@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { once } from 'lodash';
+import { once, defer } from 'lodash';
 import debugFactory from 'debug';
 import notices from 'notices';
 import page from 'page';
@@ -14,7 +11,6 @@ import page from 'page';
  */
 import config from 'config';
 import {
-	ANALYTICS_SUPER_PROPS_UPDATE,
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
@@ -25,13 +21,12 @@ import {
 	SELECTED_SITE_SUBSCRIBE,
 	SELECTED_SITE_UNSUBSCRIBE,
 } from 'state/action-types';
-import analytics from 'lib/analytics';
 import userFactory from 'lib/user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser, getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
@@ -54,11 +49,7 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktopEnabled = config.isEnabled( 'desktop' );
-let desktop;
-if ( desktopEnabled ) {
-	desktop = require( 'lib/desktop' ).default;
-}
+const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -91,15 +82,13 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	if ( ! action.query.immediate_login_success ) {
 		return;
 	}
-	const currentUser = getCurrentUser( getState() );
-	if ( ! currentUser ) {
+	const email = getCurrentUserEmail( getState() );
+	if ( ! email ) {
 		return;
 	}
-	const { email } = currentUser;
 
 	// Let redux process all dispatches that are currently queued and show the message
-	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
-	delay( () => {
+	defer( () => {
 		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
 	} );
 } );
@@ -141,22 +130,6 @@ const removeSelectedSitesChangeListener = ( dispatch, action ) => {
 	selectedSiteChangeListeners = selectedSiteChangeListeners.filter(
 		listener => listener !== action.listener
 	);
-};
-
-/**
- * Sets the selectedSite and siteCount for lib/analytics. This is used to
- * populate extra fields on tracks analytics calls.
- *
- * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
- */
-const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	const siteCount = getCurrentUserSiteCount( state );
-	analytics.setSelectedSite( selectedSite );
-	analytics.setSiteCount( siteCount );
 };
 
 /**
@@ -213,9 +186,6 @@ const handler = ( dispatch, action, getState ) => {
 		case ROUTE_SET:
 			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
 
-		case ANALYTICS_SUPER_PROPS_UPDATE:
-			return updateSelectedSiteForAnalytics( dispatch, action, getState );
-
 		//when the notifications panel is open keyboard events should not fire.
 		case NOTIFICATIONS_PANEL_TOGGLE:
 			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
@@ -231,7 +201,7 @@ const handler = ( dispatch, action, getState ) => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
-				if ( desktopEnabled ) {
+				if ( config.isEnabled( 'desktop' ) ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 

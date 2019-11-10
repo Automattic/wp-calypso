@@ -48,7 +48,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		this.destroy();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
 			this.pause();
 		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {

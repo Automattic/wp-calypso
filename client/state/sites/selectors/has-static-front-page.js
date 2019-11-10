@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import getSiteFrontPage from './get-site-front-page';
+import getSiteFrontPageType from './get-site-front-page-type';
 
 /**
  * Returns true if the site is using a static front page
@@ -11,5 +12,5 @@ import getSiteFrontPage from './get-site-front-page';
  * @return {Boolean} False if not set or set to `0`. True otherwise.
  */
 export default function hasStaticFrontPage( state, siteId ) {
-	return !! getSiteFrontPage( state, siteId );
+	return 'page' === getSiteFrontPageType( state, siteId ) && !! getSiteFrontPage( state, siteId );
 }

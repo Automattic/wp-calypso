@@ -1,16 +1,14 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * Internal dependencies
  */
-
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 
@@ -21,7 +19,7 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case DOMAINS_SUGGESTIONS_RECEIVE:
 			const serializedQuery = getSerializedDomainsSuggestionsQuery( action.queryObject );
@@ -33,8 +31,7 @@ export function items( state = {}, action ) {
 			return state;
 	}
 	return state;
-}
-items.schema = itemsSchema;
+} );
 
 /**
  * Tracks domains suggestions request state, indexed by a serialized query.

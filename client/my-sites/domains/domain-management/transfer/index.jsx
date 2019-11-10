@@ -50,7 +50,7 @@ function Transfer( props ) {
 				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAtomic && ! isDomainOnly && (
+				{ ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
 					>

@@ -7,16 +7,16 @@
 }
 
 .badge--warning {
-	color: var( --color-neutral-700 );
-	background-color: var( --color-warning );
+	color: var( --color-warning-80 );
+	background-color: var( --color-warning-20 );
 }
 
 .badge--success {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	background-color: var( --color-success );
 }
 
 .badge--info {
-	color: var( --color-neutral-800 );
-	background-color: var( --color-neutral-50 );
+	color: var( --color-neutral-70 );
+	background-color: var( --color-neutral-5 );
 }

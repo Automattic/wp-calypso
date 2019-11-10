@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -16,7 +14,6 @@ import { getToken } from 'lib/oauth-token';
 import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
-import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
@@ -25,6 +22,8 @@ import PulsingDot from 'components/pulsing-dot';
  * Style dependencies
  */
 import './style.scss';
+
+const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 
 export default {
 	oauthLogin: function( context, next ) {
@@ -46,17 +45,17 @@ export default {
 			const protocol = process.env.PROTOCOL || config( 'protocol' );
 			const host = process.env.HOST || config( 'hostname' );
 			const port = process.env.PORT || config( 'port' );
-			const oauthSettings = {
+			const redirectUri = `${ protocol }://${ host }:${ port }/api/oauth/token`;
+
+			const params = {
 				response_type: 'token',
 				client_id: config( 'oauth_client_id' ),
-				client_secret: 'n/a',
-				url: {
-					redirect: `${ protocol }://${ host }:${ port }/api/oauth/token`,
-				},
+				redirect_uri: redirectUri,
+				scope: 'global',
+				blog_id: 0,
 			};
 
-			const wpoauth = WPOAuth( oauthSettings );
-			authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
+			authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
 		}
 
 		context.primary = <ConnectComponent authUrl={ authUrl } />;

@@ -11,7 +11,7 @@ import { times } from 'lodash';
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
 
 /**

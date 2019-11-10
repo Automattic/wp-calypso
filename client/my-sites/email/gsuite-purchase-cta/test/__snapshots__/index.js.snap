@@ -171,7 +171,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
             Connect with your team
           </h5>
           <p>
-            Use text chats, voice calls, or video calls, with built in screen sharing.
+            Use text chats or video calls, with built in screen sharing.
           </p>
         </div>
       </div>

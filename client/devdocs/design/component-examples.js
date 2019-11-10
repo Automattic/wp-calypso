@@ -9,8 +9,8 @@ export { default as Badge } from 'components/badge/docs/example';
 export { default as Banner } from 'components/banner/docs/example';
 export { default as BulkSelect } from 'components/bulk-select/docs/example';
 export { default as ButtonGroups } from 'components/button-group/docs/example';
-export { default as Buttons } from 'components/button/docs/example';
-export { default as Cards } from 'components/card/docs/example';
+export { default as Buttons } from '@automattic/components/src/button/docs/example';
+export { default as Cards } from '@automattic/components/src/card/docs/example';
 export { default as CardHeading } from 'components/card-heading/docs/example';
 export { default as Chart } from 'components/chart/docs/example';
 export { default as Checklist } from 'components/checklist/docs/example';
@@ -60,13 +60,15 @@ export { default as PaginationExample } from 'components/pagination/docs/example
 export { default as PaymentLogo } from 'components/payment-logo/docs/example';
 export { default as PieChart } from 'components/pie-chart/docs/example';
 export { default as Popovers } from 'components/popover/docs/example';
-export { default as ProgressBar } from '@automattic/calypso-ui/src/progress-bar/docs/example';
+export { default as ProgressBar } from '@automattic/components/src/progress-bar/docs/example';
+export { default as PromoSection } from 'components/promo-section/docs/example';
+export { default as PromoCard } from 'components/promo-section/promo-card/docs/example';
 export { default as Ranges } from 'components/forms/range/docs/example';
 export { default as Rating } from 'components/rating/docs/example';
-export { default as Ribbon } from 'components/ribbon/docs/example';
+export { default as Ribbon } from '@automattic/components/src/ribbon/docs/example';
 export {
 	default as ScreenReaderTextExample,
-} from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
+} from '@automattic/components/src/screen-reader-text/docs/example';
 export { default as SearchDemo } from 'components/search/docs/example';
 export { default as SectionHeader } from 'components/section-header/docs/example';
 export { default as SectionNav } from 'components/section-nav/docs/example';
@@ -79,7 +81,7 @@ export { default as Spinner } from 'components/spinner/docs/example';
 export { default as SpinnerButton } from 'components/spinner-button/docs/example';
 export { default as SpinnerLine } from 'components/spinner-line/docs/example';
 export { default as SplitButton } from 'components/split-button/docs/example';
-export { default as Suggestions } from 'components/suggestions/docs/example';
+export { default as Suggestions } from '@automattic/components/src/suggestions/docs/example';
 export { default as TextareaAutosize } from 'components/textarea-autosize/docs/example';
 export { default as TextDiff } from 'components/text-diff/docs/example';
 export { default as TileGrid } from 'components/tile-grid/docs/example';

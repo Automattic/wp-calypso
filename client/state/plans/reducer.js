@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -22,15 +19,14 @@ import { itemsSchema } from './schema';
  * @param {Object} action - plans action
  * @return {Object} updated state
  */
-export const items = ( state = [], action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case PLANS_RECEIVE:
 			return action.plans.slice( 0 );
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions

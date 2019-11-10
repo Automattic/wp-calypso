@@ -28,11 +28,28 @@
 }
 
 .formatted-header__subtitle {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 
 	@include breakpoint( '<480px' ) {
 		margin: 0;
-		padding: 0 20px 24px 0;
+		padding: 0 20px 24px;
+	}
+}
+
+// Compact header on small screens
+.formatted-header.is-compact-on-mobile {
+	@include breakpoint( '<660px' ) {
+		text-align: left;
+
+		.formatted-header__title {
+			font-size: 17px;
+			font-weight: 600;
+			padding: 0 24px;
+		}
+
+		.formatted-header__subtitle {
+			padding: 0 24px 12px;
+		}
 	}
 }

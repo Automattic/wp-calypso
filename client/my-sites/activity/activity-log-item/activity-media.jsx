@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 export default class ActivityMedia extends PureComponent {
 	static propTypes = {

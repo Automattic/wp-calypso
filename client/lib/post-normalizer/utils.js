@@ -180,6 +180,8 @@ export function iframeIsWhitelisted( iframe ) {
 		'gfycat.com',
 		'scribd.com',
 		'megaphone.fm',
+		'icloud.com',
+		'read.amazon.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

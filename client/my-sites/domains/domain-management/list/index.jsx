@@ -7,7 +7,7 @@
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -30,7 +30,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
@@ -312,10 +312,10 @@ export class List extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 

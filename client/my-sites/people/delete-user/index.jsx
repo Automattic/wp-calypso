@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

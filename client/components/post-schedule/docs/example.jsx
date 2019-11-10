@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -64,7 +64,7 @@ const PostScheduleExample = localize(
 			};
 		}
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.setState( {
 				isFuture: true,
 			} );

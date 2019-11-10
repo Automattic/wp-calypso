@@ -16,7 +16,7 @@ class Skeleton extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<CompactCard> { translate( 'Cancelling your Concierge session…' ) } </CompactCard>
+				<CompactCard> { translate( 'Cancelling your Quick Start session…' ) } </CompactCard>
 			</div>
 		);
 	}

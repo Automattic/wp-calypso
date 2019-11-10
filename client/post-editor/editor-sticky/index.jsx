@@ -6,10 +6,10 @@
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -86,16 +86,18 @@ class EditorSticky extends React.Component {
 		);
 
 		return (
-			<Button
-				borderless
-				className={ classes }
-				onClick={ this.toggleStickyStatus }
-				onMouseEnter={ this.enableTooltip }
-				onMouseLeave={ this.disableTooltip }
-				aria-label={ translate( 'Stick post to the front page' ) }
-				ref={ this.stickyPostButtonRef }
-			>
-				<Gridicon icon="bookmark" />
+			<Fragment>
+				<Button
+					borderless
+					className={ classes }
+					onClick={ this.toggleStickyStatus }
+					onMouseEnter={ this.enableTooltip }
+					onMouseLeave={ this.disableTooltip }
+					aria-label={ translate( 'Stick post to the front page' ) }
+					ref={ this.stickyPostButtonRef }
+				>
+					<Gridicon icon="bookmark" />
+				</Button>
 				<Tooltip
 					className="editor-sticky__tooltip"
 					context={ this.stickyPostButtonRef.current }
@@ -104,7 +106,7 @@ class EditorSticky extends React.Component {
 				>
 					{ tooltipLabel }
 				</Tooltip>
-			</Button>
+			</Fragment>
 		);
 	}
 }

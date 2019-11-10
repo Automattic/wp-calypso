@@ -116,7 +116,7 @@ export class ConversationCommentList extends React.Component {
 		this.reqMoreComments();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
 
 		// if we are running low on comments to expand then fetch more

@@ -34,8 +34,7 @@ import {
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 } from 'my-sites/email/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { decodeURIComponentIfValid } from 'lib/url';
 
 export default {
@@ -107,7 +106,6 @@ export default {
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -140,7 +138,6 @@ export default {
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -261,15 +258,6 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
-		const state = pageContext.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		if ( isAutomatedTransfer ) {
-			const siteSlug = getSelectedSiteSlug( state );
-			page.redirect( `/domains/manage/${ siteSlug }` );
-			return;
-		}
-
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }

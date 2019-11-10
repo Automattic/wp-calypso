@@ -22,7 +22,7 @@ export const PendingPaymentNotice = ( { translate, cart = {} } ) => {
 			icon="info-outline"
 			isCompact
 			status="is-warning"
-			text={ translate( 'Processing your payment...', {
+			text={ translate( 'Processing your payment…', {
 				comment: 'Notice to user that a payment is pending',
 			} ) }
 		>

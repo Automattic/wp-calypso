@@ -11,9 +11,8 @@ import { shallow } from 'enzyme';
 import { identity } from 'lodash';
 
 import { WebPaymentBox } from '../web-payment-box';
-import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import PaymentCountrySelect from 'components/payment-country-select';
-import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
+import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
 
 jest.mock( 'config', () => {
 	const configMock = jest.fn( i => i );
@@ -21,7 +20,7 @@ jest.mock( 'config', () => {
 	return configMock;
 } );
 
-jest.mock( 'lib/upgrades/actions/cart' );
+jest.mock( 'lib/cart/actions' );
 
 jest.mock( 'lib/cart-values', () => ( {
 	getTaxCountryCode: jest.fn( () => 'TEST_CART_COUNTRY_CODE' ),
@@ -49,11 +48,10 @@ describe( 'WebPaymentBox', () => {
 
 	const defaultProps = {
 		cart: defaultCart,
+		disablePostalCodeDebounce: true,
 		translate: identity,
 		countriesList: [ 'TEST_COUNTRY_CODE' ],
 		onSubmit: jest.fn(),
-		transactionStep: { name: BEFORE_SUBMIT },
-		transaction: {},
 	};
 
 	const context = {

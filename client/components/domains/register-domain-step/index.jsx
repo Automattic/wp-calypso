@@ -93,6 +93,8 @@ import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 
 /**
  * Style dependencies
@@ -199,12 +201,19 @@ class RegisterDomainStep extends React.Component {
 				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
 			}
 
-			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
+			if (
+				this.state.searchResults ||
+				this.state.subdomainSearchResults ||
+				! props.initialState.isInitialQueryActive
+			) {
 				this.state.lastQuery = props.initialState.lastQuery;
 			} else {
 				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
+
+		this.state.filters = this.getInitialFiltersState();
+		this.state.lastFilters = this.getInitialFiltersState();
 	}
 
 	getState() {
@@ -238,6 +247,7 @@ class RegisterDomainStep extends React.Component {
 			unavailableDomains: [],
 			trademarkClaimsNoticeInfo: null,
 			selectedSuggestion: null,
+			isInitialQueryActive: !! this.props.suggestion,
 		};
 	}
 
@@ -331,6 +341,11 @@ class RegisterDomainStep extends React.Component {
 		) {
 			this.focusSearchCard();
 		}
+
+		// Hide the signup site preview when we're loading results
+		if ( this.props.isSignupStep && this.state.loadingResults && this.props.isSitePreviewVisible ) {
+			this.props.hideSitePreview();
+		}
 	}
 
 	getNewRailcarId() {
@@ -406,6 +421,7 @@ class RegisterDomainStep extends React.Component {
 							describedBy={ 'step-header' }
 							dir="ltr"
 							initialValue={ this.state.lastQuery }
+							inputLabel={ this.props.translate( 'What would you like your domain name to be?' ) }
 							minLength={ MIN_QUERY_LENGTH }
 							maxLength={ 60 }
 							onBlur={ this.save }
@@ -654,11 +670,18 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
+		// Reshow the signup site preview if there is no search query
+		if ( ! searchQuery && this.props.isSignupStep && ! this.props.isSitePreviewVisible ) {
+			this.props.showSitePreview();
+		}
+
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
+		const isInitialQueryActive = searchQuery === this.props.suggestion;
 
 		this.setState(
 			{
+				isInitialQueryActive,
 				availabilityError: null,
 				availabilityErrorData: null,
 				exactMatchDomain: null,
@@ -729,8 +752,10 @@ class RegisterDomainStep extends React.Component {
 
 					const {
 						AVAILABLE,
+						AVAILABLE_PREMIUM,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
 						TRANSFERRABLE,
+						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
@@ -749,7 +774,12 @@ class RegisterDomainStep extends React.Component {
 						} );
 					} else {
 						let site = get( result, 'other_site_domain', null );
-						if ( MAPPED_SAME_SITE_TRANSFERRABLE === status ) {
+						if (
+							includes(
+								[ MAPPED_SAME_SITE_TRANSFERRABLE, AVAILABLE_PREMIUM, TRANSFERRABLE_PREMIUM ],
+								status
+							)
+						) {
 							site = get( this.props, 'selectedSite.slug', null );
 						}
 						this.showAvailabilityErrorMessage( domain, status, {
@@ -999,9 +1029,7 @@ class RegisterDomainStep extends React.Component {
 		const pageNumber = this.state.pageNumber + 1;
 
 		debug(
-			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${
-				this.props.analyticsSection
-			}"`
+			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${ this.props.analyticsSection }"`
 		);
 
 		this.props.recordShowMoreResults(
@@ -1103,9 +1131,7 @@ class RegisterDomainStep extends React.Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
-					}
-
-					if ( trademarkClaimsNoticeInfo ) {
+					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
@@ -1307,6 +1333,7 @@ export default connect(
 	( state, props ) => {
 		const queryObject = getQueryObject( props );
 		return {
+			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
@@ -1324,5 +1351,7 @@ export default connect(
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 		recordUseYourDomainButtonClick,
+		hideSitePreview,
+		showSitePreview,
 	}
 )( localize( RegisterDomainStep ) );

@@ -13,7 +13,6 @@ import classNames from 'classnames';
  */
 import Spinner from 'components/spinner';
 import ExternalLink from 'components/external-link';
-import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { loadmShotsPreview } from 'lib/mshots';
@@ -111,9 +110,10 @@ class SiteImporterSitePreview extends React.Component {
 								</div>
 								<div className={ containerClass }>
 									<div className="site-importer__site-preview-column-container">
-										<MiniSitePreview
+										<img
 											className="site-importer__site-preview"
-											imageSrc={ this.state.sitePreviewImage }
+											src={ this.state.sitePreviewImage }
+											alt={ this.props.translate( 'Screenshot of your site.' ) }
 										/>
 										<ImportableContent importData={ this.props.importData } />
 									</div>

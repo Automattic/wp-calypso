@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -28,9 +28,13 @@ export class ConciergeSupportSession extends PureComponent {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		const pageViewTrackerPath = receiptId
+			? '/checkout/offer-support-session/:receipt_id/:site'
+			: '/checkout/offer-support-session/:site';
+
 		return (
 			<>
-				<PageViewTracker path="/checkout/:site/offer-support-session/:receipt_id" title={ title } />
+				<PageViewTracker path={ pageViewTrackerPath } title={ title } />
 				<DocumentHead title={ title } />
 				{ receiptId ? (
 					<CompactCard className="concierge-support-session__card-header">
@@ -159,7 +163,7 @@ export class ConciergeSupportSession extends PureComponent {
 								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
-										saveAmount: formatCurrency( savings, currencyCode ),
+										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
 									},
 								}
 							) }
@@ -172,7 +176,7 @@ export class ConciergeSupportSession extends PureComponent {
 									{
 										components: { del: <del /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}

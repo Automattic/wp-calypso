@@ -69,7 +69,7 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -88,7 +88,7 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 

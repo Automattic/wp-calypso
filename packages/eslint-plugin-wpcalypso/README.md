@@ -53,7 +53,6 @@ Then configure the rules you want to use under the rules section.
 - [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md): Enforce recommended Gridicon size attributes
 - [`import-docblock`](docs/rules/import-docblock.md): Enforce external, internal dependencies docblocks
 - [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md): Disallow using the wildcard '*' in `postMessage`
-- [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md): Disallow combineReducers import from redux
 - [`redux-no-bound-selectors`](docs/rules/redux-no-bound-selectors.md): Disallow creation of selectors bound to Redux state
 
 ## License

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { map, partial, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 /**
  * Internal Dependencies

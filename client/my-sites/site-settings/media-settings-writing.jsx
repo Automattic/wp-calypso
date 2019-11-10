@@ -80,7 +80,7 @@ class MediaSettingsWriting extends Component {
 								{ translate( 'Show photo metadata in carousel, when available' ) }
 							</CompactFormToggle>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-								{ translate( 'Background color' ) }
+								{ translate( 'Background Color' ) }
 							</FormLabel>
 							<FormSelect
 								name="carousel_background_color"

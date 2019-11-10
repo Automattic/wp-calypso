@@ -20,7 +20,7 @@ import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -125,7 +125,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
 
@@ -152,6 +152,16 @@ export class RewindCredentialsForm extends Component {
 		return (
 			<div className="rewind-credentials-form">
 				<QueryRewindState siteId={ siteId } />
+				<div className="rewind-credentials-form__instructions">
+					{ translate(
+						'Please get your credentials from your hosting provider. Their website should explain how to get or create the credentials you need. {{link}}Check out our handy guide{{/link}}',
+						{
+							components: {
+								link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,
+							},
+						}
+					) }
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					<FormSelect

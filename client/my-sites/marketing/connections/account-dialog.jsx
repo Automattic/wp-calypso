@@ -16,7 +16,7 @@ import Notice from 'components/notice';
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { warningNotice } from 'state/notices/actions';
 
 /**
@@ -24,7 +24,6 @@ import { warningNotice } from 'state/notices/actions';
  */
 import './account-dialog.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
@@ -213,7 +212,6 @@ class AccountDialog extends Component {
 				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
 			];
 
-		/*eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -234,10 +232,8 @@ class AccountDialog extends Component {
 				{ this.getConnectedAccountsContent() }
 			</Dialog>
 		);
-		/*eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default connect(
 	null,

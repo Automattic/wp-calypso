@@ -86,7 +86,7 @@ class PostSelectorPosts extends React.Component {
 		requestedPages: [ 1 ],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
@@ -98,7 +98,7 @@ class PostSelectorPosts extends React.Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
 			this.props.siteId !== nextProps.siteId

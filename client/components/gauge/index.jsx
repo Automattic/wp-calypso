@@ -65,15 +65,15 @@ export default class extends React.PureComponent {
 							d={ this.getPathDefinition( 100 ) }
 							fill="none"
 							stroke={ colorBg }
-							stroke-width={ lineWidth }
-							stroke-linecap="round"
+							strokeWidth={ lineWidth }
+							strokeLinecap="round"
 						/>
 						<path
 							d={ this.getPathDefinition( percentage ) }
 							fill="none"
 							stroke={ colorFg }
-							stroke-width={ lineWidth }
-							stroke-linecap="round"
+							strokeWidth={ lineWidth }
+							strokeLinecap="round"
 						/>
 					</svg>
 					<span className="gauge__label" style={ labelStyles }>

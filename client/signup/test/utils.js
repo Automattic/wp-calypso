@@ -5,9 +5,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
-import debugModule from 'debug';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -20,8 +17,8 @@ import {
 	getStepName,
 	getLocale,
 	getFlowName,
+	getFilteredSteps,
 } from '../utils';
-import mockedFlows from './fixtures/flows';
 import flows from 'signup/config/flows';
 
 jest.mock( 'lib/abtest', () => ( {
@@ -31,173 +28,190 @@ jest.mock( 'lib/user', () => () => ( {
 	get: () => {},
 } ) );
 
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:client:signup:controller-utils:test' );
-
-debug( 'start utils test' );
+jest.mock( 'signup/config/flows-pure', () => ( {
+	generateFlows: () => require( './fixtures/flows' ),
+} ) );
 
 describe( 'utils', () => {
-	beforeAll( () => {
-		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-	} );
+	const defaultFlowName = flows.defaultFlowName;
 
 	describe( 'getLocale', () => {
 		test( 'should find the locale anywhere in the params', () => {
-			assert.equal( getLocale( { lang: 'fr' } ), 'fr' );
-			assert.equal( getLocale( { stepName: 'fr' } ), 'fr' );
-			assert.equal( getLocale( { flowName: 'fr' } ), 'fr' );
+			expect( getLocale( { lang: 'fr' } ) ).toBe( 'fr' );
+			expect( getLocale( { stepName: 'fr' } ) ).toBe( 'fr' );
+			expect( getLocale( { flowName: 'fr' } ) ).toBe( 'fr' );
 		} );
 
 		test( 'should return undefined if no locale is present in the params', () => {
-			assert.equal(
+			expect(
 				getLocale( {
 					stepName: 'theme-selection',
 					flowName: 'flow-one',
-				} ),
-				undefined
-			);
+				} )
+			).toBeUndefined();
 		} );
 	} );
 
 	describe( 'getStepName', () => {
 		test( 'should find the step name in either the stepName or flowName fragment', () => {
-			assert.equal( getStepName( { stepName: 'user' } ), 'user' );
-			assert.equal( getStepName( { flowName: 'user' } ), 'user' );
+			expect( getStepName( { stepName: 'user' } ) ).toBe( 'user' );
+			expect( getStepName( { flowName: 'user' } ) ).toBe( 'user' );
 		} );
 
 		test( 'should return undefined if no step name is found', () => {
-			assert.equal( getStepName( { flowName: 'account' } ), undefined );
+			expect( getStepName( { flowName: 'account' } ) ).toBeUndefined();
 		} );
 	} );
 
 	describe( 'getFlowName', () => {
-		afterEach( () => {
-			flows.filterFlowName = null;
-		} );
-
 		test( 'should find the flow name in the flowName fragment if present', () => {
-			assert.equal( getFlowName( { flowName: 'other' } ), 'other' );
+			expect( getFlowName( { flowName: 'other' } ) ).toBe( 'other' );
 		} );
 
 		test( 'should return the default flow if the flow is missing', () => {
-			assert.equal( getFlowName( {} ), 'main' );
+			expect( getFlowName( {} ) ).toBe( defaultFlowName );
+		} );
+	} );
+
+	describe( 'getFilteredSteps', () => {
+		describe( 'when the given flow is found in the config', () => {
+			const exampleFlowName = 'onboarding';
+
+			describe( 'when there are a number of steps in the progress state', () => {
+				describe( 'and some of them match that flow', () => {
+					const userStep = { stepName: 'user' };
+					const siteTypeStep = { stepName: 'site-type' };
+					const someOtherStep = { stepName: 'some-other-step' };
+					const exampleSteps = {
+						user: userStep,
+						'site-type': siteTypeStep,
+						'some-other-step': someOtherStep,
+					};
+
+					const result = getFilteredSteps( exampleFlowName, exampleSteps );
+
+					test( 'it returns an array', () => {
+						expect( Array.isArray( result ) ).toBe( true );
+					} );
+
+					test( 'it should return only the step objects that match the flow', () => {
+						expect( result ).toEqual( [ userStep, siteTypeStep ] );
+					} );
+				} );
+
+				describe( 'but none of them match that flow', () => {
+					const exampleSteps = {
+						'some-step': { stepName: 'some-step' },
+						'some-other-step': { stepName: 'some-other-step' },
+					};
+					const result = getFilteredSteps( exampleFlowName, exampleSteps );
+
+					test( 'it should return an empty array', () => {
+						expect( result ).toHaveLength( 0 );
+						expect( Array.isArray( result ) ).toBe( true );
+					} );
+				} );
+			} );
+
+			describe( 'when there are no steps in the progress state', () => {
+				const result = getFilteredSteps( exampleFlowName, {} );
+
+				test( 'it should return an empty array', () => {
+					expect( result ).toHaveLength( 0 );
+					expect( Array.isArray( result ) ).toBe( true );
+				} );
+			} );
 		} );
 
-		test( 'should return the result of filterFlowName if it is a function and the flow is missing', () => {
-			flows.filterFlowName = sinon.stub().returns( 'filtered' );
-			assert.equal( getFlowName( {} ), 'filtered' );
-		} );
+		describe( 'when the given flow is not found in the config', () => {
+			const exampleFlowName = 'some-bad-flow';
+			const exampleSteps = {
+				user: { stepName: 'user' },
+				'site-type': { stepName: 'site-type' },
+			};
+			const result = getFilteredSteps( exampleFlowName, exampleSteps );
 
-		test( 'should return the result of filterFlowName if it is a function and the flow is not valid', () => {
-			flows.filterFlowName = sinon.stub().returns( 'filtered' );
-			assert.equal( getFlowName( { flowName: 'invalid' } ), 'filtered' );
-		} );
-
-		test( 'should return the result of filterFlowName if it is a function and the requested flow is present', () => {
-			flows.filterFlowName = sinon.stub().returns( 'filtered' );
-			assert.equal( getFlowName( { flowName: 'other' } ), 'filtered' );
-		} );
-
-		test( 'should return the passed flow if the result of filterFlowName is not valid', () => {
-			flows.filterFlowName = sinon.stub().returns( 'foobar' );
-			assert.equal( getFlowName( { flowName: 'other' } ), 'other' );
-		} );
-
-		test( 'should call filterFlowName with the default flow if it is a function and the flow is not valid', () => {
-			flows.filterFlowName = sinon.stub().returns( 'filtered' );
-			getFlowName( { flowName: 'invalid' } );
-			assert( flows.filterFlowName.calledWith( 'main' ) );
-		} );
-
-		test( 'should call filterFlowName with the requested flow if it is a function and the flow is valid', () => {
-			flows.filterFlowName = sinon.stub().returns( 'filtered' );
-			getFlowName( { flowName: 'other' } );
-			assert( flows.filterFlowName.calledWith( 'other' ) );
+			test( 'it should return an empty array', () => {
+				expect( result ).toHaveLength( 0 );
+				expect( Array.isArray( result ) ).toBe( true );
+			} );
 		} );
 	} );
 
 	describe( 'getValidPath', () => {
 		test( 'should redirect to the default if no flow is present', () => {
-			assert.equal( getValidPath( {} ), '/start/user' );
+			expect( getValidPath( {} ) ).toBe( '/start/user' );
 		} );
 
 		test( 'should redirect to the current flow default if no step is present', () => {
-			assert.equal( getValidPath( { flowName: 'account' } ), '/start/account/user' );
+			expect( getValidPath( { flowName: 'account' } ) ).toBe( '/start/account/user' );
 		} );
 
 		test( 'should redirect to the default flow if the flow is the default', () => {
-			assert.equal( getValidPath( { flowName: 'main' } ), '/start/user' );
+			expect( getValidPath( { flowName: defaultFlowName } ) ).toBe( '/start/user' );
 		} );
 
 		test( 'should redirect invalid steps to the default flow if no flow is present', () => {
-			assert.equal(
+			expect(
 				getValidPath( {
 					stepName: 'fr',
 					stepSectionName: 'fr',
-				} ),
-				'/start/user/fr'
-			);
+				} )
+			).toBe( '/start/user/fr' );
 		} );
 
 		test( 'should preserve a valid locale to the default flow if one is specified', () => {
-			assert.equal(
+			expect(
 				getValidPath( {
 					stepName: 'fr',
 					stepSectionName: 'abc',
-				} ),
-				'/start/user/abc/fr'
-			);
+				} )
+			).toBe( '/start/user/abc/fr' );
 		} );
 
 		test( 'should redirect invalid steps to the current flow default', () => {
-			assert.equal(
+			expect(
 				getValidPath( {
 					flowName: 'account',
 					stepName: 'fr',
 					stepSectionName: 'fr',
-				} ),
-				'/start/account/user/fr'
-			);
+				} )
+			).toBe( '/start/account/user/fr' );
 		} );
 
 		test( 'should preserve a valid locale if one is specified', () => {
-			assert.equal(
+			expect(
 				getValidPath( {
 					flowName: 'account',
 					stepName: 'fr',
 					stepSectionName: 'abc',
-				} ),
-				'/start/account/user/abc/fr'
-			);
+				} )
+			).toBe( '/start/account/user/abc/fr' );
 		} );
 
 		test( 'should handle arbitrary step section names', () => {
 			const randomStepSectionName = 'random-step-section-' + Math.random();
 
-			assert.equal(
+			expect(
 				getValidPath( {
 					flowName: 'account',
 					stepName: 'user',
 					stepSectionName: randomStepSectionName,
 					lang: 'fr',
-				} ),
-				'/start/account/user/' + randomStepSectionName + '/fr'
-			);
+				} )
+			).toBe( `/start/account/user/${ randomStepSectionName }/fr` );
 		} );
 
 		test( 'should handle arbitrary step section names in the default flow', () => {
 			const randomStepSectionName = 'random-step-section-' + Math.random();
 
-			assert.equal(
+			expect(
 				getValidPath( {
 					stepName: 'user',
 					stepSectionName: randomStepSectionName,
 					lang: 'fr',
-				} ),
-				'/start/user/' + randomStepSectionName + '/fr'
-			);
+				} )
+			).toBe( `/start/user/${ randomStepSectionName }/fr` );
 		} );
 	} );
 
@@ -210,12 +224,12 @@ describe( 'utils', () => {
 		};
 
 		test( 'should return the value of the field if it exists', () => {
-			assert.equal( getValueFromProgressStore( config ), 'calypso' );
+			expect( getValueFromProgressStore( config ) ).toBe( 'calypso' );
 		} );
 
 		test( 'should return null if the field is not present', () => {
 			delete signupProgress[ 1 ].site;
-			assert.equal( getValueFromProgressStore( config ), null );
+			expect( getValueFromProgressStore( config ) ).toBeUndefined();
 		} );
 	} );
 

@@ -297,7 +297,11 @@ describe( 'isPlanFulfilled()', () => {
 
 	test( 'should remove a step for existing paid plan', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: true, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
@@ -305,7 +309,7 @@ describe( 'isPlanFulfilled()', () => {
 		isPlanFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, undefined },
+			{ stepName, undefined, wasSkipped: true },
 			{ cartItem: undefined }
 		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
@@ -313,7 +317,11 @@ describe( 'isPlanFulfilled()', () => {
 
 	test( 'should remove a step when provided a cartItem default dependency', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: false,
+			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
 		const defaultDependencies = { cartItem: 'testPlan' };
 		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
 
@@ -322,13 +330,20 @@ describe( 'isPlanFulfilled()', () => {
 
 		isPlanFulfilled( stepName, defaultDependencies, nextProps );
 
-		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName, cartItem }, { cartItem } );
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, cartItem, wasSkipped: true },
+			{ cartItem }
+		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
 	test( 'should not remove unfulfilled step', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: false,
+			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
@@ -469,5 +484,31 @@ describe( 'isSiteTopicFulfilled()', () => {
 
 		expect( setSurvey ).not.toHaveBeenCalled();
 		expect( submitSiteVertical ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should remove a step with optional dependency not met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalTheme';
+		const stepName = 'site-topic-with-optional-theme';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-theme' );
+	} );
+
+	test( 'should remove a step with optional dependency met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalSurveyQuestion';
+		const stepName = 'site-topic-with-optional-survey-question';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
 	} );
 } );

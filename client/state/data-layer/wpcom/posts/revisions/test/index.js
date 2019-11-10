@@ -67,7 +67,7 @@ describe( '#fetchPostRevisionsDiffs', () => {
 		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
-					apiVersion: '1.1',
+					apiVersion: '1.2',
 					method: 'GET',
 					path: '/sites/12345678/post/10/diffs',
 					query: {
@@ -85,7 +85,7 @@ describe( '#fetchPostRevisionsDiffs', () => {
 		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
-					apiVersion: '1.1',
+					apiVersion: '1.2',
 					method: 'GET',
 					path: '/sites/12345678/page/10/diffs',
 					query: {
@@ -103,7 +103,7 @@ describe( '#fetchPostRevisionsDiffs', () => {
 		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
-					apiVersion: '1.1',
+					apiVersion: '1.2',
 					method: 'GET',
 					path: '/sites/12345678/jetpack-portfolio/10/diffs',
 					query: {

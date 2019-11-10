@@ -72,7 +72,7 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @return {array} current list of site types
+ * @return {Array} current list of site types
  */
 export function getAllSiteTypes() {
 	return [
@@ -82,7 +82,7 @@ export function getAllSiteTypes() {
 			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
@@ -109,7 +109,7 @@ export function getAllSiteTypes() {
 			defaultVertical: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'page',
 			siteTitleLabel: i18n.translate( 'Tell us your business’s name' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
@@ -126,10 +126,12 @@ export function getAllSiteTypes() {
 			defaultVertical: 'designer',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed', {
+				comment: "An example of a person's name, use something appropriate for the locale",
+			} ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
@@ -151,6 +153,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
+			forcePublicSite: true,
 		},
 	];
 }

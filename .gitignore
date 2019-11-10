@@ -49,5 +49,5 @@ cover.html
 cached-requests.json
 
 # Monorepo output
-/apps/**/dist/
+/apps/*/dist/
 /packages/*/dist/

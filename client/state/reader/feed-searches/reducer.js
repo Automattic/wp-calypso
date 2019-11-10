@@ -7,7 +7,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 
 /**
@@ -29,9 +29,13 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
  */
 export const items = keyedReducer(
 	'queryKey',
-	createReducer( null, {
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) =>
-			uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' ),
+	withoutPersistence( ( state = null, action ) => {
+		switch ( action.type ) {
+			case READER_FEED_SEARCH_RECEIVE:
+				return uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' );
+		}
+
+		return state;
 	} )
 );
 
@@ -56,8 +60,13 @@ export const items = keyedReducer(
  */
 export const total = keyedReducer(
 	'queryKey',
-	createReducer( null, {
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.total,
+	withoutPersistence( ( state = null, action ) => {
+		switch ( action.type ) {
+			case READER_FEED_SEARCH_RECEIVE:
+				return action.payload.total;
+		}
+
+		return state;
 	} )
 );
 

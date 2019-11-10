@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

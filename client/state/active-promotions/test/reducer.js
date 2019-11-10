@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,16 +14,13 @@ import {
 	requestActivePromotions,
 } from '../actions';
 import activePromotionsReducer, {
-	items,
+	items as itemsReducer,
 	requesting as requestReducer,
 	error as errorReducer,
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-
-const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;

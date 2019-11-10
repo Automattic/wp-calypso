@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -103,13 +103,7 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		if ( this.props.provideCouponCode ) {
-			const couponCode = get( this.props.queryObject, 'discount', '' );
-			this.props.submitSignupStep( step, { cartItem, couponCode } );
-		} else {
-			this.props.submitSignupStep( step, { cartItem } );
-		}
-
+		this.props.submitSignupStep( step, { cartItem } );
 		this.props.goToNextStep();
 	};
 
@@ -175,20 +169,14 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			selectedSite,
-			siteSlug,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
-
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.props.subHeaderText;
+		const subHeaderText =
+			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
+
 		let backUrl, backLabelText;
 
 		if ( 0 === positionInFlow && selectedSite ) {
@@ -204,7 +192,7 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }

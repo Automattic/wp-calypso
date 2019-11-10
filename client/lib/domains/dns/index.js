@@ -43,11 +43,12 @@ function validateField( { name, value, type, domainName } ) {
 			return includes( [ 'tcp', 'udp', 'tls' ], value );
 		case 'weight':
 		case 'aux':
-		case 'port':
+		case 'port': {
 			const intValue = parseInt( value, 10 );
 			return intValue >= 0 && intValue <= 65535;
+		}
 		case 'service':
-			return value.match( /^[^\s\.]+$/ );
+			return value.match( /^[^\s.]+$/ );
 		default:
 			return true;
 	}
@@ -79,7 +80,7 @@ function isValidData( data, type ) {
 		case 'A':
 			return data.match( /^(\d{1,3}\.){3}\d{1,3}$/ );
 		case 'AAAA':
-			return data.match( /^[a-f0-9\:]+$/i );
+			return data.match( /^[a-f0-9:]+$/i );
 		case 'CNAME':
 		case 'MX':
 			return isValidDomain( data );
@@ -200,10 +201,6 @@ function addMissingWpcomRecords( domain, records ) {
 	return newRecords;
 }
 
-function isBeingProcessed( record ) {
-	return record.isBeingDeleted || record.isBeingAdded;
-}
-
 function isDeletingLastMXRecord( recordToDelete, records ) {
 	const currentMXRecords = filter( records, { type: 'MX' } );
 
@@ -215,6 +212,5 @@ export {
 	getNormalizedData,
 	removeDuplicateWpcomRecords,
 	validateAllFields,
-	isBeingProcessed,
 	isDeletingLastMXRecord,
 };

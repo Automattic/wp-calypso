@@ -12,7 +12,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';

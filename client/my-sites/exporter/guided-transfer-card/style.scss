@@ -14,7 +14,7 @@
 .guided-transfer-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	clear: left;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .guided-transfer-card__details-title {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	margin-bottom: 12px;
 }
@@ -88,7 +88,7 @@
 	height: 48px;
 	padding: 14px;
 	border-radius: 50%;
-	background-color: var( --color-neutral-500 );
+	background-color: var( --color-neutral-50 );
 	color: var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
@@ -101,11 +101,11 @@
 .guided-transfer-card__in-progress-title {
 	font-size: 24px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .guided-transfer-card__unavailable-notice {
-	background-color: var( --color-neutral-700 );
+	background-color: var( --color-neutral-70 );
 	border-radius: 3px;
 	color: var( --color-neutral-0 );
 	padding: 5px 12px;
@@ -117,6 +117,6 @@
 }
 
 .guided-transfer-card__unavailable-info-icon.info-popover .gridicon:hover,
-.guided-transfer-card__unavailable-info-icon.info-popover.is_active .gridicon {
+.guided-transfer-card__unavailable-info-icon.info-popover.is-active .gridicon {
 	color: var( --color-neutral-0 );
 }

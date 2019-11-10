@@ -6,6 +6,7 @@
  */
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies.
@@ -870,6 +871,26 @@ Undocumented.prototype.metaKeyring = function( fn ) {
 };
 
 /**
+ * Return a list of third-party services that WordPress.com can integrate with for a specific site
+ *
+ * @param {int|string} siteId The site ID or domain
+ * @param {Function} fn The callback function
+ * @return {Promise} A Promise to resolve when complete
+ * @api public
+ */
+
+Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
+	debug( '/sites/:site-id:/external-services query' );
+	return this.wpcom.req.get(
+		{
+			path: '/sites/' + siteId + '/external-services',
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
  * Return a list of happiness engineers gravatar urls
  *
  * @param {Function} fn The callback function
@@ -1107,9 +1128,8 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
 };
 
 /**
- * GET/POST transactions
+ * POST create a payment transaction
  *
- * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
@@ -1124,31 +1144,20 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  *		locale: {string} Locale for translating strings in response data,
  * }
  */
-Undocumented.prototype.transactions = function( method, data, fn ) {
-	debug( '/me/transactions query' );
-
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	} else {
-		data = mapKeysRecursively( data, snakeCase );
-	}
-
-	return this._sendRequest(
-		{
-			path: '/me/transactions',
-			method: method,
-			body: data,
-		},
-		fn
-	);
+Undocumented.prototype.transactions = function( data, fn ) {
+	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
 };
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
-	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.cardToken;
-
+	const data = pick( params, [
+		'country',
+		'zip',
+		'month',
+		'year',
+		'name',
+		'payment_partner',
+		'paygate_token',
+	] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -1163,6 +1172,19 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 	debug( '/me/paygate-configuration query' );
 
 	return this.wpcom.req.get( '/me/paygate-configuration', query, fn );
+};
+
+/**
+ * GET stripe configuration
+ *
+ * @param {Object} query - query parameters
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.stripeConfiguration = function( query, fn ) {
+	debug( '/me/stripe-configuration query' );
+
+	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
 };
 
 /**
@@ -1430,6 +1452,26 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
 
 	const args = {
 		path: '/users/email/new',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new user account and login immediately
+ * Onboard a new user
+ *
+ * @param {object} query - an object with the following values: email
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.createUserAccountFromEmailAddress = function( query, fn ) {
+	debug( '/users/email/onboard' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	const args = {
+		path: '/users/email/onboard',
 		body: query,
 	};
 	return this.wpcom.req.post( args, fn );
@@ -1882,10 +1924,10 @@ Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, 
 };
 
 Undocumented.prototype.isSiteImportable = function( site_url ) {
-	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
 	return this.wpcom.req.get(
-		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
 		{ site_url }
 	);
 };
@@ -1902,6 +1944,21 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
+	} );
+};
+
+Undocumented.prototype.importWithSiteImporter = function(
+	siteId,
+	importerStatus,
+	params,
+	targetUrl
+) {
+	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
+
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
+		apiNamespace: 'wpcom/v2',
+		formData: [ [ 'import_status', JSON.stringify( importerStatus ) ], [ 'site_url', targetUrl ] ],
 	} );
 };
 

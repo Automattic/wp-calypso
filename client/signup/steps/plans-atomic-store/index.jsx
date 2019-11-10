@@ -134,14 +134,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			designType,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, designType } = this.props;
 
 		let headerText = translate( "Pick a plan that's right for you." );
 
@@ -156,7 +149,6 @@ export class PlansAtomicStoreStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 			/>

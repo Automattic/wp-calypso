@@ -58,8 +58,8 @@
 
 .nps-survey__recommendation-select-wrapper {
 	background-color: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	padding: 16px 0;
 	text-align: center;
 
@@ -97,7 +97,7 @@
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: var( --color-primary-400 );
+	color: var( --color-primary-40 );
 	font-weight: bold;
 }
 

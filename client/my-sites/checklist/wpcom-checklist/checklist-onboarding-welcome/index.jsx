@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';

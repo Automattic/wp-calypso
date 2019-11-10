@@ -6,7 +6,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -65,7 +65,7 @@ export class Login extends React.Component {
 		this.recordPageView( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
@@ -195,6 +195,7 @@ export class Login extends React.Component {
 			twoFactorAuthType,
 			socialService,
 			socialServiceResponse,
+			fromSite,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -212,6 +213,7 @@ export class Login extends React.Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				fromSite={ fromSite }
 			/>
 		);
 	}

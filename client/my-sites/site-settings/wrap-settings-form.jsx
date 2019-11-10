@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -44,7 +44,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			uniqueEvents: {},
 		};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -93,8 +93,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! ( currentFields[ field ] == persistedFields[ field ] )
+			const nextDirtyFields = previousDirtyFields.filter( field =>
+				isObjectLike( currentFields[ field ] )
+					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
+					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
 			/*eslint-enable eqeqeq*/
 

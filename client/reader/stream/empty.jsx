@@ -11,6 +11,11 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
+/**
+ * Image dependencies
+ */
+import welcomeImage from 'assets/images/reader/reader-welcome-illustration.svg';
+
 class FollowingEmptyContent extends React.Component {
 	shouldComponentUpdate() {
 		return false;
@@ -42,8 +47,8 @@ class FollowingEmptyContent extends React.Component {
 				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/reader/reader-welcome-illustration.svg' }
-				illustrationWidth={ 380 }
+				illustration={ welcomeImage }
+				illustrationWidth={ 350 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

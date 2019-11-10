@@ -4,7 +4,6 @@
  */
 import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ const debug = debugModule( 'calypso:wpcom-task-list' );
 
 function getTasks( {
 	designType,
-	isSiteUnlaunched,
+	siteIsUnlaunched,
 	phase2,
 	siteSegment,
 	siteVerticals,
@@ -73,22 +72,20 @@ function getTasks( {
 	addTask( 'custom_domain_registered' );
 	addTask( 'mobile_app_installed' );
 
-	if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
+	if ( get( taskStatuses, 'email_verified.completed' ) && siteIsUnlaunched ) {
 		addTask( 'site_launched' );
 	}
 
-	if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
-		if ( hasTask( 'email_setup' ) ) {
-			addTask( 'email_setup' );
-		}
+	if ( hasTask( 'email_setup' ) ) {
+		addTask( 'email_setup' );
+	}
 
-		if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
-			addTask( 'email_forwarding_upgraded_to_gsuite' );
-		}
+	if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
+		addTask( 'email_forwarding_upgraded_to_gsuite' );
+	}
 
-		if ( hasTask( 'gsuite_tos_accepted' ) ) {
-			addTask( 'gsuite_tos_accepted' );
-		}
+	if ( hasTask( 'gsuite_tos_accepted' ) ) {
+		addTask( 'gsuite_tos_accepted' );
 	}
 
 	debug( 'Site info: ', { designType, segmentSlug, siteVerticals } );
@@ -132,6 +129,12 @@ class WpcomTaskList {
 		return found;
 	}
 
+	removeTasksWithoutUrls( taskUrls ) {
+		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
+
+		this.tasks = this.tasks.filter( hasUrl );
+	}
+
 	getFirstIncompleteTask() {
 		return this.tasks.find( task => ! task.isCompleted );
 	}
@@ -154,7 +157,7 @@ export const getTaskList = memoize(
 		const key = pick( params, [
 			'taskStatuses',
 			'designType',
-			'isSiteUnlaunched',
+			'siteIsUnlaunched',
 			'siteSegment',
 			'siteVerticals',
 		] );

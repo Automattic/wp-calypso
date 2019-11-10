@@ -20,7 +20,7 @@ import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import EllipsisMenu from 'components/ellipsis-menu';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
@@ -77,6 +77,8 @@ class ActivityLogItem extends Component {
 			roots: true,
 			contents: true,
 		},
+		disableRestoreButton: false,
+		disableDownloadButton: false,
 	};
 
 	confirmBackup = () =>
@@ -89,15 +91,56 @@ class ActivityLogItem extends Component {
 			this.state.restoreArgs
 		);
 
-	restoreSettingsChange = ( { target: { name, checked } } ) =>
+	restoreSettingsChange = ( { target: { name, checked } } ) => {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
+			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
+				k => ! this.state.restoreArgs[ k ]
+			),
 		} );
+	};
 
-	downloadSettingsChange = ( { target: { name, checked } } ) =>
+	downloadSettingsChange = ( { target: { name, checked } } ) => {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
+			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
+				k => ! this.state.downloadArgs[ k ]
+			),
 		} );
+	};
+
+	cancelRewindIntent = () => {
+		this.props.dismissRewind();
+		this.cancelIntent();
+	};
+
+	cancelDownloadIntent = () => {
+		this.props.dismissBackup();
+		this.cancelIntent();
+	};
+
+	cancelIntent = () => {
+		this.setState( {
+			restoreArgs: {
+				themes: true,
+				plugins: true,
+				uploads: true,
+				sqls: true,
+				roots: true,
+				contents: true,
+			},
+			downloadArgs: {
+				themes: true,
+				plugins: true,
+				uploads: true,
+				sqls: true,
+				roots: true,
+				contents: true,
+			},
+			disableRestoreButton: false,
+			disableDownloadButton: false,
+		} );
+	};
 
 	sizeChanged = () => {
 		this.forceUpdate();
@@ -277,8 +320,6 @@ class ActivityLogItem extends Component {
 		const {
 			activity,
 			className,
-			dismissBackup,
-			dismissRewind,
 			gmtOffset,
 			mightBackup,
 			mightRewind,
@@ -298,41 +339,40 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
 						confirmTitle={ translate( 'Confirm Rewind' ) }
-						notice={ translate(
-							'This will remove all content and options created or changed since then.'
-						) }
-						onClose={ dismissRewind }
+						notice={
+							this.state.disableRestoreButton
+								? translate( 'Please select at least one item to rewind.' )
+								: translate( 'This will override and remove all content created after this point.' )
+						}
+						onClose={ this.cancelRewindIntent }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
+						disableButton={ this.state.disableRestoreButton }
 					>
-						{ translate(
-							'This is the selected point for your site Rewind. ' +
-								'Are you sure you want to rewind your site back to {{time/}}?',
-							{
-								components: {
-									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
-								},
-							}
-						) }
+						{ translate( '{{time/}} is the selected point for your site Rewind.', {
+							components: {
+								time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
+							},
+						} ) }
 					</ActivityLogConfirmDialog>
 				) }
 				{ mightBackup && (
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
 						confirmTitle={ translate( 'Create download' ) }
-						onClose={ dismissBackup }
+						onClose={ this.cancelBackupIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backups"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
 						icon={ 'cloud-download' }
+						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
-							'We will build a downloadable backup of your site at {{time/}}. ' +
-								'You will get a notification when the backup is ready to download.',
+							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
 							{
 								components: {
 									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
@@ -423,6 +463,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				recordTracksEvent( 'calypso_activitylog_restore_confirm', {
 					action_id: rewindId,
 					activity_name: activityName,
+					restore_types: JSON.stringify( restoreArgs ),
 				} ),
 				rewindRestore( siteId, rewindId, restoreArgs )
 			)

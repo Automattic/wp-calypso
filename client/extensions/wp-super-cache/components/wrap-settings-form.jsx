@@ -29,7 +29,7 @@ import {
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			if ( getFormSettings ) {
 				this.props.replaceFields( getFormSettings( this.props.settings ) );
 			}

@@ -22,7 +22,7 @@ import {
 	createAccount,
 	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import {
 	getError,
@@ -49,7 +49,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 		};
 	}
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		this.props.clearError();
 	};
 
@@ -146,7 +146,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 				isVisible
 			>
 				<div className="stripe__method-edit-header">
-					{ translate( 'Take credit card payments with Stripe' ) }
+					{ translate( 'Accept credit card payments with Stripe' ) }
 				</div>
 				<StripeConnectPrompt
 					isCreateSelected={ this.state.createSelected }

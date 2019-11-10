@@ -14,7 +14,7 @@ export default class FeaturedImage extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.setState( { src: nextProps.src } );
 		}

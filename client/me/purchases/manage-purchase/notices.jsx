@@ -22,7 +22,9 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewable,
+	isRechargeable,
 	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
@@ -64,9 +66,22 @@ class PurchaseNotice extends Component {
 			}
 
 			if ( hasPaymentMethod( purchase ) ) {
+				if ( isRechargeable( purchase ) ) {
+					return translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							"Please enable auto-renewal so you don't lose out on your paid features!",
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					);
+				}
+
 				return translate(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-						"Please enable auto-renewal so you don't lose out on your paid features!",
+						"Please renew before expiry so you don't lose out on your paid features!",
 					{
 						args: {
 							purchaseName: getName( purchase ),
@@ -110,7 +125,7 @@ class PurchaseNotice extends Component {
 		} );
 	}
 
-	renderRenewNoticeAction() {
+	renderRenewNoticeAction( onClick ) {
 		const { editCardDetailsPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
@@ -127,7 +142,11 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		return null;
+		return (
+			! isRechargeable( purchase ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
@@ -145,6 +164,13 @@ class PurchaseNotice extends Component {
 			eventProperties( warning )
 		);
 	}
+
+	handleExpiringNoticeRenewal = () => {
+		this.trackClick( 'purchase-expiring' );
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
+	};
 
 	renderPurchaseExpiringNotice() {
 		const { moment, purchase } = this.props;
@@ -167,7 +193,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ this.getExpiringText( purchase ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
@@ -224,6 +250,13 @@ class PurchaseNotice extends Component {
 		}
 	}
 
+	handleExpiredNoticeRenewal = () => {
+		this.trackClick( 'purchase-expired' );
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
+	};
+
 	renderExpiredRenewNotice() {
 		const { purchase, translate } = this.props;
 
@@ -241,7 +274,7 @@ class PurchaseNotice extends Component {
 				status="is-error"
 				text={ translate( 'This purchase has expired and is no longer in use.' ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
@@ -274,7 +307,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
 			return null;
 		}
 

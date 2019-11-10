@@ -14,16 +14,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { withRtl } from 'components/rtl';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -265,12 +264,6 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		mediaScale: getPreference( state, 'mediaScale' ),
-		isRtl: isRtlSelector( state ),
-	} ),
-	null,
-	null,
-	{ pure: false }
-)( MediaLibraryList );
+export default connect( state => ( {
+	mediaScale: getPreference( state, 'mediaScale' ),
+} ) )( withRtl( MediaLibraryList ) );

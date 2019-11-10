@@ -84,7 +84,7 @@ const Privacy = createReactClass( {
 							<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
 							<p>
 								{ translate(
-									'This information helps us improve our products, make marketing to you more ' +
+									'The information you choose to share helps us improve our products, make marketing to you more ' +
 										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
 										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
 									{
@@ -96,7 +96,7 @@ const Privacy = createReactClass( {
 							</p>
 							<p>
 								{ translate(
-									'We use other tracking tools, including some from third parties. ' +
+									'In addition to our analytics tool, we use other tracking tools, including some from third parties. ' +
 										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
 										'control them.',
 									{

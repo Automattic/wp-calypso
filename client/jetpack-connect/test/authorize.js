@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import React from 'react';
 import { identity, noop } from 'lodash';
 import { shallow } from 'enzyme';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ const DEFAULT_PROPS = deepFreeze( {
 		authApproved: false,
 		blogname: 'Example Blog',
 		clientId: CLIENT_ID,
+		closeWindowAfterLogin: false,
 		from: 'banner-44-slide-1-dashboard',
 		homeUrl: `http://${ SITE_SLUG }`,
 		jpVersion: '5.4',
@@ -62,6 +64,12 @@ const DEFAULT_PROPS = deepFreeze( {
 		display_name: "A User's Name",
 	},
 	userAlreadyConnected: false,
+} );
+
+jest.mock( 'config', () => {
+	const mock = () => 'development';
+	mock.isEnabled = jest.fn( () => true );
+	return mock;
 } );
 
 describe( 'JetpackAuthorize', () => {
@@ -156,6 +164,42 @@ describe( 'JetpackAuthorize', () => {
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
 					from: 'woocommerce-services-auto-authorize',
+				},
+			} );
+			const result = component.instance().shouldAutoAuthorize();
+
+			expect( result ).toBe( true );
+		} );
+
+		test( 'should return false for woocommerce onboarding', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				authQuery: {
+					...DEFAULT_PROPS.authQuery,
+					from: 'woocommerce-setup-wizard',
+				},
+			} );
+			const result = component.instance().shouldAutoAuthorize();
+
+			expect( result ).toBe( false );
+		} );
+
+		test( 'should return true for woocommerce onboarding when the feature flag is disabled', () => {
+			isEnabled.mockImplementation( flag => {
+				if ( flag === 'jetpack/connect/woocommerce' ) {
+					return false;
+				}
+
+				return true;
+			} );
+
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				authQuery: {
+					...DEFAULT_PROPS.authQuery,
+					from: 'woocommerce-setup-wizard',
 				},
 			} );
 			const result = component.instance().shouldAutoAuthorize();

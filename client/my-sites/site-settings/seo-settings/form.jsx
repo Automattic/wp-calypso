@@ -106,7 +106,7 @@ export class SeoForm extends React.Component {
 		this.refreshCustomTitles();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;

@@ -73,6 +73,10 @@
 
 	select {
 		width: 100%;
+
+		option, optgroup {
+			color: initial;
+		}
 	}
 
 	.foldable-card__header {
@@ -155,7 +159,7 @@
 }
 
 .label-purchase-modal__price-item-help {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	cursor: help;
 
 	svg {

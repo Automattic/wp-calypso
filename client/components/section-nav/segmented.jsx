@@ -9,18 +9,12 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 
 /**
  * Style dependencies
  */
 import './segmented.scss';
-
-/**
- * Internal variables
- */
-let _instance = 1;
 
 class NavSegmented extends Component {
 	static propTypes = {
@@ -32,15 +26,8 @@ class NavSegmented extends Component {
 		hasSiblingControls: false,
 	};
 
-	componentWillMount() {
-		this.id = _instance;
-		_instance++;
-	}
-
 	render() {
-		const segmentedClassName = classNames( {
-			'section-nav-group': true,
-			'section-nav__segmented': true,
+		const segmentedClassName = classNames( 'section-nav-group', 'section-nav__segmented', {
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 
@@ -55,19 +42,11 @@ class NavSegmented extends Component {
 		);
 	}
 
-	getControlItems = () => {
-		return React.Children.map(
-			this.props.children,
-			function( child, index ) {
-				return (
-					<ControlItem { ...child.props } key={ 'navSegmented-' + this.id + '-' + index }>
-						{ child.props.children }
-					</ControlItem>
-				);
-			},
-			this
-		);
-	};
+	getControlItems() {
+		return React.Children.map( this.props.children, ( child, index ) => (
+			<SegmentedControl.Item { ...child.props } key={ index } />
+		) );
+	}
 }
 
 export default NavSegmented;

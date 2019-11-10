@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';

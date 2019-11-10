@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global wpcomGutenberg */
 
 /**
@@ -78,6 +79,5 @@ registerFormatType( 'wpcom/justify', {
 	title: wpcomGutenberg.richTextToolbar.justify,
 	tagName: 'p',
 	className: null,
-	attributes: { style: 'style' },
 	edit: ConnectedRichTextJustifyButton,
 } );

@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { decodeEntities } from 'lib/formatting';
 
 /**

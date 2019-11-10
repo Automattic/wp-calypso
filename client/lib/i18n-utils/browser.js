@@ -11,6 +11,7 @@ export {
 	getLocaleFromPath,
 	isDefaultLocale,
 	isLocaleVariant,
+	isLocaleRtl,
 	localizeUrl,
 	canBeTranslated,
 	removeLocaleFromPath,

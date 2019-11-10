@@ -15,7 +15,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 
 class HelpModal extends React.Component {

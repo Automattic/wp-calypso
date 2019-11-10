@@ -6,7 +6,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -145,12 +145,21 @@ export class RedirectPaymentBox extends PureComponent {
 			disabled: true,
 		} );
 
-		let cancelUrl = origin + '/checkout/';
+		let cancelUrl = origin + '/checkout/',
+			successUrl;
+		const redirectTo = this.props.redirectTo();
+		const redirectPath = redirectTo.includes( 'https://' ) ? redirectTo : origin + redirectTo;
 
 		if ( this.props.selectedSite ) {
 			cancelUrl += this.props.selectedSite.slug;
+			successUrl =
+				origin +
+				`/checkout/thank-you/${
+					this.props.selectedSite.slug
+				}/pending?redirectTo=${ redirectPath }`;
 		} else {
 			cancelUrl += 'no-site';
+			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
 		}
 
 		// unmask form values
@@ -161,7 +170,7 @@ export class RedirectPaymentBox extends PureComponent {
 		const dataForApi = {
 			payment: Object.assign( {}, paymentDetails, {
 				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
-				successUrl: origin + this.props.redirectTo(),
+				successUrl: successUrl,
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
@@ -169,9 +178,24 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 
 		// get the redirect URL from rest endpoint
-		wpcom.undocumented().transactions( 'POST', dataForApi, ( error, result ) => {
-			let errorMessage;
-			if ( error ) {
+		wpcom
+			.undocumented()
+			.transactions( dataForApi )
+			.then( result => {
+				if ( result.redirect_url ) {
+					this.setSubmitState( {
+						info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
+						disabled: true,
+					} );
+					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					analytics.tracks.recordEvent(
+						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
+					);
+					location.href = result.redirect_url;
+				}
+			} )
+			.catch( error => {
+				let errorMessage;
 				if ( error.message ) {
 					errorMessage = error.message;
 				} else {
@@ -182,18 +206,7 @@ export class RedirectPaymentBox extends PureComponent {
 					error: errorMessage,
 					disabled: false,
 				} );
-			} else if ( result.redirect_url ) {
-				this.setSubmitState( {
-					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
-					disabled: true,
-				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-				analytics.tracks.recordEvent(
-					'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
-				);
-				location.href = result.redirect_url;
-			}
-		} );
+			} );
 	};
 
 	renderButtonText() {

@@ -1,14 +1,6 @@
 .sidebar__sparkline {
 	width: 80px;
 	height: 24px;
-	position: absolute;
-	right: 16px;
-	top: 8px;
-
-	@include breakpoint( '<660px' ) {
-		top: 13px;
-		right: 20px;
-	}
 }
 
 .sidebar__menu li.stats.selected .sidebar__sparkline {
@@ -24,10 +16,9 @@
  * CSS variables. This ensures that the sparkline can still be 
  * seen (as white) on some of the darker color schemes.
  */
-.is-classic-blue .sidebar__menu li.stats.selected .sidebar__sparkline, 
+.is-classic-blue .sidebar__menu li.stats.selected .sidebar__sparkline,
 .is-powder-snow .sidebar__menu li.stats.selected .sidebar__sparkline,
 .is-nightfall .sidebar__menu li.stats.selected .sidebar__sparkline {
 	filter: brightness( 100 );
 	-webkit-filter: brightness( 100 );
 }
-

@@ -31,7 +31,6 @@ class CloneDestinationStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -212,7 +211,7 @@ class CloneDestinationStep extends Component {
 	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Getting started' );
 		const subHeaderText = translate(
@@ -229,7 +228,6 @@ class CloneDestinationStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

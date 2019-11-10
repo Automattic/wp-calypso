@@ -44,13 +44,15 @@ class JetpackSiteType extends Component {
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
 					<FormattedHeader
-						headerText={ translate( 'What are we building today?' ) }
-						subHeaderText={ translate(
-							'Choose the best starting point for your site. You can add or change features later.'
-						) }
+						headerText={ translate( 'What type of site are you connecting to Jetpack?' ) }
+						subHeaderText={ translate( "We'll use this to customize your Jetpack experience." ) }
 					/>
 
-					<SiteTypeForm submitForm={ this.handleSubmit } />
+					<SiteTypeForm
+						showDescriptions={ false }
+						showPurchaseRequired={ false }
+						submitForm={ this.handleSubmit }
+					/>
 
 					<SkipButton
 						onClick={ this.goToNextStep }

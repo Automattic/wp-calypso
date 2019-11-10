@@ -14,6 +14,9 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from 'lib/plans/constants';
@@ -45,24 +48,6 @@ export function generateSteps( {
 
 		themes: {
 			stepName: 'themes',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'blog-themes': {
-			stepName: 'blog-themes',
-			props: {
-				designType: 'blog',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'website-themes': {
-			stepName: 'website-themes',
-			props: {
-				designType: 'page',
-			},
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
@@ -109,10 +94,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			props: {
-				provideCouponCode: true,
-			},
-			providesDependencies: [ 'cartItem', 'couponCode' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		site: {
@@ -175,6 +157,17 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-import': {
+			stepName: 'plans-import',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
+			},
+		},
+
 		'plans-personal': {
 			stepName: 'plans-personal',
 			apiRequestFunction: addPlanToCart,
@@ -216,8 +209,10 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
-				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				fallbackHeaderText: i18n.translate(
+					"Almost there, pick a plan that's right for you. Upgrade as you grow."
+				),
 				isLaunchPage: true,
 			},
 		},
@@ -419,13 +414,31 @@ export function generateSteps( {
 		'from-url': {
 			stepName: 'from-url',
 			providesDependencies: [
-				'importEngine',
-				'importFavicon',
+				'importSiteEngine',
+				'importSiteFavicon',
 				'importSiteUrl',
-				'sitePreviewImageBlob',
 				'siteTitle',
+				'suggestedDomain',
 				'themeSlugWithRepo',
 			],
+		},
+
+		/* Import onboarding */
+		'import-url': {
+			stepName: 'import-url',
+			providesDependencies: [
+				'importSiteEngine',
+				'importSiteFavicon',
+				'importSiteUrl',
+				'siteTitle',
+				'suggestedDomain',
+				'themeSlugWithRepo',
+			],
+		},
+
+		'import-preview': {
+			stepName: 'import-preview',
+			dependencies: [ 'importSiteEngine', 'importSiteFavicon', 'importSiteUrl', 'siteTitle' ],
 		},
 
 		'reader-landing': {
@@ -442,7 +455,8 @@ export function generateSteps( {
 
 		'site-topic': {
 			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
@@ -466,7 +480,8 @@ export function generateSteps( {
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic' ],
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**

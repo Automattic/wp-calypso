@@ -20,7 +20,6 @@ import * as playgroundScope from 'devdocs/design/playground-scope';
 import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import Main from 'components/main';
-import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
 
@@ -33,7 +32,7 @@ import './syntax.scss';
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();
@@ -116,9 +115,9 @@ class DesignAssets extends React.Component {
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );
 					return (
 						exampleCode && (
-							<DropdownItem key={ name } onClick={ this.addComponent( exampleCode ) }>
+							<SelectDropdown.Item key={ name } onClick={ this.addComponent( exampleCode ) }>
 								{ name }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						)
 					);
 				} ) }

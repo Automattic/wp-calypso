@@ -23,7 +23,7 @@ import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'lib/upgrades/actions';
+import { addDns } from 'lib/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 
 class DnsAddNew extends React.Component {
@@ -94,7 +94,7 @@ class DnsAddNew extends React.Component {
 		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,

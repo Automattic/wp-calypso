@@ -13,14 +13,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { isEnabled } from 'config';
-import isVipSite from 'state/selectors/is-vip-site';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -28,6 +26,7 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -189,7 +188,7 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, siteId );
+		const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 
 		return {
 			postContent,

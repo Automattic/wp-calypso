@@ -53,7 +53,7 @@ class Site extends React.Component {
 		submitting: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
@@ -249,7 +249,7 @@ class Site extends React.Component {
 			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ true }
+					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
@@ -299,7 +299,6 @@ class Site extends React.Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() }
 			/>
 		);

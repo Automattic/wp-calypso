@@ -3,11 +3,12 @@
 /**
  * External dependencies
  */
-import { assign, difference, get, isEmpty, pick } from 'lodash';
+import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { JETPACK_BACKUP_PRODUCTS } from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -199,6 +200,15 @@ export function isVipPlan( product ) {
 
 export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
+}
+
+export function isJetpackProduct( product ) {
+	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return includes( jetpackProducts, product.product_slug );
 }
 
 export function isMonthly( rawProduct ) {

@@ -48,7 +48,7 @@ class ThemePreview extends React.Component {
 		showActionIndicator: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isActivating && ! nextProps.isActivating ) {
 			this.setState( { showActionIndicator: false } );
 			this.props.hideThemePreview();

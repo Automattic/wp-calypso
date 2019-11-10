@@ -22,7 +22,7 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -69,6 +69,13 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
+}
+
+function getPartnerName( purchase ) {
+	if ( isPartnerPurchase( purchase ) ) {
+		return purchase.partnerName;
+	}
+	return null;
 }
 
 function getSubscriptionEndDate( purchase ) {
@@ -218,6 +225,17 @@ function maybeWithinRefundPeriod( purchase ) {
 }
 
 /**
+ * Checks if a purchase have a bound payment method that we can recharge.
+ * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase can be recharged by us through the bound payment method.
+ */
+function isRechargeable( purchase ) {
+	return purchase.isRechargeable;
+}
+
+/**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
@@ -260,6 +278,10 @@ function isRemovable( purchase ) {
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
 	);
+}
+
+function isPartnerPurchase( purchase ) {
+	return !! purchase.partnerName;
 }
 
 /**
@@ -374,6 +396,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -412,6 +438,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
@@ -422,11 +449,13 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	isPartnerPurchase,
 	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRechargeable,
 	isRefundable,
 	isRemovable,
 	isRenewable,

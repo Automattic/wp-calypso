@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';

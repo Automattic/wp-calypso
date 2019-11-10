@@ -14,9 +14,7 @@ interface Props {
 	handleButtonClick: () => void;
 }
 
-const MarketingToolsHeader: FunctionComponent< Props > = ( {
-	handleButtonClick,
-} ) => {
+const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick } ) => {
 	const translate = useTranslate();
 
 	return (

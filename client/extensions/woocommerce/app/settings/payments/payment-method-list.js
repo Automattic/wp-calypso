@@ -41,7 +41,7 @@ class SettingsPaymentsMethodList extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:infinite-list:helper' );
 
@@ -11,8 +8,10 @@ const debug = debugFactory( 'calypso:infinite-list:helper' );
 // The purpose of extracting it is to make it testable and help the methods
 // to be shorter and readable.
 class ScrollHelper {
-	constructor( boundsForRef ) {
+	constructor( boundsForRef, getTopPlaceholderBounds, getBottomPlaceholderBounds ) {
 		this.boundsForRef = boundsForRef;
+		this.getTopPlaceholderBounds = getTopPlaceholderBounds;
+		this.getBottomPlaceholderBounds = getBottomPlaceholderBounds;
 		this.itemHeights = {};
 
 		// Hide levels and context height
@@ -69,8 +68,8 @@ class ScrollHelper {
 		this.forEachInRow(
 			index,
 			function( item ) {
-				const itemKey = this.props.getItemRef( item ),
-					itemBounds = this.boundsForRef( itemKey );
+				const itemKey = this.props.getItemRef( item );
+				const itemBounds = this.boundsForRef( itemKey );
 				let height;
 
 				if ( itemBounds ) {
@@ -146,8 +145,8 @@ class ScrollHelper {
 	}
 
 	updatePlaceholderDimensions() {
-		const topPlaceholderRect = this.boundsForRef( 'topPlaceholder' ),
-			bottomPlaceholderRect = this.boundsForRef( 'bottomPlaceholder' );
+		const topPlaceholderRect = this.getTopPlaceholderBounds();
+		const bottomPlaceholderRect = this.getBottomPlaceholderBounds();
 
 		this.topPlaceholderHeight = topPlaceholderRect.height;
 		this.containerTop = topPlaceholderRect.top;

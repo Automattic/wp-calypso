@@ -6,8 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, overSome, some } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,6 +19,8 @@ import {
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
+	MODAL_AUTHORIZATION,
+	RECEIVED_AUTHORIZATION_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
@@ -30,6 +31,8 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import { withStripeProps } from 'lib/stripe';
+import { setStripeObject } from 'lib/transaction/actions';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {
@@ -46,6 +49,7 @@ function isFormSubmitting( transactionStep ) {
 			return true;
 
 		case RECEIVED_PAYMENT_KEY_RESPONSE:
+		case RECEIVED_AUTHORIZATION_RESPONSE:
 			if ( transactionStep.error ) {
 				return false;
 			}
@@ -54,6 +58,7 @@ function isFormSubmitting( transactionStep ) {
 		case SUBMITTING_PAYMENT_KEY_REQUEST:
 		case SUBMITTING_WPCOM_REQUEST:
 		case REDIRECTING_FOR_AUTHORIZATION:
+		case MODAL_AUTHORIZATION:
 			return true;
 
 		case RECEIVED_WPCOM_RESPONSE:
@@ -67,7 +72,7 @@ function isFormSubmitting( transactionStep ) {
 	}
 }
 
-export class CreditCardPaymentBox extends React.Component {
+class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
@@ -77,6 +82,10 @@ export class CreditCardPaymentBox extends React.Component {
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func.isRequired,
+		stripe: PropTypes.object,
+		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
+		stripeConfiguration: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -164,14 +173,32 @@ export class CreditCardPaymentBox extends React.Component {
 
 	submit = event => {
 		event.preventDefault();
+
+		if ( this.props.stripe ) {
+			setStripeObject( this.props.stripe, this.props.stripeConfiguration );
+		}
+
 		this.setState( {
 			progress: 0,
 		} );
-		this.props.onSubmit( event );
+
+		// setStripeObject uses Flux Dispatcher so they are deferred. This
+		// defers the submit so it will occur after they take effect.
+		setTimeout( () => this.props.onSubmit(), 0 );
 	};
 
 	render = () => {
-		const { cart, cards, countriesList, initialCard, transaction } = this.props;
+		const {
+			cart,
+			cards,
+			countriesList,
+			initialCard,
+			transaction,
+			stripe,
+			isStripeLoading,
+			stripeLoadingError,
+			translate,
+		} = this.props;
 
 		return (
 			<React.Fragment>
@@ -181,6 +208,10 @@ export class CreditCardPaymentBox extends React.Component {
 						countriesList={ countriesList }
 						initialCard={ initialCard }
 						transaction={ transaction }
+						stripe={ stripe }
+						isStripeLoading={ isStripeLoading }
+						stripeLoadingError={ stripeLoadingError }
+						translate={ translate }
 					/>
 
 					{ this.props.children }
@@ -202,4 +233,7 @@ export class CreditCardPaymentBox extends React.Component {
 	};
 }
 
-export default localize( CreditCardPaymentBox );
+export { CreditCardPaymentBox };
+
+const InjectedStripeCreditCardPaymentBox = withStripeProps( CreditCardPaymentBox );
+export default InjectedStripeCreditCardPaymentBox;

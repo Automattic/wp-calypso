@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

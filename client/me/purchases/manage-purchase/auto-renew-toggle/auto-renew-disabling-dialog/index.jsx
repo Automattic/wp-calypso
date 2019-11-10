@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Dialog from 'components/dialog';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import { Dialog } from '@automattic/components';
+import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { getSite } from 'state/sites/selectors';
@@ -154,7 +154,7 @@ class AutoRenewDisablingDialog extends Component {
 				<ul>
 					<li>
 						<Button href={ exportPath } primary>
-							{ translate( 'Download a backup' ) }
+							{ translate( 'Download a current backup' ) }
 						</Button>
 					</li>
 					<li>
@@ -201,11 +201,9 @@ class AutoRenewDisablingDialog extends Component {
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.onClickGeneralConfirm }>
+				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
+				<Button onClick={ this.onClickGeneralConfirm } primary>
 					{ translate( 'Confirm cancellation' ) }
-				</Button>
-				<Button onClick={ this.closeAndCleanup } primary>
-					{ translate( "I'll keep it" ) }
 				</Button>
 			</Dialog>
 		);
@@ -215,13 +213,11 @@ class AutoRenewDisablingDialog extends Component {
 		const { purchase, isVisible, selectedSite } = this.props;
 
 		return (
-			<CancelPurchaseForm
+			<CancelAutoRenewalForm
 				purchase={ purchase }
 				selectedSite={ selectedSite }
 				isVisible={ isVisible }
 				onClose={ this.closeAndCleanup }
-				onClickFinalConfirm={ this.closeAndCleanup }
-				flowType={ 'cancel_autorenew_survey_only' }
 			/>
 		);
 	};

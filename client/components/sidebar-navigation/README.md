@@ -1,5 +1,4 @@
-Sidebar Navigation
-==================
+# Sidebar Navigation
 
 This component is used to display the mobile sidebar navigation header at the top of content sections. It sets `layout-focus` to `sidebar`.
 
@@ -9,7 +8,7 @@ Put the component in your `Main` component, and wrap it around any components yo
 
 ```js
 import SidebarNavigation from 'components/sidebar-navigation';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicons';
 
 
 render() {

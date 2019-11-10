@@ -106,9 +106,50 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 0,
 
-		// error if any module depends on the data-observe mixin, which is deprecated
-		'no-restricted-imports': [ 2, 'lib/mixins/data-observe' ],
-		'no-restricted-modules': [ 2, 'lib/mixins/data-observe' ],
+		'no-restricted-imports': [
+			2,
+			{
+				paths: [
+					// Error if any module depends on the data-observe mixin, which is deprecated.
+					'lib/mixins/data-observe',
+					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					{
+						name: 'gridicons',
+						message: "Please use 'components/gridicon' instead.",
+					},
+					// Prevent importing Redux's combineReducers.
+					{
+						name: 'redux',
+						importNames: [ 'combineReducers' ],
+						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
+				],
+			},
+		],
+		'no-restricted-modules': [
+			2,
+			{
+				paths: [
+					// Error if any module depends on the data-observe mixin, which is deprecated.
+					'lib/mixins/data-observe',
+					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					{
+						name: 'gridicons',
+						message: "Please use 'components/gridicon' instead.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
+				],
+			},
+		],
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 0,
@@ -120,10 +161,6 @@ module.exports = {
 				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
 			},
 		],
-
-		// Force folks to use our custom combineReducers function instead of the plain redux one
-		// This allows us to control serialization for every reducer.
-		'wpcalypso/import-no-redux-combine-reducers': 2,
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls

@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
@@ -42,7 +42,7 @@ class PriceInput extends Component {
 		};
 	}
 
-	componentWillReceiveProps( { value } ) {
+	UNSAFE_componentWillReceiveProps( { value } ) {
 		this.setState( { value } );
 	}
 

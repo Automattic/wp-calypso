@@ -26,7 +26,7 @@ import {
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
@@ -73,7 +73,7 @@ export class LanguagePickerModal extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
 			this.setState( {
 				selectedLanguageSlug: nextProps.selected,

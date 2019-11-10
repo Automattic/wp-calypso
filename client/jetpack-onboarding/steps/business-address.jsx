@@ -41,7 +41,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		this.maybeDisplayForm();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
 			this.setState( {
 				fields: get( nextProps.settings, 'businessAddress' ) || this.constructor.emptyFields,

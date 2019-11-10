@@ -114,6 +114,19 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Omit Apple as we cannot let users disconnect without losing their name and email
+		if ( 'apple' === service.ID ) {
+			return false;
+		}
+
+		if (
+			'google_drive' === service.ID &&
+			( ! config.isEnabled( 'google-drive' ) ||
+				! canCurrentUser( state, siteId, 'manage_options' ) )
+		) {
+			return false;
+		}
+
 		return true;
 	} );
 }

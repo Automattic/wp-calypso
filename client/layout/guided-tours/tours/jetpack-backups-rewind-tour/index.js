@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**

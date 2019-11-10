@@ -63,9 +63,9 @@
 		padding: 0;
 		margin: 0 0 4px;
 		pointer-events: none;
-		background: var( --color-white );
+		background: var( --color-surface );
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-50 );
+		background-color: var( --color-neutral-5 );
 		color: transparent;
 		cursor: default;
 		&::placeholder {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External Dependencies
  */
@@ -15,7 +13,7 @@ import { clearJITM, insertJITM } from 'state/jitm/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { isJetpackSite } from 'state/sites/selectors';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';

@@ -54,7 +54,7 @@ export class Notifications extends PureComponent {
 		receiveMessage: noop,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const {
 			customEnhancer,
 			customMiddleware,
@@ -104,7 +104,7 @@ export class Notifications extends PureComponent {
 		store.dispatch( { type: 'APP_IS_READY' } );
 	}
 
-	componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
+	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
 		if ( wpcom !== this.props.wpcom ) {
 			initAPI( wpcom );
 		}

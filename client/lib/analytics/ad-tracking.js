@@ -11,22 +11,21 @@ import { v4 as uuid } from 'uuid';
  */
 import config from 'config';
 import productsValues from 'lib/products-values';
-import userModule from 'lib/user';
-import { loadScript as loadScriptCallback } from '@automattic/load-script';
+import { loadScript } from '@automattic/load-script';
 import {
-	isAdTrackingAllowed,
-	hashPii,
+	isPiiUrl,
 	costToUSD,
-	getNormalizedHashedUserEmail,
+	doNotTrack,
+	getCurrentUser,
+	isAdTrackingAllowed,
+	mayWeTrackCurrentUserGdpr,
+	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
-import { promisify } from '../../utils';
-import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-const user = userModule();
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
@@ -46,6 +45,7 @@ const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
+const isAdRollEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -75,6 +75,14 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
 	ICON_MEDIA_ORDER_PIXEL_URL =
 		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
+	ADROLL_PAGEVIEW_PIXEL_URL_1 =
+		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
+	ADROLL_PAGEVIEW_PIXEL_URL_2 =
+		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
+	ADROLL_PURCHASE_PIXEL_URL_1 =
+		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
+	ADROLL_PURCHASE_PIXEL_URL_2 =
+		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
@@ -94,6 +102,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
 		wpcomFloodlightGtag: 'DC-6355556',
 		wpcomGoogleAdsGtag: 'AW-946162814',
+		wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
 		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
@@ -102,20 +111,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800,
-	TRACKING_STATE_VALUES = {
-		NOT_LOADED: 0,
-		LOADING: 1,
-		LOADED: 2,
-	};
-
-/**
- * Globals
- */
-
-// Used to enqueue the various events while the trackers are still loading so they can be fired afterwards.
-let trackingState = TRACKING_STATE_VALUES.NOT_LOADED;
-const trackingEventsQueue = [];
+	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
@@ -171,53 +167,11 @@ if ( typeof window !== 'undefined' ) {
 	if ( isPinterestEnabled ) {
 		setupPinterestGlobal();
 	}
-}
 
-/**
- * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
- *
- * @param {Function} callback - Callback function to call once the `country_code` cookie has been successfully refreshed.
- * @returns {Boolean} Returns `true` if the `country_code` cookie needs to be refreshed.
- */
-function maybeRefreshCountryCodeCookieGdpr( callback ) {
-	const cookieMaxAgeSeconds = 6 * 60 * 60;
-	const cookies = cookie.parse( document.cookie );
-
-	if ( ! cookies.country_code ) {
-		// cache buster
-		const v = new Date().getTime();
-
-		const handleError = err => {
-			document.cookie = cookie.serialize( 'country_code', 'unknown', {
-				path: '/',
-				maxAge: cookieMaxAgeSeconds,
-			} );
-			debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
-		};
-
-		const makeRequest = async () => {
-			try {
-				const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v );
-				if ( res.ok ) {
-					const json = await res.json();
-					document.cookie = cookie.serialize( 'country_code', json.country_short, {
-						path: '/',
-						maxAge: cookieMaxAgeSeconds,
-					} );
-					callback();
-				} else {
-					handleError( new Error( await res.body() ) );
-				}
-			} catch ( err ) {
-				handleError( err );
-			}
-		};
-
-		makeRequest();
-		return true;
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		setupAdRollGlobal();
 	}
-
-	return false;
 }
 
 /**
@@ -320,23 +274,22 @@ function setupPinterestGlobal() {
 	}
 }
 
-const loadScript = promisify( loadScriptCallback );
-
-async function loadTrackingScripts( callback ) {
-	debug( `loadTrackingScripts: state is ${ trackingState }` );
-
-	trackingEventsQueue.push( callback );
-	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
-		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
-		return;
-	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
-		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
-		trackingState = TRACKING_STATE_VALUES.LOADING;
-	} else {
-		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
-		return;
+function setupAdRollGlobal() {
+	if ( ! window.adRoll ) {
+		window.adRoll = {
+			trackPageview: function() {
+				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
+				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
+			},
+			trackPurchase: function() {
+				new Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
+				new Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
+			},
+		};
 	}
+}
 
+function getTrackingScriptsToLoad() {
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
@@ -385,25 +338,10 @@ async function loadTrackingScripts( callback ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
-	let hasError = false;
-	for ( const src of scripts ) {
-		try {
-			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
-			// the trackers get loaded in a user friendly manner.
-			await loadScript( src );
-		} catch ( error ) {
-			hasError = true;
-			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
-		}
-		debug( 'loadTrackingScripts: [Loaded]', src );
-	}
+	return scripts;
+}
 
-	if ( hasError ) {
-		return;
-	}
-
-	debug( 'loadTrackingScripts: load done' );
-
+function initLoadedTrackingScripts() {
 	// init Facebook
 	if ( isFacebookEnabled ) {
 		initFacebook();
@@ -434,21 +372,72 @@ async function loadTrackingScripts( callback ) {
 
 	// init Pinterest
 	if ( isPinterestEnabled ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+		const currentUser = getCurrentUser();
+		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
 	}
 
 	debug( 'loadTrackingScripts: init done' );
+}
+
+// Returns a function that has the following behavior:
+// - when called, tries to call `loader` and returns a promise that resolves when load is finished
+// - when `loader` is already in progress, don't issue two concurrent calls: wait for the first to finish
+// - when `loader` fails, DON'T return a rejected promise. Instead, leave it unresolved and let the caller
+//   wait, potentially forever. Next call to the loader function has a chance to succeed and resolve the
+//   promise, for the current and all previous callers. That effectively implements a queue.
+function attemptLoad( loader ) {
+	let setLoadResult;
+	let status = 'not-loading';
+
+	const loadResult = new Promise( resolve => {
+		setLoadResult = resolve;
+	} );
+
+	return () => {
+		if ( status === 'not-loading' ) {
+			status = 'loading';
+			loader().then(
+				result => {
+					status = 'loaded';
+					setLoadResult( result );
+				},
+				() => {
+					status = 'not-loading';
+				}
+			);
+		}
+		return loadResult;
+	};
+}
+
+const loadTrackingScripts = attemptLoad( async () => {
+	const scripts = getTrackingScriptsToLoad();
+
+	let hasError = false;
+	for ( const src of scripts ) {
+		try {
+			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
+			// the trackers get loaded in a user friendly manner.
+			await loadScript( src );
+		} catch ( error ) {
+			hasError = true;
+			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
+		}
+		debug( 'loadTrackingScripts: [Loaded]', src );
+	}
+
+	if ( hasError ) {
+		throw new Error( 'One or more tracking scripts failed to load' );
+	}
+
+	debug( 'loadTrackingScripts: load done' );
+
+	initLoadedTrackingScripts();
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-
-	// call all enqueued event callbacks
-	trackingState = TRACKING_STATE_VALUES.LOADED;
-	trackingEventsQueue.forEach( cb => cb() );
-	debug( 'loadTrackingScripts: event queue done', trackingEventsQueue );
-}
+} );
 
 /**
  * Fire tracking events for the purposes of retargeting on all Calypso pages
@@ -458,20 +447,15 @@ async function loadTrackingScripts( callback ) {
  *
  * @returns {void}
  */
-export function retarget( urlPath ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( retarget.bind( null, urlPath ) ) ) {
-		return;
-	}
+export async function retarget( urlPath ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( retarget.bind( null, urlPath ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'retarget:', urlPath );
 
@@ -514,6 +498,12 @@ export function retarget( urlPath ) {
 	if ( isPinterestEnabled ) {
 		debug( 'retarget: [Pinterest]' );
 		window.pintrk( 'page' );
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		debug( 'retarget: [AdRoll]' );
+		window.adRoll.trackPageview();
 	}
 
 	// Rate limited retargeting (secondary trackers)
@@ -618,23 +608,60 @@ function splitWpcomJetpackCartInfo( cart ) {
 		wpcomCost: wpcomCost,
 		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ),
 		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
+		totalCostUSD: costToUSD( cart.total_cost, cart.currency ),
 	};
 }
 
-export function recordRegistration() {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordRegistration.bind( null ) ) ) {
+export async function recordSignupStart( { flow } ) {
+	await refreshCountryCodeCookieGdpr();
+
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordSignupStart: [Skipping] ad tracking is not allowed' );
 		return;
 	}
+
+	await loadTrackingScripts();
+	const currentUser = getCurrentUser();
+
+	// Floodlight.
+
+	if ( isFloodlightEnabled ) {
+		debug( 'recordSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/pre-p0+unique',
+		} );
+	}
+	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
+		debug( 'recordSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/landi00+unique',
+		} );
+	}
+
+	// Google Ads.
+
+	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
+			},
+		];
+		debug( 'recordSignupStart: [Google Ads Gtag]', params );
+		window.gtag( ...params );
+	}
+}
+
+export async function recordRegistration() {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordRegistration.bind( null ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Google Ads Gtag
 
@@ -695,22 +722,18 @@ export function recordRegistration() {
  * @param {String} slug - Signup slug.
  * @returns {void}
  */
-export function recordSignup( slug ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordSignup.bind( null, slug ) ) ) {
-		return;
-	}
+export async function recordSignup( slug ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordSignup.bind( null, slug ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Synthesize a cart object for signup tracking.
+
 	const syntheticCart = {
 		is_signup: true,
 		currency: 'USD',
@@ -728,12 +751,10 @@ export function recordSignup( slug ) {
 		],
 	};
 
-	// 35-byte signup tracking ID.
-	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' );
+	// Prepare a few more variables.
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-
+	const currentUser = getCurrentUser();
+	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' ); // 35-byte signup tracking ID.
 	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
 
 	// Google Ads Gtag
@@ -779,7 +800,7 @@ export function recordSignup( slug ) {
 				product_slug: syntheticCart.products.map( product => product.product_slug ).join( ', ' ),
 				value: syntheticCart.total_cost,
 				currency: syntheticCart.currency,
-				user_id: userId,
+				user_id: currentUser ? currentUser.hashedPii.ID : 0,
 				order_id: syntheticOrderId,
 			},
 		];
@@ -864,20 +885,15 @@ export function retargetViewPlans() {
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
-export function recordAddToCart( cartItem ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordAddToCart.bind( null, cartItem ) ) ) {
-		return;
-	}
+export async function recordAddToCart( cartItem ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'recordAddToCart:', cartItem );
 
@@ -1003,20 +1019,15 @@ export function recordViewCheckout( cart ) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-export function recordOrder( cart, orderId ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordOrder.bind( null, cart, orderId ) ) ) {
-		return;
-	}
+export async function recordOrder( cart, orderId ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordOrder.bind( null, cart, orderId ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	if ( cart.is_signup ) {
 		return;
@@ -1116,6 +1127,12 @@ export function recordOrder( cart, orderId ) {
 		window.pintrk( ...params );
 	}
 
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		debug( 'recordOrder: [AdRoll]' );
+		window.adRoll.trackPurchase();
+	}
+
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.
@@ -1195,11 +1212,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	debug( 'recordOrderInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		value: cart.total_cost,
+		value: wpcomJetpackCartInfo.totalCostUSD,
 		transaction_id: orderId,
-		u1: cart.total_cost,
+		u1: wpcomJetpackCartInfo.totalCostUSD,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
-		u3: cart.currency,
+		u3: 'USD',
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
 	} );
 
@@ -1207,11 +1224,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		debug( 'recordOrderInFloodlight: WPCom' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.wpcomCost,
+			value: wpcomJetpackCartInfo.wpcomCostUSD,
 			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.wpcomCost,
+			u1: wpcomJetpackCartInfo.wpcomCostUSD,
 			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
-			u3: cart.currency,
+			u3: 'USD',
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
 		} );
 	}
@@ -1220,11 +1237,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		debug( 'recordOrderInFloodlight: Jetpack' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.jetpackCost,
+			value: wpcomJetpackCartInfo.jetpackCostUSD,
 			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.jetpackCost,
+			u1: wpcomJetpackCartInfo.jetpackCostUSD,
 			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
-			u3: cart.currency,
+			u3: 'USD',
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
 		} );
 	}
@@ -1252,8 +1269,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		return;
 	}
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
+	const currentUser = getCurrentUser();
 
 	// Fire both WPCom and Jetpack pixels
 
@@ -1267,7 +1283,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1284,7 +1300,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1354,22 +1370,6 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 			);
 		}
 	}
-}
-
-/**
- * Record that a user started sign up in DCM Floodlight
- *
- * @returns {void}
- */
-export function recordSignupStartInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	debug( 'recordSignupStartInFloodlight:' );
-	recordParamsInFloodlightGtag( {
-		send_to: 'DC-6355556/wordp0/pre-p0+unique',
-	} );
 }
 
 /**
@@ -1449,13 +1449,13 @@ function floodlightSessionId() {
  */
 function floodlightUserParams() {
 	const params = {};
+	const currentUser = getCurrentUser();
+	const anonymousUserId = tracksAnonymousUserId();
 
-	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = hashPii( currentUser.ID );
+		params.u4 = currentUser.hashedPii.ID;
 	}
 
-	const anonymousUserId = tracksAnonymousUserId();
 	if ( anonymousUserId ) {
 		params.u5 = anonymousUserId;
 	}
@@ -1589,24 +1589,22 @@ function recordPlansViewInCriteo() {
  *
  * @returns {void}
  */
-function recordInCriteo( eventName, eventProps ) {
+async function recordInCriteo( eventName, eventProps ) {
 	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
 		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	const events = [];
+	const currentUser = getCurrentUser();
+
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-	if ( normalizedHashedEmail ) {
-		events.push( { event: 'setEmail', email: [ normalizedHashedEmail ] } );
+	if ( currentUser ) {
+		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
@@ -1738,8 +1736,10 @@ export function isGoogleAnalyticsAllowed() {
  * @return {Object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
+	const currentUser = getCurrentUser();
+
 	return {
-		...( user.get() && { user_id: hashPii( user.get().ID ) } ),
+		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
 		anonymize_ip: true,
 		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
@@ -1804,9 +1804,10 @@ export function fireGoogleAnalyticsTiming( name, value, event_category, event_la
  */
 function initFacebook() {
 	let advancedMatching = {};
-	if ( user.get() ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+	const currentUser = getCurrentUser();
+
+	if ( currentUser ) {
+		advancedMatching = { em: currentUser.hashedPii.email };
 	}
 
 	debug( 'initFacebook', advancedMatching );

@@ -35,10 +35,8 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async selectNewTheme() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			by.css( '.is-actionable:not(.is-active) a' )
-		);
+		// select first theme from the list
+		return await driverHelper.clickWhenClickable( this.driver, by.css( '.theme__content' ) );
 	}
 
 	async selectNewThemeStartingWith( phrase ) {

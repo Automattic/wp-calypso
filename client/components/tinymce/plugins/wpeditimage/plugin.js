@@ -80,7 +80,6 @@ function wpEditImage( editor ) {
 			'wpcom_img_size_decrease',
 			'wpcom_img_size_increase',
 			'wp_img_caption', // See plugins/media
-			'wp_img_advanced', // See plugins/media/advanced
 			'wp_img_edit', // See plugins/media
 			'wp_img_remove',
 		] );

@@ -76,7 +76,7 @@ class Layout extends React.Component {
 		selectedNote: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
@@ -102,7 +102,7 @@ class Layout extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
 				previousDetailScrollTop: this.detailView ? this.detailView.scrollTop : 0,
@@ -127,7 +127,7 @@ class Layout extends React.Component {
 		} );
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
 		const noteList = ReactDOM.findDOMNode( this.noteList );

@@ -27,7 +27,8 @@
 }
 
 .auth.main {
-	background: var( --color-primary );
+	// Use WordPress.com’s brand color for the auth background
+	background: var( --color-wordpress-com );
 	float: none;
 	height: 100%;
 	display: flex;
@@ -89,12 +90,6 @@
 		width: calc( 100% - 20px );
 	}
 
-	.form-buttons-bar button,
-	.form-buttons-bar .button.is-primary[disabled] {
-		background: #00a8db;
-		border: #00a8db;
-	}
-
 	.form-buttons-bar .button.is-primary[disabled],
 	.form-fieldset input[type='password']:disabled,
 	.form-fieldset input[type='text']:disabled {
@@ -140,7 +135,7 @@
 }
 
 .auth__lost-password a {
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 }
 
 .auth__help,
@@ -148,7 +143,7 @@
 	position: absolute;
 	top: 16px;
 	right: 16px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 .auth__links {
@@ -160,7 +155,7 @@
 	a,
 	button {
 		text-decoration: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		margin: 0 16px;
 		padding: 10px 0;
 		cursor: pointer;
@@ -217,7 +212,7 @@
 	ol li::before {
 		margin-right: 2em;
 		content: counter( item );
-		background: var( --color-white );
+		background: var( --color-surface );
 		border-radius: 100%;
 		color: var( --color-primary-dark );
 		width: 24px;
@@ -248,7 +243,7 @@
 		top: 10px;
 		text-decoration: none;
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.auth__self-hosted-instructions-close:hover {
@@ -257,7 +252,7 @@
 }
 
 .auth__welcome {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 .auth__connect-intro {
@@ -269,7 +264,7 @@
 .auth__connect .button:visited {
 	background: #00a8db;
 	border: #00a8db;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 .auth .pulsing-dot {

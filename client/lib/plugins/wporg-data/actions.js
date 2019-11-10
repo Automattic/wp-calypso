@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 /**
@@ -11,7 +8,7 @@ import debugFactory from 'debug';
  */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import wporg from 'lib/wporg';
+import { fetchPluginsList as fetchWporgPluginsList } from 'lib/wporg';
 import { normalizePluginsList } from 'lib/plugins/utils';
 import impureLodash from 'lib/impure-lodash';
 
@@ -67,7 +64,7 @@ const PluginsDataActions = {
 			return;
 		}
 
-		wporg.fetchPluginsList(
+		fetchWporgPluginsList(
 			{
 				pageSize: _LIST_DEFAULT_SIZE,
 				page: page,

@@ -23,7 +23,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import SeoForm from './form';
 
 export class SeoSettings extends Component {
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.purchasesError ) {
 			notices.error( nextProps.purchasesError );
 		}

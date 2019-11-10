@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -22,7 +19,7 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import buildUrl from 'lib/build-url';
+import { buildRelativeSearchUrl } from 'lib/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
@@ -135,7 +132,7 @@ class ThemeShowcase extends React.Component {
 		filterSection = filterSection.replace( /\s/g, '+' );
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		return buildUrl( url, searchString );
+		return buildRelativeSearchUrl( url, searchString );
 	};
 
 	onTierSelect = ( { value: tier } ) => {
@@ -228,9 +225,11 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-						<UpworkBanner location={ 'theme-banner' } />
-					) }
+					{ showBanners &&
+						abtest &&
+						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+							<UpworkBanner location={ 'theme-banner' } />
+						) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
@@ -247,7 +246,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
+							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
 					<ThemesSelection

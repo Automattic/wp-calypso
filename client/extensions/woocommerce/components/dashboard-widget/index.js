@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isUndefined, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -37,9 +37,7 @@ class DashboardWidget extends Component {
 		this.props.onSettingsClose();
 	};
 
-	setSettingsToggle = c => {
-		this.settingsToggle = c;
-	};
+	settingsToggleRef = React.createRef();
 
 	showTooltip = () => {
 		this.setState( { showTooltip: true } );
@@ -86,12 +84,12 @@ class DashboardWidget extends Component {
 					onClick={ this.toggleSettingsPanel }
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
-					ref={ this.setSettingsToggle }
+					ref={ this.settingsToggleRef }
 					size={ 18 }
 				/>
 				<Tooltip
 					baseClassName="dashboard-widget__settings-tooltip"
-					context={ this.settingsToggle }
+					context={ this.settingsToggleRef.current }
 					isVisible={ showTooltip }
 				>
 					{ translate( 'Settings', {
@@ -101,7 +99,7 @@ class DashboardWidget extends Component {
 				{ hasSettingsPanel && (
 					<Popover
 						className="woocommerce dashboard-widget__settings-popover"
-						context={ this.settingsToggle }
+						context={ this.settingsToggleRef.current }
 						isVisible={ showDialog }
 						onClose={ this.onSettingsPanelClose }
 						position="bottom left"

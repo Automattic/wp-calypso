@@ -20,7 +20,10 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
+import {
+	disablePrivacyProtection,
+	enablePrivacyProtection,
+} from 'lib/domains/wapi-domain-info/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { togglePrivacy } from 'state/sites/domains/actions';
 import Property from './card/property';

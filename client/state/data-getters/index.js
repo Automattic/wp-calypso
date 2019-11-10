@@ -209,3 +209,62 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestAtomicSFTPDetails = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { username } ) => [
+				[ `atomic-hosting-data-${ siteId }`, username ? { username } : {} ],
+			],
+		}
+	);
+
+export const resetAtomicSFTPUserPassword = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user/reset-password`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
+	);
+
+export const createAtomicSFTPUser = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
+	);

@@ -36,5 +36,6 @@
 		"stats.json",
 		"server/bundlers/assets-*.json",
 		"server/devdocs/search-index.js"
-	]
+	],
+	"types": [ "webpack-env" ]
 }

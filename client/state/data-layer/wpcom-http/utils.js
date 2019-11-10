@@ -63,7 +63,7 @@ const getRequestStatus = action => {
 };
 
 export const getRequestKey = fullAction => {
-	const { meta, ...action } = fullAction; // eslint-disable-line no-unused-vars
+	const { meta, ...action } = fullAction;
 	const requestKey = get( meta, 'dataLayer.requestKey' );
 
 	return requestKey ? requestKey : deterministicStringify( action );

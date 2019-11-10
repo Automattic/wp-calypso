@@ -2,10 +2,10 @@
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		width: 60px;
 		margin: 10px 0;
 		height: 21px;
@@ -42,7 +42,7 @@
 	left: 0;
 	top: 50%;
 	right: 0;
-	border-top: 2px solid var( --color-primary );
+	border-top: 2px solid var( --color-accent );
 	transform: rotate( -16deg );
 	opacity: 0.9;
 }
@@ -56,6 +56,10 @@
 
 .plan-price.is-discounted .plan-price__currency-symbol {
 	color: var( --color-success );
+}
+
+.plan-price__tax-amount {
+	margin-left: 4px;
 }
 
 .plan-price__currency-symbol,

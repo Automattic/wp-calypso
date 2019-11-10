@@ -1,0 +1,15 @@
+
+// ==========================================================================
+// Placeholder mixin
+// Adds animation to placeholder section
+// ==========================================================================
+
+@mixin placeholder( $color-property: --color-neutral-5 ) {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var( $color-property );
+	color: transparent;
+
+	&::after {
+		content: '\00a0';
+	}
+}

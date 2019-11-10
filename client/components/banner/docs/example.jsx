@@ -55,9 +55,9 @@ const BannerExample = () => (
 		/>
 		<Banner href="#" plan={ PLAN_ECOMMERCE } title="Upgrade to an eCommerce Plan!" />
 
-		<Banner href="#" plan={ PLAN_JETPACK_PERSONAL } title="Upgrade to a Jetpack Personal plan!" />
-		<Banner href="#" plan={ PLAN_JETPACK_PREMIUM } title="Upgrade to a Jetpack Premium plan!" />
-		<Banner href="#" plan={ PLAN_JETPACK_BUSINESS } title="Upgrade to a Jetpack Business plan!" />
+		<Banner href="#" plan={ PLAN_JETPACK_PERSONAL } title="Upgrade to a Jetpack Personal Plan!" />
+		<Banner href="#" plan={ PLAN_JETPACK_PREMIUM } title="Upgrade to a Jetpack Premium Plan!" />
+		<Banner href="#" plan={ PLAN_JETPACK_BUSINESS } title="Upgrade to a Jetpack Business Plan!" />
 	</div>
 );
 

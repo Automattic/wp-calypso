@@ -18,7 +18,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'lib/cart-values/cart-items';
-import { addItem, addItems } from 'lib/upgrades/actions';
+import { addItem, addItems } from 'lib/cart/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
@@ -30,6 +30,7 @@ import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 export class TransferDomain extends Component {
 	static propTypes = {
 		initialQuery: PropTypes.string,
+		useStandardBack: PropTypes.bool,
 		query: PropTypes.string,
 		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -47,7 +48,12 @@ export class TransferDomain extends Component {
 	};
 
 	goBack = () => {
-		const { selectedSite, selectedSiteSlug } = this.props;
+		const { selectedSite, selectedSiteSlug, useStandardBack } = this.props;
+
+		if ( useStandardBack ) {
+			page.back();
+			return;
+		}
 
 		if ( ! selectedSite ) {
 			page( '/domains/add' );
@@ -105,11 +111,11 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}
 

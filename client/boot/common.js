@@ -11,6 +11,7 @@ import url from 'url';
 import { get, startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
+import Modal from 'react-modal';
 import store from 'store';
 
 /**
@@ -33,7 +34,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
-import superProps from 'lib/analytics/super-props';
+import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
@@ -200,10 +201,6 @@ export const locales = ( currentUser, reduxStore ) => {
 export const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' ).default();
-	}
-
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( hasTouch() ) {
@@ -214,6 +211,9 @@ export const utils = () => {
 
 	// Add accessible-focus listener
 	accessibleFocus();
+
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
@@ -258,15 +258,8 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
-	analytics.setDispatch( reduxStore.dispatch );
-
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
+	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.

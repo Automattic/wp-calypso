@@ -9,7 +9,7 @@ import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
-import { hasGSuite } from '.';
+import { hasGSuiteWithUs } from '.';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -116,7 +116,7 @@ const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
  */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
-	mailboxesByCount: { [mailbox: string]: number }
+	mailboxesByCount: { [ mailbox: string ]: number }
 ) => ( {
 	value: mailBox,
 	error:
@@ -129,7 +129,7 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
-	const mailboxesByCount: { [mailbox: string]: number } = countBy(
+	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
 	);
 
@@ -241,14 +241,14 @@ const getItemsForCart = (
 	productSlug: string,
 	users: GSuiteNewUser[]
 ) => {
-	const usersGroupedByDomain: { [domain: string]: GSuiteProductUser[] } = mapValues(
+	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		groupedUsers => groupedUsers.map( transformUserForCart )
 	);
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
-		return domainInfo && hasGSuite( domainInfo )
+		return domainInfo && hasGSuiteWithUs( domainInfo )
 			? googleAppsExtraLicenses( {
 					domain,
 					users: groupedUsers,

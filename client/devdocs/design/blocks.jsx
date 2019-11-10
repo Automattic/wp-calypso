@@ -33,6 +33,7 @@ import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
+import ProductSelector from 'blocks/product-selector/docs/example';
 import Site from 'blocks/site/docs/example';
 import SitePlaceholder from 'blocks/site/docs/placeholder-example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
@@ -42,6 +43,7 @@ import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
 import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
+import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
@@ -153,13 +155,15 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
+					<ProductSelector readmeFilePath="product-selector" />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
 					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge readmeFilePath="upgrade-nudge-expanded" />
+					<UpgradeNudge readmeFilePath="upgrade-nudge" />
+					<UpgradeNudgeExpanded readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />

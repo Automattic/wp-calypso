@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,10 +12,8 @@ import {
 	map,
 	concat,
 	flatten,
-	endsWith,
 } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
-import { withoutHttp } from 'lib/url';
 
 /**
  * Internal dependencies
@@ -45,25 +41,6 @@ export function getPeriodFormat( period, date ) {
 		default:
 			return 'YYYY-MM-DD';
 	}
-}
-
-/**
- * Returns the base URL for downloadable files on *.wordpress.com sites.
- *
- * @param  {Object} site Site object
- * @return {String} URL
- */
-export function getWpcomFilesBaseUrl( site ) {
-	if ( ! site ) {
-		return false;
-	}
-
-	// For mapped domains, wpcom_url will contain the *.wordpress.com domain
-	// Otherwise, use the site.URL without protocol
-	const wpcomUrl =
-		site.wpcom_url || ( endsWith( site.URL, '.wordpress.com' ) && withoutHttp( site.URL ) );
-
-	return wpcomUrl && 'https://' + wpcomUrl.replace( '.wordpress.com', '.files.wordpress.com' );
 }
 
 /**
@@ -988,11 +965,9 @@ export const normalizers = {
 	 *
 	 * @param  {Object} data   Stats data
 	 * @param  {Object} query  Stats query
-	 * @param  {Int}    siteId Site ID
-	 * @param  {Object} site   Site Object
 	 * @return {Array}         Parsed data array
 	 */
-	statsFileDownloads( data, query, siteId, site ) {
+	statsFileDownloads( data, query ) {
 		if ( ! data || ! query.period || ! query.date ) {
 			return [];
 		}
@@ -1001,12 +976,13 @@ export const normalizers = {
 		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
 
 		return statsData.map( item => {
-			const wpcomFilesBaseUrl = getWpcomFilesBaseUrl( site );
 			return {
-				label: item.filename,
+				label: item.relative_url,
+				shortLabel: item.filename,
 				page: null,
 				value: item.downloads,
-				link: wpcomFilesBaseUrl + item.filename,
+				link: item.download_url,
+				linkTitle: item.relative_url,
 				labelIcon: 'external',
 			};
 		} );

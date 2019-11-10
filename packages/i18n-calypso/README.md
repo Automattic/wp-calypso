@@ -6,7 +6,7 @@ This lib enables translations, exposing three public methods:
 * [.moment()](#moment-method)
 * [.numberFormat()](#numberformat-method)
 
-It also provides a Higher-Order Component named [localize()](#localize). Wrapping your component in `localize()` will give it the aforementioned functions as props. This is the suggested way of using them with React components.
+It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
 Finally, this lib exposes a utility method for your React application:
 
@@ -357,3 +357,7 @@ just the hash is used for lookup, resulting in a shorter file.
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.
 
 Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.
+
+## Extracting Translatable Strings From JavaScript Sources
+
+There is a companion [i18n-calypso-cli](https://npmjs.com/package/i18n-calypso-cli) package that provides a tool to extract `translate()`-d strings from your JavaScript code and generate a POT or PHP translation file.

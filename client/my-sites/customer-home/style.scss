@@ -1,0 +1,203 @@
+.customer-home {
+	&__box-action {
+		margin-bottom: 16px;
+		width: 100%;
+
+		.button {
+			border-width: 1px;
+			display: block;
+			min-height: 85px;
+			min-width: 100%;
+			padding: 24px;
+			text-align: center;
+		}
+		.button:hover {
+			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
+		}
+
+		span {
+			display: block;
+		}
+
+		@mixin box-action-two-col {
+			margin-bottom: 24px;
+			width: 50%;
+
+			.button {
+				margin: 0 12px;
+				min-height: 105px;
+				min-width: 90%;
+				padding: 30px 24px;
+			}
+		}
+		@include breakpoint('>1280px') {
+			@include box-action-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include box-action-two-col;
+		}
+	}
+	&__boxes {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+	}
+	&__card-boxes {
+		margin-top: rem( -15px );
+		padding: 24px 24px 0;
+
+		@include breakpoint('>1280px') {
+			padding: 24px 12px 0;
+		}
+		@include breakpoint('800px-960px') {
+			padding: 24px 12px 0;
+		}
+	}
+	&__card-col {
+		display: block;
+
+		.button {
+			display: block;
+			text-align:center;
+			width: 100%;
+		}
+
+		@mixin card-col-two-col {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+
+			.button {
+				width: auto;
+			}
+		}
+		@include breakpoint('>1040px') {
+			@include card-col-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-two-col;
+		}
+	}
+	&__card-col-left {
+		margin-bottom: 16px;
+		width: 100%;
+
+		@mixin card-col-left-two-col {
+			margin-bottom: 0;
+			width: 50%;
+
+			.button {
+				margin-right: 12px;
+			}
+		}
+		@include breakpoint('>1040px') {
+			@include card-col-left-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-left-two-col;
+		}
+	}
+	&__card-col-right {
+		width: 100%;
+
+		@mixin card-col-right-two-col {
+			width: 50%;
+
+			.button {
+				margin-left: 12px;
+			}
+		}
+		@include breakpoint('>1040px') {
+			@include card-col-right-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-right-two-col;
+		}
+	}
+	&__card-mobile {
+		justify-content: space-around;
+	}
+	&__card-subheader {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin: -0.5rem 0 1rem;
+	}
+	&__card-support {
+		display: flex;
+		justify-content: space-between;
+
+		img {
+			margin: 0 7%;
+			height: 119px;
+			width: 137px;
+		}
+
+		.vertical-nav {
+			width: 50%;
+		}
+	}
+	&__go-mobile,
+	&__grow-earn {
+		padding-bottom: 12px;
+	}
+	&__layout {
+		@include breakpoint('>960px') {
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+	&__layout-col {
+		.card-heading {
+			margin-top: -8px;
+		}
+
+		a:last-child .vertical-nav-item {
+			border-bottom: none;
+		}
+
+		@include breakpoint('>960px') {
+			width: 50%;
+		}
+	}
+	&__layout-col-left {
+		@include breakpoint('>960px') {
+			.card {
+				margin-right: 8px;
+			}
+		}
+	}
+	&__layout-col-right {
+		h6 {
+			margin-bottom: 6px;
+		}
+
+		.vertical-nav {
+			margin-top: 0;
+		}
+
+		.vertical-nav-item {
+			border-bottom: 1px solid var( --color-neutral-5 );
+			box-shadow: none;
+			padding: 12px 0;
+
+			.gridicon {
+				right: 0;
+			}
+		}
+
+		@include breakpoint('>960px') {
+			.card {
+				margin-left: 8px;
+			}
+
+			.card.vertical-nav-item {
+				margin-left: 0;
+			}
+		}
+		@include breakpoint('960px-1040px') {
+			.android-app-badge {
+				margin-left: -8px;
+			}
+		}
+	}
+}

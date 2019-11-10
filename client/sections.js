@@ -293,15 +293,6 @@ const sections = [
 		group: 'editor',
 		secondary: true,
 	},
-
-	{
-		name: 'account-recovery',
-		paths: [ '/account-recovery' ],
-		module: 'account-recovery',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
@@ -382,14 +373,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'login',
-		paths: [ '/log-in' ],
-		module: 'login',
-		enableLoggedOut: true,
-		secondary: false,
-		isomorphic: true,
-	},
-	{
 		name: 'auth',
 		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
@@ -452,6 +435,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'migrate',
+		paths: [ '/migrate' ],
+		module: 'my-sites/migrate',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'devdocs',
@@ -464,6 +454,20 @@ const sections = [
 		module: 'devdocs',
 		secondary: false,
 		enableLoggedOut: true,
+	},
+	{
+		name: 'home',
+		paths: [ '/home' ],
+		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'hosting',
+		paths: [ '/hosting-admin' ],
+		module: 'my-sites/hosting',
+		secondary: true,
+		group: 'sites',
 	},
 ];
 

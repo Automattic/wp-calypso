@@ -11,17 +11,12 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
-import { generateFlows } from './flows-pure';
+import { generateFlows } from 'signup/config/flows-pure';
 
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	if ( dependencies.couponCode ) {
-		return `/checkout/${ dependencies.siteSlug }?coupon=${ dependencies.couponCode }`;
-	}
-
-	return '/checkout/' + dependencies.siteSlug;
+	return `/checkout/${ dependencies.siteSlug }?signup=1`;
 }
 
 function dependenciesContainCartItem( dependencies ) {
@@ -54,14 +49,24 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getChecklistDestination( dependencies ) {
-	return '/checklist/' + dependencies.siteSlug;
+function getSignupDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }`;
+}
+
+function getThankYouNoSiteDestination() {
+	return `/checkout/thank-you/no-site`;
+}
+
+function getChecklistThemeDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=theme`;
 }
 
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
-	getChecklistDestination,
+	getSignupDestination,
+	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -74,29 +79,6 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-/**
- * Properly filter the current flow.
- *
- * Called by `getFlowName` in 'signup/utils.js' to allow conditional filtering of the current
- * flow for AB tests.
- *
- * @example
- * function filterFlowName( flowName ) {
- *   const defaultFlows = [ 'main', 'website' ];
- *   if ( ! user.get() && includes( defaultFlows, flowName ) ) {
- *     return 'filtered-flow-name';
- *   }
- *   return flowName;
- * }
- * // If user is logged out and the current flow is 'main' or 'website' switch to 'filtered-flow-name' flow.
- *
- * @param  {string} flowName Current flow name.
- * @return {string}          New flow name.
- */
-function filterFlowName( flowName ) {
-	return flowName;
-}
-
 function filterDestination( destination, dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
@@ -105,13 +87,14 @@ function filterDestination( destination, dependencies ) {
 	return destination;
 }
 
+function getDefaultFlowName() {
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+}
+
 const Flows = {
-	filterFlowName,
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: getDefaultFlowName(),
 	excludedSteps: [],
 
 	/**
@@ -119,12 +102,7 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * `currentStepName` is the current step in the signup flow. It is used
-	 * to determine if any AB variations should be assigned after it is completed.
-	 * Example use case: To determine if a new signup step should be part of the flow or not.
-	 *
 	 * @param {String} flowName The name of the flow to return
-	 * @param {String} currentStepName The current step. See description above
 	 * @returns {Object} A flow object
 	 */
 	getFlow( flowName ) {
@@ -177,21 +155,12 @@ const Flows = {
 		} );
 	},
 
+	resetExcludedSteps() {
+		Flows.excludedSteps = [];
+	},
+
 	getFlows() {
 		return flows;
-	},
-
-	isValidFlow( flowName ) {
-		return Boolean( Flows.getFlows()[ flowName ] );
-	},
-
-	removeStepFromFlow( stepName, flow ) {
-		return {
-			...flow,
-			steps: flow.steps.filter( step => {
-				return step !== stepName;
-			} ),
-		};
 	},
 };
 

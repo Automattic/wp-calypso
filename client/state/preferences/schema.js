@@ -62,15 +62,15 @@ export const remoteValuesSchema = {
 		colorScheme: {
 			type: 'string',
 			enum: [
-				'default',
-				'light',
-				'dark',
 				'classic-blue',
 				'classic-bright',
-				'laser-black',
-				'powder-snow',
+				'contrast',
+				'midnight',
 				'nightfall',
+				'ocean',
+				'powder-snow',
 				'sakura',
+				'sunset',
 			],
 		},
 		'store-dashboardStatsWidgetUnit': {

@@ -71,7 +71,7 @@ class InvitePeople extends React.Component {
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
-	componentWillReceiveProps() {
+	UNSAFE_componentWillReceiveProps() {
 		this.setState( this.resetState() );
 	}
 

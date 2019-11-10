@@ -33,7 +33,6 @@ class SiteTitleStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string,
@@ -92,14 +91,7 @@ class SiteTitleStep extends Component {
 	};
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			showSiteMockups,
-			signupProgress,
-			siteType,
-			stepName,
-		} = this.props;
+		const { flowName, positionInFlow, showSiteMockups, siteType, stepName } = this.props;
 		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' );
 		const subHeaderText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleSubheader' );
 
@@ -113,7 +105,6 @@ class SiteTitleStep extends Component {
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ signupProgress }
 					stepContent={ this.renderSiteTitleStep() }
 					showSiteMockups={ showSiteMockups }
 				/>

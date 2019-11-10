@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import {
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
-import * as analytics from 'state/analytics/actions';
+import * as analytics from 'state/analytics/actions/record';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'Directly data layer', () => {

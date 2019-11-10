@@ -6,6 +6,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -41,7 +42,7 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import HeaderButton from 'components/header-button';
+import Button from 'components/button';
 import { isEnabled } from 'config';
 
 /**
@@ -60,7 +61,7 @@ export class PluginsMain extends Component {
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
 
 		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {
@@ -421,13 +422,15 @@ export class PluginsMain extends Component {
 		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
-			<HeaderButton
-				icon="plus"
-				label={ translate( 'Add Plugin' ) }
-				aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
+			<Button
+				className="plugins__button"
+				compact
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
-			/>
+			>
+				<Gridicon icon="plus" />
+				<span className="plugins__button-text">{ translate( 'Add Plugin' ) }</span>
+			</Button>
 		);
 	}
 
@@ -445,13 +448,15 @@ export class PluginsMain extends Component {
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
-			<HeaderButton
-				icon="cloud-upload"
-				label={ translate( 'Upload Plugin' ) }
-				aria-label={ translate( 'Upload Plugin' ) }
+			<Button
+				className="plugins__button"
+				compact
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
-			/>
+			>
+				<Gridicon icon="cloud-upload" />
+				<span className="plugins__button-text">{ translate( 'Install Plugin' ) }</span>
+			</Button>
 		);
 	}
 
@@ -502,20 +507,22 @@ export class PluginsMain extends Component {
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
-				<div className="plugins__header">
-					<SectionNav selectedText={ this.getSelectedText() }>
-						<NavTabs>{ navItems }</NavTabs>
-						<Search
-							pinned
-							fitsContainer
-							onSearch={ this.props.doSearch }
-							initialValue={ this.props.search }
-							ref="url-search"
-							analyticsGroup="Plugins"
-							placeholder={ this.getSearchPlaceholder() }
-						/>
-					</SectionNav>
-					<div className="plugins__header-buttons">
+				<div className="plugins__main">
+					<div className="plugins__main-header">
+						<SectionNav selectedText={ this.getSelectedText() }>
+							<NavTabs>{ navItems }</NavTabs>
+							<Search
+								pinned
+								fitsContainer
+								onSearch={ this.props.doSearch }
+								initialValue={ this.props.search }
+								ref={ `url-search` }
+								analyticsGroup="Plugins"
+								placeholder={ this.getSearchPlaceholder() }
+							/>
+						</SectionNav>
+					</div>
+					<div className="plugins__main-buttons">
 						{ this.renderAddPluginButton() }
 						{ this.renderUploadPluginButton() }
 					</div>

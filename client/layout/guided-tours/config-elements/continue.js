@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -41,11 +41,11 @@ export default class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	componentWillReceiveProps( nextProps, nextContext ) {
+	UNSAFE_componentWillReceiveProps( nextProps, nextContext ) {
 		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		this.removeTargetListener();
 	}
 

@@ -7,7 +7,7 @@
 	left: 0;
 	padding-top: 16px;
 	z-index: -1;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 
 	// Hide the signup header on oauth
 	// flows like Crowdsignal
@@ -19,7 +19,7 @@
 	.wordpress-logo {
 		height: 180px;
 		width: 180px;
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		margin: 0 auto;
 		display: block;
 		transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );

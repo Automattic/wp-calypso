@@ -19,11 +19,11 @@ class QueryFeed extends PureComponent {
 		zoneId: PropTypes.number.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestFeed( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
 			return;
 		}

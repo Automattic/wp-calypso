@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import {
 	PLUGIN_SETUP_ERROR,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*
@@ -53,7 +51,7 @@ export function hasRequested( state = {}, action ) {
  * Tracks all known premium plugin objects (plugin meta and install status),
  * indexed by site ID.
  */
-export function plugins( state = {}, action ) {
+export const plugins = withSchemaValidation( pluginInstructionSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: action.data } );
@@ -81,8 +79,7 @@ export function plugins( state = {}, action ) {
 		default:
 			return state;
 	}
-}
-plugins.schema = pluginInstructionSchema;
+} );
 
 /*
  * Tracks the list of premium plugin objects for a single site
