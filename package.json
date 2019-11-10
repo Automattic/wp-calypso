@@ -159,7 +159,7 @@
 		"percentage-regex": "3.0.0",
 		"phone": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre-1",
 		"photon": "file:./packages/photon",
-		"postcss-cli": "6.1.2",
+		"postcss-cli": "6.1.3",
 		"prismjs": "1.16.0",
 		"prop-types": "15.7.2",
 		"qrcode.react": "0.9.3",
