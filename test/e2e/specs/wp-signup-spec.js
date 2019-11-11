@@ -1777,11 +1777,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
 			async function() {
 				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
-				await jetpackAddNewSitePage.createNewWordPressDotComSite();
-				return await jetpackAddNewSitePage.overrideABTestInLocalStorage(
+				await jetpackAddNewSitePage.overrideABTestInLocalStorage(
 					'passwordlessSignup',
 					'passwordless'
 				);
+				return await jetpackAddNewSitePage.createNewWordPressDotComSite();
 			}
 		);
 
