@@ -203,8 +203,8 @@ export function isJetpackMonthlyPlan( product ) {
 }
 
 export function isJetpackProduct( product ) {
-	// When we update the jetpack products list.
-	// Make sure that we update isJetpackBackups to continoue to be work.
+	// When we expand the list of products we should update isJetpackBackups
+	// so that it works as expected.
 	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
 
 	product = formatProduct( product );
