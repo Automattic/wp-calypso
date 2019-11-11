@@ -16,11 +16,10 @@ import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { useSelect, useDispatch, useRegistry } from '../lib/registry';
-import useConstructor from '../lib/use-constructor';
+import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
 
-function createCheckoutStore( { registerStore } ) {
-	registerStore( 'checkout', {
+function useRegisterCheckoutStore() {
+	useRegisterStore( 'checkout', {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
@@ -59,8 +58,7 @@ export default function Checkout( {
 	OrderSummary,
 	className,
 } ) {
-	const registry = useRegistry();
-	useConstructor( () => createCheckoutStore( registry ) );
+	useRegisterCheckoutStore();
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
 	const { changeStep } = useDispatch( 'checkout' );
 
