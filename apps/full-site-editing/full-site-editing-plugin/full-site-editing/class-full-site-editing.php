@@ -65,6 +65,8 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+
+		$this->register_footer_credit_setting();
 	}
 
 	/**
@@ -172,6 +174,8 @@ class Full_Site_Editing {
 				'closeButtonLabel'    => $this->get_close_button_label(),
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
+				'footerCreditOptions' => get_footer_credit_options(),
+				'defaultCreditOption' => get_default_footer_credit_option(),
 			)
 		);
 
@@ -632,5 +636,30 @@ class Full_Site_Editing {
 		if ( isset( $submenu['themes.php'][6] ) ) {
 			unset( $submenu['themes.php'][6] );
 		}
+	}
+
+	/**
+	 * Registers the footer credit option for API use.
+	 */
+	public function register_footer_credit_setting() {
+		/**
+		 * Note: We do not want to create the option if it doesn't exist. This
+		 * way, the default option can theoretically change if the user switches
+		 * site types without changing an option in the list at all. As soon as
+		 * they make a change to the selection, however, it will be persisted.
+		 */
+
+		// Registers the footercredit option for API use.
+		register_setting(
+			'general',
+			'footercredit',
+			[
+				'show_in_rest' => [
+					'name' => 'footer_credit',
+				],
+				'type'         => 'string',
+				'description'  => __( 'WordPress Footer Credit' ),
+			]
+		);
 	}
 }
