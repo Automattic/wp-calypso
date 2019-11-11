@@ -22,6 +22,7 @@ import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
+import SidebarTemplatesPlugin from './components/sidebar-modal-opener';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -245,7 +246,7 @@ class PageTemplateModal extends Component {
 	}
 }
 
-const PageTemplatesPlugin = compose(
+export const PageTemplatesPlugin = compose(
 	withSelect( select => ( {
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
 		postContentBlock: select( 'core/editor' )
@@ -305,105 +306,18 @@ if ( window.location.toString().includes( 'post-new' ) ) {
 	} );
 }
 
-import TemplateSelectorItem from './components/template-selector-item';
-
-export class SidebarTemplateOpener extends Component {
-	state = {
-		isOpen: false,
-		isWarningOpen: false,
-	};
-
-	togglePlugin = () => {
-		this.setState( { isOpen: ! this.state.isOpen, isWarningOpen: false } );
-	};
-
-	toggleWarningModal = () => {
-		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
-	};
-
-	getTemplateUsed = () => {
-		if ( ! this.props.templateUsedSlug ) {
-			return templates[ 1 ];
-		}
-		return templates.filter( temp => temp.slug === this.props.templateUsedSlug )[ 0 ];
-	};
-
-	render() {
-		// const blocksByTemplates = this.state.blocksByTemplateSlug;
-		const { slug, title, preview, previewAlt } = this.getTemplateUsed();
-
-		return (
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-				} }
-			>
-				{ this.state.isOpen ? (
-					<PageTemplatesPlugin
-						shouldPrefetchAssets={ false }
-						templates={ templates }
-						vertical={ vertical }
-						segment={ segment }
-						togglePlugin={ this.togglePlugin }
-						isPromptedFromSidebar
-					/>
-				) : null }
-				{ this.state.isWarningOpen ? (
-					<Modal
-						title="Are You Sure?"
-						// labelledby="Changing the page's layout will remove any customizations or edits you have already made."
-						isDismissible={ false }
-						onRequestClose={ this.toggleWarningModal }
-					>
-						<div>
-							Changing the page's layout will remove any customizations or edits you have already
-							made.
-						</div>
-						<Button isDefault onClick={ this.toggleWarningModal }>
-							Cancel
-						</Button>
-						<Button isPrimary onClick={ this.togglePlugin }>
-							Change Layout
-						</Button>
-					</Modal>
-				) : null }
-
-				<TemplateSelectorItem
-					id="fubar--101"
-					value={ slug }
-					label={ replacePlaceholders( title, siteInformation ) }
-					// label={ templates[2].title || "??" }
-					staticPreviewImg={ preview }
-					staticPreviewImgAlt={ previewAlt }
-					// blocks={ blocksByTemplates.hasOwnProperty( templates[2].slug ) ? blocksByTemplates[ templates[2].slug ] : [] }
-					// onSelect={ () => {} }
-				/>
-
-				<Button isPrimary onClick={ this.toggleWarningModal }>
-					Change Layout
-				</Button>
-			</div>
-		);
-	}
-}
-
-const SidebarTemplatesPlugin = compose(
-	withSelect( select => ( {
-		templateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
-			._starter_page_template,
-	} ) )
-)( SidebarTemplateOpener );
-
 const PluginDocumentSettingPanelDemo = () => (
 	<PluginDocumentSettingPanel
 		name="Template Plugin Opener"
 		title="Page Layout"
 		className="page-template-modal__sidebar"
 	>
-		<SidebarTemplatesPlugin />
+		<SidebarTemplatesPlugin
+			templates={ templates }
+			vertical={ vertical }
+			segment={ segment }
+			siteInformation={ siteInformation }
+		/>
 	</PluginDocumentSettingPanel>
 );
 

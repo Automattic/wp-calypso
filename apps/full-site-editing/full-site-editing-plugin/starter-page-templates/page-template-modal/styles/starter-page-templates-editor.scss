@@ -507,3 +507,27 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 		float: none;
 	}
 }
+
+// Sidebar modal opener goo.
+.sidebar-modal-opener__button {
+	margin-top: 20px;
+}
+
+.sidebar-modal-opener__warning-modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidebar-modal-opener__warning-text {
+	max-width: 300px;
+	font-size: 1rem;
+	line-height: 1.5rem;
+}
+
+.sidebar-modal-opener__warning-options {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
+}
