@@ -17,6 +17,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 
@@ -53,6 +54,6 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+		isDisabled: ! isSiteAutomatedTransfer( state, siteId ) || ! canSiteViewAtomicHosting( state ),
 	};
 } )( localize( Hosting ) );

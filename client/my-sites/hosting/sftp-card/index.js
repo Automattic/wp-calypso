@@ -33,7 +33,6 @@ const SftpCard = ( {
 	username,
 	password,
 	siteId,
-	loaded,
 	disabled,
 	currentUserId,
 	requestSftpUser,
@@ -49,7 +48,7 @@ const SftpCard = ( {
 
 	const onDestroy = () => {
 		if ( password ) {
-			removePasswordFromState( siteId, currentUserId, { username } );
+			removePasswordFromState( siteId, currentUserId, username );
 		}
 	};
 
@@ -64,12 +63,12 @@ const SftpCard = ( {
 	};
 
 	useEffect( () => {
-		if ( ! loaded ) {
+		if ( ! username && ! disabled ) {
 			setIsLoading( true );
 			requestSftpUser( siteId, currentUserId );
 		}
 		return onDestroy();
-	}, [ loaded ] );
+	}, [ username ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -189,13 +188,11 @@ export default connect(
 		const currentUserId = getCurrentUserId( state );
 		let username = null;
 		let password = null;
-		let loaded = null;
 
 		if ( ! disabled ) {
 			const sftpDetails = getAtomicHostingSftpUser( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
-			loaded = sftpDetails !== null;
 		}
 
 		return {
@@ -203,13 +200,13 @@ export default connect(
 			currentUserId,
 			username,
 			password,
-			loaded,
 		};
 	},
 	{
 		requestSftpUser: requestAtomicSftpUser,
 		createSftpUser: createAtomicSftpUser,
 		resetSftpPassword: resetAtomicSftpPassword,
-		removePasswordFromState: updateAtomicSftpUser,
+		removePasswordFromState: ( siteId, userId, username ) =>
+			updateAtomicSftpUser( siteId, userId, { username } ),
 	}
 )( localize( SftpCard ) );
