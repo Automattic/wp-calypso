@@ -37,20 +37,68 @@ describe( 'index', () => {
 	} );
 
 	describe( '#getEligibleGSuiteDomain', () => {
-		test( 'Returns selected domain name if valid', () => {
-			expect( getEligibleGSuiteDomain( 'foobar.blog', [] ) ).toEqual( 'foobar.blog' );
-		} );
-
-		test( 'Returns empty string if no selected site and empty domains array', () => {
+		test( 'Returns empty string if selected domain and domains are empty', () => {
 			expect( getEligibleGSuiteDomain( '', [] ) ).toEqual( '' );
 		} );
 
-		test( 'Returns empty string if selected site is invalid and empty domains array', () => {
-			expect( getEligibleGSuiteDomain( 'foogoogle.blog', [] ) ).toEqual( '' );
+		test( 'Returns empty string if selected domain is invalid and domains are empty', () => {
+			expect( getEligibleGSuiteDomain( 'domain-with-google-banned-term.blog', [] ) ).toEqual( '' );
 		} );
 
-		test( 'Returns empty string if no selected site and domains array does not contain a valid domain', () => {
-			expect( getEligibleGSuiteDomain( '', [ 'foogoogle.blog' ] ) ).toEqual( '' );
+		test( 'Returns selected domain if selected domain is valid and domains are empty', () => {
+			expect( getEligibleGSuiteDomain( 'valid-domain.blog', [] ) ).toEqual( 'valid-domain.blog' );
+		} );
+
+		const domains = [
+			{
+				name: 'domain-with-google-banned-term.blog',
+				type: 'REGISTERED',
+			},
+			{
+				name: 'account-with-another-provider.blog',
+				type: 'REGISTERED',
+				googleAppsSubscription: { status: 'other_provider' },
+			},
+			{
+				name: 'mapped-domain-without-wpcom-nameservers.blog',
+				type: 'MAPPED',
+				hasWpcomNameservers: false,
+			},
+			{
+				name: 'mapped-domain-with-wpcom-nameservers.blog',
+				type: 'MAPPED',
+				hasWpcomNameservers: true,
+			},
+			{
+				name: 'secondary-domain.blog',
+				type: 'REGISTERED',
+				isPrimary: false,
+			},
+			{
+				name: 'primary-domain.blog',
+				type: 'REGISTERED',
+				isPrimary: true,
+			}
+		];
+
+		test( 'Returns selected domain if selected domain is valid', () => {
+			expect( getEligibleGSuiteDomain( 'selected-valid-domain.blog', domains ) ).toEqual( 'selected-valid-domain.blog' );
+		} );
+
+		test( 'Returns primary domain if no selected domain', () => {
+			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual( 'primary-domain.blog' );
+		} );
+
+		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
+			const domainsWithoutPrimaryDomain = domains.slice( 0, -1 );
+
+			expect( getEligibleGSuiteDomain( '', domainsWithoutPrimaryDomain ) ).toEqual( 'mapped-domain-with-wpcom-nameservers.blog' );
+		} );
+
+		test( 'Returns empty string if no selected domain and no valid domain in domains', () => {
+			const domainsWithoutValidDomain = domains.slice( 0, -3 );
+
+			expect( getEligibleGSuiteDomain( '', domainsWithoutValidDomain ) ).toEqual( '' );
 		} );
 	} );
 
@@ -74,11 +122,13 @@ describe( 'index', () => {
 				hasWpcomNameservers: true,
 				googleAppsSubscription: {},
 			};
+
 			expect( getGSuiteSupportedDomains( [ registered ] ) ).toEqual( [ registered ] );
 		} );
 
 		test( 'returns empty array if domain is valid and type of mapped without our nameservers', () => {
 			const mapped = { name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} };
+
 			expect( getGSuiteSupportedDomains( [ mapped ] ) ).toEqual( [] );
 		} );
 
@@ -89,11 +139,13 @@ describe( 'index', () => {
 				googleAppsSubscription: {},
 				hasWpcomNameservers: true,
 			};
+
 			expect( getGSuiteSupportedDomains( [ mapped ] ) ).toEqual( [ mapped ] );
 		} );
 
 		test( 'returns empty array if domain is valid and type of site redirected', () => {
 			const siteRedirect = { name: 'foo.blog', type: 'SITE_REDIRECT', googleAppsSubscription: {} };
+
 			expect( getGSuiteSupportedDomains( [ siteRedirect ] ) ).toEqual( [] );
 		} );
 	} );
@@ -151,6 +203,7 @@ describe( 'index', () => {
 				false
 			);
 		} );
+
 		test( 'returns true if googleAppsSubscription.pendingUsers has an non-empty array', () => {
 			expect(
 				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
