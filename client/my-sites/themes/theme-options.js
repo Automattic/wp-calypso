@@ -30,6 +30,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isThemeAvailableOnJetpackSite,
+	isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -132,7 +133,9 @@ const tryandcustomize = {
 		( isThemePremium( state, themeId ) &&
 			isJetpackSite( state, siteId ) &&
 			! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ),
+		( isJetpackSite( state, siteId ) &&
+			! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
+		isThemeGutenbergFirst( state, themeId ),
 };
 
 const preview = {
