@@ -2534,7 +2534,7 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 
 Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	return this.wpcom.req.post( {
-		path: `/sites/${ sourceSiteId }/migrate-to/${ targetSiteId }`,
+		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
