@@ -43,7 +43,7 @@
 		"@automattic/tree-select": "file:./packages/tree-select",
 		"@babel/cli": "7.7.0",
 		"@babel/polyfill": "7.7.0",
-		"@babel/runtime": "7.7.1",
+		"@babel/runtime": "7.7.2",
 		"@github/webauthn-json": "0.3.6",
 		"@ungap/url-search-params": "0.1.2",
 		"@webcomponents/url": "0.7.3",
