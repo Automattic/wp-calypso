@@ -19,9 +19,10 @@ import './style.scss';
 
 interface Props {
 	inputClass: string;
+	onVerticalSelect: () => void;
 }
 
-export default function VerticalSelect( { inputClass, forceHideSuggestions, onClick }: Props ) {
+export default function VerticalSelect( { inputClass, onVerticalSelect }: Props ) {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -75,6 +76,7 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 		( vertical: SiteVertical ) => {
 			setSiteVertical( vertical );
 			hideSuggestions();
+			onVerticalSelect();
 			if ( inputRef && inputRef.current ) {
 				inputRef.current.blur();
 			}
@@ -101,45 +103,23 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 
 	return (
 		<div className="vertical-select">
-			{ suggestionsVisibility || ! value ? (
-				<>
-					<input
-						ref={ inputRef }
-						className={ inputClass }
-						placeholder={ NO__( 'enter a topic' ) }
-						onChange={ handleSuggestionChangeEvent }
-						onFocus={ showSuggestions }
-						onBlur={ hideSuggestions }
-						onKeyDown={ handleSuggestionKeyDown }
-						onMouseDown={ onClick }
-						autoComplete="off"
-						value={ value }
-					/>
-					{ ! forceHideSuggestions && (
-						<Suggestions
-							ref={ suggestionRef }
-							query={ inputValue }
-							suggestions={ ! verticals.length ? loadingMessage : suggestions }
-							suggest={ handleSelect }
-						/>
-					) }
-				</>
-			) : (
-				<span
-					ref={ inputRef }
-					className={ inputClass }
-					onClick={ showSuggestions }
-					onMouseDown={ onClick }
-					onFocus={ onClick }
-					onKeyDown={ onClick }
-					onKeyPress={ showSuggestions }
-					autoComplete="off"
-					role="button"
-					tabIndex="0"
-				>
-					{ value ? value : NO__( 'enter a topic' ) }
-				</span>
-			) }
+			<input
+				ref={ inputRef }
+				className={ inputClass }
+				placeholder={ NO__( 'enter a topic' ) }
+				onChange={ handleSuggestionChangeEvent }
+				onFocus={ showSuggestions }
+				onBlur={ hideSuggestions }
+				onKeyDown={ handleSuggestionKeyDown }
+				autoComplete="off"
+				value={ value }
+			/>
+			<Suggestions
+				ref={ suggestionRef }
+				query={ inputValue }
+				suggestions={ ! verticals.length ? loadingMessage : suggestions }
+				suggest={ handleSelect }
+			/>
 		</div>
 	);
 }
