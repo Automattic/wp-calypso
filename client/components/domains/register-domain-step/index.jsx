@@ -53,6 +53,7 @@ import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import FreeDomainExplainer from 'components/domains/free-domain-explainer';
 import {
 	DropdownFilters,
 	FilterResetNotice,
@@ -571,6 +572,10 @@ class RegisterDomainStep extends React.Component {
 
 		if ( this.props.showExampleSuggestions ) {
 			return this.renderExampleSuggestions();
+		}
+
+		if ( this.props.showTestCopy ) {
+			return this.renderFreeDomainExplainer();
 		}
 
 		return this.renderInitialSuggestions();
@@ -1111,6 +1116,10 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderFreeDomainExplainer( isCard = false ) {
+		return <FreeDomainExplainer isCard={ isCard } />;
+	}
+
 	onAddDomain = suggestion => {
 		const domain = get( suggestion, 'domain_name' );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
@@ -1162,12 +1171,14 @@ class RegisterDomainStep extends React.Component {
 		const suggestions = this.getSuggestionsFromProps();
 
 		// the search returned no results
-		if (
-			suggestions.length === 0 &&
-			! this.state.loadingResults &&
-			this.props.showExampleSuggestions
-		) {
-			return this.renderExampleSuggestions();
+		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
+			if ( this.props.showExampleSuggestions ) {
+				return this.renderExampleSuggestions();
+			}
+
+			if ( this.props.showTestCopy ) {
+				return this.renderFreeDomainExplainer();
+			}
 		}
 
 		const showTldFilterBar =
@@ -1178,6 +1189,10 @@ class RegisterDomainStep extends React.Component {
 			this.state.loadingResults;
 
 		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
+
+		const hasResults =
+			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
+			! this.state.loadingResults;
 
 		return (
 			<DomainSearchResults
@@ -1208,6 +1223,8 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 			>
+				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer( true ) }
+
 				{ showTldFilterBar && (
 					<TldFilterBar
 						availableTlds={ this.state.availableTlds }

@@ -1,0 +1,24 @@
+.free-domain-explainer__title {
+     
+    color: var( --color-text-inverted );
+    font-weight: 400;
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 0.7em;
+}
+
+.card .free-domain-explainer__title {
+    color: var( --color-text );
+}
+
+.free-domain-explainer__subtitle {
+    color: var( --color-text-inverted );
+    font-weight: 400;
+    font-size: 15px;
+    margin: 0;
+    margin-bottom: 0.7em;
+}
+
+.card .free-domain-explainer__subtitle {
+    color: var( --color-text );
+}
