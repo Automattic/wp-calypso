@@ -2532,4 +2532,11 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	} );
 };
 
+Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ sourceSiteId }/migrate-to/${ targetSiteId }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export default Undocumented;

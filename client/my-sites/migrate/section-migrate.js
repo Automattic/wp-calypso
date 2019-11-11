@@ -4,6 +4,9 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
+import { get } from 'lodash';
+import wpLib from 'lib/wp';
 
 /**
  * Internal dependencies
@@ -15,12 +18,15 @@ import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSelector from 'components/site-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
+
+const wpcom = wpLib.undocumented();
 
 class SectionMigrate extends Component {
 	state = {
@@ -28,9 +34,17 @@ class SectionMigrate extends Component {
 	};
 
 	jetpackSiteFilter = sourceSite => {
-		const { siteId } = this.props;
+		const { targetSiteId } = this.props;
 
-		return sourceSite.jetpack && sourceSite.ID !== siteId;
+		return sourceSite.jetpack && sourceSite.ID !== targetSiteId;
+	};
+
+	selectSourceSite = () => {
+		if ( ! this.state.sourceSiteId ) {
+			return;
+		}
+
+		page( `/migrate/${ this.state.sourceSiteId }/${ this.props.targetSiteSlug }` );
 	};
 
 	setSourceSiteId = sourceSiteId => {
@@ -39,8 +53,57 @@ class SectionMigrate extends Component {
 		} );
 	};
 
-	render() {
+	startMigration = () => {
+		const { sourceSiteId, targetSiteId } = this.props;
+
+		if ( ! sourceSiteId || ! targetSiteId ) {
+			return;
+		}
+
+		wpcom.startMigration( sourceSiteId, targetSiteId );
+	};
+
+	renderMigrationConfirmation() {
+		const { sourceSite, targetSite, translate } = this.props;
+
+		const sourceSiteDomain = get( sourceSite, 'domain' );
+		const targetSiteDomain = get( targetSite, 'domain' );
+
+		return (
+			<CompactCard>
+				<div className="migrate__confirmation">
+					{ translate(
+						'Do you want to migrate all content from %(sourceSite)s to %(targetSite)s? All existing content on %(sourceSite)s will be lost.',
+						{ args: { sourceSite: sourceSiteDomain, targetSite: targetSiteDomain } }
+					) }
+				</div>
+				<Button primary onClick={ this.startMigration }>
+					{ translate( 'Start Migration' ) }
+				</Button>
+			</CompactCard>
+		);
+	}
+
+	renderSourceSiteSelector() {
 		const { translate } = this.props;
+
+		return (
+			<CompactCard className="migrate__card">
+				<SiteSelector
+					className="migrate__source-site"
+					selected={ this.state.sourceSiteId }
+					onSiteSelect={ this.setSourceSiteId }
+					filter={ this.jetpackSiteFilter }
+				/>
+				<Button primary onClick={ this.selectSourceSite } disabled={ ! this.state.sourceSiteId }>
+					{ translate( 'Continue' ) }
+				</Button>
+			</CompactCard>
+		);
+	}
+
+	render() {
+		const { sourceSiteId, translate } = this.props;
 		const headerText = translate( 'Migrate' );
 		const subHeaderText = translate( 'Migrate your WordPress site to WordPress.com' );
 
@@ -53,22 +116,15 @@ class SectionMigrate extends Component {
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
 				/>
-				<CompactCard className="migrate__card">
-					<SiteSelector
-						className="migrate__source-site"
-						selected={ this.state.sourceSiteId }
-						onSiteSelect={ this.setSourceSiteId }
-						filter={ this.jetpackSiteFilter }
-					/>
-					<Button primary disabled={ ! this.state.sourceSiteId }>
-						{ translate( 'Migrate' ) }
-					</Button>
-				</CompactCard>
+				{ sourceSiteId ? this.renderMigrationConfirmation() : this.renderSourceSiteSelector() }
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
+export default connect( ( state, ownProps ) => ( {
+	sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
+	targetSite: getSelectedSite( state ),
+	targetSiteId: getSelectedSiteId( state ),
+	targetSiteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( SectionMigrate ) );
