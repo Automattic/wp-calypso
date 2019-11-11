@@ -144,7 +144,10 @@ function usePaymentRequestOptions() {
 	const { stripeConfiguration } = useStripe();
 	const [ items, total ] = useLineItems();
 	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
-	const currency = items.reduce( ( firstCurrency, item ) => firstCurrency || item.amount.currency );
+	const currency = items.reduce(
+		( firstCurrency, item ) => firstCurrency || item.amount.currency,
+		null
+	);
 	const paymentRequestOptions = useMemo(
 		() => ( {
 			country: countryCode,
