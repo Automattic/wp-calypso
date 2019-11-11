@@ -39,6 +39,9 @@ class SidebarModalOpener extends Component {
 		return this.props.templates.filter( temp => temp.slug === this.props.templateUsedSlug )[ 0 ];
 	};
 
+	// The TemplateSelectorItem wants a function to run when clicked, we want it to do nothing from here.
+	onSelectOverride = () => {};
+
 	render() {
 		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
 		const { templates, vertical, segment, siteInformation } = this.props;
@@ -51,6 +54,7 @@ class SidebarModalOpener extends Component {
 					label={ replacePlaceholders( title, siteInformation ) }
 					staticPreviewImg={ preview }
 					staticPreviewImgAlt={ previewAlt }
+					onSelect={ this.onSelectOverride }
 				/>
 
 				<Button

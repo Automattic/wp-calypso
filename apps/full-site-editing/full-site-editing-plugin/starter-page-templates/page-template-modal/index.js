@@ -128,7 +128,11 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
-		this.props.toggleTemplateModal();
+
+		// Turn off sidebar's rendering of modal
+		if ( this.props.isPromptedFromSidebar ) {
+			this.props.toggleTemplateModal();
+		}
 	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
@@ -273,12 +277,11 @@ export const PageTemplatesPlugin = compose(
 				// Set post title.
 				editorDispatcher.editPost( { title } );
 
-				// Insert blocks.
+				// Replace blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				dispatch( 'core/block-editor' ).insertBlocks(
-					blocks,
-					0,
+				dispatch( 'core/block-editor' ).replaceInnerBlocks(
 					postContentBlock ? postContentBlock.clientId : '',
+					blocks,
 					false
 				);
 			},
