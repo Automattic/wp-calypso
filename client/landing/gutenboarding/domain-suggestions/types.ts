@@ -4,6 +4,14 @@
 }
 export { ActionType };
 
+// See client/state/domains/suggestions/actions.js#requestDomainsSuggestions
+export interface DomainSuggestionQuery {
+	query: string; // Domain query
+	quantity: number; // max results
+	vendor: string; // vendor
+	include_wordpressdotcom?: boolean; // adds wordpress subdomain suggestions when true
+}
+
 export interface DomainSuggestion {
 	domain_name: string;
 	relevance: number; // Percentage, <= 1
