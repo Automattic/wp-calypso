@@ -193,9 +193,20 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.mediaSelectPort = ports[ 0 ];
 
 			if ( value ) {
-				const selectedItems = Array.isArray( value )
-					? map( value, item => ( { ID: parseInt( item, 10 ) } ) )
-					: [ { ID: parseInt( value, 10 ) } ];
+				const ids = Array.isArray( value )
+					? value.map( item => parseInt( item, 10 ) )
+					: [ parseInt( value, 10 ) ];
+				const selectedItems = ids.map( id => {
+					const media = MediaStore.get( siteId, id );
+					if ( ! media ) {
+						MediaActions.fetch( siteId, id );
+					}
+					return {
+						ID: id,
+						...media,
+					};
+				} );
+
 				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
 			} else {
 				MediaActions.setLibrarySelectedItems( siteId, [] );
