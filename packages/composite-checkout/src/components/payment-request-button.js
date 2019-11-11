@@ -3,11 +3,13 @@
  */
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize';
+import Button from './button';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -33,26 +35,26 @@ export default function PaymentRequestButton( {
 
 	if ( isSubmitting ) {
 		return (
-			<button disabled>
+			<Button disabled fullWidth>
 				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
-			</button>
+			</Button>
 		);
 	}
 	if ( disabled ) {
 		return (
-			<React.Fragment>
-				<button disabled>{ disabledReason }</button>
-			</React.Fragment>
+			<Button disabled fullWidth>
+				{ disabledReason }
+			</Button>
 		);
 	}
 
 	if ( paymentType === 'apple-pay' ) {
-		return <button className="payment-request-button" onClick={ onClick } />;
+		return <ApplePayButton onClick={ onClick } />;
 	}
 	return (
-		<button onClick={ onClick }>
+		<Button onClick={ onClick } fullWidth>
 			{ localize( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
-		</button>
+		</Button>
 	);
 }
 
@@ -62,3 +64,10 @@ PaymentRequestButton.propTypes = {
 	disabled: PropTypes.bool,
 	disabledReason: PropTypes.string,
 };
+
+const ApplePayButton = styled.button`
+	-webkit-appearance: -apple-pay-button;
+	-apple-pay-button-style: black;
+	-apple-pay-button-type: plain;
+	width: 100%;
+`;
