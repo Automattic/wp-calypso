@@ -261,13 +261,6 @@ class Full_Site_Editing {
 				'render_callback' => __NAMESPACE__ . '\render_site_title_block',
 			)
 		);
-
-		register_block_type(
-			'a8c/site-credit',
-			array(
-				'render_callback' => __NAMESPACE__ . '\render_site_credit_block',
-			)
-		);
 	}
 
 	/**
