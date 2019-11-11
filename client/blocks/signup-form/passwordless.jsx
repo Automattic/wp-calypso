@@ -79,7 +79,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 
 		const recaptchaPromise =
-			'show' === abtest( 'userStepRecaptcha' )
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
 				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
 				: Promise.resolve();
 

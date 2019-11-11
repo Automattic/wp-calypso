@@ -50,7 +50,10 @@ export class UserStep extends Component {
 		submitting: false,
 		subHeaderText: '',
 		recaptchaClientId: null,
-		isLoadingRecaptcha: 'show' === abtest( 'userStepRecaptcha' ) ? true : false,
+		isLoadingRecaptcha:
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
+				? true
+				: false,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -78,7 +81,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
+		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
 			initGoogleRecaptcha( 'g-recaptcha', 'calypso/signup/pageLoad' ).then(
 				this.saveRecaptchaToken
 			);
@@ -206,7 +209,7 @@ export class UserStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
 		const recaptchaPromise =
-			'show' === abtest( 'userStepRecaptcha' )
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
 				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
 				: Promise.resolve();
 
