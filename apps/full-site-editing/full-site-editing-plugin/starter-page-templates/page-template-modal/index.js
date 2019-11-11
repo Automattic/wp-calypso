@@ -157,7 +157,7 @@ class PageTemplateModal extends Component {
 	render() {
 		/* eslint-disable no-shadow */
 		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
-		const { templates } = this.props;
+		const { templates, isPromptedFromSidebar } = this.props;
 		/* eslint-enable no-shadow */
 
 		if ( ! isOpen ) {
@@ -174,12 +174,21 @@ class PageTemplateModal extends Component {
 				isDismissable={ false }
 				isDismissible={ false }
 			>
-				<IconButton
-					className="page-template-modal__close-button components-icon-button"
-					onClick={ this.closeModal }
-					icon="arrow-left-alt2"
-					label={ __( 'Go back' ) }
-				/>
+				{ isPromptedFromSidebar ? (
+					<IconButton
+						className="page-template-modal__close-button components-icon-button"
+						onClick={ this.props.togglePlugin }
+						icon="no-alt"
+						label={ __( 'Close Layout Selector' ) }
+					/>
+				) : (
+					<IconButton
+						className="page-template-modal__close-button components-icon-button"
+						onClick={ this.closeModal }
+						icon="arrow-left-alt2"
+						label={ __( 'Go back' ) }
+					/>
+				) }
 
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
@@ -296,10 +305,13 @@ if ( window.location.toString().includes( 'post-new' ) ) {
 	} );
 }
 
+import TemplateSelectorItem from './components/template-selector-item';
+
 export class SidebarTemplateOpener extends Component {
 	state = {
 		isOpen: false,
 		isWarningOpen: false,
+		// blocksByTemplateSlug: {}
 	};
 
 	togglePlugin = () => {
@@ -311,8 +323,17 @@ export class SidebarTemplateOpener extends Component {
 	};
 
 	render() {
+		// const blocksByTemplates = this.state.blocksByTemplateSlug;
+
 		return (
-			<>
+			<div
+				style={ {
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+				} }
+			>
 				{ this.state.isOpen ? (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
@@ -320,6 +341,7 @@ export class SidebarTemplateOpener extends Component {
 						vertical={ vertical }
 						segment={ segment }
 						togglePlugin={ this.togglePlugin }
+						isPromptedFromSidebar
 					/>
 				) : null }
 				{ this.state.isWarningOpen ? (
@@ -342,10 +364,21 @@ export class SidebarTemplateOpener extends Component {
 					</Modal>
 				) : null }
 
+				<TemplateSelectorItem
+					id="fubar--101"
+					value={ templates[ 5 ].slug }
+					label={ replacePlaceholders( templates[ 5 ].title, siteInformation ) }
+					// label={ templates[5].title || "??" }
+					staticPreviewImg={ templates[ 5 ].preview }
+					staticPreviewImgAlt={ templates[ 5 ].previewAlt }
+					// blocks={ blocksByTemplates.hasOwnProperty( templates[5].slug ) ? blocksByTemplates[ templates[5].slug ] : [] }
+					// onSelect={ () => {} }
+				/>
+
 				<Button isPrimary onClick={ this.toggleWarningModal }>
-					Open Layout Selector
+					Change Layout
 				</Button>
-			</>
+			</div>
 		);
 	}
 }
@@ -353,7 +386,7 @@ export class SidebarTemplateOpener extends Component {
 const PluginDocumentSettingPanelDemo = () => (
 	<PluginDocumentSettingPanel
 		name="Template Plugin Opener"
-		title="Choose a Layout"
+		title="Page Layout"
 		className="page-template-modal__sidebar"
 	>
 		<SidebarTemplateOpener />
