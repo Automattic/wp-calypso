@@ -9,9 +9,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import ProductCardAction from './action';
 import ProductCardPriceGroup from './price-group';
 import { managePurchase } from 'me/purchases/paths';
 
@@ -62,14 +62,11 @@ const ProductCard = ( {
 			<div className="product-card__description">
 				{ description && <p>{ description }</p> }
 				{ purchase && (
-					<div className="product-card__action">
-						<Button
-							className="product-card__action-button"
-							href={ managePurchase( purchase.domain, purchase.id ) }
-						>
-							{ translate( 'Manage Subscription' ) }
-						</Button>
-					</div>
+					<ProductCardAction
+						href={ managePurchase( purchase.domain, purchase.id ) }
+						label={ translate( 'Manage Subscription' ) }
+						isPrimary={ false }
+					/>
 				) }
 			</div>
 			{ children }
