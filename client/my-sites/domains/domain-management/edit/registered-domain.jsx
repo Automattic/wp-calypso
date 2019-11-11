@@ -3,33 +3,40 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
 import Notice from 'components/notice';
+import FormToggle from 'components/forms/form-toggle';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
 	domainManagementContactsPrivacy,
-	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
-	domainManagementTransferOut,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
+import {
+	disablePrivacyProtection,
+	enablePrivacyProtection,
+} from 'lib/domains/wapi-domain-info/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import { togglePrivacy } from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-const RegisteredDomain = createReactClass( {
-	displayName: 'RegisteredDomain',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+class RegisteredDomain extends React.Component {
+	state = {
+		submitting: false,
+	};
 
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
@@ -59,7 +66,7 @@ const RegisteredDomain = createReactClass( {
 				{ domain.expirationMoment.format( 'LL' ) }
 			</Property>
 		);
-	},
+	}
 
 	getLabel( { status, icon, message, href } ) {
 		return (
@@ -69,71 +76,66 @@ const RegisteredDomain = createReactClass( {
 				</Notice>
 			</a>
 		);
-	},
+	}
+
+	togglePrivacy = () => {
+		const { selectedSite, translate } = this.props;
+		const { privateDomain, name } = this.props.domain;
+
+		this.setState( { submitting: true } );
+
+		const callback = error => {
+			if ( error ) {
+				this.props.errorNotice( error.message );
+			} else {
+				this.props.togglePrivacy( selectedSite.ID, name );
+
+				const notice = privateDomain
+					? translate( 'Privacy has been successfully disabled!' )
+					: translate( 'Yay, privacy has been successfully enabled!' );
+
+				this.props.successNotice( notice, {
+					duration: 5000,
+				} );
+			}
+
+			this.setState( { submitting: false } );
+		};
+
+		if ( privateDomain ) {
+			disablePrivacyProtection( name, callback );
+		} else {
+			enablePrivacyProtection( name, callback );
+		}
+	};
 
 	getPrivacyProtection() {
-		const {
-				hasPrivacyProtection,
-				privateDomain,
-				privacyAvailable,
-				name,
-				pendingTransfer,
-			} = this.props.domain,
-			{ slug } = this.props.selectedSite,
-			{ translate } = this.props,
-			privacyPath = domainManagementContactsPrivacy( slug, name ),
-			transferPath = domainManagementTransferOut( slug, name );
-		let label;
+		const { privateDomain, privacyAvailable } = this.props.domain;
+		const { translate } = this.props;
+		const { submitting } = this.state;
 
 		if ( ! privacyAvailable ) {
 			return false;
 		}
 
-		if ( pendingTransfer ) {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				message: translate( 'Pending Transfer', {
-					context: 'An icon label when domain is pending transfer.',
-				} ),
-			} );
-		} else if ( hasPrivacyProtection ) {
-			if ( privateDomain ) {
-				label = this.getLabel( {
-					status: 'is-success',
-					icon: 'lock',
-					href: privacyPath,
-					message: translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.',
-					} ),
-				} );
-			} else {
-				label = this.getLabel( {
-					status: 'is-warning',
-					icon: 'notice',
-					href: transferPath,
-					message: translate( 'Disabled for Transfer', {
-						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.',
-					} ),
-				} );
-			}
-		} else {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				href: privacyPath,
-				message: translate( 'None', {
-					context: 'An icon label when Privacy Protection is not purchased by the user.',
-				} ),
-			} );
-		}
+		return (
+			<Property label={ translate( 'Privacy Protection' ) }>
+				{
+					<FormToggle
+						wrapperClassName="edit__privacy-protection-toggle"
+						checked={ privateDomain }
+						toggling={ submitting }
+						disabled={ submitting }
+						onChange={ this.togglePrivacy }
+					/>
+				}
+			</Property>
+		);
+	}
 
-		return <Property label={ translate( 'Privacy Protection' ) }>{ label }</Property>;
-	},
-
-	handlePaymentSettingsClick() {
-		this.recordEvent( 'paymentSettingsClick', this.props.domain );
-	},
+	handlePaymentSettingsClick = () => {
+		this.props.paymentSettingsClick( this.props.domain );
+	};
 
 	domainWarnings() {
 		return (
@@ -146,7 +148,7 @@ const RegisteredDomain = createReactClass( {
 					'expiringDomainsCanManage',
 					'newDomainsWithPrimary',
 					'newDomains',
-					'pendingGappsTosAcceptanceDomains',
+					'pendingGSuiteTosAcceptanceDomains',
 					'expiredDomainsCannotManage',
 					'expiringDomainsCannotManage',
 					'pendingTransfer',
@@ -155,7 +157,7 @@ const RegisteredDomain = createReactClass( {
 				] }
 			/>
 		);
-	},
+	}
 
 	getVerticalNav() {
 		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
@@ -170,13 +172,13 @@ const RegisteredDomain = createReactClass( {
 				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
 			</VerticalNav>
 		);
-	},
+	}
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	},
+	}
 
 	nameServersNavItem() {
 		const path = domainManagementNameServers(
@@ -189,22 +191,17 @@ const RegisteredDomain = createReactClass( {
 				{ this.props.translate( 'Name Servers and DNS' ) }
 			</VerticalNavItem>
 		);
-	},
+	}
 
 	contactsPrivacyNavItem() {
-		const { privacyAvailable } = this.props.domain;
 		const { translate } = this.props;
 		const path = domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
-		return (
-			<VerticalNavItem path={ path }>
-				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
-			</VerticalNavItem>
-		);
-	},
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts' ) }</VerticalNavItem>;
+	}
 
 	transferNavItem() {
 		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
@@ -212,11 +209,12 @@ const RegisteredDomain = createReactClass( {
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
 		);
-	},
+	}
 
 	render() {
 		const { domain, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.domainWarnings() }
@@ -261,7 +259,29 @@ const RegisteredDomain = createReactClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-} );
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+}
 
-export default localize( RegisteredDomain );
+const paymentSettingsClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
+			section: domain.type,
+		} )
+	);
+
+export default connect(
+	null,
+	{
+		errorNotice,
+		paymentSettingsClick,
+		successNotice,
+		togglePrivacy,
+	}
+)( localize( RegisteredDomain ) );

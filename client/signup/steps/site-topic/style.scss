@@ -1,50 +1,67 @@
-body.is-section-signup .step-wrapper .site-topic__content {
+body.is-section-signup .step-wrapper .site-topic__content,
+body.is-section-jetpack-connect .site-topic__content {
 	max-width: 480px;
+	min-height: 46px;
 	margin: 0 auto;
+	position: relative;
 
 	.form-fieldset {
 		margin-bottom: 0;
+		position: absolute;
+		width: 100%;
+		z-index: 1000; // I know, I know...
+		border-radius: 4px;
+		background: var( --color-surface );
+		@include elevation ( 2dp );
+	}
+
+	.suggestion-search .gridicon {
+		fill: var( --color-text-subtle );
 	}
 
 	input {
 		// Extra padding to account for the button and
 		// the search icon.
-		padding: 10px 100px 10px 42px;
+		padding: 10px 90px 12px 42px;
 
 		// Trying out a rounded input
 		border-radius: 4px;
 
-		// Making the border feel a little more "at home"
-		// with signups dark background color.
-		border-color: var( --color-primary-700 );
-
-		// Since there's a 1px padding on the container, and
-		// inputs use actual borders (unlike cards, which
-		// use box-shadow), we need to adjust.
-		margin: 0 -1px;
-		width: calc( 100% + 2px );
+		// No need for a border here
+		border: none;
 
 		@include breakpoint( '<660px' ) {
 			// On smaller screens the buttons get bigger,
 			// so this input needs to get bigger, too.
-			padding-top: 15px;
-			padding-bottom: 15px;
+			padding: 15px 100px 15px 42px;
 
 			// The rounded borders look strange on
 			// smaller screens.
 			border-radius: 0;
 		}
+
+		&:focus {
+			box-shadow: 0 0 0 3px var( --color-accent-light );
+		}
+	}
+
+	&.is-empty input {
+		padding-right: 15px;
 	}
 
 	.suggestions__wrapper {
-		// Without the extra padding from the Card, we need
-		// to adjust the position of the suggestions.
-		top: 46px;
+		position: relative;
+		top: 0;
+		@include elevation ( 0 );
+		margin-top: 3px;
+		margin-bottom: 0;
+		border-radius: 0 0 4px 4px;
+	}
 
-		// On smaller screens the input gets bigger,
-		// so the suggestions need to move down a little.
-		@include breakpoint( '<660px' ) {
-			top: 52px;
+	.suggestions__item {
+		padding-left: 40px;
+		&:last-child {
+			border-width: 0;
 		}
 	}
 
@@ -52,5 +69,19 @@ body.is-section-signup .step-wrapper .site-topic__content {
 		position: absolute;
 		top: 3px;
 		right: 3px;
+		padding: 8px;
+
+		&[disabled] {
+			opacity: 0;
+		}
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			padding: 12px;
+		}
 	}
 }

@@ -16,9 +16,13 @@ import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash
 import SummaryChart from '../stats-summary';
 import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import QueryPostStats from 'components/data/query-post-stats';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatsPostSummary extends Component {
 	static propTypes = {
@@ -77,7 +81,7 @@ class StatsPostSummary extends Component {
 						value: stats.years[ year ].total,
 					};
 				} );
-			case 'month':
+			case 'month': {
 				if ( ! stats.years ) {
 					return [];
 				}
@@ -98,6 +102,7 @@ class StatsPostSummary extends Component {
 				const lastNotEmpty = findLastIndex( months, item => item.value !== 0 );
 
 				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
+			}
 			case 'week':
 				if ( ! stats.weeks ) {
 					return [];
@@ -136,13 +141,13 @@ class StatsPostSummary extends Component {
 				<SectionNav>
 					<SegmentedControl compact>
 						{ periods.map( ( { id, label } ) => (
-							<ControlItem
+							<SegmentedControl.Item
 								key={ id }
 								onClick={ this.selectPeriod( id ) }
 								selected={ this.state.period === id }
 							>
 								{ label }
-							</ControlItem>
+							</SegmentedControl.Item>
 						) ) }
 					</SegmentedControl>
 				</SectionNav>

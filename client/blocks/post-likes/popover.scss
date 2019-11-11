@@ -1,0 +1,15 @@
+@import './variables.scss';
+
+.post-likes-popover {
+	.post-likes {
+		padding: $post-like-padding;
+		max-width: $post-like-width * $post-likes-per-popover-row;
+		max-height: 400px;
+		text-align: left;
+
+		&.has-display-names {
+			max-width: 250px;
+			max-height: 340px;
+		}
+	}
+}

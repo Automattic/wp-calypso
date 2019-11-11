@@ -15,16 +15,18 @@ import { get } from 'lodash';
 import SetupStart from './setup-start';
 import SetupTos from './setup-tos';
 import SetupForm from './setup-form';
-import SetupFooter from './setup-footer';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class CredentialsSetupFlow extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 	};
 
-	componentWillMount() {
-		this.setState( { currentStep: 'start', showPopover: false } );
-	}
+	state = { currentStep: 'start' };
 
 	reset = () => this.setState( { currentStep: 'start' } );
 
@@ -54,7 +56,6 @@ class CredentialsSetupFlow extends Component {
 				) }
 				{ 'form' === this.state.currentStep && [
 					<SetupForm key="credentials-flow-setup-form" reset={ this.reset } siteId={ siteId } />,
-					<SetupFooter key="credentials-flow-setup-form-footer" />,
 				] }
 			</div>
 		);

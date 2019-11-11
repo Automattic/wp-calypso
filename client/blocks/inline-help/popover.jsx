@@ -4,11 +4,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { noop } from 'lodash';
+import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -43,7 +43,6 @@ import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -53,12 +52,12 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import isGutenbergEnabled from '../../state/selectors/is-gutenberg-enabled';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
+import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -241,6 +240,7 @@ class InlineHelpPopover extends Component {
 		const {
 			translate,
 			showNotification,
+			siteId,
 			setNotification,
 			setStoredTask,
 			showOptIn,
@@ -250,6 +250,7 @@ class InlineHelpPopover extends Component {
 
 		return (
 			<>
+				<QueryActiveTheme siteId={ siteId } />
 				{ showOptOut && (
 					<Button
 						onClick={ this.switchToClassicEditor }
@@ -280,10 +281,10 @@ class InlineHelpPopover extends Component {
 	};
 
 	switchToClassicEditor = () => {
-		const { siteId, onClose, optOut, classicUrl } = this.props;
+		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
 		const proceed =
 			typeof window === 'undefined' ||
-			window.confirm( __( 'Are you sure you wish to leave this page?' ) );
+			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
 		if ( proceed ) {
 			optOut( siteId, classicUrl );
 			onClose();
@@ -359,9 +360,7 @@ function mapStateToProps( state ) {
 	const classicRoute = currentRoute.replace( '/block-editor/', '' );
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
-	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const optInEnabled =
-		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
@@ -374,10 +373,9 @@ function mapStateToProps( state ) {
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		selectedEditor: getSelectedEditor( state, siteId ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: optInEnabled && isGutenbergEditor,
+		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 	};
@@ -393,7 +391,10 @@ const mapDispatchToProps = {
 	resetContactForm: resetInlineHelpContactForm,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpPopover ) );
+export default compose(
+	localize,
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
+)( InlineHelpPopover );

@@ -1,0 +1,223 @@
+.reader-list-item {
+	display: flex;
+	flex-flow: row wrap;
+	font-size: 14px;
+	height: 100%;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0 15px;
+	}
+}
+
+.reader-list-item__options {
+	order: 3;
+    align-self: flex-end;
+	width: 100%;
+	margin-left: 44px;
+}
+
+.reader-list-item__byline {
+	color: var( --color-text );
+	margin-right: 16px;
+	flex: 1;
+	order: 2;
+	margin-bottom: 4px;
+}
+
+.following-manage__subscriptions-list {
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes aliasing in Safari
+}
+
+/* Fix for https://github.com/bvaughn/react-virtualized/issues/454 */
+.following-manage__subscriptions-list .ReactVirtualized__List {
+	direction: ltr !important;
+}
+
+.following-manage__subscriptions-list .reader-list-item__options {
+	display: flex;
+	flex-direction: column;
+	min-width: 24px;
+
+	@include breakpoint( '>660px' ) {
+		min-width: 90px;
+	}
+
+	.button.follow-button {
+		@include breakpoint( '>660px' ) {
+			display: flex;
+		}
+	}
+}
+
+.reader-list-item__link,
+.reader-list-item__link:visited {
+	color: var( --color-primary );
+
+	&:hover {
+		color: var( --color-primary-light );
+	}
+}
+
+.reader-list-item__by-text .reader-list-item__link {
+	color: var( --color-text );
+}
+
+.reader-list-item .gravatar {
+	float: left;
+	margin: 4px 12px 0 0;
+	height: 32px;
+	min-height: 32px;
+	min-width: 32px;
+	background: gray;
+}
+
+.reader-list-item .site-icon {
+	margin-top: 5px;
+}
+
+.reader-list-item__site-url,
+.reader-list-item__site-url:visited,
+.reader-list-item__timestamp {
+	color: var( --color-text-subtle );
+}
+
+.reader-list-item__site-title,
+.reader-list-item__by-text,
+.reader-list-item__site-excerpt,
+.reader-list-item__site-url-timestamp {
+	display: block;
+	max-height: 16px * 2.6;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	margin-bottom: 4px;
+
+	&:not( .is-placeholder )::after {
+		@include long-content-fade( $size: 20% );
+		height: 16px * 1.3;
+		top: auto;
+	}
+}
+
+.reader-list-item__by-text,
+.reader-list-item__site-url-timestamp {
+	word-break: break-all;
+}
+
+.reader-list-item__site-excerpt {
+	max-height: 16px * 2.8;
+}
+
+.reader-list-item__site-title {
+	font-weight: 600;
+	font-size: 15px;
+}
+
+.reader-list-item__site-url-timestamp {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	max-height: 16px * 3.2;
+	min-width: 100%;
+
+	@include breakpoint( '<960px' ) {
+		height: auto;
+		flex-direction: column;
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: row;
+	}
+
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+	}
+
+	&:not( .is-placeholder )::after {
+		@include long-content-fade( $size: 20% );
+		height: 100%;
+		top: auto;
+	}
+
+	.external-link .gridicons-external {
+		margin-left: 4px;
+	}
+}
+
+.reader-list-item__site-url {
+	display: inline;
+	margin-right: 8px;
+	overflow: hidden;
+	position: relative;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	max-height: 16px * 1.3;
+
+	@include breakpoint( '<960px' ) {
+		height: 20px;
+		flex: 1 1 auto;
+		max-width: none;
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex: 0 1 auto;
+	}
+
+	@include breakpoint( '<480px' ) {
+		flex: 1 1 auto;
+		max-width: none;
+	}
+}
+
+.reader-list-item .follow-button .gridicon {
+	@include breakpoint( '<660px' ) {
+		left: 3px;
+	}
+}
+
+// Placeholders
+.reader-list-item.reader-list-item__placeholder {
+	.reader-list-item__site-title,
+	.reader-list-item__site-excerpt,
+	.reader-list-item__by-text,
+	.reader-list-item__site-url,
+	.reader-list-item__follow {
+		@include placeholder();
+	}
+
+	.reader-list-item__site-excerpt {
+		margin-top: 2px;
+	}
+
+	.reader-list-item__site-title {
+		max-width: 60%;
+	}
+
+	.reader-list-item__site-excerpt {
+		max-width: 80%;
+	}
+
+	.reader-list-item__site-url {
+		max-width: 40%;
+		margin-top: -1px;
+	}
+
+	.reader-list-item__follow {
+		width: 20px;
+		height: 20px;
+
+		@include breakpoint( '>660px' ) {
+			width: 16px * 1.5 * 3;
+		}
+	}
+}
+
+.reader-list-item__avatar {
+	min-width: 44px;
+	order: 1;
+    flex: 0;
+}

@@ -1,0 +1,413 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
+<div
+  className="gsuite-features__list"
+>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+      <p>
+        Professional ad-free email that works with most email clients.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+      <p>
+        Collaborate in real-time with documents, spreadsheets and slides.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Keep all your files secure
+      </h5>
+      <p>
+        Get 30GB of storage for all your files synced across devices.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Connect with your team
+      </h5>
+      <p>
+        Use text chats or video calls, with built in screen sharing.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+      <p>
+        Professional ad-free email that works with most email clients.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+      <p>
+        Collaborate in real-time with documents, spreadsheets and slides.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Keep all your files secure
+      </h5>
+      <p>
+        Get 30GB of storage for all your files synced across devices.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Connect with your team
+      </h5>
+      <p>
+        Use text chats or video calls, with built in screen sharing.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+      <p>
+        Professional ad-free email that works with most email clients.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+      <p>
+        Collaborate in real-time with documents, spreadsheets and slides.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Keep all your files secure
+      </h5>
+      <p>
+        Get unlimited storage for all your files synced across devices.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Connect with your team
+      </h5>
+      <p>
+        Use text chats or video calls, with built in screen sharing.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
+<div
+  className="gsuite-features__grid"
+>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Gmail Logo"
+        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        A custom @testing123.com email address
+      </h5>
+      <p>
+        Professional ad-free email that works with most email clients.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Docs Logo"
+        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Docs, spreadsheets and more
+      </h5>
+      <p>
+        Collaborate in real-time with documents, spreadsheets and slides.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Drive Logo"
+        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Keep all your files secure
+      </h5>
+      <p>
+        Get 30GB or unlimited storage for all your files synced across devices.
+      </p>
+    </div>
+  </div>
+  <div
+    className="gsuite-features__feature"
+  >
+    <div
+      className="gsuite-features__feature-image"
+    >
+      <img
+        alt="Google Hangouts Logo"
+        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+      />
+    </div>
+    <div
+      className="gsuite-features__feature-block"
+    >
+      <h5
+        className="gsuite-features__feature-header"
+      >
+        Connect with your team
+      </h5>
+      <p>
+        Use text chats or video calls, with built in screen sharing.
+      </p>
+    </div>
+  </div>
+</div>
+`;

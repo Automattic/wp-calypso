@@ -19,7 +19,7 @@ import {
 	clearError,
 	oauthConnect,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import {
 	getError,
 	getIsOAuthConnecting,
@@ -38,7 +38,7 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 		onCancel: PropTypes.func.isRequired,
 	};
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		this.props.clearError();
 	};
 
@@ -53,7 +53,7 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 		}
 	};
 
-	componentWillReceiveProps = ( { stripeConnectAccount } ) => {
+	UNSAFE_componentWillReceiveProps = ( { stripeConnectAccount } ) => {
 		// Did we receive a connected user ID? Connect must have finished, so
 		// let's close this dialog
 		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );

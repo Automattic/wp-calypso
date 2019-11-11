@@ -12,8 +12,13 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import FeaturedDomainSuggestionsPlaceholder from 'components/domains/featured-domain-suggestions/placeholder';
+import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {

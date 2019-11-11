@@ -1,5 +1,5 @@
 /** @format */
-
+const { merge } = require( 'lodash' );
 const reactVersion = require( './package.json' ).dependencies.react;
 
 module.exports = {
@@ -22,33 +22,59 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'client/gutenberg/extensions/**/*' ],
+			files: [ 'test/e2e/**/*' ],
 			rules: {
-				'react/forbid-elements': [
-					'error',
-					{
-						forbid: [
-							[ 'circle', 'Circle' ],
-							[ 'g', 'G' ],
-							[ 'path', 'Path' ],
-							[ 'polygon', 'Polygon' ],
-							[ 'rect', 'Rect' ],
-							[ 'svg', 'SVG' ],
-						].map( ( [ element, componentName ] ) => ( {
-							element,
-							message: `use <${ componentName }> from @wordpress/components`,
-						} ) ),
-					},
-				],
-				'react/react-in-jsx-scope': 0,
-				'wpcalypso/jsx-classname-namespace': 0,
+				'import/no-nodejs-modules': 0,
+				'import/no-extraneous-dependencies': 0,
+				'no-console': 0,
+				'jest/valid-describe': 0,
+				'jest/no-test-prefixes': 0,
+				'jest/no-identical-title': 0,
+			},
+			globals: {
+				step: false,
 			},
 		},
+		merge(
+			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
+			// the TypeScript config manually using internal bits from various plugins
+			{},
+			// base TypeScript config: parser options, add plugin with rules
+			require( '@typescript-eslint/eslint-plugin' ).configs.base,
+			// basic recommended rules config from the TypeScript plugin
+			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
+			// Prettier rules config
+			require( 'eslint-config-prettier/@typescript-eslint' ),
+			// Our own overrides
+			{
+				files: [ '**/*.ts', '**/*.tsx' ],
+				rules: {
+					'@typescript-eslint/explicit-function-return-type': 'off',
+					'@typescript-eslint/explicit-member-accessibility': 'off',
+					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+					'@typescript-eslint/no-use-before-define': [
+						'error',
+						{ functions: false, typedefs: false },
+					],
+					'no-use-before-define': 'off',
+					'@typescript-eslint/no-var-requires': 'off',
+					// REST API objects include underscores
+					'@typescript-eslint/camelcase': 'off',
+					'valid-jsdoc': [
+						2,
+						{
+							requireParamType: false,
+							requireReturn: false,
+							requireReturnType: false,
+						},
+					],
+				},
+			}
+		),
 	],
-	parser: 'babel-eslint',
 	env: {
 		browser: true,
-		'jest/globals': true,
+		jest: true,
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
@@ -56,8 +82,6 @@ module.exports = {
 	globals: {
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
 		asyncRequire: true,
-		// this is the name of the project from the build config. Injected at boot in a script tag.
-		PROJECT_NAME: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle
@@ -82,9 +106,50 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 0,
 
-		// error if any module depends on the data-observe mixin, which is deprecated
-		'no-restricted-imports': [ 2, 'lib/mixins/data-observe' ],
-		'no-restricted-modules': [ 2, 'lib/mixins/data-observe' ],
+		'no-restricted-imports': [
+			2,
+			{
+				paths: [
+					// Error if any module depends on the data-observe mixin, which is deprecated.
+					'lib/mixins/data-observe',
+					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					{
+						name: 'gridicons',
+						message: "Please use 'components/gridicon' instead.",
+					},
+					// Prevent importing Redux's combineReducers.
+					{
+						name: 'redux',
+						importNames: [ 'combineReducers' ],
+						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
+				],
+			},
+		],
+		'no-restricted-modules': [
+			2,
+			{
+				paths: [
+					// Error if any module depends on the data-observe mixin, which is deprecated.
+					'lib/mixins/data-observe',
+					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					{
+						name: 'gridicons',
+						message: "Please use 'components/gridicon' instead.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
+				],
+			},
+		],
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 0,
@@ -96,10 +161,6 @@ module.exports = {
 				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
 			},
 		],
-
-		// Force folks to use our custom combineReducers function instead of the plain redux one
-		// This allows us to control serialization for every reducer.
-		'wpcalypso/import-no-redux-combine-reducers': 2,
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls

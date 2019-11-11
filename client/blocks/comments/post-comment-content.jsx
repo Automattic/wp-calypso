@@ -13,6 +13,11 @@ import { localize } from 'i18n-calypso';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
+/**
+ * Style dependencies
+ */
+import './post-comment-content.scss';
+
 class PostCommentContent extends React.Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,

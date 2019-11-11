@@ -23,6 +23,11 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsMostPopular extends Component {
 	static propTypes = {
 		day: PropTypes.string,

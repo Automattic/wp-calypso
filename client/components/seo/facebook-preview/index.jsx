@@ -8,6 +8,11 @@ import React, { PureComponent } from 'react';
 import { compact } from 'lodash';
 import { firstValid, hardTruncation, shortEnough } from '../helpers';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 200;
 

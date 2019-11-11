@@ -205,7 +205,7 @@ class CrossPost extends PureComponent {
 							</a>
 						</h1>
 					) }
-					<Emojify>{ this.getDescription( post.author.first_name ) }</Emojify>
+					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

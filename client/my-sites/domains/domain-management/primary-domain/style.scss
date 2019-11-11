@@ -1,0 +1,22 @@
+.primary-domain-card {
+	.primary-domain-explanation {
+		color: var( --color-text-subtle );
+		display: block;
+		font-size: 13px;
+		font-style: italic;
+		margin: 5px 0;
+	}
+
+	.primary-domain-notice {
+		background: var( --color-neutral-0 );
+		font-size: 13px;
+		color: var( --color-neutral-70 );
+		&::before {
+			line-height: 1.5em;
+		}
+	}
+
+	.domain-management-form-footer {
+		justify-content: flex-end;
+	}
+}

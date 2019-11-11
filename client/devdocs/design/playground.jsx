@@ -20,14 +20,19 @@ import * as playgroundScope from 'devdocs/design/playground-scope';
 import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import Main from 'components/main';
-import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
+
+/**
+ * Style Dependencies
+ */
+import './playground.scss';
+import './syntax.scss';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();
@@ -74,6 +79,7 @@ class DesignAssets extends React.Component {
           fitsContainer
           placeholder="Search Published..."
           delaySearch={ true }
+          onSearch={ () => {} }
       />
     </SectionNav>
 </Main>`,
@@ -109,9 +115,9 @@ class DesignAssets extends React.Component {
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );
 					return (
 						exampleCode && (
-							<DropdownItem key={ name } onClick={ this.addComponent( exampleCode ) }>
+							<SelectDropdown.Item key={ name } onClick={ this.addComponent( exampleCode ) }>
 								{ name }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						)
 					);
 				} ) }
@@ -150,6 +156,7 @@ class DesignAssets extends React.Component {
 	}
 }
 
+let connectedDesignAssets;
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
@@ -172,10 +179,10 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
+	connectedDesignAssets = connect(
 		mapStateToProps,
 		mapDispatchToProps
 	)( DesignAssets );
 }
 
-export default DesignAssets;
+export default connectedDesignAssets || DesignAssets;

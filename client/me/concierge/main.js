@@ -35,6 +35,8 @@ import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
 import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ReauthRequired from 'me/reauth-required';
+import twoStepAuthorization from 'lib/two-step-authorization';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -42,8 +44,25 @@ export class ConciergeMain extends Component {
 
 		this.state = {
 			currentStep: 0,
+			reauthRequired: false,
 		};
 	}
+
+	componentDidMount() {
+		twoStepAuthorization.on( 'change', this.checkReauthRequired );
+		this.checkReauthRequired();
+	}
+
+	componentWillUnmount() {
+		twoStepAuthorization.off( 'change', this.checkReauthRequired );
+	}
+
+	checkReauthRequired = () => {
+		const reauthRequired = twoStepAuthorization.isReauthRequired();
+		if ( this.state.reauthRequired !== reauthRequired ) {
+			this.setState( { reauthRequired } );
+		}
+	};
 
 	goToPreviousStep = () => {
 		this.setState( { currentStep: this.state.currentStep - 1 } );
@@ -62,6 +81,7 @@ export class ConciergeMain extends Component {
 			scheduleId,
 			userSettings,
 			nextAppointment,
+			rescheduling,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -76,8 +96,8 @@ export class ConciergeMain extends Component {
 			return <Upsell site={ site } />;
 		}
 
-		if ( nextAppointment ) {
-			return <AppointmentInfo appointment={ nextAppointment } />;
+		if ( nextAppointment && ! rescheduling ) {
+			return <AppointmentInfo appointment={ nextAppointment } site={ site } />;
 		}
 
 		if ( isEmpty( availableTimes ) ) {
@@ -98,15 +118,20 @@ export class ConciergeMain extends Component {
 
 	render() {
 		const { analyticsPath, analyticsTitle, site } = this.props;
+		const { reauthRequired } = this.state;
 		const siteId = site && site.ID;
-
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				<QueryUserSettings />
-				<QuerySites />
-				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				{ ! reauthRequired && (
+					<>
+						<QueryUserSettings />
+						<QuerySites />
+						{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+						{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					</>
+				) }
 				{ this.getDisplayComponent() }
 			</Main>
 		);

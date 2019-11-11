@@ -1,0 +1,202 @@
+// ==========================================================================
+// Buttons - From wp-calypso
+// ==========================================================================
+
+.wpnc__main {
+	// resets button styles
+	wpnc__button {
+		background: transparent;
+		border: none;
+		outline: 0;
+		padding: 0;
+		font-size: 14px;
+		-webkit-appearance: none;
+		appearance: none;
+		vertical-align: baseline;
+	}
+
+	.wpnc__button {
+		background: var( --color-surface );
+		border-color: var( --color-neutral-10 );
+		border-style: solid;
+		border-width: 1px 1px 2px;
+		color: var( --color-neutral-70 );
+		cursor: pointer;
+		display: inline-block;
+		margin: 0;
+		outline: 0;
+		overflow: hidden;
+		font-weight: 500;
+		text-overflow: ellipsis;
+		text-decoration: none;
+		vertical-align: top;
+		box-sizing: border-box;
+		font-size: 14px;
+		line-height: 21px;
+		border-radius: 4px;
+		padding: 7px 14px 9px;
+		-webkit-appearance: none;
+		appearance: none;
+
+		&:hover {
+			border-color: var( --color-neutral-20 );
+			color: var( --color-neutral-70 );
+		}
+		&:active {
+			border-width: 2px 1px 1px;
+		}
+		&:visited {
+			color: var( --color-neutral-70 );
+		}
+		&[disabled],
+		&:disabled {
+			color: var( --color-neutral-0 );
+			background: var( --color-surface );
+			border-color: var( --color-neutral-0 );
+			cursor: default;
+
+			&:active {
+				border-width: 1px 1px 2px;
+			}
+		}
+		&:focus {
+			border-color: var( --color-primary );
+			box-shadow: 0 0 0 2px var( --color-primary-light );
+		}
+		&.is-compact {
+			padding: 7px;
+			color: var( --color-neutral-40 );
+			font-size: 11px;
+			line-height: 1;
+			text-transform: uppercase;
+
+			&:disabled {
+				color: var( --color-neutral-0 );
+			}
+			.gridicon {
+				top: 4px;
+				margin-top: -8px;
+			}
+		}
+		&.hidden {
+			display: none;
+		}
+		.gridicon {
+			position: relative;
+			top: 4px;
+			margin-top: -2px;
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	// Primary buttons
+	.wpnc__button.is-primary {
+		background: var( --color-primary );
+		border-color: var( --color-primary );
+		color: var( --color-text-inverted );
+
+		&:hover,
+		&:focus {
+			border-color: var( --color-primary-dark );
+			color: var( --color-text-inverted );
+		}
+		&[disabled],
+		&:disabled {
+			background: var( --color-primary-5 );
+			border-color: var( --color-primary-20 );
+			color: var( --color-text-inverted );
+		}
+		&.is-compact {
+			color: var( --color-text-inverted );
+		}
+	}
+
+	// Scary buttons
+	.wpnc__button.is-scary {
+		color: var( --color-error );
+
+		&:hover,
+		&:focus {
+			border-color: var( --color-error );
+		}
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-error-20 );
+		}
+		&[disabled],
+		&:disabled {
+			color: var( --color-error-5 );
+			border-color: var( --color-neutral-0 );
+		}
+	}
+
+	.wpnc__button.is-primary.is-scary {
+		background: var( --color-error );
+		border-color: var( --color-error-60 );
+		color: var( --color-text-inverted );
+
+		&:hover,
+		&:focus {
+			border-color: var( --color-error-100 );
+		}
+		&[disabled],
+		&:disabled {
+			background: var( --color-error-20 );
+			border-color: var( --color-error-30 );
+		}
+	}
+
+	.wpnc__button.is-borderless {
+		border: none;
+		color: var( --color-neutral-40 );
+		padding-left: 0;
+		padding-right: 0;
+
+		&:hover {
+			color: var( --color-neutral-70 );
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		.gridicon {
+			width: auto;
+			height: auto;
+			top: 6px;
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --color-neutral-0 );
+			background: var( --color-surface );
+			cursor: default;
+
+			&:active {
+				border-width: 0;
+			}
+		}
+		&.is-scary {
+			color: var( --color-error );
+
+			&:hover,
+			&:focus {
+				color: var( --color-error-60 );
+			}
+
+			&[disabled] {
+				color: var( --color-error-5 );
+			}
+		}
+
+		&.is-compact {
+			background: transparent;
+			border-radius: 0;
+			.gridicon {
+				width: 18px;
+				height: 18px;
+				top: 5px;
+			}
+		}
+	}
+}

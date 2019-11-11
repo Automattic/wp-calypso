@@ -1,6 +1,8 @@
 /** @format */
 export const SIMPLE_PAYMENTS_PRODUCT_POST_TYPE = 'jp_pay_product';
 
+export const NUMBER_OF_POSTS_BY_REQUEST = 100;
+
 export const DEFAULT_CURRENCY = 'USD';
 
 // https://developer.paypal.com/docs/integration/direct/rest/currency-codes/

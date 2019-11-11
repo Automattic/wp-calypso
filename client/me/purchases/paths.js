@@ -6,6 +6,12 @@ export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
 
+export const upcomingCharges = purchasesRoot + '/upcoming';
+
+export const pendingPayments = purchasesRoot + '/pending';
+
+export const myMemberships = purchasesRoot + '/other';
+
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {
@@ -40,15 +46,6 @@ export function confirmCancelDomain( siteName, purchaseId ) {
 		}
 	}
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
-}
-
-export function cancelPrivacyProtection( siteName, purchaseId ) {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
-			throw new Error( 'siteName and purchaseId must be provided' );
-		}
-	}
-	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 
 export function addCardDetails( siteName, purchaseId ) {

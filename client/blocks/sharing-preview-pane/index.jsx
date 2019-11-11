@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,6 @@ import { get, find, map } from 'lodash';
  */
 import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
-import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
 import LinkedinSharePreview from 'components/share/linkedin-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
 import TumblrSharePreview from 'components/share/tumblr-share-preview';
@@ -29,10 +26,14 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getSiteIconUrl from 'state/selectors/get-site-icon-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const serviceNames = {
 	facebook: 'Facebook',
 	twitter: 'Twitter',
-	google_plus: 'Google Plus',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
 };
@@ -91,7 +92,9 @@ class SharingPreviewPane extends PureComponent {
 					status="is-info"
 					showDismiss={ false }
 				>
-					<NoticeAction href={ '/sharing/' + siteSlug }>{ translate( 'Settings' ) }</NoticeAction>
+					<NoticeAction href={ '/marketing/connections/' + siteSlug }>
+						{ translate( 'Settings' ) }
+					</NoticeAction>
 				</Notice>
 			);
 		}
@@ -128,8 +131,6 @@ class SharingPreviewPane extends PureComponent {
 		switch ( selectedService ) {
 			case 'facebook':
 				return <FacebookSharePreview { ...previewProps } />;
-			case 'google_plus':
-				return <GooglePlusSharePreview { ...previewProps } />;
 			case 'tumblr':
 				return <TumblrSharePreview { ...previewProps } />;
 			case 'linkedin':

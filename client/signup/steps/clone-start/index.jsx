@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
 import { getSiteBySlug } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -27,7 +27,6 @@ class CloneStartStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -35,16 +34,15 @@ class CloneStartStep extends Component {
 	goToNextStep = () => {
 		const { originBlogId, originSiteSlug, originSiteName } = this.props;
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			originBlogId,
-			originSiteSlug,
-			originSiteName,
-		} );
+		this.props.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{ originBlogId, originSiteSlug, originSiteName }
+		);
 
 		this.props.goToNextStep();
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { originSiteSlug, translate } = this.props;
 
 		return (
@@ -161,17 +159,10 @@ class CloneStartStep extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, originSiteName, translate } = this.props;
 
 		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
 		const subHeaderText = translate(
@@ -188,21 +179,23 @@ class CloneStartStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const originSiteSlug = get( ownProps, 'stepSectionName', '' );
-	const site = getSiteBySlug( state, originSiteSlug );
-	const originSiteName = get( site, 'name', '' );
+export default connect(
+	( state, ownProps ) => {
+		const originSiteSlug = get( ownProps, 'stepSectionName', '' );
+		const site = getSiteBySlug( state, originSiteSlug );
+		const originSiteName = get( site, 'name', '' );
 
-	return {
-		originBlogId: get( site, 'ID', -Infinity ),
-		originSiteName,
-		originSiteSlug,
-	};
-} )( localize( CloneStartStep ) );
+		return {
+			originBlogId: get( site, 'ID', -Infinity ),
+			originSiteName,
+			originSiteSlug,
+		};
+	},
+	{ submitSignupStep }
+)( localize( CloneStartStep ) );

@@ -6,7 +6,6 @@ import './polyfills';
  * External dependencies
  */
 import debugFactory from 'debug';
-import { invoke } from 'lodash';
 import page from 'page';
 
 /**
@@ -19,23 +18,23 @@ import { getInitialState, persistOnChange } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
+/**
+ * Style dependencies
+ */
+import 'assets/stylesheets/style.scss';
+
 const debug = debugFactory( 'calypso' );
 
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
-	const project = require( `./project/${ PROJECT_NAME }` );
 	utils();
-	invoke( project, 'utils' );
 	getInitialState( initialReducer ).then( initialState => {
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
 		locales( currentUser, reduxStore );
-		invoke( project, 'locales', currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );
-		invoke( project, 'configureReduxStore', currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
-		invoke( project, 'setupMiddlewares', currentUser, reduxStore );
 		detectHistoryNavigation.start();
 		page.start( { decodeURLComponents: false } );
 	} );
@@ -43,9 +42,5 @@ const boot = currentUser => {
 
 window.AppBoot = () => {
 	const user = userFactory();
-	if ( user.initialized ) {
-		boot( user );
-	} else {
-		user.once( 'change', () => boot( user ) );
-	}
+	user.initialize().then( () => boot( user ) );
 };

@@ -20,7 +20,7 @@ import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { isLocaleRtl } from 'lib/i18n-utils';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {
@@ -44,7 +44,7 @@ class CompactTinyMCE extends Component {
 	// See this.localize()
 	DUMMY_LANG_URL = '/do-not-load/';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._id = uniqueId( 'woocommerce-tinymce-' );
 		// Init any plugins we need
 		wplinkPlugin();
@@ -85,8 +85,8 @@ class CompactTinyMCE extends Component {
 		if ( store ) {
 			const state = store.getState();
 
-			isRtl = isRtlSelector( state );
 			localeSlug = getCurrentLocaleSlug( state );
+			isRtl = isLocaleRtl( localeSlug );
 		}
 
 		this.localize( isRtl, localeSlug );

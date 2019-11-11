@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,11 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import countPostLikes from 'state/selectors/count-post-likes';
 import getPostLikes from 'state/selectors/get-post-likes';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostLikes extends React.PureComponent {
 	static defaultProps = {

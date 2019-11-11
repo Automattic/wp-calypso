@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -21,18 +22,20 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
 		siteId,
+		isVip,
 		siteSlug,
 		translate,
 		isJetpack,
 	} = props;
 
-	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes;
+	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes && ! isVip;
 	const bannerLocationBelowSearch = ! isJetpack;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
@@ -42,7 +45,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			upsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
-					className="is-theme-showcase-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					customerType="business"
+					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
 					callToAction={ translate( 'View Plans' ) }
@@ -65,7 +69,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 		}
 	}
 	return (
-		<div>
+		<Main className="themes">
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }
@@ -80,12 +84,13 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
 			</ThemeShowcase>
-		</div>
+		</Main>
 	);
 } );
 
 export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
+	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),

@@ -4,12 +4,10 @@
  */
 import page from 'page';
 import React from 'react';
-import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
@@ -24,10 +22,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { setSection } from 'state/ui/actions';
-import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
-import { decodeURIComponentIfValid } from 'lib/url';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -50,71 +45,18 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-export function redirectToGeneral() {
-	page.redirect( '/settings/general' );
-}
-
 export function redirectIfCantDeleteSite( context, next ) {
 	const state = context.store.getState();
-	const dispatch = context.store.dispatch;
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 
-	if ( siteId && ! canDeleteSite( state, siteId ) ) {
-		return page.redirect( '/settings/general/' + siteSlug );
+	if ( ! canDeleteSite( state, getSelectedSiteId( state ) ) ) {
+		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 
-	if ( ! siteId ) {
-		dispatch( {
-			type: SITES_ONCE_CHANGED,
-			listener: () => {
-				const updatedState = context.store.getState();
-				const updatedSiteId = getSelectedSiteId( updatedState );
-				const updatedSiteSlug = getSelectedSiteSlug( updatedState );
-				if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
-					return page.redirect( '/settings/general/' + updatedSiteSlug );
-				}
-			},
-		} );
-	}
 	next();
 }
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function importSite( context, next ) {
-	// Pull supported query arguments into state & discard the rest
-	if ( context.querystring ) {
-		page.replace( context.pathname, {
-			engine: get( context, 'query.engine' ),
-			siteUrl: get( context, 'query.from-site' ),
-		} );
-		return;
-	}
-
-	context.store.dispatch(
-		setImportOriginSiteDetails( {
-			engine: get( context, 'state.engine' ),
-			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
-		} )
-	);
-
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
-	next();
-}
-
-export function exportSite( context, next ) {
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
-	next();
-}
-
-export function guidedTransfer( context, next ) {
-	context.primary = (
-		<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
-	);
 	next();
 }
 
@@ -162,23 +104,26 @@ export function manageConnection( context, next ) {
 }
 
 export function legacyRedirects( context, next ) {
-	const section = context.params.section,
-		redirectMap = {
-			account: '/me/account',
-			password: '/me/security',
-			'public-profile': '/me/public-profile',
-			notifications: '/me/notifications',
-			disbursements: '/me/public-profile',
-			earnings: '/me/public-profile',
-			'billing-history': billingHistory,
-			'billing-history-v2': billingHistory,
-			'connected-apps': '/me/security/connected-applications',
-		};
-	if ( ! context ) {
-		return page( '/me/public-profile' );
-	}
+	const { section } = context.params;
+	const redirectMap = {
+		account: '/me/account',
+		password: '/me/security',
+		'public-profile': '/me/public-profile',
+		notifications: '/me/notifications',
+		disbursements: '/me/public-profile',
+		earnings: '/me/public-profile',
+		'billing-history': billingHistory,
+		'billing-history-v2': billingHistory,
+		'connected-apps': '/me/security/connected-applications',
+	};
+
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
 	}
+
 	next();
+}
+
+export function redirectToTraffic( context ) {
+	return page.redirect( '/marketing/traffic/' + context.params.site_id );
 }

@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { Env } from 'tinymce/tinymce';
 
 /**
@@ -24,7 +24,8 @@ import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	fieldAdd,
 	fieldRemove,
@@ -506,7 +507,7 @@ export class EditorHtmlToolbar extends Component {
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	renderAddEverythingDropdown = () => {
-		const { translate } = this.props;
+		const { translate, canUserUploadFiles } = this.props;
 
 		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
 			'is-visible': this.state.showInsertContentMenu,
@@ -522,17 +523,19 @@ export class EditorHtmlToolbar extends Component {
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</button>
 
-				{ config.isEnabled( 'external-media/google-photos' ) && (
+				{ config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
 						<Gridicon icon="shutter" />
-						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
+						<span data-e2e-insert-type="google-media">
+							{ translate( 'Google Photos library' ) }
+						</span>
 					</button>
 				) }
 
-				{ config.isEnabled( 'external-media/free-photo-library' ) && (
+				{ config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
@@ -710,6 +713,7 @@ const mapStateToProps = state => ( {
 	contactForm: get( state, 'ui.editor.contactForm', {} ),
 	isDropZoneVisible: isDropZoneVisible( state ),
 	site: getSelectedSite( state ),
+	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
 } );
 
 const mapDispatchToProps = {

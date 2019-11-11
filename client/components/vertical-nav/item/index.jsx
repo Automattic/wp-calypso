@@ -12,7 +12,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

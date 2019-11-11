@@ -26,7 +26,7 @@ const ruleWhiteList = [
 	'expiredDomainsCannotManage',
 	'expiringDomainsCannotManage',
 	'wrongNSMappedDomains',
-	'pendingGappsTosAcceptanceDomains',
+	'pendingGSuiteTosAcceptanceDomains',
 	'transferStatus',
 	'newTransfersWrongNS',
 	'pendingConsent',

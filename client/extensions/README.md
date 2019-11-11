@@ -13,7 +13,7 @@ Before you get started we encourage you to get familiar with our [development va
 
 ## Defining a new section
 
-Create a new directory within `/client/extensions` with your plugin name. Add a `package.json` file at the root of your directory. Add a `section` field in the same format as those found in `client/wordpress-com.js`:
+Create a new directory within `/client/extensions` with your plugin name. Add a `package.json` file at the root of your directory. Add a `section` field in the same format as those found in `client/sections.js`:
 
 ```json
 {

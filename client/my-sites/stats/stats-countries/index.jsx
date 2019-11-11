@@ -15,6 +15,11 @@ import statsStrings from '../stats-strings';
 import Geochart from '../geochart';
 import StatsModule from '../stats-module';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatCountries extends Component {
 	static propTypes = {
 		summary: PropTypes.bool,

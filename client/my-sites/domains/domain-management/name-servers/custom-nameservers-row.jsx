@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -37,7 +37,7 @@ class CustomNameserversRow extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="custom-nameservers-row">
+			<div className="name-servers__custom-nameservers-row">
 				<fieldset>
 					<input
 						type="text"

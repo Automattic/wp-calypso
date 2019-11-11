@@ -5,13 +5,13 @@
 	height: 18px;
 	margin: 0;
 	padding: 0;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	background: linear-gradient(
 		to bottom,
 		transparent,
 		transparent 8px,
-		$gray-lighten-20 8px,
-		$gray-lighten-20 10px,
+		var( --color-neutral-10 ) 8px,
+		var( --color-neutral-10 ) 10px,
 		transparent 10px
 	);
 }
@@ -27,7 +27,7 @@
 	background: radial-gradient(
 		var( --color-primary ),
 		var( --color-primary ) 6px,
-		$blue-dark 7px,
+		var( --color-primary-dark ) 7px,
 		transparent 8px,
 		transparent
 	);

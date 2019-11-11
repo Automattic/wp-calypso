@@ -95,7 +95,7 @@ class OrderDetails extends Component {
 		return (
 			<div className="order-details">
 				<SectionHeader
-					label={ translate( 'Order %(orderId)s Details', {
+					label={ translate( 'Order %(orderId)s details', {
 						args: { orderId: isObject( order.id ) ? '' : `#${ order.id }` },
 					} ) }
 				>

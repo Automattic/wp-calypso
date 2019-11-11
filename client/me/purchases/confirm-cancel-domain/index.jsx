@@ -12,7 +12,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase } from 'lib/purchases/actions';
 import Card from 'components/card';
 import { clearPurchases } from 'state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
@@ -43,6 +43,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -67,7 +72,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 

@@ -20,10 +20,14 @@ class SiteLink extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		isButton: PropTypes.bool,
+		isPrimaryButton: PropTypes.bool,
+		newWindow: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isButton: false,
+		isPrimaryButton: true,
+		newWindow: false,
 	};
 
 	static contextTypes = contextTypes;
@@ -35,12 +39,18 @@ class SiteLink extends Component {
 	};
 
 	render() {
-		const { children, href, siteSlug, isButton } = this.props;
+		const { children, href, siteSlug, isButton, isPrimaryButton, newWindow } = this.props;
 		const siteHref = href.replace( ':site', siteSlug );
+		const siteTarget = newWindow ? '_blank' : null;
 
 		if ( isButton ) {
 			return (
-				<Button primary onClick={ this.onClick } href={ siteHref }>
+				<Button
+					primary={ isPrimaryButton }
+					onClick={ this.onClick }
+					href={ siteHref }
+					target={ siteTarget }
+				>
 					{ children }
 				</Button>
 			);

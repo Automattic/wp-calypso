@@ -1,0 +1,38 @@
+.importer-header {
+	border-bottom: 1px solid var( --color-border-subtle );
+	margin-bottom: 1.25em;
+}
+
+.importer-header__is-start {
+	border-bottom: 0;
+
+	.importer-header__service-title {
+		line-height: 40px;
+
+		@include breakpoint( '>960px' ) {
+			line-height: 56px;
+		}
+	}
+
+}
+
+.importer-header__service-info {
+	margin-left: 3.75em;
+
+	p {
+		margin-bottom: 1em;
+	}
+}
+
+.importer-header__service-title {
+	font-size: 21px;
+	color: var( --color-text-subtle );
+	clear: none;
+
+	@include breakpoint( '<660px' ) {
+		line-height: 1;
+		margin-bottom: 0.25em;
+	}
+}
+
+

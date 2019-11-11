@@ -24,6 +24,16 @@ import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isFreePlan } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './intro-banner.scss';
+
+/**
+ * Image dependencies
+ */
+import activityImage from 'assets/images/illustrations/site-activity.svg';
+
 class IntroBanner extends Component {
 	recordLearnMore = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_learn_more' );
@@ -92,7 +102,7 @@ class IntroBanner extends Component {
 			>
 				<img
 					className="activity-log-banner__intro-image"
-					src="/calypso/images/illustrations/jetpack-site-activity.svg"
+					src={ activityImage }
 					alt={ translate( 'Activity' ) }
 				/>
 				<div className="activity-log-banner__intro-description">

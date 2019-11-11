@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -26,9 +26,14 @@ import {
 import { disconnect } from 'state/jetpack/connection/actions';
 import { setAllSitesSelected, navigate } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getPlanClass } from 'lib/plans/constants';
+import { getPlanClass } from 'lib/plans';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {

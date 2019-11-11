@@ -11,20 +11,16 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import config from 'config';
-import Head from '../components/head';
+import Head from 'components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from '../components/environment-badge';
-import getStylesheet from './utils/stylesheet';
+} from 'components/environment-badge';
+import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
 
 class Document extends React.Component {
 	render() {
@@ -44,14 +40,12 @@ class Document extends React.Component {
 			languageRevisions,
 			renderedLayout,
 			user,
-			urls,
 			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
 			isFluidWidth,
 			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			preferencesHelper,
@@ -62,9 +56,10 @@ class Document extends React.Component {
 			feedbackURL,
 			inlineScriptNonce,
 			isSupportSession,
+			isWCComConnect,
+			addEvergreenCheck,
+			requestFrom,
 		} = this.props;
-
-		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -80,13 +75,19 @@ class Document extends React.Component {
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' );
 
-		const isIframe = config.isEnabled( 'calypsoify/iframe' ) && sectionName === 'gutenberg-editor';
+		const isJetpackWooCommerceFlow =
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'jetpack-connect' === sectionName &&
+			'woocommerce-setup-wizard' === requestFrom;
 
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth, 'is-iframe': isIframe } ) }
+				className={ classNames( {
+					'is-fluid-width': isFluidWidth,
+					'is-iframe': sectionName === 'gutenberg-editor',
+				} ) }
 			>
 				<Head
 					title={ head.title }
@@ -101,17 +102,8 @@ class Document extends React.Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
-					{ entrypoint[ csskey ].map( cssChunkLink ) }
-					{ chunkFiles[ csskey ].map( cssChunkLink ) }
+					{ chunkCssLinks( entrypoint, isRTL ) }
+					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
 					className={ classNames( {
@@ -136,6 +128,8 @@ class Document extends React.Component {
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
+									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
 								<div className="masterbar" />
@@ -175,13 +169,37 @@ class Document extends React.Component {
 						} }
 					/>
 
+					{ // Use <script nomodule> to redirect browsers with no ES module
+					// support to the fallback build. ES module support is a convenient
+					// test to determine that a browser is modern enough to handle
+					// the evergreen bundle.
+					addEvergreenCheck && (
+						<script
+							nonce={ inlineScriptNonce }
+							noModule
+							dangerouslySetInnerHTML={ {
+								__html: `
+							(function() {
+								var url = window.location.href;
+
+								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
+									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
+									url += 'forceFallback=1';
+									window.location.href = url;
+								}
+							})();
+							`,
+							} }
+						/>
+					) }
+
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
 					{ env !== 'development' && (
 						<script
 							nonce={ inlineScriptNonce }

@@ -71,25 +71,6 @@ export default function() {
 		);
 		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
-
-		if ( config.isEnabled( 'devdocs/gutenberg-blocks' ) ) {
-			page(
-				'/devdocs/gutenberg-components/:component?',
-				controller.sidebar,
-				controller.gutenbergComponents,
-				makeLayout,
-				clientRender
-			);
-
-			page(
-				'/devdocs/gutenberg-blocks/:block*',
-				controller.sidebar,
-				controller.gutenbergBlocks,
-				makeLayout,
-				clientRender
-			);
-		}
-
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );
 	}
 }

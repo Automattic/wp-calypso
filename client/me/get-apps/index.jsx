@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,20 +9,15 @@ import React from 'react';
  */
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
-import GetAppsIllustration from './illustration.jsx';
-import DesktopDownloadCard from './desktop-download-card.jsx';
-import MobileDownloadCard from './mobile-download-card.jsx';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import config from 'config';
+import GetAppsBlock from 'blocks/get-apps';
 
 export const GetApps = () => {
 	return (
 		<Main className="get-apps">
 			<PageViewTracker path="/me/get-apps" title="Me > Get Apps" />
 			<MeSidebarNavigation />
-			<GetAppsIllustration />
-			<MobileDownloadCard />
-			{ ! config( 'env_id' ).startsWith( 'desktop' ) && <DesktopDownloadCard /> }
+			<GetAppsBlock />
 		</Main>
 	);
 };

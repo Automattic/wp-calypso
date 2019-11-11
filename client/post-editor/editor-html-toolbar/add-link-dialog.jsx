@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -41,7 +41,7 @@ export class AddLinkDialog extends Component {
 		selectedPost: { id: null, url: null },
 	};
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.setState( {
 			linkUrl: this.inferUrl( newProps.selectedText ),
 			linkText: newProps.selectedText,

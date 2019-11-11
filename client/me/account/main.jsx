@@ -21,8 +21,10 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
+import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from 'components/card';
+import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -39,7 +41,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
@@ -49,10 +51,15 @@ import isRequestingMissingSites from 'state/selectors/is-requesting-missing-site
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
-import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
+import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -62,6 +69,7 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
  */
 const debug = debugFactory( 'calypso:me:account' );
 
+/* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
 
@@ -74,7 +82,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
@@ -486,13 +494,12 @@ const Account = createReactClass( {
 
 		if ( ! user.get().visible_site_count ) {
 			return (
-				<a
-					className="button"
+				<Button
 					href={ config( 'signup_url' ) }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
-				</a>
+				</Button>
 			);
 		}
 
@@ -589,7 +596,7 @@ const Account = createReactClass( {
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={
@@ -680,6 +687,9 @@ const Account = createReactClass( {
 						} ) }
 					</FormLabel>
 					<FormTextInput
+						autoCapitalize="off"
+						autoComplete="off"
+						autoCorrect="off"
 						id="username_confirm"
 						name="username_confirm"
 						onFocus={ this.getFocusHandler( 'Username Confirm Field' ) }
@@ -784,7 +794,9 @@ const Account = createReactClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 							<FormTextInput
+								autoCapitalize="off"
 								autoComplete="off"
+								autoCorrect="off"
 								className="account__username"
 								disabled={
 									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )

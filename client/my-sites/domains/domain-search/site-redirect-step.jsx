@@ -7,17 +7,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+
+import Button from 'components/button';
+import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
 import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
+
+/**
+ * Style dependencies
+ */
+import './site-redirect-step.scss';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {
@@ -29,11 +37,10 @@ class SiteRedirectStep extends React.Component {
 	state = { searchQuery: '' };
 
 	render() {
-		const price = this.props.products.offsite_redirect
-			? this.props.products.offsite_redirect.cost_display
-			: null;
+		const price = get( this.props, 'products.offsite_redirect.cost_display', null );
 		const { translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="site-redirect-step">
 				<form className="site-redirect-step__form card" onSubmit={ this.handleFormSubmit }>
@@ -57,18 +64,21 @@ class SiteRedirectStep extends React.Component {
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
 						/>
-						<button
-							className="site-redirect-step__go button is-primary"
+						<Button
+							primary
+							className="site-redirect-step__go"
+							type="submit"
 							onClick={ this.recordGoButtonClick }
 						>
 							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
-						</button>
+						</Button>
 					</fieldset>
 				</form>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	recordInputFocus = () => {
@@ -90,7 +100,7 @@ class SiteRedirectStep extends React.Component {
 
 		this.props.recordFormSubmit( domain );
 
-		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
+		if ( hasProduct( this.props.cart, 'offsite_redirect' ) ) {
 			this.props.errorNotice(
 				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
 			);
@@ -112,7 +122,7 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	addSiteRedirectToCart = domain => {
-		addItem( cartItems.siteRedirect( { domain: domain } ) );
+		addItem( siteRedirect( { domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

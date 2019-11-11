@@ -9,21 +9,10 @@ import { omit, sortBy } from 'lodash';
  */
 import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData, httpData, empty } from 'state/data-layer/http-data';
+import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
-import { isValidPostalCode } from 'lib/postal-code';
-import {
-	bumpStat,
-	composeAnalytics,
-	withAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
-import { convertToSnakeCase } from 'state/data-layer/utils';
-import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
 
 /**
  * Fetches content from a URL with a GET request
@@ -102,6 +91,55 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	);
 };
 
+const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+
+export const requestExternalContributors = siteId =>
+	requestHttpData(
+		requestExternalContributorsId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/external-contributors`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+		}
+	);
+
+export const requestExternalContributorsAddition = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-addition-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/add`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
+export const requestExternalContributorsRemoval = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-removal-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/remove`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
 export const requestGeoLocation = () =>
 	requestHttpData(
 		'geo',
@@ -172,158 +210,61 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const createAutoDraft = ( siteId, draftKey, postType ) =>
+export const requestAtomicSFTPDetails = siteId =>
 	requestHttpData(
-		draftKey,
+		`atomic-hosting-data-${ siteId }`,
 		http(
 			{
-				path: `/sites/${ siteId }/posts/new`,
-				method: 'POST',
-				apiVersion: '1.2',
-				body: {
-					status: 'auto-draft',
-					type: postType,
-					content: ' ', //endpoint only creates this with non-empty content ¯\_(ツ)_/¯
-				},
-			},
-			{}
-		),
-		{ fromApi: () => data => [ [ draftKey, data ] ] }
-	);
-
-export const requestGutenbergDemoContent = () =>
-	requestHttpData(
-		'gutenberg-demo-content',
-		http(
-			{
-				path: `/gutenberg/demo-content`,
 				method: 'GET',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
 				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		),
-		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
-	);
-
-export const requestSitePost = ( siteId, postId, postType, freshness ) => {
-	//post and page types are plural except for custom post types
-	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
-	const path =
-		postType === 'page' || postType === 'post'
-			? `/sites/${ siteId }/${ postType }s/${ postId }?context=edit`
-			: `/sites/${ siteId }/${ postType }/${ postId }?context=edit`;
-	if ( freshness === 0 ) {
-		//clear cache. TODO: add a helper for this, or fix this case
-		httpData.set( `gutenberg-site-${ siteId }-post-${ postId }`, empty );
-	}
-	return requestHttpData(
-		`gutenberg-site-${ siteId }-post-${ postId }`,
-		http(
-			{
-				path,
-				method: 'GET',
-				apiNamespace: 'wp/v2',
 			},
 			{}
 		),
 		{
-			freshness,
-			fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ],
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { username } ) => [
+				[ `atomic-hosting-data-${ siteId }`, username ? { username } : {} ],
+			],
 		}
 	);
-};
 
-export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
-	const defaultOptions = {
-		freshness: 2 * 24 * 60 * 60 * 1000, // 2 days
-	};
-
-	const optionsWithDefaults = { ...defaultOptions, ...httpOptions };
-
-	if ( countryCode !== 'US' ) {
-		return { status: 'invalid', error: 'unsupported country code' };
-	}
-
-	if ( ! isValidPostalCode( postalCode, countryCode ) ) {
-		return { status: 'invalid', error: 'invalid postal code' };
-	}
-
-	const id = `tax-rate-${ countryCode }-${ postalCode }`;
-	const path = `/tax-rate/${ countryCode }/${ postalCode }` && '/sites/example.wordpress.com/hello'; // #tax-on-checkout-placeholder
-
-	const fetchAction = withAnalytics(
-		composeAnalytics(
-			bumpStat( 'calypso_tax_rate_request', 'request' ),
-			bumpStat( 'calypso_tax_rate_request_country_code', countryCode ),
-			bumpStat( 'calypso_tax_rate_request_postal_code', postalCode ),
-			recordTracksEvent(
-				'calypso_tax_rate_request',
-				convertToSnakeCase( {
-					countryCode,
-					postalCode,
-				} )
-			)
-		),
-		http(
-			{
-				path,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		)
-	);
-
-	return requestHttpData( id, fetchAction, {
-		// #tax-on-checkout-placeholder
-		// eslint-disable-next-line no-unused-vars
-		fromApi: () => tax_data => {
-			return [ [ id, dummyTaxRate( postalCode, countryCode ) ] ];
-		},
-		...optionsWithDefaults,
-	} );
-};
-
-export const requestGutenbergBlockAvailability = siteSlug => {
-	const betaQueryArgument = addQueryArgs( { beta: isEnabled( 'jetpack/blocks/beta' ) }, '' );
-	return requestHttpData(
-		`gutenberg-block-availability-${ siteSlug }`,
-		http(
-			{
-				path: `/sites/${ siteSlug }/gutenberg/available-extensions${ betaQueryArgument }`,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		),
-		{ fromApi: () => data => [ [ `gutenberg-block-availability-${ siteSlug }`, data ] ] }
-	);
-};
-
-export const requestActiveThemeSupport = siteSlug =>
+export const resetAtomicSFTPUserPassword = siteId =>
 	requestHttpData(
-		`active-theme-support-${ siteSlug }`,
+		`atomic-hosting-data-${ siteId }`,
 		http(
 			{
-				path: `/sites/${ siteSlug }/theme-support`,
-				method: 'GET',
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user/reset-password`,
 				apiNamespace: 'wpcom/v2',
+				body: {},
 			},
 			{}
 		),
-		{ fromApi: () => data => [ [ `active-theme-support-${ siteSlug }`, data ] ] }
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
 	);
 
-export const requestGutenbergCoreServerBlockSettings = () =>
+export const createAtomicSFTPUser = siteId =>
 	requestHttpData(
-		'gutenberg-core-server-block-settings',
+		`atomic-hosting-data-${ siteId }`,
 		http(
 			{
-				path: `/gutenberg/core-server-block-settings`,
-				method: 'GET',
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
 				apiNamespace: 'wpcom/v2',
+				body: {},
 			},
 			{}
 		),
-		{ fromApi: () => data => [ [ 'gutenberg-core-server-block-settings', data ] ] }
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
 	);

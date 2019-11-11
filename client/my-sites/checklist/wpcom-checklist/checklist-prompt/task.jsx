@@ -34,6 +34,11 @@ class ChecklistPromptTask extends PureComponent {
 		translate: PropTypes.func.isRequired,
 		closePopover: PropTypes.func.isRequired,
 		onDismiss: PropTypes.func,
+		trackTaskDisplay: PropTypes.func,
+	};
+
+	static defaultProps = {
+		trackTaskDisplay: () => {},
 	};
 
 	componentDidMount() {
@@ -42,6 +47,8 @@ class ChecklistPromptTask extends PureComponent {
 		if ( currentRoute !== targetUrl ) {
 			page( targetUrl );
 		}
+
+		this.props.trackTaskDisplay( this.props.id, this.props.completed, 'prompt' );
 	}
 
 	getExtendedProps() {

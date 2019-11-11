@@ -1,10 +1,13 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /** @format */
+
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -27,7 +30,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
@@ -43,11 +46,15 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class List extends React.Component {
 	static defaultProps = {
@@ -62,6 +69,14 @@ export class List extends React.Component {
 		primaryDomainIndex: -1,
 		notice: null,
 	};
+
+	componentDidUpdate( prevProps ) {
+		if (
+			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
+		) {
+			this.hideNotice();
+		}
+	}
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -78,7 +93,7 @@ export class List extends React.Component {
 						'newDomainsWithPrimary',
 						'newDomains',
 						'unverifiedDomainsCanManage',
-						'pendingGappsTosAcceptanceDomains',
+						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
 						'transferStatus',
@@ -150,8 +165,9 @@ export class List extends React.Component {
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main wideLayout={ isPlanFeaturesEnabled() }>
+			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
@@ -169,6 +185,7 @@ export class List extends React.Component {
 				<DomainToPlanNudge />
 			</Main>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	isFreshDomainOnlyRegistration() {
@@ -278,23 +295,27 @@ export class List extends React.Component {
 		}
 
 		if ( this.state.changePrimaryDomainModeEnabled ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Button
 					disabled={ this.state.settingPrimaryDomain }
+					// eslint-disable-next-line react/no-string-refs
 					ref="cancelChangePrimaryButton"
 					borderless
 					compact
+					className="domain-management-list__cancel-change-primary-button"
 					onClick={ this.disableChangePrimaryDomainMode }
 				>
 					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 
@@ -303,6 +324,7 @@ export class List extends React.Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Button
 				compact
@@ -314,6 +336,7 @@ export class List extends React.Component {
 				} ) }
 			</Button>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	addDomainButton() {
@@ -321,6 +344,7 @@ export class List extends React.Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Button
 				primary
@@ -331,6 +355,7 @@ export class List extends React.Component {
 				{ this.props.translate( 'Add Domain' ) }
 			</Button>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	setPrimaryDomain( domainName ) {

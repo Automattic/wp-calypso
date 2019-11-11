@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -49,7 +49,7 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 			{ iconSrc ? (
 				<Image className="site-icon__img" src={ iconSrc } alt="" />
 			) : (
-				<Gridicon icon="globe" size={ Math.round( size / 1.3 ) } />
+				<Gridicon icon="site" size={ Math.round( size / 1.3 ) } />
 			) }
 			{ isTransientIcon && <Spinner /> }
 		</div>

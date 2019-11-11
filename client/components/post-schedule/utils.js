@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { moment } from 'i18n-calypso';
+import moment from 'moment-timezone';
 
 /**
  * Checks whether the passed time  format is of a 12-hour format.

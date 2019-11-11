@@ -14,7 +14,7 @@ import {
 	NAMESERVERS_FETCH_COMPLETED,
 	NAMESERVERS_FETCH_FAILED,
 	NAMESERVERS_UPDATE_COMPLETED,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 
 const initialDomainState = {
 	isFetching: false,

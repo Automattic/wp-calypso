@@ -39,9 +39,10 @@ import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-al
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'state/selectors/has-navigated';
+
+/* eslint-disable react/prefer-es6-class */
 
 function goBack() {
 	window.history.back();
@@ -52,7 +53,7 @@ const SinglePlugin = createReactClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
 	mixins: [ PluginNotices ],
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
@@ -77,7 +78,7 @@ const SinglePlugin = createReactClass( {
 		}
 	},
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.refreshSitesAndPlugins( nextProps );
 	},
 
@@ -342,7 +343,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	render() {
-		const { selectedSite, requestTour } = this.props;
+		const { selectedSite } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -382,16 +383,6 @@ const SinglePlugin = createReactClass( {
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
-
-		if ( calypsoify && this.isPluginInstalledOnsite() && ! this.hasAlreadyShownTheTour ) {
-			const pluginsToursSeen = this.props.toursHistory.filter(
-				tour => tour.tourName === 'pluginsBasicTour'
-			);
-			if ( pluginsToursSeen.length < 3 ) {
-				this.hasAlreadyShownTheTour = true;
-				requestTour( 'pluginsBasicTour' );
-			}
-		}
 
 		return (
 			<MainComponent>
@@ -446,6 +437,5 @@ export default connect(
 	{
 		recordGoogleEvent,
 		wporgFetchPluginData,
-		requestTour: requestGuidedTour,
 	}
 )( localize( SinglePlugin ) );

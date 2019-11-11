@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,6 @@ import {
 	includes,
 	pick,
 	flatten,
-	forEach,
 	groupBy,
 	intersection,
 	snakeCase,
@@ -25,6 +23,7 @@ import {
 } from 'lodash';
 import bodyParser from 'body-parser';
 import superagent from 'superagent';
+import { matchesUA } from 'browserslist-useragent';
 
 /**
  * Internal dependencies
@@ -34,31 +33,27 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, renderJsx } from 'render';
+import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
+import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
-import { logSectionResponseTime } from './analytics';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [
-	{ path: 'style.css' },
-	{ path: 'editor.css' },
-	{ path: 'tinymce/skins/wordpress/wp-content.css' },
-	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'style-debug-rtl.css' },
-];
+const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -83,16 +78,49 @@ function getInitialServerState( serializedServerState ) {
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
-const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
-const getAssets = ( () => {
-	let assets;
-	return () => {
-		if ( ! assets ) {
-			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
-		}
-		return assets;
-	};
-} )();
+/**
+ * Checks whether a user agent is included in the browser list for an environment.
+ * @param {String} userAgentString The user agent string.
+ * @param {String} environment The `browserslist` environment.
+ *
+ * @returns {Boolean} Whether the user agent is included in the browser list.
+ */
+function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
+	return matchesUA( userAgentString, {
+		env: environment,
+		ignorePatch: true,
+		ignoreMinor: true,
+		allowHigherVersions: true,
+	} );
+}
+
+function getBuildTargetFromRequest( request ) {
+	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
+	const isForcedFallback = request.query.forceFallback;
+	// Development is always evergreen, except desktop
+	const isDevelopment = process.env.NODE_ENV === 'development';
+	return ( isDevelopment && ! isDesktop ) || ( isEvergreen && ! isForcedFallback )
+		? 'evergreen'
+		: null;
+}
+
+const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
+function getAssetsPath( target ) {
+	const result = path.join(
+		ASSETS_PATH,
+		target ? `assets-${ target }.json` : 'assets-fallback.json'
+	);
+	return result;
+}
+
+const cachedAssets = {};
+const getAssets = target => {
+	if ( ! cachedAssets[ target ] ) {
+		cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
+	}
+	return cachedAssets[ target ];
+};
 
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
@@ -109,8 +137,10 @@ const getAssetType = asset => {
 
 const groupAssetsByType = assets => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
-const getFilesForChunk = chunkName => {
-	const assets = getAssets();
+const getFilesForChunk = ( chunkName, request ) => {
+	const target = getBuildTargetFromRequest( request );
+
+	const assets = getAssets( target );
 
 	function getChunkByName( _chunkName ) {
 		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
@@ -137,29 +167,12 @@ const getFilesForChunk = chunkName => {
 	return groupAssetsByType( allTheFiles );
 };
 
-const getFilesForEntrypoint = () => {
-	const entrypointAssets = getAssets().entrypoints.build.assets.filter(
+const getFilesForEntrypoint = ( target, name ) => {
+	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
 		asset => ! asset.startsWith( 'manifest' )
 	);
 	return groupAssetsByType( entrypointAssets );
 };
-
-/**
- * Generate an object that maps asset names name to a server-relative urls.
- * Assets in request and static files are included.
- *
- * @returns {Object} Map of asset names to urls
- **/
-function generateStaticUrls() {
-	const urls = { ...staticFilesUrls };
-	const assets = getAssets().assetsByChunkName;
-
-	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset;
-	} );
-
-	return urls;
-}
 
 function getCurrentBranchName() {
 	try {
@@ -215,8 +228,8 @@ function getAcceptedLanguagesFromHeader( header ) {
  * all following handlers (including the locale and redirect ones) can rely on the context values.
  */
 function setupLoggedInContext( req, res, next ) {
-	const isSupportSession = !! req.get( 'x-support-session' );
-	const isLoggedIn = isSupportSession || !! req.cookies.wordpress_logged_in;
+	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
+	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
@@ -227,7 +240,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request ) {
+function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
@@ -262,19 +275,28 @@ function getDefaultContext( request ) {
 		lang = request.context.lang;
 	}
 
+	const target = getBuildTargetFromRequest( request );
+
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isWCComConnect =
+		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		request.query[ 'wccom-from' ] &&
+		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
-		urls: generateStaticUrls(),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
-		isDebug,
+		requestFrom: request.query.from,
+		isWCComConnect,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint(),
-		manifest: getAssets().manifests.manifest,
+		entrypoint: getFilesForEntrypoint( target, entrypoint ),
+		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
@@ -282,12 +304,14 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
+		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		target: target || 'fallback',
 	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug,
 		staticUrls: staticFilesUrls,
 	};
 
@@ -383,7 +407,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				req.context.user = data;
 
 				// Setting user in the state is safe as long as we don't cache it
-				setCurrentUserOnReduxStore( data, req.context.store );
+				req.context.store.dispatch( setCurrentUser( data ) );
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
@@ -488,6 +512,7 @@ function setUpCSP( req, res, next ) {
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
+			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
@@ -530,7 +555,6 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
@@ -538,27 +562,32 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-function render404( request, response ) {
-	const ctx = getDefaultContext( request );
-	response.status( 404 ).send( renderJsx( '404', ctx ) );
+function render404( req, res ) {
+	const ctx = {
+		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+	};
+
+	res.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-/* eslint-disable no-unused-vars */
 /* We don't use `next` but need to add it for express.js to
    recognize this function as an error handler, hence the
-   eslint-disable. */
+	 eslint-disable. */
+// eslint-disable-next-line no-unused-vars
 function renderServerError( err, req, res, next ) {
-	/* eslint-enable no-unused-vars */
 	if ( process.env.NODE_ENV !== 'production' ) {
 		console.error( err );
 	}
 
-	res.status( err.status || 500 );
 	const ctx = {
-		urls: generateStaticUrls(),
 		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
-	res.send( renderJsx( '500', ctx ) );
+
+	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 }
 
 /**
@@ -604,7 +633,7 @@ module.exports = function() {
 
 	app.set( 'views', __dirname );
 
-	app.use( logSectionResponseTime );
+	app.use( logSectionResponse );
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
@@ -635,13 +664,10 @@ module.exports = function() {
 			return;
 		}
 		if ( 'change-theme' === req.params.section ) {
-			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/change\-theme/,
-				'/themes'
-			);
+			redirectUrl = req.originalUrl.replace( /^\/sites\/[0-9a-zA-Z\-.]+\/change-theme/, '/themes' );
 		} else {
 			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/\w+/,
+				/^\/sites\/[0-9a-zA-Z\-.]+\/\w+/,
 				'/' + req.params.section + '/' + req.params.site
 			);
 		}
@@ -709,36 +735,58 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
+	// Landing pages for domains-related emails
+	app.get( '/domain-services/:action', function( req, res ) {
+		const ctx = getDefaultContext( req, 'entry-domains-landing' );
+		attachBuildTimestamp( ctx );
+		attachHead( ctx );
+		attachI18n( ctx );
+
+		ctx.clientData = config.clientData;
+		ctx.domainsLandingData = {
+			action: get( req, [ 'params', 'action' ], 'unknown-action' ),
+			query: get( req, 'query', {} ),
+		};
+
+		const pageHtml = renderJsx( 'domains-landing', ctx );
+		res.send( pageHtml );
+	} );
+
+	function handleSectionPath( section, sectionPath, entrypoint ) {
+		const pathRegex = pathToRegExp( sectionPath );
+
+		app.get( pathRegex, function( req, res, next ) {
+			req.context = {
+				...getDefaultContext( req, entrypoint ),
+				sectionName: section.name,
+			};
+
+			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+				req.context.chunkFiles = getFilesForChunk( section.name, req );
+			} else {
+				req.context.chunkFiles = EMPTY_ASSETS;
+			}
+
+			if ( section.secondary && req.context ) {
+				req.context.hasSecondary = true;
+			}
+
+			if ( section.group && req.context ) {
+				req.context.sectionGroup = section.group;
+			}
+
+			next();
+		} );
+
+		if ( ! section.isomorphic ) {
+			app.get( pathRegex, setUpRoute, serverRender );
+		}
+	}
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( sectionPath => {
-				const pathRegex = pathToRegExp( sectionPath );
-
-				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
-
-					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name );
-					} else {
-						req.context.chunkFiles = EMPTY_ASSETS;
-					}
-
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
-					}
-
-					if ( section.group && req.context ) {
-						req.context.sectionGroup = section.group;
-					}
-
-					next();
-				} );
-
-				if ( ! section.isomorphic ) {
-					app.get( pathRegex, setUpRoute, serverRender );
-				}
-			} );
+			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -749,6 +797,12 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	// Set up login routing.
+	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

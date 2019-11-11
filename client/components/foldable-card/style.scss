@@ -31,7 +31,7 @@
 		}
 
 		.foldable-card__expand {
-			border-left: 1px var( --color-neutral-0 ) solid;
+			border-left: 1px var( --color-neutral-5 ) solid;
 		}
 	}
 }
@@ -105,7 +105,7 @@ button.foldable-card__action {
 	width: 48px;
 
 	.gridicon {
-		fill: var( --color-neutral-300 );
+		fill: var( --color-neutral-30 );
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -115,11 +115,11 @@ button.foldable-card__action {
 	}
 
 	.gridicon:hover {
-		fill: var( --color-neutral-300 );
+		fill: var( --color-neutral-30 );
 	}
 
 	&:hover .gridicon {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 	}
 }
 
@@ -134,7 +134,7 @@ button.foldable-card__action {
 .foldable-card.is-expanded .foldable-card__content {
 	display: block;
 	padding: 16px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-5 );
 }
 
 .foldable-card.is-compact .foldable-card.is-expanded .foldable-card__content {

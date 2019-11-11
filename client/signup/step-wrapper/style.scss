@@ -1,3 +1,26 @@
 .step-wrapper__content .themes-list {
 	padding: 0 20px;
 }
+
+.step-wrapper__skip-hr {
+	background: var( --color-primary-light );
+	max-width: 270px;
+	margin-bottom: 50px;
+	margin-top: -20px;
+
+	@include breakpoint( '<660px' ) {
+		margin: 30px auto;
+	}
+}
+
+.step-wrapper__skip-heading {
+	color: var( --color-text-inverted );
+}
+
+.is-large-skip-layout .step-wrapper__buttons {
+	margin-bottom: 34px;
+
+	@include breakpoint( '<660px' ) {
+		margin-bottom: 14px;
+	}
+}

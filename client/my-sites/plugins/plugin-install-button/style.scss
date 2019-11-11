@@ -46,7 +46,7 @@
 .plugin-install-button__warning {
 	margin-right: 8px;
 	font-size: 11px;
-	color:  $gray;
+	color:  var( --color-neutral-light );
 	text-transform: uppercase;
 	white-space: nowrap;
 }

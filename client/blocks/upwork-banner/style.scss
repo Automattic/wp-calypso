@@ -1,0 +1,76 @@
+.upwork-banner {
+	background: no-repeat var( --color-accent );
+	display: block;
+	overflow: hidden;
+	padding: 0.8em;
+	position: relative;
+	user-select: none;
+
+	h1,
+	p,
+	.button.upwork-banner__cta {
+		color: var( --color-neutral-70 );
+		position: relative;
+		z-index: z-index( '.upwork-banner', '.button.upwork-banner__cta' );
+	}
+
+	h1 {
+		font-size: 1.6em;
+		font-weight: 500;
+		letter-spacing: 0.01em;
+		line-height: 1.3;
+		margin: -0.1em 0;
+
+		+ p {
+			margin-top: 0.6em;
+		}
+	}
+
+	p {
+		margin: 0;
+	}
+
+	img {
+		max-width: 190px;
+		opacity: 0.5;
+		position: absolute;
+			top: 0;
+		transform-origin: top right;
+		transition: opacity 400ms ease-in-out;
+			right: 30px;
+		user-select: none;
+
+		@include breakpoint( '<960px' ) {
+			display: none;
+		}
+	}
+
+	.button.upwork-banner__cta {
+		color: white;
+		margin-top: 1em;
+	}
+
+	.button.upwork-banner__close {
+		background: rgba( white, 0.66 );
+		border: none;
+		border-radius: 0;
+		display: block;
+		line-height: 0.9;
+		padding: 1px 0;
+		position: absolute;
+			right: 0;
+			top: 0;
+		width: 1.7em;
+		z-index: z-index( '.upwork-banner', '.button.upwork-banner__close' );
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		.gridicons-cross-small {
+			fill: black;
+			position: relative;
+				top: 2px;
+		}
+	}
+}

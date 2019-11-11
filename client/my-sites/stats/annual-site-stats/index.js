@@ -22,6 +22,11 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import QuerySiteStats from 'components/data/query-site-stats';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AnnualSiteStats extends Component {
 	static propTypes = {
 		requesting: PropTypes.bool,
@@ -183,7 +188,7 @@ class AnnualSiteStats extends Component {
 					{ isWidget && currentYearData && this.renderWidgetContent( currentYearData, strings ) }
 					{ isWidget && previousYearData && this.renderWidgetContent( previousYearData, strings ) }
 					{ ! isWidget && years && this.renderTable( years, strings ) }
-					{ isWidget && years && years.length && (
+					{ isWidget && years && years.length !== 0 && (
 						<div className="module-expand">
 							<a href={ viewAllLink }>
 								{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }

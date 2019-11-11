@@ -11,4 +11,7 @@ export default {
 	getFlow: function( flowName ) {
 		return flows[ flowName ];
 	},
+
+	excludeStep: jest.fn(),
+	resetExcludedSteps: jest.fn(),
 };

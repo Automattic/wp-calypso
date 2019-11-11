@@ -143,6 +143,8 @@ export class JetpackConnectMain extends Component {
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
 
+	goBack = () => page.back();
+
 	makeSafeRedirectionFunction( func ) {
 		return url => {
 			if ( ! this.state.redirecting ) {
@@ -339,7 +341,7 @@ export class JetpackConnectMain extends Component {
 				status ? (
 					<JetpackConnectNotices
 						noticeType={ status }
-						onDismissClick={ this.dismissUrl }
+						onDismissClick={ IS_DOT_COM === status ? this.goBack : this.dismissUrl }
 						url={ this.state.currentUrl }
 						onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
 					/>

@@ -7,14 +7,14 @@
 	margin: 0 auto 60px;
 
 	p {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		text-align: right;
 		margin-bottom: 8px;
 	}
 
 	a {
 		text-decoration: underline;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -35,7 +35,6 @@
 	width: 300px;
 
 	@include breakpoint( '<660px' ) {
-		padding-top: 24px;
 		position: relative;
 		margin: 0 auto;
 	}

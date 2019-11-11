@@ -3,11 +3,14 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:notices' );
+/**
+ * Internal dependencies
+ */
 import Emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:notices' );
 
 debug( 'initializing notices' );
 
@@ -19,6 +22,10 @@ const notices = {
 	/**
 	 * Creates a new notice
 	 * @private
+	 *
+	 * @param {String} text The text of the notices
+	 * @param {Object} options Options for the notice
+	 * @param {String} status The status
 	 *
 	 * @return {object} notice
 	 */
@@ -32,7 +39,7 @@ const notices = {
 		debug( 'creating notice', text, options, status );
 
 		list[ container ] = [];
-		var noticeObject = {
+		const noticeObject = {
 			type: options.type || 'message',
 			status: status,
 			text: text,
@@ -69,6 +76,9 @@ const notices = {
 	 * Helper function for creating a new "Success" notice
 	 * @public
 	 *
+	 * @param {String} text The text of the notices
+	 * @param {Object} options Options for the notice
+	 *
 	 * @return {object} notice
 	 */
 	success: function( text, options ) {
@@ -79,6 +89,9 @@ const notices = {
 	/**
 	 * Helper function for creating a new "Error" notice
 	 * @public
+	 *
+	 * @param {String} text The text of the notices
+	 * @param {Object} options Options for the notice
 	 *
 	 * @return {object} notice
 	 */
@@ -91,6 +104,9 @@ const notices = {
 	 * Helper function for creating a new general "Info" notice
 	 * @public
 	 *
+	 * @param {String} text The text of the notices
+	 * @param {Object} options Options for the notice
+	 *
 	 * @return {object} notice
 	 */
 	info: function( text, options ) {
@@ -101,6 +117,9 @@ const notices = {
 	/**
 	 * Helper function for creating a new general "Info" notice
 	 * @public
+	 *
+	 * @param {String} text The text of the notices
+	 * @param {Object} options Options for the notice
 	 *
 	 * @return {object} notice
 	 */
@@ -122,7 +141,7 @@ const notices = {
 		if ( ! notice.container ) {
 			return;
 		}
-		let containerList = list[ notice.container ],
+		const containerList = list[ notice.container ],
 			index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
@@ -135,18 +154,18 @@ const notices = {
 	/**
 	 * Callback handler to clear notices when a user leaves current page
 	 * @public
+	 * @param {Object} context The page context
+	 * @param {Function} next The continuation
 	 */
 	clearNoticesOnNavigation: function( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
-		let length,
-			container,
-			changed = false,
-			isNoticePersistent = function( notice ) {
-				return notice.persistent;
-			};
+		let changed = false;
+		const isNoticePersistent = function( notice ) {
+			return notice.persistent;
+		};
 
-		for ( container in list.containerNames ) {
-			length = list[ container ].length;
+		for ( const container in list.containerNames ) {
+			const { length } = list[ container ];
 			list[ container ] = list[ container ].filter( isNoticePersistent );
 			if ( length !== list[ container ].length ) {
 				changed = true;

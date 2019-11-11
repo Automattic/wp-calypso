@@ -102,10 +102,7 @@
 								"trademarkNumber": {
 									"pattern": "^[0-9]*$",
 									"maxLength": 9,
-									"oneOf": [
-										{ "minLength": 9 },
-										{ "$ref": "#/definitions/empty" }
-									]
+									"oneOf": [ { "minLength": 9 }, { "$ref": "#/definitions/empty" } ]
 								}
 							},
 							"required": [ "registrantType" ]

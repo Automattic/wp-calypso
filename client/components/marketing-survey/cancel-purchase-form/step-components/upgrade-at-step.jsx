@@ -36,7 +36,7 @@ export class UpgradeATStep extends Component {
 
 	render() {
 		const { translate, selectedSite } = this.props;
-		const href = `/checkout/${ selectedSite.slug }/business`;
+		const href = `/checkout/${ selectedSite.slug }/business?coupon=BIZC25`;
 
 		return (
 			<div>

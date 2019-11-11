@@ -1,7 +1,7 @@
 ShareButton (JSX)
 ====================
 
-ShareButton is a component which allows you to open a popup window to share content on various services. Supported services are WordPress, Facebook, Twitter, Linkedin, Tumblr, Pinterest, Telegram, and GooglePlus.
+ShareButton is a component which allows you to open a popup window to share content on various services. Supported services are WordPress, Facebook, Twitter, LinkedIn, Tumblr, Pinterest and Telegram.
 
 -------
 
@@ -36,4 +36,4 @@ function MyButton() {
 * `title`: (string) The title of the content to share
 * `service`: (object) The serice to share on - contains a `url` and `windowArg` to append to the URL
 
-A full list of supported services and associated URLs and windowArgs are at `compnents/share-button/servicesjs`.
+A full list of supported services and associated URLs and windowArgs are at `components/share-button/servicesjs`.

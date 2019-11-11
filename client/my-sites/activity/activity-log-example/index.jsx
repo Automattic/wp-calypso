@@ -9,11 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActivityLogItem from '../activity-log-item/index';
+import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
 import FormattedHeader from 'components/formatted-header';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { getPreference } from 'state/preferences/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ActivityLogExample extends Component {
 	render() {
@@ -70,7 +75,7 @@ class ActivityLogExample extends Component {
 				<FeatureExample role="presentation">
 					{ exampleItems.map( log => (
 						<ActivityLogItem
-							key={ `activity-log-example-${ log.activityTs }` }
+							key={ log.activityTs }
 							activity={ log }
 							disableRestore={ true }
 							disableBackup={ true }

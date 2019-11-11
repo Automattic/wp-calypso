@@ -44,19 +44,13 @@ export default function() {
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
 
-	page( paths.domainManagementEmail(), siteSelection, sites, makeLayout, clientRender );
-
 	registerMultiPage( {
 		paths: [
+			paths.domainManagementEmail(),
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
-			domainManagementController.domainManagementEmail,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
 	registerMultiPage( {
@@ -64,20 +58,12 @@ export default function() {
 			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
 			paths.domainManagementAddGSuiteUsers( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementAddGSuiteUsers,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
 	} );
 
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEmailForwarding,
-		makeLayout,
-		clientRender
+		domainManagementController.domainManagementEmailForwardingRedirect
 	);
 
 	page(

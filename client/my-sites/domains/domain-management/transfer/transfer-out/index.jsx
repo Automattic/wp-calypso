@@ -25,6 +25,11 @@ import SelectIpsTag from './select-ips-tag.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 import TransferLock from './transfer-lock.jsx';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Transfer extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
@@ -68,7 +73,7 @@ class Transfer extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-transfer">
+			<Main>
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>

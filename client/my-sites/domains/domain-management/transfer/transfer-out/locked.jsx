@@ -13,7 +13,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
-import { fetchWapiDomainInfo, requestTransferCode } from 'lib/upgrades/actions';
+import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
@@ -24,13 +24,13 @@ class Locked extends React.Component {
 	};
 
 	unlockAndRequestTransferCode = () => {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
+		const { privateDomain } = getSelectedDomain( this.props );
 
 		const options = {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
 			unlock: true,
-			disablePrivacy: privateDomain && hasPrivacyProtection,
+			disablePrivacy: privateDomain,
 		};
 
 		this.setState( { submitting: true } );

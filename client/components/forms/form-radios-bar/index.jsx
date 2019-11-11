@@ -13,6 +13,11 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
 	return (
 		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>

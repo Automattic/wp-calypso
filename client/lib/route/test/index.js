@@ -205,14 +205,6 @@ describe( 'route', function() {
 				expect( route.getSiteFragment( '/me/purchases/2916284/cancel' ) ).to.equal( 2916284 );
 				expect(
 					route.getSiteFragment(
-						'/me/purchases/example.wordpress.com/12345678/cancel-privacy-protection'
-					)
-				).to.equal( 'example.wordpress.com' );
-				expect(
-					route.getSiteFragment( '/me/purchases/2916284/12345678/cancel-privacy-protection' )
-				).to.equal( 2916284 );
-				expect(
-					route.getSiteFragment(
 						'/me/purchases/example.wordpress.com/12345678/payment/edit/87654321'
 					)
 				).to.equal( 'example.wordpress.com' );

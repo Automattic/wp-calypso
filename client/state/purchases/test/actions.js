@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * @jest-environment jsdom
+ * @format
+ */
 /**
  * External dependencies
  */
@@ -8,16 +11,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
 import {
-	cancelPrivacyProtection,
-	clearPurchases,
-	fetchSitePurchases,
-	fetchUserPurchases,
-	removePurchase,
-} from '../actions';
-import {
-	PRIVACY_PROTECTION_CANCEL,
-	PRIVACY_PROTECTION_CANCEL_COMPLETED,
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
@@ -45,30 +40,6 @@ describe( 'actions', () => {
 			clearPurchases()( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: PURCHASES_REMOVE,
-			} );
-		} );
-	} );
-
-	describe( '#cancelPrivacyProtection', () => {
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( `/rest/v1.1/upgrades/${ purchaseId }/cancel-privacy-protection` )
-				.reply( 200, { upgrade: purchases[ 0 ] } );
-		} );
-
-		test( 'should dispatch fetch/complete actions', () => {
-			const promise = cancelPrivacyProtection( purchaseId )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PRIVACY_PROTECTION_CANCEL,
-				purchaseId,
-			} );
-
-			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
-					purchase: purchases[ 0 ],
-				} );
 			} );
 		} );
 	} );

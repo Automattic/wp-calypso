@@ -437,11 +437,11 @@ describe( 'QueryManager', () => {
 		} );
 
 		test( 'should sort when extended using subclassed static compare', () => {
-			let sortingManager = new class extends QueryManager {
+			let sortingManager = new ( class extends QueryManager {
 				static compare( query, a, b ) {
 					return a.ID - b.ID;
 				}
-			}();
+			} )();
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
 				item =>
 					( sortingManager = sortingManager.receive( item, {

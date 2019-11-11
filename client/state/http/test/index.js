@@ -1,18 +1,18 @@
-/** @format */
+/**
+ * @jest-environment jsdom
+ */
+
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon from 'sinon';
+const fetch = require( 'jest-fetch-mock' );
 
 /**
  * Internal dependencies
  */
 import { httpHandler } from '../';
-import superagentMock from './mocks/superagent';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 import { extendAction } from 'state/utils';
-jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };
@@ -28,38 +28,65 @@ const getMe = {
 
 describe( '#httpHandler', () => {
 	let dispatch;
+	let completed;
+
+	beforeAll( () => {
+		global.fetch = fetch;
+	} );
 
 	beforeEach( () => {
-		dispatch = sinon.spy();
+		fetch.resetMocks();
+		completed = new Promise( resolve => {
+			dispatch = jest.fn( () => resolve( true ) );
+		} );
 	} );
 
-	test( 'should call `onSuccess` when a response returns with data', () => {
+	test( 'should call `onSuccess` when a response returns with data', async () => {
 		const data = { value: 1 };
-
-		superagentMock.setResponse( true, data );
+		fetch.mockResponse( JSON.stringify( data ) );
 
 		httpHandler( { dispatch }, getMe, null );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		await completed;
 
-		expect( dispatch ).to.have.been.calledWithMatch(
-			sinon.match( extendAction( succeeder, successMeta( { body: data } ) ) )
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith(
+			extendAction( succeeder, successMeta( { body: data } ) )
 		);
 	} );
 
-	test( 'should call `onFailure` when a response returns with error', () => {
+	test( 'should call `onFailure` when a response returns with error', async () => {
 		const data = { error: 'bad, bad request!' };
-		superagentMock.setResponse( false, data );
+		fetch.mockResponse( JSON.stringify( data ), { status: 500 } );
 
 		httpHandler( { dispatch }, getMe, null );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		await completed;
 
-		expect( dispatch ).to.have.been.calledWithMatch(
-			sinon.match(
-				extendAction( failer, failureMeta( { response: { body: { error: data.error } } } ) )
-			)
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith(
+			extendAction( failer, failureMeta( { response: { body: { error: data.error } } } ) )
 		);
+	} );
+
+	test( 'should call `onFailure` when a network error occurs', async () => {
+		const errorMessage = 'Connection problems!';
+		fetch.mockReject( new Error( errorMessage ) );
+
+		httpHandler( { dispatch }, getMe, null );
+
+		await completed;
+
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith( {
+			type: 'FAIL',
+			meta: {
+				dataLayer: {
+					error: new Error( errorMessage ),
+					headers: undefined,
+				},
+			},
+		} );
 	} );
 
 	test( 'should reject invalid headers', () => {
@@ -75,9 +102,8 @@ describe( '#httpHandler', () => {
 			null
 		);
 
-		expect( dispatch ).to.have.been.calledOnce;
-		// sinon matchers fail hard here for some reason
-		global.expect( dispatch.args[ 0 ][ 0 ] ).toEqual( {
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith( {
 			type: 'FAIL',
 			meta: {
 				dataLayer: {
@@ -90,8 +116,9 @@ describe( '#httpHandler', () => {
 
 	test( 'should set appropriate headers', () => {
 		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
+		const data = {};
 
-		superagentMock.setResponse( true, {} );
+		fetch.mockResponse( JSON.stringify( data ) );
 
 		httpHandler(
 			{
@@ -105,7 +132,10 @@ describe( '#httpHandler', () => {
 		);
 
 		headers.forEach( ( [ key, value ] ) =>
-			expect( superagentMock.getLastRequest().set ).to.have.been.calledWith( key, value )
+			expect( fetch.mock.calls[ fetch.mock.calls.length - 1 ][ 1 ].headers ).toHaveProperty(
+				key,
+				value
+			)
 		);
 	} );
 
@@ -119,8 +149,9 @@ describe( '#httpHandler', () => {
 
 		const queryString =
 			'statement=hello%20world&regex=%2F.%24%2F&spaced%20key=spaced%20value&plus%2B=plus%2B';
+		const data = {};
 
-		superagentMock.setResponse( true, {} );
+		fetch.mockResponse( JSON.stringify( data ) );
 
 		httpHandler(
 			{
@@ -133,13 +164,14 @@ describe( '#httpHandler', () => {
 			null
 		);
 
-		expect( superagentMock.getLastRequest().query ).to.have.been.calledWith( queryString );
+		expect( fetch.mock.calls[ fetch.mock.calls.length - 1 ][ 0 ] ).toContain( queryString );
 	} );
 
 	test( 'should not set empty query string', () => {
 		const queryParams = [];
+		const data = {};
 
-		superagentMock.setResponse( true, {} );
+		fetch.mockResponse( JSON.stringify( data ) );
 
 		httpHandler(
 			{
@@ -152,6 +184,6 @@ describe( '#httpHandler', () => {
 			null
 		);
 
-		expect( superagentMock.getLastRequest().query ).to.not.have.been.called;
+		expect( fetch.mock.calls[ fetch.mock.calls.length - 1 ][ 0 ] ).not.toContain( '?' );
 	} );
 } );

@@ -15,21 +15,17 @@
 	}
 
 	&__option-container {
-		&:first-child:nth-last-child( 2 ),
-		&:first-child:nth-last-child( 2 ) ~ div {
-			flex-basis: calc( 50% - 10px );
-			margin-top: 0;
-		}
-
 		flex-basis: calc( 100% );
+
 		&:not( :first-child ) {
-			margin-top: 20px;
+			margin-top: 8px;
 		}
 
-		@include breakpoint( '<960px' ) {
-			flex-basis: calc( 100% );
-			&:not( :first-child ) {
-				margin-top: 20px;
+		@include breakpoint( '>960px' ) {
+			&:first-child:nth-last-child( 2 ),
+			&:first-child:nth-last-child( 2 ) ~ div {
+				flex-basis: calc( 50% - 10px );
+				margin-top: 0;
 			}
 		}
 	}
@@ -45,7 +41,7 @@
 	padding: $padding-size;
 	border-radius: 5px;
 
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	.subscription-length-picker__option-radio-wrapper {
 		width: 21px;
@@ -102,20 +98,20 @@
 
 	.subscription-length-picker__option-credit-info {
 		float: right;
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 	}
 
 	.subscription-length-picker__option-old-price {
 		position: relative;
 		display: inline-block;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		margin-right: 5px;
 		text-decoration: line-through;
 	}
 
 	.subscription-length-picker__option-price {
 		display: inline-block;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.subscription-length-picker__option-side-note {
@@ -131,7 +127,7 @@
 	}
 
 	&:not( .is-active ) {
-		border: 1px solid $gray;
+		border: 1px solid var( --color-neutral-light );
 		padding: $padding-size + 2px;
 	}
 

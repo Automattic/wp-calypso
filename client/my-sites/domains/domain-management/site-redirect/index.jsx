@@ -27,11 +27,16 @@ import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
 	updateSiteRedirect,
-} from 'lib/upgrades/actions';
+} from 'lib/domains/site-redirect/actions';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class SiteRedirect extends React.Component {
 	static propTypes = {
@@ -44,11 +49,11 @@ class SiteRedirect extends React.Component {
 		redirectUrl: this.props.location.value || '',
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		fetchSiteRedirect( this.props.selectedSite.domain );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.location.value !== nextProps.location.value ) {
 			this.setState( {
 				redirectUrl: nextProps.location.value,
@@ -122,7 +127,7 @@ class SiteRedirect extends React.Component {
 					<Card className={ classes }>
 						<form>
 							<FormFieldset>
-								<FormLabel>{ translate( 'Redirect To' ) }</FormLabel>
+								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect To' ) }</FormLabel>
 
 								<FormTextInputWithAffixes
 									disabled={ isFetching || isUpdating }
@@ -133,6 +138,7 @@ class SiteRedirect extends React.Component {
 									prefix="http://"
 									type="text"
 									value={ this.state.redirectUrl }
+									id="site-redirect__input"
 								/>
 
 								<p className="site-redirect__explanation">

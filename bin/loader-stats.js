@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require( 'path' );
-const stats = require( path.join( __dirname, '..', 'server', 'bundler', 'assets.json' ) );
+const stats = require( path.join( __dirname, '..', 'server', 'bundler', 'assets-evergreen.json' ) );
 const _ = require( 'lodash' );
 const gzipSize = require( 'gzip-size' );
 
@@ -27,19 +27,19 @@ if ( sectionChunks.length !== sectionsToCheck.length ) {
 const sectionsToLoad = [];
 sectionsToLoad.push( {
 	name: 'boot',
-	chunks: getChunkAndSiblings( 'build' ),
+	chunks: getChunkAndSiblings( 'entry-main' ),
 } );
 sectionChunks.forEach( section => {
 	sectionsToLoad.push( {
 		name: section.names.join( ',' ),
 		chunks: _.difference(
 			getChunkAndSiblings( section.names[ 0 ] ),
-			_.flatMap( sectionsToLoad, section => section.chunks )
+			_.flatMap( sectionsToLoad, s => s.chunks )
 		),
 	} );
 } );
 
-filesToLoadPerSection = sectionsToLoad.map( section => {
+const filesToLoadPerSection = sectionsToLoad.map( section => {
 	return {
 		name: section.name,
 		filesToLoad: _.flatMap( section.chunks, chunk => {
@@ -62,10 +62,7 @@ async function calculateSizes( section ) {
 		console.log( `   ${ f }: (${ filesWithSizes[ f ] / 1000 }kb)` );
 	} );
 
-	const totalSize = section.filesToLoad.reduce(
-		( totalSize, f ) => totalSize + filesWithSizes[ f ],
-		0
-	);
+	const totalSize = section.filesToLoad.reduce( ( size, f ) => size + filesWithSizes[ f ], 0 );
 
 	console.log( '\t' + totalSize / 1000 + 'kb' );
 	console.log( '' );
@@ -74,7 +71,7 @@ async function calculateSizes( section ) {
 
 async function go() {
 	let totalSize = 0;
-	for ( section in filesToLoadPerSection ) {
+	for ( const section in filesToLoadPerSection ) {
 		totalSize += await calculateSizes( filesToLoadPerSection[ section ] );
 	}
 	console.log( 'Total Load: ' + totalSize / 1000 + 'kb' );

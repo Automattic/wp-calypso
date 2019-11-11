@@ -8,7 +8,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -27,7 +28,6 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
-import { getCurrencyObject } from 'lib/format-currency';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from './redirect-if';
@@ -125,7 +125,7 @@ class ThemesUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="plugins" size={ 48 } /> }
 							title="Install as Many WordPress Plugins as You Want"
-							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and MailChimp integration, Google Analytics, and much, much more."
+							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and Mailchimp integration, Google Analytics, and much, much more."
 						/>
 					</div>
 

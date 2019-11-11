@@ -22,6 +22,11 @@ import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
 import ScreenReaderText from 'components/screen-reader-text';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostActionCounts extends PureComponent {
 	static propTypes = {
 		globalId: PropTypes.string,

@@ -87,6 +87,7 @@ describe( 'Credit Card Payment Box', () => {
 	test( 'does not blow up with default props', () => {
 		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
 		expect( wrapper ).toHaveLength( 1 );
+		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should set progress timer when incoming validation transaction step contains no errors', () => {

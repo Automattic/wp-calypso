@@ -5,7 +5,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
   className="contact-details-form-fields"
 >
   <div
-    className="contact-details-form-fields__container first-name"
+    className="contact-details-form-fields__row"
   >
     <Input
       additionalClasses="contact-details-form-fields__field"
@@ -22,10 +22,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       onChange={[Function]}
       value="Osso"
     />
-  </div>
-  <div
-    className="contact-details-form-fields__container last-name"
-  >
     <Input
       additionalClasses="contact-details-form-fields__field"
       autoComplete="on"
@@ -46,7 +42,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     className="contact-details-form-fields__contact-details"
   >
     <div
-      className="contact-details-form-fields__container organization"
+      className="contact-details-form-fields__row"
     >
       <HiddenInput
         additionalClasses="contact-details-form-fields__field"
@@ -65,7 +61,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <div
-      className="contact-details-form-fields__container email"
+      className="contact-details-form-fields__row"
     >
       <Input
         additionalClasses="contact-details-form-fields__field"
@@ -82,10 +78,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         onChange={[Function]}
         value="osso@buco.com"
       />
-    </div>
-    <div
-      className="contact-details-form-fields__container phone"
-    >
       <FormPhoneMediaInput
         additionalClasses="contact-details-form-fields__field"
         countriesList={
@@ -105,6 +97,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         enableStickyCountry={false}
         errorMessage=""
         eventFormName="Domain contact details form"
+        inputRef={[Function]}
         isError={false}
         label="Phone"
         labelClass="contact-details-form-fields__label"
@@ -115,7 +108,10 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <div
-      className="contact-details-form-fields__container country-code"
+      className="contact-details-form-fields__row"
+    />
+    <div
+      className="contact-details-form-fields__row"
     >
       <CountrySelect
         additionalClasses="contact-details-form-fields__field"

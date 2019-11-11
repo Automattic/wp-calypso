@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items as unwrappedItems, fetchingItems } from '../reducer';
+import reducer, { items, fetchingItems } from '../reducer';
 import {
 	SITE_MEDIA_STORAGE_RECEIVE,
 	SITE_MEDIA_STORAGE_REQUEST,
@@ -18,10 +16,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	let sandbox;

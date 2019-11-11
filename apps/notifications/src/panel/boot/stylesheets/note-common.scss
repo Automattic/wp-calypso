@@ -1,0 +1,21 @@
+div.wpnc__note-actions {
+  @extend %container;
+  color: var( --color-neutral-70 );
+  line-height: 1em;
+  text-align: center;
+  padding-top: $wpnc__padding-large;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  a {
+    color: inherit;
+    margin-right: 0.5em;
+  }
+}
+
+.wpnc__comment-unapproved div.wpnc__note-actions {
+  border-top: none;
+  margin-top: 0;
+}

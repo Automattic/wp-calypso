@@ -19,7 +19,7 @@ import Main from 'components/main';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
-import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
+import GMClosureNotice from 'me/help/gm-closure-notice';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -67,6 +67,11 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:help-contact' );
 
@@ -287,7 +292,7 @@ class HelpContact extends React.Component {
 		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
-			case SUPPORT_HAPPYCHAT:
+			case SUPPORT_HAPPYCHAT: {
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
 				let additionalSupportOption = { enabled: false };
@@ -329,7 +334,7 @@ class HelpContact extends React.Component {
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
-
+			}
 			case SUPPORT_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,
@@ -526,22 +531,14 @@ class HelpContact extends React.Component {
 		return (
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
-					<Fragment>
-						<LiveChatClosureNotice
-							holidayName="Christmas"
-							compact={ compact }
-							displayAt="2018-12-17 00:00Z"
-							closesAt="2018-12-24 00:00Z"
-							reopensAt="2018-12-26 07:00Z"
-						/>
-						<LiveChatClosureNotice
-							holidayName="New Year's Day"
-							compact={ compact }
-							displayAt="2018-12-26 07:00Z"
-							closesAt="2019-01-01 00:00Z"
-							reopensAt="2019-01-02 07:00Z"
-						/>
-					</Fragment>
+					<GMClosureNotice
+						compact={ compact }
+						displayAt="2019-08-31 00:00Z"
+						basicChatClosesAt="2019-09-07 00:00Z"
+						basicChatReopensAt="2019-09-23 04:00Z"
+						priorityChatClosesAt="2019-09-10 00:00Z"
+						priorityChatReopensAt="2019-09-19 04:00Z"
+					/>
 				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice

@@ -25,6 +25,11 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsAllTime extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

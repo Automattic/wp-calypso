@@ -38,6 +38,15 @@ If your browser is set to block 3rd-party cookies, you should set an exception o
 
 See [Development Workflow](../docs/development-workflow.md) for more.
 
+### Limited builds
+
+Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js) and by default, every section is built when the development server starts.
+This can take a long time and slow down incremental builds as your work. To speed things up,
+you can choose to build and run specific sections of Calypso using the `SECTION_LIMIT` enviroment variable.
+
+For instance, `SECTION_LIMIT=reader,login npm start` would start Calypso and only build the `reader` and `login` sections.
+
+
 ### Starting the node debugger
 
 The `npm start` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command.  This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" npm start`.  Starting the built-in inspector can also be done by running `NODE_ARGS="--inspect" npm start`.  In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" npm start`.

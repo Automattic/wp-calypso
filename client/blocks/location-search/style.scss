@@ -1,7 +1,14 @@
 .location-search__prediction {
 	cursor: pointer;
+	width: 100%;
+
 	&:hover {
-		color: lighten( $blue-wordpress, 5% );
+		color: var( --color-primary-light );
+	}
+
+	&:focus {
+		box-shadow:	0 0 0 2px var( --color-primary );
+		z-index: 1;
 	}
 }
 
@@ -11,4 +18,13 @@
 	position: absolute;
 	top: 0;
 	right: 16px;
+}
+
+.location-search__attribution {
+	text-align: right;
+	padding: 10px;
+}
+
+.location-search__attribution > img {
+	height: 15px;
 }

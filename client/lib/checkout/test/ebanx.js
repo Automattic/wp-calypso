@@ -13,8 +13,9 @@
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
+	isValidCNPJ,
 	shouldRenderAdditionalCountryFields,
-} from '../ebanx';
+} from '../processor-specific';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
@@ -50,6 +51,17 @@ describe( 'Ebanx payment processing methods', () => {
 		test( 'should return false for invalid CPF', () => {
 			expect( isValidCPF( '85384484612' ) ).toEqual( false );
 			expect( isValidCPF( '853.844.846.12' ) ).toEqual( false );
+		} );
+	} );
+
+	describe( 'isValidCNPJ', () => {
+		test( 'should return true for valid CNPJ (Brazilian company tax identification number)', () => {
+			expect( isValidCNPJ( '94065313000171' ) ).toEqual( true );
+			expect( isValidCNPJ( '94.065.313/0001-71' ) ).toEqual( true );
+		} );
+		test( 'should return false for invalid CPF', () => {
+			expect( isValidCNPJ( '94065313000170' ) ).toEqual( false );
+			expect( isValidCNPJ( '94.065.313/0001-70' ) ).toEqual( false );
 		} );
 	} );
 

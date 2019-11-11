@@ -41,6 +41,11 @@ import { Composer } from './composer';
 import { Notices } from './notices';
 import { Timeline } from './timeline';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /*
  * Main chat UI component
  */
@@ -53,7 +58,6 @@ export class Happychat extends Component {
 		this.props.setBlurred();
 	}
 
-	// transform-class-properties syntax so this is bound within the function
 	onCloseChatTitle = () => {
 		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
 		onMinimizeChat();

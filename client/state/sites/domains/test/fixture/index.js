@@ -1,9 +1,9 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -29,6 +29,7 @@ export const DOMAIN_PRIMARY = {
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -37,15 +38,17 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: true,
+	isEligibleForInboundTransfer: true,
 	isAutoRenewing: true,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: false,
 	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
 	name: 'retronevergiveup.me',
 	owner: 'John Doe',
@@ -55,7 +58,6 @@ export const DOMAIN_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: true,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
@@ -81,6 +83,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: null,
@@ -89,15 +92,17 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: false,
+	isEligibleForInboundTransfer: false,
 	isAutoRenewing: false,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: true,
 	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
 	name: 'retronevergiveup.wordpress.me',
 	owner: typeof undefined,
@@ -107,7 +112,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
@@ -135,6 +139,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -149,7 +154,9 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	has_wpcom_nameservers: true,
 	has_zone: true,
 	current_user_can_manage: true,
+	is_eligible_for_inbound_transfer: true,
 	is_pending_icann_verification: false,
+	is_subdomain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -181,6 +188,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: false,
@@ -195,7 +203,9 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	has_wpcom_nameservers: true,
 	has_zone: false,
 	current_user_can_manage: true,
+	is_eligible_for_inbound_transfer: false,
 	is_pending_icann_verification: false,
+	is_subdomain: true,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -259,6 +269,12 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 	type: SITE_DOMAINS_REQUEST_FAILURE,
 	siteId: SITE_ID_FIRST,
 	error: ERROR_MESSAGE_RESPONSE,
+};
+
+export const ACTION_DOMAIN_PRIVACY_TOGGLE = {
+	type: DOMAIN_PRIVACY_TOGGLE,
+	siteId: SITE_ID_FIRST,
+	domain: REST_API_SITE_DOMAIN_FIRST.domain,
 };
 
 /**

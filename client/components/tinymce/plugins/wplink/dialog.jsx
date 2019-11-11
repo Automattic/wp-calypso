@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,6 @@ import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
-import GridiconLinkBreak from 'gridicons/dist/link-break';
 
 /**
  * Internal dependencies
@@ -16,7 +14,7 @@ import GridiconLinkBreak from 'gridicons/dist/link-break';
 import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
@@ -27,13 +25,14 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import Gridicon from 'components/gridicon';
 
 /**
  * Module variables
  */
-let REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
-	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
+const REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+const REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
+const REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 class LinkDialog extends React.Component {
 	static propTypes = {
@@ -50,14 +49,14 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}
 	}
 
 	getLink = () => {
-		const editor = this.props.editor;
+		const { editor } = this.props;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
 	};
@@ -77,10 +76,7 @@ class LinkDialog extends React.Component {
 	};
 
 	updateEditor = () => {
-		let editor = this.props.editor,
-			attrs,
-			link,
-			linkText;
+		const { editor } = this.props;
 
 		editor.focus();
 
@@ -93,9 +89,9 @@ class LinkDialog extends React.Component {
 			return;
 		}
 
-		link = this.getLink();
-		linkText = this.state.linkText;
-		attrs = {
+		const link = this.getLink();
+		let { linkText } = this.state;
+		const attrs = {
 			href: this.getCorrectedUrl(),
 			target: this.state.newWindow ? '_blank' : '',
 		};
@@ -121,10 +117,9 @@ class LinkDialog extends React.Component {
 	};
 
 	hasSelectedText = linkNode => {
-		let editor = this.props.editor,
-			html = editor.selection.getContent(),
-			nodes,
-			i;
+		const { editor } = this.props;
+		const html = editor.selection.getContent();
+		let nodes;
 
 		// Partial html and not a fully selected anchor element
 		if (
@@ -141,7 +136,7 @@ class LinkDialog extends React.Component {
 				return false;
 			}
 
-			for ( i = nodes.length - 1; i >= 0; i-- ) {
+			for ( let i = nodes.length - 1; i >= 0; i-- ) {
 				if ( nodes[ i ].nodeType !== 3 ) {
 					return false;
 				}
@@ -152,10 +147,9 @@ class LinkDialog extends React.Component {
 	};
 
 	getInferredUrl = () => {
-		let selectedText = this.props.editor.selection.getContent(),
-			selectedNode,
-			parsedImage,
-			knownImage;
+		const selectedText = this.props.editor.selection.getContent();
+		let parsedImage;
+		let knownImage;
 
 		if ( REGEXP_EMAIL.test( selectedText ) ) {
 			return 'mailto:' + selectedText;
@@ -163,7 +157,7 @@ class LinkDialog extends React.Component {
 			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
 		}
 
-		selectedNode = this.props.editor.selection.getNode();
+		const selectedNode = this.props.editor.selection.getNode();
 		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
 			parsedImage = deserialize( selectedNode );
 			if ( this.props.site && parsedImage.media.ID ) {
@@ -179,18 +173,18 @@ class LinkDialog extends React.Component {
 	};
 
 	getState = () => {
-		let editor = this.props.editor,
-			selectedNode = editor.selection.getNode(),
-			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
-			onlyText = this.hasSelectedText( linkNode ),
-			nextState = {
-				isNew: true,
-				newWindow: false,
-				showLinkText: true,
-				linkText: '',
-				url: '',
-				isUserDefinedLinkText: false,
-			};
+		const { editor } = this.props;
+		const selectedNode = editor.selection.getNode();
+		const linkNode = editor.dom.getParent( selectedNode, 'a[href]' );
+		const onlyText = this.hasSelectedText( linkNode );
+		const nextState = {
+			isNew: true,
+			newWindow: false,
+			showLinkText: true,
+			linkText: '',
+			url: '',
+			isUserDefinedLinkText: false,
+		};
 
 		if ( linkNode ) {
 			nextState.linkText = linkNode.innerText || linkNode.textContent;
@@ -244,7 +238,7 @@ class LinkDialog extends React.Component {
 	};
 
 	getButtons = () => {
-		let buttonText, buttons;
+		let buttonText;
 
 		if ( this.state.isNew ) {
 			buttonText = this.props.translate( 'Add Link' );
@@ -252,7 +246,7 @@ class LinkDialog extends React.Component {
 			buttonText = this.props.translate( 'Save' );
 		}
 
-		buttons = [
+		const buttons = [
 			<FormButton key="save" onClick={ this.updateEditor }>
 				{ buttonText }
 			</FormButton>,
@@ -264,7 +258,7 @@ class LinkDialog extends React.Component {
 		if ( this.state.url && ! this.state.isNew ) {
 			buttons.push(
 				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
-					<GridiconLinkBreak />
+					<Gridicon icon="link-break" />
 					{ this.props.translate( 'Remove' ) }
 				</button>
 			);
@@ -305,6 +299,7 @@ class LinkDialog extends React.Component {
 
 	state = this.getState();
 
+	/* eslint-disable jsx-a11y/no-autofocus */
 	render() {
 		return (
 			<Dialog
@@ -318,6 +313,7 @@ class LinkDialog extends React.Component {
 					<FormLabel>
 						<span>{ this.props.translate( 'URL' ) }</span>
 						<FormTextInput
+							// eslint-disable-next-line react/no-string-refs
 							ref="url"
 							autoFocus={ true }
 							onChange={ this.setUrl }
@@ -364,6 +360,7 @@ class LinkDialog extends React.Component {
 			</Dialog>
 		);
 	}
+	/* eslint-enable jsx-a11y/no-autofocus */
 }
 
 export default connect(

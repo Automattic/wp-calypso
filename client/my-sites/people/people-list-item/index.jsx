@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
@@ -25,6 +25,11 @@ import {
 } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PeopleListItem extends React.PureComponent {
 	static displayName = 'PeopleListItem';
@@ -122,7 +127,16 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+		const {
+			className,
+			invite,
+			onRemove,
+			siteId,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -153,7 +167,7 @@ class PeopleListItem extends React.PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } type={ type } user={ user } />
+					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
 				</div>
 
 				{ isInvite && this.renderInviteStatus() }
@@ -162,16 +176,16 @@ class PeopleListItem extends React.PureComponent {
 					<div className="people-list-item__actions">
 						<Button
 							compact
-							scary
-							borderless
 							className="people-list-item__remove-button"
 							onClick={ onRemove }
 							data-e2e-remove-login={ get( user, 'login', '' ) }
 						>
-							<Gridicon icon="trash" />
-							{ translate( 'Remove', {
-								context: 'Verb: Remove a user or follower from the blog.',
-							} ) }
+							<Gridicon icon="cross" />
+							<span>
+								{ translate( 'Remove', {
+									context: 'Verb: Remove a user or follower from the blog.',
+								} ) }
+							</span>
 						</Button>
 					</div>
 				) }

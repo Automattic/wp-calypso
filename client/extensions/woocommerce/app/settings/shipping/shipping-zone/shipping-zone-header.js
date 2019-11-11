@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { isNumber } from 'lodash';
@@ -32,9 +32,9 @@ const ShippingZoneHeader = ( {
 } ) => {
 	const currentCrumb =
 		zone && isNumber( zone.id ) ? (
-			<span>{ translate( 'Edit Shipping Zone' ) }</span>
+			<span>{ translate( 'Edit shipping zone' ) }</span>
 		) : (
-			<span>{ translate( 'Add new Shipping Zone' ) }</span>
+			<span>{ translate( 'Add new shipping zone' ) }</span>
 		);
 
 	const breadcrumbs = [

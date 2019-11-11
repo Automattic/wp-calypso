@@ -1,10 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
+// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
+import 'jest-fetch-mock';
 
 /**
  * Internal dependencies

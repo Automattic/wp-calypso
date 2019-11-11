@@ -9,7 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems, isPaidForFullyInCredits } from 'lib/cart-values';
+import { isPaidForFullyInCredits } from 'lib/cart-values';
+import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'lib/cart-values/cart-items';
 import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
@@ -17,8 +18,11 @@ import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	RECEIVED_AUTHORIZATION_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
+	REDIRECTING_FOR_AUTHORIZATION,
+	MODAL_AUTHORIZATION,
 } from 'lib/store-transactions/step-types';
 
 export class PayButton extends React.Component {
@@ -46,6 +50,7 @@ export class PayButton extends React.Component {
 				state = this.sending();
 				break;
 
+			case REDIRECTING_FOR_AUTHORIZATION:
 			case RECEIVED_PAYMENT_KEY_RESPONSE:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
@@ -55,9 +60,11 @@ export class PayButton extends React.Component {
 				break;
 
 			case SUBMITTING_WPCOM_REQUEST:
+			case MODAL_AUTHORIZATION:
 				state = this.completing();
 				break;
 
+			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();
@@ -80,7 +87,7 @@ export class PayButton extends React.Component {
 			return this.props.beforeSubmitText;
 		}
 
-		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
+		if ( hasOnlyFreeTrial( cart ) ) {
 			return this.props.translate( 'Start %(days)s Day Free Trial', {
 				args: { days: '14' },
 				context: 'Pay button for free trials on /checkout',
@@ -89,7 +96,7 @@ export class PayButton extends React.Component {
 
 		if ( cart.total_cost_display ) {
 			if ( isPaidForFullyInCredits( cart ) ) {
-				if ( cartItems.hasRenewalItem( this.props.cart ) ) {
+				if ( hasRenewalItem( this.props.cart ) ) {
 					return this.props.translate( 'Purchase %(price)s subscription with Credits', {
 						args: { price: cart.total_cost_display },
 						context: 'Renew button on /checkout',
@@ -102,7 +109,7 @@ export class PayButton extends React.Component {
 				} );
 			}
 
-			if ( cartItems.hasRenewalItem( this.props.cart ) ) {
+			if ( hasRenewalItem( this.props.cart ) ) {
 				return this.props.translate( 'Renew subscription - %(price)s', {
 					args: { price: cart.total_cost_display },
 					context: 'Renew button on /checkout',
@@ -143,7 +150,7 @@ export class PayButton extends React.Component {
 
 	completing = () => {
 		let text;
-		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
+		if ( hasFreeTrial( this.props.cart ) ) {
 			text = this.props.translate( 'Starting your free trial…', {
 				context: 'Loading state on /checkout',
 			} );

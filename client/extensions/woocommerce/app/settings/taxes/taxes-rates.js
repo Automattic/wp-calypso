@@ -10,14 +10,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import {
 	areSettingsGeneralLoaded,
-	areTaxCalculationsEnabled,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
@@ -67,7 +66,7 @@ class TaxesRates extends Component {
 
 	renderLocation = () => {
 		const {
-			areTaxesEnabled,
+			taxesEnabled,
 			countryName,
 			loadedSettingsGeneral,
 			loadedLocations,
@@ -75,7 +74,7 @@ class TaxesRates extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! areTaxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
+		if ( ! taxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
 			return null;
 		}
 
@@ -109,9 +108,9 @@ class TaxesRates extends Component {
 	};
 
 	renderCalculationStatus = () => {
-		const { areTaxesEnabled, translate } = this.props;
+		const { taxesEnabled, translate } = this.props;
 
-		if ( ! areTaxesEnabled ) {
+		if ( ! taxesEnabled ) {
 			return (
 				<Notice showDismiss={ false } status="is-warning">
 					{ translate(
@@ -137,8 +136,8 @@ class TaxesRates extends Component {
 	};
 
 	possiblyRenderRates = () => {
-		const { areTaxesEnabled, taxRates, translate } = this.props;
-		if ( ! areTaxesEnabled ) {
+		const { taxesEnabled, taxRates, translate } = this.props;
+		if ( ! taxesEnabled ) {
 			return null;
 		}
 
@@ -257,7 +256,6 @@ class TaxesRates extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const address = getStoreLocation( state, ownProps.siteId );
-	const areTaxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
 	const countries = getAllCountries( state, ownProps.siteId );
 	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
 	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
@@ -277,7 +275,6 @@ function mapStateToProps( state, ownProps ) {
 
 	return {
 		address,
-		areTaxesEnabled,
 		countries,
 		countryName,
 		loadedLocations,

@@ -1,35 +1,3 @@
-/* Progress Indicator */
-
-.wizard__progress-indicator {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var( --color-text-subtle );
-	font-size: 12px;
-	margin-bottom: 8px;
-	text-align: center;
-
-	@include breakpoint( '<660px' ) {
-		padding-top: 8px;
-	}
-}
-
-/* Navigation */
 .wizard__navigation-links {
-	text-align: center;
-}
-
-.wizard__navigation-links .button.is-borderless {
-	color: var( --color-neutral-500 );
-
-	&:hover {
-		color: var( --color-neutral-700 );
-	}
-}
-
-.wizard__navigation-link {
-	cursor: pointer;
-	display: inline-block;
-	margin: 24px 12px;
 	text-align: center;
 }

@@ -6,12 +6,17 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+
+/**
+ * Style dependencies
+ */
+import './help-teaser-button.scss';
 
 export default localize( ( { title, description, href, onClick } ) => {
 	return (

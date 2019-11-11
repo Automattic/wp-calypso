@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { fetchUserSettings } from 'state/user-settings/actions';
 
 class QueryUserSettings extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.fetchUserSettings();
 	}
 

@@ -15,11 +15,11 @@ import { requestPostTypeTaxonomies } from 'state/post-types/taxonomies/actions';
 import { isRequestingPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 
 class QueryTaxonomies extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType ) {
 			return;
 		}

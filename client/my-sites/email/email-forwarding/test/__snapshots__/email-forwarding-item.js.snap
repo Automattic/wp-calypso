@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmailForwardingItem it renders EmailForwardingItem correctly 1`] = `
+<li>
+  <button
+    className="button is-borderless"
+    onClick={[Function]}
+    type="button"
+  >
+    <svg
+      className="gridicon gridicons-trash"
+      height={24}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <use
+        xlinkHref="gridicons.svg#gridicons-trash"
+      />
+    </svg>
+  </button>
+  <button
+    className="button is-borderless"
+    onClick={[Function]}
+    title="Resend Verification Email"
+    type="button"
+  >
+    <svg
+      className="gridicon gridicons-mail"
+      height={24}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <use
+        xlinkHref="gridicons.svg#gridicons-mail"
+      />
+    </svg>
+  </button>
+  <span>
+    <strong>
+      
+    </strong>
+     
+    <em>
+      forwards to
+    </em>
+     
+    <strong>
+      foo@a8c.com
+    </strong>
+  </span>
+</li>
+`;

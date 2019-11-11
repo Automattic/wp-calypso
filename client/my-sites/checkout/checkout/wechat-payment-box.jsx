@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -18,9 +18,8 @@ import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import CartToggle from './cart-toggle';
 import PaymentChatButton from './payment-chat-button';
 import SubscriptionText from './subscription-text';
-import TermsOfService from './terms-of-service';
 import WeChatPaymentQRcode from './wechat-payment-qrcode';
-import cartValues, { paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
+import { paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import userAgent from 'lib/user-agent';
 import { Input } from 'my-sites/domains/components/form';
 import { convertToSnakeCase } from 'state/data-layer/utils';
@@ -32,6 +31,8 @@ import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
+import CheckoutTerms from './checkout-terms';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -173,10 +174,11 @@ export class WechatPaymentBox extends Component {
 					{ children }
 
 					<RecentRenewals cart={ cart } />
-					<TermsOfService
-						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-					/>
+
+					<CheckoutTerms cart={ cart } />
+
 					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-buttons  payment-box__payment-buttons">

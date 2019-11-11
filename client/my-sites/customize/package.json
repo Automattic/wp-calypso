@@ -1,6 +1,6 @@
 {
-  "name": "customizer",
-  "version": "0.1.0",
-  "private": true,
-  "main": "customize.jsx"
+	"name": "customizer",
+	"version": "0.1.0",
+	"private": true,
+	"main": "customize.jsx"
 }

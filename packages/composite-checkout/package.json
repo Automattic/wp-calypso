@@ -1,0 +1,43 @@
+{
+	"name": "@automattic/composite-checkout",
+	"version": "1.0.0",
+	"description": "A checkout component for Automattic brands",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/composite-checkout"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout#readme",
+	"dependencies": {
+		"prop-types": "^15.7.2",
+		"react": "^16.8.6",
+		"react-stripe-elements": "^5.1.0",
+		"styled-components": "4.4.0"
+	},
+	"private": true
+}

@@ -1,0 +1,63 @@
+// Post comments line-clamping
+.comments__comment-content-wrapper {
+	position: relative;
+
+	&.is-single-line,
+	&.is-single-line .comments__comment-content {
+		max-height: 15px * 1.6;
+	}
+
+	&.is-excerpt,
+	&.is-excerpt .comments__comment-content {
+		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
+	}
+
+	&.is-single-line .comments__comment-content,
+	&.is-excerpt .comments__comment-content {
+		overflow: hidden;
+	}
+}
+
+// Hide certain elements in excerpt comments
+.comments__comment-content-wrapper.is-excerpt {
+	blockquote {
+		display: none;
+	}
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
+	margin-bottom: 0;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content blockquote {
+	margin: 10px 0 16px;
+}
+
+.comments__comment-content {
+	@extend %content-font;
+	font-size: 15px;
+	line-height: 1.56;
+	word-break: break-word;
+
+	p {
+		color: var( --color-text );
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	blockquote {
+		background: var( --color-neutral-0 );
+		border-left: 2px solid var( --color-neutral-0 );
+		border-radius: 0;
+		color: var( --color-text );
+		margin: 8px 0 16px;
+		padding: 8px 16px;
+	}
+
+	pre {
+		white-space: pre-wrap;
+	}
+}
+

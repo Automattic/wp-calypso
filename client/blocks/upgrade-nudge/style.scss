@@ -1,0 +1,60 @@
+.card.upgrade-nudge {
+	border-left: 3px solid var( --color-plan-premium );
+	display: flex;
+	margin: 16px 0;
+	padding: 12px 16px;
+
+	.upgrade-nudge__title {
+		font-size: 14px;
+	}
+
+	.button {
+		margin-left: auto;
+	}
+
+	&.is-no-margin {
+		margin: 0;
+	}
+
+	&.is-card-link {
+		padding-right: 48px;
+	}
+}
+
+.upgrade-nudge__icon {
+	background: var( --color-plan-premium );
+	border-radius: 50%;
+	margin-right: 16px;
+	color: var( --color-text-inverted );
+	padding: 5px 7px 7px 5px;
+	align-self: center;
+	flex: 0 0 auto;
+}
+
+.button.upgrade-nudge {
+	margin-bottom: 16px;
+	text-align: left;
+	display: inline-flex;
+
+	.upgrade-nudge__icon {
+		background: var( --color-success );
+	}
+
+	&.is-full-width {
+		width:100%;
+		@include breakpoint( '>660px' ) {
+			max-width: 420px;
+		}
+	}
+}
+
+.upgrade-nudge__title {
+	color: var( --color-neutral-70 );
+	font-weight: 500;
+}
+
+.upgrade-nudge__message {
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	display: block;
+}

@@ -5,7 +5,6 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
@@ -41,7 +40,6 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
-import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
@@ -63,14 +61,20 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
-import withLocalizedMoment from 'components/with-localized-moment';
-
+import { applySiteOffset } from 'lib/site/timezone';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PAGE_SIZE = 20;
 
@@ -152,12 +156,12 @@ class ActivityLog extends Component {
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
 	 * times need to be formatted for display to ensure all times are displayed as site times.
 	 *
-	 * @param   {object} moment Moment to adjust.
-	 * @returns {object}        Moment adjusted for site timezone or gmtOffset.
+	 * @param   {object} date Moment to adjust.
+	 * @returns {Moment}      Moment adjusted for site timezone or gmtOffset.
 	 */
-	applySiteOffset = moment => {
+	applySiteOffset = date => {
 		const { timezone, gmtOffset } = this.props;
-		return adjustMoment( { timezone, gmtOffset, moment } );
+		return applySiteOffset( date, { timezone, gmtOffset } );
 	};
 
 	changePage = pageNumber => {
@@ -180,7 +184,7 @@ class ActivityLog extends Component {
 
 		const cards = [];
 
-		if ( !! restoreProgress ) {
+		if ( restoreProgress ) {
 			cards.push(
 				'finished' === restoreProgress.status
 					? this.getEndBanner( siteId, restoreProgress )
@@ -188,7 +192,7 @@ class ActivityLog extends Component {
 			);
 		}
 
-		if ( !! backupProgress ) {
+		if ( backupProgress ) {
 			if ( 0 <= backupProgress.progress ) {
 				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
 			} else if (
@@ -358,6 +362,7 @@ class ActivityLog extends Component {
 			siteIsOnFreePlan,
 			slug,
 			translate,
+			isAtomic,
 			isJetpack,
 			isIntroDismissed,
 		} = this.props;
@@ -375,11 +380,11 @@ class ActivityLog extends Component {
 		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const timePeriod = ( () => {
-			const today = this.applySiteOffset( moment.utc( Date.now() ) );
+			const today = this.applySiteOffset( moment() );
 			let last = null;
 
 			return ( { rewindId } ) => {
-				const ts = this.applySiteOffset( moment.utc( rewindId * 1000 ) );
+				const ts = this.applySiteOffset( moment( rewindId * 1000 ) );
 
 				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
@@ -404,9 +409,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
-				{ config.isEnabled( 'rewind-alerts' ) && siteId && isJetpack && (
-					<RewindAlerts siteId={ siteId } />
-				) }
+				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
@@ -585,6 +588,7 @@ export default connect(
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			logs: ( siteId && logs.data ) || emptyList,
 			logLoadingState: logs && logs.state,

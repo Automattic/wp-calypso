@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	PAGE_TEMPLATES_RECEIVE,
@@ -21,20 +18,24 @@ import {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer(
-	{},
-	{
-		[ PAGE_TEMPLATES_REQUEST ]: ( state, { siteId } ) => {
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case PAGE_TEMPLATES_REQUEST: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: true };
-		},
-		[ PAGE_TEMPLATES_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		}
+		case PAGE_TEMPLATES_REQUEST_FAILURE: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
-		[ PAGE_TEMPLATES_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		}
+		case PAGE_TEMPLATES_REQUEST_SUCCESS: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -45,15 +46,16 @@ export const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ PAGE_TEMPLATES_RECEIVE ]: ( state, { siteId, templates } ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case PAGE_TEMPLATES_RECEIVE: {
+			const { siteId, templates } = action;
 			return { ...state, [ siteId ]: templates };
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	requesting,

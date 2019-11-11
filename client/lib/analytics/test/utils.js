@@ -39,9 +39,6 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/tag' ) ).toBe( true );
 	} );
 	test( 'always returns false when :site is in the path', () => {
-		expect(
-			shouldReportOmitBlogId( '/me/purchases/:site/:purchaseId/cancel-privacy-protection' )
-		).toBe( false );
 		expect( shouldReportOmitBlogId( '/me/concierge/:site/book' ) ).toBe( false );
 		expect( shouldReportOmitBlogId( '/following/:site' ) ).toBe( false );
 	} );

@@ -13,9 +13,9 @@ import { get } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
-import SignupActions from 'lib/signup/actions';
 import ActivityLogRewindToggle from 'my-sites/activity/activity-log/activity-log-rewind-toggle';
 import getRewindState from 'state/selectors/get-rewind-state';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -27,7 +27,6 @@ class RewindMigrate extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
 		// Connected props
@@ -41,21 +40,14 @@ class RewindMigrate extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: this.props.translate( 'Migrating your credentials' ),
-					stepName: this.props.stepName,
-				},
-				undefined,
-				{ rewindconfig: true }
-			);
+			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();
 		}
 	}
 
-	stepContent = () => {
+	stepContent() {
 		const { translate, siteId } = this.props;
 
 		return (
@@ -89,7 +81,7 @@ class RewindMigrate extends Component {
 				</div>
 			</div>
 		);
-	};
+	}
 
 	render() {
 		return (
@@ -97,7 +89,6 @@ class RewindMigrate extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
@@ -116,5 +107,5 @@ export default connect(
 			rewindIsNowActive: 'provisioning' === rewindState.state,
 		};
 	},
-	null
+	{ submitSignupStep }
 )( localize( RewindMigrate ) );

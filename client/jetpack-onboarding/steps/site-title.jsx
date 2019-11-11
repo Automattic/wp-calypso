@@ -23,7 +23,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		blogdescription: this.getFieldValue( 'siteDescription' ),
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
 			this.setState( {
 				blogname: nextProps.settings.siteTitle,

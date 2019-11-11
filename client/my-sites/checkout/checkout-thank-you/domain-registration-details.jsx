@@ -11,12 +11,11 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
 import { isGoogleApps, isBlogger } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
-import { EMAIL_VALIDATION_AND_VERIFICATION, REGISTER_DOMAIN } from 'lib/url/support';
+import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'lib/url/support';
 
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
@@ -46,9 +45,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					/>
 				) }
 
-				{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
-					<GoogleAppsDetails isRequired />
-				) }
+				{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 			</div>
 
 			<PurchaseDetail
@@ -58,7 +55,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					'Your domain should start working immediately, but may be unreliable during the first 72 hours.'
 				) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
-				href={ REGISTER_DOMAIN }
+				href={ DOMAIN_WAITING }
 				target="_blank"
 				rel="noopener noreferrer"
 			/>

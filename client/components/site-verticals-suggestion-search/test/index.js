@@ -1,9 +1,4 @@
 /**
- * @format
- * @jest-environment jsdom
- */
-
-/**
  * External dependencies
  */
 import React from 'react';
@@ -12,13 +7,18 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-
 import { SiteVerticalsSuggestionSearch } from '../';
 import SuggestionSearch from 'components/suggestion-search';
+import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
+
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
+} ) );
+
+jest.mock( 'components/data/query-verticals', () => 'QueryVerticals' );
 
 const defaultProps = {
 	onChange: jest.fn(),
-	requestVerticals: jest.fn(),
 	verticals: [
 		{
 			verticalName: 'doo',
@@ -29,7 +29,7 @@ const defaultProps = {
 			verticalId: 'hoodoo',
 		},
 	],
-	requestDefaultVertical: jest.fn(),
+	defaultVerticalSearchTerm: 'eeek',
 	defaultVertical: {
 		verticalName: 'eeek',
 		verticalSlug: 'ooofff',
@@ -38,12 +38,10 @@ const defaultProps = {
 		parent: 'whoops',
 		verticalId: 'argh',
 	},
+	siteType: 'blog',
+	searchValue: '',
 	translate: str => str,
-	charsToTriggerSearch: 2,
-	lastUpdated: 1,
 };
-
-defaultProps.requestVerticals.cancel = jest.fn();
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {
 	afterEach( () => {
@@ -56,32 +54,46 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should make an API call onMount where there is a valid initial value', () => {
-		shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } initialValue="scooby" /> );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'scooby', 1 );
-	} );
-
-	test( 'should trigger search after > `charsToTriggerSearch` characters and call `onChange` prop', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'b' );
-		expect( defaultProps.requestVerticals ).not.toHaveBeenCalled();
-		wrapper.instance().onSiteTopicChange( 'bo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'bo', 5 );
-	} );
-
 	test( 'should pass an exact non-user vertical match to the `onChange` prop', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		wrapper.instance().onSiteTopicChange( 'doo' );
-		wrapper.setProps( { lastUpdated: 2 } );
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 
-	test( 'should cancel debounced invocations when the search value is falsey or has fewer chars than `props.charsToTriggerSearch`', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'b' );
-		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 1 );
-		wrapper.instance().onSiteTopicChange( null );
-		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
+	test( 'should show popular topics', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
+		);
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should hide popular topics if showPopular is false', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ false } />
+		);
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should hide popular topics if user has typed a query', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch
+				{ ...defaultProps }
+				searchValue={ 'Dogs' }
+				showPopular={ true }
+			/>
+		);
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should pass default vertical search term to <QueryVerticals />', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
+		);
+		const queryComponent = wrapper.find( 'QueryVerticals' ).at( 1 );
+
+		expect( queryComponent.length ).toBe( 1 );
+		expect( queryComponent.props().searchTerm ).toBe( defaultProps.defaultVerticalSearchTerm );
+		expect( queryComponent.props().siteType ).toBe( defaultProps.siteType );
 	} );
 
 	describe( 'searchForVerticalMatches()', () => {
@@ -113,8 +125,8 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		test( 'should return default vertical object', () => {
 			wrapper.instance().updateVerticalData();
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-				verticalName: undefined,
-				verticalSlug: undefined,
+				verticalName: '',
+				verticalSlug: '',
 				isUserInputVertical: true,
 				preview: defaultProps.defaultVertical.preview,
 				verticalId: '',
@@ -140,33 +152,73 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		} );
 	} );
 
-	describe( 'sortSearchResults()', () => {
+	test( "show verticals that don't match searchValue in the Related category", () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="dog" />
+		);
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ category: 'Related', label: 'Cats' },
+		] );
+	} );
+
+	test( 'user input vertical is never shown in Related category', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="dog" />
+		);
+		wrapper.setProps( {
+			verticals: [
+				{ verticalName: 'Dogs' },
+				{ verticalName: 'Doggo' },
+				{ verticalName: 'Cats', isUserInputVertical: true },
+			],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ label: 'Cats' },
+		] );
+	} );
+
+	test( "don't show any related topics if query length is less than 3", () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="do" />
+		);
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+		] );
+
+		wrapper.instance().onSiteTopicChange( 'dog' );
+		// Need to re-set the verticals prop again because `cDU` does reference equality
+		// check before updating candidateVerticals
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ label: 'Cats', category: 'Related' },
+		] );
+	} );
+
+	test( 'specifies which fetch_algo and ui_algo are being used for traintracks events', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		test( 'should return sorted results with `startsWith` matches at the start and exact match at the end', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Bar', 'Bari Beaches', 'Bartender', 'Foobar', 'Crowbar' ], ' bar ' );
-			expect( sortedResults ).toEqual( [
-				'Bari Beaches',
-				'Bartender',
-				'Foobar',
-				'Crowbar',
-				'Bar',
-			] );
-		} );
 
-		test( 'should omit non-matches', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Bar', 'Bartender', 'Foobar', 'Terminal spiv' ], 'spiv' );
-			expect( sortedResults ).toEqual( [ 'Terminal spiv' ] );
-		} );
-
-		test( 'should not sort when no `startsWith` suggestions', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ], 'tam' );
-			expect( sortedResults ).toEqual( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ] );
+		expect( wrapper.find( SuggestionSearch ).prop( 'railcar' ) ).toMatchObject( {
+			fetch_algo: expect.any( String ),
+			ui_algo: expect.any( String ),
 		} );
 	} );
 } );

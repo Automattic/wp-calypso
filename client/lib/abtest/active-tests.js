@@ -1,13 +1,5 @@
 /** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190214',
-		variations: {
-			main: 50,
-			onboarding: 50,
-		},
-		defaultVariation: 'main',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -26,34 +18,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	businessPlanDescriptionAT: {
-		datestamp: '20170605',
-		variations: {
-			original: 50,
-			pluginsAndThemes: 50,
-		},
-		defaultVariation: 'original',
-	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -72,24 +37,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	showConciergeSessionUpsell: {
-		datestamp: '20181214',
-		variations: {
-			skip: 100,
-			show: 0,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
-	showConciergeSessionUpsellNonGSuite: {
-		datestamp: '20190104',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
@@ -106,53 +53,76 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	removeDomainsStepFromOnboarding: {
-		datestamp: '20181221',
+	pageBuilderMVP: {
+		datestamp: '20190419',
 		variations: {
-			keep: 100,
-			remove: 0,
+			control: 100,
+			test: 0,
 		},
-		defaultVariation: 'keep',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	domainSearchButtonStyles: {
-		datestamp: '20190119',
+	conciergeUpsellDial: {
+		//this test is used to dial down the upsell offer
+		datestamp: '20190429',
 		variations: {
-			allPrimary: 50,
-			onePrimary: 50,
+			offer: 100,
+			noOffer: 0,
 		},
-		defaultVariation: 'allPrimary',
+		defaultVariation: 'noOffer',
+		allowExistingUsers: true,
 	},
-	twoYearPlanByDefault: {
-		datestamp: '20190207',
+	popularPlanBy: {
+		datestamp: '20190529',
 		variations: {
-			originalFlavor: 50,
-			twoYearFlavor: 50,
+			siteType: 0,
+			customerType: 100,
 		},
-		defaultVariation: 'originalFlavor',
+		defaultVariation: 'siteType',
 	},
-	gSuitePostCheckoutNotice: {
-		datestamp: '20190211',
+	skippableDomainStep: {
+		datestamp: '20290717',
 		variations: {
-			original: 50,
-			enhanced: 50,
+			skippable: 0,
+			notSkippable: 100,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
 	},
-	onlyJetpackMonthly: {
-		datestamp: '20190212',
+	verticalSuggestedThemes: {
+		datestamp: '20191031',
 		variations: {
-			original: 50,
-			monthlyOnly: 50,
+			control: 90,
+			test: 10,
 		},
-		defaultVariation: 'original',
-		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	pluginFeaturedTitle: {
-		datestamp: '20190220',
+	passwordlessSignup: {
+		datestamp: '20191029',
 		variations: {
-			featured: 50,
-			recommended: 50,
+			passwordless: 10,
+			default: 90,
 		},
-		defaultVariation: 'featured',
+		defaultVariation: 'default',
+	},
+	checkoutPaymentTypes: {
+		datestamp: '20191028',
+		variations: {
+			tabs: 50,
+			radios: 50,
+		},
+		defaultVariation: 'tabs',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191106',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

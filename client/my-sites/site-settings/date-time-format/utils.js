@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { moment } from 'i18n-calypso';
+import moment from 'moment-timezone';
 import { has, startsWith } from 'lodash';
 
 /**

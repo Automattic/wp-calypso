@@ -1,0 +1,22 @@
+
+// ==========================================================================
+// Returns a linear gradient used to fade elements extending outside their parent
+//
+// The input value for the function must be individual RGB values. For conversion
+// of hexadecimal color values please use the hex-to-rgb() color function.
+//
+// The rgba() notation needs to be escaped in order to support CSS custom
+// properties. If it were not escaped SASS would interpret it as a SASS color
+// function which doesn't allow for CSS custom properties as input values.
+//
+// Usage:
+// background: overflow-gradient( var( --color-sidebar-background-rgb ) );
+// border-image: overflow-gradient( var( --color-neutral-light-rgb ) ), to left );
+// ==========================================================================
+@function overflow-gradient( $color, $stop: 90%, $direction: to right ) {
+	@return linear-gradient(
+		$direction,
+		#{'rgba('} $color #{', 0 )'},
+		#{'rgba('} $color #{', 1 )'} $stop
+	);
+}

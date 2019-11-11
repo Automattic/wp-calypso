@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-import { map } from 'lodash';
+import { map, noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -14,11 +12,13 @@ import { translate } from 'i18n-calypso';
 import { createSiteDomainObject } from './assembler';
 import wp from 'lib/wp';
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
+import { requestSite } from 'state/sites/actions';
 
 /**
  * Module vars
@@ -134,3 +134,25 @@ export function fetchSiteDomains( siteId ) {
 			} );
 	};
 }
+
+export function togglePrivacy( siteId, domain ) {
+	return {
+		type: DOMAIN_PRIVACY_TOGGLE,
+		siteId,
+		domain,
+	};
+}
+
+export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
+	debug( 'setPrimaryDomain', siteId, domainName );
+	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
+		if ( error ) {
+			return onComplete( error, data );
+		}
+
+		return dispatch( fetchSiteDomains( siteId ) ).then( () => {
+			onComplete( null, data );
+			dispatch( requestSite( siteId ) );
+		} );
+	} );
+};

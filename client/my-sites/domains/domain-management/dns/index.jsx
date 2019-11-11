@@ -28,6 +28,11 @@ import VerticalNav from 'components/vertical-nav';
 import DomainConnectRecord from './domain-connect-record';
 import { domainConnect } from 'lib/domains/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Dns extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,

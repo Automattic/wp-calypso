@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { head, find, noop, trim, uniqueId } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,7 +51,7 @@ class ProductImageUploader extends Component {
 		errors: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._isMounted = true;
 	}
 	componentWillUnmount() {

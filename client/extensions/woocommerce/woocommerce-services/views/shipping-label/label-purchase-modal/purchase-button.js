@@ -7,13 +7,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import formatCurrency from 'lib/format-currency';
 import {
 	confirmPrintLabel,
 	purchaseLabel,

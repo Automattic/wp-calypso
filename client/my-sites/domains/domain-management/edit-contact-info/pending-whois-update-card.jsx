@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +14,14 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
-function PendingWhoisUpdateCard( { translate } ) {
+/**
+ * Style dependencies
+ */
+import './pending-whois-update-card.scss';
+
+export default function PendingWhoisUpdateCard() {
+	const translate = useTranslate();
+
 	return (
 		<div className="edit-contact-info__pending-whois-update-card">
 			<Notice status="is-warning" showDismiss={ false }>
@@ -43,5 +50,3 @@ function PendingWhoisUpdateCard( { translate } ) {
 		</div>
 	);
 }
-
-export default localize( PendingWhoisUpdateCard );

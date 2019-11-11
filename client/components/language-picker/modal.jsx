@@ -26,7 +26,7 @@ import {
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
@@ -35,6 +35,11 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './modal.scss';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
@@ -68,7 +73,7 @@ export class LanguagePickerModal extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
 			this.setState( {
 				selectedLanguageSlug: nextProps.selected,
@@ -138,12 +143,13 @@ export class LanguagePickerModal extends PureComponent {
 					return languages
 						.filter( language => language.popular )
 						.sort( ( a, b ) => a.popular - b.popular );
-				default:
+				default: {
 					const languageGroup = getLanguageGroupById( filter );
 					const subTerritories = languageGroup ? languageGroup.subTerritories : null;
 					return languages
 						.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
 						.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+				}
 			}
 		}
 

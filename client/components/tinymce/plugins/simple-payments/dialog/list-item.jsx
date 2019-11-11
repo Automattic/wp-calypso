@@ -8,11 +8,11 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import classnames from 'classnames';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import { getCurrencyObject } from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';

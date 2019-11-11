@@ -88,7 +88,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
-						domain: domain,
+						domain,
 						daysAgoRegistered: moment().diff( moment( creationDate ), 'days' ),
 						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
 					},

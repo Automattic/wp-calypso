@@ -18,14 +18,14 @@ import { getPreference } from 'state/preferences/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class QuerySites extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestAll( this.props );
 		this.requestPrimary( this.props );
 		this.requestRecent( this.props );
 		this.requestSingle( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.requestSingle( nextProps );
 		}

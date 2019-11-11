@@ -14,6 +14,11 @@ import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function() {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
@@ -110,7 +115,7 @@ export default function() {
 			'authors',
 			'videoplays',
 			'videodetails',
-			'podcastdownloads',
+			'filedownloads',
 			'searchterms',
 			'annualstats',
 		];
@@ -202,11 +207,6 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-
-		// Reset first view
-		if ( config.isEnabled( 'ui/first-view/reset-route' ) ) {
-			page( '/stats/reset-first-view', statsController.resetFirstView, makeLayout, clientRender );
-		}
 
 		page(
 			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,

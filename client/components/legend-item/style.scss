@@ -45,7 +45,7 @@
 	&::after {
 		content: '';
 	}
-	border: 2px solid $white;
+	border: 2px solid var( --color-border-inverted );
 }
 
 .legend-item__placeholder-detail {

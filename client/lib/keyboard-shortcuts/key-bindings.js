@@ -23,10 +23,18 @@ const KEY_BINDINGS = {
 		},
 		{
 			eventName: 'open-selection',
-			keys: [ 'enter' ],
+			keys: [ [ 'enter' ] ],
 			description: {
-				keys: [ 'enter' ],
+				keys: [ [ 'enter' ] ],
 				text: translate( 'Open selection' ),
+			},
+		},
+		{
+			eventName: 'open-selection-new-tab',
+			keys: [ [ 'v' ] ],
+			description: {
+				keys: [ [ 'v' ] ],
+				text: translate( 'Open selection in a new tab' ),
 			},
 		},
 		{

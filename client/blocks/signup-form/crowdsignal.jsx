@@ -3,13 +3,14 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import AutomatticLogo from 'components/automattic-logo';
 import Button from 'components/button';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
@@ -24,7 +25,6 @@ import SocialSignupForm from './social';
 import './crowdsignal.scss';
 
 class CrowdsignalSignupForm extends Component {
-
 	static propTypes = {
 		disabled: PropTypes.bool,
 		handleSocialResponse: PropTypes.func,
@@ -50,33 +50,16 @@ class CrowdsignalSignupForm extends Component {
 
 	hideSignupForm = () => this.setState( { showSignupForm: false } );
 
-	renderLearnMoreLink() {
-		const { translate } = this.props;
-		const link = (
-			<a
-				href="https://en.support.wordpress.com/wpcc-faq/"
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		);
-
-		return (
-			<p className="signup-form__crowdsignal-learn-more">
-				{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
-					components: {
-						a: link
-					}
-				} ) }
-			</p>
-		);
-	}
-
 	render() {
 		const { translate } = this.props;
 
-		const socialCardClass = classNames( 'signup-form__crowdsignal-card', 'signup-form__crowdsignal-social', {
-			'is-active': ! this.state.showSignupForm,
-		} );
+		const socialCardClass = classNames(
+			'signup-form__crowdsignal-card',
+			'signup-form__crowdsignal-social',
+			{
+				'is-active': ! this.state.showSignupForm,
+			}
+		);
 		const signupCardClass = classNames( 'signup-form__crowdsignal-card', {
 			'is-active': this.state.showSignupForm,
 		} );
@@ -88,20 +71,29 @@ class CrowdsignalSignupForm extends Component {
 			<div className="signup-form__crowdsignal">
 				<div className="signup-form__crowdsignal-layout">
 					<div className={ socialCardClass }>
-						<h2 className="signup-form__crowdsignal-card-header">{ translate( 'Connect an existing account:' ) }</h2>
+						<h2 className="signup-form__crowdsignal-card-header">
+							{ translate( 'Connect an existing account:' ) }
+						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
 							<p className="signup-form__crowdsignal-card-subheader">
-								{ translate( 'The fastest way.{{br/}}Use one of your existing accounts{{br/}}to sign up with Crowdsignal:', {
-									components: {
-										br: <br />
+								{ translate(
+									'The fastest way.{{br/}}Use one of your existing accounts{{br/}}to sign up for Crowdsignal:',
+									{
+										components: {
+											br: <br />,
+										},
 									}
-								} ) }
+								) }
 							</p>
 
-							<Button primary href={ this.props.loginLink } className="signup-form__crowdsignal-wpcom">
+							<Button
+								primary
+								href={ this.props.loginLink }
+								className="signup-form__crowdsignal-wpcom"
+							>
 								<WordPressLogo size={ 20 } />
-								<span>{ translate( 'Sign up with WordPress.com' ) }</span>
+								<span>{ translate( 'Sign in with WordPress.com' ) }</span>
 							</Button>
 							{ this.props.isSocialSignupEnabled && (
 								<SocialSignupForm
@@ -111,10 +103,12 @@ class CrowdsignalSignupForm extends Component {
 									socialServiceResponse={ this.props.socialServiceResponse }
 								/>
 							) }
-							<Button className="signup-form__crowdsignal-show-form" onClick={ this.showSignupForm }>
+							<Button
+								className="signup-form__crowdsignal-show-form"
+								onClick={ this.showSignupForm }
+							>
 								{ translate( 'Create a WordPress.com Account' ) }
 							</Button>
-							{ this.renderLearnMoreLink() }
 						</div>
 					</div>
 
@@ -123,18 +117,35 @@ class CrowdsignalSignupForm extends Component {
 					</div>
 
 					<div className={ signupCardClass }>
-						<h2 className="signup-form__crowdsignal-card-header">{ translate( 'Create a new WordPress.com account:' ) }</h2>
+						<h2 className="signup-form__crowdsignal-card-header">
+							{ translate( 'Create a new WordPress.com account:' ) }
+						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
 							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>
-									<FormButton className="signup-form__crowdsignal-submit" disabled={ this.props.submitting || this.props.disabled }>
-										{ translate( 'Create a WordPress.com Account') }
+									<FormButton
+										className="signup-form__crowdsignal-submit"
+										disabled={ this.props.submitting || this.props.disabled }
+									>
+										{ translate( 'Create a WordPress.com Account' ) }
 									</FormButton>
 
-									{ this.renderLearnMoreLink() }
+									<p className="signup-form__crowdsignal-learn-more">
+										{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
+											components: {
+												a: (
+													<a
+														href="https://crowdsignal.com/2012/12/03/crowdsignal-wordpress-account/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										} ) }
+									</p>
 								</LoggedOutFormFooter>
 							</LoggedOutForm>
 						</div>
@@ -153,11 +164,24 @@ class CrowdsignalSignupForm extends Component {
 						compact
 						className="signup-form__crowdsignal-prev-button"
 						onClick={ this.hideSignupForm }
-						disabled={ this.props.submitting }>
-
+						disabled={ this.props.submitting }
+					>
 						<Gridicon icon="arrow-left" />
 						<span>{ translate( 'Back' ) }</span>
 					</Button>
+				</div>
+
+				<div className="signup-form__crowdsignal-footer">
+					<p className="signup-form__crowdsignal-footer-text">
+						Powered by
+						<Gridicon icon="my-sites" size={ 18 } />
+						WordPress.com
+					</p>
+					<p className="signup-form__crowdsignal-footer-text">
+						An
+						<AutomatticLogo size={ 18 } />
+						Company
+					</p>
 				</div>
 			</div>
 		);

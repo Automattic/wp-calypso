@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DnsRecordsList from '../dns-records/list';
 import DomainConnectDnsRecord from './domain-connect-dns-record';
 
 class DomainConnectAuthorizeRecords extends Component {
@@ -42,17 +43,11 @@ class DomainConnectAuthorizeRecords extends Component {
 
 	renderDnsRecords = records => {
 		return (
-			<ul className="domain-connect__dns-list">
-				{ records.map( ( record, index ) => {
-					return (
-						<DomainConnectDnsRecord
-							key={ index }
-							domain={ this.props.domain }
-							dnsRecord={ record }
-						/>
-					);
-				} ) }
-			</ul>
+			<DnsRecordsList>
+				{ records.map( ( record, index ) => (
+					<DomainConnectDnsRecord key={ index } domain={ this.props.domain } dnsRecord={ record } />
+				) ) }
+			</DnsRecordsList>
 		);
 	};
 
@@ -111,6 +106,7 @@ class DomainConnectAuthorizeRecords extends Component {
 			return null;
 		}
 
+		/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		return (
 			<div>
 				<p>
@@ -127,6 +123,7 @@ class DomainConnectAuthorizeRecords extends Component {
 				{ this.renderConflictingRecords() }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 	}
 }
 

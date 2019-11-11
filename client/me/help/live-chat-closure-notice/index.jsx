@@ -5,28 +5,31 @@
  */
 
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { useLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const DATE_FORMAT = 'MMMM D h:mma z';
 
-const LiveChatClosureNotice = ( {
-	closesAt,
-	compact,
-	displayAt,
-	holidayName,
-	reopensAt,
-	translate,
-} ) => {
-	const currentDate = i18n.moment();
-	const guessedTimezone = i18n.moment.tz.guess();
+const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
-	if ( ! currentDate.isBetween( i18n.moment( displayAt ), i18n.moment( reopensAt ) ) ) {
+	const currentDate = moment();
+	const guessedTimezone = moment.tz.guess();
+
+	if ( ! currentDate.isBetween( displayAt, reopensAt ) ) {
 		return null;
 	}
 
@@ -42,8 +45,8 @@ const LiveChatClosureNotice = ( {
 				'You’ll be able to reach us by email and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					closesAt: i18n.moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
-					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}
@@ -54,7 +57,7 @@ const LiveChatClosureNotice = ( {
 				'You can reach us by email below and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}
@@ -85,4 +88,4 @@ const LiveChatClosureNotice = ( {
 	);
 };
 
-export default localize( LiveChatClosureNotice );
+export default LiveChatClosureNotice;

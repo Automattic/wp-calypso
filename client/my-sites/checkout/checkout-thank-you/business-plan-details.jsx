@@ -12,13 +12,20 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
 import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+
+/**
+ * Image dependencies
+ */
+import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
+import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+import themeImage from 'assets/images/illustrations/themes.svg';
+import updatesImage from 'assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
@@ -30,9 +37,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
-				<GoogleAppsDetails isRequired />
-			) }
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -40,10 +45,10 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
+				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
-					'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
+					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
@@ -53,7 +58,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+					icon={ <img alt="" src={ themeImage } /> }
 					title={ i18n.translate( 'Try a New Theme' ) }
 					description={ i18n.translate(
 						"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. " +
@@ -66,7 +71,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+					icon={ <img alt="" src={ updatesImage } /> }
 					title={ i18n.translate( 'Add a Plugin' ) }
 					description={ i18n.translate(
 						'Search and add plugins right from your dashboard, or upload a plugin ' +
@@ -78,7 +83,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			) }
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }
+				icon={ <img alt="" src={ analyticsImage } /> }
 				title={ i18n.translate( 'Connect to Google Analytics' ) }
 				description={ i18n.translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."

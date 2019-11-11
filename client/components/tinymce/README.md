@@ -9,17 +9,17 @@ When upgrading the version of `tinymce` in `package.json`, be sure to also
 update the TinyMCE skin files pulled from the Calypso repo. Here's how:
 
 - Upgrade the TinyMCE package in `node_modules/tinymce`
-- Update the skin files in the `public/` directory in Calypso:
+- Update the skin files in the `static/` directory in Calypso:
 
 ```sh
-git rm -r public/tinymce/skins/lightgray/
-cp -r node_modules/tinymce/skins/lightgray public/tinymce/skins/
-git add public/tinymce/skins/lightgray/
+git rm -r static/tinymce/skins/lightgray/
+cp -r node_modules/tinymce/skins/lightgray static/tinymce/skins/
+git add static/tinymce/skins/lightgray/
 ```
 
-- Commit any changes to the `public/` directory along with the upgrade
+- Commit any changes to the `static/` directory along with the upgrade
 - Make sure the Calypso editor is loading `skin.min.css` and `content.min.css`
-  from `/calypso/`, which corresponds to the `public/` directory in the repo:
+  from `/calypso/`, which corresponds to the `static/` directory in the repo:
   - `http://calypso.localhost:3000/calypso/tinymce/skins/lightgray/skin.min.css`
     (local development)
   - `https://wordpress.com/calypso/tinymce/skins/lightgray/skin.min.css`

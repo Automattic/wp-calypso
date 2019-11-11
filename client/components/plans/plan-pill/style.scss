@@ -1,0 +1,16 @@
+.plan-pill {
+	position: absolute;
+	bottom: -10px;
+	left: 14px;
+	z-index: z-index( 'root', '.plan-pill' );
+	
+	padding: 4px;
+	border-radius: 3px;
+	background: var( --color-accent );
+	
+	font-size: 11px;
+	text-align: center;
+	line-height: 1;
+	color: var( --color-text-inverted );
+	text-transform: uppercase;
+}

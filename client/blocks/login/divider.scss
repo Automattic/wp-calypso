@@ -1,0 +1,17 @@
+.login__divider {
+	margin-bottom: -11px;
+	margin-top: -11px;
+	position: relative;
+	text-align: center;
+	text-transform: uppercase;
+
+	span {
+		background: var( --color-surface );
+		color: var( --color-text-subtle );
+		font-size: 14px;
+		padding-left: 8px;
+		padding-right: 8px;
+		position: relative;
+		z-index: 2;
+	}
+}

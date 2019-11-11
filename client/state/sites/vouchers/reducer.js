@@ -1,9 +1,7 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * Internal dependencies
  */
-
 import {
 	SITE_VOUCHERS_ASSIGN_RECEIVE,
 	SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -14,7 +12,7 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -24,7 +22,7 @@ import { itemsSchema } from './schema';
  * @param {Object} action - vouchers action
  * @return {Object} updated state
  */
-export const items = ( state = {}, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId, type, voucher, vouchers, serviceType } = action;
 
 	switch ( type ) {
@@ -44,8 +42,7 @@ export const items = ( state = {}, action ) => {
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions

@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -19,17 +19,20 @@ import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
+	isPaidDomain,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
-import { getDomainPrice } from 'lib/domains';
+import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
+import Badge from 'components/badge';
+import InfoPopover from 'components/info-popover';
+import { HTTPS_SSL } from 'lib/url/support';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -57,6 +60,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
+		productSaleCost: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -121,15 +125,20 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
-			isFeatured,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
 		let buttonContent;
+		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
-			buttonContent = <Gridicon icon="checkmark" />;
+			buttonContent = translate( '{{checkmark/}} In Cart', {
+				context: 'Domain is already added to shopping cart',
+				components: { checkmark: <Gridicon icon="checkmark" /> },
+			} );
+
+			buttonStyles = { ...buttonStyles, primary: false };
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -138,11 +147,6 @@ class DomainRegistrationSuggestion extends React.Component {
 							context: 'Domain mapping suggestion button with plan upgrade',
 					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
-		}
-
-		let buttonStyles = { primary: true };
-		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
-			buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
 		}
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
@@ -170,6 +174,9 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderDomain() {
 		const {
+			isFeatured,
+			showHstsNotice,
+			productSaleCost,
 			suggestion: { domain_name: domain },
 			translate,
 		} = this.props;
@@ -182,8 +189,40 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		const paidDomain = isPaidDomain( this.getPriceRule() );
+		const saleBadgeText = translate( 'Sale', {
+			comment: 'Shown next to a domain that has a special discounted sale price',
+		} );
+		const infoPopoverSize = isFeatured ? 22 : 18;
 
-		return <h3 className="domain-registration-suggestion__title">{ title }</h3>;
+		return (
+			<div className="domain-registration-suggestion__title-wrapper">
+				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
+				{ showHstsNotice && (
+					<InfoPopover
+						className="domain-registration-suggestion__hsts-tooltip"
+						iconSize={ infoPopoverSize }
+						position={ 'right' }
+					>
+						{ translate(
+							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+								'to host a website. When you host this domain at WordPress.com an SSL ' +
+								'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+							{
+								args: {
+									tld: '.' + getTld( domain ),
+								},
+								components: {
+									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									strong: <strong />,
+								},
+							}
+						) }
+					</InfoPopover>
+				) }
+			</div>
+		);
 	}
 
 	renderProgressBar() {
@@ -255,6 +294,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
+			productSaleCost,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -269,6 +309,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				extraClasses={ extraClasses }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
+				salePrice={ productSaleCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
@@ -284,13 +325,13 @@ class DomainRegistrationSuggestion extends React.Component {
 
 const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
+	const productsList = getProductsList( state );
+	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 
 	return {
-		productCost: getDomainPrice(
-			productSlug,
-			getProductsList( state ),
-			getCurrentUserCurrencyCode( state )
-		),
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
+		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
 	};
 };
 

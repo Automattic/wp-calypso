@@ -17,7 +17,7 @@ import { find, isEmpty } from 'lodash';
 import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import {
 	areLocationsLoaded,
@@ -39,7 +39,7 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		this.setState( { address: newProps.address } );
 	};
 

@@ -1,17 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'components/localized-moment';
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
 import Delta from 'woocommerce/components/delta';
 import { getPeriodFormat } from 'state/stats/lists/utils';
@@ -38,7 +35,7 @@ class StoreStatsOrdersChart extends Component {
 	};
 
 	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
-		const { deltas } = this.props;
+		const { deltas, moment } = this.props;
 		return (
 			<Tabs data={ chartData }>
 				{ tabs.map( ( tab, tabIndex ) => {
@@ -102,4 +99,4 @@ export default connect( ( state, { query, siteId } ) => {
 		deltas: statsData.deltas,
 		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
 	};
-} )( StoreStatsOrdersChart );
+} )( withLocalizedMoment( StoreStatsOrdersChart ) );

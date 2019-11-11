@@ -1,11 +1,10 @@
-/** @format */
-
+/* eslint-disable react/no-string-refs */
+// TODO: remove string ref usage.
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -19,6 +18,11 @@ import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
 import scrollTo from 'lib/scroll-to';
 import smartSetState from 'lib/react-smart-set-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:infinite-list' );
 
@@ -48,8 +52,10 @@ export default class InfiniteList extends React.Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
+	topPlaceholderRef = React.createRef();
+	bottomPlaceholderRef = React.createRef();
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const url = page.current;
 		let newState, scrollTop;
 
@@ -63,7 +69,11 @@ export default class InfiniteList extends React.Component {
 			newState.scrollTop = scrollTop;
 		}
 
-		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper = new ScrollHelper(
+			this.boundsForRef,
+			this.getTopPlaceholderBounds,
+			this.getBottomPlaceholderBounds
+		);
 		this.scrollHelper.props = this.props;
 		if ( this._contextLoaded() ) {
 			this._scrollContainer = this.props.context || window;
@@ -107,7 +117,7 @@ export default class InfiniteList extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
@@ -150,9 +160,11 @@ export default class InfiniteList extends React.Component {
 
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
-			this.cancelAnimationFrame();
-			this.updateScroll( {
-				triggeredByScroll: false,
+			setTimeout( () => {
+				this.cancelAnimationFrame();
+				this.updateScroll( {
+					triggeredByScroll: false,
+				} );
 			} );
 		}
 	}
@@ -161,7 +173,11 @@ export default class InfiniteList extends React.Component {
 	reset() {
 		this.cancelAnimationFrame();
 
-		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper = new ScrollHelper(
+			this.boundsForRef,
+			this.getTopPlaceholderBounds,
+			this.getBottomPlaceholderBounds
+		);
 		this.scrollHelper.props = this.props;
 		if ( this._contextLoaded() ) {
 			this._scrollContainer = this.props.context || window;
@@ -296,6 +312,12 @@ export default class InfiniteList extends React.Component {
 		return null;
 	};
 
+	getTopPlaceholderBounds = () =>
+		this.topPlaceholderRef.current && this.topPlaceholderRef.current.getBoundingClientRect();
+
+	getBottomPlaceholderBounds = () =>
+		this.bottomPlaceholderRef.current && this.bottomPlaceholderRef.current.getBoundingClientRect();
+
 	/**
 	 * Returns a list of visible item indexes. This includes any items that are
 	 * partially visible in the viewport. Instance method that is called externally
@@ -341,21 +363,34 @@ export default class InfiniteList extends React.Component {
 	}
 
 	render() {
-		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
-			spacerClassName = 'infinite-list__spacer';
+		const {
+			items,
+			fetchingNextPage,
+			lastPage,
+			guessedItemHeight,
+			itemsPerRow,
+			fetchNextPage,
+			getItemRef,
+			renderItem,
+			renderLoadingPlaceholders,
+			renderTrailingItems,
+			context,
+			...propsToTransfer
+		} = this.props;
+		const spacerClassName = 'infinite-list__spacer';
 		let i,
 			lastRenderedIndex = this.state.lastRenderedIndex,
 			itemsToRender = [];
 
-		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
+		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
 			debug(
 				'resetting lastRenderedIndex, currently at %s, %d items',
 				lastRenderedIndex,
-				this.props.items.length
+				items.length
 			);
 			lastRenderedIndex = Math.min(
 				this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(),
-				this.props.items.length - 1
+				items.length - 1
 			);
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
@@ -363,24 +398,24 @@ export default class InfiniteList extends React.Component {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
+			itemsToRender.push( renderItem( items[ i ], i ) );
 		}
 
-		if ( this.props.fetchingNextPage ) {
-			itemsToRender = itemsToRender.concat( this.props.renderLoadingPlaceholders() );
+		if ( fetchingNextPage ) {
+			itemsToRender = itemsToRender.concat( renderLoadingPlaceholders() );
 		}
 
 		return (
 			<div { ...propsToTransfer }>
 				<div
-					ref="topPlaceholder"
+					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }
 					style={ { height: this.state.topPlaceholderHeight } }
 				/>
 				{ itemsToRender }
-				{ this.props.renderTrailingItems() }
+				{ renderTrailingItems() }
 				<div
-					ref="bottomPlaceholder"
+					ref={ this.bottomPlaceholderRef }
 					className={ spacerClassName }
 					style={ { height: this.state.bottomPlaceholderHeight } }
 				/>

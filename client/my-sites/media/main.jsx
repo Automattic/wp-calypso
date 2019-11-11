@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -276,6 +274,11 @@ class Media extends Component {
 		if ( this.props.search ) {
 			// Before we change the source reset the search value - it is confusing to jump between sources while searching
 			searchUrl( '', this.props.search );
+		}
+
+		if ( this.props.filter ) {
+			// Reset the filter so we don't switch to a source that doesn't support the filter
+			this.onFilterChange( '' );
 		}
 
 		MediaActions.sourceChanged( this.props.selectedSite.ID );

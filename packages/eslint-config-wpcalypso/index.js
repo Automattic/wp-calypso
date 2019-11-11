@@ -4,10 +4,15 @@ module.exports = {
 	env: {
 		es6: true,
 	},
+	parser: 'babel-eslint',
 	parserOptions: {
-		ecmaVersion: 7,
+		ecmaVersion: 2018,
 		sourceType: 'module',
+		ecmaFeatures: {
+			jsx: true,
+		},
 	},
+	extends: 'eslint:recommended',
 	plugins: [ 'wpcalypso' ],
 	rules: {
 		'array-bracket-spacing': [ 2, 'always' ],
@@ -80,7 +85,6 @@ module.exports = {
 		'prefer-const': 2,
 		'quote-props': [ 2, 'as-needed' ],
 		quotes: [ 2, 'single', 'avoid-escape' ],
-		'require-await': 2,
 		semi: 2,
 		'semi-spacing': 2,
 		'space-before-blocks': [ 2, 'always' ],

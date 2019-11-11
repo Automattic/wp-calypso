@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
 
@@ -26,8 +26,10 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
- * Component
+ * Style dependencies
  */
+import './style.scss';
+
 export class Theme extends Component {
 	static propTypes = {
 		theme: PropTypes.shape( {
@@ -105,21 +107,23 @@ export class Theme extends Component {
 		}
 	};
 
-	isBeginnerTheme = () => {
+	isBeginnerTheme() {
 		const { theme } = this.props;
 		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
 		return some( skillLevels, { slug: 'beginner' } );
-	};
+	}
 
-	renderPlaceholder = () => {
+	renderPlaceholder() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card className="theme is-placeholder">
 				<div className="theme__content" />
 			</Card>
 		);
-	};
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
 
-	renderInstalling = () => {
+	renderInstalling() {
 		if ( this.props.installing ) {
 			return (
 				<div className="theme__installing">
@@ -127,7 +131,7 @@ export class Theme extends Component {
 				</div>
 			);
 		}
-	};
+	}
 
 	onUpsellClick = () => {
 		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
@@ -256,10 +260,7 @@ export class Theme extends Component {
 	}
 }
 
-const mapStateToProps = null;
-const mapDispatchToProps = { recordTracksEvent };
-
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+	null,
+	{ recordTracksEvent }
 )( localize( Theme ) );

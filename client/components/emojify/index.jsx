@@ -8,6 +8,11 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import twemoji from 'twemoji';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class Emojify extends PureComponent {
 	static propTypes = {
 		imgClassName: PropTypes.string,
@@ -66,7 +71,7 @@ export default class Emojify extends PureComponent {
 			tagName: WrapperTagName,
 			twemojiUrl,
 			...other
-		} = this.props; // eslint-disable-line no-unused-vars
+		} = this.props;
 		const classes = classNames( className, 'emojify' );
 
 		return (

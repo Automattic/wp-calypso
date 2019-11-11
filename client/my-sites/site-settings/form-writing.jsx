@@ -27,6 +27,7 @@ import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
+import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -64,16 +65,6 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__general-settings"
 			>
-				{ isMasterbarSectionVisible && (
-					<div>
-						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
-						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-						/>
-					</div>
-				) }
-
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
 						<QueryTaxonomies siteId={ siteId } postType="post" />
@@ -127,7 +118,7 @@ class SiteSettingsFormWriting extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Content types' ) }
+					title={ translate( 'Content Types' ) }
 				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -159,6 +150,15 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 				/>
 
+				{ siteIsJetpack && (
+					<Widgets
+						onSubmitForm={ handleSubmitForm }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				) }
+
 				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
 					<PublishingTools
 						onSubmitForm={ handleSubmitForm }
@@ -168,16 +168,24 @@ class SiteSettingsFormWriting extends Component {
 					/>
 				) }
 
-				{ config.isEnabled( 'press-this' ) &&
-					! this.isMobile() &&
-					! siteIsJetpack && (
-						<div>
-							<SettingsSectionHeader
-								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-							/>
-							<PressThis />
-						</div>
-					) }
+				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
+					<div>
+						<SettingsSectionHeader
+							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+						/>
+						<PressThis />
+					</div>
+				) }
+
+				{ isMasterbarSectionVisible && (
+					<div>
+						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
 			</form>
 		);
 	}
@@ -224,7 +232,6 @@ const getFormSettings = settings => {
 		'wp_mobile_featured_images',
 		'wp_mobile_app_promos',
 		'post_by_email_address',
-		'after-the-deadline',
 		'onpublish',
 		'onupdate',
 		'guess_lang',
@@ -254,7 +261,7 @@ const getFormSettings = settings => {
 	const timezone_string = get( settings, 'timezone_string' );
 
 	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;

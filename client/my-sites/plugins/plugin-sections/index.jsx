@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

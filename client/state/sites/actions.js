@@ -25,6 +25,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
+	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 
@@ -121,7 +122,9 @@ export function requestSite( siteFragment ) {
 
 		return wpcom
 			.site( siteFragment )
-			.get()
+			.get( {
+				apiVersion: '1.2',
+			} )
 			.then( site => {
 				// If we can't manage the site, don't add it to state.
 				if ( ! ( site && site.capabilities ) ) {
@@ -185,4 +188,20 @@ export function deleteSite( siteId ) {
 export const sitePluginUpdated = siteId => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
+} );
+
+/**
+ * Returns an action object to be used to update the site front page options.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Object} frontPageOptions Object containing the three optional front page options.
+ * @param  {String} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
+ * @param  {Number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
+ * @param  {Number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
+ * @return {Object} Action object
+ */
+export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
+	type: SITE_FRONT_PAGE_UPDATE,
+	siteId,
+	frontPageOptions,
 } );

@@ -1,0 +1,11 @@
+.stats-navigation__intervals.segmented-control {
+	&.is-standalone {
+		max-width: 100%;
+		margin: 8px 9px;
+
+		@include breakpoint( '>480px' ) {
+			max-width: 400px;
+			margin: 16px auto;
+		}
+	}
+}

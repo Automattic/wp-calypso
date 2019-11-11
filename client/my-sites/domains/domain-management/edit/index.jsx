@@ -24,6 +24,11 @@ import SiteRedirect from './site-redirect';
 import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Edit extends React.Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
@@ -34,7 +39,7 @@ class Edit extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-edit">
+			<Main>
 				<Header
 					onClick={ this.goToDomainManagement }
 					selectedDomainName={ this.props.selectedDomainName }

@@ -5,7 +5,12 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function ListEnd() {
 	return (

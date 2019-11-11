@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -126,95 +125,91 @@ function renderProvisionPlugins( context ) {
 	} );
 }
 
-const controller = {
-	plugins( context, next ) {
-		const { pluginFilter: filter = 'all' } = context.params;
-		const basePath = sectionify( context.path ).replace( '/' + filter, '' );
+export function plugins( context, next ) {
+	const { pluginFilter: filter = 'all' } = context.params;
+	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
-		context.params.pluginFilter = filter;
-		notices.clearNotices( 'notices' );
-		renderPluginList( context, basePath );
-		next();
-	},
+	context.params.pluginFilter = filter;
+	notices.clearNotices( 'notices' );
+	renderPluginList( context, basePath );
+	next();
+}
 
-	plugin( context, next ) {
-		const siteUrl = getSiteFragment( context.path );
+function plugin( context, next ) {
+	const siteUrl = getSiteFragment( context.path );
 
-		notices.clearNotices( 'notices' );
-		renderSinglePlugin( context, siteUrl );
-		next();
-	},
+	notices.clearNotices( 'notices' );
+	renderSinglePlugin( context, siteUrl );
+	next();
+}
 
-	// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
-	// If the "plugin" part of the route is actually a site,
-	// render the plugin browser for that site. Otherwise render plugin.
-	browsePluginsOrPlugin( context, next ) {
-		const siteUrl = getSiteFragment( context.path );
-		const { plugin } = context.params;
+// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
+// If the "plugin" part of the route is actually a site,
+// render the plugin browser for that site. Otherwise render plugin.
+export function browsePluginsOrPlugin( context, next ) {
+	const siteUrl = getSiteFragment( context.path );
 
-		if (
-			plugin &&
-			( ( siteUrl && plugin === siteUrl.toString() ) || includes( allowedCategoryNames, plugin ) )
-		) {
-			controller.browsePlugins( context, next );
-			return;
-		}
+	if (
+		context.params.plugin &&
+		( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
+			includes( allowedCategoryNames, context.params.plugin ) )
+	) {
+		browsePlugins( context, next );
+		return;
+	}
 
-		controller.plugin( context, next );
-	},
+	plugin( context, next );
+}
 
-	browsePlugins( context, next ) {
-		renderPluginsBrowser( context );
-		next();
-	},
+export function browsePlugins( context, next ) {
+	renderPluginsBrowser( context );
+	next();
+}
 
-	upload( context, next ) {
-		context.primary = <PluginUpload />;
-		next();
-	},
+export function upload( context, next ) {
+	context.primary = <PluginUpload />;
+	next();
+}
 
-	jetpackCanUpdate( context, next ) {
-		const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
-		let redirectToPlugins = false;
+export function jetpackCanUpdate( context, next ) {
+	const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
+	let redirectToPlugins = false;
 
-		if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-			redirectToPlugins = ! some( selectedSites, function( site ) {
-				return site && site.jetpack && site.canUpdateFiles;
-			} );
+	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
+		redirectToPlugins = ! some( selectedSites, function( site ) {
+			return site && site.jetpack && site.canUpdateFiles;
+		} );
 
-			if ( redirectToPlugins ) {
-				if ( context.params && context.params.site_id ) {
-					page.redirect( `/plugins/manage/${ context.params.site_id }` );
-					return;
-				}
-				page.redirect( '/plugins/manage' );
+		if ( redirectToPlugins ) {
+			if ( context.params && context.params.site_id ) {
+				page.redirect( `/plugins/manage/${ context.params.site_id }` );
 				return;
 			}
+			page.redirect( '/plugins/manage' );
+			return;
 		}
-		next();
-	},
+	}
+	next();
+}
 
-	setupPlugins( context, next ) {
-		renderProvisionPlugins( context );
-		next();
-	},
+export function setupPlugins( context, next ) {
+	renderProvisionPlugins( context );
+	next();
+}
 
-	eligibility( context, next ) {
-		renderPluginWarnings( context );
-		next();
-	},
+export function eligibility( context, next ) {
+	renderPluginWarnings( context );
+	next();
+}
 
-	resetHistory() {
-		lastPluginsListVisited = null;
-		lastPluginsQuerystring = null;
-	},
+export function resetHistory() {
+	lastPluginsListVisited = null;
+	lastPluginsQuerystring = null;
+}
 
-	scrollTopIfNoHash( context, next ) {
-		if ( typeof window !== 'undefined' && ! window.location.hash ) {
-			window.scrollTo( 0, 0 );
-		}
-		next();
-	},
-};
-
-export default controller;
+export function scrollTopIfNoHash( context, next ) {
+	if ( typeof window !== 'undefined' && ! window.location.hash ) {
+		window.scrollTo( 0, 0 );
+	}
+	next();
+}

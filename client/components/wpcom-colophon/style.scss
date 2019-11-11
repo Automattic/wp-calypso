@@ -1,25 +1,8 @@
 .wpcom-colophon {
 	margin-top: 40px;
 	text-align: center;
-	color: var( --color-text );
 
-	.wordpress-logo {
-		display: inline-block;
-		fill: currentColor;
-	}
-
-	@include breakpoint( '<660px' ) {
-		margin-bottom: 24px;
-	}
-}
-
-.wpcom-colophon__content {
-	display: inline-block;
-	vertical-align: top;
-
-	.wordpress-logo {
-		vertical-align: inherit;
-		margin-top: -1px;
-		margin-left: 4px;
+	path {
+		fill: var( --color-text );
 	}
 }

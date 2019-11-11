@@ -21,6 +21,7 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 /**
@@ -53,6 +54,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 } from 'lib/plans/constants';
+import PlanPrice from 'my-sites/plan-price/';
 
 const props = {
 	translate: x => x,
@@ -221,9 +223,14 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 	test( 'Should return a single, not discounted price when a single price is passed', () => {
 		const comp = new PlanFeaturesHeader( baseProps );
 		const wrapper = shallow( <span>{ comp.renderPriceGroup( 15 ) }</span> );
-		expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
+		expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
 
-		const myProps = wrapper.find( 'PlanPrice' ).props();
+		// We need the dive() here to pick up defaultProps
+		const myProps = wrapper
+			.find( PlanPrice )
+			.first()
+			.dive()
+			.props();
 		expect( myProps.rawPrice ).toBe( 15 );
 		expect( myProps.discounted ).toBe( false );
 		expect( myProps.original ).toBe( false );
@@ -233,16 +240,26 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 	test( 'Should return two prices when two numbers are passed: one original and one discounted', () => {
 		const comp = new PlanFeaturesHeader( baseProps );
 		const wrapper = shallow( <span>{ comp.renderPriceGroup( 15, 13 ) }</span> );
-		expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
+		expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
 
-		const props1 = wrapper.find( 'PlanPrice' ).get( 0 ).props;
+		// We need the dive() here to pick up defaultProps
+		const props1 = wrapper
+			.find( PlanPrice )
+			.at( 0 )
+			.dive()
+			.props();
 		expect( props1.rawPrice ).toBe( 15 );
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
 		expect( props1.currencyCode ).toBe( 'USD' );
 		expect( props1.isInSignup ).toBe( false );
 
-		const props2 = wrapper.find( 'PlanPrice' ).get( 1 ).props;
+		// We need the dive() here to pick up defaultProps
+		const props2 = wrapper
+			.find( PlanPrice )
+			.at( 1 )
+			.dive()
+			.props();
 		expect( props2.rawPrice ).toBe( 13 );
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
@@ -267,7 +284,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
 			expect( wrapper.find( '.is-placeholder' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 0 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 0 );
 		} );
 		test( 'Placeholder should have a class .plan-features__price for non-jetpack sites', () => {
 			const comp = new PlanFeaturesHeader( {
@@ -308,23 +325,23 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 		test( 'Should return two price groups', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
 		} );
 
 		test( 'Full price should be monthly price * 12 and discounted price should be rawPrice when no discountPrice is passed', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 50 );
 		} );
 
 		test( "Full price should be monthly price * 12 and discounted price should be discountPrice when it's passed", () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps, discountPrice: 30 } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.rawPrice ).toBe( 30 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 30 );
 		} );
 
 		test( 'Should return a single price (rawPrice) when availableForPurchase is false', () => {
@@ -334,8 +351,8 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 				availableForPurchase: false,
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
 		} );
 	} );
 
@@ -353,15 +370,15 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 		test( 'Should return two price groups', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
 		} );
 
 		test( 'Full price should be rawPrice and discounted price should be discountPrice', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 50 );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.rawPrice ).toBe( 40 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 40 );
 		} );
 
 		test( 'Should return a single price (rawPrice) when availableForPurchase is false', () => {
@@ -371,8 +388,8 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 				availableForPurchase: false,
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
 		} );
 	} );
 
@@ -389,21 +406,21 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 		test( 'Should return a single price group', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
 		} );
 
 		test( 'Full price should be rawPrice', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
 		} );
 
 		test( 'Should behave in the same way when availableForPurchase is false', () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps, availableForPurchase: false } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
 		} );
 	} );
 } );
@@ -426,8 +443,8 @@ describe( 'PlanFeaturesHeader.render()', () => {
 				planType: PLAN_JETPACK_PREMIUM_MONTHLY,
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 9 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 9 );
 		} );
 
 		test( "Rendering annual plan should show monthly price * 12 discounted to regular price if there's no discountPrice", () => {
@@ -437,11 +454,11 @@ describe( 'PlanFeaturesHeader.render()', () => {
 				planType: PLAN_JETPACK_PREMIUM,
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 108 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.original ).toBe( true );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.rawPrice ).toBe( 9 );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.discounted ).toBe( true );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 108 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.original ).toBe( true );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 9 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.discounted ).toBe( true );
 		} );
 
 		test( 'Rendering annual plan should show monthly price * 12 discounted to discountPrice if one is passed', () => {
@@ -452,18 +469,18 @@ describe( 'PlanFeaturesHeader.render()', () => {
 				planType: PLAN_JETPACK_PREMIUM,
 			} );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 2 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 108 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.original ).toBe( true );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( 'PlanPrice' ).get( 1 ).props.discounted ).toBe( true );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 108 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.original ).toBe( true );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 60 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.discounted ).toBe( true );
 		} );
 
 		test( "Rendering annual plan should show rawPrice with no discounts if there's no discountPrice and relatedMonthlyPlan", () => {
 			const comp = new PlanFeaturesHeader( { ...baseProps, rawPrice: 60, planType: PLAN_PREMIUM } );
 			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( 'PlanPrice' ).length ).toBe( 1 );
-			expect( wrapper.find( 'PlanPrice' ).get( 0 ).props.rawPrice ).toBe( 60 );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
 		} );
 	} );
 } );

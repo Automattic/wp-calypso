@@ -31,6 +31,13 @@ import {
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace*/
+
 class StatsComments extends Component {
 	static propTypes = {
 		commentsStatsData: PropTypes.object,

@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-export ButtonRow from './button-row';
-export combineTours from './combine-tours';
-export ConditionalBlock from './conditional-block';
-export Continue from './continue';
-export Link from './link';
-export makeTour from './make-tour';
-export Next from './next';
-export Quit from './quit';
-export SiteLink from './site-link';
-export Step from './step';
-export Tour from './tour';
-export LinkQuit from './link-quit';
+export { default as ButtonRow } from './button-row';
+export { default as combineTours } from './combine-tours';
+export { default as ConditionalBlock } from './conditional-block';
+export { default as Continue } from './continue';
+export { default as Link } from './link';
+export { default as makeTour } from './make-tour';
+export { default as Next } from './next';
+export { default as Quit } from './quit';
+export { default as SiteLink } from './site-link';
+export { default as Step } from './step';
+export { default as Tour } from './tour';
+export { default as LinkQuit } from './link-quit';

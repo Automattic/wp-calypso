@@ -5,6 +5,11 @@
 import React, { Fragment } from 'react';
 import { parsePatch } from 'diff';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const decompose = path => {
 	const lastSlash = path.lastIndexOf( '/' );
 

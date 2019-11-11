@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
@@ -20,17 +17,28 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated requesting state
  */
-const requesting = createReducer(
-	{},
-	{
-		[ WP_SUPER_CACHE_RECEIVE_STATUS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-		[ WP_SUPER_CACHE_REQUEST_STATUS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ WP_SUPER_CACHE_REQUEST_STATUS_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WP_SUPER_CACHE_RECEIVE_STATUS: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: false };
+		}
+		case WP_SUPER_CACHE_REQUEST_STATUS: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: true };
+		}
+		case WP_SUPER_CACHE_REQUEST_STATUS_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Tracks the status for a particular site.
@@ -39,16 +47,17 @@ const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated status
  */
-const items = createReducer(
-	{},
-	{
-		[ WP_SUPER_CACHE_RECEIVE_STATUS ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: action.status,
-		} ),
-	},
-	itemsSchema
-);
+const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WP_SUPER_CACHE_RECEIVE_STATUS:
+			return {
+				...state,
+				[ action.siteId ]: action.status,
+			};
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

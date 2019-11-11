@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { get, defer } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -24,6 +24,11 @@ import { getDailyPostType } from './helper';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function getPingbackAttributes( post ) {
 	const typeTitles = {

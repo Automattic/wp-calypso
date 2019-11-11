@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {
@@ -21,18 +19,26 @@ import {
 
 export const settingsReducer = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => ( {
-				...state,
-				[ moduleSlug ]: true,
-			} ),
-			[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => ( {
-				...state,
-				[ moduleSlug ]: false,
-			} ),
-			[ JETPACK_MODULES_RECEIVE ]: ( state, { modules } ) => {
+	withSchemaValidation( jetpackSettingsSchema, ( state = {}, action ) => {
+		switch ( action.type ) {
+			case JETPACK_MODULE_ACTIVATE_SUCCESS: {
+				const { moduleSlug } = action;
+
+				return {
+					...state,
+					[ moduleSlug ]: true,
+				};
+			}
+			case JETPACK_MODULE_DEACTIVATE_SUCCESS: {
+				const { moduleSlug } = action;
+
+				return {
+					...state,
+					[ moduleSlug ]: false,
+				};
+			}
+			case JETPACK_MODULES_RECEIVE: {
+				const { modules } = action;
 				const modulesActivationState = mapValues( modules, module => module.active );
 				// The need for flattening module options into this moduleSettings is temporary.
 				// Once https://github.com/Automattic/jetpack/pull/6002 is released,
@@ -48,17 +54,24 @@ export const settingsReducer = keyedReducer(
 					...modulesActivationState,
 					...normalizeSettings( moduleSettings ),
 				};
-			},
-			[ JETPACK_SETTINGS_SAVE_SUCCESS ]: ( state, { settings: { post_by_email_address } } ) => {
+			}
+			case JETPACK_SETTINGS_SAVE_SUCCESS: {
+				const {
+					settings: { post_by_email_address },
+				} = action;
 				if ( post_by_email_address && post_by_email_address !== state.post_by_email_address ) {
 					return { ...state, post_by_email_address };
 				}
 				return state;
-			},
-			[ JETPACK_SETTINGS_UPDATE ]: ( state, { settings } ) => merge( {}, state, settings ),
-		},
-		jetpackSettingsSchema
-	)
+			}
+			case JETPACK_SETTINGS_UPDATE: {
+				const { settings } = action;
+				return merge( {}, state, settings );
+			}
+		}
+
+		return state;
+	} )
 );
 settingsReducer.hasCustomPersistence = true;
 

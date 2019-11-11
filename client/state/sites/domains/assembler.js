@@ -3,7 +3,12 @@
 /**
  * Internal dependencies
  */
-import { getDomainType, getGdprConsentStatus, getTransferStatus } from 'lib/domains/utils';
+import {
+	getDomainRegistrationAgreementUrl,
+	getDomainType,
+	getGdprConsentStatus,
+	getTransferStatus,
+} from 'lib/domains/utils';
 import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
@@ -24,22 +29,26 @@ export const createSiteDomainObject = domain => {
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
+		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
-		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
-		isPrivate: Boolean( domain.private_domain ),
+		isSubdomain: Boolean( domain.is_subdomain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
+		mustRemovePrivacyBeforeContactUpdate: Boolean(
+			domain.must_remove_privacy_before_contact_update
+		),
 		newRegistration: Boolean( domain.new_registration ),
 		name: String( domain.domain ),
 		owner: String( domain.owner ),

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import ShareButton from 'components/share-button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const services = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
+const services = [ 'facebook', 'twitter', 'linkedin', 'pinterest' ];
 
 class ChecklistShowShare extends PureComponent {
 	static propTypes = {

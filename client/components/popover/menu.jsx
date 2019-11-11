@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { over } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,8 +21,7 @@ class PopoverMenu extends Component {
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
-		rootClassName: PropTypes.string,
-		popoverComponent: PropTypes.func,
+		popoverComponent: PropTypes.elementType,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
 	};
@@ -51,7 +49,6 @@ class PopoverMenu extends Component {
 			isVisible,
 			popoverTitle,
 			position,
-			rootClassName,
 		} = this.props;
 
 		return (
@@ -65,7 +62,6 @@ class PopoverMenu extends Component {
 				isVisible={ isVisible }
 				popoverTitle={ popoverTitle }
 				position={ position }
-				rootClassName={ rootClassName }
 			>
 				<div
 					ref={ this.menu }
@@ -85,15 +81,14 @@ class PopoverMenu extends Component {
 			return child;
 		}
 
-		const boundOnClose = this._onClose.bind( this, child.props.action );
-		let onClick = boundOnClose;
-
-		if ( child.props.onClick ) {
-			onClick = over( [ child.props.onClick, boundOnClose ] );
-		}
+		const { action, onClick } = child.props;
 
 		return React.cloneElement( child, {
-			onClick: onClick,
+			action: null,
+			onClick: () => {
+				onClick && onClick();
+				this._onClose( action );
+			},
 		} );
 	};
 

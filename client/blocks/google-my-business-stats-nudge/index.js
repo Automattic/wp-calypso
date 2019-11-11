@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -21,6 +19,11 @@ import { dismissNudge } from './actions';
 import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {

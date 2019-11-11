@@ -1,7 +1,7 @@
 .step-confirmation-button {
 	padding: 16px 24px;
 	margin: 0 -24px -24px;
-	background: lighten( $gray, 35 );
+	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 
 	.form-button {

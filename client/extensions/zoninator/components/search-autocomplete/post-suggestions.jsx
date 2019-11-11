@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,9 +10,9 @@ import { find, map } from 'lodash';
  * Internal depencencies
  */
 import QueryPosts from 'components/data/query-posts';
-import Suggestions from 'components/suggestions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { Suggestions } from '@automattic/components';
 
 class PostSuggestions extends PureComponent {
 	static propTypes = {

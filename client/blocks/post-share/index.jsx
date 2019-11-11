@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { current as currentPage } from 'page';
 
 /**
@@ -51,15 +51,21 @@ import {
 	isRequestingSitePlans as siteIsRequestingPlans,
 } from 'state/sites/plans/selectors';
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
-import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
+import { UpgradeToPremiumNudge } from './nudges';
 import SharingPreviewModal from './sharing-preview-modal';
-import ConnectionsList, { NoConnectionsNotice } from './connections-list';
+import ConnectionsList from './connections-list';
+import NoConnectionsNotice from './no-connections-notice';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { sectionify } from 'lib/route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -318,7 +324,6 @@ class PostShare extends Component {
 						showOutsideDays={ false }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
-						tabIndex={ 3 }
 						siteId={ siteId }
 						onDateChange={ this.scheduleDate }
 						onDayMouseEnter={ this.showCalendarTooltip }
@@ -363,7 +368,7 @@ class PostShare extends Component {
 						showDismiss={ false }
 						text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
 					>
-						<NoticeAction href={ `/sharing/${ siteSlug }` }>
+						<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
 							{ translate( 'Reconnect' ) }
 						</NoticeAction>
 					</Notice>
@@ -389,7 +394,7 @@ class PostShare extends Component {
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }
-						<NoticeAction href={ `/sharing/${ siteSlug }` }>
+						<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
 							{ translate( 'Disconnect' ) }
 						</NoticeAction>
 					</Notice>
@@ -475,7 +480,7 @@ class PostShare extends Component {
 				<div className="post-share__manage-connections-link">
 					{ translate( '{{a}}Manage connections{{/a}}', {
 						components: {
-							a: <a href={ `/sharing/${ siteId }` } />,
+							a: <a href={ `/marketing/connections/${ siteId }` } />,
 						},
 					} ) }
 				</div>
@@ -484,21 +489,14 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug, translate } = this.props;
+		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
 		}
 
 		if ( ! this.hasConnections() ) {
-			return (
-				<NoConnectionsNotice
-					{ ...{
-						siteSlug,
-						translate,
-					} }
-				/>
-			);
+			return <NoConnectionsNotice siteSlug={ siteSlug } />;
 		}
 
 		if ( ! hasRepublicizeFeature ) {
@@ -568,7 +566,7 @@ class PostShare extends Component {
 									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
 									{
 										components: {
-											a: <a href={ `/sharing/${ siteSlug }` } />,
+											a: <a href={ `/marketing/connections/${ siteSlug }` } />,
 										},
 									}
 								) }

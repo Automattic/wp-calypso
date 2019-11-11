@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -24,13 +24,12 @@ import './style.scss';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {
-		const { goToNextStep, stepName, stepSectionName, translate } = this.props;
+		const { goToNextStep, stepName, stepSectionName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
 
-		SignupActions.submitSignupStep( {
+		this.props.submitSignupStep( {
 			isPurchasingItem: false,
-			processingMessage: translate( 'Setting up your site' ),
 			siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 			stepName,
 			stepSectionName,
@@ -53,7 +52,7 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, stepName, translate } = this.props;
 
 		return (
 			<div className="rebrand-cities-welcome">
@@ -70,7 +69,6 @@ class RebrandCitiesWelcomeStep extends Component {
 							'to get your business online. We’ll need you to create a WordPress.com ' +
 							'account to get you started.'
 					) }
-					signupProgress={ signupProgress }
 					stepContent={ this.renderContent() }
 				/>
 			</div>
@@ -80,5 +78,5 @@ class RebrandCitiesWelcomeStep extends Component {
 
 export default connect(
 	null,
-	{ setSiteTitle }
+	{ setSiteTitle, submitSignupStep }
 )( localize( RebrandCitiesWelcomeStep ) );

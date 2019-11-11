@@ -1,0 +1,162 @@
+.earnings_breakdown, .earnings_history {
+	.module-content {
+		display: block;
+	}
+}
+
+.earnings_breakdown {
+	padding: 0;
+
+	ul.module-header-actions .toggle-info {
+		display: inline-block;
+	}
+
+	&.is-showing-info {
+		ul.module-header-actions .toggle-info::after,
+		.module-content-text-info {
+			display: inline-block;
+		}
+	}
+}
+
+.ads__earnings-breakdown-list {
+	margin: 0;
+	border-top: 1px solid var( --color-neutral-0 );
+}
+
+.ads__earnings-breakdown-item {
+	width: 33%;
+	float: left;
+	padding: 5px 0 10px;
+	list-style-type: none;
+	text-align: center;
+	border-left: 1px solid var( --color-neutral-0 );
+
+	@include breakpoint( '<480px' ) {
+		width: auto;
+		float: none;
+		padding: 10px 24px;
+		text-align: left;
+		border: 0;
+		border-top: 1px solid var( --color-neutral-0 );
+	}
+
+	&:first-child {
+		border: 0;
+	}
+}
+
+.ads__earnings-breakdown-label {
+	color: var( --color-neutral-60 );
+	font-size: 10px;
+	letter-spacing: 0.1em;
+	line-height: 1.6;
+	text-transform: uppercase;
+
+	@include breakpoint( '<480px' ) {
+		font-size: 14px;
+		line-height: 1.8;
+	}
+}
+
+.ads__earnings-breakdown-value {
+	width: 100%;
+	display: block;
+	font-size: 25px;
+
+	@include breakpoint( '<480px' ) {
+		width: auto;
+		float: right;
+		font-size: 16px;
+	}
+}
+
+.earnings_history {
+	padding: 0;
+
+	ul.module-header-actions .toggle-info {
+		display: inline-block;
+	}
+
+	&.is-showing-info {
+		ul.module-header-actions .toggle-info::after,
+		.module-content-text-info {
+			display: inline-block;
+		}
+	}
+
+	tbody tr:hover {
+		background-color: var( --color-neutral-5 );
+	}
+}
+
+.ads__module-content-text p {
+	text-align: left;
+}
+
+.module-content-text ul.ads__earnings-history-info-list {
+	margin: 1em 24px 1em 40px;
+}
+
+.ads__earnings-history-info {
+	padding-bottom: 10px;
+	text-align: left;
+}
+
+.ads__earnings-history-header {
+	color: var( --color-neutral-light );
+	border: 1px solid var( --color-neutral-0 );
+	border-left: none;
+	border-right: none;
+	font-size: 11px;
+	line-height: 50px;
+	justify-content: center;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.ads__earnings-history-value {
+	line-height: 40px;
+	text-align: center;
+
+	@include breakpoint( '<480px' ) {
+		&:first-child, &:last-child {
+			font-size: 12px;
+		}
+	}
+}
+@include breakpoint( '<480px' ) {
+	.ads__settings-state {
+		max-width: 75%;
+	}
+}
+
+.ads__settings-display-toggles .form-toggle__wrapper {
+	display: block;
+}
+
+.ads__activate-header-title {
+	font-weight: 600;
+}
+
+.ads__activate-notice {
+	margin: 0;
+}
+
+.ads__activate-header-toggle, .ads__activate-header-title {
+	margin: auto 0;
+}
+.ads__activate-wrapper {
+	padding: 0;
+}
+.ads__activate-header {
+	padding: 24px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.ads__activate-description {
+	border-top: 1px solid var( --color-border-subtle );
+	padding: 24px;
+}

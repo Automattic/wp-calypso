@@ -1,5 +1,4 @@
-I18n Calypso
-============
+# I18n Calypso
 
 This lib enables translations, exposing three public methods:
 
@@ -7,7 +6,7 @@ This lib enables translations, exposing three public methods:
 * [.moment()](#moment-method)
 * [.numberFormat()](#numberformat-method)
 
-It also provides a Higher-Order Component named [localize()](#localize). Wrapping your component in `localize()` will give it the aforementioned functions as props. This is the suggested way of using them with React components.
+It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
 Finally, this lib exposes a utility method for your React application:
 
@@ -45,7 +44,7 @@ var translation = i18n.translate( 'Some content to translate' );
 
 ### Strings Only
 
-Translation strings are extracted from our codebase through a process of [static analysis](http://en.wikipedia.org/wiki/Static_program_analysis) and imported into GlotPress where they are translated ([more on that process here](./cli)). So you must avoid passing a variable, ternary expression, function call, or other form of logic in place of a string value to the `translate` method. The _one_ exception is that you can split a long string into mulitple substrings concatenated with the `+` operator.
+Translation strings are extracted from our codebase through a process of [static analysis](http://en.wikipedia.org/wiki/Static_program_analysis) and imported into GlotPress where they are translated ([more on that process here](./cli)). So you must avoid passing a variable, ternary expression, function call, or other form of logic in place of a string value to the `translate` method. The _one_ exception is that you can split a long string into multiple substrings concatenated with the `+` operator.
 
 ```js
 /*----------------- Bad Examples -----------------*/
@@ -301,6 +300,41 @@ render(
 );
 ```
 
+## React Hook
+
+The `useTranslate` hook is a modern alternative to the `localize` higher-order component that
+exposes the `translate` method to React components as a return value of a React hook. The
+resulting component is also reactive, i.e., it gets rerendered when the `i18n` locale changes
+and the state emitter emits a `change` event.
+
+The `useTranslate` hook returns the `translate` function:
+```jsx
+const translate = useTranslate();
+```
+The function can be called to return a localized value of a string, and it also exposes a
+`localeSlug` property whose value is a string with the current locale slug.
+
+### Usage
+
+```jsx
+import React from 'react';
+import { useTranslate } from 'i18n-calypso';
+
+function Greeting( { className } ) {
+  const translate = useTranslate();
+  debug( 'using translate with locale:', translate.localeSlug );
+	return (
+		<h1 className={ className }>
+			{ translate( 'Hello!' ) }
+		</h1>
+	);
+}
+
+export default Greeting;
+```
+
+Unlike the `localize` HOC, the component doesn't need to be wrapped and receives the `translate`
+function from the hook call rather than a prop.
 
 ## Some Background
 
@@ -324,3 +358,6 @@ The generator of the jed file would usually try to choose the smallest hash leng
 
 Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.
 
+## Extracting Translatable Strings From JavaScript Sources
+
+There is a companion [i18n-calypso-cli](https://npmjs.com/package/i18n-calypso-cli) package that provides a tool to extract `translate()`-d strings from your JavaScript code and generate a POT or PHP translation file.

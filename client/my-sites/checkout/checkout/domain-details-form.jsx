@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { first, includes, indexOf, intersection, isEqual, last, map } from 'lodash';
+import { first, includes, indexOf, intersection, isEqual, last, map, merge } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -24,13 +25,26 @@ import ContactDetailsFormFields from 'components/domains/contact-details-form-fi
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
+import { setDomainDetails } from 'lib/transaction/actions';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
-	setDomainDetails,
 	addGoogleAppsRegistrationData,
-} from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
+} from 'lib/cart/actions';
+import {
+	getDomainRegistrations,
+	getDomainTransfers,
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasInvalidAlternateEmailDomain,
+	needsExplicitAlternateEmailForGSuite,
+	hasTransferProduct,
+	getTlds,
+	hasTld,
+	hasOnlyDomainProductsWithPrivacySupport,
+	getDomainRegistrationsWithoutPrivacy,
+	getDomainTransfersWithoutPrivacy,
+} from 'lib/cart-values/cart-items';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -73,6 +87,23 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( newState );
 	}
 
+	addAlternateEmailToValidationHandler = ( fieldValues, validationHandler ) => ( error, data ) => {
+		if ( this.needsAlternateEmailForGSuite() ) {
+			let message = null;
+			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
+				message = this.props.translate( 'Please provide a valid email address.' );
+			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
+				message = this.props.translate(
+					'Please provide an email address that does not use the same domain than the G Suite account being purchased.'
+				);
+			}
+			if ( null !== message ) {
+				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
+			}
+		}
+		validationHandler( error, data );
+	};
+
 	validate = ( fieldValues, onComplete ) => {
 		const validationHandler = ( error, data ) => {
 			const messages = ( data && data.messages ) || {};
@@ -80,7 +111,10 @@ export class DomainDetailsForm extends PureComponent {
 		};
 
 		if ( this.needsOnlyGoogleAppsDetails() ) {
-			wpcom.validateGoogleAppsContactInformation( fieldValues, validationHandler );
+			wpcom.validateGoogleAppsContactInformation(
+				fieldValues,
+				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
+			);
 			return;
 		}
 
@@ -99,23 +133,27 @@ export class DomainDetailsForm extends PureComponent {
 
 	getDomainNames = () =>
 		map(
-			[
-				...cartItems.getDomainRegistrations( this.props.cart ),
-				...cartItems.getDomainTransfers( this.props.cart ),
-			],
+			[ ...getDomainRegistrations( this.props.cart ), ...getDomainTransfers( this.props.cart ) ],
 			'meta'
 		);
 
+	needsAlternateEmailForGSuite() {
+		return (
+			this.needsOnlyGoogleAppsDetails() &&
+			needsExplicitAlternateEmailForGSuite( this.props.cart, this.props.contactDetails )
+		);
+	}
+
 	needsOnlyGoogleAppsDetails() {
 		return (
-			cartItems.hasGoogleApps( this.props.cart ) &&
-			! cartItems.hasDomainRegistration( this.props.cart ) &&
-			! cartItems.hasTransferProduct( this.props.cart )
+			hasGoogleApps( this.props.cart ) &&
+			! hasDomainRegistration( this.props.cart ) &&
+			! hasTransferProduct( this.props.cart )
 		);
 	}
 
 	getNumberOfDomainRegistrations() {
-		return cartItems.getDomainRegistrations( this.props.cart ).length;
+		return getDomainRegistrations( this.props.cart ).length;
 	}
 
 	getTldsWithAdditionalForm() {
@@ -123,30 +161,22 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
+		return intersection( getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 
 	needsFax() {
-		return (
-			this.props.contactDetails.countryCode === 'NL' && cartItems.hasTld( this.props.cart, 'nl' )
-		);
+		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
 	}
 
 	allDomainProductsSupportPrivacy() {
-		return cartItems.hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
+		return hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
 	}
 
 	allDomainItemsHavePrivacy() {
 		return (
-			cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
-			cartItems.getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
+			getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
+			getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
 		);
-	}
-
-	getSubmitButtonText() {
-		return this.hasAnotherStep()
-			? this.props.translate( 'Continue' )
-			: this.props.translate( 'Continue to Checkout' );
 	}
 
 	renderSubmitButton() {
@@ -155,7 +185,7 @@ export class DomainDetailsForm extends PureComponent {
 				className="checkout__domain-details-form-submit-button"
 				onClick={ this.handleSubmitButtonClick }
 			>
-				{ this.getSubmitButtonText() }
+				{ this.props.translate( 'Continue' ) }
 			</FormButton>
 		);
 	}
@@ -178,7 +208,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderDomainContactDetailsFields() {
 		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
-			submitButton: this.getSubmitButtonText(),
+			submitButton: translate( 'Continue' ),
 			organization: translate(
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
@@ -193,6 +223,7 @@ export class DomainDetailsForm extends PureComponent {
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
+				needsAlternateEmailForGSuite={ this.needsAlternateEmailForGSuite() }
 				onContactDetailsChange={ this.handleContactDetailsChange }
 				onSubmit={ this.handleSubmitButtonClick }
 				eventFormName="Checkout Form"
@@ -272,8 +303,7 @@ export class DomainDetailsForm extends PureComponent {
 		}
 
 		const renderPrivacy =
-			( cartItems.hasDomainRegistration( this.props.cart ) ||
-				cartItems.hasTransferProduct( this.props.cart ) ) &&
+			( hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart ) ) &&
 			this.allDomainProductsSupportPrivacy();
 
 		return (

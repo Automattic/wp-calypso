@@ -60,6 +60,14 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 					siteId,
 					error,
 				} );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 10000,
+						text: error.message,
+						status: 'is-error',
+					},
+				} );
 			} );
 	};
 };

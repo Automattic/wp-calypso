@@ -7,7 +7,7 @@ const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
-const getWebpackConfig = require( 'webpack.config' );
+const webpackConfig = require( 'webpack.config' );
 
 const config = require( 'config' );
 
@@ -17,7 +17,7 @@ const port = process.env.PORT || config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 
 function middleware( app ) {
-	const compiler = webpack( getWebpackConfig() );
+	const compiler = webpack( webpackConfig );
 	const callbacks = [];
 	let built = false;
 	let beforeFirstCompile = true;
@@ -100,7 +100,8 @@ function middleware( app ) {
 	app.use(
 		webpackMiddleware( compiler, {
 			mode: 'development',
-			publicPath: '/calypso/',
+			// Development is always evergreen.
+			publicPath: '/calypso/evergreen/',
 			stats: {
 				colors: true,
 				hash: true,

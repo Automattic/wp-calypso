@@ -108,8 +108,9 @@ class Transfer extends React.PureComponent {
 			);
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="edit__domain-details-card">
+			<div className="domain-details-card">
 				{ this.renderInboundTransferEmailNotice() }
 				{ transferNotice }
 				<Header domain={ domain } />
@@ -117,6 +118,7 @@ class Transfer extends React.PureComponent {
 				{ cancelNavItem }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInboundTransferEmailNotice = () => {

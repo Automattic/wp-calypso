@@ -24,6 +24,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security extends React.Component {
 	static displayName = 'Security';
 
@@ -54,14 +59,17 @@ class Security extends React.Component {
 				<Card className="me-security-settings security__settings">
 					<p>
 						{ translate(
-							'To update your password enter a new one below. Your password should be at least six characters long. ' +
-								'To make it stronger, use upper and lower case letters, numbers and symbols like ! " ? $ % ^ & ).'
+							'To update your password enter a new one below. ' +
+								'Strong passwords have at least six characters, and use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'
 						) }
 					</p>
 
 					<AccountPassword
-						userSettings={ this.props.userSettings }
 						accountPasswordData={ this.props.accountPasswordData }
+						autocomplete="new-password"
+						// Hint to LastPass not to attempt autofill
+						data-lpignore="true"
+						userSettings={ this.props.userSettings }
 					/>
 				</Card>
 			</Main>

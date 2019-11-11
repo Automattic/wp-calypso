@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -37,12 +37,17 @@ import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purc
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
 	};
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();

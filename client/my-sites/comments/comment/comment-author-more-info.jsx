@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
 /**
@@ -174,24 +174,22 @@ export class CommentAuthorMoreInfo extends Component {
 					) }
 
 					{ ! authorEmail && (
-						<div className="comment__author-more-info-element">
-							<div>
-								{ translate(
-									"Anonymous messages can't be blocked individually, " +
-										'but you can update your {{a}}settings{{/a}} to ' +
-										'only allow comments from registered users.',
-									{
-										components: {
-											a: (
-												<a
-													href={ `/settings/discussion/${ siteSlug }` }
-													onClick={ trackAnonymousModeration }
-												/>
-											),
-										},
-									}
-								) }
-							</div>
+						<div>
+							{ translate(
+								"Anonymous messages can't be blocked individually, " +
+									'but you can update your {{a}}settings{{/a}} to ' +
+									'only allow comments from registered users.',
+								{
+									components: {
+										a: (
+											<a
+												href={ `/settings/discussion/${ siteSlug }` }
+												onClick={ trackAnonymousModeration }
+											/>
+										),
+									},
+								}
+							) }
 						</div>
 					) }
 				</Popover>

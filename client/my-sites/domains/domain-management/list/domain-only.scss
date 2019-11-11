@@ -1,0 +1,20 @@
+.domain-only-site__settings-notice {
+	color: var( --color-neutral-50 );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: var( --color-neutral-10 );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
+}
+
+.domain-only-site__placeholder {
+	h2 {
+		@include placeholder();
+	}
+}

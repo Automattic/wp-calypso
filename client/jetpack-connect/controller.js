@@ -11,13 +11,15 @@ import { get, isEmpty, some, dropRight } from 'lodash';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import CheckoutData from 'components/data/checkout';
 import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
+import JetpackUserType from './user-type/index';
+import JetpackSiteTopic from './site-topic';
+import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
@@ -279,19 +281,41 @@ export function plansSelection( context, next ) {
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
-		<CheckoutData>
-			<Plans
-				basePlansPath={
-					context.query.redirect
-						? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
-						: JPC_PATH_PLANS
-				}
-				context={ context }
-				interval={ context.params.interval }
-				queryRedirect={ context.query.redirect }
-			/>
-		</CheckoutData>
+		<Plans
+			basePlansPath={
+				context.query.redirect
+					? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
+					: JPC_PATH_PLANS
+			}
+			context={ context }
+			interval={ context.params.interval }
+			queryRedirect={ context.query.redirect }
+		/>
 	);
+	next();
+}
+
+export function userType( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/user-type', 'Jetpack Site User Type Category' );
+
+	context.primary = <JetpackUserType />;
+
+	next();
+}
+
+export function siteType( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
+
+	context.primary = <JetpackSiteType />;
+
+	next();
+}
+
+export function siteTopic( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/site-topic', 'Jetpack Site Topic Selection' );
+
+	context.primary = <JetpackSiteTopic />;
+
 	next();
 }
 

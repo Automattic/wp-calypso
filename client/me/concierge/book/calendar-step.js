@@ -47,6 +47,7 @@ class CalendarStep extends Component {
 			message: signupForm.message,
 			timezone: signupForm.timezone,
 			isRebrandCitiesSite: signupForm.isRebrandCitiesSite,
+			phoneNumber: signupForm.phoneNumber,
 		};
 
 		this.props.bookConciergeAppointment( scheduleId, timestamp, currentUserId, site.ID, meta );

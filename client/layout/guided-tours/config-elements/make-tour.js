@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { tourBranching } from '../tour-branching';
-import { childContextTypes } from '../context-types';
+import { contextTypes } from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -27,9 +27,10 @@ const makeTour = tree => {
 			shouldPause: PropTypes.bool.isRequired,
 			sectionName: PropTypes.string,
 			stepName: PropTypes.string.isRequired,
+			dispatch: PropTypes.func.isRequired,
 		};
 
-		static childContextTypes = childContextTypes;
+		static childContextTypes = contextTypes;
 
 		static meta = omit( tree.props, 'children' );
 
@@ -42,7 +43,17 @@ const makeTour = tree => {
 		}
 
 		static getDerivedStateFromProps( props ) {
-			const { isValid, lastAction, next, quit, start, sectionName, shouldPause, stepName } = props;
+			const {
+				isValid,
+				lastAction,
+				next,
+				quit,
+				start,
+				sectionName,
+				shouldPause,
+				stepName,
+				dispatch,
+			} = props;
 			const step = stepName;
 			const branching = tourBranching( tree );
 
@@ -59,6 +70,7 @@ const makeTour = tree => {
 				isLastStep: isEmpty( branching[ step ] ),
 				tour: tree.props.name,
 				tourVersion: tree.props.version,
+				dispatch,
 			};
 
 			debug( 'makeTour#getDerivedStateFromProps computed new context', props, tourContext );

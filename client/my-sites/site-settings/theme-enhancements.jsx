@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -116,13 +116,18 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate(
 						'Loads the next posts automatically when the reader approaches the bottom of the page.'
 					) }
 					link="https://jetpack.com/support/infinite-scroll/"
 				/>
+				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
+					) }
+				</p>
 				{ this.renderRadio(
 					'infinite_scroll',
 					'default',
@@ -142,6 +147,29 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
+	renderCustomCSSSettings() {
+		const { selectedSiteId, translate } = this.props;
+		const formPending = this.isFormPending();
+
+		return (
+			<FormFieldset>
+				<SupportInfo
+					text={ translate(
+						"Adds options for CSS preprocessor use, disabling the theme's CSS, or custom image width."
+					) }
+					link="https://jetpack.com/support/custom-css/"
+				/>
+
+				<JetpackModuleToggle
+					siteId={ selectedSiteId }
+					moduleSlug="custom-css"
+					label={ translate( 'Enhance CSS customization panel' ) }
+					disabled={ formPending }
+				/>
+			</FormFieldset>
+		);
+	}
+
 	renderMinilevenSettings() {
 		const { selectedSiteId, minilevenModuleActive, translate } = this.props;
 		const formPending = this.isFormPending();
@@ -155,7 +183,13 @@ class ThemeEnhancements extends Component {
 					) }
 					link="https://jetpack.com/support/mobile-theme/"
 				/>
-
+				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
+							'still see your regular theme on other screen sizes.'
+					) }
+				</p>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
@@ -167,12 +201,12 @@ class ThemeEnhancements extends Component {
 					{ this.renderToggle(
 						'wp_mobile_excerpt',
 						! minilevenModuleActive,
-						translate( 'Show excerpts on front page and on archive pages instead of full posts' )
+						translate( 'Use excerpts instead of full posts on front page and archive pages' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_featured_images',
 						! minilevenModuleActive,
-						translate( 'Hide all featured images' )
+						translate( 'Show featured images' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_app_promos',
@@ -201,11 +235,13 @@ class ThemeEnhancements extends Component {
 
 				<Card className="theme-enhancements__card site-settings">
 					{ siteIsJetpack ? (
-						<div>
+						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
 							{ this.renderMinilevenSettings() }
-						</div>
+							<hr />
+							{ this.renderCustomCSSSettings() }
+						</Fragment>
 					) : (
 						this.renderSimpleSiteInfiniteScrollSettings()
 					) }

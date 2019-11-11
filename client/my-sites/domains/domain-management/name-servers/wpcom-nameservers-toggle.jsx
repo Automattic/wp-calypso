@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import Toggle from 'components/forms/form-toggle';
 import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -23,7 +24,7 @@ class NameserversToggle extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="name-servers__dns is-compact card">
+			<Card compact className="name-servers__dns">
 				<span className="name-servers__title">
 					{ this.props.translate( 'Use WordPress.com Name Servers' ) }
 				</span>
@@ -39,7 +40,7 @@ class NameserversToggle extends React.PureComponent {
 					/>
 				</form>
 				{ this.renderExplanation() }
-			</div>
+			</Card>
 		);
 	}
 

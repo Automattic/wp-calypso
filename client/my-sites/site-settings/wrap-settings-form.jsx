@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -22,6 +22,7 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
@@ -43,7 +44,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			uniqueEvents: {},
 		};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -92,8 +93,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! ( currentFields[ field ] == persistedFields[ field ] )
+			const nextDirtyFields = previousDirtyFields.filter( field =>
+				isObjectLike( currentFields[ field ] )
+					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
+					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
 			/*eslint-enable eqeqeq*/
 
@@ -113,7 +116,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		// Some Utils
 		handleSubmitForm = event => {
-			const { dirtyFields, fields, trackTracksEvent } = this.props;
+			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
 			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
@@ -122,18 +125,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			dirtyFields.map( function( value ) {
 				switch ( value ) {
 					case 'blogdescription':
-						trackTracksEvent( 'calypso_settings_site_tagline_updated' );
+						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );
 						break;
 					case 'blogname':
-						trackTracksEvent( 'calypso_settings_site_title_updated' );
+						trackTracksEvent( 'calypso_settings_site_title_updated', { path } );
 						break;
 					case 'blog_public':
 						trackTracksEvent( 'calypso_settings_site_privacy_updated', {
 							privacy: fields.blog_public,
+							path,
 						} );
 						break;
 					case 'wga':
-						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated' );
+						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
 				}
 			} );
@@ -189,6 +193,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		handleAutosavingToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
+			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
+				name,
+				path: this.props.path,
+			} );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
 				this.submitForm();
 			} );
@@ -264,6 +272,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const settingsFields = {
 				site: keys( settings ),
 			};
+			const path = getCurrentRouteParameterized( state, siteId );
 
 			const isJetpack = isJetpackSite( state, siteId );
 
@@ -293,6 +302,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSavingSettings,
 				isSaveRequestSuccessful,
 				jetpackFieldsToUpdate,
+				path,
 				siteIsJetpack: isJetpack,
 				siteSettingsSaveError,
 				settings,

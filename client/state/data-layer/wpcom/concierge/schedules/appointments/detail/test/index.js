@@ -28,9 +28,7 @@ describe( 'wpcom-api', () => {
 				http(
 					{
 						method: 'GET',
-						path: `/concierge/schedules/${ action.scheduleId }/appointments/${
-							action.appointmentId
-						}/detail`,
+						path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/detail`,
 						apiNamespace: 'wpcom/v2',
 						retryPolicy: noRetry(),
 					},

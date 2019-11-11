@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -19,8 +17,10 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
 /**
- * Main
+ * Style dependencies
  */
+import './style.scss';
+
 class SectionNav extends Component {
 	static propTypes = {
 		selectedText: PropTypes.node,
@@ -40,11 +40,11 @@ class SectionNav extends Component {
 		mobileOpen: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.checkForSiblingControls( this.props.children );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkForSiblingControls( nextProps.children );
 
 		if ( ! this.hasSiblingControls ) {
@@ -52,31 +52,25 @@ class SectionNav extends Component {
 		}
 	}
 
-	renderDropdown = () => {
+	renderDropdown() {
 		if ( ! this.props.allowDropdown ) {
-			return <div />;
+			return null;
 		}
 
 		return (
-			<div className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
+			<button className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
 				<span className="section-nav__mobile-header-text">{ this.props.selectedText }</span>
 				<Gridicon icon="chevron-down" size={ 18 } />
-			</div>
+			</button>
 		);
-	};
+	}
 
 	render() {
 		const children = this.getChildren();
 		let className;
 
 		if ( ! children ) {
-			className = classNames(
-				{
-					'section-nav': true,
-					'is-empty': true,
-				},
-				this.props.className
-			);
+			className = classNames( 'section-nav', 'is-empty', this.props.className );
 
 			return (
 				<div className={ className }>
@@ -87,63 +81,55 @@ class SectionNav extends Component {
 			);
 		}
 
-		className = classNames(
-			{
-				'section-nav': true,
-				'is-open': this.state.mobileOpen,
-				'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
-			},
-			this.props.className
-		);
+		className = classNames( 'section-nav', this.props.className, {
+			'is-open': this.state.mobileOpen,
+			'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
+		} );
 
 		return (
 			<div className={ className }>
 				{ this.renderDropdown() }
-
 				<div className="section-nav__panel">{ children }</div>
 			</div>
 		);
 	}
 
-	getChildren = () => {
-		return React.Children.map(
-			this.props.children,
-			function( child ) {
-				const extraProps = {
-					hasSiblingControls: this.hasSiblingControls,
-					closeSectionNavMobilePanel: this.closeMobilePanel,
-				};
+	getChildren() {
+		return React.Children.map( this.props.children, child => {
+			const extraProps = {
+				hasSiblingControls: this.hasSiblingControls,
+				closeSectionNavMobilePanel: this.closeMobilePanel,
+			};
 
-				if ( ! child ) {
-					return null;
+			if ( ! child ) {
+				return null;
+			}
+
+			// Propagate 'selectedText' to NavItem component
+			if (
+				child.type === NavTabs &&
+				! child.props.selectedText &&
+				typeof this.props.selectedText === 'string'
+			) {
+				extraProps.selectedText = this.props.selectedText;
+			}
+
+			// Propagate 'selectedCount' to NavItem component
+			if ( child.type === NavTabs && this.props.selectedCount ) {
+				extraProps.selectedCount = this.props.selectedCount;
+			}
+
+			if ( child.type === Search ) {
+				if ( child.props.pinned ) {
+					this.hasPinnedSearch = true;
 				}
 
-				// Propagate 'selectedText' to NavItem component
-				if (
-					child.type === NavTabs &&
-					! child.props.selectedText &&
-					typeof this.props.selectedText === 'string'
-				) {
-					extraProps.selectedText = this.props.selectedText;
-				}
+				extraProps.onSearch = this.generateOnSearch( child.props.onSearch );
+			}
 
-				// Propagate 'selectedCount' to NavItem component
-				if ( child.type === NavTabs && this.props.selectedCount ) {
-					extraProps.selectedCount = this.props.selectedCount;
-				}
-
-				if ( child.type === Search ) {
-					if ( child.props.pinned ) {
-						this.hasPinnedSearch = true;
-					}
-
-					extraProps.onSearch = this.generateOnSearch( child.props.onSearch );
-				}
-
-				return React.cloneElement( child, extraProps );
-			}.bind( this )
-		);
-	};
+			return React.cloneElement( child, extraProps );
+		} );
+	}
 
 	closeMobilePanel = () => {
 		if ( window.innerWidth < 480 && this.state.mobileOpen ) {
@@ -165,28 +151,25 @@ class SectionNav extends Component {
 		}
 	};
 
-	generateOnSearch = existingOnSearch => {
+	generateOnSearch( existingOnSearch ) {
 		return ( ...args ) => {
 			existingOnSearch( ...args );
 			this.closeMobilePanel();
 		};
-	};
+	}
 
-	checkForSiblingControls = children => {
+	checkForSiblingControls( children ) {
 		this.hasSiblingControls = false;
 
 		const ignoreSiblings = [ Search, CommentNavigationTab ];
 
-		React.Children.forEach(
-			children,
-			function( child, index ) {
-				// Checking for at least 2 controls groups that are not null or ignored siblings
-				if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
-					this.hasSiblingControls = true;
-				}
-			}.bind( this )
-		);
-	};
+		React.Children.forEach( children, ( child, index ) => {
+			// Checking for at least 2 controls groups that are not null or ignored siblings
+			if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
+				this.hasSiblingControls = true;
+			}
+		} );
+	}
 }
 
 export default SectionNav;

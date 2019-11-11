@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -147,7 +147,7 @@ class EditorConfirmationSidebar extends Component {
 					<span>
 						{ this.props.translate( 'Show this every time I publish', {
 							comment:
-								'This string appears in the bottom of a publish confirmation sidebar.' +
+								'This string appears in the bottom of a publish confirmation sidebar. ' +
 								'There is limited space. Longer strings will wrap.',
 						} ) }
 					</span>

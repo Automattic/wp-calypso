@@ -55,10 +55,10 @@
 	}
 
 	.gridicon.is_active {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		&:hover {
-			color: lighten( $gray, 15% );
+			color: var( --color-neutral-10 );
 		}
 	}
 
@@ -71,7 +71,7 @@
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
-			color: var( --color-neutral-400 );
+			color: var( --color-neutral-40 );
 		}
 	}
 
@@ -105,18 +105,18 @@
 		cursor: pointer;
 		vertical-align: bottom;
 		margin-left: 4px;
-		color: lighten( $gray, 15% );
+		color: var( --color-neutral-10 );
 
 		&:hover {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
 	.gridicon.is_active {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		&:hover {
-			color: lighten( $gray, 15% );
+			color: var( --color-neutral-10 );
 		}
 	}
 }

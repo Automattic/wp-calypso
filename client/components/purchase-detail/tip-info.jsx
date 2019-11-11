@@ -1,20 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
-const TipInfo = ( { info = '', className = '' } ) => {
-	className += ' purchase-detail__info form-setting-explanation';
+/**
+ * Style dependencies
+ */
+import './tip-info.scss';
+
+const TipInfo = ( { info = '', className } ) => {
+	const classes = classNames( 'purchase-detail__info', className );
 	return (
-		<div className={ className }>
-			<span className="purchase-detail__info-icon-container">
-				<Gridicon size={ 12 } icon="info-outline" />
-			</span>
+		<div className={ classes }>
+			<Gridicon size={ 12 } icon="info-outline" className="purchase-detail__info-icon" />
 			{ info }
 		</div>
 	);

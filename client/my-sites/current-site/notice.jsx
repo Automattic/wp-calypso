@@ -9,6 +9,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import config from 'config';
+import { get, reject, transform } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +18,9 @@ import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getActiveDiscount from 'state/selectors/get-active-discount';
+import { clickUpgradeNudge } from 'state/marketing/actions';
 import { domainManagementList } from 'my-sites/domains/paths';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { hasDomainCredit, isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-to-paid-upsell';
@@ -33,6 +35,17 @@ import CartData from 'components/data/cart';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 import PendingPaymentNotice from './pending-payment-notice';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getProductsList } from 'state/products-list/selectors';
+import QueryProductsList from 'components/data/query-products-list';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
+import formatCurrency from '@automattic/format-currency/src';
+import { getPreference } from 'state/preferences/selectors';
+import { savePreference } from 'state/preferences/actions';
+import { CTA_FREE_TO_PAID } from './constants';
+
+const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
 export class SiteNotice extends React.Component {
 	static propTypes = {
@@ -95,8 +108,94 @@ export class SiteNotice extends React.Component {
 		);
 	}
 
+	domainUpsellNudge() {
+		if ( ! this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate ) {
+			return null;
+		}
+
+		const nonWPCOMDomains = reject(
+			this.props.domains,
+			domain => domain.isWPCOMDomain || domain.name.endsWith( '.wpcomstaging.com' )
+		);
+
+		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
+			return null;
+		}
+
+		const { site, currencyCode, productsList, translate } = this.props;
+
+		const priceAndSaleInfo = transform(
+			productsList,
+			function( result, value, key ) {
+				if ( value.is_domain_registration && value.available ) {
+					const regularPrice = getUnformattedDomainPrice( key, productsList );
+					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
+					result.minRegularPrice = Math.min( minRegularPrice, regularPrice );
+
+					const salePrice = getUnformattedDomainSalePrice( key, productsList );
+					if ( salePrice ) {
+						const minSalePrice = get( result, 'minSalePrice', salePrice );
+						result.minSalePrice = Math.min( minSalePrice, salePrice );
+						result.saleTlds.push( value.tld );
+					}
+				}
+			},
+			{ saleTlds: [] }
+		);
+
+		if ( ! priceAndSaleInfo.minSalePrice && ! priceAndSaleInfo.minRegularPrice ) {
+			return null;
+		}
+
+		let noticeText;
+
+		if ( priceAndSaleInfo.minSalePrice ) {
+			if ( get( priceAndSaleInfo, 'saleTlds.length', 0 ) === 1 ) {
+				noticeText = translate( 'Get a %(tld)s domain for just %(salePrice)s for a limited time', {
+					args: {
+						tld: priceAndSaleInfo.saleTlds[ 0 ],
+						salePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
+					},
+				} );
+			} else {
+				noticeText = translate( 'Domains on sale starting at %(minSalePrice)s', {
+					args: {
+						minSalePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
+					},
+				} );
+			}
+		} else {
+			noticeText = translate( 'Add another domain from %(minDomainPrice)s', {
+				args: {
+					minDomainPrice: formatCurrency( priceAndSaleInfo.minRegularPrice, currencyCode ),
+				},
+			} );
+		}
+
+		return (
+			<Notice
+				isCompact
+				status="is-success"
+				icon="info-outline"
+				onDismissClick={ this.props.clickDomainUpsellDismiss }
+				showDismiss={ true }
+			>
+				<NoticeAction
+					onClick={ this.props.clickDomainUpsellGo }
+					href={ `/domains/add/${ site.slug }` }
+				>
+					{ noticeText }
+					<TrackComponentView
+						eventName="calypso_upgrade_nudge_impression"
+						eventProperties={ { cta_name: 'domain-upsell-nudge' } }
+					/>
+				</NoticeAction>
+			</Notice>
+		);
+	}
+
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell || this.props.isDomainOnly ) {
 			return null;
 		}
 
@@ -104,11 +203,12 @@ export class SiteNotice extends React.Component {
 
 		return (
 			<SidebarBanner
-				ctaName="free-to-paid-sidebar"
+				ctaName={ CTA_FREE_TO_PAID }
 				ctaText={ translate( 'Upgrade' ) }
 				href={ '/plans/' + site.slug }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
+				onClick={ () => this.props.clickFreeToPaidPlanNotice( site.ID ) }
 			/>
 		);
 	}
@@ -188,18 +288,26 @@ export class SiteNotice extends React.Component {
 	render() {
 		const { site } = this.props;
 		if ( ! site ) {
-			return <div className="site__notices" />;
+			return <div className="current-site__notices" />;
 		}
 
+		const discountOrFreeToPaid = this.activeDiscountNotice() || this.freeToPaidPlanNotice();
+		const siteRedirectNotice = this.getSiteRedirectNotice( site );
+		const domainCreditNotice = this.domainCreditNotice();
+		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
+
 		return (
-			<div className="site__notices">
+			<div className="current-site__notices">
+				<QueryProductsList />
 				<QueryActivePromotions />
-				{ this.activeDiscountNotice() || this.freeToPaidPlanNotice() || <DomainToPaidPlanNotice /> }
-				{ this.getSiteRedirectNotice( site ) }
+				{ discountOrFreeToPaid || <DomainToPaidPlanNotice /> }
+				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.pendingPaymentNotice() }
-				{ this.domainCreditNotice() }
-				{ this.jetpackPluginsSetupNotice() }
+				{ domainCreditNotice }
+				{ jetpackPluginsSetupNotice }
+				{ ! ( discountOrFreeToPaid || domainCreditNotice || jetpackPluginsSetupNotice ) &&
+					this.domainUpsellNudge() }
 			</div>
 		);
 	}
@@ -216,6 +324,11 @@ export default connect(
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			pausedJetpackPluginsSetup:
 				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
+			productsList: getProductsList( state ),
+			domains: getDomainsBySiteId( state, siteId ),
+			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 		};
 	},
 	dispatch => {
@@ -226,12 +339,22 @@ export default connect(
 						cta_name: 'current_site_domain_notice',
 					} )
 				),
-			clickFreeToPaidPlanNotice: () =>
+			clickDomainUpsellGo: () =>
 				dispatch(
 					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-						cta_name: 'free-to-paid-sidebar',
+						cta_name: 'domain-upsell-nudge',
 					} )
 				),
+			clickDomainUpsellDismiss: () => {
+				dispatch( savePreference( DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString() ) );
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'domain-upsell-nudge-dismiss',
+					} )
+				);
+			},
+			clickFreeToPaidPlanNotice: siteId =>
+				dispatch( clickUpgradeNudge( siteId, CTA_FREE_TO_PAID ) ),
 		};
 	}
 )( localize( SiteNotice ) );

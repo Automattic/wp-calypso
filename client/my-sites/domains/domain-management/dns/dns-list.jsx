@@ -5,17 +5,18 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/domains/dns/actions';
 import { isDeletingLastMXRecord } from 'lib/domains/dns';
 import { domainConnect } from 'lib/domains/constants';
 
@@ -65,12 +66,8 @@ class DnsList extends React.Component {
 			return;
 		}
 
-		deleteDnsAction( selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The DNS record has not been deleted.' )
-				);
-			} else {
+		deleteDnsAction( selectedDomainName, record ).then(
+			() => {
 				const successNoticeId = 'dns-list-success-notice';
 				this.props.successNotice( translate( 'The DNS record has been deleted.' ), {
 					id: successNoticeId,
@@ -82,24 +79,30 @@ class DnsList extends React.Component {
 						this.addDns( record );
 					},
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record has not been deleted.' )
+				);
 			}
-		} );
+		);
 	};
 
 	addDns( record ) {
 		const { translate } = this.props;
 
-		addDnsAction( this.props.selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The DNS record could not be restored.' )
-				);
-			} else {
+		addDnsAction( this.props.selectedDomainName, record ).then(
+			() => {
 				this.props.successNotice( translate( 'The DNS record has been restored.' ), {
 					duration: 5000,
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record could not be restored.' )
+				);
 			}
-		} );
+		);
 	}
 
 	isDomainConnectRecord( dnsRecord ) {
@@ -130,15 +133,15 @@ class DnsList extends React.Component {
 		} );
 
 		return (
-			<div className="dns__list">
+			<Fragment>
+				<DnsRecordsList>{ dnsRecordsList }</DnsRecordsList>
 				<DeleteEmailForwardsDialog
 					visible={ dialog.type === 'deleteEmailForwards' }
 					onClose={ this.handleDialogClose }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
-				<ul>{ dnsRecordsList }</ul>
-			</div>
+			</Fragment>
 		);
 	}
 }

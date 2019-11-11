@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
@@ -21,6 +22,11 @@ import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -71,6 +77,7 @@ class JetpackNewSite extends Component {
 	render() {
 		return (
 			<div>
+				<DocumentHead title={ this.props.translate( 'Add New Site' ) } />
 				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
 					<div className="jetpack-new-site__header">

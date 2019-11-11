@@ -23,7 +23,7 @@ import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'lib/upgrades/actions';
+import { addDns } from 'lib/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 
 class DnsAddNew extends React.Component {
@@ -94,7 +94,7 @@ class DnsAddNew extends React.Component {
 		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,
@@ -192,19 +192,18 @@ class DnsAddNew extends React.Component {
 			formState.hasErrors( this.state.fields );
 
 		return (
-			<form className="dns__add-new">
-				<div className="dns__form-content">
-					<FormFieldset>
-						<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
-
-						<FormSelect onChange={ this.changeType } value={ this.state.fields.type.value }>
-							{ options }
-						</FormSelect>
-					</FormFieldset>
-
-					{ this.recordFields() }
-				</div>
-
+			<form className="dns__form">
+				<FormFieldset>
+					<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
+					<FormSelect
+						className="dns__add-new-select-type"
+						onChange={ this.changeType }
+						value={ this.state.fields.type.value }
+					>
+						{ options }
+					</FormSelect>
+				</FormFieldset>
+				{ this.recordFields() }
 				<FormFooter>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add New DNS Record' ) }

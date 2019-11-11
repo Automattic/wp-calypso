@@ -9,13 +9,18 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class EllipsisMenu extends Component {
 	static propTypes = {

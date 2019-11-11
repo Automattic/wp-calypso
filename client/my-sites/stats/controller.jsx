@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +7,11 @@ import i18n from 'i18n-calypso';
 import { find, pick, get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { savePreference } from 'state/preferences/actions';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -135,10 +133,6 @@ function getMomentSiteZone( state, siteId ) {
 }
 
 export default {
-	resetFirstView( context ) {
-		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
-	},
-
 	redirectToDefaultSitePage: function( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
@@ -308,7 +302,7 @@ export default {
 			'authors',
 			'videoplays',
 			'videodetails',
-			'podcastdownloads',
+			'filedownloads',
 			'searchterms',
 			'annualstats',
 		];
@@ -340,8 +334,8 @@ export default {
 		const isValidStartDate =
 			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate )
-			: momentSiteZone.endOf( activeFilter.period );
+			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
 		const extraProps =

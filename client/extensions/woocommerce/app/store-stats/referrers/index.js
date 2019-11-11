@@ -50,11 +50,11 @@ class Referrers extends Component {
 		selectedReferrer: {},
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setData( nextProps, this.state.filter );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setData( this.props, this.state.filter );
 	}
 
@@ -65,7 +65,7 @@ class Referrers extends Component {
 			const basePath = '/store/stats/referrers';
 			const {
 				queryParams: { referrer, ...queryParams },
-			} = this.props; // eslint-disable-line no-unused-vars
+			} = this.props;
 			const widgetPath = getWidgetPath( unit, slug, queryParams );
 			this.state.filter = '';
 			this.state.selectedReferrer = {};

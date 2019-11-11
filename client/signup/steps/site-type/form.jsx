@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -10,12 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Badge from 'components/badge';
 import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -25,6 +21,8 @@ import './style.scss';
 
 class SiteTypeForm extends Component {
 	static propTypes = {
+		showDescriptions: PropTypes.bool,
+		showPurchaseRequired: PropTypes.bool,
 		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
@@ -33,66 +31,47 @@ class SiteTypeForm extends Component {
 	};
 
 	static defaultProps = {
-		siteType: null,
+		showDescriptions: true,
+		showPurchaseRequired: true,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			siteType: props.siteType,
-		};
-	}
-
-	handleRadioChange = event => this.setState( { siteType: event.currentTarget.value } );
-
-	handleSubmit = event => {
-		const { siteType } = this.state;
-
-		event.preventDefault();
-		// Default siteType is 'blog'
-		const siteTypeInputVal = siteType || getSiteTypePropertyValue( 'id', 2, 'slug' );
-
+	handleSubmit = type => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-			value: siteType,
+			value: type,
 		} );
-
-		this.props.submitForm( siteTypeInputVal );
+		this.props.submitForm( type );
 	};
-
-	renderRadioOptions() {
-		return allSiteTypes.map( siteTypeProperties => (
-			<FormLabel
-				className={ classNames( 'site-type__option', {
-					'is-selected': siteTypeProperties.slug === this.state.siteType,
-				} ) }
-				key={ siteTypeProperties.id }
-			>
-				<FormRadio
-					value={ siteTypeProperties.slug }
-					checked={ siteTypeProperties.slug === this.state.siteType }
-					onChange={ this.handleRadioChange }
-				/>
-				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
-			</FormLabel>
-		) );
-	}
 
 	render() {
-		const { translate } = this.props;
+		const { showDescriptions, showPurchaseRequired, translate } = this.props;
 
 		return (
-			<div className="site-type__wrapper">
-				<form onSubmit={ this.handleSubmit }>
-					<Card>
-						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit">
-							{ translate( 'Continue' ) }
-						</Button>
-					</Card>
-				</form>
-			</div>
+			<>
+				<Card className="site-type__wrapper">
+					{ getAllSiteTypes().map( siteTypeProperties => (
+						<Card
+							className="site-type__option"
+							key={ siteTypeProperties.id }
+							tagName="button"
+							displayAsLink
+							data-e2e-title={ siteTypeProperties.slug }
+							onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
+						>
+							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+							{ showDescriptions && (
+								<span className="site-type__option-description">
+									{ siteTypeProperties.description }
+								</span>
+							) }
+							{ showPurchaseRequired && siteTypeProperties.purchaseRequired && (
+								<Badge className="site-type__option-badge" type="info">
+									{ translate( 'Purchase required' ) }
+								</Badge>
+							) }
+						</Card>
+					) ) }
+				</Card>
+			</>
 		);
 	}
 }

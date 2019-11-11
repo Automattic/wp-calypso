@@ -1,0 +1,99 @@
+// Actions for Individual Comments
+.comments__comment-actions {
+	color: var( --color-text-subtle );
+	font-size: 14px;
+	list-style: none;
+	margin-top: -6px;
+
+	button {
+		display: inline-block;
+	color: var( --color-text-subtle );
+		padding: 4px;
+		margin-right: 8px;
+		margin-top: 0;
+		cursor: pointer;
+		font-size: 14px;
+
+		.gridicon {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+		}
+
+		.gridicons-star,
+		.gridicons-star-outline {
+			top: 3px;
+		}
+
+		.like-button__like-icons {
+			margin-right: 18px;
+		}
+
+		&.comments__comment-actions-reply {
+			margin-left: -7px;
+		}
+
+		&.like-button {
+			.gridicon {
+				position: absolute;
+			}
+		}
+
+		&:hover {
+			color: var( --color-primary );
+		}
+
+		&.comments__comment-actions-cancel-reply {
+			float: right;
+			margin-top: 4px;
+			margin-right: 0;
+			padding-right: 0;
+		}
+	}
+
+	// Aligns Like icon to comment text when it's by itself
+	> :only-child {
+		left: -3px;
+		top: 3px;
+	}
+
+	.comments__comment-actions-approve,
+	.comments__comment-actions-trash,
+	.comments__comment-actions-spam,
+	.comments__comment-actions-edit {
+		display: none;
+	}
+
+	@include breakpoint( '>660px' ) {
+		.comments__comment-actions-approve,
+		.comments__comment-actions-trash,
+		.comments__comment-actions-spam,
+		.comments__comment-actions-edit {
+			display: inline;
+		}
+
+		.ellipsis-menu {
+			display: none;
+		}
+	}
+
+	@include breakpoint( '<480px' ) {
+		.like-button .like-button__label-status {
+			display: inline;
+		}
+	}
+}
+
+.comments__comment-actions .comments__comment-actions-read-more {
+	color: var( --color-primary );
+	margin: 0 10px 0 -3px;
+	padding-left: 0;
+}
+
+.comments__comment-actions-read-more-icon {
+	fill: var( --color-primary );
+}
+
+.comments__comment-actions-moderation-tools {
+	display: inline-block;
+}

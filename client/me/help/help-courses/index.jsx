@@ -28,6 +28,11 @@ import {
 } from 'state/purchases/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Courses extends Component {
 	UNSAFE_componentWillMount() {
 		this.fetchCoursesIfNeeded();

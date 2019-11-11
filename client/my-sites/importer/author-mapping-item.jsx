@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +13,12 @@ import { connect } from 'react-redux';
 import AuthorSelector from 'blocks/author-selector';
 import User from 'components/user';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { decodeEntities } from 'lib/formatting';
+
+/**
+ * Style dependencies
+ */
+import './author-mapping-item.scss';
 
 const userShape = nameField =>
 	PropTypes.shape( {
@@ -44,7 +48,19 @@ class ImporterAuthorMapping extends React.Component {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
-			selectAuthor( this.props.currentUser );
+			/**
+			 * Using `defer` here is a leftover from using Flux store in the past.
+			 *
+			 * It's not ideal and should be refactored in the future to read
+			 * the state, instead of automating the UI in this way.
+			 *
+			 * This effort is quite big as it requires refactoring a few things on more fundamental
+			 * level in the imports section.
+			 *
+			 * TODO: Refactor this to not automate the UI but use proper state
+			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
+			 */
+			defer( () => selectAuthor( this.props.currentUser ) );
 		}
 	}
 
@@ -62,7 +78,7 @@ class ImporterAuthorMapping extends React.Component {
 
 		return (
 			<div className="importer__author-mapping">
-				<span className="importer__source-author">{ name }</span>
+				<span className="importer__source-author">{ decodeEntities( name ) }</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>

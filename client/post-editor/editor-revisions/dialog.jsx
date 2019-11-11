@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import CloseOnEscape from 'components/close-on-escape';
 
 class PostRevisionsDialog extends PureComponent {
@@ -41,12 +41,12 @@ class PostRevisionsDialog extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.toggleBodyClass( { isVisible: this.props.isVisible } );
 		this.props.selectPostRevision( null );
 	}
 
-	componentWillUpdate( { isVisible } ) {
+	UNSAFE_componentWillUpdate( { isVisible } ) {
 		this.toggleBodyClass( { isVisible } );
 	}
 

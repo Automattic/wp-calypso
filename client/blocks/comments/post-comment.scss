@@ -1,0 +1,159 @@
+.comments__comment {
+	list-style-type: none;
+	margin-top: 20px;
+	position: relative;
+
+	&.depth-0,
+	&.depth-1,
+	&.depth-2 {
+		padding-left: 42px;
+
+		> .comments__comment-author .gravatar {
+			left: 0;
+		}
+	}
+
+	&.depth-2 {
+		.comments__view-replies-btn {
+			margin-left: -40px;
+		}
+	}
+
+	&.is-child {
+		background: transparent;
+	}
+
+	.comments__form {
+		margin-top: 10px;
+	}
+}
+
+// A list of comments
+.comments__list {
+	list-style: none;
+	margin: 0;
+
+	&.is-root {
+		margin-top: 20px;
+	}
+}
+
+.comments__view-replies-btn {
+	cursor: pointer;
+	background-color: var( --color-neutral-0 );
+	width: 100%;
+	color: var( --color-neutral-40 );
+	text-align: left;
+	margin-top: 15px;
+	padding: 5px 10px 10px 12px;
+
+	.gridicon {
+		position: relative;
+		top: 4px;
+		margin-right: 4px;
+		transform: rotate( 180deg );
+	}
+}
+
+.comments__comment-author {
+	color: var( --color-text );
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 14px;
+	font-weight: 500;
+
+	.gravatar {
+		border-radius: 48px;
+		position: absolute;
+		top: 8px;
+		left: -41px;
+	}
+}
+
+.comments__comment-username {
+	color: var( --color-text );
+	height: 21px;
+	margin-right: 7px;
+}
+
+a.comments__comment-username {
+	color: var( --color-primary );
+	height: 21px;
+
+	&:hover {
+		color: var( --color-primary-light );
+	}
+}
+
+.comments__comment-trackbackicon {
+	background-color: var( --color-neutral-0 );
+	border-radius: 50%;
+	height: 32px;
+	margin-right: 9px;
+	position: absolute;
+	left: 1px;
+	top: -5px;
+	width: 32px;
+
+	.gridicon {
+		height: 24px;
+		fill: var( --color-neutral-20 );
+		margin-left: 4px;
+		margin-top: 4px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		top: -4px;
+	}
+}
+
+// Avoids long trackback links from wrapping
+// Using General Sibling Selector so this doesn't affect regular comment usernames
+.comments__comment-trackbackicon ~ .comments__comment-username {
+	height: 16px * 1.6;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&::after {
+		@include long-content-fade( $size: 35px );
+	}
+}
+
+.comments__comment-respondee {
+	color: var( --color-text-subtle );
+	margin-right: 12px;
+
+	.gridicon {
+		fill: var( --color-neutral-light );
+		position: relative;
+		left: -5px;
+		top: 3px;
+	}
+}
+
+.comments__comment-respondee .comments__comment-respondee-link {
+	color: var( --color-text-subtle );
+	font-weight: normal;
+	margin-left: -2px;
+
+	&:hover {
+		color: var( --color-primary-light );
+	}
+}
+
+.comments__comment-timestamp a {
+	color: var( --color-text-subtle );
+	font-weight: normal;
+	text-decoration: none;
+
+	&:hover {
+		color: var( --color-link-dark );
+	}
+}
+
+.comments__comment-moderation {
+	color: var( --color-text-subtle );
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	font-size: 12px;
+}

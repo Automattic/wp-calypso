@@ -19,10 +19,12 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import {
 	domainManagementDns,
-	domainManagementEmail,
 	domainManagementDomainConnectMapping,
+	domainTransferIn,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 
+// eslint-disable-next-line react/prefer-es6-class
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -91,6 +93,7 @@ const MappedDomain = createReactClass( {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="domain-details-card">
 				<Header { ...this.props } />
 
@@ -118,12 +121,13 @@ const MappedDomain = createReactClass( {
 				{ this.emailNavItem() }
 				{ this.dnsRecordsNavItem() }
 				{ this.domainConnectMappingNavItem() }
+				{ this.transferMappedDomainNavItem() }
 			</VerticalNav>
 		);
 	},
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
@@ -150,6 +154,22 @@ const MappedDomain = createReactClass( {
 		return (
 			<VerticalNavItem path={ path }>
 				{ this.props.translate( 'Connect Your Domain' ) }
+			</VerticalNavItem>
+		);
+	},
+
+	transferMappedDomainNavItem() {
+		const { domain, selectedSite, translate } = this.props;
+
+		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
+			return null;
+		}
+
+		const path = domainTransferIn( selectedSite.slug, domain.name, true );
+
+		return (
+			<VerticalNavItem path={ path }>
+				{ translate( 'Transfer Domain to WordPress.com' ) }
 			</VerticalNavItem>
 		);
 	},

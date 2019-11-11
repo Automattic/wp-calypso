@@ -13,12 +13,11 @@ import React from 'react';
  */
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
 import { isBlogger } from 'lib/products-values';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import CheckoutTerms from './checkout-terms';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -34,7 +33,7 @@ class FreeCartPaymentBox extends React.Component {
 			<React.Fragment>
 				<form onSubmit={ onSubmit }>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-					<div className="payment-box-section">
+					<div className="payment-box-section checkout__free-cart-payment-box">
 						<div className="checkout__payment-box-section-content">
 							{ this.getDomainCreditIllustration() }
 
@@ -55,8 +54,7 @@ class FreeCartPaymentBox extends React.Component {
 						</div>
 					</div>
 
-					<TermsOfService />
-					<DomainRegistrationRefundPolicy cart={ cart } />
+					<CheckoutTerms cart={ cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">
@@ -88,7 +86,11 @@ class FreeCartPaymentBox extends React.Component {
 		const cart = this.props.cart;
 
 		if ( ! cart.has_bundle_credit ) {
-			return;
+			return (
+				<span className="checkout__free-stand-alone-domain-mapping-illustration">
+					<img src={ '/calypso/images/upgrades/custom-domain.svg' } alt="" />
+				</span>
+			);
 		}
 
 		const isRestrictedToBlogDomains = isBlogger( this.props.selectedSite.plan );

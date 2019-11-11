@@ -8,18 +8,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
-	getThemeCustomizeUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -27,6 +27,13 @@ import {
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestSite } from 'state/sites/actions';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+
+/**
+ * Style dependencies
+ */
+import './thanks-modal.scss';
 
 class ThanksModal extends Component {
 	static propTypes = {
@@ -34,6 +41,7 @@ class ThanksModal extends Component {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
 		clearActivated: PropTypes.func.isRequired,
+		refreshSite: PropTypes.func.isRequired,
 		currentTheme: PropTypes.shape( {
 			author: PropTypes.string,
 			author_uri: PropTypes.string,
@@ -48,6 +56,13 @@ class ThanksModal extends Component {
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 	};
+
+	componentDidUpdate( prevProps ) {
+		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			this.props.refreshSite( this.props.siteId );
+		}
+	}
 
 	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
@@ -95,7 +110,7 @@ class ThanksModal extends Component {
 	goToCustomizer = () => {
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		page( this.props.customizeUrl );
+		window.open( this.props.customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -168,9 +183,14 @@ class ThanksModal extends Component {
 
 	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated
-			? translate( 'Customize site' )
-			: translate( 'Activating theme…' );
+		const customizeSiteText = hasActivated ? (
+			<span className="thanks-modal__button-customize">
+				<Gridicon icon="external" />
+				{ translate( 'Customize site' ) }
+			</span>
+		) : (
+			translate( 'Activating theme…' )
+		);
 		const buttons = [
 			{
 				action: 'learn',
@@ -209,12 +229,17 @@ export default connect(
 			siteId,
 			currentTheme,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
-	{ clearActivated }
+	dispatch => {
+		return {
+			clearActivated: siteId => dispatch( clearActivated( siteId ) ),
+			refreshSite: siteId => dispatch( requestSite( siteId ) ),
+		};
+	}
 )( ThanksModal );

@@ -5,7 +5,7 @@
  */
 
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Action creator: Set site vertical data
@@ -27,9 +27,22 @@ export function setSiteVertical( siteVerticalData ) {
  *
  * @param {Object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @param {String} stepName The name of the step to submit. Default is `site-topic`
+ * @param {String} suggestedTheme Fulfills the theme dependency if this vertical has a suggested theme e.g. `pub/maywood`
  * @return {Function} A thunk
  */
-export const submitSiteVertical = ( siteVerticalData, stepName = 'site-topic' ) => dispatch => {
+export const submitSiteVertical = (
+	siteVerticalData,
+	stepName = 'site-topic',
+	suggestedTheme = undefined
+) => dispatch => {
 	dispatch( setSiteVertical( siteVerticalData ) );
-	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: siteVerticalData.name } );
+	dispatch(
+		submitSignupStep(
+			{ stepName },
+			{
+				siteTopic: siteVerticalData.name,
+				...( suggestedTheme && { themeSlugWithRepo: suggestedTheme } ),
+			}
+		)
+	);
 };

@@ -13,9 +13,15 @@ import classNames from 'classnames';
  */
 import { preventWidows } from 'lib/formatting';
 
-function FormattedHeader( { id, headerText, subHeaderText } ) {
-	const classes = classNames( 'formatted-header', {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+function FormattedHeader( { id, headerText, subHeaderText, className, compactOnMobile } ) {
+	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
+		'is-compact-on-mobile': compactOnMobile,
 	} );
 
 	return (
@@ -29,8 +35,9 @@ function FormattedHeader( { id, headerText, subHeaderText } ) {
 }
 
 FormattedHeader.propTypes = {
-	headerText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
+	compactOnMobile: PropTypes.bool,
 };
 
 export default FormattedHeader;

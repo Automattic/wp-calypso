@@ -1,0 +1,15 @@
+.dns-records__list.dns__domain-connect-record {
+	margin: 0;
+}
+
+.dns__domain-connect-toggle {
+	align-self: center;
+}
+
+.dns__domain-connect-explanation {
+	display: block;
+	margin: 5px 0;
+	font-size: 13px;
+	font-style: italic;
+	color: var( --color-text-subtle );
+}

@@ -10,7 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export const PlansSkipButton = ( { onClick, translate = identity } ) => (
 	<div className="plans-skip-button">

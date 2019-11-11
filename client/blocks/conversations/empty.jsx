@@ -11,6 +11,11 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
+/**
+ * Image dependencies
+ */
+import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
+
 class ConversationsEmptyContent extends React.Component {
 	shouldComponentUpdate() {
 		return false;
@@ -45,7 +50,7 @@ class ConversationsEmptyContent extends React.Component {
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/illustrations/illustration-conversations-empty.svg' }
+				illustration={ charactersImage }
 				illustrationWidth={ 400 }
 			/>
 		);

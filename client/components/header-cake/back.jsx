@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { throttle } from 'lodash';
 
 /**
@@ -16,6 +16,11 @@ import { throttle } from 'lodash';
  */
 import Button from 'components/button';
 import { getWindowInnerWidth } from 'lib/viewport';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables

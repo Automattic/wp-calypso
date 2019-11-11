@@ -4,7 +4,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
 <div>
   <Localized(StepWrapper)
     fallbackHeaderText="Choose a style"
-    fallbackSubHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
+    fallbackSubHeaderText="This will help you get started with a theme you might like. You can change it later."
     headerText="Choose a style"
     stepContent={
       <div
@@ -16,6 +16,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
         >
           <FormFieldset
             className="site-style__fieldset"
+            role="radiogroup"
           >
             <Localized(FormLabel)
               className="site-style__option-label is-checked site-style__variation-default"
@@ -29,11 +30,6 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="default"
               />
-              <span>
-                <strong>
-                  nice
-                </strong>
-              </span>
             </Localized(FormLabel)>
             <Localized(FormLabel)
               className="site-style__option-label site-style__variation-eyesore"
@@ -47,11 +43,6 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="eyesore"
               />
-              <span>
-                <strong>
-                  nicer
-                </strong>
-              </span>
             </Localized(FormLabel)>
           </FormFieldset>
           <div
@@ -67,7 +58,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
         </form>
       </div>
     }
-    subHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
+    subHeaderText="This will help you get started with a theme you might like. You can change it later."
   />
 </div>
 `;

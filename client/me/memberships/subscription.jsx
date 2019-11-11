@@ -6,6 +6,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -16,11 +17,10 @@ import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import formatCurrency from 'lib/format-currency';
 import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
@@ -37,11 +37,11 @@ class Subscription extends React.Component {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 		return (
 			<Main className="memberships__subscription">
-				<DocumentHead title={ translate( 'My Memberships' ) } />
+				<DocumentHead title={ translate( 'Other Sites' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
 				<PurchasesHeader section={ 'memberships' } />
-				<HeaderCake backHref={ purchasesRoot + '/memberships' }>
+				<HeaderCake backHref={ purchasesRoot + '/other' }>
 					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
 				</HeaderCake>
 				{ stoppingStatus === 'start' && (

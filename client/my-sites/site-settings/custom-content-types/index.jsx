@@ -78,21 +78,24 @@ class CustomContentTypes extends Component {
 
 		return (
 			<div className="custom-content-types__module-settings">
-				{ hasToggle && (
+				{ hasToggle ? (
 					<CompactFormToggle
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
-					/>
+					>
+						<span className="custom-content-types__label">{ label }</span>
+					</CompactFormToggle>
+				) : (
+					<div
+						id={ numberFieldIdentifier }
+						className={ classnames( 'custom-content-types__label', {
+							'indented-form-field': ! hasToggle,
+						} ) }
+					>
+						{ label }
+					</div>
 				) }
-				<div
-					id={ numberFieldIdentifier }
-					className={ classnames( 'custom-content-types__label', {
-						'indented-form-field': ! hasToggle,
-					} ) }
-				>
-					{ label }
-				</div>
 				<div className="custom-content-types__indented-form-field indented-form-field">
 					{ translate( 'Display {{field /}} per page', {
 						comment:
@@ -124,7 +127,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog posts' );
+		const fieldLabel = translate( 'Blog Posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (

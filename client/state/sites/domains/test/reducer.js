@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import {
 	domainsRequestFailureAction,
 } from '../actions';
 import domainsReducer, {
-	items,
+	items as itemsReducer,
 	requesting as requestReducer,
 	errors as errorsReducer,
 } from '../reducer';
@@ -29,19 +27,17 @@ import {
 	ERROR_MESSAGE_RESPONSE as errorMessageResponse,
 } from './fixture';
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
-
-const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -93,6 +89,28 @@ describe( 'reducer', () => {
 			deepFreeze( action );
 
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
+		} );
+
+		test( 'should toggle privacy for given site and domain', () => {
+			const state = {
+				[ siteId ]: [ firstDomain ],
+			};
+			const action = {
+				type: DOMAIN_PRIVACY_TOGGLE,
+				siteId,
+				domain: firstDomain.domain,
+			};
+			const expectedDomain = Object.assign( {}, firstDomain, {
+				privateDomain: ! firstDomain.privateDomain,
+			} );
+			const expectedState = {
+				[ siteId ]: [ expectedDomain ],
+			};
+
+			deepFreeze( state );
+			deepFreeze( action );
+
+			expect( itemsReducer( state, action ) ).to.eql( expectedState );
 		} );
 
 		test( 'should accumulate domains for different sites', () => {

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -23,15 +20,20 @@ import {
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function SuggestionsButtonAll( props ) {
 	function click() {
 		return props.onClick( props.category );
 	}
 
 	return (
-		<span className="keyed-suggestions__category-show-all" onClick={ click }>
+		<button className="keyed-suggestions__category-show-all" onClick={ click }>
 			{ props.label }
-		</span>
+		</button>
 	);
 }
 
@@ -67,11 +69,11 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setInitialState( this.props.input );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
 			this.setInitialState( nextProps.input );
 		}
@@ -123,7 +125,7 @@ class KeyedSuggestions extends React.Component {
 				event.preventDefault();
 				break;
 			case 'Enter':
-				if ( !! this.state.currentSuggestion ) {
+				if ( this.state.currentSuggestion ) {
 					this.props.suggest( this.state.currentSuggestion );
 					return true;
 				}
@@ -327,6 +329,7 @@ class KeyedSuggestions extends React.Component {
 						'has-highlight': hasHighlight,
 					} );
 					return (
+						/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 						<span
 							className={ className }
 							onMouseDown={ this.onMouseDown }
@@ -343,6 +346,7 @@ class KeyedSuggestions extends React.Component {
 								</span>
 							) }
 						</span>
+						/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 					);
 				} )
 			);

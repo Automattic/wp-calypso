@@ -23,39 +23,30 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import {
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isVipPlan,
-	isEcommerce,
-} from 'lib/products-values';
+import { isPremium, isBusiness, isEnterprise, isVipPlan, isEcommerce } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import {
-	FEATURE_GOOGLE_ANALYTICS,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	TERM_ANNUALLY,
-} from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasBusinessPlan = overSome(
+const hasPlanWithAnalytics = overSome(
+	isPremium,
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
-	isJetpackBusiness,
-	isVipPlan,
+	isVipPlan
 );
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
 		isCodeValid: true,
+		loggedGoogleAnalyticsModified: false,
 	};
 
 	handleFieldChange = ( key, value ) => {
@@ -74,8 +65,11 @@ export class GoogleAnalyticsForm extends Component {
 	};
 
 	handleToggleChange = key => {
-		const { fields } = this.props;
+		const { fields, path } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
+
+		this.props.recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
+
 		this.handleFieldChange( key, value );
 	};
 
@@ -101,12 +95,14 @@ export class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			path,
 			showUpgradeNudge,
 			site,
 			sitePlugins,
 			siteId,
 			siteIsJetpack,
 			translate,
+			trackTracksEvent,
 			uniqueEventTracker,
 		} = this.props;
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
@@ -118,8 +114,10 @@ export class GoogleAnalyticsForm extends Component {
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
-			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
+			? translate(
+					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
+			  )
+			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
@@ -141,7 +139,7 @@ export class GoogleAnalyticsForm extends Component {
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
+							type: TYPE_PREMIUM,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
 						title={ nudgeTitle }
@@ -180,8 +178,17 @@ export class GoogleAnalyticsForm extends Component {
 								onChange={ this.handleCodeChange }
 								placeholder={ placeholderText }
 								disabled={ isRequestingSettings || ! enableForm }
-								onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
-								onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+								onFocus={ () => {
+									trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
+									eventTracker( 'Focused Analytics Key Field' )();
+								} }
+								onKeyPress={ () => {
+									if ( ! this.state.loggedGoogleAnalyticsModified ) {
+										trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
+										this.setState( { loggedGoogleAnalyticsModified: true } );
+									}
+									uniqueEventTracker( 'Typed In Analytics Key Field' )();
+								} }
 								isError={ ! this.state.isCodeValid }
 							/>
 							{ ! this.state.isCodeValid && (
@@ -265,7 +272,7 @@ export class GoogleAnalyticsForm extends Component {
 		if ( ! this.props.site ) {
 			return null;
 		}
-		// Only show Google Analytics for business users.
+		// Only show Google Analytics for users with a premium or above plan.
 		return this.form();
 	}
 }
@@ -273,26 +280,31 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible =
-		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
+	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
+		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
+		path,
+		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		site,
 		siteId,
 		siteIsJetpack,
-		showUpgradeNudge: ! isGoogleAnalyticsEligible,
-		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		sitePlugins,
 	};
 };
 
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
 const connectComponent = connect(
 	mapStateToProps,
-	null,
+	mapDispatchToProps,
 	null,
 	{ pure: false }
 );

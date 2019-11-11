@@ -39,7 +39,7 @@ function Transfer( props ) {
 	const slug = get( selectedSite, 'slug' );
 
 	return (
-		<Main className="domain-management-transfer">
+		<Main>
 			<Header
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName ) }
@@ -50,7 +50,7 @@ function Transfer( props ) {
 				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAtomic && ! isDomainOnly && (
+				{ ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
 					>

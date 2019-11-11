@@ -1,0 +1,19 @@
+.gsuite-price__price-per-user {
+	strong {
+		color: var( --color-text );
+		font-size: 24px;
+		font-weight: 300;
+	}
+
+	span {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-weight: normal;
+	}
+}
+
+.gsuite-price__annual-price {
+	color: var( --color-text-subtle );
+	font-size: 13px;
+	font-style: italic;
+}

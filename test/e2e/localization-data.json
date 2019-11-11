@@ -1,0 +1,296 @@
+{
+	"ar": {
+		"language": "العربية",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "خطوة",
+		"wpcom_landing_page_string": "دخول",
+		"wpcom_base_url": "ar.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com.ar",
+				"query": "wordpress",
+				"location": 1005390,
+				"comment_location": "Cairo, Egypt"
+			}
+		]
+	},
+
+	"de": {
+		"language": "Deutsch",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Schritt",
+		"wpcom_landing_page_string": "Anmelden",
+		"wpcom_base_url": "de.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.de",
+				"query": "wordpress",
+				"location": 20226,
+				"comment_location": "Berlin, Germany"
+			}
+		]
+	},
+
+	"en": {
+		"language": "English",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "Step",
+		"wpcom_landing_page_string": "Log In",
+		"wpcom_base_url": "wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com",
+				"query": "wordpress",
+				"location": 1022762,
+				"comment_location": "Brooklyn, USA"
+			},
+			{
+				"domain": "www.google.co.uk",
+				"query": "wordpress",
+				"location": 1006886,
+				"comment_location": "London, UK"
+			}
+		]
+	},
+
+	"es": {
+		"language": "español",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Paso",
+		"wpcom_landing_page_string": "Acceder",
+		"wpcom_base_url": "es.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.es",
+				"query": "wordpress",
+				"location": 1005493,
+				"comment_location": "Madrid, Spain"
+			}
+		]
+	},
+
+	"fr": {
+		"language": "Français",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Étape",
+		"wpcom_landing_page_string": "Se Connecter",
+		"wpcom_base_url": "fr.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.fr",
+				"query": "wordpress",
+				"location": 1006094,
+				"comment_location": "Paris, France"
+			}
+		]
+	},
+
+	"he": {
+		"language": "עברית",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "שלב",
+		"wpcom_landing_page_string": "להתחבר",
+		"wpcom_base_url": "he.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.co.il",
+				"query": "wordpress",
+				"location": 1007978,
+				"comment_location": "Jerusalem, Israel"
+			}
+		]
+	},
+
+	"id": {
+		"language": "Bahasa",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "Langkah",
+		"wpcom_landing_page_string": "Log Masuk",
+		"wpcom_base_url": "id.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.co.id",
+				"query": "wordpress",
+				"location": 1007716,
+				"comment_location": "Jakarta, Indonesia"
+			}
+		]
+	},
+
+	"it": {
+		"language": "Italiano",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Passaggio",
+		"wpcom_landing_page_string": "Accedi",
+		"wpcom_base_url": "it.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.it",
+				"query": "wordpress",
+				"location": 1008736,
+				"comment_location": "Rome, Italy"
+			}
+		]
+	},
+
+	"ja": {
+		"language": "日本語",
+		"currency_symbol": "¥",
+		"nux_landing_page_string": "ステップ",
+		"wpcom_landing_page_string": "ログイン",
+		"wpcom_base_url": "ja.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.co.jp",
+				"query": "wordpress",
+				"location": 1009317,
+				"comment_location": "Tokyo, Japan"
+			}
+		]
+	},
+
+	"ko": {
+		"language": "한국어",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "단계",
+		"wpcom_landing_page_string": "로그인",
+		"wpcom_base_url": "ko.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.co.kr",
+				"query": "wordpress",
+				"location": 1009871,
+				"comment_location": "Seoul, South Korea"
+			}
+		]
+	},
+
+	"nl": {
+		"language": "Nederlands",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Stap",
+		"wpcom_landing_page_string": "Inloggen",
+		"wpcom_base_url": "nl.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.nl",
+				"query": "wordpress",
+				"location": 1010543,
+				"comment_location": "Amsterdam, Netherlands"
+			}
+		]
+	},
+
+	"pt-br": {
+		"language": "Português",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "Etapa",
+		"wpcom_landing_page_string": "Fazer login",
+		"wpcom_base_url": "br.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com.br",
+				"query": "wordpress",
+				"location": 1001655,
+				"comment_location": "Rio de Janeiro, Brazil"
+			}
+		]
+	},
+
+	"ru": {
+		"language": "Русский",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "Шаг",
+		"wpcom_landing_page_string": "Войти",
+		"wpcom_base_url": "ru.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.ru",
+				"query": "wordpress",
+				"location": 1011969,
+				"comment_location": "Moscow, Russia"
+			}
+		]
+	},
+
+	"sv": {
+		"language": "svenska",
+		"currency_symbol": "€",
+		"nux_landing_page_string": "Steg",
+		"wpcom_landing_page_string": "Logga in",
+		"wpcom_base_url": "sv.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.se",
+				"query": "wordpress",
+				"location": 1012228,
+				"comment_location": "Stockholm, Sverige"
+			}
+		]
+	},
+
+	"tr": {
+		"language": "Türkçe",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "başlayalım",
+		"wpcom_landing_page_string": "Giriş",
+		"wpcom_base_url": "tr.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com.tr",
+				"query": "wordpress",
+				"location": 1012782,
+				"comment_location": "Istanbul, Turkey"
+			}
+		]
+	},
+
+	"zh-cn": {
+		"language": "中文 (簡體)",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "步",
+		"wpcom_landing_page_string": "登录",
+		"wpcom_base_url": "zh-cn.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com",
+				"query": "wordpress",
+				"location": 1003334,
+				"comment_location": "Beijing, China"
+			}
+		]
+	},
+
+	"zh-tw": {
+		"language": "中文 (繁體)",
+		"currency_symbol": "$",
+		"nux_landing_page_string": "步",
+		"wpcom_landing_page_string": "登入",
+		"wpcom_base_url": "zh-tw.wordpress.com",
+
+		"google_searches": [
+			{
+				"domain": "www.google.com.tw",
+				"query": "wordpress",
+				"location": 9040379,
+				"comment_location": "Taipei, Taiwan"
+			}
+		]
+	}
+}

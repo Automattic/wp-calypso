@@ -28,7 +28,7 @@
 .plan-compare-card__title {
 	font-size: 16px;
 	font-weight: 500;
-	color: lighten( $gray-dark, 10% );
+	color: var( --color-neutral-60 );
 }
 
 .plan-compare-card__line {
@@ -60,7 +60,6 @@
 }
 
 .plan-compare-card-item {
-	display: flex;
 	list-style-type: none;
 }
 
@@ -76,8 +75,7 @@
 
 .plan-compare-card__item-checkmark {
 	margin-right: 6px;
-	vertical-align: middle;
-	line-height: 16px;
+	vertical-align: text-bottom;
 }
 
 .plan-compare-card__button-checkmark {

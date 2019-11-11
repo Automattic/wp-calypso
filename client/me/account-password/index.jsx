@@ -29,6 +29,12 @@ import observe from 'lib/mixins/data-observe';
 import { errorNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable react/prefer-es6-class */
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
@@ -134,7 +140,7 @@ const AccountPassword = createReactClass( {
 		const failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
-			return <FormInputValidation text={ translate( 'Your password can be saved.' ) } />;
+			return <FormInputValidation text={ translate( 'Your password is strong enough to be saved.' ) } />;
 		} else if ( ! isEmpty( failure ) ) {
 			return <FormInputValidation isError text={ failure.explanation } />;
 		}
@@ -185,12 +191,7 @@ const AccountPassword = createReactClass( {
 						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
 					</FormButton>
 
-					<FormButton
-						className="button"
-						isPrimary={ false }
-						onClick={ this.handleGenerateButtonClick }
-						type="button"
-					>
+					<FormButton isPrimary={ false } onClick={ this.handleGenerateButtonClick } type="button">
 						{ translate( 'Generate strong password' ) }
 					</FormButton>
 				</FormButtonsBar>

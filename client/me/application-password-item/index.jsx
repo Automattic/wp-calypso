@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,6 +15,11 @@ import Button from 'components/button';
 import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ApplicationPasswordsItem extends React.Component {
 	handleRemovePasswordButtonClick = () => {
@@ -28,7 +33,7 @@ class ApplicationPasswordsItem extends React.Component {
 		const { moment, password, translate } = this.props;
 
 		return (
-			<li className="application-password-item__password" key={ password.ID }>
+			<li className="application-password-item">
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">

@@ -1,8 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<GlobalNotices /> should render notices with the expected structure 1`] = `
-<div
-  className="global-notices"
+<GlobalNoticesContainer
   id="overlay-notices"
 >
   <Localized(Notice)
@@ -12,5 +11,5 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
     status="is-success"
     text="A test notice"
   />
-</div>
+</GlobalNoticesContainer>
 `;

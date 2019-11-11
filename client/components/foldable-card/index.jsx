@@ -15,8 +15,13 @@ import { noop } from 'lodash';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import ScreenReaderText from 'components/screen-reader-text';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
@@ -50,7 +55,7 @@ class FoldableCard extends Component {
 		expanded: this.props.expanded,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
 		}
@@ -90,7 +95,7 @@ class FoldableCard extends Component {
 		const clickAction = ! this.props.clickableHeader ? this.getClickAction() : null;
 		if ( this.props.actionButton ) {
 			return (
-				<div className="foldable-card__action" onClick={ clickAction }>
+				<div className="foldable-card__action" role="presentation" onClick={ clickAction }>
 					{ this.getActionButton() }
 				</div>
 			);
@@ -129,7 +134,7 @@ class FoldableCard extends Component {
 			'has-border': !! this.props.summary,
 		} );
 		return (
-			<div className={ headerClasses } onClick={ headerClickAction }>
+			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
 				<span className="foldable-card__main">{ this.props.header } </span>
 				<span className="foldable-card__secondary">
 					{ summary }

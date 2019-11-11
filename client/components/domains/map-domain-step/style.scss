@@ -13,15 +13,14 @@
 		min-width: 0;
 		padding-right: 0;
 
+		@include breakpoint( '<660px' ) {
+			padding-bottom: 5px;
+		}
+
 		@include breakpoint( '>960px' ) {
 			float: right;
 			margin: 0;
 		}
-	}
-
-	.domain-product-price__is-with-plans-only {
-		color: var( --color-neutral-500 );
-		line-height: 25px;
 	}
 
 	.notice {

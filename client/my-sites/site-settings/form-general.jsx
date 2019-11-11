@@ -6,8 +6,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
+import { languages } from 'languages';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -34,16 +36,19 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._showWarning( this.props.site );
 	}
 
@@ -216,7 +221,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://codex.wordpress.org/Roles_and_Capabilities',
+				link: 'https://support.wordpress.com/user-roles/',
 				linkText: translate( 'More info' ),
 			},
 			error_const: {
@@ -225,6 +230,7 @@ export class SiteSettingsFormGeneral extends Component {
 				),
 				link:
 					'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
+				//don't know if this will ever trigger on a .com site?
 				linkText: translate( 'More info' ),
 			},
 		};
@@ -263,7 +269,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				{ errorNotice }
 				<LanguagePicker
-					languages={ config( 'languages' ) }
+					languages={ languages }
 					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
 					value={ errorNotice ? 'en_US' : fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
@@ -350,7 +356,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate, moment } = this.props;
+		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
@@ -390,7 +396,26 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+
+		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
+			'site-settings__disable-privacy-settings': ! siteDomains.length,
+		} );
+		const btnText = translate( 'Launch site' );
+		let querySiteDomainsComponent, btnComponent;
+
+		if ( 0 === siteDomains.length ) {
+			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
+			btnComponent = <Button>{ btnText }</Button>;
+		} else if ( isPaidPlan && siteDomains.length > 1 ) {
+			btnComponent = <Button onClick={ this.props.launchSite }>{ btnText }</Button>;
+			querySiteDomainsComponent = '';
+		} else {
+			btnComponent = (
+				<Button href={ `/start/launch-site?siteSlug=${ siteSlug }` }>{ btnText }</Button>
+			);
+			querySiteDomainsComponent = '';
+		}
 
 		return (
 			<>
@@ -403,10 +428,10 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</p>
 					</div>
-					<div className="site-settings__general-settings-launch-site-button">
-						<Button onClick={ this.props.launchSite }>{ translate( 'Launch site' ) }</Button>
-					</div>
+					<div className={ launchSiteClasses }>{ btnComponent }</div>
 				</Card>
+
+				{ querySiteDomainsComponent }
 			</>
 		);
 	}
@@ -469,6 +494,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			siteIsVip,
 			siteSlug,
 			translate,
 		} = this.props;
@@ -525,7 +551,7 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site && ! isBusiness( site.plan ) && (
+						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
 							<Banner
 								feature={ FEATURE_NO_BRANDING }
 								plan={ PLAN_BUSINESS }
@@ -580,8 +606,11 @@ const connectComponent = connect(
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
+			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 			selectedSite,
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			siteDomains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	mapDispatchToProps,
@@ -616,7 +645,7 @@ const getFormSettings = settings => {
 	const gmt_offset = settings.gmt_offset;
 
 	if ( ! settings.timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;

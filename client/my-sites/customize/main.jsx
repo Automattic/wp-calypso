@@ -23,12 +23,18 @@ import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { requestSite } from 'state/sites/actions';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 
@@ -63,7 +69,7 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -82,7 +88,7 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
@@ -250,6 +256,10 @@ class Customize extends React.Component {
 					}
 					this.goBack();
 					break;
+				case 'saved':
+					debug( 'iframe says it saved' );
+					this.props.requestSite( this.props.siteId );
+					break;
 				case 'loading':
 					debug( 'iframe says it is starting loading customizer' );
 					this.cancelWaitingTimer();
@@ -262,11 +272,12 @@ class Customize extends React.Component {
 				case 'activated':
 					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
-				case 'purchased':
+				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
 					break;
-				case 'navigateTo':
+				}
+				case 'navigateTo': {
 					const destination = message.destination;
 					if ( ! destination ) {
 						debug( 'missing destination' );
@@ -274,13 +285,14 @@ class Customize extends React.Component {
 					}
 					this.navigateTo( destination );
 					break;
+				}
 			}
 		}
 	};
 
 	renderErrorPage = error => {
 		return (
-			<div className="main main-column customize" role="main">
+			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
 				<SidebarNavigation />
 				<EmptyContent
@@ -315,7 +327,7 @@ class Customize extends React.Component {
 
 		if ( ! this.props.site ) {
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel />
 				</div>
@@ -341,10 +353,10 @@ class Customize extends React.Component {
 			// component. If the loading takes longer than 25 seconds (see
 			// waitForLoading above) then an error will be shown.
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } />
+					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
 				</div>
 			);
 		}
@@ -368,11 +380,12 @@ export default connect(
 		const siteId = get( site, 'ID' );
 		return {
 			site,
+			siteId,
 			menusUrl: getMenusUrl( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
 		};
 	},
-	{ themeActivated }
+	{ requestSite, themeActivated }
 )( localize( Customize ) );

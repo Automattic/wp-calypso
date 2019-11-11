@@ -13,6 +13,11 @@ import CompactCard from 'components/card/compact';
 import HelpResult from './item';
 import SectionHeader from 'components/section-header';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.PureComponent {
 	static displayName = 'HelpResults';
 

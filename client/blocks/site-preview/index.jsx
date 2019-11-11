@@ -38,7 +38,7 @@ class SitePreview extends Component {
 
 	previewCounter = 0;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
 			this.previewCounter = 0;
 		}

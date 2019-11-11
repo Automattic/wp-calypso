@@ -11,6 +11,11 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './comment-count.scss';
+
 const CommentCount = ( { count, translate } ) => {
 	let countPhrase;
 	if ( count > 0 ) {

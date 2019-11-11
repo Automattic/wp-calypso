@@ -8,9 +8,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -29,15 +30,25 @@ import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
-import { getDomainPrice, getDomainProductSlug } from 'lib/domains';
+import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'lib/cart-values/cart-items';
-import formatCurrency from 'lib/format-currency';
 import { isPlan } from 'lib/products-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import themesImage from 'assets/images/illustrations/themes.svg';
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -158,6 +169,38 @@ class UseYourDomainStep extends React.Component {
 		return domainProductFreeText;
 	};
 
+	getTransferSalePriceText = () => {
+		const {
+			cart,
+			currencyCode,
+			translate,
+			domainsWithPlansOnly,
+			isSignupStep,
+			productsList,
+			selectedSite,
+		} = this.props;
+		const { searchQuery } = this.state;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+		const domainProductSalePrice = getDomainTransferSalePrice(
+			productSlug,
+			productsList,
+			currencyCode
+		);
+
+		if (
+			isEmpty( domainProductSalePrice ) ||
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery ) ||
+			domainsWithPlansOnlyButNoPlan
+		) {
+			return;
+		}
+
+		return translate( 'Sale price is %(cost)s', { args: { cost: domainProductSalePrice } } );
+	};
+
 	getTransferPriceText = () => {
 		const {
 			cart,
@@ -173,21 +216,21 @@ class UseYourDomainStep extends React.Component {
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
-		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
-		if ( domainProductPrice ) {
-			domainProductPrice += ' per year';
-		}
+		const domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
 		if (
 			domainProductPrice &&
 			( isNextDomainFree( cart ) ||
 				isDomainBundledWithPlan( cart, searchQuery ) ||
-				domainsWithPlansOnlyButNoPlan )
+				domainsWithPlansOnlyButNoPlan ||
+				getDomainTransferSalePrice( productSlug, productsList, currencyCode ) )
 		) {
-			domainProductPrice = translate( 'Renews at ' ) + domainProductPrice;
+			return translate( 'Renews at %(cost)s', { args: { cost: domainProductPrice } } );
 		}
 
-		return domainProductPrice;
+		if ( domainProductPrice ) {
+			return translate( '%(cost)s per year', { args: { cost: domainProductPrice } } );
+		}
 	};
 
 	getMappingPriceText = () => {
@@ -206,7 +249,10 @@ class UseYourDomainStep extends React.Component {
 		const price = get( productsList, [ 'domain_map', 'cost' ], null );
 		if ( price ) {
 			mappingProductPrice = formatCurrency( price, currencyCode );
-			mappingProductPrice += ' per year plus registration costs at your current provider';
+			mappingProductPrice = translate(
+				'%(cost)s per year plus registration costs at your current provider',
+				{ args: { cost: mappingProductPrice } }
+			);
 		}
 
 		if (
@@ -295,7 +341,7 @@ class UseYourDomainStep extends React.Component {
 	renderSelectTransfer = () => {
 		const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const image = migratingHostImage;
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
 			translate(
@@ -304,6 +350,7 @@ class UseYourDomainStep extends React.Component {
 			translate( 'Manage your domain and site from your WordPress.com dashboard' ),
 			translate( 'Extends registration by one year' ),
 			this.getTransferFreeText(),
+			this.getTransferSalePriceText(),
 			this.getTransferPriceText(),
 		];
 		const buttonText = translate( 'Transfer to WordPress.com' );
@@ -326,7 +373,7 @@ class UseYourDomainStep extends React.Component {
 
 	renderSelectMapping = () => {
 		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/jetpack-themes.svg';
+		const image = themesImage;
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
 			translate( 'Domain registration and billing will remain at your current provider' ),

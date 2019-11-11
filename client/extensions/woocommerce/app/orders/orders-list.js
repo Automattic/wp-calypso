@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { range } from 'lodash';
 import React, { Component } from 'react';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import formatCurrency from 'lib/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
@@ -53,7 +53,7 @@ class Orders extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const hasAnythingChanged =
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentSearch !== this.props.currentSearch ||

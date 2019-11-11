@@ -1,4 +1,4 @@
-/** @format */
+/** @jest-environment jsdom */
 /**
  * External dependencies
  */
@@ -44,9 +44,10 @@ describe( 'mapped-domain', () => {
 	} );
 
 	test( 'should use selectedSite.slug for URLs', () => {
-		const paths = require( 'my-sites/domains/paths' );
-		const dnsStub = sinon.stub( paths, 'domainManagementDns' );
-		const emailStub = sinon.stub( paths, 'domainManagementEmail' );
+		const domainPaths = require( 'my-sites/domains/paths' );
+		const dnsStub = sinon.stub( domainPaths, 'domainManagementDns' );
+		const emailPaths = require( 'my-sites/email/paths' );
+		const emailStub = sinon.stub( emailPaths, 'emailManagement' );
 
 		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );

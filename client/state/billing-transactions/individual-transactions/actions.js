@@ -29,7 +29,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 			dispatch( {
 				type: BILLING_TRANSACTION_RECEIVE,
 				transactionId,
-				receipt,
+				receipt: receipt,
 			} );
 		} )
 		.catch( error => {

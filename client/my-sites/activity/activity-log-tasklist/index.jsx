@@ -29,6 +29,11 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Checks if the supplied core update, plugins, or themes are being updated.
  *
  * @param {Array} updatables List of plugin, theme or core update objects to check their update status.

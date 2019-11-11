@@ -14,6 +14,11 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import HeaderCakeBack from './back';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class HeaderCake extends Component {
 	render() {
 		const {
@@ -34,7 +39,7 @@ export default class HeaderCake extends Component {
 			<Card className={ classes }>
 				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
 
-				<div className="header-cake__title" onClick={ this.props.onTitleClick }>
+				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
 				</div>
 

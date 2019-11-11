@@ -28,6 +28,11 @@ describe( 'Badge', () => {
 		assert.lengthOf( badge.find( '.badge.badge--success' ), 1 );
 	} );
 
+	test( 'should have proper type class (info)', () => {
+		const badge = shallow( <Badge type="info" /> );
+		assert.lengthOf( badge.find( '.badge.badge--info' ), 1 );
+	} );
+
 	test( 'should have proper type class (default)', () => {
 		const badge = shallow( <Badge /> );
 		assert.lengthOf( badge.find( '.badge.badge--warning' ), 1 );

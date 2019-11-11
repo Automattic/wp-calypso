@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -196,8 +196,7 @@ export class ActionTypeSelector extends Component {
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
-		const buttonClass = classnames( {
-			filterbar__selection: true,
+		const buttonClass = classnames( 'filterbar__selection', {
 			'is-selected': hasSelectedCheckboxes,
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );

@@ -147,7 +147,6 @@
 	}
 
 	.reviews__author-gravatar {
-		display: flex;
 		align-items: center;
 		margin-left: 16px;
 		margin-right: 0;
@@ -290,7 +289,7 @@
 			color: var( --color-error );
 		}
 		&.is-trash {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }
@@ -305,7 +304,7 @@
 	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 
 	.reviews__reply-content {
 		padding: 0 16px;
@@ -331,7 +330,7 @@
 		min-height: 68px;
 
 		&:not( :focus ) {
-			border-color: var( --color-white );
+			border-color: var( --color-border-inverted );
 			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;
@@ -387,7 +386,7 @@
 
 		.accessible-focus &:focus {
 			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px var( --color-primary-100 );
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
 		}
 	}
 }

@@ -1,0 +1,178 @@
+.signup-site-preview__wrapper {
+	width: 100%;
+	height: 800px;
+	max-width: 1200px;
+	margin: 0 auto;
+	background: var( --color-surface );
+	position: relative;
+	transition: all 200ms cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+
+	// Hide the mockups until we have vertical
+	// data to show.
+	.is-empty & {
+		opacity: 0;
+		transform: translateY( 200px );
+	}
+
+	&.is-desktop {
+		border-radius: 4px;
+		// Side by side layout uses flexbox to show
+		// both mockups next to each other.
+		@include breakpoint( '>960px' ) {
+			margin-right: 16px;
+
+			// Forces the desktop preview to take up
+			// all available horizontal space.
+			flex-grow: 1;
+		}
+
+		@include breakpoint( '<660px' ) {
+			width: 100%;
+			max-width: 480px;
+			border-radius: 12px;
+		}
+	}
+
+	&.is-phone {
+		border-radius: 12px;
+		width: 280px;
+		transition-delay: 200ms;
+		height: 468px;
+		padding: 0 0 24px;
+		@include elevation( 4dp );
+
+		@include breakpoint( '>960px' ) {
+			min-width: 280px;
+		}
+		// Grouped layout shows a fixed-height mobile mockup
+		// overlaid on top of the desktop mockup.
+		@include breakpoint( '660px-960px' ) {
+			position: absolute;
+			top: 48px;
+			right: 8px;
+			z-index: 2;
+			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ), 0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
+		}
+
+		// Only show one iframe at small
+		// breakpoints.
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+}
+
+.signup-site-preview__iframe-wrapper {
+	background-color: #fff;
+	margin: 0 auto;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+
+	.is-desktop & {
+		border-radius: 4px;
+		@include elevation( 3dp );
+		@include breakpoint( '<660px' ) {
+			border-radius: 12px 12px 0 0;
+		}
+	}
+
+	.is-phone & {
+		border-bottom: 1px solid var( --color-neutral-10 );
+		border-radius: 12px 12px 0 0;
+	}
+
+	.spinner {
+		margin-top: 40px;
+	}
+}
+
+.signup-site-preview__iframe {
+	position: absolute;
+	// the height of the browser header
+	top: 29px;
+	left: 0;
+	border: 0;
+	width: 100%;
+	height: calc( 100% - 25px );
+}
+
+// Browser chrome to make mockups look
+// a little more like a website/phone.
+.signup-site-preview__chrome-desktop,
+.signup-site-preview__chrome-mobile {
+	height: 28px;
+	border-bottom: 1px solid var( --color-neutral-10 );
+}
+
+.signup-site-preview__chrome-desktop {
+	// Desktop chrome has some OS dots to
+	// help signify its a browser.
+	svg {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		fill: var( --color-neutral );
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+
+	.signup-site-preview__chrome-label {
+		position: absolute;
+		top: 7px;
+		right: 0;
+		left: 0;
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: var( --color-neutral-50 );
+		display: block;
+		width: 70%;
+		background: var( --color-neutral-0 );
+		border-radius: 3px;
+		cursor: default;
+
+		// At small screen sizes "hide" the label
+		// text as its mostly redundant.
+		@include breakpoint( '<660px' ) {
+			color: var( --color-neutral-0 );
+			width: 96%;
+			border-radius: 16px;
+		}
+	}
+}
+
+.signup-site-preview__chrome-mobile {
+	.signup-site-preview__chrome-label {
+		position: relative;
+		top: 6px;
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: var( --color-neutral-50 );
+		display: block;
+		width: 65%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		background: var( --color-neutral-0 );
+		border-radius: 16px;
+		cursor: default;
+		padding: 0 6px;
+	}
+}
+
+.signup-site-preview__scrolling-screenshot {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.signup-site-preview__screenshot-spinner {
+	margin: 40px;
+}

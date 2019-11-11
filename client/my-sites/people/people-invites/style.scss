@@ -1,28 +1,5 @@
-.people-invites__invite-users-action {
-	.people-invites__invite-users-message {
-		margin-bottom: 16px;
-
-		.empty-content & {
-			font-size: 22px;
-		}
-	}
-
-	.button {
-		.gridicon {
-			margin-right: 4px;
-		}
-	}
-
-	.people-invites__pending & {
-		text-align: center;
-		margin: 50px 0;
-		@include breakpoint( '<960px' ) {
-			margin: 40px 0;
-		}
-		@include breakpoint( '<480px' ) {
-			margin: 30px 0;
-		}
-	}
+.people-invites__invites-list {
+	padding: 0;
 }
 
 .people-invites__max-items-notice {

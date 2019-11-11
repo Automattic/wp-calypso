@@ -23,7 +23,8 @@ import {
 jest.mock( 'lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
-const { getTermDuration, getPlan } = require( 'lib/plans' );
+const { getPlan } = require( 'lib/plans' );
+const { getTermDuration } = require( 'lib/plans/constants' );
 const {
 	planItem,
 	replaceItem,

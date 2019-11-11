@@ -3,41 +3,46 @@
 	margin-bottom: 64px;
 }
 
-.import-url__wrapper .form-setting-explanation {
-	color: var( --color-white );
+// The containing element
+.import-url__wrapper {
+	padding: 0;
+	@include elevation ( 0 );
+	border-radius: 3px;
+	max-width: 640px;
+	margin: auto;
+}
+
+// Actual form input for typing the URL
+.import-url__wrapper .import-url__url-input {
+	border: none;
+	border-radius: 3px;
+	padding: 10px 14px;
 
 	@include breakpoint( '<660px' ) {
-		text-align: center;
+		padding: 14px;
 	}
 }
 
-.import-url {
-	position: relative;
+.import-url__wrapper .import-url__url-input-message {
+	max-width: 640px;
+	margin: 16px auto;
+}
 
+
+.import-url {
 	&__form {
 		position: relative;
-	}
-
-	.import-url__wrapper &__url-input {
-		padding: 9px 14px;
-
-		@include breakpoint( '<660px' ) {
-			padding: 14px;
-		}
-	}
-
-	&__url-input-message {
-		font-size: 14px;
-		margin: 0;
-		padding-top: 6px;
-		// Normalize height with bottom padding so it doesn't change when an error is shown.
-		padding-bottom: 4px;
 	}
 
 	&__submit-button {
 		position: absolute;
 		top: 2px;
 		right: 2px;
+
+		@include breakpoint( '<660px' ) {
+			top: 1px;
+			right: 1px;
+		}
 	}
 
 	&__example {
@@ -54,7 +59,7 @@
 	}
 
 	&__example-urls {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		list-style: none;
 		margin: 1em 0 1.5em;
 	}
@@ -62,7 +67,7 @@
 	&__example-url {
 		font-family: monospace;
 		font-size: 14px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		&:first-of-type {
 			padding-top: 8px;
@@ -70,12 +75,12 @@
 	}
 
 	&__escape {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		padding: 0 15px 24px;
 		text-align: center;
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			text-decoration: underline;
 
 			&:hover {
@@ -87,4 +92,9 @@
 			vertical-align: middle;
 		}
 	}
+}
+
+.import-url__notice-placeholder {
+	height: 47px;
+	margin: 16px auto;
 }

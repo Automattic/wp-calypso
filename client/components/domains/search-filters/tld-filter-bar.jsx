@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -177,7 +177,7 @@ export class TldFilterBar extends Component {
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
-						suggestions={ this.props.availableTlds }
+						suggestions={ [ ...this.props.availableTlds ].sort() }
 						tokenizeOnSpace
 						value={ this.props.filters.tlds }
 					/>

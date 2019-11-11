@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import jsxToString from 'jsx-to-string';
+import format from 'react-element-to-jsx-string';
 
 export const getExampleCodeFromComponent = ExampleComponent => {
 	if ( ! ExampleComponent.props.exampleCode ) {
@@ -14,8 +14,7 @@ export const getExampleCodeFromComponent = ExampleComponent => {
 		return ExampleComponent.props.exampleCode;
 	}
 
-	return jsxToString( ExampleComponent.props.exampleCode, { useFunctionCode: true } ).replace(
-		/Localized\((\w+)\)/g,
-		'$1'
-	);
+	return format( ExampleComponent.props.exampleCode, {
+		showDefaultProps: false,
+	} ).replace( /Localized\((\w+)\)/g, '$1' );
 };

@@ -14,9 +14,9 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySites from 'components/data/query-sites';
-import SignupActions from 'lib/signup/actions';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -28,7 +28,6 @@ class CredsPermissionStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 	};
 
@@ -41,29 +40,24 @@ class CredsPermissionStep extends Component {
 		this.autoConfigCredentials();
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
-
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: this.props.translate( 'Setting up your site' ),
-				stepName: this.props.stepName,
-			},
-			undefined,
-			{ rewindconfig: true }
-		);
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 		this.props.goToStep(
 			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
 		);
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { translate } = this.props;
 
 		return (
 			<Card className="creds-permission__card">
 				<QuerySites />
 				<h3 className="creds-permission__title">{ translate( 'Start backing up your site' ) }</h3>
-				<img className="creds-permission__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="creds-permission__image"
+					src="/calypso/images/illustrations/security.svg"
+					alt=""
+				/>
 				<p className="creds-permission__description">
 					{ translate(
 						'Jetpack, a plugin already on your site, can back up and secure your site at no ' +
@@ -77,7 +71,7 @@ class CredsPermissionStep extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
 		return (
@@ -85,7 +79,6 @@ class CredsPermissionStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
 				hideFormattedHeader={ true }
@@ -101,5 +94,6 @@ export default connect(
 	{
 		autoConfigCredentials,
 		recordTracksEvent,
+		submitSignupStep,
 	}
 )( localize( CredsPermissionStep ) );

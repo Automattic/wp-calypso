@@ -16,6 +16,8 @@ import PaymentLogo from 'components/payment-logo';
 
 <PaymentLogo type="amex" />
 
+<PaymentLogo type="apple-pay" />
+
 <PaymentLogo type="bancontact" />
 
 <PaymentLogo type="diners" />
@@ -47,6 +49,7 @@ import PaymentLogo from 'components/payment-logo';
 * `type` – String that determines which type of logo is displayed. Currently accepts:
    * `alipay`
    * `amex`
+   * `apple-pay`
    * `bancontact`
    * `diners`
    * `discover`

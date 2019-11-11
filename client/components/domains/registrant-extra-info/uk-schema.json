@@ -1,7 +1,7 @@
 {
 	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schema/uk",
 	"errorCode": "dotukValidation",
-	"$comment": "See http:\/\/domains.opensrs.guide\/docs\/tld#section-uk",
+	"$comment": "See http://domains.opensrs.guide/docs/tld#section-uk",
 	"type": "object",
 	"properties": {
 		"extra": {
@@ -20,22 +20,13 @@
 											"minLength": 1
 										}
 									},
-									"required": [
-										"registrationNumber"
-									]
+									"required": [ "registrationNumber" ]
 								},
 								{
 									"not": {
 										"properties": {
 											"registrantType": {
-												"enum": [
-													"IP",
-													"LLP",
-													"LTD",
-													"PLC",
-													"RCHAR",
-													"SCH"
-												]
+												"enum": [ "IP", "LLP", "LTD", "PLC", "RCHAR", "SCH" ]
 											}
 										}
 									}
@@ -52,9 +43,7 @@
 											"minLength": 1
 										}
 									},
-								"required": [
-										"tradingName"
-									]
+									"required": [ "tradingName" ]
 								},
 								{
 									"not": {
@@ -86,9 +75,7 @@
 							}
 						}
 					],
-					"required": [
-						"registrantType"
-					]
+					"required": [ "registrantType" ]
 				}
 			}
 		},
@@ -104,7 +91,5 @@
 			}
 		}
 	},
-	"required": [
-		"extra"
-	]
+	"required": [ "extra" ]
 }

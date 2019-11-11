@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -27,11 +24,12 @@ import {
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import InlineConnection from 'my-sites/sharing/connections/inline-connection';
+import InlineConnection from 'my-sites/marketing/connections/inline-connection';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
@@ -275,18 +273,18 @@ export class MediaLibraryContent extends React.Component {
 
 	goToSharing = ev => {
 		ev.preventDefault();
-		page( `/sharing/${ this.props.site.slug }` );
+		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
 
 	renderGooglePhotosConnect() {
 		const connectMessage = this.props.translate(
-			'To show Photos from Google, you need to connect your Google account.'
+			'To show your Google Photos library you need to connect your Google account.'
 		);
 
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<Gridicon icon="image" size={ 72 } />
+					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
 				</p>
 				<p>{ connectMessage }</p>
 
@@ -408,8 +406,12 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	render() {
+		const classNames = classnames( 'media-library__content', {
+			'has-no-upload-button': ! this.props.displayUploadMediaButton,
+		} );
+
 		return (
-			<div className="media-library__content">
+			<div className={ classNames }>
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
@@ -429,6 +431,7 @@ export default connect(
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
+			displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one

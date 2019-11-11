@@ -1,0 +1,30 @@
+.p2-autocomplete {
+	width: 100%;
+	display: flex;
+	max-width: 350px;
+	align-items: center;
+}
+.p2-autocomplete__blavatar-placeholder,
+.p2-autocomplete__blavatar {
+	display: block;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+.p2-autocomplete__blavatar-placeholder {
+	background-color: #24354a;
+	border-radius: 100%;
+	position: relative;
+}
+.p2-autocomplete__subdomain {
+	margin-right: 8px;
+}
+.p2-autocomplete__title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: right;
+	padding-right: 8px;
+	font-size: 0.8em;
+	flex-grow: 1;
+}

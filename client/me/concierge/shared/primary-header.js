@@ -9,7 +9,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import ClosureNotice from '../shared/closure-notice';
+import GMClosureNotice from '../shared/gm-closure-notice';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
 import { localize } from 'i18n-calypso';
@@ -21,17 +21,10 @@ class PrimaryHeader extends Component {
 
 		return (
 			<Fragment>
-				<ClosureNotice
-					holidayName="Christmas"
-					displayAt="2018-12-17 00:00Z"
-					closesAt="2018-12-24 00:00Z"
-					reopensAt="2018-12-26 07:00Z"
-				/>
-				<ClosureNotice
-					holidayName="New Year's Day"
-					displayAt="2018-12-26 07:00Z"
-					closesAt="2019-01-01 00:00Z"
-					reopensAt="2019-01-02 07:00Z"
+				<GMClosureNotice
+					displayAt="2019-09-03 00:00Z"
+					closesAt="2019-09-10 00:00Z"
+					reopensAt="2019-09-19 04:00Z"
 				/>
 				<Card>
 					<img
@@ -40,9 +33,9 @@ class PrimaryHeader extends Component {
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Support Scheduler' ) }
+						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }
 						subHeaderText={ translate(
-							'Your Business plan includes two complimentary, half-hour sessions. Use the tool below to schedule. If you need to cancel, let us know ahead of time so we can help you reschedule and preserve the number of sessions available to you.'
+							'Use the tool below to book your in-depth support session.'
 						) }
 					/>
 					<ExternalLink

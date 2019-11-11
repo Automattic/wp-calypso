@@ -1,0 +1,17 @@
+.account__close-section-title {
+	margin-bottom: 4px;
+	font-size: 14px;
+	line-height: 18px;
+	color: var( --color-neutral-70 );
+
+	&.is-warning {
+		color: var( --color-error );
+	}
+}
+
+.account__close-section-desc {
+	margin-bottom: 0;
+	font-size: 13px;
+	color: var( --color-text-subtle );
+	font-style: italic;
+}

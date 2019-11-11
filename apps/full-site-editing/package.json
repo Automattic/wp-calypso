@@ -1,0 +1,51 @@
+{
+	"name": "@automattic/full-site-editing",
+	"version": "0.14.0",
+	"description": "Plugin for full site editing with the block editor.",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/full-site-editing"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"full-site-editing": "calypso-build --source='full-site-editing'",
+		"dev:full-site-editing": "npm run full-site-editing",
+		"build:full-site-editing": "NODE_ENV=production npm run full-site-editing",
+		"posts-list-block": "calypso-build --source='posts-list-block'",
+		"dev:posts-list-block": "npm run posts-list-block",
+		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
+		"starter-page-templates": "calypso-build --source='starter-page-templates'",
+		"dev:starter-page-templates": "npm run starter-page-templates",
+		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
+		"global-styles": "calypso-build --source='global-styles'",
+		"build:global-styles": "NODE_ENV=production npm run global-styles",
+		"dev:global-styles": "npm run global-styles",
+		"dev": "npm-run-all --parallel dev:*",
+		"build": "npm-run-all --parallel build:*",
+		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
+		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
+		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean"
+	},
+	"dependencies": {
+		"classnames": "2.2.6"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^4.2.1",
+		"@testing-library/jest-dom": "4.1.2",
+		"@testing-library/react": "9.3.0",
+		"@wordpress/jest-preset-default": "5.1.1",
+		"@wordpress/scripts": "5.1.0",
+		"eslint-plugin-jest": "23.0.3"
+	}
+}

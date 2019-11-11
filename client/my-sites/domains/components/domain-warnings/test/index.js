@@ -128,7 +128,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain( 'name server records should be configured' );
+			expect( textContent ).to.contain( 'name server records need to be configured' );
 			assert(
 				links.some(
 					link => link.href === 'https://en.support.wordpress.com/domain-helper/?host=1.com'
@@ -183,7 +183,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain( 'CNAME records should be configured' );
+			expect( textContent ).to.contain( 'DNS records need to be configured' );
 			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
@@ -212,9 +212,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain(
-				"Some of your domains' CNAME records should be configured"
-			);
+			expect( textContent ).to.contain( "Some of your domains' DNS records need to be configured" );
 			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
@@ -244,7 +242,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).to.contain(
-				"Some of your domains' name server records should be configured"
+				"Some of your domains' name server records need to be configured"
 			);
 			assert( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
 		} );

@@ -16,6 +16,11 @@ import { resendInboundTransferEmail } from 'lib/domains';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from 'lib/url/support';
 import Card from 'components/card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class InboundTransferEmailVerificationCard extends React.PureComponent {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,

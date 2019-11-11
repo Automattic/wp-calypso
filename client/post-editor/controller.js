@@ -17,7 +17,7 @@ import { get, has, startsWith } from 'lodash';
  */
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
-import { addSiteFragment } from 'lib/route';
+import { addQueryArgs, addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -26,10 +26,9 @@ import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import isGutenlypsoEnabled from 'state/selectors/is-gutenlypso-enabled';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { requestSelectedEditor } from 'state/selected-editor/actions';
+import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
+import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -162,7 +161,7 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-async function maybeCalypsoifyGutenberg( context, next ) {
+async function redirectIfBlockEditor( context, next ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	if ( ! selectedEditor ) {
@@ -171,16 +170,30 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
+
+	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
+	// editor, so we update the selected editor for the current user/site pair.
+	const newEditorChoice = get( context.query, 'set-editor' );
+	const allowedEditors = [ 'classic', 'gutenberg' ];
+
+	if ( allowedEditors.indexOf( newEditorChoice ) > -1 ) {
+		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
+	}
+
+	// If the new editor is classic, we bypass the selected editor check.
+	if ( 'classic' === newEditorChoice ) {
+		return next();
+	}
+
+	if ( ! shouldLoadGutenberg( state, siteId ) ) {
+		return next();
+	}
+
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
-
-	if (
-		( isCalypsoifyGutenbergEnabled( state, siteId ) || isGutenlypsoEnabled( state, siteId ) ) &&
-		'gutenberg' === getSelectedEditor( state, siteId )
-	) {
-		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
-	}
-	next();
+	const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+	// pass along parameters, for example press-this
+	return window.location.replace( addQueryArgs( context.query, url ) );
 }
 
 export default {
@@ -303,11 +316,6 @@ export default {
 			next();
 		}
 
-		// Bypass the selected editor check if the URL contains a force=true param
-		if ( get( context.query, 'force', false ) ) {
-			return next();
-		}
-
-		maybeCalypsoifyGutenberg( context, next );
+		redirectIfBlockEditor( context, next );
 	},
 };

@@ -1,26 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
-import page from 'page';
-import { get } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
+import Main from 'components/main';
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
-import Placeholder from 'my-sites/site-settings/placeholder';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const guidedTransferHosts = {
 	bluehost: {
@@ -50,15 +51,15 @@ class GuidedTransfer extends React.Component {
 	};
 
 	showExporter = () => {
-		page( `/settings/export/${ this.props.siteSlug }` );
+		page( `/export/${ this.props.siteSlug }` );
 	};
 
 	showHostSelection = () => {
-		page( `/settings/export/guided/${ this.props.siteSlug }` );
+		page( `/export/guided/${ this.props.siteSlug }` );
 	};
 
 	showHost = hostSlug => {
-		page( `/settings/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
+		page( `/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	};
 
 	goBack = () => {
@@ -71,10 +72,6 @@ class GuidedTransfer extends React.Component {
 
 	render() {
 		const { siteId, siteSlug } = this.props;
-		if ( ! siteId ) {
-			return <Placeholder />;
-		}
-
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
 		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
 			return {

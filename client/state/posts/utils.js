@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,6 @@ import {
 	find,
 	reject,
 } from 'lodash';
-import { moment } from 'i18n-calypso';
 import url from 'url';
 
 /**
@@ -42,7 +39,6 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import postNormalizer from 'lib/post-normalizer';
 
 /**
  * Constants
@@ -441,7 +437,7 @@ export function isDateEqual( localDateEdit, savedDate ) {
 		return true;
 	}
 
-	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
+	return localDateEdit && new Date( localDateEdit ).getTime() === new Date( savedDate ).getTime();
 }
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {
@@ -594,7 +590,7 @@ export const isBackDatedPublished = function( post, status ) {
 
 	const effectiveStatus = status || post.status;
 
-	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
+	return effectiveStatus === 'future' && new Date( post.date ) < Date.now();
 };
 
 // Return published status of a post. Optionally, the `status` can be overridden
@@ -664,7 +660,7 @@ export const isBackDated = function( post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment( post.modified ) );
+	return new Date( post.date ) < new Date( post.modified );
 };
 
 export const isPage = function( post ) {
@@ -673,25 +669,6 @@ export const isPage = function( post ) {
 	}
 
 	return post && 'page' === post.type;
-};
-
-export const normalizeSync = function( post, callback ) {
-	const imageWidth = 653;
-	postNormalizer(
-		post,
-		[
-			postNormalizer.decodeEntities,
-			postNormalizer.stripHTML,
-			postNormalizer.safeImageProperties( imageWidth ),
-			postNormalizer.withContentDOM( [
-				postNormalizer.content.removeStyles,
-				postNormalizer.content.makeImagesSafe( imageWidth ),
-				postNormalizer.content.detectMedia,
-			] ),
-			postNormalizer.pickCanonicalImage,
-		],
-		callback
-	);
 };
 
 export const getVisibility = function( post ) {
@@ -708,10 +685,6 @@ export const getVisibility = function( post ) {
 	}
 
 	return 'public';
-};
-
-export const normalizeAsync = function( post, callback ) {
-	postNormalizer( post, [ postNormalizer.keepValidImages( 72, 72 ) ], callback );
 };
 
 export const removeSlug = function( path ) {
@@ -777,20 +750,4 @@ export const getFeaturedImageId = function( post ) {
 		// from the thumbnail object if one exists
 		return post.post_thumbnail.ID;
 	}
-};
-
-/**
- * Return date with timezone offset.
- * If `date` is not defined it returns `now`.
- *
- * @param {String|Date} date - date
- * @param {String} tz - timezone
- * @return {Moment} moment instance
- */
-export const getOffsetDate = function( date, tz ) {
-	if ( ! tz ) {
-		return moment( date );
-	}
-
-	return moment( moment.tz( date, tz ) );
 };

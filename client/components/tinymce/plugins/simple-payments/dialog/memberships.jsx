@@ -18,7 +18,7 @@ import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites
 import getMemberships from 'state/selectors/get-memberships';
 import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';
@@ -35,7 +35,7 @@ import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/membershi
 import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
 import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';

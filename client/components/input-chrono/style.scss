@@ -1,34 +1,24 @@
-.input-chrono__container {
+.input-chrono {
 	position: relative;
 	margin: 6px auto;
-
-	.gridicons-calendar {
-		color: var( --color-neutral-100 );
-		z-index: z-index( '.popover', '.input-chrono__container .gridicons-calendar' );
-		font-size: 8px;
-		width: 20px;
-		position: absolute;
-			left: 5px;
-			top: 5px;
-	}
 }
 
-.text-chrono,
-input.input-chrono {
+.input-chrono__text,
+.input-chrono__input {
 	width: 100%;
 	height: 36px;
 	line-height: 36px;
 	padding: 0 10px;
 	border: 1px solid var( --color-neutral-0 );
 	box-sizing: border-box;
-	background-color: $transparent;
+	background-color: rgba( var( --color-surface-rgb ), 0 );
 	color: var( --color-text-subtle );
 	font-size: 12px;
 	text-align: left;
 	position: relative;
-	z-index: z-index( '.popover', 'input.input-chrono' );
+	z-index: z-index( '.popover', '.input-chrono__input' );
 }
 
-.text-chrono {
+.input-chrono__text {
 	border: 0;
 }

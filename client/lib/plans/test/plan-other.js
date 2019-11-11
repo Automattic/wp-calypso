@@ -6,8 +6,8 @@
 /**
  * Internal dependencies
  */
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../constants';
-import { calculateMonthlyPrice, getBillingMonthsForTerm, getTermDuration } from '../index';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, getTermDuration } from '../constants';
+import { calculateMonthlyPrice, getBillingMonthsForTerm } from '../index';
 
 describe( 'calculateMonthlyPrice', () => {
 	test( 'should return same number for monthly term', () => {

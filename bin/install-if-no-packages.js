@@ -7,7 +7,8 @@ if ( ! fs.existsSync( 'node_modules' ) ) {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;
-	if ( installResult ) {
-		process.exit( installResult );
+	if ( installResult.status ) {
+		console.error( 'Failed install: %o', installResult );
+		process.exit( installResult.status );
 	}
 }

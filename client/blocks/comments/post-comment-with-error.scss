@@ -1,0 +1,11 @@
+.comments__comment.is-error {
+  padding: 0;
+
+  .notice {
+    margin-top: 10px;
+  }
+
+  .comments__form-textarea {
+    border-color: var( --color-error );
+  }
+}

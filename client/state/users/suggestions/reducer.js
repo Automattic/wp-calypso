@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -21,20 +18,24 @@ import { itemsSchema } from './schema';
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer(
-	{},
-	{
-		[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_SUGGESTIONS_REQUEST: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: true };
-		},
-		[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		}
+		case USER_SUGGESTIONS_REQUEST_FAILURE: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
-		[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		}
+		case USER_SUGGESTIONS_REQUEST_SUCCESS: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -45,15 +46,16 @@ export const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_SUGGESTIONS_RECEIVE: {
+			const { siteId, suggestions } = action;
 			return { ...state, [ siteId ]: suggestions };
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	requesting,

@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,8 +14,14 @@ import i18n from 'i18n-calypso';
 import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
+import VisitSite from 'blocks/visit-site';
 
-export class Sites extends Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 	};
@@ -33,15 +39,15 @@ export class Sites extends Component {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
 
-		// No support for Gutenberg on VIP or Jetpack sites yet.
+		// No support for Gutenberg on VIP.
 		if ( /^\/block-editor/.test( path ) ) {
-			return ! site.is_vip && ! site.jetpack;
+			return ! site.is_vip;
 		}
 
 		return site;
 	};
 
-	getHeaderText = () => {
+	getHeaderText() {
 		if ( this.props.getSiteSelectionHeaderText ) {
 			return this.props.getSiteSelectionHeaderText();
 		}
@@ -51,58 +57,67 @@ export class Sites extends Component {
 			path = path.toLowerCase();
 		}
 
-		switch ( path ) {
-			case 'activity-log':
-				path = i18n.translate( 'Activity' );
-				break;
-			case 'stats':
-				path = i18n.translate( 'Insights' );
-				break;
-			case 'plans':
-				path = i18n.translate( 'Plans' );
-				break;
-			case 'media':
-				path = i18n.translate( 'Media' );
-				break;
-			case 'sharing':
-				path = i18n.translate( 'Sharing' );
-				break;
-			case 'people':
-				path = i18n.translate( 'People' );
-				break;
-			case 'domains':
-				path = i18n.translate( 'Domains' );
-				break;
-			case 'settings':
-				path = i18n.translate( 'Settings' );
-				break;
-		}
+		const { translate } = this.props;
 
 		// nicer wording for editor routes
 		const editorRouters = [ 'page', 'post', 'edit', 'block-editor' ];
 		if ( editorRouters.includes( path ) ) {
-			return i18n.translate( 'Select a site to start writing' );
+			return translate( 'Select a site to start writing' );
 		}
 
-		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
-			args: {
-				path: path,
-			},
+		switch ( path ) {
+			case 'activity-log':
+				path = translate( 'Activity' );
+				break;
+			case 'stats':
+				path = translate( 'Insights' );
+				break;
+			case 'plans':
+				path = translate( 'Plans' );
+				break;
+			case 'media':
+				path = translate( 'Media' );
+				break;
+			case 'sharing':
+				path = translate( 'Sharing' );
+				break;
+			case 'people':
+				path = translate( 'People' );
+				break;
+			case 'domains':
+				path = translate( 'Domains' );
+				break;
+			case 'settings':
+				path = translate( 'Settings' );
+				break;
+			case 'home':
+				path = translate( 'My Home' );
+				break;
+			case 'hosting-admin':
+				path = translate( 'SFTP & MySQL' );
+				break;
+		}
+
+		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
+			args: { path },
 			components: {
 				strong: <strong />,
 			},
 		} );
-	};
+	}
 
 	render() {
 		return (
 			<Main className="sites">
-				<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
-				<Card className="sites__selector-wrapper">
+				<div className="sites__select-header">
+					<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+					{ this.props.fromSite && <VisitSite siteSlug={ this.props.fromSite } /> }
+				</div>
+				<Card className="sites__select-wrapper">
 					<SiteSelector
 						filter={ this.filterSites }
 						siteBasePath={ this.props.siteBasePath }
-						groups={ true }
+						groups
 					/>
 				</Card>
 			</Main>
@@ -110,4 +125,4 @@ export class Sites extends Component {
 	}
 }
 
-export default Sites;
+export default localize( Sites );

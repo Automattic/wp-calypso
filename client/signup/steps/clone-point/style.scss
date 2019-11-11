@@ -1,3 +1,7 @@
+.clone-point__card {
+	background: var( --color-surface-backdrop );
+}
+
 .clone-point__wrapper {
 	position: relative;
 
@@ -17,7 +21,7 @@
 		top: 0;
 		height: 100%;
 		z-index: -2;
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 	}
 
 	&::after {
@@ -25,7 +29,7 @@
 		height: 16px;
 		z-index: -1;
 		background: blue;
-		background: linear-gradient( transparentize( $gray-light, 1 ), $gray-light );
+		background: linear-gradient( rgba( var( --color-neutral-0-rgb ), 1 ), var( --color-neutral-0 ) );
 	}
 }
 

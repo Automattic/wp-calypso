@@ -35,11 +35,11 @@ import ImageThumb from 'woocommerce/components/image-thumb';
 const ITEM_HEIGHT = 70;
 
 class ProductCategories extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.catIds = map( this.props.categories, 'id' );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.categories !== this.props.categories ) {
 			this.catIds = map( newProps.categories, 'id' );
 		}

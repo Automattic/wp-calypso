@@ -3,39 +3,39 @@
  * External dependencies
  */
 import page from 'page';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some, includes, forEach } from 'lodash';
+import { get, includes } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getTaskList } from './wpcom-task-list';
-import Checklist from 'components/checklist';
+import { Checklist, Task } from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
 import ChecklistNavigation from './checklist-navigation';
 import ChecklistPrompt from './checklist-prompt';
 import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import QueryPosts from 'components/data/query-posts';
+import QuerySites from 'components/data/query-sites';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import Task from 'components/checklist/task';
 import { successNotice } from 'state/notices/actions';
-import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug, getSiteFrontPage } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
-import { launchSite } from 'state/sites/launch/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import createSelector from 'lib/create-selector';
-import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
+import getChecklistTaskUrls, {
+	FIRST_TEN_SITE_POSTS_QUERY,
+} from 'state/selectors/get-checklist-task-urls';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
 	showInlineHelpPopover,
@@ -43,19 +43,19 @@ import {
 	setChecklistPromptTaskId,
 	setChecklistPromptStep,
 } from 'state/inline-help/actions';
-import getEditorUrl from 'state/selectors/get-editor-url';
+import { emailManagement } from 'my-sites/email/paths';
+import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 
 const userLib = userFactory();
-
-const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 class WpcomChecklistComponent extends PureComponent {
 	state = {
 		pendingRequest: false,
 		emailSent: false,
 		error: null,
+		gSuiteDialogVisible: false,
+		selectedTaskId: null,
 	};
-	trackedTaskDisplays = {};
 
 	constructor() {
 		super();
@@ -77,6 +77,7 @@ class WpcomChecklistComponent extends PureComponent {
 			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
 			gsuite_tos_accepted: this.renderGSuiteTOSAcceptedTask,
 			about_text_updated: this.renderAboutTextUpdatedTask,
+			front_page_updated: this.renderFrontPageUpdatedTask,
 			homepage_photo_updated: this.renderHomepagePhotoUpdatedTask,
 			business_hours_added: this.renderBusinessHoursAddedTask,
 			service_list_added: this.renderServiceListAddedTask,
@@ -145,19 +146,21 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskDisplayOnce = task => {
-		if ( this.trackedTaskDisplays[ task.id ] ) {
-			return;
-		}
-		this.trackedTaskDisplays[ task.id ] = true;
-
+	trackTaskDisplay = ( id, isCompleted, location ) => {
 		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
 			site_id: this.props.siteId,
-			step_name: task.id,
-			completed: task.isCompleted,
+			step_name: id,
+			completed: isCompleted,
+			location,
 		} );
 	};
+
+	trackExpandTask = ( { id } ) =>
+		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: id,
+			product: 'WordPress.com',
+		} );
 
 	handleTaskStartThenDismiss = args => () => {
 		const { task } = args;
@@ -185,14 +188,9 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	handleLaunchSite = task => () => {
-		if ( task.isCompleted ) {
-			return;
-		}
-
+	handleLaunchSite = () => {
 		const { siteId } = this.props;
-
-		this.props.launchSite( siteId );
+		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
 	verificationTaskButtonText() {
@@ -224,7 +222,7 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	nextInlineHelp = () => {
-		const taskList = getTaskList( this.props );
+		const taskList = this.props.taskList;
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 
 		if ( firstIncomplete ) {
@@ -242,9 +240,10 @@ class WpcomChecklistComponent extends PureComponent {
 
 	render() {
 		const {
+			phase2,
 			siteId,
+			taskList,
 			taskStatuses,
-			taskUrls,
 			viewMode,
 			updateCompletion,
 			setNotification,
@@ -253,15 +252,6 @@ class WpcomChecklistComponent extends PureComponent {
 			showNotification,
 			storedTask,
 		} = this.props;
-
-		const taskList = getTaskList( this.props );
-
-		// Hide a task when we can't find the exact URL of the target page.
-		forEach( taskUrls, ( url, taskId ) => {
-			if ( ! url ) {
-				taskList.remove( taskId );
-			}
-		} );
 
 		let ChecklistComponent = Checklist;
 
@@ -281,6 +271,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 		return (
 			<>
+				{ siteId && <QuerySites siteId={ siteId } /> }
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
 				<ChecklistComponent
@@ -292,20 +283,14 @@ class WpcomChecklistComponent extends PureComponent {
 					setStoredTask={ setStoredTask }
 					storedTask={ storedTask }
 					taskList={ taskList }
+					phase2={ phase2 }
+					onExpandTask={ this.trackExpandTask }
+					showChecklistHeader={ true }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
 			</>
 		);
-	}
-
-	componentDidUpdate() {
-		const taskList = getTaskList( this.props );
-		taskList.getAll().forEach( task => {
-			if ( this.shouldRenderTask( task.id ) ) {
-				this.trackTaskDisplayOnce( task );
-			}
-		} );
 	}
 
 	renderTask( task ) {
@@ -322,17 +307,13 @@ class WpcomChecklistComponent extends PureComponent {
 				break;
 		}
 
-		const taskList = getTaskList( this.props );
-		const firstIncomplete = taskList.getFirstIncompleteTask();
-
 		const baseProps = {
 			id: task.id,
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
-			firstIncomplete,
-			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
 			closePopover: closePopover,
+			trackTaskDisplay: this.trackTaskDisplay,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -364,10 +345,12 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 						components: {
 							br: <br />,
-							changeButton: <a href="/me/account" />,
+							changeButton: <a href="/me/account?tour=checklistUserEmail" />,
 						},
 					}
 				) }
+				// only render an unclickable grey circle when email conformation is incomplete
+				disableIcon={ ! baseProps.completed }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
 				onClick={ this.handleSendVerificationEmail }
 				title={ translate( 'Confirm your email address' ) }
@@ -419,6 +402,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Give your site a name' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -443,6 +427,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload a site icon' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -467,6 +452,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a tagline' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -491,6 +477,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload your profile picture' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -515,6 +502,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Personalize your Contact page' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -537,6 +525,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Publish your first blog post' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -561,6 +550,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Register a custom domain' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -585,24 +575,42 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Get the WordPress app' ) }
+				showSkip={ true }
 			/>
 		);
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { needsVerification, siteIsUnlaunched, translate } = this.props;
+		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				forceCollapsed={ task.isCompleted && ! siteIsUnlaunched }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
 				buttonText={ translate( 'Launch site' ) }
-				completedTitle={ translate( 'You launched your site' ) }
-				description={ translate(
-					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
-				) }
-				onClick={ this.handleLaunchSite( task ) }
+				completedButtonText={ siteIsUnlaunched && translate( 'Launch site' ) }
+				completedTitle={
+					siteIsUnlaunched
+						? translate( 'You skipped launching your site' )
+						: translate( 'You launched your site' )
+				}
+				description={
+					siteIsUnlaunched
+						? translate(
+								"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+						  )
+						: null
+				}
+				disableIcon={ disabled }
+				isButtonDisabled={ disabled }
+				noticeText={
+					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
+				}
+				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				showSkip={ true }
 				title={ translate( 'Launch your site' ) }
 			/>
 		);
@@ -616,7 +624,7 @@ class WpcomChecklistComponent extends PureComponent {
 			: {
 					onClick: () => {
 						this.trackTaskStart( task );
-						page( `/domains/manage/email/${ siteSlug }` );
+						page( emailManagement( siteSlug ) );
 					},
 					onDismiss: this.handleTaskDismiss( task.id ),
 			  };
@@ -631,6 +639,7 @@ class WpcomChecklistComponent extends PureComponent {
 					'Subscribe to G Suite to get a dedicated inbox with a personalized email address using your domain and collaborate in real-time on documents, spreadsheets, and slides.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				showSkip={ true }
 				{ ...clickProps }
 			/>
 		);
@@ -646,14 +655,14 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email forwarding for your site' ) }
-				completedDescription={ translate(
+				description={ translate(
 					'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
 					{
 						components: {
 							link: (
 								<a
 									onClick={ () => this.trackTaskStart( task, { clicked_element: 'hyperlink' } ) }
-									href={ `/domains/manage/email/${ siteSlug }` }
+									href={ emailManagement( siteSlug ) }
 								/>
 							),
 						},
@@ -662,60 +671,79 @@ class WpcomChecklistComponent extends PureComponent {
 				completedButtonText={ translate( 'Upgrade' ) }
 				onClick={ () => {
 					this.trackTaskStart( task, { clicked_element: 'button' } );
-					page( `/domains/manage/email/${ siteSlug }` );
+					page( emailManagement( siteSlug ) );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				showSkip={ true }
 			/>
 		);
+	};
+
+	onCloseGSuiteDialogClickHandler = () => {
+		this.setState( { gSuiteDialogVisible: false } );
+	};
+
+	onOpenGSuiteDialogClickHandler = () => {
+		this.setState( { gSuiteDialogVisible: true } );
 	};
 
 	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
 		const { domains, translate, userEmail } = this.props;
 
-		let loginUrlWithTOSRedirect;
+		let domainName;
+		let user;
 		if ( Array.isArray( domains ) && domains.length > 0 ) {
-			const domainName = domains[ 0 ].name;
-			const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
-			loginUrlWithTOSRedirect = getLoginUrlWithTOSRedirect( users[ 0 ], domainName );
+			domainName = domains[ 0 ].name;
+			user = domains[ 0 ].googleAppsSubscription.pendingUsers[ 0 ];
 		}
 
 		return (
-			<TaskComponent
-				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
-				title={ translate( 'You set up email for your site' ) }
-				description={ translate(
-					"{{strong}}You're almost done!{{/strong}} We've sent an email to %s. Log in and accept Google's Terms of Service to activate your G Suite account. {{link}}Didn't receive the email?{{/link}}",
-					{
-						components: {
-							strong: <strong />,
-							link: (
-								<a
-									onClick={ () =>
-										this.trackTaskStart( task, {
-											sub_step_name: 'gsuite_tos_accepted',
-											clicked_element: 'no_email_help_link',
-										} )
-									}
-									href={ `/help/contact` }
-								/>
-							),
-						},
-						args: [ userEmail ],
-					}
-				) }
-				isWarning={ true }
-				onClick={ () => {
-					if ( ! loginUrlWithTOSRedirect ) {
-						return;
-					}
+			<Fragment key={ baseProps.key }>
+				<TaskComponent
+					{ ...baseProps }
+					bannerImageSrc="/calypso/images/stats/tasks/email.svg"
+					title={ translate( 'You set up email for your site' ) }
+					description={ translate(
+						"{{strong}}You're almost done!{{/strong}} We've sent an email to %s. Log in and accept Google's Terms of Service to activate your G Suite account. {{link}}Didn't receive the email?{{/link}}",
+						{
+							components: {
+								strong: <strong />,
+								link: (
+									<a
+										onClick={ () =>
+											this.trackTaskStart( task, {
+												sub_step_name: 'gsuite_tos_accepted',
+												clicked_element: 'no_email_help_link',
+											} )
+										}
+										href={ `/help/contact` }
+									/>
+								),
+							},
+							args: [ userEmail ],
+						}
+					) }
+					isWarning={ true }
+					onClick={ () => {
+						if ( ! domainName ) {
+							return;
+						}
+						this.onOpenGSuiteDialogClickHandler();
+						this.trackTaskStart( task, {
+							sub_step_name: 'gsuite_tos_accepted',
+						} );
+					} }
+				/>
 
-					this.trackTaskStart( task, {
-						sub_step_name: 'gsuite_tos_accepted',
-					} );
-					window.open( loginUrlWithTOSRedirect, '_blank' );
-				} }
-			/>
+				<PendingGSuiteTosNoticeDialog
+					domainName={ domainName }
+					onClose={ this.onCloseGSuiteDialogClickHandler }
+					section={ 'gsuite-timeline-task' }
+					siteSlug={ this.props.siteSlug }
+					user={ user }
+					visible={ this.state.gSuiteDialogVisible }
+				/>
+			</Fragment>
 		);
 	};
 
@@ -747,11 +775,14 @@ class WpcomChecklistComponent extends PureComponent {
 					},
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -784,11 +815,42 @@ class WpcomChecklistComponent extends PureComponent {
 					},
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
-				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
+			/>
+		);
+	};
+
+	renderFrontPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, taskUrls } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				preset="update-homepage"
+				title={ translate( 'Update your homepage' ) }
+				completedTitle={ translate( 'You updated your homepage' ) }
+				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
+				completedButtonText={ translate( 'Change' ) }
+				description={ translate(
+					`We've created the basics, now it's time for you to update the images and text.`
+				) }
+				steps={ [] }
+				duration={ translate( '%d minute', '%d minutes', { count: 20, args: [ 20 ] } ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -818,11 +880,14 @@ class WpcomChecklistComponent extends PureComponent {
 					},
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 8, args: [ 8 ] } ) }
-				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -850,32 +915,35 @@ class WpcomChecklistComponent extends PureComponent {
 					},
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
 
 	renderStaffInfoAddedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls, siteVerticals } = this.props;
-		let staff = translate( 'staff' );
+		let title = translate( 'Add info about your staff' );
 
 		if ( includes( siteVerticals, 'Health & Medical' ) ) {
-			staff = translate( 'doctors', { context: 'Health & Medical' } );
+			title = translate( 'Add info about your doctors' );
 		} else if ( includes( siteVerticals, 'Educations' ) ) {
-			staff = translate( 'educators', { context: 'Educations' } );
+			title = translate( 'Add info about your educators' );
 		} else if ( includes( siteVerticals, 'Fitness & Exercise' ) ) {
-			staff = translate( 'professionals', { context: 'Fitness & Exercise' } );
+			title = translate( 'Add info about your professionals' );
 		}
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
 				preset="update-homepage"
-				title={ translate( 'Add info about your %(staff)s', { args: { staff } } ) }
+				title={ title }
 				description={ translate(
 					'Customers love to learn about who they’re going to interact with if they contact you.'
 				) }
@@ -883,7 +951,7 @@ class WpcomChecklistComponent extends PureComponent {
 					{
 						title: translate( 'Add staff to your homepage' ),
 						description: translate(
-							'Help customers trust you by telling them about your qualifications.' +
+							'Help customers trust you by telling them about your qualifications. ' +
 								'Click the services block to add your list of services.'
 						),
 					},
@@ -898,6 +966,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -932,53 +1001,11 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
 }
-
-function getContactPage( posts ) {
-	return get(
-		find(
-			posts,
-			post =>
-				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
-					post.slug === 'contact' )
-		),
-		'ID',
-		null
-	);
-}
-
-function getPageEditorUrl( state, siteId, pageId ) {
-	if ( ! pageId ) {
-		return null;
-	}
-
-	return getEditorUrl( state, siteId, pageId, 'page' );
-}
-
-const getTaskUrls = createSelector(
-	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
-		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl( state, siteId, getSiteFrontPage( state, siteId ) );
-
-		return {
-			post_published: getPageEditorUrl( state, siteId, firstPostID ),
-			contact_page_updated: contactPageUrl,
-			about_text_updated: frontPageUrl,
-			homepage_photo_updated: frontPageUrl,
-			business_hours_added: frontPageUrl,
-			service_list_added: frontPageUrl,
-			staff_info_added: frontPageUrl,
-			product_list_added: frontPageUrl,
-		};
-	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
-);
 
 export default connect(
 	state => {
@@ -986,19 +1013,21 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const user = getCurrentUser( state );
-		const taskUrls = getTaskUrls( state, siteId );
+		const taskUrls = getChecklistTaskUrls( state, siteId );
+		const taskList = getSiteTaskList( state, siteId );
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
+			phase2: get( siteChecklist, 'phase2' ),
 			siteId,
 			siteSlug,
-			siteSegment: get( siteChecklist, 'segment' ),
 			siteVerticals: get( siteChecklist, 'verticals' ),
 			taskStatuses: get( siteChecklist, 'tasks' ),
 			taskUrls,
+			taskList,
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
 		};
 	},
@@ -1007,7 +1036,7 @@ export default connect(
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
-		launchSite,
+		launchSiteOrRedirectToLaunchSignupFlow,
 		showInlineHelpPopover,
 		showChecklistPrompt,
 		setChecklistPromptTaskId,

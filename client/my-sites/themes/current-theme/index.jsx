@@ -22,6 +22,11 @@ import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /*
  * Show current active theme for a site, with
  * related actions.
@@ -64,7 +69,7 @@ class CurrentTheme extends Component {
 				<div className="current-theme__current">
 					{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 					{ showScreenshot && (
-						<img src={ currentTheme.screenshot + '?w=150' } className="current-theme__img" />
+						<img src={ currentTheme.screenshot + '?w=150' } className="current-theme__img" alt="" />
 					) }
 					<span className="current-theme__label">{ translate( 'Current Theme' ) }</span>
 					<span className="current-theme__name">{ text }</span>

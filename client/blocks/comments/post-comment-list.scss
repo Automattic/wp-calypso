@@ -1,0 +1,38 @@
+// The main comment list wrapper
+.comments__comment-list {
+	border-top: 1px solid var( --color-neutral-10 );
+	clear: both;
+	margin: 36px 0;
+	padding-top: 11px;
+
+	.segmented-control {
+		margin: 20px;
+	}
+
+	.comments__conversation-follow-button {
+		float: right;
+		margin-top: 4px;
+	}
+}
+
+.comments__info-bar {
+	margin: 0 24px -24px 0;
+	overflow: auto;
+
+	&.is-no-comments {
+		display: none;
+	}
+}
+
+.comments__view-more {
+	color: var( --color-text-subtle );
+	cursor: pointer;
+	display: block !important; // to overwrite inline-block rule
+	font-size: 14px;
+	line-height: 1;
+	margin-bottom: 15px !important; // to overwrite 10px value
+
+	&:hover {
+		color: var( --color-primary-light );
+	}
+}

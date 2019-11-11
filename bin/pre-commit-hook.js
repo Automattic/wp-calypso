@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ console.log(
 require( '../server/config/validate-config-keys' );
 
 /**
- * Parses the output of a git diff command into javascript file paths.
+ * Parses the output of a git diff command into file paths.
  *
  * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
@@ -27,8 +25,31 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /\.(jsx?|scss)$/.test( name ) );
+		.filter( name => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
 }
+
+function linterFailure() {
+	console.log(
+		chalk.red( 'COMMIT ABORTED:' ),
+		'The linter reported some problems. ' +
+			'If you are aware of them and it is OK, ' +
+			'repeat the commit command with --no-verify to avoid this check.'
+	);
+	process.exit( 1 );
+}
+
+function phpcsInstalled() {
+	try {
+		execSync( 'which -s phpcs phpcbf' );
+		return true;
+	} catch ( error ) {
+		console.log( chalk.red( 'PHP files will not be processed because PHPCS was not found.' ) );
+		return false;
+	}
+}
+
+// determine if PHPCS is available
+const phpcs = phpcsInstalled();
 
 // grab a list of all the files staged to commit
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
@@ -50,10 +71,19 @@ const toFormat = files.filter( file => ! dirtyFiles.has( file ) );
 
 // Split the set to format into things to format with stylelint and things to format with prettier.
 // We avoid prettier on sass files because of outstanding bugs in how prettier handles
-// single line comments.
-const [ toStylelintfix, toPrettify ] = _.partition( toFormat, file => file.endsWith( '.scss' ) );
+// single line comments. We also split on PHP files for PHPCS handling.
+const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFormat, file => {
+	switch ( true ) {
+		case file.endsWith( '.scss' ):
+			return 'toStylelintfix';
+		case file.endsWith( '.php' ) && phpcs:
+			return 'toPHPCBF';
+		default:
+			return 'toPrettify';
+	}
+} );
 
-// Format the JS and JSX files with prettier, then re-stage them. Swallow the output.
+// Format JavaScript and TypeScript files with prettier, then re-stage them. Swallow the output.
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
 	execSync(
@@ -69,8 +99,35 @@ if ( toStylelintfix.length ) {
 	execSync( `git add ${ toStylelintfix.join( ' ' ) }` );
 }
 
-// Now run the linters over everything staged to commit, even if they are partially staged
-const [ toStylelint, toEslint ] = _.partition( files, file => file.endsWith( '.scss' ) );
+// Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
+toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
+if ( toPHPCBF.length ) {
+	try {
+		execSync( `phpcbf --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
+	} catch ( error ) {
+		// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
+		// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
+		if ( 2 === error.status ) {
+			linterFailure();
+		}
+	}
+	execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
+}
+
+// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+const { toEslint = [], toStylelint = [], toPHPCS = [] } = _.groupBy(
+	files.filter( file => ! file.endsWith( '.json' ) ),
+	file => {
+		switch ( true ) {
+			case file.endsWith( '.scss' ):
+				return 'toStylelint';
+			case file.endsWith( '.php' ) && phpcs:
+				return 'toPHPCS';
+			default:
+				return 'toEslint';
+		}
+	}
+);
 
 // first stylelint
 if ( toStylelint.length ) {
@@ -80,12 +137,7 @@ if ( toStylelint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		console.log(
-			chalk.yellow( 'STYLELINT:' ),
-			'The linter reported some problems. Please consider fixing them.'
-		);
-		//process.exit( 1 );
-		// do not abort the commit for now. Maybe in the future...
+		linterFailure();
 	}
 }
 
@@ -97,12 +149,18 @@ if ( toEslint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		console.log(
-			chalk.red( 'COMMIT ABORTED:' ),
-			'The linter reported some problems. ' +
-				'If you are aware of them and it is OK, ' +
-				'repeat the commit command with --no-verify to avoid this check.'
-		);
-		process.exit( 1 );
+		linterFailure();
+	}
+}
+
+// and finally PHPCS
+if ( toPHPCS.length ) {
+	const lintResult = spawnSync( 'phpcs', [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
+		shell: true,
+		stdio: 'inherit',
+	} );
+
+	if ( lintResult.status ) {
+		linterFailure();
 	}
 }

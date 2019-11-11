@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import {
 	sortBy,
 	toPairs,
@@ -117,7 +114,7 @@ export function buildExportArray( data, parent = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
-	const escapedLabel = label.replace( /\"/, '""' );
+	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line no-useless-escape
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	if ( data.children ) {
@@ -289,9 +286,11 @@ export function parseChartData( payload, nullAttributes = [] ) {
  * @return {Object} - moment date object
  */
 export function parseUnitPeriods( unit, period ) {
+	let splitYearWeek;
+
 	switch ( unit ) {
 		case 'week':
-			const splitYearWeek = period.split( '-W' );
+			splitYearWeek = period.split( '-W' );
 			return moment()
 				.isoWeekYear( splitYearWeek[ 0 ] )
 				.isoWeek( splitYearWeek[ 1 ] )
@@ -962,36 +961,29 @@ export const normalizers = {
 	},
 
 	/*
-	 * Returns a normalized statsPodcastDownloads array, ready for use in stats-module
+	 * Returns a normalized statsFileDownloads array, ready for use in stats-module
 	 *
 	 * @param  {Object} data   Stats data
 	 * @param  {Object} query  Stats query
-	 * @param  {Int}    siteId Site ID
-	 * @param  {Object} site   Site Object
 	 * @return {Array}         Parsed data array
 	 */
-	statsPodcastDownloads( data, query, siteId, site ) {
+	statsFileDownloads( data, query ) {
 		if ( ! data || ! query.period || ! query.date ) {
 			return [];
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'downloads' ], [] );
+		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
 
 		return statsData.map( item => {
-			const detailPage = site
-				? '/stats/' + query.period + '/podcastdownloads/' + site.slug + '?post=' + item.post_id
-				: null;
 			return {
-				label: item.title,
-				page: detailPage,
+				label: item.relative_url,
+				shortLabel: item.filename,
+				page: null,
 				value: item.downloads,
-				actions: [
-					{
-						type: 'link',
-						data: item.url,
-					},
-				],
+				link: item.download_url,
+				linkTitle: item.relative_url,
+				labelIcon: 'external',
 			};
 		} );
 	},

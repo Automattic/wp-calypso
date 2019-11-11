@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import interpolateComponents from 'interpolate-components';
 import Jed from 'jed';
 import LRU from 'lru';
-import moment from 'moment-timezone';
+import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
 

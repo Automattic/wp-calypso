@@ -52,7 +52,7 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {

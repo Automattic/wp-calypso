@@ -9,12 +9,28 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
+		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users' );
+	} else {
+		path = '/email/gsuite/add-users/' + siteName;
+	}
+
+	return path;
+}
+
+export function emailManagementAddGSuiteUsersLegacy( siteName, domainName ) {
+	let path;
+
+	if ( domainName ) {
 		path = emailManagementEdit( siteName, domainName, 'add-gsuite-users' );
 	} else {
 		path = '/email/add-gsuite-users/' + siteName;
 	}
 
 	return path;
+}
+
+export function emailManagementNewGSuiteAccount( siteName, domainName, planType ) {
+	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType );
 }
 
 export function emailManagement( siteName, domainName ) {

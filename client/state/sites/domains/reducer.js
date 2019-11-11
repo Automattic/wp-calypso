@@ -1,16 +1,20 @@
-/** @format */
+/* eslint-disable no-case-declarations */
+/**
+ * External dependencies
+ */
+import { find, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -20,18 +24,35 @@ import { itemsSchema } from './schema';
  * @param {Object} action - domains action
  * @return {Object} updated state
  */
-export const items = ( state = {}, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
 		case SITE_DOMAINS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ siteId ]: action.domains,
 			} );
+		case DOMAIN_PRIVACY_TOGGLE:
+			// Find the domain we want to update
+			const targetDomain = find( state[ siteId ], { domain: action.domain } );
+			const domainIndex = indexOf( state[ siteId ], targetDomain );
+			// Copy as we shouldn't mutate original state
+			const newDomains = [ ...state[ siteId ] ];
+			// Update privacy
+			newDomains.splice(
+				domainIndex,
+				1,
+				Object.assign( {}, targetDomain, {
+					privateDomain: ! targetDomain.privateDomain,
+				} )
+			);
+
+			return Object.assign( {}, state, {
+				[ siteId ]: newDomains,
+			} );
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions
@@ -79,7 +100,7 @@ export const errors = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
+	errors,
 	items,
 	requesting,
-	errors,
 } );

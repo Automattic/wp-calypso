@@ -16,6 +16,11 @@ import { localize } from 'i18n-calypso';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainProductPrice extends React.Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
@@ -24,6 +29,7 @@ class DomainProductPrice extends React.Component {
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
+		salePrice: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -87,9 +93,29 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
-	renderPrice() {
+	renderSalePrice() {
+		const { price, salePrice, translate } = this.props;
+
 		return (
-			<div className={ classnames( 'domain-product-price' ) }>
+			<div className="domain-product-price is-free-domain">
+				<div className="domain-product-price__sale-price">{ salePrice }</div>
+				<div className="domain-product-price__renewal-price">
+					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: price },
+						components: { small: <small /> },
+					} ) }
+				</div>
+			</div>
+		);
+	}
+
+	renderPrice() {
+		if ( this.props.salePrice ) {
+			return this.renderSalePrice();
+		}
+
+		return (
+			<div className="domain-product-price">
 				<span className="domain-product-price__price">
 					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: this.props.price },

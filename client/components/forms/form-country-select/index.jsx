@@ -9,6 +9,11 @@ import React, { Component } from 'react';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /* eslint-disable jsx-a11y/no-onchange */
 export class FormCountrySelect extends Component {
 	static propTypes = {

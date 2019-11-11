@@ -64,7 +64,7 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			isVideoPressAvailable && (
-				<FormFieldset className="site-settings__formfieldset">
+				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
 						link="https://jetpack.com/support/videopress/"

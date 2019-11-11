@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
-import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
@@ -24,12 +22,6 @@ import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
- * Style Dependencies
- */
-import './style.scss';
-import './syntax.scss';
-
-/**
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';
@@ -41,9 +33,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
+import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from 'components/card/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -74,6 +66,8 @@ import Gauge from 'components/gauge/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
+import Gridicon from 'components/gridicon/docs/example';
+import GSuiteExamples from 'components/gsuite/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -87,6 +81,7 @@ import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import MarkedLinesExample from 'components/marked-lines/docs/example';
+import MultipleChoiceQuestionExample from 'components/multiple-choice-question/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -94,11 +89,14 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
+import ProductCard from 'components/product-card/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import PromoSection from 'components/promo-section/docs/example';
+import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
@@ -106,12 +104,12 @@ import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
-import SocialLogos from 'social-logos/example';
+import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
+import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
@@ -231,7 +229,8 @@ class DesignAssets extends React.Component {
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
-					<Gridicons />
+					<Gridicon />
+					<GSuiteExamples readmeFilePath="gsuite" />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
@@ -245,6 +244,7 @@ class DesignAssets extends React.Component {
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
+					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
@@ -253,6 +253,8 @@ class DesignAssets extends React.Component {
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
+					<PromoSection readmeFilePath="promo-section" />
+					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="ribbon" />
@@ -263,6 +265,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
+					<ProductCard readmeFilePath="product-card" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
@@ -291,6 +294,8 @@ class DesignAssets extends React.Component {
 	}
 }
 
+let DesignAssetsExport = DesignAssets;
+
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
@@ -313,10 +318,10 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
+	DesignAssetsExport = connect(
 		mapStateToProps,
 		mapDispatchToProps
 	)( DesignAssets );
 }
 
-export default DesignAssets;
+export default DesignAssetsExport;
