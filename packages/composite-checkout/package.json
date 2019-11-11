@@ -34,6 +34,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout#readme",
 	"dependencies": {
+		"@wordpress/data": "^4.9.2",
 		"prop-types": "^15.7.2",
 		"react": "^16.8.6",
 		"react-stripe-elements": "^5.1.0",
