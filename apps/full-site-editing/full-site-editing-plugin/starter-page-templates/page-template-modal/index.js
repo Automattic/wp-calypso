@@ -128,7 +128,7 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
-		this.props.togglePlugin();
+		this.props.toggleTemplateModal();
 	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
@@ -178,7 +178,7 @@ class PageTemplateModal extends Component {
 				{ isPromptedFromSidebar ? (
 					<IconButton
 						className="page-template-modal__close-button components-icon-button"
-						onClick={ this.props.togglePlugin }
+						onClick={ this.props.toggleTemplateModal }
 						icon="no-alt"
 						label={ __( 'Close Layout Selector' ) }
 					/>
@@ -290,7 +290,8 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-// !? - better way?  can acess get_current_screen or wordpress screen object?
+// Don't open plugin if we arent creating new page.
+// Is there better way?  Can we acess get_current_screen or wordpress screen object like in php?
 if ( window.location.toString().includes( 'post-new' ) ) {
 	registerPlugin( 'page-templates', {
 		render: () => {

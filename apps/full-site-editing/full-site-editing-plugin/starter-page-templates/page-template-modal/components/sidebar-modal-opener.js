@@ -15,13 +15,13 @@ import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 
-export class SidebarTemplateOpener extends Component {
+class SidebarModalOpener extends Component {
 	state = {
 		isTemplateModalOpen: false,
 		isWarningOpen: false,
 	};
 
-	togglePlugin = () => {
+	toggleTemplateModal = () => {
 		this.setState( {
 			isTemplateModalOpen: ! this.state.isTemplateModalOpen,
 			isWarningOpen: false,
@@ -32,7 +32,7 @@ export class SidebarTemplateOpener extends Component {
 		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
-	getTemplateUsed = () => {
+	getLastTemplateUsed = () => {
 		if ( ! this.props.templateUsedSlug || this.props.templateUsedSlug === 'blank' ) {
 			return this.props.templates[ 1 ];
 		}
@@ -40,21 +40,38 @@ export class SidebarTemplateOpener extends Component {
 	};
 
 	render() {
-		const { slug, title, preview, previewAlt } = this.getTemplateUsed();
+		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
 		const { templates, vertical, segment, siteInformation } = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
+				<TemplateSelectorItem
+					id="sidebar-modal-opener__template-preview"
+					value={ slug }
+					label={ replacePlaceholders( title, siteInformation ) }
+					staticPreviewImg={ preview }
+					staticPreviewImgAlt={ previewAlt }
+				/>
+
+				<Button
+					isPrimary
+					onClick={ this.toggleWarningModal }
+					className="sidebar-modal-opener__button"
+				>
+					{ __( 'Change Layout' ) }
+				</Button>
+
 				{ this.state.isTemplateModalOpen ? (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
 						vertical={ vertical }
 						segment={ segment }
-						togglePlugin={ this.togglePlugin }
+						toggleTemplateModal={ this.toggleTemplateModal }
 						isPromptedFromSidebar
 					/>
 				) : null }
+
 				{ this.state.isWarningOpen ? (
 					<Modal
 						title={ __( 'Overwrite Page Content?' ) }
@@ -71,28 +88,12 @@ export class SidebarTemplateOpener extends Component {
 							<Button isDefault onClick={ this.toggleWarningModal }>
 								{ __( 'Cancel' ) }
 							</Button>
-							<Button isPrimary onClick={ this.togglePlugin }>
+							<Button isPrimary onClick={ this.toggleTemplateModal }>
 								{ __( 'Change Layout' ) }
 							</Button>
 						</div>
 					</Modal>
 				) : null }
-
-				<TemplateSelectorItem
-					id="sidebar-modal-opener__template-preview"
-					value={ slug }
-					label={ replacePlaceholders( title, siteInformation ) }
-					staticPreviewImg={ preview }
-					staticPreviewImgAlt={ previewAlt }
-				/>
-
-				<Button
-					isPrimary
-					onClick={ this.toggleWarningModal }
-					className="sidebar-modal-opener__button"
-				>
-					{ __( 'Change Layout' ) }
-				</Button>
 			</div>
 		);
 	}
@@ -103,6 +104,6 @@ const SidebarTemplatesPlugin = compose(
 		templateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
 	} ) )
-)( SidebarTemplateOpener );
+)( SidebarModalOpener );
 
 export default SidebarTemplatesPlugin;
