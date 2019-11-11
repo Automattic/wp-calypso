@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { URL as URLString } from 'types';
-import { Falsy } from 'utility-types';
 
 // For complete definitions of these classifications, see:
 // https://url.spec.whatwg.org/#urls
@@ -33,15 +32,15 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
  *
  * @returns the type of the URL
  */
-export function determineUrlType( url: URLString | URL | Falsy ): URL_TYPE {
+export function determineUrlType( url: URLString | URL ): URL_TYPE {
+	// Check for expected parameter types.
+	if ( ! ( url instanceof URL ) && typeof url !== 'string' ) {
+		return URL_TYPE.INVALID;
+	}
+
 	// As a URL, the empty string means "the current resource".
 	if ( url === '' ) {
 		return URL_TYPE.PATH_RELATIVE;
-	}
-
-	// Any other falsy value is an invalid URL.
-	if ( ! url ) {
-		return URL_TYPE.INVALID;
 	}
 
 	// The native URL object can only represent absolute URLs.
