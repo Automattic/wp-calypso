@@ -18,9 +18,9 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
+	isJetpackProduct,
 	isPlan,
 	isTheme,
-	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/cart/actions';
