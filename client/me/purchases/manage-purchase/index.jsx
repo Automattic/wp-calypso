@@ -57,6 +57,7 @@ import {
 	isDomainTransfer,
 	isTheme,
 	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
@@ -404,6 +405,7 @@ class ManagePurchase extends Component {
 			'is-personal': isPersonal( purchase ),
 			'is-premium': isPremium( purchase ),
 			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
