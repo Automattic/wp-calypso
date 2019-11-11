@@ -6,23 +6,54 @@
 		display: none;
 	}
 }
+.onboarding-block__acquire-intent {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 40px;
+	position: fixed;
+
+	top: 20%;
+	left: 0%;
+	width: 100%;
+}
+
+.onboarding-block__questions {
+	display: inline-block;
+	min-width: 800px;
+}
 
 .onboarding-block__questions-heading {
-	font-size: 1.5em;
-	line-height: 2em;
 	margin-bottom: 10px;
+	text-align: left;
+	font-size: 20px;
+}
+
+.gutenboarding-block-list .components-form-token-field,
+.onboarding-block__question.selected {
+	font-size: 40px;
+	margin-top: 18px;
+	margin-bottom: 28px;
+
+	&:first-of-type {
+		margin-top: 0;
+	}
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
 }
 
 .gutenboarding-block-list .components-form-token-field,
 .onboarding-block__question {
 	display: flex;
-	font-size: 2em;
-	line-height: 2.1em;
+	font-size: 28px;
 	margin-bottom: 10px;
+	transition-property: 'font-size';
+	transition-duration: 0.25s;
+	transition-timing-function: 'linear';
+	transition-delay: 0;
 
-	> * {
-		margin: 0 0.5em 0 0;
-	}
 }
 
 .onboarding-block__multi-question {
@@ -30,10 +61,43 @@
 	margin: 0;
 	padding: 0;
 
+	label {
+		margin-bottom: 36px;
+		display: inline-block;
+	}
+
+	label::after {
+		content: '✓';
+		margin-left: 8px;
+		opacity: 0;
+		font-size: 40px;
+		transition-property: opacity, color;
+		transition-duration: 0.3s;
+		transition-timing-function: 'linear';
+		transition-delay: 0;
+
+	}
+
+	li.selected label::after {
+		opacity: 1;
+		color: $light-gray-800;
+	}
+	
+	li.selected	label:hover::after,
+	label:hover::after {
+		opacity: 1;
+		color: var( --studio-jetpack-green-30 );
+	}
+
 	.onboarding-block__question-answered,
 	.onboarding-block__multi-question-choice {
-		border-bottom: 3px solid $light-gray-500;
+		border-bottom: 3px solid transparent;
 		cursor: pointer;
+		margin: 0 0 0 0.2em;
+		transition-property: border-color;
+		transition-duration: 0.3s;
+		transition-timing-function: 'linear';
+		transition-delay: 0;
 
 		&:hover {
 			border-color: $blue-medium-highlight;
@@ -69,7 +133,7 @@
 	display: inline-block;
 	font-size: inherit;
 	line-height: inherit;
-	margin: 0;
+	margin: 0 0 0 0.2em;
 	padding: 0;
 	color: $blue-medium-900;
 
@@ -85,10 +149,15 @@
 	}
 }
 
+.onboarding-block__footer {
+	text-align: right;
+}
+
 .components-button.is-link.onboarding-block__question-skip {
 	color: $dark-gray-500;
-	font-size: 1.5em;
+	font-size: 20px;
 	line-height: 2em;
 	margin: 10px 0;
 	text-decoration: none;
+	position: relative;
 }
