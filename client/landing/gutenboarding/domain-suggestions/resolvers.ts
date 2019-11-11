@@ -14,7 +14,7 @@ export function* getDomainSuggestions( queryObject: DomainSuggestionQuery ) {
 	const url = 'https://public-api.wordpress.com/wpcom/v1.1/domains/sugestions';
 
 	// @FIXME use generic fetch?
-	const verticals = yield apiFetch( { url: addQueryArgs( url, queryObject ) } );
+	const suggestions = yield apiFetch( { url: addQueryArgs( url, queryObject ) } );
 
-	return receiveDomainSuggestions( verticals );
+	return receiveDomainSuggestions( queryObject, suggestions );
 }
