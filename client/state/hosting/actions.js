@@ -35,7 +35,7 @@ export const createAtomicSftpUser = ( siteId, userId ) => ( {
 	userId,
 } );
 
-export const resetAtomicSFTPPassword = ( siteId, userId ) => ( {
+export const resetAtomicSftpPassword = ( siteId, userId ) => ( {
 	type: HOSTING_SFTP_PASSWORD_RESET,
 	siteId,
 	userId,

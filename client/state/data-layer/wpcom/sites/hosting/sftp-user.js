@@ -41,7 +41,7 @@ const createAtomicSftpUser = action => {
 	);
 };
 
-const resetAtomicSFTPPassword = action => {
+const resetAtomicSftpPassword = action => {
 	return http(
 		{
 			method: 'POST',
@@ -56,7 +56,7 @@ const resetAtomicSFTPPassword = action => {
 const receiveAtomicSftpUserSuccess = ( action, { username, password } ) =>
 	updateAtomicSftpUser( action.siteId, action.userId, { username, password } );
 
-const sFTPUserError = ( { siteId, userId } ) => [
+const sftpUserError = ( { siteId, userId } ) => [
 	updateAtomicSftpUser( siteId, userId, null ),
 	errorNotice(
 		translate(
@@ -73,21 +73,21 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 		dispatchRequest( {
 			fetch: requestAtomicSftpUser,
 			onSuccess: receiveAtomicSftpUserSuccess,
-			onError: sFTPUserError,
+			onError: sftpUserError,
 		} ),
 	],
 	[ HOSTING_SFTP_USER_CREATE ]: [
 		dispatchRequest( {
 			fetch: createAtomicSftpUser,
 			onSuccess: receiveAtomicSftpUserSuccess,
-			onError: sFTPUserError,
+			onError: sftpUserError,
 		} ),
 	],
 	[ HOSTING_SFTP_PASSWORD_RESET ]: [
 		dispatchRequest( {
-			fetch: resetAtomicSFTPPassword,
+			fetch: resetAtomicSftpPassword,
 			onSuccess: receiveAtomicSftpUserSuccess,
-			onError: sFTPUserError,
+			onError: sftpUserError,
 		} ),
 	],
 } );
