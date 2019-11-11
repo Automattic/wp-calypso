@@ -2532,6 +2532,13 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	} );
 };
 
+Undocumented.prototype.getMigrationStatus = function( targetSiteId ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ targetSiteId }/migration-status`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
