@@ -3,7 +3,6 @@
  */
 import { parse as parseUrl, format as formatUrl } from 'url';
 import crc32 from 'crc32';
-import seed from 'seed-random';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'photon' );
@@ -101,9 +100,7 @@ function isAlreadyPhotoned( host ) {
  * @return {string}          The hostname for the pathname
  */
 function serverFromPathname( pathname ) {
-	const hash = crc32( pathname );
-	const rng = seed( hash );
-	const server = 'i' + Math.floor( rng() * 3 );
+	const server = 'i' + Math.abs( crc32( pathname ) % 3 );
 	debug( 'determined server "%s" to use with "%s"', server, pathname );
 	return server + '.wp.com';
 }
