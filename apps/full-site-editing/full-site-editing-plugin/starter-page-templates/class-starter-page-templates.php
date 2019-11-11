@@ -130,7 +130,7 @@ class Starter_Page_Templates {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
-		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
+		if ( 'page' !== $screen->id ) {
 			return;
 		}
 

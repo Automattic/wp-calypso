@@ -280,20 +280,23 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-registerPlugin( 'page-templates', {
-	render: () => {
-		return (
-			<PageTemplatesPlugin
-				shouldPrefetchAssets={ false }
-				templates={ templates }
-				vertical={ vertical }
-				segment={ segment }
-			/>
-		);
-	},
-} );
+// !? - better way?  can acess get_current_screen or wordpress screen object?
+if ( window.location.toString().includes( 'post-new' ) ) {
+	registerPlugin( 'page-templates', {
+		render: () => {
+			return (
+				<PageTemplatesPlugin
+					shouldPrefetchAssets={ false }
+					templates={ templates }
+					vertical={ vertical }
+					segment={ segment }
+				/>
+			);
+		},
+	} );
+}
 
-class SidebarTemplateOpener extends Component {
+export class SidebarTemplateOpener extends Component {
 	state = {
 		isOpen: false,
 	};
