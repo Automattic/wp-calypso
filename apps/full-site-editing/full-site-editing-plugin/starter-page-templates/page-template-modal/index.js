@@ -299,10 +299,15 @@ if ( window.location.toString().includes( 'post-new' ) ) {
 export class SidebarTemplateOpener extends Component {
 	state = {
 		isOpen: false,
+		isWarningOpen: false,
 	};
 
 	togglePlugin = () => {
-		this.setState( { isOpen: ! this.state.isOpen } );
+		this.setState( { isOpen: ! this.state.isOpen, isWarningOpen: false } );
+	};
+
+	toggleWarningModal = () => {
+		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
 	render() {
@@ -316,14 +321,30 @@ export class SidebarTemplateOpener extends Component {
 						segment={ segment }
 						togglePlugin={ this.togglePlugin }
 					/>
-				) : (
-					<button
-						onClick={ this.togglePlugin }
-						className="page-template-modal__sidebar-button components-button components-icon-button is-button is-default"
+				) : null }
+				{ this.state.isWarningOpen ? (
+					<Modal
+						title="Are You Sure?"
+						// labelledby="Changing the page's layout will remove any customizations or edits you have already made."
+						isDismissible={ false }
+						onRequestClose={ this.toggleWarningModal }
 					>
-						Open Layout Selector
-					</button>
-				) }
+						<div>
+							Changing the page's layout will remove any customizations or edits you have already
+							made.
+						</div>
+						<Button isDefault onClick={ this.toggleWarningModal }>
+							Cancel
+						</Button>
+						<Button isPrimary onClick={ this.togglePlugin }>
+							Change Layout
+						</Button>
+					</Modal>
+				) : null }
+
+				<Button isPrimary onClick={ this.toggleWarningModal }>
+					Open Layout Selector
+				</Button>
 			</>
 		);
 	}
