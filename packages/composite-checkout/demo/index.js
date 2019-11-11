@@ -70,9 +70,37 @@ const stripeMethod = createStripeMethod( {
 
 const creditCardMethod = createCreditCardMethod();
 
-const applePayMethod = createApplePayMethod();
+const applePayMethod = isApplePayAvailable()
+	? createApplePayMethod( {
+			registerStore,
+			fetchStripeConfiguration,
+	  } )
+	: null;
 
 const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+
+export function isApplePayAvailable() {
+	// Our Apple Pay implementation uses the Payment Request API, so check that first.
+	if ( ! window.PaymentRequest ) {
+		return false;
+	}
+
+	// Check if Apple Pay is available. This can be very expensive on certain
+	// Safari versions due to a bug (https://trac.webkit.org/changeset/243447/webkit),
+	// and there is no way it can change during a page request, so cache the
+	// result.
+	if ( typeof isApplePayAvailable.canMakePayments === 'undefined' ) {
+		try {
+			isApplePayAvailable.canMakePayments = Boolean(
+				window.ApplePaySession && window.ApplePaySession.canMakePayments()
+			);
+		} catch ( error ) {
+			console.error( error ); // eslint-disable-line no-console
+			return false;
+		}
+	}
+	return isApplePayAvailable.canMakePayments;
+}
 
 const handleEvent = setItems => () => {
 	const cardholderName = select( 'stripe' ).getCardholderName();
@@ -113,8 +141,10 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ] }
 			registry={ registry }
+			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
+				Boolean
+			) }
 		>
 			<Checkout OrderSummary={ WPCheckoutOrderSummary } ReviewContent={ WPCheckoutOrderReview } />
 		</CheckoutProvider>
