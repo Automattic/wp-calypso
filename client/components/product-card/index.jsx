@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import ProductCardPriceGroup from './price-group';
 import { managePurchase } from 'me/purchases/paths';
