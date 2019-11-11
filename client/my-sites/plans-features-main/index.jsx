@@ -429,7 +429,7 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
-					headerText={ translate( 'Single Products' ) }
+					headerText={ translate( 'Solutions' ) }
 					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
 					compactOnMobile
 				/>
