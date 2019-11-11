@@ -509,6 +509,13 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 }
 
 // Sidebar modal opener goo.
+.sidebar-modal-opener {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
 .sidebar-modal-opener__button {
 	margin-top: 20px;
 }

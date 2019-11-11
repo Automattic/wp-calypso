@@ -44,14 +44,7 @@ export class SidebarTemplateOpener extends Component {
 		const { templates, vertical, segment, siteInformation } = this.props;
 
 		return (
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-				} }
-			>
+			<div className="sidebar-modal-opener">
 				{ this.state.isTemplateModalOpen ? (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
@@ -64,7 +57,7 @@ export class SidebarTemplateOpener extends Component {
 				) : null }
 				{ this.state.isWarningOpen ? (
 					<Modal
-						title={ __( 'Are You Sure?' ) }
+						title={ __( 'Overwrite Page Content?' ) }
 						isDismissible={ false }
 						onRequestClose={ this.toggleWarningModal }
 						className="sidebar-modal-opener__warning-modal"
