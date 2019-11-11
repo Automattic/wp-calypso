@@ -194,7 +194,7 @@ export default connect( state => {
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
