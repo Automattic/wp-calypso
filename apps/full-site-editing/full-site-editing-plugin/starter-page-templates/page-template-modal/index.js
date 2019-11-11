@@ -311,7 +311,6 @@ export class SidebarTemplateOpener extends Component {
 	state = {
 		isOpen: false,
 		isWarningOpen: false,
-		// blocksByTemplateSlug: {}
 	};
 
 	togglePlugin = () => {
@@ -322,8 +321,16 @@ export class SidebarTemplateOpener extends Component {
 		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
+	getTemplateUsed = () => {
+		if ( ! this.props.templateUsedSlug ) {
+			return templates[ 1 ];
+		}
+		return templates.filter( temp => temp.slug === this.props.templateUsedSlug )[ 0 ];
+	};
+
 	render() {
 		// const blocksByTemplates = this.state.blocksByTemplateSlug;
+		const { slug, title, preview, previewAlt } = this.getTemplateUsed();
 
 		return (
 			<div
@@ -366,12 +373,12 @@ export class SidebarTemplateOpener extends Component {
 
 				<TemplateSelectorItem
 					id="fubar--101"
-					value={ templates[ 5 ].slug }
-					label={ replacePlaceholders( templates[ 5 ].title, siteInformation ) }
-					// label={ templates[5].title || "??" }
-					staticPreviewImg={ templates[ 5 ].preview }
-					staticPreviewImgAlt={ templates[ 5 ].previewAlt }
-					// blocks={ blocksByTemplates.hasOwnProperty( templates[5].slug ) ? blocksByTemplates[ templates[5].slug ] : [] }
+					value={ slug }
+					label={ replacePlaceholders( title, siteInformation ) }
+					// label={ templates[2].title || "??" }
+					staticPreviewImg={ preview }
+					staticPreviewImgAlt={ previewAlt }
+					// blocks={ blocksByTemplates.hasOwnProperty( templates[2].slug ) ? blocksByTemplates[ templates[2].slug ] : [] }
 					// onSelect={ () => {} }
 				/>
 
@@ -383,13 +390,20 @@ export class SidebarTemplateOpener extends Component {
 	}
 }
 
+const SidebarTemplatesPlugin = compose(
+	withSelect( select => ( {
+		templateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+			._starter_page_template,
+	} ) )
+)( SidebarTemplateOpener );
+
 const PluginDocumentSettingPanelDemo = () => (
 	<PluginDocumentSettingPanel
 		name="Template Plugin Opener"
 		title="Page Layout"
 		className="page-template-modal__sidebar"
 	>
-		<SidebarTemplateOpener />
+		<SidebarTemplatesPlugin />
 	</PluginDocumentSettingPanel>
 );
 
