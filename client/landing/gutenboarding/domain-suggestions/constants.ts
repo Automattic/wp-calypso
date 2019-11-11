@@ -1,1 +1,1 @@
-export const STORE_KEY = 'automattic/onboard';
+export const STORE_KEY = 'automattic/domain-suggestions';
