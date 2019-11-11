@@ -291,7 +291,7 @@ if ( tracksUserData ) {
 }
 
 // Don't open plugin if we arent creating new page.
-// Is there better way?  Can we acess get_current_screen or wordpress screen object like in php?
+// Is there better way?  Can we acess get_current_screen for wordpress screen object like in php?
 if ( window.location.toString().includes( 'post-new' ) ) {
 	registerPlugin( 'page-templates', {
 		render: () => {
@@ -307,21 +307,23 @@ if ( window.location.toString().includes( 'post-new' ) ) {
 	} );
 }
 
-const PluginDocumentSettingPanelDemo = () => (
-	<PluginDocumentSettingPanel
-		name="Template Plugin Opener"
-		title="Page Layout"
-		className="page-template-modal__sidebar"
-	>
-		<SidebarTemplatesPlugin
-			templates={ templates }
-			vertical={ vertical }
-			segment={ segment }
-			siteInformation={ siteInformation }
-		/>
-	</PluginDocumentSettingPanel>
-);
-
+// Always register ability to open from document sidebar.
 registerPlugin( 'page-templates-sidebar', {
-	render: PluginDocumentSettingPanelDemo,
+	render: () => {
+		return (
+			<PluginDocumentSettingPanel
+				name="Template Modal Opener"
+				title={ __( 'Page Layout' ) }
+				className="page-template-modal__sidebar"
+				icon="admin-page"
+			>
+				<SidebarTemplatesPlugin
+					templates={ templates }
+					vertical={ vertical }
+					segment={ segment }
+					siteInformation={ siteInformation }
+				/>
+			</PluginDocumentSettingPanel>
+		);
+	},
 } );

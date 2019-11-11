@@ -46,7 +46,7 @@ class SidebarModalOpener extends Component {
 		return (
 			<div className="sidebar-modal-opener">
 				<TemplateSelectorItem
-					id="sidebar-modal-opener__template-preview"
+					id="sidebar-modal-opener__last-template-used-preview"
 					value={ slug }
 					label={ replacePlaceholders( title, siteInformation ) }
 					staticPreviewImg={ preview }
