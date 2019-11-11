@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { URL as URLString } from 'types';
-import { Falsy } from 'utility-types';
 
 /**
  * Internal dependencies
@@ -22,11 +21,15 @@ const BASE_URL = 'http://__domain__.invalid/';
  * @returns The formatted URL.
  */
 export default function format(
-	url: URLString | URL | Falsy,
+	url: URLString | URL,
 	urlType?: Exclude< URL_TYPE, URL_TYPE.INVALID | URL_TYPE.PATH_RELATIVE >
 ): URLString {
 	let parsed: URL;
 	let originalType: URL_TYPE;
+
+	if ( ! ( url instanceof URL ) && typeof url !== 'string' ) {
+		throw new Error( '`url` should be a string or URL instance' );
+	}
 
 	if ( url instanceof URL ) {
 		// The native URL object can only represent absolute URLs.
