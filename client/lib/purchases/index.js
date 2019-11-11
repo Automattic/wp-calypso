@@ -18,7 +18,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
-	isJetpackProduct,
 	isPlan,
 	isTheme,
 	isConciergeSession,
@@ -74,7 +73,7 @@ function getName( purchase ) {
 }
 
 function getDisplayName( purchase ) {
-	if ( isJetpackProduct( purchase ) && JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
+	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
 		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
 	}
 	return getName( purchase );
