@@ -29,7 +29,7 @@ ProductCardAction.propTypes = {
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	href: PropTypes.string,
-	primary: PropTypes.boolean,
+	isPrimary: PropTypes.boolean,
 };
 
 ProductCardAction.defaultProps = {
