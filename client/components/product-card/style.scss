@@ -204,10 +204,16 @@
 	line-height: 20px;
 	color: var( --color-text-subtle );
 
-	a {
+	a:not( .button ) {
 		@extend %product-card-link-plain;
 	}
-
+	.button {
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		max-width: 200px;
+		text-align: center;
+	}
 	p:last-child {
 		margin: 0;
 	}
