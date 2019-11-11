@@ -9,12 +9,11 @@
 		}
 
 		@include breakpoint( '<660px' ) {
-			margin-top: 18px;
+			margin-top: 24px;
+			margin-right: 15px;
 		}
 
 		@include breakpoint( '<480px' ) {
-			margin-top: 24px;
-			margin-right: 15px;
 			font-size: 0;
 			.gridicon {
 				padding: 0;
