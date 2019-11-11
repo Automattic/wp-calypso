@@ -12,6 +12,8 @@ import { SharingService, connectFor } from 'my-sites/marketing/connections/servi
 
 export class Facebook extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 	};
 
