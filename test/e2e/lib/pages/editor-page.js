@@ -173,7 +173,9 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal__navigation .section-header__actions' )
+			by.css(
+				'.editor-simple-payments-modal__navigation .section-header__actions .gridicons-plus-small'
+			)
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
