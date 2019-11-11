@@ -62,7 +62,7 @@ const ProductCard = ( {
 			<div className="product-card__description">
 				{ description && <p>{ description }</p> }
 				{ purchase && (
-					<div class="product-card__action">
+					<div className="product-card__action">
 						<Button
 							className="product-card__action-button"
 							href={ managePurchase( purchase.domain, purchase.id ) }
