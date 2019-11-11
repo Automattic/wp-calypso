@@ -15,21 +15,21 @@ module.exports = {
 		{
 			files: [ 'bin/**/*' ],
 			rules: {
-				'import/no-nodejs-modules': 0,
-				'no-console': 0,
-				'no-process-exit': 0,
-				'valid-jsdoc': 0,
+				'import/no-nodejs-modules': 'off',
+				'no-console': 'off',
+				'no-process-exit': 'off',
+				'valid-jsdoc': 'off',
 			},
 		},
 		{
 			files: [ 'test/e2e/**/*' ],
 			rules: {
-				'import/no-nodejs-modules': 0,
-				'import/no-extraneous-dependencies': 0,
-				'no-console': 0,
-				'jest/valid-describe': 0,
-				'jest/no-test-prefixes': 0,
-				'jest/no-identical-title': 0,
+				'import/no-nodejs-modules': 'off',
+				'import/no-extraneous-dependencies': 'off',
+				'no-console': 'off',
+				'jest/valid-describe': 'off',
+				'jest/no-test-prefixes': 'off',
+				'jest/no-identical-title': 'off',
 			},
 			globals: {
 				step: false,
@@ -95,16 +95,16 @@ module.exports = {
 	},
 	rules: {
 		// REST API objects include underscores
-		camelcase: 0,
+		camelcase: 'off',
 
 		// TODO: why did we turn this off?
-		'jest/valid-expect': 0,
+		'jest/valid-expect': 'off',
 
 		// Deprecated rule, fails in some valid cases with custom input components
-		'jsx-a11y/label-has-for': 0,
+		'jsx-a11y/label-has-for': 'off',
 
 		// i18n-calypso translate triggers false failures
-		'jsx-a11y/anchor-has-content': 0,
+		'jsx-a11y/anchor-has-content': 'off',
 
 		'no-restricted-imports': [
 			2,
@@ -152,7 +152,7 @@ module.exports = {
 		],
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
-		'no-unused-expressions': 0,
+		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
 
