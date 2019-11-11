@@ -205,24 +205,19 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
-			recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
-				token => {
-					this.submit( {
-						userData,
-						form: formWithoutPassword,
-						queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-						recaptchaToken: token,
-					} );
-				}
-			);
-		} else {
+		const recaptchaPromise =
+			'show' === abtest( 'userStepRecaptcha' )
+				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+				: Promise.resolve();
+
+		recaptchaPromise.then( token => {
 			this.submit( {
 				userData,
 				form: formWithoutPassword,
 				queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+				recaptchaToken: token || undefined,
 			} );
-		}
+		} );
 	};
 
 	/**

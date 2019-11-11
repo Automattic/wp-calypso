@@ -78,34 +78,24 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
-			recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
-				recaptchaToken => {
-					wpcom
-						.undocumented()
-						.createUserAccountFromEmailAddress(
-							{
-								email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-								'g-recaptcha-response': recaptchaToken,
-							},
-							null
-						)
-						.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-						.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
-				}
-			);
-		} else {
+		const recaptchaPromise =
+			'show' === abtest( 'userStepRecaptcha' )
+				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+				: Promise.resolve();
+
+		recaptchaPromise.then( recaptchaToken => {
 			wpcom
 				.undocumented()
 				.createUserAccountFromEmailAddress(
 					{
 						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+						'g-recaptcha-response': recaptchaToken || undefined,
 					},
 					null
 				)
 				.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
 				.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
-		}
+		} );
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {
