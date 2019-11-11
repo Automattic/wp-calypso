@@ -12,7 +12,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
-
+import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 /**
  * Internal dependencies
  */
@@ -127,6 +127,7 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
+		this.props.togglePlugin();
 	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
@@ -290,4 +291,51 @@ registerPlugin( 'page-templates', {
 			/>
 		);
 	},
+} );
+
+class SidebarTemplateOpener extends Component {
+	state = {
+		isOpen: false,
+	};
+
+	togglePlugin = () => {
+		this.setState( { isOpen: ! this.state.isOpen } );
+	};
+
+	render() {
+		return (
+			<>
+				{ this.state.isOpen ? (
+					<PageTemplatesPlugin
+						shouldPrefetchAssets={ false }
+						templates={ templates }
+						vertical={ vertical }
+						segment={ segment }
+						togglePlugin={ this.togglePlugin }
+					/>
+				) : (
+					<button
+						onClick={ this.togglePlugin }
+						className="page-template-modal__sidebar-button components-button components-icon-button is-button is-default"
+					>
+						Open Layout Selector
+					</button>
+				) }
+			</>
+		);
+	}
+}
+
+const PluginDocumentSettingPanelDemo = () => (
+	<PluginDocumentSettingPanel
+		name="Template Plugin Opener"
+		title="Choose a Layout"
+		className="page-template-modal__sidebar"
+	>
+		<SidebarTemplateOpener />
+	</PluginDocumentSettingPanel>
+);
+
+registerPlugin( 'page-templates-sidebar', {
+	render: PluginDocumentSettingPanelDemo,
 } );
