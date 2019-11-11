@@ -160,7 +160,7 @@ export class UserStep extends Component {
 
 		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate(
-				"Create an account and answer a few questions about what you want to build. We'll start you off with a new site tailored to your choices."
+				'Create an account and answer a few questions about what you want to build, so we can start you off with a custom site.'
 			);
 		}
 
