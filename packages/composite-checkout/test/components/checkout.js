@@ -16,9 +16,8 @@ import {
 	CheckoutProvider,
 	useSelect,
 	useDispatch,
-	useRegistry,
 	createRegistry,
-	useConstructor,
+	useRegisterStore,
 } from '../../src/public-api';
 
 const noop = () => {};
@@ -336,8 +335,8 @@ function createMockMethod() {
 	};
 }
 
-const createMockStore = ( { registerStore } ) => {
-	registerStore( 'mock', {
+function MockPaymentForm( { summary } ) {
+	useRegisterStore( 'mock', {
 		reducer( state = {}, action ) {
 			switch ( action.type ) {
 				case 'CARDHOLDER_NAME_SET':
@@ -356,11 +355,6 @@ const createMockStore = ( { registerStore } ) => {
 			},
 		},
 	} );
-};
-
-function MockPaymentForm( { summary } ) {
-	const registry = useRegistry();
-	useConstructor( () => createMockStore( registry ) );
 	const cardholderName = useSelect( select => select( 'mock' ).getCardholderName() );
 	const { changeCardholderName } = useDispatch( 'mock' );
 	return (
