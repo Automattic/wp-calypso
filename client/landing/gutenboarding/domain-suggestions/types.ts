@@ -4,6 +4,17 @@
 }
 export { ActionType };
 
+export interface DomainSuggestion {
+	domain_name: string;
+	relevance: number; // Percentage, <= 1
+	supports_privacy: boolean;
+	vendor: string; // List of possible values? E.g. "dotdomains"
+	match_reasons: string[]; // E.g. [ "exact-match" ]
+	cost: string; // With currency, e.g. "€15.00"
+	product_id: number;
+	product_slug: string; // List of possible values? E.g. "dotart_domain"
+}
+
 /**
  * Parameters type of a function, excluding the first parameter.
  *
