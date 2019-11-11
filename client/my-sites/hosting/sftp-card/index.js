@@ -23,12 +23,12 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	requestAtomicSftpUser,
 	createAtomicSftpUser,
-	resetAtomicSFTPPassword,
+	resetAtomicSftpPassword,
 	updateAtomicSftpUser,
 } from 'state/hosting/actions';
 import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
-const SFTPCard = ( {
+const SftpCard = ( {
 	translate,
 	username,
 	password,
@@ -38,7 +38,7 @@ const SFTPCard = ( {
 	currentUserId,
 	requestSftpUser,
 	createSftpUser,
-	resetSFTPPassword,
+	resetSftpPassword,
 	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
@@ -55,7 +55,7 @@ const SFTPCard = ( {
 
 	const resetPassword = () => {
 		setIsLoading( true );
-		resetSFTPPassword( siteId, currentUserId );
+		resetSftpPassword( siteId, currentUserId );
 	};
 
 	const createUser = () => {
@@ -209,7 +209,7 @@ export default connect(
 	{
 		requestSftpUser: requestAtomicSftpUser,
 		createSftpUser: createAtomicSftpUser,
-		resetSFTPPassword: resetAtomicSFTPPassword,
+		resetSftpPassword: resetAtomicSftpPassword,
 		removePasswordFromState: updateAtomicSftpUser,
 	}
-)( localize( SFTPCard ) );
+)( localize( SftpCard ) );
