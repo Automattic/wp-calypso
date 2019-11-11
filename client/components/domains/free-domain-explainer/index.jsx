@@ -28,9 +28,8 @@ class FreeDomainExplainer extends React.Component {
 						next page.
 					</p>
 					<p className="free-domain-explainer__subtitle">
-						If you’d like a free domain but aren't ready to choose, that’s no problem. Click here to
-						start with a default WordPress.com domain, and can claim your free custom domain when
-						you’re ready.
+						If you're not ready to choose, you can skip this step for now and claim your free custom
+						domain when you're ready. Review our plan options to get started,
 					</p>
 				</header>
 			</div>
