@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { moment } from 'moment';
+import moment from 'moment';
 
 /**
  * Internal dependencies
