@@ -1,6 +1,11 @@
 .data-loss-warning {
 	margin-top: 40px;
 
+	@include breakpoint( '<660px' ) {
+		padding: 24px;
+		margin-top: 0;
+	}
+
 	h2 {
 		font-size: 21px;
 		font-weight: 400;
