@@ -1,35 +1,37 @@
-/** @format */
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'lib/load-script/callback-handler' );
 
 /**
- * Module variables
+ * Internal dependencies
  */
-const callbacksForURLsInProgress = new Map();
+import { ScriptCallback } from './types';
+
+const debug = debugFactory( 'load-script:callback-handler' );
+const callbacksForURLsInProgress = new Map< string, Set< ScriptCallback > >();
 
 export function getCallbacksMap() {
 	return callbacksForURLsInProgress;
 }
 
-export function isLoading( url ) {
+export function isLoading( url: string ) {
 	return getCallbacksMap().has( url );
 }
 
-export function addScriptCallback( url, callback ) {
+export function addScriptCallback( url: string, callback: ScriptCallback ) {
 	const callbacksMap = getCallbacksMap();
 	if ( isLoading( url ) ) {
 		debug( `Adding a callback for an existing script from "${ url }"` );
-		callbacksMap.get( url ).add( callback );
+		// isLoading implies that we have a Set for the given url.
+		( callbacksMap.get( url ) as Set< ScriptCallback > ).add( callback );
 	} else {
 		debug( `Adding a callback for a new script from "${ url }"` );
 		callbacksMap.set( url, new Set( [ callback ] ) );
 	}
 }
 
-export function removeScriptCallback( url, callback ) {
+export function removeScriptCallback( url: string, callback: ScriptCallback ) {
 	debug( `Removing a known callback for a script from "${ url }"` );
 
 	if ( ! isLoading( url ) ) {
@@ -37,7 +39,8 @@ export function removeScriptCallback( url, callback ) {
 	}
 
 	const callbacksMap = getCallbacksMap();
-	const callbacksAtUrl = callbacksMap.get( url );
+	// isLoading implies that we have a Set for the given url.
+	const callbacksAtUrl = callbacksMap.get( url ) as Set< ScriptCallback >;
 	callbacksAtUrl.delete( callback );
 
 	if ( callbacksAtUrl.size === 0 ) {
@@ -45,7 +48,7 @@ export function removeScriptCallback( url, callback ) {
 	}
 }
 
-export function removeScriptCallbacks( url ) {
+export function removeScriptCallbacks( url: string ) {
 	debug( `Removing all callbacks for a script from "${ url }"` );
 	getCallbacksMap().delete( url );
 }
@@ -55,7 +58,7 @@ export function removeAllScriptCallbacks() {
 	getCallbacksMap().clear();
 }
 
-export function executeCallbacks( url, error = null ) {
+export function executeCallbacks( url: string, error: Error | null = null ) {
 	const callbacksMap = getCallbacksMap();
 	const callbacksForUrl = callbacksMap.get( url );
 
@@ -75,16 +78,14 @@ export function executeCallbacks( url, error = null ) {
 	}
 }
 
-export function handleRequestSuccess() {
-	const url = this.getAttribute( 'src' );
+export function handleRequestSuccess( this: HTMLScriptElement ) {
+	const url = this.src;
 	debug( `Handling successful request for "${ url }"` );
 	executeCallbacks( url );
-	this.onload = null;
 }
 
-export function handleRequestError() {
-	const url = this.getAttribute( 'src' );
+export function handleRequestError( this: HTMLScriptElement ) {
+	const url = this.src;
 	debug( `Handling failed request for "${ url }"` );
 	executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
-	this.onerror = null;
 }

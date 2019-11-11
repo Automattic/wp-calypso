@@ -1,21 +1,20 @@
-/** @format */
 /**
  * A little module for loading a external script
- *
- * @format
  */
 
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'package/load-script' );
 
 /**
  * Internal dependencies
  */
 import { addScriptCallback, isLoading } from './callback-handler';
 import { createScriptElement, attachToHead } from './dom-operations';
+import { ScriptCallback } from './types';
+
+const debug = debugFactory( 'package/load-script' );
 
 // NOTE: This exists for compatibility.
 export { removeScriptCallback } from './callback-handler';
@@ -25,11 +24,19 @@ export { removeScriptCallback } from './callback-handler';
  */
 export const JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js';
 
-//
-// loadScript and loadjQueryDependentScript
-//
-
-export function loadScript( url, callback ) {
+/**
+ *
+ * @param url      Script URL
+ * @param callback Callback invoked on load or error
+ */
+export function loadScript( url: string, callback: ScriptCallback ): void;
+/**
+ * Load a script, returns a Promise
+ *
+ * @param url Script URL
+ */
+export function loadScript( url: string ): Promise< void >;
+export function loadScript( url: string, callback?: ScriptCallback ): void | Promise< void > {
 	// If this script is not currently being loaded, create a script element and attach to document head.
 	const shouldLoadScript = ! isLoading( url );
 	if ( shouldLoadScript ) {
@@ -56,10 +63,10 @@ export function loadScript( url, callback ) {
 	} );
 }
 
-export function loadjQueryDependentScript( url, callback ) {
+export function loadjQueryDependentScript( url: string, callback: ScriptCallback ) {
 	debug( `Loading a jQuery dependent script from "${ url }"` );
 
-	if ( window.jQuery ) {
+	if ( ( window as { jQuery?: unknown } ).jQuery ) {
 		debug( `jQuery found on window, skipping jQuery script loading for "${ url }"` );
 		return loadScript( url, callback );
 	}

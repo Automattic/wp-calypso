@@ -1,28 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'lib/load-script/dom-operations' );
 
 /**
  * Internal dependencies
  */
 import { handleRequestError, handleRequestSuccess } from './callback-handler';
 
-export function createScriptElement( url ) {
+const debug = debugFactory( 'lib/load-script/dom-operations' );
+
+export function createScriptElement( url: string ) {
 	debug( `Creating script element for "${ url }"` );
 	const script = document.createElement( 'script' );
 	script.src = url;
 	script.type = 'text/javascript';
 	script.async = true;
-	script.onload = handleRequestSuccess;
-	script.onerror = handleRequestError;
+	script.addEventListener( 'load', handleRequestSuccess, { once: true } );
+	script.addEventListener( 'error', handleRequestError, { once: true } );
 	return script;
 }
 
-export function attachToHead( element ) {
+export function attachToHead( node: Node ) {
 	debug( 'Attaching element to head' );
-	document.head.appendChild( element );
+	document.head.appendChild( node );
 }
