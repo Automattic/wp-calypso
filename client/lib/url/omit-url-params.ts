@@ -25,11 +25,15 @@ export default function omitUrlParams(
 	url: URLString | Falsy,
 	paramsToOmit: string | string[]
 ): URLString | null {
-	const urlType = determineUrlType( url );
-
-	if ( ! url || urlType === URL_TYPE.INVALID ) {
+	if ( ! url ) {
 		// Note that we return null for the valid empty string URL.
 		// This is done to maintain compatibility with the previous implementation.
+		return null;
+	}
+
+	const urlType = determineUrlType( url );
+
+	if ( urlType === URL_TYPE.INVALID ) {
 		return null;
 	}
 
