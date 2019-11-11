@@ -202,14 +202,10 @@ export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-export function isJetpackProduct( product, type_of_product = null ) {
-	let jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
-
-	switch ( type_of_product ) {
-		case 'backup':
-			jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
-			break;
-	}
+export function isJetpackProduct( product ) {
+	// When we update the jetpack products list.
+	// Make sure that we update isJetpackBackups to continoue to be work.
+	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -218,7 +214,7 @@ export function isJetpackProduct( product, type_of_product = null ) {
 }
 
 export function isJetpackBackup( product ) {
-	return isJetpackProduct( product, 'backup' );
+	return isJetpackProduct( product );
 }
 
 export function isMonthly( rawProduct ) {
