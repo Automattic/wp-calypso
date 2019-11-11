@@ -37,7 +37,8 @@ export class ProductSelector extends Component {
 		this.state = {
 			...products.reduce( ( acc, product ) => {
 				map( product.options, ( slugs, interval ) => {
-					acc[ this.getStateKey( product.id, interval ) ] = slugs[ 0 ];
+					// Default to the last option as the selected one
+					acc[ this.getStateKey( product.id, interval ) ] = slugs[ slugs.length - 1 ];
 				} );
 				return acc;
 			}, {} ),
