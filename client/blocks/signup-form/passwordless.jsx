@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
@@ -77,21 +78,34 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
-			recaptchaToken => {
-				wpcom
-					.undocumented()
-					.createUserAccountFromEmailAddress(
-						{
-							email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-							'g-recaptcha-response': recaptchaToken,
-						},
-						null
-					)
-					.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-					.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
-			}
-		);
+		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
+			recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
+				recaptchaToken => {
+					wpcom
+						.undocumented()
+						.createUserAccountFromEmailAddress(
+							{
+								email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+								'g-recaptcha-response': recaptchaToken,
+							},
+							null
+						)
+						.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
+						.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+				}
+			);
+		} else {
+			wpcom
+				.undocumented()
+				.createUserAccountFromEmailAddress(
+					{
+						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					},
+					null
+				)
+				.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
+				.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+		}
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {

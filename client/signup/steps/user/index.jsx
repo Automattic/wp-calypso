@@ -12,6 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
@@ -49,7 +50,7 @@ export class UserStep extends Component {
 		submitting: false,
 		subHeaderText: '',
 		recaptchaClientId: null,
-		isLoadingRecaptcha: true,
+		isLoadingRecaptcha: 'show' === abtest( 'userStepRecaptcha' ) ? true : false,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -77,7 +78,11 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		initGoogleRecaptcha( 'g-recaptcha', 'calypso/signup/pageLoad' ).then( this.saveRecaptchaToken );
+		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
+			initGoogleRecaptcha( 'g-recaptcha', 'calypso/signup/pageLoad' ).then(
+				this.saveRecaptchaToken
+			);
+		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
@@ -200,16 +205,24 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
-			token => {
-				this.submit( {
-					userData,
-					form: formWithoutPassword,
-					queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-					recaptchaToken: token,
-				} );
-			}
-		);
+		if ( 'show' === abtest( 'userStepRecaptcha' ) ) {
+			recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
+				token => {
+					this.submit( {
+						userData,
+						form: formWithoutPassword,
+						queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+						recaptchaToken: token,
+					} );
+				}
+			);
+		} else {
+			this.submit( {
+				userData,
+				form: formWithoutPassword,
+				queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			} );
+		}
 	};
 
 	/**
