@@ -62,11 +62,14 @@ const ProductCard = ( {
 			<div className="product-card__description">
 				{ description && <p>{ description }</p> }
 				{ purchase && (
-					<p>
-						<Button href={ managePurchase( purchase.domain, purchase.id ) }>
+					<div class="product-card__action">
+						<Button
+							className="product-card__action-button"
+							href={ managePurchase( purchase.domain, purchase.id ) }
+						>
 							{ translate( 'Manage Subscription' ) }
 						</Button>
-					</p>
+					</div>
 				) }
 			</div>
 			{ children }
