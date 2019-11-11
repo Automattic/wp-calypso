@@ -365,11 +365,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		'rewind-add-creds': {
-			stepName: 'rewind-add-creds',
-			providesDependencies: [],
-		},
-
 		'rewind-form-creds': {
 			stepName: 'rewind-form-creds',
 			providesDependencies: [ 'rewindconfig' ],
