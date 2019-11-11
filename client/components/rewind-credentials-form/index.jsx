@@ -154,7 +154,7 @@ export class RewindCredentialsForm extends Component {
 				<QueryRewindState siteId={ siteId } />
 				<div className="rewind-credentials-form__instructions">
 					{ translate(
-						'Please get your credentials from your hosting provider. Their website should explain how to get or create the credentials you need. {{link}}Check out our handy guide{{/link}}',
+						'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Check out our handy guide for more info{{/link}}.',
 						{
 							components: {
 								link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,
@@ -305,6 +305,12 @@ export class RewindCredentialsForm extends Component {
 						</div>
 					) }
 				</FormFieldset>
+
+				<div className="rewind-credentials-form__tos">
+					{ translate(
+						'By adding credentials, you are providing us with access to your server to perform automatic actions (such as backing up or restoring your site), manually access your site in case of an emergency, and troubleshoot your support requests.'
+					) }
+				</div>
 
 				<FormFieldset>
 					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
