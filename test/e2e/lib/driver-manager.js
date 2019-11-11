@@ -88,6 +88,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
 		const caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
+		builder = new webdriver.Builder();
 
 		caps.username = config.get( 'sauceUsername' );
 		caps.accessKey = config.get( 'sauceAccessKey' );
@@ -108,13 +109,17 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( process.env.CIRCLE_BUILD_NUM ) {
 			caps.name += ' - CircleCI Build #' + process.env.CIRCLE_BUILD_NUM;
 		}
+		if ( caps.browserName === 'chrome' ) {
+			options = new chrome.Options();
+			options.addArguments( '--app=https://www.wordpress.com' );
+			builder.setChromeOptions( options );
+		}
 
 		global._sauceLabs = new SauceLabs( {
 			username: caps.username,
 			password: caps.accessKey,
 		} );
 
-		builder = new webdriver.Builder();
 		global.browserName = caps.browserName;
 		global.__BROWSER__ = driver = builder
 			.usingServer( sauceURL )
@@ -217,25 +222,25 @@ export async function resizeBrowser( driver, screenSize ) {
 				await driver
 					.manage()
 					.window()
-					.setRect( { width: 400, height: 1000 } );
+					.setRect( { x: 0, y: 0, width: 400, height: 1000 } );
 				break;
 			case 'tablet':
 				await driver
 					.manage()
 					.window()
-					.setRect( { width: 1024, height: 1000 } );
+					.setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
 				break;
 			case 'desktop':
 				await driver
 					.manage()
 					.window()
-					.setRect( { width: 1440, height: 1000 } );
+					.setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
 				break;
 			case 'laptop':
 				await driver
 					.manage()
 					.window()
-					.setRect( { width: 1400, height: 790 } );
+					.setRect( { x: 0, y: 0, width: 1400, height: 790 } );
 				break;
 			default:
 				throw new Error(
