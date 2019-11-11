@@ -6,6 +6,7 @@ import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { Button, Modal } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
@@ -16,12 +17,15 @@ import replacePlaceholders from '../utils/replace-placeholders';
 
 export class SidebarTemplateOpener extends Component {
 	state = {
-		isOpen: false,
+		isTemplateModalOpen: false,
 		isWarningOpen: false,
 	};
 
 	togglePlugin = () => {
-		this.setState( { isOpen: ! this.state.isOpen, isWarningOpen: false } );
+		this.setState( {
+			isTemplateModalOpen: ! this.state.isTemplateModalOpen,
+			isWarningOpen: false,
+		} );
 	};
 
 	toggleWarningModal = () => {
@@ -48,7 +52,7 @@ export class SidebarTemplateOpener extends Component {
 					justifyContent: 'center',
 				} }
 			>
-				{ this.state.isOpen ? (
+				{ this.state.isTemplateModalOpen ? (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
@@ -60,22 +64,22 @@ export class SidebarTemplateOpener extends Component {
 				) : null }
 				{ this.state.isWarningOpen ? (
 					<Modal
-						title="Are You Sure?"
-						// labelledby="Changing the page's layout will remove any customizations or edits you have already made."
+						title={ __( 'Are You Sure?' ) }
 						isDismissible={ false }
 						onRequestClose={ this.toggleWarningModal }
 						className="sidebar-modal-opener__warning-modal"
 					>
 						<div className="sidebar-modal-opener__warning-text">
-							Changing the page's layout will remove any customizations or edits you have already
-							made.
+							{ __(
+								`Changing the page's layout will remove any customizations or edits you have already made.`
+							) }
 						</div>
 						<div className="sidebar-modal-opener__warning-options">
 							<Button isDefault onClick={ this.toggleWarningModal }>
-								Cancel
+								{ __( 'Cancel' ) }
 							</Button>
 							<Button isPrimary onClick={ this.togglePlugin }>
-								Change Layout
+								{ __( 'Change Layout' ) }
 							</Button>
 						</div>
 					</Modal>
@@ -94,7 +98,7 @@ export class SidebarTemplateOpener extends Component {
 					onClick={ this.toggleWarningModal }
 					className="sidebar-modal-opener__button"
 				>
-					Change Layout
+					{ __( 'Change Layout' ) }
 				</Button>
 			</div>
 		);
