@@ -23,7 +23,7 @@ import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getFancyName,
+	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
@@ -414,7 +414,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getFancyName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (

@@ -73,11 +73,9 @@ function getName( purchase ) {
 	return purchase.productName;
 }
 
-function getFancyName( purchase ) {
-	if ( isJetpackProduct( purchase ) ) {
-		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ]
-			? JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ]
-			: getName( purchase );
+function getDisplayName( purchase ) {
+	if ( isJetpackProduct( purchase ) && JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
+		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
 	}
 	return getName( purchase );
 }
@@ -449,7 +447,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
-	getFancyName,
+	getDisplayName,
 	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
