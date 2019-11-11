@@ -84,12 +84,24 @@ export function ApplePayLabel() {
 }
 
 export function ApplePaySubmitButton() {
+	const localize = useLocalize();
 	const { onSuccess } = useCheckoutHandlers();
 	const paymentRequestOptions = usePaymentRequestOptions();
-	const { paymentRequest } = useStripePaymentRequest( {
+	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit: onSuccess,
 	} );
+
+	if ( ! canMakePayment ) {
+		return (
+			<PaymentRequestButton
+				paymentRequest={ paymentRequest }
+				paymentType="apple-pay"
+				disabled
+				disabledReason={ localize( 'This payment type is not supported' ) }
+			/>
+		);
+	}
 
 	return <PaymentRequestButton paymentRequest={ paymentRequest } paymentType="apple-pay" />;
 }
