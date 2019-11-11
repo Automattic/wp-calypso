@@ -9,7 +9,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { ActionType, DomainSuggestion } from './types';
 import * as Actions from './actions';
-import { getSerializedDomainsSuggestionsQuery } from 'client/state/domains/suggestions/utils';
+import { getSerializedDomainsSuggestionsQuery } from 'state/domains/suggestions/utils';
 
 const domainSuggestions: Reducer<
 	DomainSuggestion[],
