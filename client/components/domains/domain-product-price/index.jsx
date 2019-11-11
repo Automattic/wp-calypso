@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -48,9 +49,18 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				message = translate( 'First year included in paid plans' );
-				if ( isMappingProduct ) {
-					message = translate( 'Included in paid plans' );
+				if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
+					message = (
+						<>
+							Registration fee: <del>{ this.props.price }</del>{' '}
+							<span className="domain-product-price__free-price">Free</span>
+						</>
+					);
+				} else {
+					message = translate( 'First year included in paid plans' );
+					if ( isMappingProduct ) {
+						message = translate( 'Included in paid plans' );
+					}
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
@@ -66,14 +76,17 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		return (
-			<div className="domain-product-price__price">
-				{ this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
-					args: { cost: this.props.price },
-					components: { small: <small /> },
-				} ) }
-			</div>
-		);
+		let priceText;
+		if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
+			priceText = `Renews at ${ this.props.price }/year`;
+		} else {
+			priceText = this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+				args: { cost: this.props.price },
+				components: { small: <small /> },
+			} );
+		}
+
+		return <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
 	renderFreeWithPlan() {
