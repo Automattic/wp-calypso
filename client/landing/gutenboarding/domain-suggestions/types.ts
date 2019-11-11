@@ -12,6 +12,8 @@ export interface DomainSuggestionQuery {
 	include_wordpressdotcom?: boolean; // adds wordpress subdomain suggestions when true
 }
 
+export type SerializedDomainsSuggestionsQuery = string;
+
 export interface DomainSuggestion {
 	domain_name: string;
 	relevance: number; // Percentage, <= 1
