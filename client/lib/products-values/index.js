@@ -202,8 +202,14 @@ export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-export function isJetpackProduct( product ) {
-	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+export function isJetpackProduct( product, type_of_product = null ) {
+	let jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+
+	switch ( type_of_product ) {
+		case 'backup':
+			jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+			break;
+	}
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -212,12 +218,7 @@ export function isJetpackProduct( product ) {
 }
 
 export function isJetpackBackup( product ) {
-	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
-
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return includes( jetpackProducts, product.product_slug );
+	return isJetpackProduct( product, 'backup' );
 }
 
 export function isMonthly( rawProduct ) {
