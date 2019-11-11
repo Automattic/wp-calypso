@@ -16,39 +16,40 @@ import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { useSelect, useDispatch, registerStore } from '../lib/registry';
+import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
 
-// Register a primary store
-registerStore( 'checkout', {
-	reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
-		switch ( action.type ) {
-			case 'STEP_NUMBER_SET':
-				return { ...state, stepNumber: action.payload };
-			case 'PAYMENT_DATA_UPDATE':
-				return {
-					...state,
-					paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
-				};
-		}
-		return state;
-	},
-	actions: {
-		changeStep( payload ) {
-			return { type: 'STEP_NUMBER_SET', payload };
+function useRegisterCheckoutStore() {
+	useRegisterStore( 'checkout', {
+		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+			switch ( action.type ) {
+				case 'STEP_NUMBER_SET':
+					return { ...state, stepNumber: action.payload };
+				case 'PAYMENT_DATA_UPDATE':
+					return {
+						...state,
+						paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
+					};
+			}
+			return state;
 		},
-		updatePaymentData( key, value ) {
-			return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
+		actions: {
+			changeStep( payload ) {
+				return { type: 'STEP_NUMBER_SET', payload };
+			},
+			updatePaymentData( key, value ) {
+				return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
+			},
 		},
-	},
-	selectors: {
-		getStepNumber( state ) {
-			return state.stepNumber;
+		selectors: {
+			getStepNumber( state ) {
+				return state.stepNumber;
+			},
+			getPaymentData( state ) {
+				return state.paymentData;
+			},
 		},
-		getPaymentData( state ) {
-			return state.paymentData;
-		},
-	},
-} );
+	} );
+}
 
 export default function Checkout( {
 	availablePaymentMethods,
@@ -57,6 +58,7 @@ export default function Checkout( {
 	OrderSummary,
 	className,
 } ) {
+	useRegisterCheckoutStore();
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
 	const { changeStep } = useDispatch( 'checkout' );
 

@@ -68,7 +68,7 @@ Here is a very simple example of using the `Checkout` component with default opt
 
 ```js
 import React, { useState } from 'react';
-import { Checkout, registerStore } from '@automattic/composite-checkout';
+import { Checkout } from '@automattic/composite-checkout';
 import { formatValueForCurrency } from 'composite-checkout/wpcom';
 
 const initialItems = [
@@ -99,7 +99,7 @@ async function makePayPalExpressRequest() {
 	return 'https://paypal.com';
 }
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+const paypalMethod = createPayPalMethod( { makePayPalExpressRequest } );
 
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
@@ -154,7 +154,6 @@ import {
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
-	registerStore,
 } from '@automattic/composite-checkout';
 import {
 	PlanLengthSelector,
@@ -194,7 +193,7 @@ async function makePayPalExpressRequest() {
 	return 'https://paypal.com';
 }
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+const paypalMethod = createPayPalMethod( { makePayPalExpressRequest } );
 
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
@@ -417,7 +416,11 @@ Within the components, the Hook `usePaymentMethod()` will return an object of th
 
 ## Data Stores
 
-Each Payment Method (or anything at all, really) can access a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
+Each Payment Method or component can create a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. These functions can be accessed by calling the `useRegistry` hook. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
+
+In addition to the features of that package, we provide a `useRegisterStore` hook which takes the same arguments as `registerStore` and will allow creating a new store just before a component first renders.
+
+The registry used for these stores is created by default in `CheckoutProvider` but you can use a custom one by including the `registry` prop on that component.
 
 ## API
 
@@ -457,6 +460,7 @@ It has the following props.
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
 - paymentMethods: array (required)
+- registry: object (optional)
 
 The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
 
@@ -467,6 +471,8 @@ The line items are for display purposes only. They should also include subtotals
 The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
 `paymentMethods` is an array of Payment Method objects.
+
+`registry` is an object returned by `createRegistry`. If not provided, a default registry will be created.
 
 ### CheckoutReviewOrder
 

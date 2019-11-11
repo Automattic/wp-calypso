@@ -20,20 +20,18 @@ import { useLineItems, useTotal } from './lib/line-items';
 import { useLocalize } from './lib/localize';
 import {
 	createRegistry,
+	useRegistry,
+	useRegisterStore,
 	useSelect,
 	useDispatch,
-	registerStore,
-	subscribe,
-	dispatch,
-	select,
 } from './lib/registry';
 import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
 import WPCheckoutOrderReview from './components/wp-checkout-order-review';
 
 // Re-export the public API
 export {
-	createRegistry,
 	Checkout,
+	createRegistry,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
@@ -47,12 +45,10 @@ export {
 	useCheckoutRedirects,
 	usePaymentMethod,
 	usePaymentMethodId,
+	useRegisterStore,
+	useRegistry,
 	useSelect,
 	useDispatch,
-	registerStore,
-	subscribe,
-	dispatch,
-	select,
 	useLocalize,
 	useTotal,
 	WPCheckoutOrderSummary,

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'styled-components';
 
@@ -11,7 +11,7 @@ import { ThemeProvider } from 'styled-components';
 import CheckoutContext from '../lib/checkout-context';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider } from '../lib/registry';
+import { RegistryProvider, createRegistry } from '../lib/registry';
 import defaultTheme from '../theme';
 
 export const CheckoutProvider = ( {
@@ -24,6 +24,7 @@ export const CheckoutProvider = ( {
 	failureRedirectUrl,
 	theme,
 	paymentMethods: allPaymentMethods,
+	registry,
 	children,
 } ) => {
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -40,6 +41,11 @@ export const CheckoutProvider = ( {
 	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+
+	// Create the registry automatically if it's not a prop
+	const registryRef = useRef( registry );
+	registryRef.current = registryRef.current || createRegistry();
+
 	const value = {
 		allPaymentMethods,
 		paymentMethodId,
@@ -52,7 +58,7 @@ export const CheckoutProvider = ( {
 	const { CheckoutWrapper = React.Fragment } = paymentMethod || {};
 	return (
 		<ThemeProvider theme={ theme || defaultTheme }>
-			<RegistryProvider>
+			<RegistryProvider value={ registryRef.current }>
 				<LocalizeProvider locale={ locale }>
 					<LineItemsProvider items={ items } total={ total }>
 						<CheckoutContext.Provider value={ value }>
@@ -67,6 +73,7 @@ export const CheckoutProvider = ( {
 
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
+	registry: PropTypes.object,
 	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
