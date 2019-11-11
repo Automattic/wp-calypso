@@ -34,11 +34,16 @@
 		"crc32": "0.2.2",
 		"debug": "^3.2.6",
 		"seed-random": "2.2.0",
-		"url": "^0.11.0"
+		"native-url": "0.2.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
 		"prepare": "transpile"
+	},
+	"resolve": {
+		"alias": {
+			"url": "native-url"
+		}
 	}
 }
