@@ -3,24 +3,18 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { SiteType, isFilledFormValue } from '../stores/onboard/types';
-import { STORE_KEY } from '../stores/onboard';
+import { isFilledFormValue } from '../store/types';
+import { STORE_KEY } from '../store';
 import VerticalSelect from './vertical-select';
+import SiteTypeSelect, { siteTypeOptions } from './site-type-select';
 import './style.scss';
-
-const siteTypeOptions: Record< SiteType, string > = {
-	[ SiteType.BLOG ]: NO__( 'with a blog' ),
-	[ SiteType.BUSINESS ]: NO__( 'for a business' ),
-	[ SiteType.PORTFOLIO ]: NO__( 'to share a portfolio' ),
-	[ SiteType.STORE ]: NO__( 'for a store' ),
-};
 
 interface StepProps {
 	isActive: boolean;
@@ -30,12 +24,6 @@ interface StepProps {
 
 const Step1 = ( { isActive, onExpand, onSelect }: StepProps ) => {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteType } = useDispatch( STORE_KEY );
-
-	const selectSiteType = e => {
-		setSiteType( e.target.value as SiteType );
-		onSelect();
-	};
 
 	return (
 		<>
@@ -45,21 +33,7 @@ const Step1 = ( { isActive, onExpand, onSelect }: StepProps ) => {
 					: NO__( 'Setting up a website ' ) }
 			</span>
 			{ isActive ? (
-				<ul className="onboarding-block__multi-question">
-					{ map( siteTypeOptions, ( label, value ) => (
-						<li key={ value } className={ value === siteType ? 'selected' : '' }>
-							<label>
-								<input
-									name="onboarding_site_type"
-									onChange={ selectSiteType }
-									type="radio"
-									value={ value }
-								/>
-								<span className="onboarding-block__multi-question-choice">{ label }</span>
-							</label>
-						</li>
-					) ) }
-				</ul>
+				<SiteTypeSelect onSelect={ onSelect } />
 			) : (
 				<div className="onboarding-block__multi-question">
 					<button className="onboarding-block__question-answered" onClick={ onExpand }>
