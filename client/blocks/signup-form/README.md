@@ -6,7 +6,7 @@ This block renders a Signup Form. It magically handles email, username, and pass
 #### Usage:
 
 A Signup Form instance expects `save` and `submitForm` properties, `save` is called `onBlur` of each field. `submitForm` is called when the form is submitted.
-OptionalTEST:
+Optional:
 redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
 disabled={ this.isDisabled() }
 submitting={ this.isSubmitting() }
