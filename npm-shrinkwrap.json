@@ -4578,6 +4578,16 @@
 				"@types/node": "*"
 			}
 		},
+		"@types/hoist-non-react-statics": {
+			"version": "3.3.1",
+			"resolved": "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz",
+			"integrity": "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==",
+			"dev": true,
+			"requires": {
+				"@types/react": "*",
+				"hoist-non-react-statics": "^3.3.0"
+			}
+		},
 		"@types/istanbul-lib-coverage": {
 			"version": "2.0.1",
 			"resolved": "https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.1.tgz",
@@ -4669,25 +4679,24 @@
 			}
 		},
 		"@types/react-redux": {
-			"version": "5.0.21",
-			"resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-5.0.21.tgz",
-			"integrity": "sha512-ewkOW4GjnyXq5L++T31utI8yRmwj8iCIahZohYi1Ef7Xkrw0V/q92ao7x20rm38FKgImDaCCsaRGWfCJmF/Ukg==",
+			"version": "7.1.1",
+			"resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.1.tgz",
+			"integrity": "sha512-owqNahzE8en/jR4NtrUJDJya3tKru7CIEGSRL/pVS84LtSCdSoT7qZTkrbBd3S4Lp11sAp+7LsvxIeONJVKMnw==",
 			"dev": true,
 			"requires": {
+				"@types/hoist-non-react-statics": "^3.3.0",
 				"@types/react": "*",
-				"redux": "^3.6.0"
+				"hoist-non-react-statics": "^3.3.0",
+				"redux": "^4.0.0"
 			},
 			"dependencies": {
-				"redux": {
-					"version": "3.7.2",
-					"resolved": "https://registry.npmjs.org/redux/-/redux-3.7.2.tgz",
-					"integrity": "sha512-pNqnf9q1hI5HHZRBkj3bAngGZW/JMCmexDlOxw4XagXY2o1327nHH54LoTjiPJ0gizoqPDRqWyX/00g0hD6w+A==",
+				"hoist-non-react-statics": {
+					"version": "3.3.0",
+					"resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.0.tgz",
+					"integrity": "sha512-0XsbTXxgiaCDYDIWFcwkmerZPSwywfUqYmwT4jzewKTQSWoE6FCMoUVOeBJWK3E/CrWbxRG3m5GzY4lnIwGRBA==",
 					"dev": true,
 					"requires": {
-						"lodash": "^4.2.1",
-						"lodash-es": "^4.2.1",
-						"loose-envify": "^1.1.0",
-						"symbol-observable": "^1.0.3"
+						"react-is": "^16.7.0"
 					}
 				}
 			}
@@ -23100,17 +23109,16 @@
 			"integrity": "sha1-nYqSjH8sN1E8LQZOV7Pjw1bp+rs="
 		},
 		"react-redux": {
-			"version": "5.1.2",
-			"resolved": "https://registry.npmjs.org/react-redux/-/react-redux-5.1.2.tgz",
-			"integrity": "sha512-Ns1G0XXc8hDyH/OcBHOxNgQx9ayH3SPxBnFCOidGKSle8pKihysQw2rG/PmciUQRoclhVBO8HMhiRmGXnDja9Q==",
+			"version": "7.1.3",
+			"resolved": "https://registry.npmjs.org/react-redux/-/react-redux-7.1.3.tgz",
+			"integrity": "sha512-uI1wca+ECG9RoVkWQFF4jDMqmaw0/qnvaSvOoL/GA4dNxf6LoV8sUAcNDvE5NWKs4hFpn0t6wswNQnY3f7HT3w==",
 			"requires": {
-				"@babel/runtime": "^7.1.2",
+				"@babel/runtime": "^7.5.5",
 				"hoist-non-react-statics": "^3.3.0",
 				"invariant": "^2.2.4",
-				"loose-envify": "^1.1.0",
-				"prop-types": "^15.6.1",
-				"react-is": "^16.6.0",
-				"react-lifecycles-compat": "^3.0.0"
+				"loose-envify": "^1.4.0",
+				"prop-types": "^15.7.2",
+				"react-is": "^16.9.0"
 			}
 		},
 		"react-spring": {
@@ -23442,25 +23450,21 @@
 			}
 		},
 		"redux-form": {
-			"version": "7.4.2",
-			"resolved": "https://registry.npmjs.org/redux-form/-/redux-form-7.4.2.tgz",
-			"integrity": "sha512-QxC36s4Lelx5Cr8dbpxqvl23dwYOydeAX8c6YPmgkz/Dhj053C16S2qoyZN6LO6HJ2oUF00rKsAyE94GwOUhFA==",
+			"version": "8.2.6",
+			"resolved": "https://registry.npmjs.org/redux-form/-/redux-form-8.2.6.tgz",
+			"integrity": "sha512-krmF7wl1C753BYpEpWIVJ5NM4lUJZFZc5GFUVgblT+jprB99VVBDyBcgrZM3gWWLOcncFyNsHcKNQQcFg8Uanw==",
 			"requires": {
+				"@babel/runtime": "^7.2.0",
 				"es6-error": "^4.1.1",
-				"hoist-non-react-statics": "^2.5.4",
+				"hoist-non-react-statics": "^3.2.1",
+				"immutable": "*",
 				"invariant": "^2.2.4",
 				"is-promise": "^2.1.0",
-				"lodash": "^4.17.10",
-				"lodash-es": "^4.17.10",
+				"lodash": "^4.17.15",
+				"lodash-es": "^4.17.15",
 				"prop-types": "^15.6.1",
+				"react-is": "^16.7.0",
 				"react-lifecycles-compat": "^3.0.4"
-			},
-			"dependencies": {
-				"hoist-non-react-statics": {
-					"version": "2.5.5",
-					"resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz",
-					"integrity": "sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw=="
-				}
 			}
 		},
 		"redux-multi": {

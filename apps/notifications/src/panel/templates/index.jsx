@@ -1,12 +1,14 @@
 /**
- * @module templates/index
+ * External dependencies
  */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { find, findIndex, matchesProperty } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import BackButton from './button-back';
 import NavButton from './nav-button';
 import NoteList from './note-list';
@@ -81,7 +83,7 @@ class Layout extends React.Component {
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
 
-		if ( 'undefined' == typeof this.props.global.navigation ) {
+		if ( 'undefined' === typeof this.props.global.navigation ) {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
@@ -434,12 +436,12 @@ class Layout extends React.Component {
 		this.noteList = ref;
 	};
 
-	storeNoteListVisibilityUpdater = updater => {
-		this.noteListVisibilityUpdater = updater;
-	};
-
 	storeDetailViewRef = ref => {
 		this.detailView = ref;
+	};
+
+	storeNoteListVisibilityUpdater = updater => {
+		this.noteListVisibilityUpdater = updater;
 	};
 
 	render() {
@@ -482,7 +484,7 @@ class Layout extends React.Component {
 										className="wpnc__prev"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
+												filteredNotes[ 0 ].id !== this.props.selectedNoteId ) ||
 											false
 										}
 										navigate={ this.navigateToPrevNote }
@@ -492,7 +494,7 @@ class Layout extends React.Component {
 										className="wpnc__next"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ filteredNotes.length - 1 ].id !=
+												filteredNotes[ filteredNotes.length - 1 ].id !==
 													this.props.selectedNoteId ) ||
 											false
 										}

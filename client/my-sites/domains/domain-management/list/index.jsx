@@ -65,6 +65,7 @@ export class List extends React.Component {
 	};
 
 	state = {
+		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
 		notice: null,

@@ -8,10 +8,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { assign, noop, uniqueId, forEach } from 'lodash';
 import classNames from 'classnames';
+import { ReactReduxContext } from 'react-redux';
+
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/themes/modern/theme.js';
 import 'tinymce/plugins/lists/plugin.js';
-
 /**
  * Internal dependencies
  */
@@ -23,10 +24,6 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { isLocaleRtl } from 'lib/i18n-utils';
 
 class CompactTinyMCE extends Component {
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static propTypes = {
 		onContentsChange: PropTypes.func.isRequired,
 		height: PropTypes.number,
@@ -41,6 +38,8 @@ class CompactTinyMCE extends Component {
 		onContentsChange: noop,
 	};
 
+	reduxStore = null;
+
 	// See this.localize()
 	DUMMY_LANG_URL = '/do-not-load/';
 
@@ -53,7 +52,7 @@ class CompactTinyMCE extends Component {
 	componentDidMount() {
 		this.mounted = true;
 
-		const setup = function( editor ) {
+		const setup = editor => {
 			this.editor = editor;
 
 			if ( ! this.mounted ) {
@@ -76,9 +75,9 @@ class CompactTinyMCE extends Component {
 					onContentsChange( this.editor.getContent() );
 				} );
 			}
-		}.bind( this );
+		};
 
-		const store = this.context.store;
+		const store = this.reduxStore;
 		let isRtl = false;
 		let localeSlug = 'en';
 
@@ -114,7 +113,7 @@ class CompactTinyMCE extends Component {
 			menubar: false,
 			indent: false,
 			plugins: 'lists,wplink',
-			redux_store: this.context.store,
+			redux_store: store,
 			height: this.props.height + 'px',
 			toolbar1: 'formatselect,bold,italic,bullist,numlist,link,blockquote',
 			toolbar2: '',
@@ -140,12 +139,9 @@ class CompactTinyMCE extends Component {
 
 	destroyEditor() {
 		if ( this.editor ) {
-			forEach(
-				[ 'change', 'keyup', 'setcontent', 'init' ],
-				function( eventName ) {
-					this.editor.off( eventName );
-				}.bind( this )
-			);
+			forEach( [ 'change', 'keyup', 'setcontent', 'init' ], eventName => {
+				this.editor.off( eventName );
+			} );
 		}
 
 		this.editorContainer && tinymce.remove( this.editorContainer );
@@ -170,13 +166,24 @@ class CompactTinyMCE extends Component {
 		tinymce.ScriptLoader.markDone( this.DUMMY_LANG_URL );
 	}
 
-	render() {
+	renderEditor() {
 		const tinyMCEClassName = classNames( 'tinymce' );
 		const className = classNames( 'compact-tinymce', this.props.className );
 		return (
 			<div className={ className }>
 				<textarea ref={ this.setTextAreaRef } className={ tinyMCEClassName } id={ this._id } />
 			</div>
+		);
+	}
+
+	render() {
+		return (
+			<ReactReduxContext.Consumer>
+				{ ( { store } ) => {
+					this.reduxStore = store;
+					return this.renderEditor();
+				} }
+			</ReactReduxContext.Consumer>
 		);
 	}
 }
