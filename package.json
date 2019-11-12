@@ -154,7 +154,7 @@
 		"node-sass-package-importer": "5.3.1",
 		"npm-run-all": "4.1.5",
 		"objectpath": "1.2.2",
-		"page": "1.11.4",
+		"page": "1.11.5",
 		"path-browserify": "1.0.0",
 		"percentage-regex": "3.0.0",
 		"phone": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre-1",
