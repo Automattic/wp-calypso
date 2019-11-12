@@ -23,7 +23,7 @@ import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getName,
+	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
@@ -56,6 +56,8 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
@@ -310,6 +312,14 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isJetpackBackup( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="cloud-upload" size={ 48 } />
+				</div>
+			);
+		}
+
 		return null;
 	}
 
@@ -395,6 +405,7 @@ class ManagePurchase extends Component {
 			'is-personal': isPersonal( purchase ),
 			'is-premium': isPremium( purchase ),
 			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
@@ -405,7 +416,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (

@@ -60,6 +60,10 @@ export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
+export const JETPACK_PRODUCT_DISPLAY_NAMES = {
+	...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+};
+
 export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
 	{
