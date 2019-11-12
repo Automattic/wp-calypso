@@ -167,6 +167,12 @@ function StripeCreditCardFields( { isActive, summary } ) {
 	const { changeCardholderName } = useDispatch( 'stripe' );
 	const { changeBrand } = useDispatch( 'stripe' );
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onFailure( stripeLoadingError );
+		}
+	}, [ onFailure, stripeLoadingError ] );
+
 	const handleStripeFieldChange = ( input, setCardElementData ) => {
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );
@@ -199,7 +205,6 @@ function StripeCreditCardFields( { isActive, summary } ) {
 		return null;
 	}
 	if ( stripeLoadingError ) {
-		onFailure( stripeLoadingError );
 		return <span>Error!</span>;
 	}
 	if ( isStripeLoading ) {
