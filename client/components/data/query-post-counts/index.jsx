@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,20 +11,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { requestPostCounts } from 'state/posts/counts/actions';
 import { isRequestingPostCounts } from 'state/posts/counts/selectors';
 
+const request = ( siteId, type ) => ( dispatch, getState ) => {
+	if ( ! isRequestingPostCounts( getState(), siteId, type ) ) {
+		dispatch( requestPostCounts( siteId, type ) );
+	}
+};
+
 export default function QuerySiteDomains( { siteId, type } ) {
-	const requesting = useSelector( state => isRequestingPostCounts( state, siteId, type ) );
 	const dispatch = useDispatch();
-	const previousId = useRef( undefined );
-	const previousType = useRef( undefined );
 
 	useEffect( () => {
-		if ( ! requesting && siteId !== previousId.current && type !== previousType.current ) {
-			dispatch( requestPostCounts( siteId, type ) );
-		}
-
-		previousId.current = siteId;
-		previousType.current = type;
-	}, [ dispatch, requesting, siteId, type ] );
+		dispatch( request( siteId, type ) );
+	}, [ dispatch, siteId, type ] );
 
 	return null;
 }

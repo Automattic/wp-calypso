@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,17 +11,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
+const request = siteId => ( dispatch, getState ) => {
+	if ( ! isRequestingSitePlans( getState(), siteId ) ) {
+		dispatch( fetchSitePlans() );
+	}
+};
+
 export default function QuerySitePlans( { siteId } ) {
-	const requestingSitePlans = useSelector( isRequestingSitePlans );
 	const dispatch = useDispatch();
-	const previousId = useRef( undefined );
 
 	useEffect( () => {
-		if ( ! requestingSitePlans && siteId && siteId !== previousId.current ) {
-			dispatch( fetchSitePlans( siteId ) );
-		}
-		previousId.current = siteId;
-	}, [ dispatch, requestingSitePlans, siteId ] );
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 }

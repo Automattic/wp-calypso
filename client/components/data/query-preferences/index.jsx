@@ -10,14 +10,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isFetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
+const request = () => ( dispatch, getState ) => {
+	if ( ! isFetchingPreferences( getState() ) ) {
+		dispatch( fetchPreferences() );
+	}
+};
+
 export default function QueryPreferences() {
 	const fetchingPreferences = useRef( useSelector( isFetchingPreferences ) );
 	const dispatch = useDispatch();
 
-	// Only runs on mount.
 	useEffect( () => {
 		if ( ! fetchingPreferences.current ) {
-			dispatch( fetchPreferences() );
+			dispatch( request() );
 		}
 	}, [ dispatch ] );
 

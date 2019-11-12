@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 /**
@@ -12,13 +12,9 @@ import { requestSelectedEditor } from 'state/selected-editor/actions';
 
 export default function QuerySiteDomains( { siteId } ) {
 	const dispatch = useDispatch();
-	const previousId = useRef( undefined );
 
 	useEffect( () => {
-		if ( siteId !== previousId.current ) {
-			dispatch( requestSelectedEditor( siteId ) );
-		}
-		previousId.current = siteId;
+		dispatch( requestSelectedEditor( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	return null;

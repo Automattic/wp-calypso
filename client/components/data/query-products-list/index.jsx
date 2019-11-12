@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,15 +10,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isProductsListFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 
+const request = () => ( dispatch, getState ) => {
+	if ( ! isProductsListFetching( getState() ) ) {
+		dispatch( requestProductsList() );
+	}
+};
+
 export default function QueryProductsList() {
-	const isFetching = useRef( useSelector( isProductsListFetching ) );
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
 	useEffect( () => {
-		if ( ! isFetching.current ) {
-			dispatch( requestProductsList() );
-		}
+		dispatch( request() );
 	}, [ dispatch ] );
 
 	return null;

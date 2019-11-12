@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 /**
@@ -12,13 +12,9 @@ import { requestSiteChecklist } from 'state/checklist/actions';
 
 export default function QuerySiteChecklist( { siteId } ) {
 	const dispatch = useDispatch();
-	const previousId = useRef( undefined );
 
 	useEffect( () => {
-		if ( siteId !== previousId.current ) {
-			dispatch( requestSiteChecklist( siteId ) );
-		}
-		previousId.current = siteId;
+		dispatch( requestSiteChecklist( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	return null;

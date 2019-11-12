@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,17 +11,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
+const request = siteId => ( dispatch, getState ) => {
+	if ( ! isRequestingSiteDomains( getState(), siteId ) ) {
+		dispatch( fetchSiteDomains( siteId ) );
+	}
+};
+
 export default function QuerySiteDomains( { siteId } ) {
-	const requestingSiteDomains = useSelector( state => isRequestingSiteDomains( state, siteId ) );
 	const dispatch = useDispatch();
-	const previousId = useRef( undefined );
 
 	useEffect( () => {
-		if ( ! requestingSiteDomains && siteId && siteId !== previousId.current ) {
-			dispatch( fetchSiteDomains( siteId ) );
-		}
-		previousId.current = siteId;
-	}, [ siteId, requestingSiteDomains, dispatch ] );
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 }
