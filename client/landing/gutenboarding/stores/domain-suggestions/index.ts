@@ -12,7 +12,7 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
-import { TailParameters } from '../type-helpers';
+import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export { STORE_KEY };
 
@@ -25,17 +25,7 @@ registerStore< State >( STORE_KEY, {
 	// persist: [],
 } );
 
-type Select = {
-	[ selector in keyof typeof selectors ]: (
-		...args: TailParameters< typeof selectors[ selector ] >
-	) => ReturnType< typeof selectors[ selector ] >;
-};
-
-type Dispatch = {
-	[ A in keyof typeof actions ]: ( ...args: Parameters< typeof actions[ A ] > ) => void;
-};
-
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): Dispatch;
-	function select( key: typeof STORE_KEY ): Select;
+	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
+	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
