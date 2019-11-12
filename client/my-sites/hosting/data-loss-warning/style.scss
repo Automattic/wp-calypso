@@ -1,6 +1,7 @@
 .data-loss-warning {
 	margin-top: 40px;
 	margin-bottom: 64px;
+	max-width: 700px;
 
 	@include breakpoint( '<660px' ) {
 		padding: 24px;
