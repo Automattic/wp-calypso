@@ -19,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
+import DataLossWarning from './data-loss-warning';
 
 /**
  * Style dependencies
@@ -45,6 +46,7 @@ const Hosting = ( { translate, isDisabled } ) => {
 				<SFTPCard disabled={ isDisabled } />
 				<PhpMyAdminCard disabled={ isDisabled } />
 			</div>
+			{ ! isDisabled && <DataLossWarning /> }
 		</Main>
 	);
 };

@@ -1,0 +1,33 @@
+.data-loss-warning {
+	margin-top: 40px;
+	margin-bottom: 64px;
+	max-width: 700px;
+
+	@include breakpoint( '<660px' ) {
+		padding: 24px;
+		margin-top: 0;
+	}
+}
+
+.data-loss-warning h2 {
+	font-size: 21px;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+.data-loss-warning__contact {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	height: 42px;
+	overflow: hidden;
+}
+
+.data-loss-warning__contact .button {
+	margin-right: 20px;
+}
+
+.data-loss-warning__contact .gravatar {
+	margin-right: 10px;
+}
