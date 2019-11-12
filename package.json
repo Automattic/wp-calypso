@@ -36,6 +36,7 @@
 	"dependencies": {
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:./packages/components",
+		"@automattic/composite-checkout": "file:./packages/composite-checkout",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
@@ -300,7 +301,6 @@
 		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
-		"@automattic/composite-checkout": "file:./packages/composite-checkout",
 		"@automattic/webpack-config-flag-plugin": "file:packages/webpack-config-flag-plugin",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
