@@ -139,6 +139,7 @@ class PasswordlessSignupForm extends Component {
 		switch ( errorObj.error ) {
 			case 'already_taken':
 			case 'already_active':
+			case 'email_exists':
 				return (
 					<>
 						{ translate( 'An account with this email address already exists.' ) }
@@ -157,11 +158,8 @@ class PasswordlessSignupForm extends Component {
 					</>
 				);
 			default:
-				return (
-					errorObj.message ||
-					translate(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					)
+				return translate(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
 				);
 		}
 	}
