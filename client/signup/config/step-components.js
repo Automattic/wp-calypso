@@ -33,7 +33,6 @@ const stepNameToModuleName = {
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
-	'rewind-add-creds': 'rewind-add-creds',
 	'rewind-form-creds': 'rewind-form-creds',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',

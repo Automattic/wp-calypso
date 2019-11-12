@@ -156,10 +156,10 @@ export function generateFlows( {
 		},
 
 		'rewind-setup': {
-			steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
+			steps: [ 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: '/activity-log',
 			description: 'Allows users with Jetpack plan to setup credentials',
-			lastModified: '2018-01-27',
+			lastModified: '2019-11-11',
 			disallowResume: true,
 			allowContinue: false,
 			hideFlowProgress: true,
