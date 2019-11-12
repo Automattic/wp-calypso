@@ -22,12 +22,12 @@ export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any >
 };
 
 /**
- * Maps a "raw" actions object to the actions available when registered on the @wordpress/data store.
+ * Maps a "raw" actionCreators object to the actions available when registered on the @wordpress/data store.
  *
- * @template AS Selector map, usually from `import * as actions from './my-store/actions';`
+ * @template A Selector map, usually from `import * as actions from './my-store/actions';`
  */
-export type DispatchFromMap< AS extends Record< string, ( ...args: any[] ) => any > > = {
-	[ A in keyof AS ]: ( ...args: Parameters< AS[ A ] > ) => void;
+export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any > > = {
+	[ actionCreator in keyof A ]: ( ...args: Parameters< A[ actionCreator ] > ) => void;
 };
 
 /**
