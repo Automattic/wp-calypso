@@ -184,6 +184,19 @@ export class ProductSelector extends Component {
 		} );
 	}
 
+	handleCheckoutForProduct = productObject => {
+		const { currentPlanSlug, intervalType, selectedSiteSlug } = this.props;
+
+		return () => {
+			this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+				current_plan: currentPlanSlug,
+				product_name: productObject.product_slug,
+				billing_cycle: intervalType,
+			} );
+			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
+		};
+	};
+
 	handleProductOptionSelect( stateKey, productSlug ) {
 		this.setState( {
 			[ stateKey ]: productSlug,
@@ -191,26 +204,13 @@ export class ProductSelector extends Component {
 	}
 
 	renderCheckoutButton( product ) {
-		const {
-			currentPlanSlug,
-			intervalType,
-			selectedSiteSlug,
-			storeProducts,
-			translate,
-		} = this.props;
+		const { intervalType, storeProducts, translate } = this.props;
 		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 		const productObject = storeProducts[ selectedProductSlug ];
 
 		return (
 			<ProductCardAction
-				onClick={ () => {
-					this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-						current_plan: currentPlanSlug,
-						product_name: productObject.product_slug,
-						billing_cycle: intervalType,
-					} );
-					page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
-				} }
+				onClick={ this.handleCheckoutForProduct( productObject ) }
 				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
