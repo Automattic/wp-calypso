@@ -30,7 +30,7 @@ const jetpackProducts = [
 export default class extends React.Component {
 	render() {
 		return (
-			<ProductSelector plans={ jetpackPlans } products={ jetpackProducts } />
+			<ProductPlanOverlapNotices plans={ jetpackPlans } products={ jetpackProducts } />
 		);
 	}
 }

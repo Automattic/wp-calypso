@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -32,25 +32,23 @@ class ProductPlanOverlapNoticesExample extends Component {
 
 	render() {
 		return (
-			<Fragment>
-				<div style={ { maxWidth: 520, margin: '0 auto' } }>
-					<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
-						<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
-					</div>
-
-					{ this.state.siteId ? (
-						<ProductPlanOverlapNotices
-							plans={ jetpackPlans }
-							products={ jetpackProducts }
-							siteId={ this.state.siteId }
-						/>
-					) : (
-						<p style={ { textAlign: 'center' } }>
-							Please, select a Jetpack site to experience the full demo.
-						</p>
-					) }
+			<div style={ { maxWidth: 520, margin: '0 auto' } }>
+				<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
+					<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
 				</div>
-			</Fragment>
+
+				{ this.state.siteId ? (
+					<ProductPlanOverlapNotices
+						plans={ jetpackPlans }
+						products={ jetpackProducts }
+						siteId={ this.state.siteId }
+					/>
+				) : (
+					<p style={ { textAlign: 'center' } }>
+						Please, select a Jetpack site to experience the full demo.
+					</p>
+				) }
+			</div>
 		);
 	}
 }
