@@ -26,7 +26,10 @@ import PhpMyAdminCard from './phpmyadmin-card';
  */
 import './style.scss';
 
-const Hosting = ( { translate, isDisabled } ) => {
+const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
+	if ( ! canViewAtomicHosting ) {
+		return null;
+	}
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
@@ -54,6 +57,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isDisabled: ! isSiteAutomatedTransfer( state, siteId ) || ! canSiteViewAtomicHosting( state ),
+		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 } )( localize( Hosting ) );

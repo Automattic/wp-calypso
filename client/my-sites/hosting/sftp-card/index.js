@@ -39,6 +39,7 @@ const SftpCard = ( {
 	createSftpUser,
 	resetSftpPassword,
 	removePasswordFromState,
+	sftpUserRequested,
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
@@ -63,12 +64,12 @@ const SftpCard = ( {
 	};
 
 	useEffect( () => {
-		if ( ! username && ! disabled ) {
+		if ( ! sftpUserRequested && ! disabled ) {
 			setIsLoading( true );
 			requestSftpUser( siteId, currentUserId );
 		}
 		return onDestroy();
-	}, [ username ] );
+	}, [ sftpUserRequested ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -188,11 +189,13 @@ export default connect(
 		const currentUserId = getCurrentUserId( state );
 		let username = null;
 		let password = null;
+		let sftpUserRequested = null;
 
 		if ( ! disabled ) {
 			const sftpDetails = getAtomicHostingSftpUser( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
+			sftpUserRequested = sftpDetails !== null;
 		}
 
 		return {
@@ -200,6 +203,7 @@ export default connect(
 			currentUserId,
 			username,
 			password,
+			sftpUserRequested,
 		};
 	},
 	{
