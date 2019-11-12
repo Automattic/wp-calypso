@@ -13,13 +13,15 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class ExternalLinkWithTracking extends Component {
 	handleClickEvent() {
-		const { onClick, tracksEventName, tracksEventProps } = this.props;
+		return () => {
+			const { onClick, tracksEventName, tracksEventProps } = this.props;
 
-		this.props.recordTracksEvent( tracksEventName, tracksEventProps );
+			this.props.recordTracksEvent( tracksEventName, tracksEventProps );
 
-		if ( onClick ) {
-			onClick();
-		}
+			if ( onClick ) {
+				onClick();
+			}
+		};
 	}
 
 	render() {
@@ -31,7 +33,7 @@ class ExternalLinkWithTracking extends Component {
 			...props
 		} = this.props;
 
-		return <ExternalLink onClick={ () => this.handleClickEvent() } { ...props } />;
+		return <ExternalLink onClick={ this.handleClickEvent() } { ...props } />;
 	}
 }
 

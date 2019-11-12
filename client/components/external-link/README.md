@@ -14,9 +14,9 @@ class MyComponent extends React.Component {
 	render() {
 		return (
 			<ExternalLink
-				icon={ true }
+				icon
 				href="https://wordpress.org"
-				onClick={ () => somefunction() }
+				onClick={ () => {} }
 			>
 				WordPress.org
 			</ExternalLink>;
@@ -53,9 +53,9 @@ class MyComponent extends React.Component {
 	render() {
 		return (
 			<ExternalLinkWithTracking
-				icon={ true }
+				icon
 				href="https://wordpress.org"
-				onClick={ () => somefunction() }
+				onClick={ () => {} }
 				tracksEventName="tracks_event_name"
 				tracksEventProps={ { foo: 'baz' } }
 			>
