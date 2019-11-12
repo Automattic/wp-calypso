@@ -242,11 +242,11 @@ const webpackConfig = {
 				includePaths: [ path.join( __dirname, 'client' ) ],
 				prelude: `@import '${ path.join(
 					__dirname,
-					'client/assets/stylesheets/shared/_utils.scss'
+					'client', 'assets', 'stylesheets', 'shared', '_utils.scss'
 				) }';`,
 			} ),
 			{
-				include: path.join( __dirname, 'client/sections.js' ),
+				include: path.join( __dirname, 'client','sections.js' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
@@ -273,9 +273,9 @@ const webpackConfig = {
 		alias: Object.assign(
 			{
 				'react-virtualized': 'react-virtualized/dist/es',
-				debug: path.resolve( __dirname, 'node_modules/debug' ),
+				debug: path.resolve( __dirname, 'node_modules','debug' ),
 				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'client/components/gridicon' ),
+				gridicons$: path.resolve( __dirname, 'client', 'components', 'gridicon' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
