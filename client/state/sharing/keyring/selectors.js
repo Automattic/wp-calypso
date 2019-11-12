@@ -43,6 +43,19 @@ export const getKeyringConnectionsByName = createSelector(
 );
 
 /**
+ * Returns an array of broken keyring connection objects for a specified service.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {String} service Service slug.
+ * @return {Array}         Keyring connections, if known.
+ */
+export function getBrokenKeyringConnectionsByName( state, service ) {
+	return filter( getKeyringConnectionsByName( state, service ), {
+		status: 'broken',
+	} );
+}
+
+/**
  * Returns an array of keyring connection objects for a specific user.
  *
  * @param  {Object} state  Global state tree
