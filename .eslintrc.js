@@ -154,6 +154,8 @@ module.exports = {
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 0,
 
+		'react/forbid-foreign-prop-types': 'error',
+
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': [
 			2,

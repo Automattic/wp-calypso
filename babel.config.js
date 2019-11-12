@@ -12,6 +12,9 @@ const babelConfig = {
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 
 	env: {
+		production: {
+			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],
+		},
 		build_pot: {
 			plugins: [
 				[
