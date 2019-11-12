@@ -115,7 +115,7 @@ references:
   restore-npm-cache: &restore-npm-cache
     name: 'Restore npm cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
@@ -124,7 +124,7 @@ references:
 
   save-npm-cache: &save-npm-cache
     name: 'Save node_modules cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
     paths:
       - ~/.npm
   npm-e2e-install: &npm-e2e-install
