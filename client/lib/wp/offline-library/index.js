@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import stringify from 'json-stable-stringify';
+import stringify from 'fast-json-stable-stringify';
 import { parse } from 'qs';
 
 const readCache = () => {

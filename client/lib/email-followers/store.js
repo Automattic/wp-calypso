@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:email-followers-store' );
 
