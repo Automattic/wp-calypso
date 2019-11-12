@@ -19,7 +19,6 @@ import {
 	StripeHookProvider,
 } from '../lib/stripe';
 import {
-	useLocalize,
 	useSelect,
 	useDispatch,
 	useCheckoutHandlers,
@@ -27,6 +26,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../public-api';
+import useLocalize from '../lib/localize';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';

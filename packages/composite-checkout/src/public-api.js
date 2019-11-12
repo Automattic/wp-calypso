@@ -17,7 +17,6 @@ import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
-import { useLocalize } from './lib/localize';
 import {
 	createRegistry,
 	useRegistry,
@@ -55,7 +54,6 @@ export {
 	useRegistry,
 	useSelect,
 	useDispatch,
-	useLocalize,
 	useTotal,
 	WPCheckoutOrderSummary,
 	WPCheckoutOrderReview,
