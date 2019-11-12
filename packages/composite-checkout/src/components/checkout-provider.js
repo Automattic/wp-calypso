@@ -111,7 +111,6 @@ function validatePaymentMethods( paymentMethods ) {
 function validatePaymentMethod( {
 	id,
 	LabelComponent,
-	PaymentMethodComponent,
 	BillingContactComponent,
 	SubmitButtonComponent,
 	SummaryComponent,
@@ -122,10 +121,6 @@ function validatePaymentMethod( {
 	validateArg(
 		BillingContactComponent,
 		`Invalid payment method '${ id }'; missing BillingContactComponent`
-	);
-	validateArg(
-		PaymentMethodComponent,
-		`Invalid payment method '${ id }'; missing PaymentMethodComponent`
 	);
 	validateArg(
 		SubmitButtonComponent,

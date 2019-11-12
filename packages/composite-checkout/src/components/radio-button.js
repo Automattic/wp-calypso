@@ -16,6 +16,7 @@ export default function RadioButton( {
 	ariaLabel,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
+
 	return (
 		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
 			<Radio
@@ -37,7 +38,7 @@ export default function RadioButton( {
 			<Label checked={ checked } htmlFor={ id }>
 				{ label }
 			</Label>
-			{ children }
+			{ children && <div>{ children }</div> }
 		</RadioButtonWrapper>
 	);
 }

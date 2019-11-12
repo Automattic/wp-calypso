@@ -80,7 +80,6 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 	return {
 		id: 'paypal',
 		LabelComponent: PaypalLabel,
-		PaymentMethodComponent: () => null,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: PaypalSubmitButton,
 		SummaryComponent: () => {
