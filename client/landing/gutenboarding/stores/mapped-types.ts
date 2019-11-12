@@ -11,7 +11,7 @@
  */
 
 /**
- * Maps a "raw" selector object to the selectors available when registered on the wp-data store.
+ * Maps a "raw" selector object to the selectors available when registered on the @wordpress/data store.
  *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
@@ -22,7 +22,7 @@ export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any >
 };
 
 /**
- * Maps a "raw" actions object to the selectors available when registered on the wp-data store.
+ * Maps a "raw" actions object to the actions available when registered on the @wordpress/data store.
  *
  * @template AS Selector map, usually from `import * as actions from './my-store/actions';`
  */
