@@ -1,3 +1,7 @@
+# 5.1.0
+
+- Add `util.createIncrementalProgressPlugin`
+
 # 5.0.1
 
 - Fix PostCSS config path default.
