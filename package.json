@@ -190,7 +190,7 @@
 		"source-map-support": "0.5.12",
 		"store": "2.0.12",
 		"striptags": "2.2.1",
-		"styled-components": "4.4.0",
+		"styled-components": "4.4.1",
 		"superagent": "3.8.3",
 		"svg4everybody": "2.1.9",
 		"textarea-caret": "3.1.0",
