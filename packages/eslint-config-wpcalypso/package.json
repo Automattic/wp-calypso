@@ -24,7 +24,7 @@
 		"directory": "packages/eslint-config-wpcalypso"
 	},
 	"peerDependencies": {
-		"eslint": "^3.3.1 || ^4.6.1 || ^5.0.0",
+		"eslint": "^6.0.0",
 		"eslint-plugin-wpcalypso": "^3.4.1 || ^4.0.0"
 	},
 	"dependencies": {
