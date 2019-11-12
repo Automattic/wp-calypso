@@ -290,6 +290,19 @@ function handlePostLockTakeover( calypsoPort ) {
 	} );
 }
 
+function handlePostStatusChange( calypsoPort ) {
+	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+
+	subscribe( () => {
+		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+		if ( status === newStatus ) {
+			return;
+		}
+		status = newStatus;
+		calypsoPort.postMessage( { action: 'postStatusChange', payload: { status } } );
+	} );
+}
+
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
@@ -781,6 +794,8 @@ function initPort( message ) {
 
 		// handle post lock state change to takeover
 		handlePostLockTakeover( calypsoPort );
+
+		handlePostStatusChange( calypsoPort );
 
 		handleUpdateImageBlocks( calypsoPort );
 
