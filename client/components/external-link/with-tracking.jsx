@@ -40,12 +40,12 @@ class ExternalLinkWithTracking extends Component {
 ExternalLinkWithTracking.propTypes = {
 	className: PropTypes.string,
 	href: PropTypes.string,
-	onClick: PropTypes.func,
 	icon: PropTypes.bool,
-	iconSize: PropTypes.number,
-	target: PropTypes.string,
-	showIconFirst: PropTypes.bool,
 	iconClassName: PropTypes.string,
+	iconSize: PropTypes.number,
+	onClick: PropTypes.func,
+	showIconFirst: PropTypes.bool,
+	target: PropTypes.string,
 	tracksEventName: PropTypes.string.isRequired,
 	tracksEventProps: PropTypes.object,
 
