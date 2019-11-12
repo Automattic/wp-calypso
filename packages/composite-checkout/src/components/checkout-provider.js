@@ -41,7 +41,10 @@ export const CheckoutProvider = ( {
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 
-	const wrappers = allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean );
+	// Remove undefined and duplicate CheckoutWrapper properties
+	const wrappers = [
+		...new Set( allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+	];
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
