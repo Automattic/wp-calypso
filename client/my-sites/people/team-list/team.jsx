@@ -1,10 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
