@@ -9,8 +9,8 @@ import { Suggestions } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../store';
-import { SiteVertical, isFilledFormValue } from '../../store/types';
+import { STORE_KEY } from '../../stores/onboard';
+import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
 
 /**
  * Style dependencies

@@ -25,7 +25,7 @@ import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import './stores/domain-suggestions';
-import './store';
+import './stores/onboard';
 import './style.scss';
 
 registerBlockType( name, settings );
