@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
+	JETPACK_PLANS,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -27,7 +28,11 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
-import { JETPACK_PRODUCT_PRICE_MATRIX, JETPACK_PRODUCTS } from 'lib/products-values/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_PRODUCTS,
+} from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
@@ -49,6 +54,7 @@ import {
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
+import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import ProductSelector from 'blocks/product-selector';
 import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
@@ -433,6 +439,7 @@ export class PlansFeaturesMain extends Component {
 					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
 					compactOnMobile
 				/>
+				<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_BACKUP_PRODUCTS } />
 				<ProductSelector
 					products={ JETPACK_PRODUCTS }
 					intervalType={ intervalType }
