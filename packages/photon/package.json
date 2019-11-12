@@ -33,7 +33,6 @@
 	"dependencies": {
 		"crc32": "0.2.2",
 		"debug": "^3.2.6",
-		"seed-random": "2.2.0",
 		"url": "^0.11.0"
 	},
 	"scripts": {
