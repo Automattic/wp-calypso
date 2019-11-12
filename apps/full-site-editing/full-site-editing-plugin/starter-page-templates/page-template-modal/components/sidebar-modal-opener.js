@@ -32,11 +32,11 @@ class SidebarModalOpener extends Component {
 		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
-	getLastTemplateUsed = () => {
-		if ( ! this.props.templateUsedSlug || this.props.templateUsedSlug === 'blank' ) {
-			return this.props.templates[ 1 ];
+	getLastTemplateUsed = ( { templateUsedSlug, templates } = this.props ) => {
+		if ( ! templateUsedSlug || templateUsedSlug === 'blank' ) {
+			return templates[ 1 ];
 		}
-		return this.props.templates.filter( temp => temp.slug === this.props.templateUsedSlug )[ 0 ];
+		return templates.find( temp => temp.slug === templateUsedSlug );
 	};
 
 	// The TemplateSelectorItem wants a function to run when clicked, we want it to do nothing from here.
