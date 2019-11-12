@@ -13,7 +13,7 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 
 const request = siteId => ( dispatch, getState ) => {
 	if ( ! isRequestingSitePlans( getState(), siteId ) ) {
-		dispatch( fetchSitePlans() );
+		dispatch( fetchSitePlans( siteId ) );
 	}
 };
 
