@@ -32,7 +32,6 @@ export default function CheckoutReviewOrder( { className } ) {
 
 CheckoutReviewOrder.propTypes = {
 	isActive: PropTypes.bool.isRequired,
-	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
 

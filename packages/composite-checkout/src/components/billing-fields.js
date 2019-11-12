@@ -9,7 +9,7 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize';
-import { useLineItems, useSelect, useDispatch } from '../public-api';
+import { useSelect, useDispatch, useHasDomainsInCart } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
 import {
@@ -19,7 +19,7 @@ import {
 } from '../lib/styled-components/summary-details';
 
 export default function BillingFields( { summary, isActive, isComplete } ) {
-	const [ items ] = useLineItems();
+	const isDomainFieldsVisible = useHasDomainsInCart();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const { isDomainContactSame = true } = paymentData;
@@ -37,7 +37,7 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 
 	return (
 		<BillingFormFields>
-			{ hasDomainsInCart( items ) && <AddressFields fieldType={ 'billing' } /> }
+			{ isDomainFieldsVisible && <AddressFields fieldType={ 'billing' } /> }
 
 			<TaxFields fieldType={ 'billing' } />
 
@@ -45,14 +45,14 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 
 			{ isElligibleForVat() && <VatIdField /> }
 
-			{ hasDomainsInCart( items ) && (
+			{ isDomainFieldsVisible && (
 				<DomainFieldsCheckbox
 					toggleVisibility={ toggleDomainFieldsVisibility }
 					isDomainContactVisible={ ! isDomainContactSame }
 				/>
 			) }
 
-			{ ! isDomainContactSame && hasDomainsInCart( items ) && <DomainFields /> }
+			{ ! isDomainContactSame && isDomainFieldsVisible && <DomainFields /> }
 		</BillingFormFields>
 	);
 }
@@ -81,14 +81,6 @@ const FieldRow = styled( GridRow )`
 		margin-top: 0;
 	}
 `;
-
-function hasDomainsInCart( items ) {
-	if ( items.find( item => item.type === 'domain' ) ) {
-		return true;
-	}
-
-	return false;
-}
 
 function isElligibleForVat() {
 	//TODO: Detect whether people are in EU or AU and return true if they are
