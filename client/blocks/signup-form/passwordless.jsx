@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
@@ -86,10 +86,14 @@ class PasswordlessSignupForm extends Component {
 		recaptchaPromise.then( recaptchaToken => {
 			wpcom
 				.undocumented()
-				.createUserAccountFromEmailAddress(
+				.usersNew(
 					{
 						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 						'g-recaptcha-response': recaptchaToken || undefined,
+						is_passwordless: true,
+						signup_flow_name: this.props.flowName,
+						validate: false,
+						ab_test_variations: getSavedVariations(),
 					},
 					null
 				)
@@ -125,7 +129,7 @@ class PasswordlessSignupForm extends Component {
 
 		this.submitStep( {
 			username: response.username,
-			bearer_token: response.token.access_token,
+			bearer_token: response.bearer_token,
 		} );
 	};
 
