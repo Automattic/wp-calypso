@@ -49,10 +49,6 @@ export class ProductSelector extends Component {
 		return productId + '_' + interval;
 	}
 
-	getProductIdFromStateKey( stateKey ) {
-		return stateKey.replace( /_[^_]+$/, '' );
-	}
-
 	getBillingTimeFrameLabel() {
 		const { intervalType, translate } = this.props;
 		switch ( intervalType ) {
@@ -196,23 +192,22 @@ export class ProductSelector extends Component {
 		};
 	};
 
-	handleProductOptionSelect( stateKey, productSlug ) {
+	handleProductOptionSelect( stateKey, selectedProductSlug, productId ) {
 		const { intervalType } = this.props;
 		const relatedStateChange = {};
 		const otherInterval = 'yearly' === intervalType ? 'monthly' : 'yearly';
-		const productId = this.getProductIdFromStateKey( stateKey );
 		const relatedStateKey = this.getStateKey( productId, otherInterval );
 		const relatedProductSlug =
 			'yearly' === otherInterval
-				? this.getRelatedYearlyProductSlug( productSlug )
-				: this.getRelatedMonthlyProductSlug( productSlug );
+				? this.getRelatedYearlyProductSlug( selectedProductSlug )
+				: this.getRelatedMonthlyProductSlug( selectedProductSlug );
 
 		if ( relatedProductSlug ) {
 			relatedStateChange[ relatedStateKey ] = relatedProductSlug;
 		}
 
 		this.setState( {
-			[ stateKey ]: productSlug,
+			[ stateKey ]: selectedProductSlug,
 			// Also update the selected product option for the other interval type
 			...relatedStateChange,
 		} );
@@ -405,7 +400,7 @@ export class ProductSelector extends Component {
 								options={ this.getProductOptions( product ) }
 								selectedSlug={ this.state[ stateKey ] }
 								handleSelect={ productSlug =>
-									this.handleProductOptionSelect( stateKey, productSlug )
+									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
 							/>
 
