@@ -9,6 +9,7 @@ import { ThemeProvider } from 'emotion-theming';
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
@@ -61,9 +62,11 @@ export const CheckoutProvider = ( {
 				<LocalizeProvider locale={ locale }>
 					<LineItemsProvider items={ items } total={ total }>
 						<CheckoutContext.Provider value={ value }>
-							<PaymentMethodWrapperProvider wrappers={ wrappers }>
-								{ children }
-							</PaymentMethodWrapperProvider>
+							<CheckoutErrorBoundary>
+								<PaymentMethodWrapperProvider wrappers={ wrappers }>
+									{ children }
+								</PaymentMethodWrapperProvider>
+							</CheckoutErrorBoundary>
 						</CheckoutContext.Provider>
 					</LineItemsProvider>
 				</LocalizeProvider>
