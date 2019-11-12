@@ -43,6 +43,7 @@ const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
@@ -329,7 +330,7 @@ const webpackConfig = {
 					chunkGroups: true,
 				},
 			} ),
-		shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+		shouldShowProgress && new webpack.ProgressPlugin( createProgressHandler() ),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
 			cacheDir: path.join(
