@@ -375,7 +375,7 @@
 		"typescript": "3.7.2",
 		"webpack": "4.41.2",
 		"webpack-cli": "3.3.10",
-		"webpack-dev-server": "3.8.2",
+		"webpack-dev-server": "3.9.0",
 		"webpack-hot-middleware": "2.25.0",
 		"webpack-node-externals": "1.7.2",
 		"whybundled": "1.4.2"
