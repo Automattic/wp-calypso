@@ -33,6 +33,7 @@ import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
+import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices/docs/example';
 import ProductSelector from 'blocks/product-selector/docs/example';
 import Site from 'blocks/site/docs/example';
 import SitePlaceholder from 'blocks/site/docs/placeholder-example';
@@ -155,6 +156,7 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
+					<ProductPlanOverlapNotices readmeFilePath="product-plan-overlap-notices" />
 					<ProductSelector readmeFilePath="product-selector" />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
