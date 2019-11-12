@@ -2,8 +2,8 @@
 	"name": "@automattic/composite-checkout",
 	"version": "1.0.0",
 	"description": "A checkout component for Automattic brands",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"main": "dist/cjs/public-api.js",
+	"module": "dist/esm/public-api.js",
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist",
