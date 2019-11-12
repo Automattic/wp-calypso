@@ -35,6 +35,11 @@ export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Real-Time Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 };
+
+export const PRODUCT_SHORT_NAMES = {
+	...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
+};
+
 export const JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME = (
 	<Fragment>
 		{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
