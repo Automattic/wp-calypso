@@ -7,6 +7,7 @@
 	flex-direction: column;
 	text-align: right;
 
+	
 	@include breakpoint( '>660px' ) {
 		align-items: flex-end;
 		font-size: 16px;
@@ -14,7 +15,12 @@
 		.featured-domain-suggestions & {
 			align-items: flex-start;
 		}
+
+		&.domain-product-price__domain-step-copy-updates {
+			align-items: flex-start;
+		}
 	}
+		
 
 	.is-section-signup & {
 		@include breakpoint( '>660px' ) {
@@ -76,8 +82,6 @@
 			font-size: 80%;
 			color: var( --color-text-subtle );
 		}
-
-
 
 		@include breakpoint( '>660px' ) {
 			line-height: 1.5;

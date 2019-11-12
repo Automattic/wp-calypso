@@ -58,9 +58,10 @@ class DomainProductPrice extends React.Component {
 					);
 				} else {
 					message = translate( 'First year included in paid plans' );
-					if ( isMappingProduct ) {
-						message = translate( 'Included in paid plans' );
-					}
+				}
+
+				if ( isMappingProduct ) {
+					message = translate( 'Included in paid plans' );
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
@@ -90,8 +91,12 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlan() {
+		const className = classnames( 'domain-product-price', 'is-free-domain', {
+			'domain-product-price__domain-step-copy-updates':
+				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ),
+		} );
 		return (
-			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
+			<div className={ className }>
 				{ this.renderFreeWithPlanText() }
 				{ this.renderFreeWithPlanPrice() }
 			</div>

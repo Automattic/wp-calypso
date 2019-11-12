@@ -14,6 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -40,6 +41,7 @@ class DomainSuggestion extends React.Component {
 
 	render() {
 		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
+
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -50,6 +52,37 @@ class DomainSuggestion extends React.Component {
 			},
 			extraClasses
 		);
+
+		if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) && ! hidePrice ) {
+			/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+			return (
+				<div
+					className={ classes }
+					onClick={ this.props.onButtonClick }
+					data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+					role="button"
+					data-e2e-domain={ this.props.domain }
+				>
+					<div className="domain-suggestion__content">
+						{ children }
+						{ ! hidePrice && (
+							<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
+						) }
+						<Button
+							className="domain-suggestion__action domain-suggestion__action-domain-step-copy-updates"
+							{ ...this.props.buttonStyles }
+						>
+							{ this.props.buttonContent }
+						</Button>
+					</div>
+
+					{ this.props.showChevron && (
+						<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+					) }
+				</div>
+			);
+			/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
+		}
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (

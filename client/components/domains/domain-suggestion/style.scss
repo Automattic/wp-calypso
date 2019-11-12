@@ -131,6 +131,11 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
+	&.domain-registration-suggestion__title-domain-copy-test {
+		max-width: 350px;
+		min-width: 350px;
+	}
+
 	.domain-registration-suggestion__title {
 		width: auto;
 		max-width: 100%;
@@ -188,11 +193,17 @@
 		padding: 0;
 	}
 
-	.is-section-signup & {
+	.is-section-signup &:not( .domain-suggestion__action-domain-step-copy-updates ) {
 		@include breakpoint( '>480px' ) {
 			flex: 1 0 auto;
 			margin-left: 1em;
 			margin-top: 0;
+		}
+	}
+
+	.is-section-signup &.domain-suggestion__action-domain-step-copy-updates {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
 		}
 	}
 
