@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { SiteType, isFilledFormValue } from '../store/types';
-import { STORE_KEY } from '../store';
+import { SiteType, isFilledFormValue } from '../stores/onboard/types';
+import { STORE_KEY } from '../stores/onboard';
 import VerticalSelect from './vertical-select';
 import './style.scss';
 

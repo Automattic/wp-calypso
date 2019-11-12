@@ -12,7 +12,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../store';
+import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
 
 interface Props {
