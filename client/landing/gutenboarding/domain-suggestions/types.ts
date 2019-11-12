@@ -6,6 +6,7 @@ export { ActionType };
 
 // See client/state/domains/suggestions/actions.js#requestDomainsSuggestions
 export interface DomainSuggestionQuery {
+	[ key: string ]: string | number | boolean | undefined;
 	query: string; // Domain query
 	quantity: number; // max results
 	vendor: string; // vendor
