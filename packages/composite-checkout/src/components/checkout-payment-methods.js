@@ -55,13 +55,13 @@ export default function CheckoutPaymentMethods( {
 			<RadioButtons>
 				{ paymentMethodsToDisplay.map( method => (
 					<CheckoutErrorBoundary
+						key={ method.id }
 						errorMessage={
 							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
 						}
 					>
 						<PaymentMethod
 							{ ...method }
-							key={ method.id }
 							checked={ paymentMethod.id === method.id }
 							onClick={ onChange }
 							ariaLabel={ method.getAriaLabel( localize ) }
