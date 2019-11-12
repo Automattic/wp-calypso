@@ -44,6 +44,7 @@ import {
 } from 'state/inline-help/actions';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
+import { domainManagementEdit, domainManagementList } from '../../domains/paths';
 
 const userLib = userFactory();
 
@@ -60,6 +61,7 @@ class WpcomChecklistComponent extends PureComponent {
 		super();
 
 		this.taskFunctions = {
+			domain_verified: this.renderDomainVerifiedTask,
 			email_verified: this.renderEmailVerifiedTask,
 			site_created: this.renderSiteCreatedTask,
 			address_picked: this.renderAddressPickedTask,
@@ -439,6 +441,39 @@ class WpcomChecklistComponent extends PureComponent {
 				title={ translate( 'Upload a site icon' ) }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
+			/>
+		);
+	};
+
+	renderDomainVerifiedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, siteSlug } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/create-tagline.svg"
+				buttonText={ translate( 'Verify' ) }
+				completedButtonText={ translate( 'Change' ) }
+				completedTitle={ translate( 'You verified your domain name' ) }
+				description={ translate(
+					'Email assigned to your domains has to be verified so we can get in touch with you when needed.'
+				) }
+				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					tourId: 'checklistSiteTagline',
+					url:
+						task.domains.length === 1
+							? domainManagementEdit( siteSlug, task.domains[ 0 ] )
+							: domainManagementList( siteSlug ),
+				} ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				title={
+					task.domains.length === 1
+						? translate( 'Verify %(domainName)s', { args: { domainName: task.domains[ 0 ] } } )
+						: translate( 'Verify your domains' )
+				}
+				showSkip={ false }
 			/>
 		);
 	};

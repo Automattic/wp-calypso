@@ -632,37 +632,26 @@ export class DomainWarnings extends React.PureComponent {
 					.isAfter()
 		);
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
+		if ( severity !== 'is-error' ) {
+			return;
+		}
+
 		const { translate } = this.props;
 		const action = translate( 'Fix' );
 
 		if ( domains.length === 1 ) {
 			const domain = domains[ 0 ].name;
-			let fullMessage, compactMessage;
-			if ( severity === 'is-error' ) {
-				fullMessage = translate(
-					'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
-					{
-						components: { strong: <strong /> },
-						args: { domain },
-					}
-				);
-				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}.', {
+			const fullMessage = translate(
+				'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
+				{
 					components: { strong: <strong /> },
 					args: { domain },
-				} );
-			} else if ( severity === 'is-info' ) {
-				fullMessage = translate(
-					'{{strong}}%(domain)s{{/strong}} needs to be verified. You should receive an email shortly with more information.',
-					{
-						components: { strong: <strong /> },
-						args: { domain },
-					}
-				);
-				compactMessage = translate( 'Please verify {{strong}}%(domain)s{{/strong}}.', {
-					components: { strong: <strong /> },
-					args: { domain },
-				} );
-			}
+				}
+			);
+			const compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}.', {
+				components: { strong: <strong /> },
+				args: { domain },
+			} );
 
 			return (
 				<Notice
@@ -680,50 +669,25 @@ export class DomainWarnings extends React.PureComponent {
 			);
 		}
 
-		let fullContent, compactContent, compactNoticeText;
-
 		const editLink = name => domainManagementEdit( this.props.selectedSite.slug, name );
-		if ( severity === 'is-error' ) {
-			fullContent = (
-				<span>
-					{ translate(
-						'Your domains may be suspended because your email address is not verified.'
-					) }
-					<ul>
-						{ domains.map( ( { name } ) => (
-							<li key={ name }>
-								{ name } <a href={ editLink( name ) }>{ action }</a>
-							</li>
-						) ) }
-					</ul>
-				</span>
-			);
-			compactNoticeText = translate( 'Issues with your domains' );
-			compactContent = (
-				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
-					{ action }
-				</NoticeAction>
-			);
-		} else if ( severity === 'is-info' ) {
-			fullContent = (
-				<span>
-					{ translate( 'Please verify ownership of domains:' ) }
-					<ul>
-						{ domains.map( ( { name } ) => (
-							<li key={ name }>
-								{ name } <a href={ editLink( name ) }>{ action }</a>
-							</li>
-						) ) }
-					</ul>
-				</span>
-			);
-			compactNoticeText = translate( 'Verification required for domains' );
-			compactContent = (
-				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
-					{ action }
-				</NoticeAction>
-			);
-		}
+		const fullContent = (
+			<span>
+				{ translate( 'Your domains may be suspended because your email address is not verified.' ) }
+				<ul>
+					{ domains.map( ( { name } ) => (
+						<li key={ name }>
+							{ name } <a href={ editLink( name ) }>{ action }</a>
+						</li>
+					) ) }
+				</ul>
+			</span>
+		);
+		const compactNoticeText = translate( 'Issues with your domains' );
+		const compactContent = (
+			<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
+				{ action }
+			</NoticeAction>
+		);
 
 		return (
 			<Notice
