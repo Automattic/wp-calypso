@@ -34,7 +34,7 @@ const receiveRestoreDatabasePasswordError = () => {
 	);
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/hosting/index.js', {
+registerHandlers( 'state/data-layer/wpcom/sites/hosting/restore-database-password.js', {
 	[ HOSTING_RESTORE_DATABASE_PASSWORD ]: [
 		dispatchRequest( {
 			fetch: requestRestoreDatabasePassword,

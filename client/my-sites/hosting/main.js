@@ -20,18 +20,20 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import DataLossWarning from './data-loss-warning';
+import RestoreWpConfig from './restore-wp-config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Hosting = ( { translate, isDisabled } ) => {
+const Hosting = ( { translate, isDisabled, isWpConfigMissing } ) => {
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
 			<DocumentHead title={ translate( 'SFTP & MySQL' ) } />
 			<SidebarNavigation />
+			{ ! isDisabled && isWpConfigMissing && <RestoreWpConfig /> }
 			{ isDisabled && (
 				<Banner
 					title={ translate(

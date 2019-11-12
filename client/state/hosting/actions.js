@@ -3,6 +3,7 @@
  */
 import {
 	HOSTING_RESTORE_DATABASE_PASSWORD,
+	HOSTING_RESTORE_WP_CONFIG,
 	HOSTING_SFTP_USER_CREATE,
 	HOSTING_SFTP_USER_REQUEST,
 	HOSTING_SFTP_PASSWORD_RESET,
@@ -39,4 +40,9 @@ export const resetAtomicSftpPassword = ( siteId, userId ) => ( {
 	type: HOSTING_SFTP_PASSWORD_RESET,
 	siteId,
 	userId,
+} );
+
+export const restoreWpConfig = siteId => ( {
+	type: HOSTING_RESTORE_WP_CONFIG,
+	siteId,
 } );

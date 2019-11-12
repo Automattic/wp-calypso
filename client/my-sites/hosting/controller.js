@@ -25,6 +25,8 @@ export function handleHostingPanelRedirect( context, next ) {
 }
 
 export function layout( context, next ) {
-	context.primary = React.createElement( Hosting );
+	const isWpConfigMissing = 'wp-config-missing' in context.query;
+
+	context.primary = <Hosting isWpConfigMissing={ isWpConfigMissing } />;
 	next();
 }
