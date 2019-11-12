@@ -27,6 +27,14 @@
 		&__no-results {
 			padding-top: 0;
 		}
+
+		.site-selector__sites {
+			border: 0;
+		}
+
+		.search {
+			display: none;
+		}
 	}
 
 	&.is-hiding-other-sites {
