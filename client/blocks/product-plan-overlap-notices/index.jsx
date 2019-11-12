@@ -50,12 +50,17 @@ class ProductPlanOverlapNotices extends Component {
 		}
 
 		// Is the current product among the products we're interested in?
-		if ( ! this.getCurrentProductSlug() ) {
+		const currentProductSlug = this.getCurrentProductSlug();
+		if ( ! currentProductSlug ) {
 			return false;
 		}
 
-		// Does the current plan include the product as a feature?
-		return some( products, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+		// Does the current plan include the current product as a feature?
+		return some(
+			products,
+			productSlug =>
+				productSlug === currentProductSlug && planHasFeature( currentPlanSlug, productSlug )
+		);
 	}
 
 	getCurrentProductSlug() {
