@@ -61,10 +61,13 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
+import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
+import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -485,6 +488,13 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
+					{ config.isEnabled( 'plans/jetpack-backup' ) && (
+						<ProductPlanOverlapNotices
+							plans={ JETPACK_PLANS }
+							products={ JETPACK_BACKUP_PRODUCTS }
+							siteId={ siteId }
+						/>
+					) }
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</Fragment>
