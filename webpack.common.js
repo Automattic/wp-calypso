@@ -1,4 +1,5 @@
 /* eslint-disable import/no-nodejs-modules */
+const { clamp } = require( 'lodash' );
 
 /**
  * Get an env var that should be a positive integer greater than 0
@@ -27,7 +28,7 @@ if ( process.env.CIRCLECI ) {
 } else {
 	workerCount = getEnvVarAsNaturalNumber(
 		'WORKERS',
-		Math.max( 2, Math.floor( require( 'os' ).cpus().length / 2 ) )
+		clamp( require( 'os' ).cpus().length - 1, 2, 16 )
 	);
 }
 
