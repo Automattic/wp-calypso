@@ -12,6 +12,7 @@ import { invoke } from 'lodash';
  */
 import * as constants from './constants';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -25,15 +26,18 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								plan_slug: constants.PLAN_JETPACK_FREE,
+							} }
 						/>
 					),
 				},
 			} ),
-		getTrackingLabel: () => 'All Free features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the free version of Jetpack.' ),
 	},
@@ -50,15 +54,18 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								plan_slug: constants.PLAN_JETPACK_PERSONAL,
+							} }
 						/>
 					),
 				},
 			} ),
-		getTrackingLabel: () => 'All Personal features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
@@ -78,15 +85,18 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								plan_slug: constants.PLAN_JETPACK_PREMIUM,
+							} }
 						/>
 					),
 				},
 			} ),
-		getTrackingLabel: () => 'All Premium features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},
