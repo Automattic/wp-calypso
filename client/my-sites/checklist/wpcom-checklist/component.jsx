@@ -635,8 +635,16 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { needsVerification, siteIsUnlaunched, translate } = this.props;
+		const { needsVerification, needsDomainVerification, siteIsUnlaunched, translate } = this.props;
 		const disabled = ! baseProps.completed && needsVerification;
+		let noticeText;
+		if ( disabled ) {
+			if ( needsDomainVerification ) {
+				noticeText = translate( 'Verify your domain before launching your site.' );
+			} else if ( needsDomainVerification ) {
+				noticeText = translate( 'Confirm your email address before launching your site.' );
+			}
+		}
 
 		return (
 			<TaskComponent
@@ -659,9 +667,7 @@ class WpcomChecklistComponent extends PureComponent {
 				}
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
-				noticeText={
-					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
-				}
+				noticeText={ noticeText }
 				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleLaunchTaskDismiss( task.id ) }
 				showSkip={ false }
@@ -1080,6 +1086,13 @@ export default connect(
 		const taskUrls = getChecklistTaskUrls( state, siteId );
 		const taskList = getSiteTaskList( state, siteId );
 
+		const needsEmailVerification = ! isCurrentUserEmailVerified( state );
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
+		const needsDomainVerification =
+			taskList.getAll().filter( task => task.id === 'domain_verified' && ! task.isCompleted )
+				.length > 0;
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
+
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
 			phase2: get( siteChecklist, 'phase2' ),
@@ -1090,7 +1103,9 @@ export default connect(
 			taskUrls,
 			taskList,
 			userEmail: ( user && user.email ) || '',
-			needsVerification: ! isCurrentUserEmailVerified( state ),
+			needsEmailVerification,
+			needsDomainVerification,
+			needsVerification: needsEmailVerification || needsDomainVerification,
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
 		};
