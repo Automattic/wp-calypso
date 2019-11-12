@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export default function Button( {
 	buttonState,
@@ -159,8 +159,6 @@ function getTextColor( { buttonState, theme } ) {
 			return colors.highlight;
 		case 'disabled':
 			return colors.disabledButtons;
-		case 'text-button':
-			return colors.highlight;
 		default:
 			return colors.textColor;
 	}

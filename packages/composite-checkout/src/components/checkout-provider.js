@@ -3,7 +3,7 @@
  */
 import React, { useContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'emotion-theming';
 
 /**
  * Internal dependencies

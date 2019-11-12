@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useState, useContext, useEffect } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled from '@emotion/styled';
+import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -155,7 +156,7 @@ export function createStripeMethod( {
 
 function StripeCreditCardFields( { isActive, summary } ) {
 	const localize = useLocalize();
-	const theme = useContext( ThemeContext );
+	const theme = useTheme();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ cardNumberElementData, setCardNumberElementData ] = useState();
