@@ -104,7 +104,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		showReCaptchaToS: PropTypes.bool,
+		showRecaptchaToS: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -116,7 +116,7 @@ class SignupForm extends Component {
 		displayUsernameInput: true,
 		flowName: '',
 		isSocialSignupEnabled: false,
-		showReCaptchaToS: false,
+		showRecaptchaToS: false,
 	};
 
 	state = {
@@ -832,7 +832,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, showReCaptchaToS, translate } = this.props;
+		const { flowName, showRecaptchaToS, translate } = this.props;
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
@@ -853,7 +853,7 @@ class SignupForm extends Component {
 						/>
 					) }
 				</LoggedOutFormLinks>
-				{ showReCaptchaToS && (
+				{ showRecaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
 							<p>
@@ -966,7 +966,7 @@ class SignupForm extends Component {
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
-						'is-showing-recaptcha-tos': this.props.showReCaptchaToS,
+						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
 					} ) }
 				>
 					{ this.getNotice() }
@@ -997,7 +997,7 @@ class SignupForm extends Component {
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
-					'is-showing-recaptcha-tos': this.props.showReCaptchaToS,
+					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
 				} ) }
 			>
 				{ this.getNotice() }

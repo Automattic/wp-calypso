@@ -374,7 +374,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showReCaptchaToS={
+					showRecaptchaToS={
 						'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
 					}
 				/>
