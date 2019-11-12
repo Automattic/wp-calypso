@@ -192,9 +192,24 @@ export class ProductSelector extends Component {
 		};
 	};
 
-	handleProductOptionSelect( stateKey, productSlug ) {
+	handleProductOptionSelect( stateKey, selectedProductSlug, productId ) {
+		const { intervalType } = this.props;
+		const relatedStateChange = {};
+		const otherInterval = 'yearly' === intervalType ? 'monthly' : 'yearly';
+		const relatedStateKey = this.getStateKey( productId, otherInterval );
+		const relatedProductSlug =
+			'yearly' === otherInterval
+				? this.getRelatedYearlyProductSlug( selectedProductSlug )
+				: this.getRelatedMonthlyProductSlug( selectedProductSlug );
+
+		if ( relatedProductSlug ) {
+			relatedStateChange[ relatedStateKey ] = relatedProductSlug;
+		}
+
 		this.setState( {
-			[ stateKey ]: productSlug,
+			[ stateKey ]: selectedProductSlug,
+			// Also update the selected product option for the other interval type
+			...relatedStateChange,
 		} );
 	}
 
@@ -385,7 +400,7 @@ export class ProductSelector extends Component {
 								options={ this.getProductOptions( product ) }
 								selectedSlug={ this.state[ stateKey ] }
 								handleSelect={ productSlug =>
-									this.handleProductOptionSelect( stateKey, productSlug )
+									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
 							/>
 
