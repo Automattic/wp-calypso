@@ -59,6 +59,7 @@ class SiteSelector extends Component {
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
+		noResultsMessage: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
 	};
 
@@ -358,7 +359,9 @@ class SiteSelector extends Component {
 		if ( ! siteElements.length ) {
 			return (
 				<div className="site-selector__no-results">
-					{ this.props.translate( 'No sites found' ) }
+					{ this.props.noResultsMessage
+						? this.props.noResultsMessage
+						: this.props.translate( 'No sites found' ) }
 				</div>
 			);
 		}
