@@ -22,7 +22,7 @@
 	}
 		
 
-	.is-section-signup & {
+	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
 		@include breakpoint( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
