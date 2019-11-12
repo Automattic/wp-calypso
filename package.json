@@ -46,7 +46,7 @@
 		"@babel/runtime": "7.7.2",
 		"@github/webauthn-json": "0.3.6",
 		"@ungap/url-search-params": "0.1.2",
-		"@webcomponents/url": "0.7.3",
+		"@webcomponents/url": "0.7.4",
 		"@wordpress/api-fetch": "3.6.3",
 		"@wordpress/block-editor": "3.2.3",
 		"@wordpress/block-library": "2.9.3",
