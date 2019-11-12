@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,13 +17,10 @@ const request = () => ( dispatch, getState ) => {
 };
 
 export default function QueryPreferences() {
-	const fetchingPreferences = useRef( useSelector( isFetchingPreferences ) );
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( ! fetchingPreferences.current ) {
-			dispatch( request() );
-		}
+		dispatch( request() );
 	}, [ dispatch ] );
 
 	return null;
