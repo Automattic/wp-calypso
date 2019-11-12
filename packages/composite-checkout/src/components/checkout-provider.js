@@ -40,9 +40,7 @@ export const CheckoutProvider = ( {
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 
-	const CheckoutWrappers = allPaymentMethods
-		.map( method => method.CheckoutWrapper )
-		.filter( Boolean );
+	const wrappers = allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -63,7 +61,7 @@ export const CheckoutProvider = ( {
 				<LocalizeProvider locale={ locale }>
 					<LineItemsProvider items={ items } total={ total }>
 						<CheckoutContext.Provider value={ value }>
-							<PaymentMethodWrapperProvider wrappers={ CheckoutWrappers }>
+							<PaymentMethodWrapperProvider wrappers={ wrappers }>
 								{ children }
 							</PaymentMethodWrapperProvider>
 						</CheckoutContext.Provider>
