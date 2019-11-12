@@ -1,43 +1,27 @@
 /**
  * External dependencies
  */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { requestSiteChecklist } from 'state/checklist/actions';
 
-class QuerySiteChecklist extends Component {
-	static propTypes = {
-		requestSiteChecklist: PropTypes.func,
-		siteId: PropTypes.number,
-	};
+export default function QuerySiteChecklist( { siteId } ) {
+	const dispatch = useDispatch();
+	const previousId = useRef( undefined );
 
-	UNSAFE_componentWillMount() {
-		this.request( this.props.siteId );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
-			return;
+	useEffect( () => {
+		if ( siteId !== previousId.current ) {
+			dispatch( requestSiteChecklist( siteId ) );
 		}
+		previousId.current = siteId;
+	}, [ dispatch, siteId ] );
 
-		this.request( nextProps.siteId );
-	}
-
-	request( siteId ) {
-		if ( siteId ) {
-			this.props.requestSiteChecklist( siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect( null, { requestSiteChecklist } )( QuerySiteChecklist );
+QuerySiteChecklist.propTypes = { siteId: PropTypes.number };

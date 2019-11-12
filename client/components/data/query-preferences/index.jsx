@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,28 +10,16 @@ import { connect } from 'react-redux';
 import { isFetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
-class QueryPreferences extends Component {
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.fetchingPreferences ) {
-			this.props.fetchPreferences();
+export default function QueryPreferences() {
+	const fetchingPreferences = useRef( useSelector( isFetchingPreferences ) );
+	const dispatch = useDispatch();
+
+	// Only runs on mount.
+	useEffect( () => {
+		if ( ! fetchingPreferences.current ) {
+			fetchPreferences()( dispatch );
 		}
-	}
+	}, [ dispatch ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
-
-QueryPreferences.propTypes = {
-	fetchingPreferences: PropTypes.bool,
-	fetchPreferences: PropTypes.func,
-};
-
-QueryPreferences.defaultProps = {
-	fetchPreferences: () => {},
-	fetchingPreferences: false,
-};
-
-export default connect( state => ( { fetchingPreferences: isFetchingPreferences( state ) } ), {
-	fetchPreferences,
-} )( QueryPreferences );

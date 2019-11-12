@@ -1,34 +1,25 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isProductsListFetching as isFetching } from 'state/products-list/selectors';
+import { isProductsListFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 
-class QueryProductsList extends Component {
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.isFetching ) {
-			this.props.requestProductsList();
+export default function QueryProductsList() {
+	const isFetching = useRef( useSelector( isProductsListFetching ) );
+	const dispatch = useDispatch();
+
+	// Only runs on mount.
+	useEffect( () => {
+		if ( ! isFetching.current ) {
+			requestProductsList()( dispatch );
 		}
-	}
+	}, [ dispatch ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
-
-QueryProductsList.propTypes = {
-	isFetching: PropTypes.bool,
-	requestProductsList: PropTypes.func,
-};
-
-export default connect( state => ( { isFetching: isFetching( state ) } ), { requestProductsList } )(
-	QueryProductsList
-);

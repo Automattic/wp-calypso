@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,60 +11,19 @@ import { bindActionCreators } from 'redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-class QuerySitePlans extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestPlans = this.requestPlans.bind( this );
-	}
+export default function QuerySitePlans( { siteId } ) {
+	const requestingSitePlans = useSelector( isRequestingSitePlans );
+	const dispatch = useDispatch();
+	const previousId = useRef( undefined );
 
-	requestPlans( props = this.props ) {
-		if ( ! props.requestingSitePlans && props.siteId ) {
-			props.fetchSitePlans( props.siteId );
+	useEffect( () => {
+		if ( ! requestingSitePlans && siteId && siteId !== previousId.current ) {
+			fetchSitePlans( siteId )( dispatch );
 		}
-	}
+		previousId.current = siteId;
+	}, [ dispatch, requestingSitePlans, siteId ] );
 
-	UNSAFE_componentWillMount() {
-		this.requestPlans();
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.requestingSitePlans ||
-			! nextProps.siteId ||
-			this.props.siteId === nextProps.siteId
-		) {
-			return;
-		}
-		this.requestPlans( nextProps );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-QuerySitePlans.propTypes = {
-	siteId: PropTypes.number,
-	requestingPlans: PropTypes.bool,
-	fetchSitePlans: PropTypes.func,
-};
-
-QuerySitePlans.defaultProps = {
-	fetchSitePlans: () => {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSitePlans: isRequestingSitePlans( state, ownProps.siteId ),
-		};
-	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				fetchSitePlans,
-			},
-			dispatch
-		);
-	}
-)( QuerySitePlans );
+QuerySitePlans.propTypes = { siteId: PropTypes.number };

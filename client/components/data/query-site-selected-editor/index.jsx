@@ -1,40 +1,27 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 
-export class QuerySiteSelectedEditor extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-	};
+export default function QuerySiteDomains( { siteId } ) {
+	const dispatch = useDispatch();
+	const previousId = useRef( undefined );
 
-	componentDidMount() {
-		this.request();
-	}
-
-	componentDidUpdate( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.request();
+	useEffect( () => {
+		if ( siteId !== previousId.current ) {
+			dispatch( requestSelectedEditor( siteId ) );
 		}
-	}
+		previousId.current = siteId;
+	}, [ dispatch, siteId ] );
 
-	request() {
-		const { siteId } = this.props;
-		if ( siteId ) {
-			this.props.requestSelectedEditor( siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect( null, { requestSelectedEditor } )( QuerySiteSelectedEditor );
+QuerySiteDomains.propTypes = { siteId: PropTypes.number };

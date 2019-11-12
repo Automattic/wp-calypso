@@ -2,9 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,55 +11,19 @@ import { bindActionCreators } from 'redux';
 import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-class QuerySiteDomains extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestSiteDomains = this.requestSiteDomains.bind( this );
-	}
+export default function QuerySiteDomains( { siteId } ) {
+	const requestingSiteDomains = useSelector( state => isRequestingSiteDomains( state, siteId ) );
+	const dispatch = useDispatch();
+	const previousId = useRef( undefined );
 
-	UNSAFE_componentWillMount() {
-		this.requestSiteDomains();
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.requestingSiteDomains ||
-			! nextProps.siteId ||
-			this.props.siteId === nextProps.siteId
-		) {
-			return;
+	useEffect( () => {
+		if ( ! requestingSiteDomains && siteId && siteId !== previousId.current ) {
+			fetchSiteDomains( siteId )( dispatch );
 		}
-		this.requestSiteDomains( nextProps );
-	}
+		previousId.current = siteId;
+	}, [ siteId, requestingSiteDomains, dispatch ] );
 
-	requestSiteDomains( props = this.props ) {
-		if ( ! props.requestingSiteDomains && props.siteId ) {
-			props.fetchSiteDomains( props.siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-QuerySiteDomains.propTypes = {
-	siteId: PropTypes.number,
-	requestingSiteDomains: PropTypes.bool,
-	fetchSiteDomains: PropTypes.func,
-};
-
-QuerySiteDomains.defaultProps = {
-	fetchSiteDomains: () => {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSiteDomains: isRequestingSiteDomains( state, ownProps.siteId ),
-		};
-	},
-	dispatch => {
-		return bindActionCreators( { fetchSiteDomains }, dispatch );
-	}
-)( QuerySiteDomains );
+QuerySiteDomains.propTypes = { siteId: PropTypes.number };
