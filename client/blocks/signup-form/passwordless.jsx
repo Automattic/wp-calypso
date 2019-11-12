@@ -10,8 +10,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -76,14 +78,24 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		wpcom
-			.undocumented()
-			.createUserAccountFromEmailAddress(
-				{ email: typeof this.state.email === 'string' ? this.state.email.trim() : '' },
-				null
-			)
-			.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-			.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+		const recaptchaPromise =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
+				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+				: Promise.resolve();
+
+		recaptchaPromise.then( recaptchaToken => {
+			wpcom
+				.undocumented()
+				.createUserAccountFromEmailAddress(
+					{
+						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+						'g-recaptcha-response': recaptchaToken || undefined,
+					},
+					null
+				)
+				.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
+				.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+		} );
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {
@@ -208,7 +220,12 @@ class PasswordlessSignupForm extends Component {
 					type="submit"
 					primary
 					busy={ isSubmitting }
-					disabled={ isSubmitting || ! isEmailAddressValid || !! this.props.disabled }
+					disabled={
+						isSubmitting ||
+						! isEmailAddressValid ||
+						!! this.props.disabled ||
+						!! this.props.disableSubmitButton
+					}
 				>
 					{ submitButtonText }
 				</Button>
