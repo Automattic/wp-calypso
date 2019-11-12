@@ -24,7 +24,7 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
-import './domain-suggestions';
+import './stores/domain-suggestions';
 import './store';
 import './style.scss';
 
