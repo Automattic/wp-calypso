@@ -29,6 +29,7 @@ import WPCheckoutOrderReview from './components/wp-checkout-order-review';
 import { createStripeMethod } from './components/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
+import { createCreditCardMethod } from './lib/payment-methods/credit-card';
 
 // Re-export the public API
 export {
@@ -53,6 +54,7 @@ export {
 	useRegisterStore,
 	useRegistry,
 	useSelect,
+	createCreditCardMethod,
 	useDispatch,
 	useTotal,
 	WPCheckoutOrderSummary,
