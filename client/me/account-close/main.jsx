@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,6 +23,7 @@ import ActionPanelFigureListItem from 'components/action-panel/figure-list-item'
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
+import SiteSelector from 'components/site-selector';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySites from 'components/data/query-sites';
@@ -45,6 +44,7 @@ import './style.scss';
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
+		showSiteDropdown: false,
 	};
 
 	UNSAFE_componentWillReceiveProps = nextProps => {
@@ -73,6 +73,22 @@ class AccountSettingsClose extends Component {
 		this.setState( { showConfirmDialog: false } );
 	};
 
+	handleSiteDropdown = () => {
+		this.setState( {
+			showSiteDropdown: true,
+		} );
+
+		if ( this.state.showSiteDropdown ) {
+			this.setState( {
+				showSiteDropdown: false,
+			} );
+		}
+	};
+
+	siteFilter = site => {
+		return ! site.jetpack;
+	};
+
 	render() {
 		const {
 			translate,
@@ -85,6 +101,7 @@ class AccountSettingsClose extends Component {
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', {
 			'is-loading': isLoading,
+			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
 
 		return (
@@ -108,7 +125,11 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem className="account-close__sites-item">
+										{ translate( 'Sites' ) }{' '}
+										<Gridicon size={ 18 } onClick={ this.handleSiteDropdown } icon="chevron-down" />
+									</ActionPanelFigureListItem>
+									<SiteSelector filter={ this.siteFilter } />
 									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
