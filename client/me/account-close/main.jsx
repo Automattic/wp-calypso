@@ -45,7 +45,7 @@ import './style.scss';
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
-		showSiteDropdown: false,
+		showSiteDropdown: true,
 	};
 
 	UNSAFE_componentWillReceiveProps = nextProps => {
@@ -86,7 +86,7 @@ class AccountSettingsClose extends Component {
 		}
 	};
 
-	siteListFilter = site => {		
+	siteListFilter = site => {
 		// Do not display sites that cannot be deleted.
 		return ! site.jetpack && userCan( 'manage_options', site );
 	};
@@ -131,7 +131,12 @@ class AccountSettingsClose extends Component {
 										{ translate( 'Sites' ) }
 										<Gridicon size={ 18 } onClick={ this.handleSiteDropdown } icon="chevron-down" />
 									</ActionPanelFigureListItem>
-									<SiteSelector filter={ this.siteListFilter } />
+									{ this.state.showSiteDropdown && (
+										<SiteSelector
+											filter={ this.siteListFilter }
+											noResultsMessage={ translate( 'You have no sites that will be deleted' ) }
+										/>
+									) }
 									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
