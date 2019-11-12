@@ -6,14 +6,18 @@ require( '@babel/polyfill' );
  */
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { Checkout, CheckoutProvider, createRegistry } from '../src/public-api';
-import { createStripeMethod } from '../src/components/stripe-credit-card-fields';
-import { createApplePayMethod } from '../src/lib/payment-methods/apple-pay';
-import { createPayPalMethod } from '../src/lib/payment-methods/paypal';
-import { createCreditCardMethod } from '../src/lib/payment-methods/credit-card';
+import {
+	Checkout,
+	CheckoutProvider,
+	createRegistry,
+	createStripeMethod,
+	createPayPalMethod,
+	createApplePayMethod,
+	createCreditCardMethod,
+	WPCheckoutOrderSummary,
+	WPCheckoutOrderReview,
+} from '../src/public-api';
 import { stripeKey } from './private';
-import WPCheckoutOrderSummary from '../src/components/wp-checkout-order-summary';
-import WPCheckoutOrderReview from '../src/components/wp-checkout-order-review';
 
 const initialItems = [
 	{

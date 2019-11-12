@@ -19,7 +19,6 @@ import {
 	StripeHookProvider,
 } from '../lib/stripe';
 import {
-	useLocalize,
 	useSelect,
 	useDispatch,
 	useCheckoutHandlers,
@@ -27,6 +26,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../public-api';
+import useLocalize from '../lib/localize';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
@@ -167,6 +167,12 @@ function StripeCreditCardFields( { isActive, summary } ) {
 	const { changeCardholderName } = useDispatch( 'stripe' );
 	const { changeBrand } = useDispatch( 'stripe' );
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onFailure( stripeLoadingError );
+		}
+	}, [ onFailure, stripeLoadingError ] );
+
 	const handleStripeFieldChange = ( input, setCardElementData ) => {
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );
@@ -199,7 +205,6 @@ function StripeCreditCardFields( { isActive, summary } ) {
 		return null;
 	}
 	if ( stripeLoadingError ) {
-		onFailure( stripeLoadingError );
 		return <span>Error!</span>;
 	}
 	if ( isStripeLoading ) {

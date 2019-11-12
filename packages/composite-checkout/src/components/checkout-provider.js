@@ -9,6 +9,7 @@ import { ThemeProvider } from 'emotion-theming';
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
@@ -40,7 +41,10 @@ export const CheckoutProvider = ( {
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 
-	const wrappers = allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean );
+	// Remove undefined and duplicate CheckoutWrapper properties
+	const wrappers = [
+		...new Set( allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+	];
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -61,9 +65,11 @@ export const CheckoutProvider = ( {
 				<LocalizeProvider locale={ locale }>
 					<LineItemsProvider items={ items } total={ total }>
 						<CheckoutContext.Provider value={ value }>
-							<PaymentMethodWrapperProvider wrappers={ wrappers }>
-								{ children }
-							</PaymentMethodWrapperProvider>
+							<CheckoutErrorBoundary>
+								<PaymentMethodWrapperProvider wrappers={ wrappers }>
+									{ children }
+								</PaymentMethodWrapperProvider>
+							</CheckoutErrorBoundary>
 						</CheckoutContext.Provider>
 					</LineItemsProvider>
 				</LocalizeProvider>
