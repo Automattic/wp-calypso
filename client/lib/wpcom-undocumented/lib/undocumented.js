@@ -2539,6 +2539,13 @@ Undocumented.prototype.getMigrationStatus = function( targetSiteId ) {
 	} );
 };
 
+Undocumented.prototype.resetMigration = function( targetSiteId ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ targetSiteId }/reset-migration`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
