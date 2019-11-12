@@ -1,1 +1,1 @@
-export const STORE_KEY = 'automattic/domain-suggestions';
+export const STORE_KEY = 'automattic/domains/suggestions';
