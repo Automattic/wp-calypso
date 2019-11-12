@@ -23,6 +23,8 @@ import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
+import config from 'config';
+import CompositeCheckoutContainer from './checkout/composite-checkout-container';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -50,6 +52,12 @@ export function checkout( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+
+	if ( config.isEnabled( 'composite-checkout' ) ) {
+		context.primary = <CompositeCheckoutContainer />;
+		next();
+		return;
+	}
 
 	context.primary = (
 		<CheckoutContainer
