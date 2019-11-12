@@ -18,7 +18,7 @@ export default function QuerySitePlans( { siteId } ) {
 
 	useEffect( () => {
 		if ( ! requestingSitePlans && siteId && siteId !== previousId.current ) {
-			fetchSitePlans( siteId )( dispatch );
+			dispatch( fetchSitePlans( siteId ) );
 		}
 		previousId.current = siteId;
 	}, [ dispatch, requestingSitePlans, siteId ] );

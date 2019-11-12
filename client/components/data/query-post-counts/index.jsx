@@ -19,7 +19,7 @@ export default function QuerySiteDomains( { siteId, type } ) {
 
 	useEffect( () => {
 		if ( ! requesting && siteId !== previousId.current && type !== previousType.current ) {
-			requestPostCounts( siteId, type )( dispatch );
+			dispatch( requestPostCounts( siteId, type ) );
 		}
 
 		previousId.current = siteId;

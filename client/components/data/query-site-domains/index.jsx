@@ -18,7 +18,7 @@ export default function QuerySiteDomains( { siteId } ) {
 
 	useEffect( () => {
 		if ( ! requestingSiteDomains && siteId && siteId !== previousId.current ) {
-			fetchSiteDomains( siteId )( dispatch );
+			dispatch( fetchSiteDomains( siteId ) );
 		}
 		previousId.current = siteId;
 	}, [ siteId, requestingSiteDomains, dispatch ] );

@@ -17,7 +17,7 @@ export default function QueryProductsList() {
 	// Only runs on mount.
 	useEffect( () => {
 		if ( ! isFetching.current ) {
-			requestProductsList()( dispatch );
+			dispatch( requestProductsList() );
 		}
 	}, [ dispatch ] );
 

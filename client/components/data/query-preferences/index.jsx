@@ -17,7 +17,7 @@ export default function QueryPreferences() {
 	// Only runs on mount.
 	useEffect( () => {
 		if ( ! fetchingPreferences.current ) {
-			fetchPreferences()( dispatch );
+			dispatch( fetchPreferences() );
 		}
 	}, [ dispatch ] );
 
