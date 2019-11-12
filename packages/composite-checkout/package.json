@@ -34,11 +34,13 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/composite-checkout#readme",
 	"dependencies": {
+		"@emotion/core": "10.0.22",
+		"@emotion/styled": "10.0.23",
 		"@wordpress/data": "^4.9.2",
+		"emotion-theming": "10.0.19",
 		"prop-types": "^15.7.2",
 		"react": "^16.8.6",
-		"react-stripe-elements": "^5.1.0",
-		"styled-components": "4.4.0"
+		"react-stripe-elements": "^5.1.0"
 	},
 	"private": true
 }

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes } from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 /**
