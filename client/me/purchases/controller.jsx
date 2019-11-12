@@ -118,10 +118,6 @@ export function editCardDetails( context, next ) {
 }
 
 export function list( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases' );
-	}
-
 	setTitle( context );
 
 	context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
@@ -129,10 +125,6 @@ export function list( context, next ) {
 }
 
 export function managePurchase( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId' );
-	}
-
 	setTitle( context, titles.managePurchase );
 
 	context.primary = (

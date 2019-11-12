@@ -40,6 +40,11 @@ import {
 	CONCIERGE_WPCOM_BUSINESS_ID,
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
 } from 'me/concierge/constants';
+import userFactory from 'lib/user';
+import NoSitesMessage from 'components/empty-content/no-sites-message';
+
+const user = userFactory();
+const userHasNoSites = () => user.get().site_count <= 0;
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -113,6 +118,15 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
+			if ( userHasNoSites() ) {
+				return (
+					<Main>
+						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+						<PurchasesHeader section={ 'purchases' } />
+						<NoSitesMessage />
+					</Main>
+				);
+			}
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
