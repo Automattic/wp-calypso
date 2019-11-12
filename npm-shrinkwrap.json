@@ -4449,9 +4449,9 @@
 			}
 		},
 		"@testing-library/jest-dom": {
-			"version": "4.2.0",
-			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.0.tgz",
-			"integrity": "sha512-H61OmRhGPWLrj9emyISx0qjp8jvC9RWyRniuLAq75Ny5XfPiOvWfnY3Wm2Tf0HXusX+PG40I94Gw792IAtSKKg==",
+			"version": "4.2.3",
+			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.3.tgz",
+			"integrity": "sha512-lrsm8OMaOLjh8AJhTNZW85Vur+a2U00ej1r/dNzABN4vfJ2kllsP/eLgkOdfCHuspdXn3/Q6rLt/41dSueVCyg==",
 			"dev": true,
 			"requires": {
 				"@babel/runtime": "^7.5.1",
