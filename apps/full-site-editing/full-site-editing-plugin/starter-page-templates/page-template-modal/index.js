@@ -32,7 +32,7 @@ const {
 	segment,
 	tracksUserData,
 	siteInformation = {},
-	screen,
+	screenAction,
 } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
@@ -295,7 +295,7 @@ if ( tracksUserData ) {
 }
 
 // Open plugin only if we are creating new page.
-if ( screen.action === 'add' ) {
+if ( screenAction === 'add' ) {
 	registerPlugin( 'page-templates', {
 		render: () => {
 			return (
