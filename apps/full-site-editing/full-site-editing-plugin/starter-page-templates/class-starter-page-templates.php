@@ -176,6 +176,7 @@ class Starter_Page_Templates {
 				'templates'       => array_merge( $default_templates, $vertical_templates ),
 				'vertical'        => $vertical,
 				'segment'         => $segment,
+				'screen'          => get_current_screen(),
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );

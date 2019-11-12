@@ -32,6 +32,7 @@ const {
 	segment,
 	tracksUserData,
 	siteInformation = {},
+	screen,
 } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
@@ -293,9 +294,8 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-// Don't open plugin if we arent creating new page.
-// Is there better way?  Can we acess get_current_screen for wordpress screen object like in php?
-if ( window.location.toString().includes( 'post-new' ) ) {
+// Open plugin only if we are creating new page.
+if ( screen.action === 'add' ) {
 	registerPlugin( 'page-templates', {
 		render: () => {
 			return (
