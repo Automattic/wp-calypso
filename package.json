@@ -286,7 +286,7 @@
 		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!apps/full-site-editing/**' '!**/node_modules/**'",
 		"typecheck": "tsc --noEmit",
 		"update-deps": "npx rimraf package-lock.json && npm run -s distclean && npm i && replace --silent 'http://' 'https://' . --recursive --include='package-lock.json' && touch -m node_modules",
-		"validate-fallback-es5": "npx eslint --env=es5 --no-eslintrc --no-ignore ./public/fallback/*.js",
+		"validate-fallback-es5": "npx eslint@5 --env=es5 --no-eslintrc --no-ignore ./public/fallback/*.js",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
 		"whybundled": "whybundled stats.json",
 		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development"
