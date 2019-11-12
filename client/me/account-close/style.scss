@@ -11,6 +11,30 @@
 	margin-bottom: 1em;
 }
 
+.account-close {
+	.account-close__sites-item {
+		.gridicon {
+			cursor: pointer;
+			position: relative;
+			top: 4px;
+		}
+	}
+
+	.site-selector {
+		pointer-events: none;
+	}
+
+	&.is-hiding-other-sites {
+		.site-selector {
+			display: none;
+		}
+
+		.account-close__sites-item .gridicon {
+			transform: rotate( 180deg );
+		}
+	}
+}
+
 // Placeholders
 .account-close.is-loading .account-close__body-copy,
 .account-close.is-loading .account-close__body-copy a,
@@ -21,4 +45,3 @@
 .account-close.is-loading .action-panel__footer .button {
 	border: 0;
 }
-
