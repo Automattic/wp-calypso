@@ -19,8 +19,8 @@ const BackupProductThankYou = ( { translate } ) => (
 		<Fragment>
 			<p>{ translate( 'We just finished settup up backups for you.' ) }</p>
 			<p>
-				{ translate( 'Next, we’ll take a look at your new WordPress.com dashboard.' ) }
-				{ translate( 'You can manage your backups under “Activity” in the sidebar.' ) }
+				{ translate( 'Next, we’ll take a look at your new WordPress.com dashboard. ' ) }
+				{ translate( 'You can manage your backups under “Activity” in the sidebar. ' ) }
 				{ translate(
 					'There’s also a checklist to help you get the most out of your Jetpack plan.'
 				) }
