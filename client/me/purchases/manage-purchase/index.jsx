@@ -80,6 +80,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
+import { Dialog } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -96,6 +97,10 @@ class ManagePurchase extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
+	};
+
+	state = {
+		isRecentRenewalDialogVisible: false,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -133,8 +138,59 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
+		const { purchase, translate } = this.props;
+
+		this.setState( { isRecentRenewalDialogVisible: true } );
+		return;
+
 		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
+
+	handleRecentRenewalCancel = () => {
+		this.setState( { isRecentRenewalDialogVisible: false } );
+	};
+
+	handleRecentRenewalRenew = () => {
+		this.setState( { isRecentRenewalDialogVisible: false } );
+		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+	};
+
+	renderRecentRenewalDialog() {
+		const { moment, purchase, translate } = this.props;
+		const dialogButtons = [
+			<Button onClick={ this.handleRecentRenewalCancel }>{ translate( 'Cancel' ) }</Button>,
+			<Button primary onClick={ this.handleRecentRenewalRenew }>
+				{ translate( 'Yes, I want to renew for another year' ) }
+			</Button>,
+		];
+
+		const message = translate(
+			'Domain {{strong}}%(domain)s{{/strong}} is already paid until %(paidUntilDate)s. ' +
+				'Are you sure you want to renew it for another year?',
+			{
+				args: {
+					domain: purchase.meta,
+					paidUntilDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+
+		return (
+			<Dialog
+				// className="remove-domain-dialog__dialog"
+				buttons={ dialogButtons }
+				isVisible={ this.state.isRecentRenewalDialogVisible }
+				onClose={ this.handleRecentRenewalCancel }
+			>
+				{ /*<div>*/ }
+				{ message }
+				{ /*</div>*/ }
+			</Dialog>
+		);
+	}
 
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
@@ -486,6 +542,7 @@ class ManagePurchase extends Component {
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
 					{ this.renderPurchaseDetail() }
+					{ this.renderRecentRenewalDialog() }
 				</Main>
 			</Fragment>
 		);
