@@ -35,6 +35,7 @@ import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Style dependencies
@@ -85,8 +86,9 @@ class AccountSettingsClose extends Component {
 		}
 	};
 
-	siteFilter = site => {
-		return ! site.jetpack;
+	siteListFilter = site => {		
+		// Do not display sites that cannot be deleted.
+		return ! site.jetpack && userCan( 'manage_options', site );
 	};
 
 	render() {
@@ -126,10 +128,10 @@ class AccountSettingsClose extends Component {
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem className="account-close__sites-item">
-										{ translate( 'Sites' ) }{' '}
+										{ translate( 'Sites' ) }
 										<Gridicon size={ 18 } onClick={ this.handleSiteDropdown } icon="chevron-down" />
 									</ActionPanelFigureListItem>
-									<SiteSelector filter={ this.siteFilter } />
+									<SiteSelector filter={ this.siteListFilter } />
 									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
