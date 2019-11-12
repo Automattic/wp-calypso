@@ -23,13 +23,13 @@
 
 	.site-selector {
 		pointer-events: none;
+
+		&__no-results {
+			padding-top: 0;
+		}
 	}
 
 	&.is-hiding-other-sites {
-		.site-selector {
-			display: none;
-		}
-
 		.account-close__sites-item .gridicon {
 			transform: rotate( 180deg );
 		}
