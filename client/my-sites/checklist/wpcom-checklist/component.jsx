@@ -464,7 +464,7 @@ class WpcomChecklistComponent extends PureComponent {
 					tourId: 'checklistSiteTagline',
 					url:
 						task.unverifiedDomains.length === 1
-							? domainManagementEdit( siteSlug, task.domains[ 0 ] )
+							? domainManagementEdit( siteSlug, task.unverifiedDomains[ 0 ] )
 							: domainManagementList( siteSlug ),
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
