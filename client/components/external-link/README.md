@@ -12,7 +12,15 @@ import ExternalLink from 'components/external-link';
 
 class MyComponent extends React.Component {
 	render() {
-		return <ExternalLink icon={ true } href="https://wordpress.org" onClick="somefunction()">WordPress.org</ExternalLink>;
+		return (
+			<ExternalLink
+				icon={ true }
+				href="https://wordpress.org"
+				onClick={ () => somefunction() }
+			>
+				WordPress.org
+			</ExternalLink>;
+		);
 	}
 }
 ```
@@ -47,7 +55,7 @@ class MyComponent extends React.Component {
 			<ExternalLinkWithTracking
 				icon={ true }
 				href="https://wordpress.org"
-				onClick="somefunction()"
+				onClick={ () => somefunction() }
 				tracksEventName="tracks_event_name"
 				tracksEventProps={ { foo: 'baz' } }
 			>

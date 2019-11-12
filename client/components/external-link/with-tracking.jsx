@@ -1,37 +1,49 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from './index.jsx';
+import ExternalLink from './index';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const ExternalLinkWIthTracking = ( {
-	onClick,
-	recordTracksEvent: recordEvent,
-	tracksEventName,
-	tracksEventProps,
-	...props
-} ) => {
-	const clickHandler = () => {
-		recordEvent( tracksEventName, tracksEventProps );
+class ExternalLinkWithTracking extends Component {
+	handleClickEvent() {
+		const { onClick, tracksEventName, tracksEventProps } = this.props;
+
+		this.props.recordTracksEvent( tracksEventName, tracksEventProps );
 
 		if ( onClick ) {
 			onClick();
 		}
-	};
+	}
 
-	return <ExternalLink onClick={ clickHandler } { ...props } />;
-};
+	render() {
+		const {
+			onClick,
+			recordTracksEvent: recordEvent,
+			tracksEventName,
+			tracksEventProps,
+			...props
+		} = this.props;
 
-ExternalLinkWIthTracking.propTypes = {
+		return <ExternalLink onClick={ () => this.handleClickEvent() } { ...props } />;
+	}
+}
+
+ExternalLinkWithTracking.propTypes = {
+	className: PropTypes.string,
+	href: PropTypes.string,
 	onClick: PropTypes.func,
+	icon: PropTypes.bool,
+	iconSize: PropTypes.number,
+	target: PropTypes.string,
+	showIconFirst: PropTypes.bool,
+	iconClassName: PropTypes.string,
 	tracksEventName: PropTypes.string.isRequired,
 	tracksEventProps: PropTypes.object,
 
@@ -42,4 +54,4 @@ ExternalLinkWIthTracking.propTypes = {
 export default connect(
 	null,
 	{ recordTracksEvent }
-)( ExternalLinkWIthTracking );
+)( ExternalLinkWithTracking );
