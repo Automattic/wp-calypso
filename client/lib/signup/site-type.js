@@ -8,6 +8,46 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
+
+function getDomainStepHeader( siteType ) {
+	if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
+		return "Let's get your site a domain!";
+	}
+
+	switch ( siteType ) {
+		case 'blog':
+			return i18n.translate( 'Give your blog an address' );
+		default:
+			return i18n.translate( 'Give your site an address' );
+	}
+}
+
+function getDomainStepSubheader( siteType ) {
+	if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
+		return "Enter your site's name or a few keywords, and we'll come up with some suggestions.";
+	}
+
+	switch ( siteType ) {
+		case 'blog':
+			return i18n.translate(
+				"Enter your blog's name or some keywords that describe it to get started."
+			);
+
+		case 'business':
+			return i18n.translate(
+				"Enter your business's name or some keywords that describe it to get started."
+			);
+
+		case 'professional':
+			return i18n.translate(
+				'Enter your name or some keywords that describe yourself to get started.'
+			);
+
+		default:
+			return i18n.translate( 'Enter a keyword that describes your site to get started.' );
+	}
+}
 
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
@@ -32,10 +72,8 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
 			// Domains step
-			domainsStepHeader: i18n.translate( 'Give your site an address' ),
-			domainsStepSubheader: i18n.translate(
-				'Enter a keyword that describes your site to get started.'
-			),
+			domainsStepHeader: getDomainStepHeader(),
+			domainsStepSubheader: getDomainStepSubheader(),
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
 				'This will help you get started with a theme you might like. You can change it later.'
@@ -98,10 +136,12 @@ export function getAllSiteTypes() {
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
 			),
 			siteMockupTitleFallback: i18n.translate( 'Your New Blog' ),
-			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
-			domainsStepSubheader: i18n.translate(
-				"Enter your blog's name or some keywords that describe it to get started."
-			),
+			get domainsStepHeader() {
+				return getDomainStepHeader( this.slug );
+			},
+			get domainsStepSubheader() {
+				return getDomainStepSubheader( this.slug );
+			},
 		},
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results
@@ -115,9 +155,9 @@ export function getAllSiteTypes() {
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
 			siteTopicHeader: i18n.translate( 'What does your business do?' ),
 			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
-			domainsStepSubheader: i18n.translate(
-				"Enter your business's name or some keywords that describe it to get started."
-			),
+			get domainsStepSubheader() {
+				return getDomainStepSubheader( this.slug );
+			},
 			customerType: 'business',
 		},
 		{
@@ -135,9 +175,9 @@ export function getAllSiteTypes() {
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
-			domainsStepSubheader: i18n.translate(
-				'Enter your name or some keywords that describe yourself to get started.'
-			),
+			get domainsStepSubheader() {
+				return getDomainStepSubheader( this.slug );
+			},
 		},
 		{
 			id: 3, // This value must correspond with its sibling in the /segments API results
