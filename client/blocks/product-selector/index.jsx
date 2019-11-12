@@ -362,8 +362,9 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			let purchase = this.getPurchaseByProduct( product );
+			const hasProductPurchase = !! purchase;
 
-			if ( currentPlanIncludesProduct ) {
+			if ( currentPlanIncludesProduct && ! hasProductPurchase ) {
 				purchase = this.getPurchaseByCurrentPlan();
 			}
 
@@ -380,7 +381,8 @@ export class ProductSelector extends Component {
 						planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
 					},
 				} );
-			} else {
+			}
+			if ( hasProductPurchase ) {
 				billingTimeFrame = this.getBillingTimeFrameLabel();
 				fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
 				discountedPrice = this.getProductOptionDiscountedPrice( selectedProductSlug );
