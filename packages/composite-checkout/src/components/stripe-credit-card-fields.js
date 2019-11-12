@@ -153,7 +153,7 @@ export function createStripeMethod( {
 	};
 }
 
-function StripeCreditCardFields( { isActive, summary } ) {
+function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useContext( ThemeContext );
 	const { onFailure } = useCheckoutHandlers();

@@ -289,13 +289,8 @@ export function StripeHookProvider( { children, configurationArgs } ) {
  */
 export function useStripe() {
 	const stripeData = useContext( StripeContext );
-	return (
-		stripeData || {
-			stripe: null,
-			stripeConfiguration: null,
-			isStripeLoading: false,
-			stripeLoadingError: null,
-			forceReload: () => {},
-		}
-	);
+	if ( ! stripeData ) {
+		throw new Error( 'useStripe can only be used in a StripeHookProvider' );
+	}
+	return stripeData;
 }
