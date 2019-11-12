@@ -65,7 +65,7 @@ const ProductCard = ( {
 					<ProductCardAction
 						href={ managePurchase( purchase.domain, purchase.id ) }
 						label={ translate( 'Manage Subscription' ) }
-						isPrimary={ false }
+						primary={ false }
 					/>
 				) }
 			</div>

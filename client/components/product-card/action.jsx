@@ -10,14 +10,14 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 
-const ProductCardAction = ( { intro, label, onClick, isPrimary, href } ) => (
+const ProductCardAction = ( { intro, label, onClick, primary, href } ) => (
 	<div className="product-card__action">
 		{ intro && <h4 className="product-card__action-intro">{ intro }</h4> }
 		<Button
 			className="product-card__action-button"
 			href={ href }
 			onClick={ onClick }
-			primary={ isPrimary }
+			primary={ primary }
 		>
 			{ label }
 		</Button>
@@ -29,13 +29,13 @@ ProductCardAction.propTypes = {
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	href: PropTypes.string,
-	isPrimary: PropTypes.boolean,
+	primary: PropTypes.bool,
 };
 
 ProductCardAction.defaultProps = {
 	href: null,
 	onClick: noop,
-	isPrimary: true,
+	primary: true,
 };
 
 export default ProductCardAction;
