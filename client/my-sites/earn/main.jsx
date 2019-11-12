@@ -190,7 +190,7 @@ class EarningsMain extends Component {
 				<FormattedHeader
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
-					leftAlign
+					align="left"
 				/>
 				{ this.getHeaderCake() }
 				{ section && this.getSectionNav( section ) }
