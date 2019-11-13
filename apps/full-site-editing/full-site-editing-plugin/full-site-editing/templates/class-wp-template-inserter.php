@@ -8,6 +8,12 @@
 namespace A8C\FSE;
 
 /**
+ * The strategy to use for loading the default template part content.
+ *
+ * @typedef {"use-api"|"use-local"} LoadingStrategy
+ */
+
+/**
  * Class WP_Template_Inserter
  */
 class WP_Template_Inserter {
@@ -58,14 +64,27 @@ class WP_Template_Inserter {
 	private $fse_page_data_option = 'fse-page-data-v1';
 
 	/**
+	 * The strategy to use for default data insertion.
+	 *
+	 * 'use-api' will use the wpcom API to get specifc content depending on the theme.
+	 *
+	 * 'use-local' will use the locally defined defaults.
+	 *
+	 * @var {LoadingStrategy} $loading_strategy
+	 */
+	private $loading_strategy;
+
+	/**
 	 * WP_Template_Inserter constructor.
 	 *
-	 * @param string $theme_slug Current theme slug.
+	 * @param string            $theme_slug Current theme slug.
+	 * @param {LoadingStrategy} $loading_strategy The strategy to use to load the template part content.
 	 */
-	public function __construct( $theme_slug ) {
-		$this->theme_slug     = $theme_slug;
-		$this->header_content = '';
-		$this->footer_content = '';
+	public function __construct( $theme_slug, $loading_strategy = 'use-api' ) {
+		$this->theme_slug       = $theme_slug;
+		$this->header_content   = '';
+		$this->footer_content   = '';
+		$this->loading_strategy = $loading_strategy;
 
 		/*
 		 * Previously the option suffix was '-fse-template-data'. Bumping this to '-fse-template-data-v1'
@@ -76,14 +95,13 @@ class WP_Template_Inserter {
 		$this->fse_template_data_option = $this->theme_slug . '-fse-template-data-v1';
 	}
 
+
 	/**
-	 * Retrieves template parts content from WP.com API.
-	 *
-	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
+	 * Retrieves template parts content.
 	 */
-	public function fetch_template_parts( $should_fetch_from_api = true ) {
+	public function fetch_template_parts() {
 		// Use default data if we don't want to fetch from the API.
-		if ( ! $should_fetch_from_api ) {
+		if ( 'use-local' === $this->loading_strategy ) {
 			$this->header_content = $this->get_default_header();
 			$this->footer_content = $this->get_default_footer();
 			return;
@@ -187,10 +205,8 @@ class WP_Template_Inserter {
 
 	/**
 	 * This function will be called on plugin activation hook.
-	 *
-	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
 	 */
-	public function insert_default_template_data( $should_fetch_from_api = true ) {
+	public function insert_default_template_data() {
 		do_action(
 			'a8c_fse_log',
 			'before_template_population',
