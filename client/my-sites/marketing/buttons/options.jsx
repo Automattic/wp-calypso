@@ -319,7 +319,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsOptions );
+export default flowRight( connectComponent, localize )( SharingButtonsOptions );

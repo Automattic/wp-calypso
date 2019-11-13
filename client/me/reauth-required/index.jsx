@@ -266,7 +266,4 @@ const ReauthRequired = createReactClass( {
 } );
 /* eslint-enable jsx-a11y/no-autofocus */
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( ReauthRequired ) );
+export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );

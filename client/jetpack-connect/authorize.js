@@ -626,7 +626,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{' '}
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
 				} ) }

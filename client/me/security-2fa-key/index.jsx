@@ -143,9 +143,6 @@ class Security2faKey extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKey ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKey ) );

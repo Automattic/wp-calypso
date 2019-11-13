@@ -69,7 +69,6 @@ class PostTypeListMaxPagesNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent, setLayoutFocus }
-)( localize( PostTypeListMaxPagesNotice ) );
+export default connect( null, { recordTracksEvent, setLayoutFocus } )(
+	localize( PostTypeListMaxPagesNotice )
+);

@@ -379,7 +379,4 @@ const mapDispatchToProps = {
 
 type ConnectedDispatchProps = typeof mapDispatchToProps;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( JetpackProductInstall ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( JetpackProductInstall ) );

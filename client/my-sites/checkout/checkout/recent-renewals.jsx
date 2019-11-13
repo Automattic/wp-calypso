@@ -18,7 +18,7 @@ function RecentRenewalListItem( { domain, productName, expiryMoment, translate }
 	return (
 		expiryMoment && (
 			<li>
-				<strong>{ domain }</strong>{' '}
+				<strong>{ domain }</strong>{ ' ' }
 				{ translate( '%(productName)s recently renewed and will expire on %(expiryDate)s', {
 					args: {
 						productName,

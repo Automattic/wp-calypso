@@ -205,10 +205,12 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
-	),
+	connect( mapStateToProps, {
+		uploadPlugin,
+		clearPluginUpload,
+		initiateAutomatedTransferWithPluginZip,
+		successNotice,
+	} ),
 	localize,
 ];
 

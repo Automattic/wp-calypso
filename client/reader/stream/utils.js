@@ -44,10 +44,9 @@ export function sameXPost( postKey1, postKey2 ) {
 		postKey2 &&
 		postKey1.xPostMetadata &&
 		postKey2.xPostMetadata &&
-		( postKey1.xPostMetadata.blogId &&
-			postKey1.xPostMetadata.blogId === postKey2.xPostMetadata.blogId ) &&
-		( postKey1.xPostMetadata.postId &&
-			postKey1.xPostMetadata.postId === postKey2.xPostMetadata.postId )
+		postKey1.xPostMetadata.blogId &&
+			postKey1.xPostMetadata.blogId === postKey2.xPostMetadata.blogId &&
+		postKey1.xPostMetadata.postId && postKey1.xPostMetadata.postId === postKey2.xPostMetadata.postId
 	);
 }
 

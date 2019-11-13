@@ -100,7 +100,10 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.reply( 200, {
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} )
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.query( { search: 'Hello' } )
@@ -129,7 +132,10 @@ describe( 'actions', () => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
@@ -141,7 +147,10 @@ describe( 'actions', () => {
 					siteId: 2916284,
 					query: {},
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
@@ -177,7 +186,10 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/me/posts' )
 				.reply( 200, {
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 		} );
 
@@ -185,7 +197,10 @@ describe( 'actions', () => {
 			return requestAllSitesPosts()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
@@ -215,7 +230,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch posts receive action when request completes', () => {
-			return requestSitePost( 2916284, 413 )( spy ).then( () => {
+			return requestSitePost(
+				2916284,
+				413
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ sinon.match( { ID: 413, title: 'Ribs & Chicken' } ) ],
@@ -224,7 +242,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch posts posts request success action when request completes', () => {
-			return requestSitePost( 2916284, 413 )( spy ).then( () => {
+			return requestSitePost(
+				2916284,
+				413
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -234,7 +255,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestSitePost( 2916284, 420 )( spy ).then( () => {
+			return requestSitePost(
+				2916284,
+				420
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_FAILURE,
 					siteId: 2916284,
@@ -459,7 +483,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when deleting post succeeds', () => {
-			return deletePost( 2916284, 13640 )( spy ).then( () => {
+			return deletePost(
+				2916284,
+				13640
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_SUCCESS,
 					siteId: 2916284,
@@ -469,7 +496,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when deleting post fails', done => {
-			deletePost( 77203074, 102 )( spy ).catch( () => {
+			deletePost(
+				77203074,
+				102
+			)( spy ).catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_FAILURE,
 					siteId: 77203074,
@@ -508,7 +538,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch the received post when request completes successfully', () => {
-			return restorePost( 2916284, 13640 )( spy ).then( () => {
+			return restorePost(
+				2916284,
+				13640
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
@@ -517,7 +550,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when restoring post succeeds', () => {
-			return restorePost( 2916284, 13640 )( spy ).then( () => {
+			return restorePost(
+				2916284,
+				13640
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_SUCCESS,
 					siteId: 2916284,
@@ -527,7 +563,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when restoring post fails', done => {
-			restorePost( 77203074, 102 )( spy ).catch( () => {
+			restorePost(
+				77203074,
+				102
+			)( spy ).catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_FAILURE,
 					siteId: 77203074,
@@ -563,10 +602,12 @@ describe( 'actions', () => {
 		};
 
 		test( 'should dispatch a POST_EDIT event with the new term', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 841 )(
-				spy,
-				getState
-			);
+			addTermForPost(
+				2916284,
+				'jetpack-portfolio',
+				{ ID: 123, name: 'ribs' },
+				841
+			)( spy, getState );
 			expect( spy ).to.have.been.calledWith( {
 				post: {
 					terms: {
@@ -585,10 +626,12 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should not dispatch anything if no post', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 3434 )(
-				spy,
-				getState
-			);
+			addTermForPost(
+				2916284,
+				'jetpack-portfolio',
+				{ ID: 123, name: 'ribs' },
+				3434
+			)( spy, getState );
 			expect( spy ).not.to.have.been.called;
 		} );
 
@@ -665,7 +708,10 @@ describe( 'actions', () => {
 				siteId,
 				postId,
 				post: {
-					metadata: [ { key: 'foo', operation: 'delete' }, { key: 'bar', operation: 'delete' } ],
+					metadata: [
+						{ key: 'foo', operation: 'delete' },
+						{ key: 'bar', operation: 'delete' },
+					],
 				},
 			} );
 		} );

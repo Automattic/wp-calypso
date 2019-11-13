@@ -120,7 +120,7 @@ class PrimaryDomain extends React.Component {
 								'Your primary domain is the address ' +
 									'visitors will see in their browser ' +
 									'when visiting your site.'
-							) }{' '}
+							) }{ ' ' }
 							<a href={ primaryDomainSupportUrl } target="_blank" rel="noopener noreferrer">
 								{ translate( 'Learn More.' ) }
 							</a>
@@ -179,11 +179,8 @@ const updatePrimaryDomainClick = ( { name, type }, success ) =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		setPrimaryDomain,
-		cancelClick,
-		updatePrimaryDomainClick,
-	}
-)( localize( PrimaryDomain ) );
+export default connect( null, {
+	setPrimaryDomain,
+	cancelClick,
+	updatePrimaryDomainClick,
+} )( localize( PrimaryDomain ) );

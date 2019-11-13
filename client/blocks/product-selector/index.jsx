@@ -511,8 +511,4 @@ const connectComponent = connect(
 	}
 );
 
-export default compose(
-	connectComponent,
-	localize,
-	withLocalizedMoment
-)( ProductSelector );
+export default compose( connectComponent, localize, withLocalizedMoment )( ProductSelector );

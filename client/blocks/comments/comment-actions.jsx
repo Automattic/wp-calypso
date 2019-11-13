@@ -149,7 +149,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( CommentActions ) );
+export default connect( null, mapDispatchToProps )( localize( CommentActions ) );

@@ -180,10 +180,9 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect(
-	null,
-	{ setPreviewShowing }
-)( localize( WebPreviewModal ) );
+const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
+	localize( WebPreviewModal )
+);
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;

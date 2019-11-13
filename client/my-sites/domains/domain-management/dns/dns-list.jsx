@@ -146,11 +146,8 @@ class DnsList extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		removeNotice,
-		successNotice,
-	}
-)( localize( DnsList ) );
+export default connect( null, {
+	errorNotice,
+	removeNotice,
+	successNotice,
+} )( localize( DnsList ) );

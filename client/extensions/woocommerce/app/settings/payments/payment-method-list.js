@@ -112,8 +112,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( SettingsPaymentsMethodList )
+	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsMethodList )
 );

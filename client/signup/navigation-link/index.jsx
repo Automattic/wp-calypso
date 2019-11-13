@@ -55,7 +55,10 @@ export class NavigationLink extends Component {
 		const { flowName, signupProgress, stepName } = this.props;
 
 		let steps = getFilteredSteps( flowName, signupProgress );
-		steps = steps.slice( 0, findIndex( steps, step => step.stepName === stepName ) );
+		steps = steps.slice(
+			0,
+			findIndex( steps, step => step.stepName === stepName )
+		);
 		const previousStep = findLast( steps, step => ! step.wasSkipped );
 
 		return previousStep || { stepName: null };

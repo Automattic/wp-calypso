@@ -79,7 +79,10 @@ describe( 'actions', () => {
 				.get( '/rest/v1.2/read/lists' )
 				.reply( 200, {
 					found: 2,
-					lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mango & Feijoa' } ],
+					lists: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Mango & Feijoa' },
+					],
 				} );
 		} );
 
@@ -95,7 +98,10 @@ describe( 'actions', () => {
 			return requestSubscribedLists()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: READER_LISTS_RECEIVE,
-					lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mango & Feijoa' } ],
+					lists: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Mango & Feijoa' },
+					],
 				} );
 			} );
 		} );

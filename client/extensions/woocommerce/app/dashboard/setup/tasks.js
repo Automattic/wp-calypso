@@ -192,7 +192,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SetupTasks ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );

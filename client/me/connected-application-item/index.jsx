@@ -223,10 +223,7 @@ class ConnectedApplicationItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		deleteConnectedApplication,
-		recordGoogleEvent,
-	}
-)( localize( ConnectedApplicationItem ) );
+export default connect( null, {
+	deleteConnectedApplication,
+	recordGoogleEvent,
+} )( localize( ConnectedApplicationItem ) );

@@ -54,9 +54,6 @@ GSuiteCancellationFeatures.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( GSuiteCancellationFeatures ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( GSuiteCancellationFeatures ) );

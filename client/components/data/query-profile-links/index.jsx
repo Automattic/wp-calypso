@@ -26,7 +26,4 @@ class QueryProfileLinks extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestUserProfileLinks }
-)( QueryProfileLinks );
+export default connect( null, { requestUserProfileLinks } )( QueryProfileLinks );

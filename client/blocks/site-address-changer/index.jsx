@@ -337,7 +337,7 @@ export class SiteAddressChanger extends Component {
 										{
 											args: { currentDomainName },
 										}
-									) }{' '}
+									) }{ ' ' }
 									<a href={ ADDRESS_CHANGE_SUPPORT_URL } target="_blank" rel="noopener noreferrer">
 										{ translate(
 											'Before you confirm the change, please read this important information.'

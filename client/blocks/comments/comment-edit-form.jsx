@@ -200,7 +200,4 @@ PostCommentForm.defaultProps = {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( PostCommentForm );
+export default connect( null, mapDispatchToProps )( PostCommentForm );

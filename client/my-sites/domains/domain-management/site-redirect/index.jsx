@@ -216,11 +216,8 @@ const updateSiteRedirectClick = ( domainName, location, success ) =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		cancelClick,
-		locationFocus,
-		updateSiteRedirectClick,
-	}
-)( localize( SiteRedirect ) );
+export default connect( null, {
+	cancelClick,
+	locationFocus,
+	updateSiteRedirectClick,
+} )( localize( SiteRedirect ) );

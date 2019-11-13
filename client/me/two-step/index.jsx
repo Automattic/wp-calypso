@@ -108,8 +108,8 @@ class TwoStep extends Component {
 		for ( let i = 0; i < 5; i++ ) {
 			placeholders.push(
 				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
-					{' '}
-					&nbsp;{' '}
+					{ ' ' }
+					&nbsp;{ ' ' }
 				</p>
 			);
 		}

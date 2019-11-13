@@ -307,7 +307,4 @@ const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 };
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ThemeShowcase ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

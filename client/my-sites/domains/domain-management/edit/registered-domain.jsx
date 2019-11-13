@@ -208,9 +208,6 @@ const paymentSettingsClick = domain =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		paymentSettingsClick,
-	}
-)( localize( RegisteredDomain ) );
+export default connect( null, {
+	paymentSettingsClick,
+} )( localize( RegisteredDomain ) );

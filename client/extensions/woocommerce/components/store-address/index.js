@@ -204,9 +204,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( StoreAddress )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( StoreAddress ) );

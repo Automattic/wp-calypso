@@ -393,8 +393,5 @@ const mapDispatchToProps = {
 
 export default compose(
 	localize,
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)
+	connect( mapStateToProps, mapDispatchToProps )
 )( InlineHelpPopover );

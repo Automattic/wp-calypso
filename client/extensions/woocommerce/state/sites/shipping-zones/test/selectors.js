@@ -36,7 +36,10 @@ const loadingMethodsAndLoadingLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: LOADING } ],
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: LOADING },
+					],
 					shippingZoneLocations: {
 						1: LOADING,
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -52,7 +55,10 @@ const loadedWithMethodsAndLoadingLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: [ 7, 42 ] } ],
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: [ 7, 42 ] },
+					],
 					shippingZoneLocations: {
 						1: LOADING,
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -68,7 +74,10 @@ const loadingMethodsAndLoadedLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: LOADING } ],
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: LOADING },
+					],
 					shippingZoneLocations: {
 						1: { country: [], continent: [], state: [], postcode: [] },
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -84,7 +93,10 @@ const loadedWithMethodsAndLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: [ 7, 42 ] } ],
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: [ 7, 42 ] },
+					],
 					shippingZoneLocations: {
 						1: { country: [], continent: [], state: [], postcode: [] },
 						2: { country: [], continent: [], state: [], postcode: [] },

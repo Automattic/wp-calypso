@@ -187,9 +187,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		requestSite,
-	}
-)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect( mapStateToProps, {
+	requestSite,
+} )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

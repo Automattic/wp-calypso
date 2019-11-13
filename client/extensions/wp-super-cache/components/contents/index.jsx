@@ -246,7 +246,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( ContentsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( ContentsTab );

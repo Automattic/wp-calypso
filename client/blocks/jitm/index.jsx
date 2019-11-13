@@ -51,7 +51,4 @@ const mapDispatchToProps = dispatch => ( {
 		dispatch( dismissJetpackJITM( siteId, id, featureClass ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( JITM );
+export default connect( mapStateToProps, mapDispatchToProps )( JITM );

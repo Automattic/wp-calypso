@@ -179,10 +179,7 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	connectedDesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	connectedDesignAssets = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default connectedDesignAssets || DesignAssets;

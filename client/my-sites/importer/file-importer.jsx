@@ -121,7 +121,4 @@ class FileImporter extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( FileImporter );
+export default connect( null, { recordTracksEvent } )( FileImporter );

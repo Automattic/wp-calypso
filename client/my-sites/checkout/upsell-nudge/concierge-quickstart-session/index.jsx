@@ -199,7 +199,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 										},
 									}
 								) }
-							</b>{' '}
+							</b>{ ' ' }
 						</p>
 						<p>
 							{ receiptId

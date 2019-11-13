@@ -38,7 +38,4 @@ class QueryWordadsStatus extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestWordadsStatus }
-)( QueryWordadsStatus );
+export default connect( null, { requestWordadsStatus } )( QueryWordadsStatus );

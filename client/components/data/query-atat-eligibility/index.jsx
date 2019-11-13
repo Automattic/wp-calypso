@@ -42,7 +42,4 @@ export const mapDispatchToProps = {
 	requestEligibility,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( QueryAutomatedTransferEligibility );
+export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );

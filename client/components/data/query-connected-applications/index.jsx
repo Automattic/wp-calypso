@@ -26,7 +26,4 @@ class QueryConnectedApplications extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestConnectedApplications }
-)( QueryConnectedApplications );
+export default connect( null, { requestConnectedApplications } )( QueryConnectedApplications );

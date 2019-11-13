@@ -234,18 +234,15 @@ function isRelatedVertical( vertical, normalizedInput ) {
 }
 
 export default localize(
-	connect(
-		( state, ownProps ) => {
-			const siteType = getSiteType( state );
-			const defaultVerticalSearchTerm =
-				getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
-			return {
-				siteType,
-				defaultVerticalSearchTerm,
-				verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
-				defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
-			};
-		},
-		null
-	)( SiteVerticalsSuggestionSearch )
+	connect( ( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		const defaultVerticalSearchTerm =
+			getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
+		return {
+			siteType,
+			defaultVerticalSearchTerm,
+			verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
+			defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
+		};
+	}, null )( SiteVerticalsSuggestionSearch )
 );

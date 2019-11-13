@@ -40,7 +40,4 @@ const connectComponent = connect( state => ( {
 	siteId: getSelectedSiteId( state ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( Settings );
+export default flowRight( connectComponent, localize )( Settings );

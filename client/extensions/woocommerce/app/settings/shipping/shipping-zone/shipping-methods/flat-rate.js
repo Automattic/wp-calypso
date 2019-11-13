@@ -49,15 +49,12 @@ FreeShippingMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect(
-	null,
-	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId(
-			{
-				setShippingCost,
-			},
-			dispatch,
-			ownProps.siteId
-		),
-	} )
-)( localize( FreeShippingMethod ) );
+export default connect( null, ( dispatch, ownProps ) => ( {
+	actions: bindActionCreatorsWithSiteId(
+		{
+			setShippingCost,
+		},
+		dispatch,
+		ownProps.siteId
+	),
+} ) )( localize( FreeShippingMethod ) );

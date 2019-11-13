@@ -329,7 +329,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ hideSitePreview }
-)( localize( DomainSearchResults ) );
+export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );

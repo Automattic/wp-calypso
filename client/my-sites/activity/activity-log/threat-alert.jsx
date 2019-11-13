@@ -393,19 +393,16 @@ const mapStateToProps = state => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{
-		fixThreat: ( siteId, threatId ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
-				fixThreatAlert( siteId, threatId )
-			),
-		ignoreThreat: ( siteId, threatId ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
-				ignoreThreatAlert( siteId, threatId )
-			),
-		requestRewindState,
-	}
-)( localize( ThreatAlert ) );
+export default connect( mapStateToProps, {
+	fixThreat: ( siteId, threatId ) =>
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
+			fixThreatAlert( siteId, threatId )
+		),
+	ignoreThreat: ( siteId, threatId ) =>
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
+			ignoreThreatAlert( siteId, threatId )
+		),
+	requestRewindState,
+} )( localize( ThreatAlert ) );

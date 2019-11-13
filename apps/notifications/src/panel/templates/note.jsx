@@ -75,9 +75,4 @@ const mapStateToProps = ( state, { note } ) => ( {
 	isRead: getIsNoteRead( state, note ),
 } );
 
-export default connect(
-	mapStateToProps,
-	null,
-	null,
-	{ forwardRef: true }
-)( Note );
+export default connect( mapStateToProps, null, null, { forwardRef: true } )( Note );

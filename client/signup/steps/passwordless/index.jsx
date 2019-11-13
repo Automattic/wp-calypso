@@ -255,7 +255,4 @@ export class PasswordlessStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( PasswordlessStep ) );
+export default connect( null, { submitSignupStep } )( localize( PasswordlessStep ) );

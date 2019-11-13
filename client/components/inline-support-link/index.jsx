@@ -87,7 +87,4 @@ class InlineSupportLink extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ openSupportArticleDialog }
-)( localize( InlineSupportLink ) );
+export default connect( null, { openSupportArticleDialog } )( localize( InlineSupportLink ) );

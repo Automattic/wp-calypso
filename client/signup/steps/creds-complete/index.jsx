@@ -74,14 +74,11 @@ class CredsCompleteStep extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const blogId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
-		const blogUrl = get( state, [ 'sites', 'items', blogId, 'URL' ], false );
+export default connect( ( state, ownProps ) => {
+	const blogId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
+	const blogUrl = get( state, [ 'sites', 'items', blogId, 'URL' ], false );
 
-		return {
-			wpAdminUrl: blogUrl ? blogUrl + '/wp-admin/' : false,
-		};
-	},
-	null
-)( localize( CredsCompleteStep ) );
+	return {
+		wpAdminUrl: blogUrl ? blogUrl + '/wp-admin/' : false,
+	};
+}, null )( localize( CredsCompleteStep ) );

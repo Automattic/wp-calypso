@@ -282,7 +282,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ errorNotice: errorNoticeAction }
-)( localize( ProductImageUploader ) );
+export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )(
+	localize( ProductImageUploader )
+);

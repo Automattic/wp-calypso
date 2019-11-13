@@ -140,13 +140,10 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		setNpsSurveyDialogShowing,
-		submitNpsSurveyWithNoScore,
-		setupNpsSurveyDevTrigger,
-		setupNpsSurveyEligibility,
-		markNpsSurveyShownThisSession,
-	}
-)( NpsSurveyNotice );
+export default connect( mapStateToProps, {
+	setNpsSurveyDialogShowing,
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyDevTrigger,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} )( NpsSurveyNotice );

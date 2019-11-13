@@ -295,10 +295,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( state => canCurrentUserUseAds( state ), '/ads/settings' )

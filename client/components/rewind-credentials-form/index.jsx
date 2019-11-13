@@ -349,7 +349,6 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	rewindState: getRewindState( state, siteId ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ deleteCredentials, updateCredentials }
-)( localize( RewindCredentialsForm ) );
+export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
+	localize( RewindCredentialsForm )
+);

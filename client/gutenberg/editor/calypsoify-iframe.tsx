@@ -680,7 +680,4 @@ const mapDispatchToProps = {
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( protectForm( CalypsoifyIframe ) );
+export default connect( mapStateToProps, mapDispatchToProps )( protectForm( CalypsoifyIframe ) );

@@ -238,16 +238,13 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		return {
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
-			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
-			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	{}
-)( localize( EmailManagement ) );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+		isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
+		selectedSiteId,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	};
+}, {} )( localize( EmailManagement ) );

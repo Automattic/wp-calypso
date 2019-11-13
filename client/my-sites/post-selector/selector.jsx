@@ -168,14 +168,12 @@ class PostSelectorPosts extends React.Component {
 
 	hasNoSearchResults = () => {
 		return (
-			! this.props.loading &&
-			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm
+			! this.props.loading && this.props.posts && ! this.props.posts.length && this.state.searchTerm
 		);
 	};
 
 	hasNoPosts = () => {
-		return ! this.props.loading && ( this.props.posts && ! this.props.posts.length );
+		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
 	getItem = index => {

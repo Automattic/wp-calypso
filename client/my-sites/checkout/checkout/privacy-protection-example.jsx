@@ -92,7 +92,7 @@ const PrivacyProtectionExample = ( { translate, fields, countriesList } ) => {
 		<p>
 			{ lines.map( ( line, index ) => {
 				return <span key={ `privacy-protection-example-line-${ index }` }>{ line }</span>;
-			} ) }{' '}
+			} ) }{ ' ' }
 		</p>
 	);
 };

@@ -54,11 +54,8 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		deleteApplicationPassword,
-		errorNotice,
-		recordGoogleEvent,
-	}
-)( localize( ApplicationPasswordsItem ) );
+export default connect( null, {
+	deleteApplicationPassword,
+	errorNotice,
+	recordGoogleEvent,
+} )( localize( ApplicationPasswordsItem ) );

@@ -202,7 +202,7 @@ class RemovePurchase extends Component {
 						// ^ is the internal WPcom domain i.e. example.wordpress.com
 						// if we want to use the purchased domain we can swap with the below line
 						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					} ) }{' '}
+					} ) }{ ' ' }
 					{ isGoogleApps( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +

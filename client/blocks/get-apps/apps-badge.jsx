@@ -125,9 +125,6 @@ export class AppsBadge extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( AppsBadge ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( AppsBadge ) );

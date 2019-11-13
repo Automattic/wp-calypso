@@ -22,7 +22,4 @@ class QueryMembershipsSubscriptions extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSubscriptionsList }
-)( QueryMembershipsSubscriptions );
+export default connect( null, { requestSubscriptionsList } )( QueryMembershipsSubscriptions );

@@ -294,8 +294,4 @@ const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
 	...stateProps,
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	mergeProps
-)( localize( AdsWrapper ) );
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( AdsWrapper ) );

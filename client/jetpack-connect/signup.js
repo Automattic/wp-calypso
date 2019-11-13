@@ -243,16 +243,13 @@ export class JetpackSignup extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{
-		createAccount: createAccountAction,
-		createSocialAccount: createSocialAccountAction,
-		errorNotice: errorNoticeAction,
-		recordTracksEvent: recordTracksEventAction,
-		warningNotice: warningNoticeAction,
-	}
-);
+const connectComponent = connect( null, {
+	createAccount: createAccountAction,
+	createSocialAccount: createSocialAccountAction,
+	errorNotice: errorNoticeAction,
+	recordTracksEvent: recordTracksEventAction,
+	warningNotice: warningNoticeAction,
+} );
 
 export default flowRight(
 	connectComponent,

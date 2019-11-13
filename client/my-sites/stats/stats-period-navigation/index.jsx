@@ -123,13 +123,6 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent: recordGoogleEventAction }
-);
+const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withRtl
-)( StatsPeriodNavigation );
+export default flowRight( connectComponent, localize, withRtl )( StatsPeriodNavigation );

@@ -31,7 +31,10 @@ describe( 'reducer', () => {
 		test( 'should index lists by ID', () => {
 			const state = items( null, {
 				type: READER_LISTS_RECEIVE,
-				lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mangos and feijoas' } ],
+				lists: [
+					{ ID: 841, title: 'Hello World' },
+					{ ID: 413, title: 'Mangos and feijoas' },
+				],
 			} );
 
 			chaiExpect( state ).to.eql( {

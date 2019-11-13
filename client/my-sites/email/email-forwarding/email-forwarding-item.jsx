@@ -136,10 +136,7 @@ const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination 
 		resendVerificationEmail( domainName, mailbox, destination )
 	);
 
-export default connect(
-	null,
-	{
-		removeEmailForwardWithAnalytics,
-		resendVerificationEmailWithAnalytics,
-	}
-)( localize( EmailForwardingItem ) );
+export default connect( null, {
+	removeEmailForwardWithAnalytics,
+	resendVerificationEmailWithAnalytics,
+} )( localize( EmailForwardingItem ) );

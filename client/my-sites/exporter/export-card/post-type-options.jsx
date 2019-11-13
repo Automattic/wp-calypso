@@ -104,7 +104,4 @@ class PostTypeOptions extends React.PureComponent {
 	}
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PostTypeOptions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

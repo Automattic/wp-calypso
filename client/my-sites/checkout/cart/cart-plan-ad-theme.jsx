@@ -71,7 +71,7 @@ class CartPlanAdTheme extends Component {
 						cta_name: eventName,
 					} }
 				/>
-				Get this theme for FREE when you upgrade to a Premium plan!{' '}
+				Get this theme for FREE when you upgrade to a Premium plan!{ ' ' }
 				<button className={ className } onClick={ this.addToCartAndRedirect }>
 					{ 'Upgrade Now' }
 				</button>
@@ -99,7 +99,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( CartPlanAdTheme ) );
+export default connect( mapStateToProps, { recordTracksEvent } )( localize( CartPlanAdTheme ) );

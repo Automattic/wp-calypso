@@ -256,10 +256,7 @@ class NameServers extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( NameServers ) );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( NameServers ) );

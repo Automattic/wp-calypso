@@ -114,7 +114,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsInsights );
+export default flowRight( connectComponent, localize )( StatsInsights );
