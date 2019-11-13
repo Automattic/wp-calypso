@@ -61,7 +61,7 @@ class SidebarModalOpener extends Component {
 					{ __( 'Change Layout' ) }
 				</Button>
 
-				{ this.state.isTemplateModalOpen ? (
+				{ this.state.isTemplateModalOpen && (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
@@ -70,9 +70,9 @@ class SidebarModalOpener extends Component {
 						toggleTemplateModal={ this.toggleTemplateModal }
 						isPromptedFromSidebar
 					/>
-				) : null }
+				) }
 
-				{ this.state.isWarningOpen ? (
+				{ this.state.isWarningOpen && (
 					<Modal
 						title={ __( 'Overwrite Page Content?' ) }
 						isDismissible={ false }
@@ -93,7 +93,7 @@ class SidebarModalOpener extends Component {
 							</Button>
 						</div>
 					</Modal>
-				) : null }
+				) }
 			</div>
 		);
 	}
