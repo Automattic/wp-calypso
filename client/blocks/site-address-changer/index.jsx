@@ -260,9 +260,12 @@ export class SiteAddressChanger extends Component {
 		);
 	}
 
-	handleAddDomainClick() {
-		this.props.recordTracksEvent( 'calypso_siteaddresschange_add_domain_click' );
-	}
+	handleAddDomainClick = () => {
+		const { siteId } = this.props;
+		this.props.recordTracksEvent( 'calypso_siteaddresschange_add_domain_click', {
+			blogid: siteId,
+		} );
+	};
 
 	render() {
 		const {
