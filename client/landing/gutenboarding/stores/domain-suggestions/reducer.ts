@@ -7,20 +7,19 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, DomainSuggestion, SerializedDomainsSuggestionsQuery } from './types';
+import { ActionType, DomainSuggestion } from './types';
 import * as Actions from './actions';
-import { getSerializedDomainsSuggestionsQuery } from 'state/domains/suggestions/utils';
+import { stringifyDomainQueryObject } from './utils';
 
 const domainSuggestions: Reducer<
-	Record< SerializedDomainsSuggestionsQuery, DomainSuggestion[] >,
+	Record< string, DomainSuggestion[] >,
 	ReturnType< typeof Actions[ 'receiveDomainSuggestions' ] >
 > = ( state = {}, action ) => {
 	if ( action.type === ActionType.RECEIVE_DOMAIN_SUGGESTIONS ) {
-		const serializedQuery =
-			action.queryObject && getSerializedDomainsSuggestionsQuery( action.queryObject );
-		if ( serializedQuery ) {
-			return { ...state, [ serializedQuery ]: action.suggestions };
-		}
+		return {
+			...state,
+			[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
+		};
 	}
 	return state;
 };
