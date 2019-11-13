@@ -4,8 +4,8 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { isEmpty } from 'lodash';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useCallback, useState } from 'react';
+import { useSelect } from '@wordpress/data';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { isFilledFormValue } from '../store/types';
 import { STORE_KEY } from '../store';
 import VerticalSelect from './vertical-select';
 import SiteTypeSelect, { siteTypeOptions } from './site-type-select';
+import SiteTitle from './site-title';
 import './style.scss';
 
 interface StepProps {
@@ -65,7 +66,7 @@ const Step2 = ( { isActive, onExpand, onSelect }: StepProps ) => {
 				) : (
 					<>
 						<button className="onboarding-block__question-answered" onClick={ onExpand }>
-							{ siteVertical.label }
+							{ ! isEmpty( siteVertical ) ? siteVertical.label : NO__( 'enter a topic' ) }
 						</button>
 						<span>.</span>
 					</>
@@ -75,30 +76,28 @@ const Step2 = ( { isActive, onExpand, onSelect }: StepProps ) => {
 	);
 };
 
-const Step3 = ( { onExpand }: StepProps ) => {
+const Step3 = ( { isActive, onExpand, onSelect }: StepProps ) => {
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteTitle } = useDispatch( STORE_KEY );
-
-	const updateTitle = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => {
-			setSiteTitle( e.target.value );
-		},
-		[ setSiteTitle ]
-	);
 
 	if ( isEmpty( siteVertical ) && ! siteTitle ) {
 		return null;
 	}
 	return (
-		<label>
+		<>
 			<span>{ NO__( "It's called" ) }</span>
-			<input
-				className="onboarding-block__question-input"
-				onClick={ onExpand }
-				onChange={ updateTitle }
-				value={ siteTitle }
-			/>
-		</label>
+			<div className="onboarding-block__multi-question">
+				{ isActive ? (
+					<SiteTitle onSelect={ onSelect } />
+				) : (
+					<>
+						<button className="onboarding-block__question-answered" onClick={ onExpand }>
+							{ ! isEmpty( siteTitle ) ? siteTitle : NO__( 'enter a title' ) }
+						</button>
+						<span>.</span>
+					</>
+				) }
+			</div>
+		</>
 	);
 };
 
