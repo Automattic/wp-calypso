@@ -99,7 +99,4 @@ const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( EmailedLoginLinkSuccessfully ) );
+export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );

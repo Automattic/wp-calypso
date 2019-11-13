@@ -58,7 +58,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 						className="gmb-select-location__connected-icon"
 						icon="checkmark-circle"
 						size={ 18 }
-					/>{' '}
+					/>{ ' ' }
 					{ translate( 'Connected' ) }
 				</div>
 			);

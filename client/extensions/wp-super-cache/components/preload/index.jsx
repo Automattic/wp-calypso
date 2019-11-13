@@ -325,7 +325,4 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PreloadTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PreloadTab );

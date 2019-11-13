@@ -173,7 +173,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( localize( InviteAcceptLoggedOut ) );

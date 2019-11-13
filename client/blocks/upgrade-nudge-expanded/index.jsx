@@ -162,7 +162,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeNudgeExpanded ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

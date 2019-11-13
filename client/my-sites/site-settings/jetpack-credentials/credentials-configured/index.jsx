@@ -133,7 +133,6 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ deleteCredentials }
-)( localize( CredentialsConfigured ) );
+export default connect( mapStateToProps, { deleteCredentials } )(
+	localize( CredentialsConfigured )
+);

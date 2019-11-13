@@ -38,7 +38,4 @@ class QueryWordadsEarnings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestWordadsEarnings }
-)( QueryWordadsEarnings );
+export default connect( null, { requestWordadsEarnings } )( QueryWordadsEarnings );

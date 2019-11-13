@@ -187,10 +187,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( Site ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( Site ) );

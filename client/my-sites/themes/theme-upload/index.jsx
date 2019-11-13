@@ -332,10 +332,7 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-	),
+	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
 	localize,
 ];
 

@@ -119,11 +119,8 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-		trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-		trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
-	}
-)( localize( ErrorBanner ) );
+export default connect( null, {
+	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
+} )( localize( ErrorBanner ) );

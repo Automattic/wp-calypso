@@ -88,7 +88,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( FormWeightInput );
+export default connect( mapStateToProps, mapDispatchToProps )( FormWeightInput );

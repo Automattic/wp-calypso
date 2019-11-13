@@ -218,7 +218,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
+			return requestSiteTerms(
+				siteId,
+				taxonomyName
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -232,7 +235,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
+			return requestSiteTerms(
+				siteId,
+				taxonomyName
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId: siteId,
@@ -244,7 +250,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( 12345, 'chicken-and-ribs' )( spy ).then( () => {
+			return requestSiteTerms(
+				12345,
+				'chicken-and-ribs'
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_FAILURE,
 					siteId: 12345,
@@ -457,7 +466,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				taxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -522,7 +536,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				categoryTaxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -571,7 +590,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				categoryTaxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).not.toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,

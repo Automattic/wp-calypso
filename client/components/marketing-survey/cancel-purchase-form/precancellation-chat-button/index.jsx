@@ -56,9 +56,6 @@ class PrecancellationChatButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PrecancellationChatButton ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PrecancellationChatButton ) );

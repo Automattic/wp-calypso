@@ -123,10 +123,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		dismissBanner,
-		recordTracksEvent,
-	}
-)( localize( UpworkBanner ) );
+export default connect( mapStateToProps, {
+	dismissBanner,
+	recordTracksEvent,
+} )( localize( UpworkBanner ) );

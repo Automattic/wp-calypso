@@ -46,7 +46,11 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { bumpStat, infoNotice, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpCopyLinkStat = bumpStatGenerator( stateProps.type, 'copy_link', dispatchProps.bumpStat );
+	const bumpCopyLinkStat = bumpStatGenerator(
+		stateProps.type,
+		'copy_link',
+		dispatchProps.bumpStat
+	);
 	const onCopyLinkClick = () => {
 		dispatchProps.infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
 		bumpCopyLinkStat();

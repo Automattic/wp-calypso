@@ -296,7 +296,4 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ loadTrackingTool }
-)( localize( ImportingPane ) );
+export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );

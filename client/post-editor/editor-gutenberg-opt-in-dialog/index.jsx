@@ -136,20 +136,17 @@ const mapDispatchToProps = dispatch => ( {
 	hideDialog: () => dispatch( hideGutenbergOptInDialog() ),
 } );
 
-export default connect(
-	state => {
-		const isDialogVisible = isGutenbergOptInDialogShowing( state );
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect( state => {
+	const isDialogVisible = isGutenbergOptInDialogShowing( state );
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 
-		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
-		return {
-			gutenbergUrl,
-			isDialogVisible,
-			siteId,
-		};
-	},
-	mapDispatchToProps
-)( localize( EditorGutenbergOptInDialog ) );
+	return {
+		gutenbergUrl,
+		isDialogVisible,
+		siteId,
+	};
+}, mapDispatchToProps )( localize( EditorGutenbergOptInDialog ) );

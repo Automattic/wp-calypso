@@ -159,18 +159,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	( state, props ) => {
-		const reply = getReviewReply( state, props.reviewId, props.replyId );
-		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
-		const replyEdits = getReviewReplyEdits( state );
-		const editContent = replyEdits.content || '';
-		return {
-			reply,
-			isEditing,
-			replyEdits,
-			editContent,
-		};
-	},
-	mapDispatchToProps
-)( localize( ReviewReply ) );
+export default connect( ( state, props ) => {
+	const reply = getReviewReply( state, props.reviewId, props.replyId );
+	const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+	const replyEdits = getReviewReplyEdits( state );
+	const editContent = replyEdits.content || '';
+	return {
+		reply,
+		isEditing,
+		replyEdits,
+		editContent,
+	};
+}, mapDispatchToProps )( localize( ReviewReply ) );

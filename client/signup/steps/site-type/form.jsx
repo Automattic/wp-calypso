@@ -76,9 +76,6 @@ class SiteTypeForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( SiteTypeForm ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( SiteTypeForm ) );

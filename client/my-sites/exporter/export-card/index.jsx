@@ -87,14 +87,8 @@ const trackExportClick = ( scope = 'all' ) =>
 	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	advancedSettingsFetch: flowRight(
-		dispatch,
-		advancedSettingsFetch
-	),
-	setPostType: flowRight(
-		dispatch,
-		setPostType
-	),
+	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
 	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
@@ -104,7 +98,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ExportCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );

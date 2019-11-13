@@ -115,7 +115,4 @@ const connectComponent = connect(
 	{ deleteFile }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( CacheStats );
+export default flowRight( connectComponent, localize )( CacheStats );

@@ -67,7 +67,4 @@ const connectComponent = connect(
 	{ requestFeed, requestLock, requestZones, resetLock }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( ZoneLockWarningNotice );
+export default flowRight( connectComponent, localize )( ZoneLockWarningNotice );

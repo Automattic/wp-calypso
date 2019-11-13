@@ -66,7 +66,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RequiredPagesSetupView ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RequiredPagesSetupView ) );

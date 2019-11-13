@@ -141,9 +141,9 @@ export class ContactDetailsFormFields extends Component {
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
 			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
-			( nextProps.needsFax !== this.props.needsFax ||
+			nextProps.needsFax !== this.props.needsFax ||
 				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
-				nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails )
+				nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails
 		);
 	}
 

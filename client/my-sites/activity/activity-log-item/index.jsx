@@ -477,10 +477,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 } );
 
 export default compose(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	withDesktopBreakpoint,
 	withLocalizedMoment,
 	localize

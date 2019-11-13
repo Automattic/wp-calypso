@@ -58,9 +58,6 @@ class Preference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		unsetPreference: savePreference,
-	}
-)( localize( Preference ) );
+export default connect( null, {
+	unsetPreference: savePreference,
+} )( localize( Preference ) );

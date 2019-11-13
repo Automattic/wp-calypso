@@ -181,7 +181,7 @@ export class ConciergeSupportSession extends PureComponent {
 										},
 									}
 								) }
-							</b>{' '}
+							</b>{ ' ' }
 							{ translate(
 								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
 							) }

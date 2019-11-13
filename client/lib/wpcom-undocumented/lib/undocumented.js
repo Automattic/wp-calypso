@@ -1950,7 +1950,10 @@ Undocumented.prototype.importWithSiteImporter = function(
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
 		apiNamespace: 'wpcom/v2',
-		formData: [ [ 'import_status', JSON.stringify( importerStatus ) ], [ 'site_url', targetUrl ] ],
+		formData: [
+			[ 'import_status', JSON.stringify( importerStatus ) ],
+			[ 'site_url', targetUrl ],
+		],
 	} );
 };
 

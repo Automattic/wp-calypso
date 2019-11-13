@@ -65,10 +65,4 @@ export class ImporterCloseButton extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect(
-		null,
-		{ recordTracksEvent }
-	),
-	localize
-)( ImporterCloseButton );
+export default flow( connect( null, { recordTracksEvent } ), localize )( ImporterCloseButton );

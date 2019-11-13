@@ -724,7 +724,4 @@ const mapDispatchToProps = {
 	settingsUpdate,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( EditorHtmlToolbar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );

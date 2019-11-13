@@ -55,7 +55,4 @@ export class CommentLink extends PureComponent {
 
 const mapDispatchToProps = { navigate };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( CommentLink );
+export default connect( null, mapDispatchToProps )( CommentLink );

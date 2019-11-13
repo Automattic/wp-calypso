@@ -53,7 +53,4 @@ ExternalLinkWithTracking.propTypes = {
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( ExternalLinkWithTracking );
+export default connect( null, { recordTracksEvent } )( ExternalLinkWithTracking );

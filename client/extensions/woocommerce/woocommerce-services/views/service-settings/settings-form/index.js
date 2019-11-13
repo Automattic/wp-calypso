@@ -62,7 +62,4 @@ function mapDispatchToProps( dispatch, ownProps ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( SettingsForm );
+export default connect( mapStateToProps, mapDispatchToProps )( SettingsForm );

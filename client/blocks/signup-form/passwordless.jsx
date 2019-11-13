@@ -259,11 +259,8 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 }
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-		saveSignupStep,
-		submitCreateAccountStep: submitSignupStep,
-	}
-)( localize( PasswordlessSignupForm ) );
+export default connect( null, {
+	recordTracksEvent,
+	saveSignupStep,
+	submitCreateAccountStep: submitSignupStep,
+} )( localize( PasswordlessSignupForm ) );

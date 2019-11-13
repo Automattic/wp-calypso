@@ -283,7 +283,4 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentEdit ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentEdit ) );

@@ -29,7 +29,7 @@ export default function JetpackConnectHelpButton( { label } ) {
 			rel="noopener noreferrer"
 			onClick={ recordClick }
 		>
-			<Gridicon icon="help-outline" size={ 18 } />{' '}
+			<Gridicon icon="help-outline" size={ 18 } />{ ' ' }
 			{ label || translate( 'Get help setting up Jetpack' ) }
 		</LoggedOutFormLinkItem>
 	);

@@ -38,7 +38,7 @@ export default function SuggestionsExample() {
 					<span role="img" aria-label="Warning">
 						⚠️
 					</span>
-					The above input is for demonstration. It is not part of the{' '}
+					The above input is for demonstration. It is not part of the{ ' ' }
 					<code>{ '<Suggestions />' }</code> component.
 				</p>
 				<p>

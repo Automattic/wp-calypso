@@ -26,7 +26,10 @@ function syncInitialize( { fieldNames } ) {
 				case 'INITIALIZE':
 					next = createNullFieldValues( fieldNames );
 					next = createInitialFormState( next );
-					next = initializeFields( next, mapValues( fieldNames, () => '' ) );
+					next = initializeFields(
+						next,
+						mapValues( fieldNames, () => '' )
+					);
 					break;
 
 				default:

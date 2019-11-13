@@ -70,7 +70,7 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__follow">
 						{ followerCount && (
 							<span className="reader-feed-header__follow-count">
-								{' '}
+								{ ' ' }
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],

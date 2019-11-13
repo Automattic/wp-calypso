@@ -361,7 +361,7 @@
 		"nock": "10.0.6",
 		"npm-merge-driver": "2.3.5",
 		"npm-package-json-lint": "4.0.3",
-		"prettier": "npm:wp-prettier@1.18.2",
+		"prettier": "npm:wp-prettier@1.19.1",
 		"react-test-renderer": "16.11.0",
 		"readline-sync": "1.4.9",
 		"replace": "1.1.0",

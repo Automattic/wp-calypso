@@ -74,7 +74,7 @@ class Locked extends React.Component {
 									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
 										'Your contact information will be publicly available during the transfer period.'
 							  )
-							: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
+							: translate( 'To transfer your domain, we must unlock it.' ) }{ ' ' }
 						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Learn More.' ) }
 						</a>

@@ -42,7 +42,4 @@ class NoAvailableTimes extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( NoAvailableTimes ) );
+export default connect( null, { recordTracksEvent } )( localize( NoAvailableTimes ) );

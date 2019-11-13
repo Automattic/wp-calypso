@@ -196,7 +196,7 @@ export class EditorGroundControl extends React.Component {
 							icon="info"
 							className="editor-ground-control__email-verification-notice-icon"
 						/>
-						{ this.getVerificationNoticeLabel() }{' '}
+						{ this.getVerificationNoticeLabel() }{ ' ' }
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
@@ -235,7 +235,4 @@ const mapDispatchToProps = {
 	pauseEditorTour: () => pauseGuidedTour(),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( EditorGroundControl ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );

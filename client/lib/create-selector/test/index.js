@@ -23,10 +23,7 @@ describe( 'index', () => {
 	} );
 
 	beforeAll( () => {
-		getSitePosts = createSelector(
-			selector,
-			state => state.posts
-		);
+		getSitePosts = createSelector( selector, state => state.posts );
 	} );
 
 	beforeEach( () => {
@@ -169,10 +166,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept an array of dependent state values', () => {
-		const getSitePostsWithArrayDependants = createSelector(
-			selector,
-			state => [ state.posts ]
-		);
+		const getSitePostsWithArrayDependants = createSelector( selector, state => [ state.posts ] );
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -192,10 +186,7 @@ describe( 'index', () => {
 
 	test( 'should accept an array of dependent selectors', () => {
 		const getPosts = state => state.posts;
-		const getSitePostsWithArrayDependants = createSelector(
-			selector,
-			[ getPosts ]
-		);
+		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -288,10 +279,7 @@ describe( 'index', () => {
 
 	test( 'should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
-		const memoizedSelector = createSelector(
-			() => null,
-			getDeps
-		);
+		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
 
 		memoizedSelector( state, 1, 2, 3 );
@@ -302,10 +290,7 @@ describe( 'index', () => {
 	test( 'should handle an array of selectors instead of a dependant state getter', () => {
 		const getPosts = sinon.spy();
 		const getQuuxs = sinon.spy();
-		const memoizedSelector = createSelector(
-			() => null,
-			[ getPosts, getQuuxs ]
-		);
+		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
 		const state = {};
 
 		memoizedSelector( state, 1, 2, 3 );

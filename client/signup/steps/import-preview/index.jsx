@@ -202,10 +202,7 @@ class ImportPreview extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		saveSignupStep,
-		submitSignupStep,
-	}
-)( localize( ImportPreview ) );
+export default connect( null, {
+	saveSignupStep,
+	submitSignupStep,
+} )( localize( ImportPreview ) );

@@ -271,7 +271,7 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{' '}
+										} ) }{ ' ' }
 									</span>
 								</FormLabel>
 

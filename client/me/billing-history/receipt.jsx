@@ -244,7 +244,7 @@ class BillingReceipt extends React.Component {
 							alt={ transaction.service }
 						/>
 						<h2>
-							{' '}
+							{ ' ' }
 							{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
 								components: {
 									link: serviceLink,

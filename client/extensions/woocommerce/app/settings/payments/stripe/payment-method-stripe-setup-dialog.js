@@ -200,8 +200,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodStripeSetupDialog )
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeSetupDialog )
 );

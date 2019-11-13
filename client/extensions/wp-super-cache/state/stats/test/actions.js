@@ -136,7 +136,12 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
-			return deleteFile( siteId, url, true, false )( spy ).then( () => {
+			return deleteFile(
+				siteId,
+				url,
+				true,
+				false
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 					isSupercache: true,
@@ -148,7 +153,12 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return deleteFile( failedSiteId, url, true, false )( spy ).then( () => {
+			return deleteFile(
+				failedSiteId,
+				url,
+				true,
+				false
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 					siteId: failedSiteId,

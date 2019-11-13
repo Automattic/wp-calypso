@@ -91,11 +91,8 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		formUpdate,
-		loginUserWithSecurityKey,
-		recordTracksEvent,
-	}
-)( localize( SecurityKeyForm ) );
+export default connect( null, {
+	formUpdate,
+	loginUserWithSecurityKey,
+	recordTracksEvent,
+} )( localize( SecurityKeyForm ) );

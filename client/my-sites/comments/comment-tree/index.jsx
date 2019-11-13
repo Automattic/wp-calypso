@@ -279,7 +279,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentTree ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentTree ) );

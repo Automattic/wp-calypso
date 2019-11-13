@@ -26,7 +26,10 @@ export default {
 			[ 'Tags ', '&', ' Stuff' ],
 			[ 'Tags ', '&', ' Stuff 2' ],
 		],
-		matchAmpersandSequence: [ [ 'Tag', 's &', ' Stuff' ], [ 'Tag', 's &', ' Stuff 2' ] ],
+		matchAmpersandSequence: [
+			[ 'Tag', 's &', ' Stuff' ],
+			[ 'Tag', 's &', ' Stuff 2' ],
+		],
 		matchAmpersandEscaped: [],
 	},
 	matchingSuggestions: {

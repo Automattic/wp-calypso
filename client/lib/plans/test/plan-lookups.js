@@ -441,12 +441,12 @@ describe( 'findSimilarPlansKeys', () => {
 		expect( findSimilarPlansKeys( PLAN_BLOGGER_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal( [
 			PLAN_BLOGGER,
 		] );
-		expect( findSimilarPlansKeys( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal(
-			[ PLAN_PERSONAL ]
-		);
-		expect( findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal(
-			[ PLAN_BUSINESS ]
-		);
+		expect(
+			findSimilarPlansKeys( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } )
+		).to.deep.equal( [ PLAN_PERSONAL ] );
+		expect(
+			findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } )
+		).to.deep.equal( [ PLAN_BUSINESS ] );
 
 		expect( findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { term: TERM_MONTHLY } ) ).to.deep.equal( [
 			PLAN_JETPACK_PERSONAL_MONTHLY,

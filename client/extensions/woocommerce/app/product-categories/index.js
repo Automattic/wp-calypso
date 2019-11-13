@@ -145,7 +145,4 @@ const mapDispatchToProps = dispatch => ( {
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategories ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

@@ -473,8 +473,4 @@ const connectHome = connect(
 	} )
 );
 
-export default flowRight(
-	connectHome,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Home );
+export default flowRight( connectHome, localize, withTrackingTool( 'HotJar' ) )( Home );

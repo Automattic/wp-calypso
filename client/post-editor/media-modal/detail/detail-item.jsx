@@ -331,7 +331,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( EditorMediaModalDetailItem );
+export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );

@@ -28,9 +28,6 @@ export const isFailed = status =>
  * @param {Number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */
-export const isAutomatedTransferFailed = compose(
-	isFailed,
-	getAutomatedTransferStatus
-);
+export const isAutomatedTransferFailed = compose( isFailed, getAutomatedTransferStatus );
 
 export default isAutomatedTransferFailed;

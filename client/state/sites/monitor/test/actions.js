@@ -126,7 +126,10 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch monitor settings request success action upon success', () => {
-				return updateSiteMonitorSettings( siteId, settings )( spy ).then( () => {
+				return updateSiteMonitorSettings(
+					siteId,
+					settings
+				)( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 						siteId,
@@ -149,7 +152,10 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch monitor settings request failure action upon error', () => {
-				return updateSiteMonitorSettings( siteId, settings )( spy ).then( () => {
+				return updateSiteMonitorSettings(
+					siteId,
+					settings
+				)( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 						siteId,

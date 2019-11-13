@@ -111,8 +111,8 @@ export class DateTimeFormat extends Component {
 			<div>
 				<div className="date-time-format__title">{ translate( 'Date and Time Format' ) }</div>
 				<div className="date-time-format__info">
-					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{' '}
-					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{' '}
+					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{ ' ' }
+					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{ ' ' }
 					{ translate( 'Week starts on %s', { args: weekday } ) }
 				</div>
 			</div>

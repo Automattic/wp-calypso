@@ -38,7 +38,4 @@ export class QuerySiteSelectedEditor extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSelectedEditor }
-)( QuerySiteSelectedEditor );
+export default connect( null, { requestSelectedEditor } )( QuerySiteSelectedEditor );

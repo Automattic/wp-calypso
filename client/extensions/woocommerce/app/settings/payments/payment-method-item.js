@@ -263,9 +263,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodItem )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );

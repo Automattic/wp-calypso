@@ -179,12 +179,9 @@ const paymentSettingsClick = domain =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		fetchSiteDomains,
-		paymentSettingsClick,
-		successNotice,
-	}
-)( localize( Transfer ) );
+export default connect( null, {
+	errorNotice,
+	fetchSiteDomains,
+	paymentSettingsClick,
+	successNotice,
+} )( localize( Transfer ) );

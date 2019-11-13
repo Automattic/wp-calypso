@@ -108,12 +108,6 @@ class StatsSummaryChart extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsSummaryChart );
+export default flowRight( connectComponent, localize )( StatsSummaryChart );

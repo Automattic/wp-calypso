@@ -114,7 +114,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsEmail ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsEmail ) );

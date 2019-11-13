@@ -30,7 +30,4 @@ class QueryMailchimpSettings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSettings }
-)( QueryMailchimpSettings );
+export default connect( null, { requestSettings } )( QueryMailchimpSettings );

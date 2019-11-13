@@ -170,7 +170,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: [ { name: 'category', label: 'Categories' }, { name: 'post_tag', label: 'Tags' } ],
+					post: [
+						{ name: 'category', label: 'Categories' },
+						{ name: 'post_tag', label: 'Tags' },
+					],
 				},
 			} );
 		} );

@@ -56,7 +56,7 @@ export class CartCoupon extends React.Component {
 					{ this.props.translate( 'Coupon applied: %(coupon)s', {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
-				</span>{' '}
+				</span>{ ' ' }
 				<button onClick={ this.clearCoupon } className="button is-link cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
 				</button>
@@ -178,7 +178,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( CartCoupon ) );
+export default connect( null, mapDispatchToProps )( localize( CartCoupon ) );

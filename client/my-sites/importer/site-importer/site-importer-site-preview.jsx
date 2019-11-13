@@ -161,7 +161,4 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteImporterSitePreview ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );

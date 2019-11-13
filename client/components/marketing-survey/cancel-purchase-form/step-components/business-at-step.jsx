@@ -83,7 +83,4 @@ export class BusinessATStep extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( BusinessATStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( BusinessATStep ) );

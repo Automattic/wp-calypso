@@ -33,9 +33,6 @@ Security2faKeyItem.propTypes = {
 	securityKey: PropTypes.object.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKeyItem ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKeyItem ) );

@@ -231,10 +231,7 @@ const finishSetupNoticeClick = siteSlug =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		finishSetupNoticeClick,
-		recordShowPendingAccountNotice,
-	}
-)( localize( PendingGSuiteTosNotice ) );
+export default connect( null, {
+	finishSetupNoticeClick,
+	recordShowPendingAccountNotice,
+} )( localize( PendingGSuiteTosNotice ) );

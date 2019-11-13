@@ -191,7 +191,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchSetupChoices }
-)( localize( App ) );
+export default connect( mapStateToProps, { fetchSetupChoices } )( localize( App ) );

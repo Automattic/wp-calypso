@@ -230,7 +230,7 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			children = (
 				<span>
-					{ text }{' '}
+					{ text }{ ' ' }
 					<a href={ learnMoreUrl } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Learn more' ) }
 					</a>
@@ -1096,7 +1096,4 @@ export class DomainWarnings extends React.PureComponent {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( DomainWarnings ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainWarnings ) );

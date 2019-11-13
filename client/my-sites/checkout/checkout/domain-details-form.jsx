@@ -334,10 +334,7 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
-	{
-		recordTracksEvent,
-		updateContactDetailsCache,
-	}
-)( localize( DomainDetailsFormContainer ) );
+export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+	recordTracksEvent,
+	updateContactDetailsCache,
+} )( localize( DomainDetailsFormContainer ) );

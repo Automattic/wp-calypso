@@ -265,8 +265,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Plans );
+export default flowRight( connectComponent, localize, withTrackingTool( 'HotJar' ) )( Plans );

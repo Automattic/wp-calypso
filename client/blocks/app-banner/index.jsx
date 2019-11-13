@@ -265,7 +265,4 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AppBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );

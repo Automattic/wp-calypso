@@ -216,8 +216,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	toggleInfo
-)( StatsPostDetailWeeks );
+export default flowRight( connectComponent, localize, toggleInfo )( StatsPostDetailWeeks );

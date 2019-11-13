@@ -70,7 +70,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request succeeds', () => {
-			return requestPostCounts( 2916284, 'post' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'post'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_RECEIVE,
 					siteId: 2916284,
@@ -84,7 +87,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when request succeeds', () => {
-			return requestPostCounts( 2916284, 'post' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'post'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -94,7 +100,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestPostCounts( 2916284, 'foo' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'foo'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId: 2916284,
