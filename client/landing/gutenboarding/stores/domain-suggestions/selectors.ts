@@ -48,16 +48,18 @@ export const __internalGetDomainSuggestions = (
  */
 function normalizeDomainSuggestionQuery(
 	search: string,
-	q: DomainSuggestionSelectorOptions
+	queryOptions: DomainSuggestionSelectorOptions
 ): DomainSuggestionQuery {
-	return Object.assign(
-		{
-			query: search.toLocaleLowerCase(),
-			include_wordpressdotcom: q.include_wordpressdotcom || false, // @FIXME replace `||` with `??`
-			quantity: q.quantity || 5, // @FIXME replace `||` with `??`
-			vendor: 'variation2_front', // see client/lib/domains/suggestions/index.js
-		},
-		q.recommendation_context && { recommendation_context: q.recommendation_context },
-		q.vertical && { vertical: q.vertical }
-	);
+	return {
+		// Defaults
+		include_wordpressdotcom: false,
+		quantity: 5,
+		vendor: 'variation2_front',
+
+		// Merge options
+		...queryOptions,
+
+		// Add the search query
+		query: search.toLocaleLowerCase(),
+	};
 }
