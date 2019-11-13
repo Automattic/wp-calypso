@@ -28,8 +28,11 @@ class FreeDomainExplainer extends React.Component {
 						next page.
 					</p>
 					<p className="free-domain-explainer__subtitle">
-						If you're not ready to choose, you can skip this step for now and claim your free custom
-						domain when you're ready. Review our plan options to get started.
+						If you’re not ready to choose, go with any paid plan and claim your free custom domain
+						when you’re ready.
+						<a className="free-domain-explainer__subtitle-link">
+							Review our plan options to get started.{' '}
+						</a>
 					</p>
 				</header>
 			</div>
