@@ -1,3 +1,8 @@
+# next
+
+- Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
+- Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
+
 # 5.0.1
 
 - Fix PostCSS config path default.
