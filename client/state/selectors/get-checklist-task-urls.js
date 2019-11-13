@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find, get, some } from 'lodash';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -49,7 +50,7 @@ export default createSelector(
 		const updateHomepageUrl =
 			// TODO: Add a query param that instructs the editor to "promote" the new page to the front page on publish
 			abtest( 'checklistUpdateHomepage' ) === 'templateSelector'
-				? getEditorUrl( state, siteId, null, 'page' )
+				? addQueryArgs( getEditorUrl( state, siteId, null, 'page' ), { 'new-homepage': 1 } )
 				: frontPageUrl;
 
 		return {

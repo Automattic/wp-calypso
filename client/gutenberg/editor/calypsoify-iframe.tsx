@@ -86,6 +86,7 @@ enum EditorActions {
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenRevisions = 'openRevisions',
+	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -296,6 +297,18 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				error[ 4 ] = errorObject && JSON.parse( errorObject );
 				window.onerror( ...error );
 			}
+		}
+
+		if ( EditorActions.PostStatusChange === action ) {
+			const { status } = payload;
+			this.handlePostStatusChange( status );
+		}
+	};
+
+	handlePostStatusChange = status => {
+		console.log( 'post status is now: ' + status );
+		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+			console.log( 'would promote this page to the front' );
 		}
 	};
 

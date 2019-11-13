@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { get, isInteger, noop } from 'lodash';
+import { get, has, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -177,6 +177,7 @@ export const post = ( context, next ) => {
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
 			fseParentPageId={ fseParentPageId }
+			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 		/>
 	);
 
