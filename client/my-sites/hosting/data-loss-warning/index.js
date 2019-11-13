@@ -28,7 +28,7 @@ const DataLossWarning = ( { avatars, translate } ) => {
 				</strong>
 				&nbsp;
 				{ translate(
-					'If you need help or have any questions our Happiness Engineers are here when you need them!'
+					'If you need help or have any questions, our Happiness Engineers are here when you need them!'
 				) }
 			</p>
 			<div className="data-loss-warning__contact">
