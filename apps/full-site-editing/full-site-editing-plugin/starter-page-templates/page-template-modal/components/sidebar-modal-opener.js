@@ -30,12 +30,12 @@ class SidebarModalOpener extends Component {
 	};
 
 	getLastTemplateUsed = () => {
-		const { templateUsedSlug, templates } = this.props;
-		if ( ! templateUsedSlug || templateUsedSlug === 'blank' ) {
+		const { lastTemplateUsedSlug, templates } = this.props;
+		if ( ! lastTemplateUsedSlug || lastTemplateUsedSlug === 'blank' ) {
 			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
 			return templates[ 1 ];
 		}
-		return templates.find( temp => temp.slug === templateUsedSlug );
+		return templates.find( temp => temp.slug === lastTemplateUsedSlug );
 	};
 
 	render() {
@@ -101,7 +101,7 @@ class SidebarModalOpener extends Component {
 
 const SidebarTemplatesPlugin = compose(
 	withSelect( select => ( {
-		templateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
 	} ) )
 )( SidebarModalOpener );
