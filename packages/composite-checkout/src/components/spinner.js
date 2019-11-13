@@ -40,5 +40,7 @@ const SpinnerWrapper = styled.div`
 		opacity: 0.5;
 		content: '';
 		border-radius: 100%;
+		animation: ${rotate} 3s linear infinite;
+		animation-fill-mode: backwards;
 	}
 `;
