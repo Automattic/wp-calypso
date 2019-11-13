@@ -234,7 +234,7 @@ class WP_Template_Inserter {
 		}
 
 		// Set header and footer content based on data fetched from the WP.com API.
-		$this->fetch_template_parts( $should_fetch_from_api );
+		$this->fetch_template_parts();
 
 		// Avoid creating template parts if data hasn't been fetched properly.
 		if ( empty( $this->header_content ) || empty( $this->footer_content ) ) {
