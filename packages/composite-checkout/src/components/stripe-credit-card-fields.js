@@ -154,7 +154,7 @@ export function createStripeMethod( {
 	};
 }
 
-function StripeCreditCardFields( { isActive, summary } ) {
+function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
 	const { onFailure } = useCheckoutHandlers();
@@ -201,9 +201,6 @@ function StripeCreditCardFields( { isActive, summary } ) {
 		},
 	};
 
-	if ( ! isActive || summary ) {
-		return null;
-	}
 	if ( stripeLoadingError ) {
 		return <span>Error!</span>;
 	}

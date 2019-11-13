@@ -18,7 +18,7 @@ export function createCreditCardMethod() {
 	return {
 		id: 'card',
 		LabelComponent: CreditCardLabel,
-		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
+		PaymentMethodComponent: CreditCardFields,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		SummaryComponent: CreditCardSummary,

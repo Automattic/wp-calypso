@@ -403,7 +403,7 @@ Each payment method has the following schema:
 {
 	id: string,
 	LabelComponent: component,
-	PaymentMethodComponent: component,
+	PaymentMethodComponent: ?component,
 	BillingContactComponent: component,
 	SubmitButtonComponent: component,
 	CheckoutWrapper: ?component,
