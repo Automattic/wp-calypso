@@ -32,7 +32,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		'Digital Marketing',
 		'Cameras & Photography',
 		'Website Designer',
-		'Restaurants',
+		'Restaurant',
 		'Fashion Designer',
 		'Real Estate Agent',
 	];
