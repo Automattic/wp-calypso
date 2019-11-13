@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
  */
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -49,7 +48,7 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
+				if ( this.props.showTestCopy ) {
 					message = (
 						<>
 							Registration fee: <del>{ this.props.price }</del>{' '}
@@ -77,24 +76,21 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		let priceText;
-		if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ) {
-			priceText = `Renews at ${ this.props.price }/year`;
-		} else {
-			priceText = this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
-				args: { cost: this.props.price },
-				components: { small: <small /> },
-			} );
-		}
+		const priceText = this.props.showTestCopy
+			? `Renews at ${ this.props.price }/year`
+			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+					args: { cost: this.props.price },
+					components: { small: <small /> },
+			  } );
 
 		return <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates':
-				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ),
+			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
 		} );
+
 		return (
 			<div className={ className }>
 				{ this.renderFreeWithPlanText() }
@@ -104,9 +100,13 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFree() {
+		const className = classnames( 'domain-product-price', {
+			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+		} );
+
 		return (
-			<div className={ classnames( 'domain-product-price' ) }>
-				<span className="domain-product-price__price">{ this.props.translate( 'Free' ) }</span>
+			<div className={ className }>
+				<div className="domain-product-price__price">{ this.props.translate( 'Free' ) }</div>
 			</div>
 		);
 	}

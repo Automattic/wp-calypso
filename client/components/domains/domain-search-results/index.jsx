@@ -259,6 +259,7 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					showTestCopy={ this.props.showTestCopy }
 				/>
 			);
 
@@ -283,6 +284,7 @@ class DomainSearchResults extends React.Component {
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						showTestCopy={ this.props.showTestCopy }
 					/>
 				);
 			} );

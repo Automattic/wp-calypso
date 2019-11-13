@@ -314,6 +314,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
+				showTestCopy={ this.props.showTestCopy }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
