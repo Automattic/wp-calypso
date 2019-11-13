@@ -25,7 +25,7 @@ const EXPECTED_FOO_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo__
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: 'babel-eslint',
+	parser: require.resolve( 'babel-eslint' ),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 		sourceType: 'module',
