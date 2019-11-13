@@ -79,9 +79,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 				compact={ compact }
 			/>
 			<GSuiteSingleFeature
-				title={
-					compact ? translate( 'Video calls' ) : translate( 'Connect with your team' )
-				}
+				title={ compact ? translate( 'Video calls' ) : translate( 'Connect with your team' ) }
 				description={
 					compact
 						? undefined

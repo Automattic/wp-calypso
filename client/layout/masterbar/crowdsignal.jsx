@@ -22,12 +22,14 @@ class CrowdsignalOauthMasterbar extends Component {
 
 		const crowdsignalFonts = [
 			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/400.woff2)' ),
-			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', { weight: 700} ),
+			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', {
+				weight: 700,
+			} ),
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, ( font ) => {
-				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
+			map( crowdsignalFonts, font => {
+				font.load().then( loadedFont => document.fonts.add( loadedFont ) );
 			} );
 		}
 	}

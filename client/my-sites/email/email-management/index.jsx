@@ -165,7 +165,8 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL: 'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL:
+					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};

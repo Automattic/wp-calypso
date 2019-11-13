@@ -154,9 +154,7 @@ export class RedirectPaymentBox extends PureComponent {
 			cancelUrl += this.props.selectedSite.slug;
 			successUrl =
 				origin +
-				`/checkout/thank-you/${
-					this.props.selectedSite.slug
-				}/pending?redirectTo=${ redirectPath }`;
+				`/checkout/thank-you/${ this.props.selectedSite.slug }/pending?redirectTo=${ redirectPath }`;
 		} else {
 			cancelUrl += 'no-site';
 			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;

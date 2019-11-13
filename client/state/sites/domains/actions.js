@@ -185,4 +185,3 @@ export function redactDomainContactInfo( siteId, domain ) {
 		domain,
 	};
 }
-
