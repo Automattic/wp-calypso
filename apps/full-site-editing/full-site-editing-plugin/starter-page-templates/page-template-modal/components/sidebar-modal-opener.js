@@ -22,10 +22,7 @@ class SidebarModalOpener extends Component {
 	};
 
 	toggleTemplateModal = () => {
-		this.setState( {
-			isTemplateModalOpen: ! this.state.isTemplateModalOpen,
-			isWarningOpen: false,
-		} );
+		this.setState( { isTemplateModalOpen: ! this.state.isTemplateModalOpen } );
 	};
 
 	toggleWarningModal = () => {
