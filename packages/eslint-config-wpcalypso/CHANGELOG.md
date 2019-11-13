@@ -1,3 +1,7 @@
+### next
+
+- Replace deprecated `valid-jsdoc` with [`eslint-plugin-jsdoc`](https://www.npmjs.com/package/eslint-plugin-jsdoc).
+
 ### v4.0.1 (2018-09-13)
 - Allow usage of eslint v5 (159e240)
 

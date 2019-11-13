@@ -59,14 +59,6 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
-					'valid-jsdoc': [
-						2,
-						{
-							requireParamType: false,
-							requireReturn: false,
-							requireReturnType: false,
-						},
-					],
 				},
 			}
 		),
@@ -98,6 +90,9 @@ module.exports = {
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
+
+		// Only use known tag names plus `jest-environment`.
+		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',
