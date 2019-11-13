@@ -29,6 +29,10 @@ export const getDomainSuggestions = (
  * Do not use this selector. It is for internal use.
  *
  * @private
+ *
+ * @param state Store state
+ * @param queryObject Normalized object representing the query
+ * @return suggestions
  */
 export const __internalGetDomainSuggestions = (
 	state: State,
@@ -45,6 +49,10 @@ export const __internalGetDomainSuggestions = (
  *
  * @see client/state/domains/suggestions/utils.js
  * @see client/components/data/query-domains-suggestions/index.jsx
+ *
+ * @param search       Domain search string
+ * @param queryOptions Optional paramaters for the query
+ * @return Normalized query object
  */
 function normalizeDomainSuggestionQuery(
 	search: string,
