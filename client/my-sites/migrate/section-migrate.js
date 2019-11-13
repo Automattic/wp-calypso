@@ -127,7 +127,7 @@ class SectionMigrate extends Component {
 			<CompactCard>
 				<div className="migrate__confirmation">
 					Do you want to migrate all content from { sourceSiteDomain } to { targetSiteDomain }? All
-					existing content on { sourceSiteDomain } will be lost.
+					existing content on { targetSiteDomain } will be lost.
 				</div>
 				<Button primary onClick={ this.startMigration }>
 					Start Migration
