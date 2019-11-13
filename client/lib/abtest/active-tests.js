@@ -124,4 +124,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	domainStepCopyUpdates: {
+		datestamp: '20291111',
+		variations: {
+			variantShowUpdates: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
