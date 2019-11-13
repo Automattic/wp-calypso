@@ -202,6 +202,8 @@
 	}
 
 	.is-section-signup &.domain-suggestion__action-domain-step-copy-updates {
+		order: 4;
+		
 		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}

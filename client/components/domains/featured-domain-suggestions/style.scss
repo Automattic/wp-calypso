@@ -137,6 +137,23 @@
 			display: none;
 		}
 	}
+
+	.domain-registration-suggestion__featured-reason {
+		border-radius: 30px;
+		color: var( --color-text-inverted );
+		text-align: center;
+		padding: 5px 20px;
+		width: auto;
+		line-height: 16px;
+	}
+	
+	.domain-registration-suggestion__recommended {
+		background: #00a32a;
+	}
+
+	.domain-registration-suggestion__alternative {
+		background: #2271b1;
+	}
 }
 
 @include breakpoint( '<660px' ) {
