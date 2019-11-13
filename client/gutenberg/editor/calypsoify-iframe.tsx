@@ -25,6 +25,7 @@ import {
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
@@ -306,10 +307,17 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	handlePostStatusChange = status => {
-		console.log( 'post status is now: ' + status );
 		if ( this.props.creatingNewHomepage && 'publish' === status ) {
-			console.log( 'would promote this page to the front' );
+			this.setFrontPage();
 		}
+	};
+
+	setFrontPage = () => {
+		const { editedPostId, siteId } = this.props;
+		this.props.updateSiteFrontPage( siteId, {
+			show_on_front: 'page',
+			page_on_front: editedPostId,
+		} );
 	};
 
 	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
@@ -687,6 +695,7 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	startEditingPost,
 	trashPost,
+	updateSiteFrontPage,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
