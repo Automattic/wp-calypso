@@ -295,14 +295,14 @@ function handlePostStatusChange( calypsoPort ) {
 	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
 
 	subscribe( () => {
-		if ( select( 'core/editor' ).isSavingPost() ) {
-			// Wait for it
-			return;
-		}
-
 		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
 		if ( status === newStatus ) {
 			// The status has not changed
+			return;
+		}
+
+		if ( select( 'core/editor' ).isEditedPostDirty() ) {
+			// Wait for the status change to be confirmed by the server
 			return;
 		}
 
