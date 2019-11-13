@@ -21,6 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import ConfirmationDialog from './dialog';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
@@ -29,7 +30,7 @@ import {
 import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
 import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
 import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -44,10 +45,12 @@ export class SiteAddressChanger extends Component {
 	static propTypes = {
 		currentDomainSuffix: PropTypes.string.isRequired,
 		currentDomain: PropTypes.object.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
 		siteId: PropTypes.number,
+		selectedSiteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -257,6 +260,10 @@ export class SiteAddressChanger extends Component {
 		);
 	}
 
+	handleAddDomainClick() {
+		this.props.recordTracksEvent( 'calypso_siteaddresschange_add_domain_click' );
+	}
+
 	render() {
 		const {
 			currentDomain,
@@ -264,6 +271,7 @@ export class SiteAddressChanger extends Component {
 			isAvailable,
 			isSiteAddressChangeRequesting,
 			siteId,
+			selectedSiteSlug,
 			translate,
 		} = this.props;
 
@@ -277,6 +285,7 @@ export class SiteAddressChanger extends Component {
 		const isDisabled =
 			( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
 			! isAvailable;
+		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
@@ -316,9 +325,12 @@ export class SiteAddressChanger extends Component {
 						<div className="site-address-changer__info">
 							<p>
 								{ translate(
-									'Once you change your site address, %(currentDomainName)s will no longer be available.',
+									'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
 									{
 										args: { currentDomainName },
+										components: {
+											a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+										},
 									}
 								) }
 							</p>
@@ -358,7 +370,9 @@ export default flow(
 	localize,
 	connect(
 		state => {
-			const siteId = getSelectedSiteId( state );
+			const selectedSite = getSelectedSite( state );
+			const siteId = selectedSite.ID;
+			const selectedSiteSlug = selectedSite.slug;
 			const isAvailable = get( state, [
 				'siteAddressChange',
 				'validation',
@@ -368,6 +382,7 @@ export default flow(
 
 			return {
 				siteId,
+				selectedSiteSlug,
 				isAvailable,
 				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
@@ -378,6 +393,7 @@ export default flow(
 			requestSiteAddressChange,
 			requestSiteAddressAvailability,
 			clearValidationError,
+			recordTracksEvent,
 		}
 	)
 )( SiteAddressChanger );

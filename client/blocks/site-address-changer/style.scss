@@ -97,7 +97,7 @@
 
 	@include breakpoint( '>480px' ) {
 		padding: 24px;
-		margin: 24px -24px -24px;
+		margin: 0 -24px -24px;
 	}
 
 	@include breakpoint( '<480px' ) {
