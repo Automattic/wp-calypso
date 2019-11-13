@@ -34,6 +34,7 @@ class SidebarModalOpener extends Component {
 
 	getLastTemplateUsed = ( { templateUsedSlug, templates } = this.props ) => {
 		if ( ! templateUsedSlug || templateUsedSlug === 'blank' ) {
+			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
 			return templates[ 1 ];
 		}
 		return templates.find( temp => temp.slug === templateUsedSlug );
