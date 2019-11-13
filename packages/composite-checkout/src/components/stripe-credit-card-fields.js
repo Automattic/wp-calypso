@@ -360,7 +360,7 @@ const LockIconGraphic = styled( LockIcon )`
 	display: block;
 	position: absolute;
 	right: 10px;
-	top: 14px
+	top: 14px;
 	width: 20px;
 	height: 20px;
 `;
