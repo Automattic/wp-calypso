@@ -1,6 +1,6 @@
-# 5.1.0
+# next
 
-- Add `util.createIncrementalProgressPlugin`
+- [ Feature ] Add `util.IncrementalProgressPlugin` to show incremental build progress
 
 # 5.0.1
 
