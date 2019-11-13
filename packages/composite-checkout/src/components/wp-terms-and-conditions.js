@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
+import interpolateComponents from 'interpolate-components';
 
 /**
  * Internal dependencies
@@ -18,65 +19,65 @@ export default function WPTermsAndConditions() {
 	return (
 		<TermsAndConditionsWrapper>
 			<TermsParagraph>
-				{ localize(
-					'{strong}By checking out:{/strong} you agree to our {tosLink}Terms of Service{/tosLink} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {howSubscriptionWorks}how your subscription works{/howSubscriptionWorks} and {howToCancel}how to cancel{/howToCancel}. ',
-					{
-						components: {
-							strong: <strong />,
-							tosLink: (
-								<a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
-							),
-							howSubscriptionWorks: (
-								<a
-									href="https://en.support.wordpress.com/manage-purchases/#automatic-renewal"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							howToCancel: (
-								<a
-									href="https://en.support.wordpress.com/manage-purchases/#FAQ-Cancelling"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
+				{ interpolateComponents( {
+					mixedString: localize(
+						'{{strong}}By checking out:{{/strong}} you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{howSubscriptionWorks}}how your subscription works{{/howSubscriptionWorks}} and {{howToCancel}}how to cancel{{/howToCancel}}.'
+					),
+					components: {
+						strong: <strong />,
+						tosLink: (
+							<a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
+						),
+						howSubscriptionWorks: (
+							<a
+								href="https://en.support.wordpress.com/manage-purchases/#automatic-renewal"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+						howToCancel: (
+							<a
+								href="https://en.support.wordpress.com/manage-purchases/#FAQ-Cancelling"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				} ) }
 			</TermsParagraph>
 			{ isDomainsTermsVisible && (
 				<React.Fragment>
 					<TermsParagraph>
-						{ localize(
-							'You agree to the {domainRegistrationAgreement}Domain Registration Agreement{/domainRegistrationAgreement} for domainname.com.',
-							{
-								components: {
-									domainRegistrationAgreement: (
-										<a
-											href="https://wordpress.com/automattic-domain-name-registration-agreement/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
+						{ interpolateComponents( {
+							mixedString: localize(
+								'You agree to the {{domainRegistrationAgreement}}Domain Registration Agreement{{/domainRegistrationAgreement}} for domainname.com.'
+							),
+							components: {
+								domainRegistrationAgreement: (
+									<a
+										href="https://wordpress.com/automattic-domain-name-registration-agreement/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
 					</TermsParagraph>
 					<TermsParagraph>
-						{ localize(
-							'You understand that {domainRefunds}domain name refunds{/domainRefunds} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
-							{
-								components: {
-									domainRefunds: (
-										<a
-											href="https://en.support.wordpress.com/manage-purchases/#refund-policy"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
+						{ interpolateComponents( {
+							mixedString: localize(
+								'You understand that {{domainRefunds}}domain name refunds{{/domainRefunds}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.'
+							),
+							components: {
+								domainRefunds: (
+									<a
+										href="https://en.support.wordpress.com/manage-purchases/#refund-policy"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
 					</TermsParagraph>
 				</React.Fragment>
 			) }
