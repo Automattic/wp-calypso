@@ -89,6 +89,7 @@ const ApplyButton = styled( Button )`
 	right: 4px;
 	padding: 7px;
 	animation: ${animateIn} 0.2s ease-out;
+	animation-fill-mode: backwards;
 	margin: 0;
 `;
 
