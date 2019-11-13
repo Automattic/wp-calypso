@@ -129,6 +129,11 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
+
+		// Turn off sidebar's instance of modal
+		if ( this.props.isPromptedFromSidebar ) {
+			this.props.toggleTemplateModal();
+		}
 	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
