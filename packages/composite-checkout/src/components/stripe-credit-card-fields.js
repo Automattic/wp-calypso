@@ -210,20 +210,14 @@ function StripeCreditCardFields() {
 	if ( isStripeLoading ) {
 		return (
 			<StripeFields>
-				<LoadingIndicator />
-				<CreditCardFields disabled={ true } />
+				<LoadingFields />
 			</StripeFields>
 		);
 	}
 
 	return (
 		<StripeFields>
-			{ ! isStripeFullyLoaded && (
-				<React.Fragment>
-					<LoadingIndicator />
-					<CreditCardFields disabled={ true } />
-				</React.Fragment>
-			) }
+			{ ! isStripeFullyLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
@@ -433,6 +427,15 @@ const BrandLogo = styled.span`
 	right: ${props => ( props.isSummary ? '0' : '10px' )};
 	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
 `;
+
+function LoadingFields() {
+	return (
+		<React.Fragment>
+			<LoadingIndicator />
+			<CreditCardFields disabled={ true } />
+		</React.Fragment>
+	);
+}
 
 function CVV( { className } ) {
 	const localize = useLocalize();
