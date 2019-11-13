@@ -13,6 +13,7 @@ import { isEqual } from 'lodash';
  */
 import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
 import { deleteSiteKeyring } from 'state/site-keyrings/actions';
+import getSiteUserConnectionsForGoogleDrive from 'state/selectors/get-site-user-connections-for-google-drive';
 
 export class GoogleDrive extends SharingService {
 	static propTypes = {
@@ -94,10 +95,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( connection => ( {
-				...connection,
-				keyring_connection_ID: connection.ID,
-			} ) ),
+			siteUserConnections: getSiteUserConnectionsForGoogleDrive( state, props.siteId ),
 		};
 	},
 	{
