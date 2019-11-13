@@ -195,7 +195,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 
 		return (
-			<div className="domain-registration-suggestion__title-wrapper">
+			<div className="domain-registration-suggestion__title-wrapper domain-registration-suggestion__title-domain-copy-test">
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
@@ -329,6 +329,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
+				showTestCopy={ this.props.showTestCopy }
+				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -350,6 +352,7 @@ const mapStateToProps = ( state, props ) => {
 	};
 };
 
-export default connect( mapStateToProps, { recordTracksEvent } )(
-	localize( DomainRegistrationSuggestion )
-);
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( localize( DomainRegistrationSuggestion ) );

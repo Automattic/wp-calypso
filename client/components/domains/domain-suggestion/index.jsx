@@ -36,8 +36,31 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
+	renderDomainSuggestAction() {
+		const className = classNames( 'domain-suggestion__action', {
+			'domain-suggestion__action-domain-copy-test':
+				this.props.showTestCopy && ! this.props.isFeatured,
+		} );
+
+		return (
+			<Button className={ className } { ...this.props.buttonStyles }>
+				{ this.props.buttonContent }
+			</Button>
+		);
+	}
+
 	render() {
-		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
+		const {
+			children,
+			extraClasses,
+			hidePrice,
+			isAdded,
+			price,
+			priceRule,
+			salePrice,
+			showTestCopy,
+			isFeatured,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -61,12 +84,17 @@ class DomainSuggestion extends React.Component {
 				<div className="domain-suggestion__content">
 					{ children }
 					{ ! hidePrice && (
-						<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
+						<DomainProductPrice
+							price={ price }
+							salePrice={ salePrice }
+							rule={ priceRule }
+							showTestCopy={ showTestCopy }
+						/>
 					) }
+					{ showTestCopy && ! isFeatured && this.renderDomainSuggestAction() }
 				</div>
-				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
-					{ this.props.buttonContent }
-				</Button>
+				{ ( ! showTestCopy || isFeatured ) && this.renderDomainSuggestAction() }
+
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }
