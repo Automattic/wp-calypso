@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -53,7 +52,7 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
-		if ( 'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) && ! hidePrice ) {
+		if ( this.props.showTestCopy && ! hidePrice ) {
 			/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 			return (
 				<div
@@ -66,7 +65,12 @@ class DomainSuggestion extends React.Component {
 					<div className="domain-suggestion__content">
 						{ children }
 						{ ! hidePrice && (
-							<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
+							<DomainProductPrice
+								price={ price }
+								salePrice={ salePrice }
+								rule={ priceRule }
+								showTestCopy={ this.props.showTestCopy }
+							/>
 						) }
 						<Button
 							className="domain-suggestion__action domain-suggestion__action-domain-step-copy-updates"
