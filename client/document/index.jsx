@@ -78,7 +78,7 @@ class Document extends React.Component {
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
-			'woocommerce-setup-wizard' === requestFrom;
+			'woocommerce-onboarding' === requestFrom;
 
 		return (
 			<html

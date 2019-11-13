@@ -68,7 +68,7 @@ export function login( {
 	}
 
 	if ( isWoo ) {
-		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
+		url = addQueryArgs( { from: 'woocommerce-onboarding' }, url );
 	}
 
 	if ( wccomFrom ) {
