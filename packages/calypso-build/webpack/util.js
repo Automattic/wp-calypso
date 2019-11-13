@@ -19,7 +19,7 @@ function cssNameFromFilename( name ) {
 	}
 }
 
-function createIncrementalProgressPlugin() {
+function IncrementalProgressPlugin() {
 	function createProgressHandler() {
 		const startTime = Date.now();
 		let lastShownBuildingMessageTime = null;
@@ -67,4 +67,4 @@ function createIncrementalProgressPlugin() {
 	return new webpack.ProgressPlugin( createProgressHandler() );
 }
 
-module.exports = { cssNameFromFilename, createIncrementalProgressPlugin };
+module.exports = { cssNameFromFilename, IncrementalProgressPlugin };
