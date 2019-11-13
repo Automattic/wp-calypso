@@ -36,7 +36,7 @@ function forceTeamA8C( context, next ) {
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/',
+			'/read',
 			preloadReaderBundle,
 			initAbTests,
 			updateLastRoute,
@@ -48,7 +48,6 @@ export default function() {
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
-		page( '/read', '/' );
 		page( '/read/blogs', '/' );
 		page( '/read/feeds', '/' );
 		page( '/read/blog', '/' );

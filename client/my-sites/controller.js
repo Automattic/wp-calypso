@@ -351,7 +351,7 @@ export function siteSelection( context, next ) {
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment ) {
+	if ( ( hasOneSite && ! siteFragment ) || basePath === '/' ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = primarySiteSlug => {
