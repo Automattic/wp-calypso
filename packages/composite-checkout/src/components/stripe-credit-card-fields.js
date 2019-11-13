@@ -294,7 +294,7 @@ const CreditCardFieldsWrapper = styled.div`
 const CreditCardField = styled( Field )`
 	margin-top: 16px;
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

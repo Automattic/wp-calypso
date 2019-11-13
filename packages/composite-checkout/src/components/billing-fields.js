@@ -69,7 +69,7 @@ const BillingFormFields = styled.div`
 
 const FormField = styled( Field )`
 	margin-top: 16px;
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;
@@ -77,7 +77,7 @@ const FormField = styled( Field )`
 const FieldRow = styled( GridRow )`
 	margin-top: 16px;
 
-	first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

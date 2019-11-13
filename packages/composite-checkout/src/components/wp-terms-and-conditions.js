@@ -107,7 +107,7 @@ const TermsParagraph = styled.p`
 		text-decoration: underline;
 	}
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

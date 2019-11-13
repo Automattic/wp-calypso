@@ -60,7 +60,7 @@ const RadioButtonWrapper = styled.div`
 	width: 100%;
 	outline: ${getOutline};
 
-	:first-child {
+	:first-of-type {
 		margin: 0;
 	}
 

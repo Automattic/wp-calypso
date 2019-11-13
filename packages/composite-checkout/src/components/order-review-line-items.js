@@ -62,7 +62,7 @@ const LineItemUI = styled( LineItem )`
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 
-	:first-child {
+	:first-of-type {
 		padding-top: 0;
 	}
 `;
