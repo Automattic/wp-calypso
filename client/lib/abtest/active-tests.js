@@ -89,15 +89,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	verticalSuggestedThemes: {
-		datestamp: '20191031',
-		variations: {
-			control: 90,
-			test: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
 		datestamp: '20191029',
 		variations: {

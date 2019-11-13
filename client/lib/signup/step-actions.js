@@ -15,7 +15,7 @@ import { parse as parseURL } from 'url';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import {
 	updatePrivacyForDomain,
@@ -142,7 +142,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
-	const defaultSiteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -167,17 +166,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
-
-	if (
-		flowToCheck === 'onboarding' &&
-		siteSegment === 1 &&
-		newSiteParams.options.theme !== defaultSiteTypeTheme &&
-		abtest( 'verticalSuggestedThemes' ) === 'test'
-	) {
-		// Tell headstart to use the theme annotation, even though
-		// segment/vertical options are provided.
-		newSiteParams.options.use_theme_annotation = true;
-	}
 
 	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =

@@ -18,16 +18,10 @@ import { setVerticals } from 'state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
 import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
-import { abtest } from 'lib/abtest';
 
 // Some flows do not choose a site type before requesting verticals. In this
 // case don't send a site_type param to the API.
 export const requestVerticals = action => {
-	const verticalSuggestedThemeTest =
-		action.flowName === 'onboarding' &&
-		action.siteTypeId === 1 &&
-		abtest( 'verticalSuggestedThemes' ) === 'test';
-
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -39,7 +33,6 @@ export const requestVerticals = action => {
 				limit: action.limit,
 				include_preview: true,
 				allow_synonyms: true,
-				...( verticalSuggestedThemeTest && { suggest_theme: true } ),
 			},
 		},
 		action
