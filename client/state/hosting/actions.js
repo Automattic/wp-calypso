@@ -10,6 +10,7 @@ import {
 	HOSTING_SFTP_USER_UPDATE,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
+import 'state/data-layer/wpcom/sites/hosting/restore-wp-config';
 import 'state/data-layer/wpcom/sites/hosting/sftp-user';
 
 export const restoreDatabasePassword = siteId => ( {

@@ -7,6 +7,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOSTING_RESTORE_WP_CONFIG } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 const requestRestoreWpConfig = action =>
 	http(
@@ -20,6 +21,7 @@ const requestRestoreWpConfig = action =>
 	);
 
 const showRestoreWpConfigSuccessNotice = () => {
+	page.replace( window.location.pathname ); // Removes the wp-config-missing query param from the URL.
 	return successNotice( translate( 'The wp-config.php file has been restored.' ), {
 		duration: 5000,
 	} );

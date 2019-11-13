@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,19 +13,32 @@ import { restoreWpConfig } from 'state/hosting/actions';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const RestoreWpConfig = ( { restore, translate } ) => (
-	<Notice
-		status="is-error"
-		text={ translate(
-			"Your site's wp-config.php file seems to be missing. Get your site back on track by restoring it."
-		) }
-		showDismiss={ false }
-	>
-		<NoticeAction href="#" onClick={ restore }>
-			{ translate( 'Restore file' ) }
-		</NoticeAction>
-	</Notice>
-);
+const RestoreWpConfig = ( { siteId, restore, translate } ) => {
+	const [ isVisible, setIsVisible ] = useState( true );
+
+	if ( ! isVisible ) {
+		return null;
+	}
+
+	return (
+		<Notice
+			status="is-error"
+			text={ translate(
+				"Your site's wp-config.php file seems to be missing. Get your site back on track by restoring it."
+			) }
+			showDismiss={ false }
+		>
+			<NoticeAction
+				onClick={ () => {
+					restore( siteId );
+					setIsVisible( false );
+				} }
+			>
+				{ translate( 'Restore file' ) }
+			</NoticeAction>
+		</Notice>
+	);
+};
 
 export default connect(
 	state => ( {
