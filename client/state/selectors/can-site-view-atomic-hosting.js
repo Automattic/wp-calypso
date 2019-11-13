@@ -13,7 +13,7 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { isBusinessPlan } from 'lib/plans';
 import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
 /**
  * TODO: this selector should be backed by an API response instead
@@ -36,7 +36,7 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	if ( ! isSiteOnPaidPlan( state, siteId ) ) {
+	if ( ! isSiteOnAtomicPlan( state, siteId ) ) {
 		return false;
 	}
 
