@@ -7,7 +7,7 @@ export const SummaryDetails = styled.ul`
 	margin: 8px 0 0 0;
 	padding: 0;
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

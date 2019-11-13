@@ -133,7 +133,7 @@ const CheckoutModalActions = styled.div`
 	justify-content: flex-end;
 	margin-top: 24px;
 
-	button:first-child {
+	button:first-of-type {
 		margin-right: 8px;
 	}
 `;
