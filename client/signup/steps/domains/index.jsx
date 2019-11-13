@@ -121,6 +121,19 @@ class DomainsStep extends React.Component {
 
 			props.goToNextStep();
 		}
+
+		if ( 'undefined' === typeof this.props.showExampleSuggestions ) {
+			if (
+				config.isEnabled( 'domain-step-copy-update' ) &&
+				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
+			) {
+				this.showExampleSuggestions = false;
+				this.showTestCopy = true;
+			} else {
+				this.showExampleSuggestions = true;
+				this.showTestCopy = false;
+			}
+		}
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -381,21 +394,6 @@ class DomainsStep extends React.Component {
 			}
 		}
 
-		let showExampleSuggestions = this.props.showExampleSuggestions,
-			showTestCopy;
-		if ( 'undefined' === typeof showExampleSuggestions ) {
-			if (
-				config.isEnabled( 'domain-step-copy-update' ) &&
-				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-			) {
-				showExampleSuggestions = false;
-				showTestCopy = true;
-			} else {
-				showExampleSuggestions = true;
-				showTestCopy = false;
-			}
-		}
-
 		let includeWordPressDotCom = this.props.includeWordPressDotCom;
 		if ( 'undefined' === typeof includeWordPressDotCom ) {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
@@ -421,8 +419,8 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions={ showExampleSuggestions }
-				showTestCopy={ showTestCopy }
+				showExampleSuggestions={ this.showExampleSuggestions }
+				showTestCopy={ this.showTestCopy }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
