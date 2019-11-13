@@ -238,7 +238,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = translate( 'Best Match' );
+			title = this.props.showTestCopy ? 'Our recommendation' : translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -255,6 +255,18 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
+			if ( this.props.showTestCopy ) {
+				const badgeClassName = classNames( '', {
+					success: isRecommended,
+					blue: isBestAlternative,
+				} );
+				return (
+					<div className="domain-registration-suggestion__progress-bar">
+						<Badge type={ badgeClassName }>{ title }</Badge>
+					</div>
+				);
+			}
+
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
 					<ProgressBar { ...progressBarProps } />
@@ -265,6 +277,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
+		if ( this.props.showTestCopy ) {
+			return null;
+		}
+
 		const {
 			suggestion: { domain_name: domain },
 			isFeatured,
