@@ -38,8 +38,8 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
+	isWpComEcommercePlan,
 	getPlanClass,
-	planHasFeature,
 } from 'lib/plans';
 import {
 	getCurrentPlan,
@@ -60,8 +60,6 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
-	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -941,10 +939,7 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const siteIsPrivateAndGoingAtomic =
-					siteIsPrivate &&
-					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
-						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
+				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 
 				return {
 					availableForPurchase,
