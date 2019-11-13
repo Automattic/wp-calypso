@@ -3,20 +3,23 @@
  */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { __, setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import LocalizeContext from './localize-context';
 
-// TODO: we need to implement this; probably delegated to i18n-calypso
-/* eslint-disable no-unused-vars */
 export default function localizeFactory( locale ) {
-	return text => {
-		return text;
-	};
+	setLocaleData( {
+		locale_data: {
+			messages: {
+				'': { domain: 'messages', lang: locale, plural_forms: 'nplurals=2; plural=(n != 1);' },
+			},
+		},
+	} );
+	return __;
 }
-/* eslint-enable no-unused-vars */
 
 export function useLocalize() {
 	const localize = useContext( LocalizeContext );
