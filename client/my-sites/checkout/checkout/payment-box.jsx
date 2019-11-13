@@ -119,7 +119,6 @@ export class PaymentBox extends PureComponent {
 		return (
 			<NavItem
 				key={ method }
-				className={ method }
 				href=""
 				onClick={ this.handlePaymentMethodChange( method ) }
 				selected={ this.props.currentPaymentMethod === method }
