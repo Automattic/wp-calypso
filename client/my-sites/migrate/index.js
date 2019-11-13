@@ -23,4 +23,14 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		'/migrate/:sourceSiteId/:site_id',
+		siteSelection,
+		navigation,
+		redirectWithoutSite( '/migrate' ),
+		migrateSite,
+		makeLayout,
+		clientRender
+	);
 }
