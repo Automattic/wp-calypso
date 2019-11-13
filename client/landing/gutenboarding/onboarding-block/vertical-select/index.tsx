@@ -12,7 +12,7 @@ import { Suggestions } from '@automattic/components';
 
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
-import { StepInputProps } from '../step';
+import { StepInputProps } from '../question';
 
 /**
  * Style dependencies
@@ -50,23 +50,18 @@ export default function VerticalSelect( { onSelect, inputClass }: StepInputProps
 	const showSuggestions = () => setsuggestionsVisibility( true );
 	const hideSuggestions = () => setsuggestionsVisibility( false );
 
-	const handleSuggestionChangeEvent = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setInputValue( e.target.value as string ),
-		[ setInputValue ]
-	);
+	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) =>
+		setInputValue( e.target.value as string );
 
-	const handleSuggestionKeyDown = useCallback(
-		( e: React.KeyboardEvent< HTMLInputElement > ) => {
-			if ( suggestionRef && suggestionRef.current ) {
-				if ( suggestionRef.current.props.suggestions.length > 0 && e.key === 'Enter' ) {
-					e.preventDefault();
-				}
-
-				suggestionRef.current.handleKeyEvent( e );
+	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( suggestionRef && suggestionRef.current ) {
+			if ( suggestionRef.current.props.suggestions.length > 0 && e.key === 'Enter' ) {
+				e.preventDefault();
 			}
-		},
-		[ setInputValue ]
-	);
+
+			suggestionRef.current.handleKeyEvent( e );
+		}
+	};
 
 	const handleSelect = useCallback(
 		( vertical: SiteVertical ) => {
@@ -74,7 +69,7 @@ export default function VerticalSelect( { onSelect, inputClass }: StepInputProps
 			hideSuggestions();
 			onSelect();
 		},
-		[ setSiteVertical, hideSuggestions ]
+		[ setSiteVertical, hideSuggestions, onSelect ]
 	);
 
 	const value =

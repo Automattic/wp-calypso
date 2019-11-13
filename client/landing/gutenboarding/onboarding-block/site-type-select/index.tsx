@@ -11,7 +11,7 @@ import { map } from 'lodash';
  */
 import { STORE_KEY } from '../../store';
 import { SiteType } from '../../store/types';
-import { StepInputProps } from '../step';
+import { StepInputProps } from '../question';
 import './style.scss';
 
 export const siteTypeOptions: Record< SiteType, string > = {
@@ -21,7 +21,9 @@ export const siteTypeOptions: Record< SiteType, string > = {
 	[ SiteType.STORE ]: NO__( 'for a store' ),
 };
 
-export default function SiteTypeSelect( { onSelect } : StepInputProps ) {
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
+export default function SiteTypeSelect( { onSelect }: StepInputProps ) {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType } = useDispatch( STORE_KEY );
 
