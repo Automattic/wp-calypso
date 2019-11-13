@@ -17,7 +17,7 @@ import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSelector from 'components/site-selector';
-import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { getSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import wpLib from 'lib/wp';
@@ -48,7 +48,10 @@ class SectionMigrate extends Component {
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
-		wpcom.resetMigration( targetSiteId ).then( () => page( `/migrate/${ targetSiteSlug }` ) );
+		wpcom.resetMigration( targetSiteId ).then( () => {
+			page( `/migrate/${ targetSiteSlug }` );
+			this.updateFromAPI();
+		} );
 	};
 
 	selectSourceSite = () => {
@@ -72,7 +75,8 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		wpcom.startMigration( sourceSiteId, targetSiteId );
+		this.setState( { migrationStatus: 'restoring' } );
+		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
 
 	updateFromAPI = () => {
@@ -145,10 +149,15 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationStatus() {
-		const { migrationStatus } = this.state;
+	renderMigrationRestoring() {
+		const { targetSite } = this.props;
+		const targetSiteDomain = get( targetSite, 'domain' );
 
-		return <div>{ migrationStatus }</div>;
+		return (
+			<CompactCard>
+				<div className="migrate__status">Restoring backup to { targetSiteDomain }.</div>
+			</CompactCard>
+		);
 	}
 
 	renderSourceSiteSelector() {
@@ -184,7 +193,7 @@ class SectionMigrate extends Component {
 				break;
 
 			case 'restoring':
-				migrationElement = this.renderMigrationStatus();
+				migrationElement = this.renderMigrationRestoring();
 				break;
 
 			case 'done':
@@ -202,7 +211,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_MINUTE } />
 				<DocumentHead title={ translate( 'Migrate' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
