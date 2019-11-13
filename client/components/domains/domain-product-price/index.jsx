@@ -104,7 +104,9 @@ class DomainProductPrice extends React.Component {
 
 		return (
 			<div className={ className }>
-				<div className="domain-product-price__price">{ this.props.translate( 'Free' ) }</div>
+				<div className="domain-product-price__price domain-product-price__free-price">
+					{ this.props.translate( 'Free' ) }
+				</div>
 			</div>
 		);
 	}
