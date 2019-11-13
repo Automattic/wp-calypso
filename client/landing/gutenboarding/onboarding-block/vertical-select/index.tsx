@@ -27,14 +27,14 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	isActive,
 	onExpand,
 } ) => {
-	const popular = [
-		NO__( 'Travel Agency' ),
-		NO__( 'Digital Marketing' ),
-		NO__( 'Cameras & Photography' ),
-		NO__( 'Website Designer' ),
-		NO__( 'Restaurants' ),
-		NO__( 'Fashion Designer' ),
-		NO__( 'Real Estate Agent' ),
+	const popularVerticalSlugs = [
+		'Travel Agency',
+		'Digital Marketing',
+		'Cameras & Photography',
+		'Website Designer',
+		'Restaurants',
+		'Fashion Designer',
+		'Real Estate Agent',
 	];
 
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -56,6 +56,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 			.map( x => ( {
 				label: x.vertical_name,
 				id: x.vertical_id,
+				slug: x.vertical_slug,
 			} ) )
 	);
 
@@ -98,9 +99,9 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	];
 
 	const suggestions = ! inputValue.length
-		? popular
-				.map( label => ( {
-					...verticals.find( vertical => vertical.label.includes( label ) ),
+		? popularVerticalSlugs
+				.map( slug => ( {
+					...verticals.find( vertical => vertical.slug === slug ),
 					category: NO__( 'Popular' ),
 				} ) )
 				.filter( x => x.hasOwnProperty( 'label' ) )
