@@ -96,7 +96,7 @@ class CurrentPlan extends Component {
 		};
 	}
 
-	getThankYou() {
+	renderThankYou() {
 		const { isFreePlan, requestProduct } = this.props;
 
 		if ( requestProduct ) {
@@ -150,7 +150,7 @@ class CurrentPlan extends Component {
 					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
 					isVisible={ showThankYou }
 				>
-					{ this.getThankYou() }
+					{ this.renderThankYou() }
 				</Dialog>
 
 				<PlansNavigation path={ path } />
@@ -229,6 +229,6 @@ export default connect( ( state, { requestThankYou, requestProduct } ) => {
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
-		requestProduct: requestProduct,
+		requestProduct,
 	};
 } )( localize( CurrentPlan ) );
