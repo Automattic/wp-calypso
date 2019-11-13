@@ -692,4 +692,3 @@ export default connect(
 		showSitePreview,
 	}
 )( localize( DomainsStep ) );
-
