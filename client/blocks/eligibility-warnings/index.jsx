@@ -33,6 +33,7 @@ import WarningList from './warning-list';
  * Style dependencies
  */
 import './style.scss';
+import SiteLaunchGate from 'blocks/site-launch-gate';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -116,57 +117,58 @@ export const EligibilityWarnings = ( {
 					title={ translate( 'Custom domain required' ) }
 				/>
 			) }
+			<SiteLaunchGate className="eligibility-warnings__site-launch-gate">
+				{ ( isPlaceholder || listHolds.length > 0 ) && (
+					<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
+				) }
+				{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
-			{ ( isPlaceholder || listHolds.length > 0 ) && (
-				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
-			) }
-			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
+				{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
+					<Card className="eligibility-warnings__no-conflicts">
+						<Gridicon icon="thumbs-up" size={ 24 } />
+						<span>
+							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
+						</span>
+					</Card>
+				) }
 
-			{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
-				<Card className="eligibility-warnings__no-conflicts">
-					<Gridicon icon="thumbs-up" size={ 24 } />
-					<span>
-						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-					</span>
+				<Card className="eligibility-warnings__confirm-box">
+					<div className="eligibility-warnings__confirm-text">
+						{ ! isEligible && (
+							<>
+								{ translate( 'Please clear all issues above to proceed.' ) }
+								&nbsp;
+							</>
+						) }
+						{ isEligible && warnings.length > 0 && (
+							<>
+								{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
+								&nbsp;
+							</>
+						) }
+						{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
+							components: {
+								a: (
+									<a
+										href="https://wordpress.com/help/contact"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</div>
+					<div className="eligibility-warnings__confirm-buttons">
+						<Button href={ backUrl } onClick={ onCancel }>
+							{ translate( 'Cancel' ) }
+						</Button>
+
+						<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
+							{ translate( 'Proceed' ) }
+						</Button>
+					</div>
 				</Card>
-			) }
-
-			<Card className="eligibility-warnings__confirm-box">
-				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && (
-						<>
-							{ translate( 'Please clear all issues above to proceed.' ) }
-							&nbsp;
-						</>
-					) }
-					{ isEligible && warnings.length > 0 && (
-						<>
-							{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
-							&nbsp;
-						</>
-					) }
-					{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/help/contact"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					} ) }
-				</div>
-				<div className="eligibility-warnings__confirm-buttons">
-					<Button href={ backUrl } onClick={ onCancel }>
-						{ translate( 'Cancel' ) }
-					</Button>
-
-					<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
-						{ translate( 'Proceed' ) }
-					</Button>
-				</div>
-			</Card>
+			</SiteLaunchGate>
 		</div>
 	);
 };
