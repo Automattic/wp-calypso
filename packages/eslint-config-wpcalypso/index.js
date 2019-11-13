@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	env: {
 		es6: true,
@@ -109,7 +107,6 @@ module.exports = {
 		// Assumed by default with Babel
 		strict: [ 2, 'never' ],
 		'template-curly-spacing': [ 2, 'always' ],
-		'valid-jsdoc': [ 2, { requireReturn: false } ],
 		'wpcalypso/i18n-ellipsis': 2,
 		'wpcalypso/i18n-no-collapsible-whitespace': 2,
 		'wpcalypso/i18n-no-variables': 2,
