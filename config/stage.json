@@ -97,7 +97,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/likes-hover": true,
 		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,

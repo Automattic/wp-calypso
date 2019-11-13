@@ -133,7 +133,6 @@
 		"reader": true,
 		"reader/comment-polling": true,
 		"reader/full-errors": true,
-		"reader/likes-hover": true,
 		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,

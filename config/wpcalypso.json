@@ -108,7 +108,6 @@
 		"privacy-policy": true,
 		"publicize-preview": true,
 		"reader": true,
-		"reader/likes-hover": true,
 		"reader/full-errors": true,
 		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
