@@ -39,6 +39,8 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			domainsStepHeaderTestCopy: "Let's get your site a domain!",
 			domainsStepSubheaderTestCopy:
 				"Tell us your site's name or a few keywords, and we'll come up with some suggestions.",
+			domainStepPlaceholder:
+				'Enter your site\'s title or a few words that describe it, like "photography" or "travel"',
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
 				'This will help you get started with a theme you might like. You can change it later.'
@@ -108,6 +110,8 @@ export function getAllSiteTypes() {
 			domainsStepHeaderTestCopy: "Let's get your blog a domain!",
 			domainsStepSubheaderTestCopy:
 				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions.",
+			domainStepPlaceholder:
+				'Enter your blog\'s title or a few words that describe it, like "photography" or "travel"',
 		},
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results
@@ -127,6 +131,8 @@ export function getAllSiteTypes() {
 			domainsStepHeaderTestCopy: "Let's get your business a domain!",
 			domainsStepSubheaderTestCopy:
 				"Tell us your business's name or a few keywords, and we'll come up with some suggestions.",
+			domainStepPlaceholder:
+				'Enter your business\'s title or a few words that describe it, like "photography" or "travel"',
 			customerType: 'business',
 		},
 		{
@@ -169,6 +175,8 @@ export function getAllSiteTypes() {
 			domainsStepHeaderTestCopy: "Let's get your store a domain!",
 			domainsStepSubheaderTestCopy:
 				"Tell us your store's name or a few keywords, and we'll come up with some suggestions.",
+			domainStepPlaceholder:
+				'Enter your store\'s title or a few words that describe it, like "photography" or "travel"',
 		},
 	];
 }
