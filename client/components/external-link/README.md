@@ -19,7 +19,7 @@ class MyComponent extends React.Component {
 				onClick={ () => {} }
 			>
 				WordPress.org
-			</ExternalLink>;
+			</ExternalLink>
 		);
 	}
 }
