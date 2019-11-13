@@ -72,33 +72,33 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Show close button only in full screen mode.
-.page-template-modal .components-modal__header::after,
+// .page-template-modal .components-modal__header::after,
+// .page-template-modal__close-button {
+// 	display: none;
+// }
+
+// body.is-fullscreen-mode {
 .page-template-modal__close-button {
-	display: none;
+	display: block;
+	position: absolute;
+	z-index: 20;
+	top: 9px;
+	width: 36px;
+	height: 36px;
+	left: 8px;
 }
 
-body.is-fullscreen-mode {
-	.page-template-modal__close-button {
+.page-template-modal .components-modal__header {
+	&::after {
 		display: block;
 		position: absolute;
-		z-index: 20;
-		top: 9px;
-		width: 36px;
-		height: 36px;
-		left: 8px;
-	}
-
-	.page-template-modal .components-modal__header {
-		&::after {
-			display: block;
-			position: absolute;
-			content: ' ';
-			border-right: 1px solid #e2e4e7;
-			height: 100%;
-			left: 54px;
-		}
+		content: ' ';
+		border-right: 1px solid #e2e4e7;
+		height: 100%;
+		left: 54px;
 	}
 }
+// }
 
 .page-template-modal .components-modal__content {
 	overflow-y: scroll;
