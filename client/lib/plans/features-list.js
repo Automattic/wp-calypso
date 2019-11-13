@@ -32,7 +32,7 @@ export const FEATURES_LIST = {
 							tracksEventName="calypso_plan_link_click"
 							tracksEventProps={ {
 								link_location: 'plan_features_list_item',
-								plan_feature_slug: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
+								link_slug: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
 							} }
 						/>
 					),
@@ -60,7 +60,7 @@ export const FEATURES_LIST = {
 							tracksEventName="calypso_plan_link_click"
 							tracksEventProps={ {
 								link_location: 'plan_features_list_item',
-								plan_feature_slug: constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
+								link_slug: constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 							} }
 						/>
 					),
@@ -91,7 +91,7 @@ export const FEATURES_LIST = {
 							tracksEventName="calypso_plan_link_click"
 							tracksEventProps={ {
 								link_location: 'plan_features_list_item',
-								plan_feature_slug: constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+								link_slug: constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 							} }
 						/>
 					),

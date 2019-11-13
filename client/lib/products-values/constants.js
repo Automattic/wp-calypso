@@ -69,8 +69,8 @@ export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 					href="https://jetpack.com/upgrade/backup/"
 					tracksEventName="calypso_plan_link_click"
 					tracksEventProps={ {
-						link_location: 'single_product_plan_description',
-						product_slug: PRODUCT_JETPACK_BACKUP,
+						link_location: 'product_jetpack_backup_description',
+						link_slug: 'which-one-do-i-need',
 					} }
 					icon
 				/>
