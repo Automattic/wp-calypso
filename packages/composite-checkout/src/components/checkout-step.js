@@ -114,11 +114,7 @@ CheckoutStepHeader.propTypes = {
 
 function Stepper( { isComplete, isActive, className, children } ) {
 	return (
-		<StepNumberOuterWrapper
-			isComplete={ isComplete }
-			isActive={ isActive }
-			className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }
-		>
+		<StepNumberOuterWrapper className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
 			<StepNumberInnerWrapper isComplete={ isComplete }>
 				<StepNumber isComplete={ isComplete } isActive={ isActive }>
 					{ children }
