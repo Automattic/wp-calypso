@@ -118,7 +118,7 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationConfirmation() {
-		const { sourceSite, targetSite, translate } = this.props;
+		const { sourceSite, targetSite } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -126,13 +126,11 @@ class SectionMigrate extends Component {
 		return (
 			<CompactCard>
 				<div className="migrate__confirmation">
-					{ translate(
-						'Do you want to migrate all content from %(sourceSite)s to %(targetSite)s? All existing content on %(sourceSite)s will be lost.',
-						{ args: { sourceSite: sourceSiteDomain, targetSite: targetSiteDomain } }
-					) }
+					Do you want to migrate all content from { sourceSiteDomain } to { targetSiteDomain }? All
+					existing content on { sourceSiteDomain } will be lost.
 				</div>
 				<Button primary onClick={ this.startMigration }>
-					{ translate( 'Start Migration' ) }
+					Start Migration
 				</Button>
 			</CompactCard>
 		);
@@ -161,8 +159,6 @@ class SectionMigrate extends Component {
 	}
 
 	renderSourceSiteSelector() {
-		const { translate } = this.props;
-
 		return (
 			<CompactCard className="migrate__card">
 				<SiteSelector
@@ -172,16 +168,16 @@ class SectionMigrate extends Component {
 					filter={ this.jetpackSiteFilter }
 				/>
 				<Button primary onClick={ this.selectSourceSite } disabled={ ! this.state.sourceSiteId }>
-					{ translate( 'Continue' ) }
+					Continue
 				</Button>
 			</CompactCard>
 		);
 	}
 
 	render() {
-		const { sourceSiteId, translate } = this.props;
-		const headerText = translate( 'Migrate' );
-		const subHeaderText = translate( 'Migrate your WordPress site to WordPress.com' );
+		const { sourceSiteId } = this.props;
+		const headerText = 'Migrate';
+		const subHeaderText = 'Migrate your WordPress site to WordPress.com';
 
 		let migrationElement;
 
@@ -212,7 +208,7 @@ class SectionMigrate extends Component {
 		return (
 			<Main>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_MINUTE } />
-				<DocumentHead title={ translate( 'Migrate' ) } />
+				<DocumentHead title="Migrate" />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="migrate__section-header"
