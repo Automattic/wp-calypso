@@ -144,6 +144,11 @@
 		@include breakpoint('>960px') {
 			display: flex;
 			justify-content: space-between;
+			flex-wrap: wrap;
+		}
+
+		&-full-width {
+			width: 100%;
 		}
 	}
 	&__layout-col {

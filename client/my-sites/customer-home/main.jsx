@@ -139,14 +139,7 @@ class Home extends Component {
 			);
 		}
 
-		const {
-			siteId,
-			hasChecklistData,
-			isChecklistComplete,
-			checklistMode,
-			isAtomic,
-			siteIsUnlaunched,
-		} = this.props;
+		const { siteId, hasChecklistData, isChecklistComplete, siteIsUnlaunched } = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -177,23 +170,19 @@ class Home extends Component {
 						onClick={ this.onLaunchBannerClick }
 					/>
 				) }
-				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ /* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
 
-				hasChecklistData &&
-					( isAtomic || isChecklistComplete ? (
-						this.renderCustomerHome()
-					) : (
-						<ChecklistWpcom displayMode={ checklistMode } />
-					) ) }
+				{ this.renderCustomerHome() }
 			</Main>
 		);
 	}
 
 	renderCustomerHome = () => {
 		const {
+			isAtomic,
+			isChecklistComplete,
 			translate,
 			customizeUrl,
+			checklistMode,
 			menusUrl,
 			site,
 			siteSlug,
@@ -203,12 +192,24 @@ class Home extends Component {
 			staticHomePageId,
 			showCustomizer,
 			hasCustomDomain,
+			hasChecklistData,
+			siteId,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+
+		/* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
+		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
+
 		return (
 			<div className="customer-home__layout">
 				<SidebarNavigation />
+				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
+				{ displayChecklist && (
+					<div className="customer-home__layout-full-width">
+						<ChecklistWpcom displayMode={ checklistMode } />
+					</div>
+				) }
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					<Card>
 						<CardHeading>{ translate( 'My Site' ) }</CardHeading>
@@ -471,4 +472,8 @@ const connectHome = connect(
 	} )
 );
 
-export default flowRight( connectHome, localize, withTrackingTool( 'HotJar' ) )( Home );
+export default flowRight(
+	connectHome,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( Home );
