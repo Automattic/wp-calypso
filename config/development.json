@@ -49,6 +49,7 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"domains/cctlds/uk": true,
+		"domain-step-copy-update": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/dashes-filter": true,
 		"domains/kracken-ui/exact-match-filter": true,

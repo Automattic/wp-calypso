@@ -50,6 +50,8 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
+import { abtest } from 'lib/abtest';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -118,6 +120,22 @@ class DomainsStep extends React.Component {
 			);
 
 			props.goToNextStep();
+		}
+
+		this.showTestCopy = false;
+		this.showExampleSuggestions = this.props.showExampleSuggestions;
+
+		if ( 'undefined' === typeof this.showExampleSuggestions ) {
+			if (
+				config.isEnabled( 'domain-step-copy-update' ) &&
+				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
+			) {
+				this.showExampleSuggestions = false;
+				this.showTestCopy = true;
+			} else {
+				this.showExampleSuggestions = true;
+				this.showTestCopy = false;
+			}
 		}
 	}
 
@@ -379,11 +397,6 @@ class DomainsStep extends React.Component {
 			}
 		}
 
-		let showExampleSuggestions = this.props.showExampleSuggestions;
-		if ( 'undefined' === typeof showExampleSuggestions ) {
-			showExampleSuggestions = true;
-		}
-
 		let includeWordPressDotCom = this.props.includeWordPressDotCom;
 		if ( 'undefined' === typeof includeWordPressDotCom ) {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
@@ -409,7 +422,8 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions={ showExampleSuggestions }
+				showExampleSuggestions={ this.showExampleSuggestions }
+				showTestCopy={ this.showTestCopy }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
