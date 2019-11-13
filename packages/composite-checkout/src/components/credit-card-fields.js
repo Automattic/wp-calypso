@@ -9,12 +9,12 @@ import styled from '@emotion/styled';
  */
 import Field from './field';
 import GridRow from './grid-row';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import { AmexLogo, VisaLogo, MastercardLogo } from './payment-logos';
 import { useSelect, useDispatch } from '../public-api';
 
 export default function CreditCardFields() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const [ paymentIcon, setPaymentIcon ] = useState( <LockIcon /> );
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
@@ -118,7 +118,7 @@ const PaymentLogo = styled.span`
 `;
 
 function CVV( { className } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<svg

@@ -8,11 +8,11 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import { useHasDomainsInCart } from '../public-api';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 
 export default function WPTermsAndConditions() {
 	const isDomainsTermsVisible = useHasDomainsInCart();
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	//TODO: replace domainname.com next to domainRegistrationAgreement with the domain being purchased.
 	return (

@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import { useLocalize } from '../../lib/localize';
+import { useTranslate } from '../../lib/localize';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from '../../components/credit-card-fields';
@@ -27,7 +27,7 @@ export function createCreditCardMethod() {
 }
 
 export function CreditCardLabel() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Credit or debit card' ) }</span>
@@ -37,7 +37,7 @@ export function CreditCardLabel() {
 }
 
 export function CreditCardSubmitButton() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const [ , total ] = useLineItems();
 	// TODO: we need to use a placeholder for the value so the localization string can be generic
 	const buttonString = localize(
@@ -51,7 +51,7 @@ export function CreditCardSubmitButton() {
 }
 
 export function CreditCardSummary( { id } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 
 	let PaymentLogo = null;

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import Button from './button';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 
 export default function CheckoutModal( {
 	className,
@@ -22,7 +22,7 @@ export default function CheckoutModal( {
 	buttonCTA,
 	cancelButtonCTA,
 } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	useModalScreen( isVisible, closeModal );
 
 	if ( ! isVisible ) {

@@ -26,7 +26,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../public-api';
-import useLocalize from '../lib/localize';
+import useTranslate from '../lib/localize';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
@@ -155,7 +155,7 @@ export function createStripeMethod( {
 }
 
 function StripeCreditCardFields( { isActive, summary } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const theme = useTheme();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
@@ -406,7 +406,7 @@ const BrandLogo = styled.span`
 `;
 
 function CVV( { className } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<svg
@@ -457,7 +457,7 @@ function LockIcon( { className } ) {
 }
 
 function StripePayButton() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const [ items, total ] = useLineItems();
 	const { onSuccess, onFailure } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();

@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import { useLocalize } from '../../lib/localize';
+import { useTranslate } from '../../lib/localize';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { useDispatch, useSelect } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
@@ -84,7 +84,7 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: PaypalSubmitButton,
 		SummaryComponent: () => {
-			const localize = useLocalize();
+			const localize = useTranslate();
 			return localize( 'PayPal' );
 		},
 		getAriaLabel: localize => localize( 'PayPal' ),
@@ -92,11 +92,11 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 }
 
 export function PaypalLabel() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Paypal' ) }</span>
+			<span>{ localize( 'PayPal' ) }</span>
 			<PaypalLogo />
 		</React.Fragment>
 	);
@@ -127,7 +127,7 @@ export function PaypalSubmitButton() {
 }
 
 function useTransactionStatusHandler() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const { onSuccess, onFailure } = useCheckoutHandlers();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
@@ -147,7 +147,7 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 `;
 
 export function PaypalSummary() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	return <React.Fragment>{ localize( 'Paypal' ) }</React.Fragment>;
 }
 

@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 
 export default class CheckoutErrorBoundary extends React.Component {
 	constructor( props ) {
@@ -28,7 +28,7 @@ export default class CheckoutErrorBoundary extends React.Component {
 }
 
 function ErrorFallback( { errorMessage } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	return (
 		<ErrorContainer>
 			{ errorMessage || localize( 'Sorry, there was an error on this page.' ) }

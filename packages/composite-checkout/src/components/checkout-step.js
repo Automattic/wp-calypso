@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import Button from './button';
 import { CheckIcon } from './shared-icons';
 
@@ -76,7 +76,7 @@ function CheckoutStepHeader( {
 	onEdit,
 	editButtonAriaLabel,
 } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	return (
 		<StepHeader
 			isComplete={ isComplete }

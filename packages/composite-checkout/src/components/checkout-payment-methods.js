@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
  */
 import joinClasses from '../lib/join-classes';
 import RadioButton from './radio-button';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import { useAllPaymentMethods } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
@@ -22,7 +22,7 @@ export default function CheckoutPaymentMethods( {
 	paymentMethod,
 	onChange,
 } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	const paymentMethods = useAllPaymentMethods();
 	const paymentMethodsToDisplay = availablePaymentMethods

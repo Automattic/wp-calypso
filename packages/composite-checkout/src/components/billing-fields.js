@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import { useSelect, useDispatch, useHasDomainsInCart } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
@@ -165,7 +165,7 @@ const DomainRegistrationCheckbox = styled.input`
 `;
 
 function AddressFields( { fieldType } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
@@ -271,7 +271,7 @@ function isStateorProvince() {
 }
 
 function PhoneNumberField( { fieldType } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
@@ -299,7 +299,7 @@ PhoneNumberField.propTypes = {
 };
 
 function VatIdField() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const fieldType = 'billing';
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
@@ -321,7 +321,7 @@ function VatIdField() {
 }
 
 function TaxFields( { fieldType } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
@@ -380,7 +380,7 @@ function isZipOrPostal() {
 }
 
 function DomainFields() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<DomainContactFields>
@@ -420,7 +420,7 @@ const DomainContactFieldsDescription = styled.p`
 `;
 
 function BillingFormSummary() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 

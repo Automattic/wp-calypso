@@ -8,7 +8,7 @@ import React, { useState, useEffect, useMemo } from 'react';
  */
 import { StripeHookProvider, useStripe } from '../../lib/stripe';
 import { useLineItems, useCheckoutHandlers } from '../../public-api';
-import { useLocalize } from '../../lib/localize';
+import { useTranslate } from '../../lib/localize';
 import BillingFields from '../../components/billing-fields';
 import PaymentRequestButton from '../../components/payment-request-button';
 
@@ -73,7 +73,7 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 }
 
 export function ApplePayLabel() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<React.Fragment>
@@ -84,7 +84,7 @@ export function ApplePayLabel() {
 }
 
 export function ApplePaySubmitButton() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const { onSuccess } = useCheckoutHandlers();
 	const paymentRequestOptions = usePaymentRequestOptions();
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
@@ -107,7 +107,7 @@ export function ApplePaySubmitButton() {
 }
 
 export function ApplePaySummary() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
 }
 

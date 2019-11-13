@@ -9,13 +9,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import joinClasses from '../lib/join-classes';
 import Field from './field';
 import Button from './button';
 
 export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 	const [ hasCouponError, setHasCouponError ] = useState( false );

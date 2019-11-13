@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import Button from './button';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
@@ -20,7 +20,7 @@ export default function PaymentRequestButton( {
 	disabled,
 	disabledReason,
 } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const onClick = event => {
 		event.persist();

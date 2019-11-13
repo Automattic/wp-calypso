@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
@@ -60,7 +60,7 @@ export default function Checkout( {
 	className,
 } ) {
 	useRegisterCheckoutStore();
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
 	const { changeStep } = useDispatch( 'checkout' );
 
@@ -153,7 +153,7 @@ const CheckoutWrapper = styled.div`
 `;
 
 function OrderSummaryStep( { OrderSummary } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<CheckoutStep
@@ -171,7 +171,7 @@ OrderSummaryStep.propTypes = {
 };
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 
@@ -223,7 +223,7 @@ PaymentMethodsStep.propTypes = {
 };
 
 function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );
@@ -265,7 +265,7 @@ BillingDetailsStep.propTypes = {
 };
 
 function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
-	const localize = useLocalize();
+	const localize = useTranslate();
 
 	return (
 		<CheckoutStep

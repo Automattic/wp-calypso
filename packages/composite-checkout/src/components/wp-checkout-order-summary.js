@@ -7,12 +7,12 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useTranslate } from 'i18n-calypso';
 import Button from './button';
 import Coupon from './coupon';
 
 export default function WPCheckoutOrderSummary() {
-	const localize = useLocalize();
+	const localize = useTranslate();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
