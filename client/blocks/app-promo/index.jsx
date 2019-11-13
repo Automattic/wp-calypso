@@ -191,7 +191,7 @@ export class AppPromo extends React.Component {
 						src={ wordpressLogoImage }
 						width="32"
 						height="32"
-						alt="WordPress Desktop Icon"
+						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
 				</button>
