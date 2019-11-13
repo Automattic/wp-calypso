@@ -84,7 +84,7 @@ class ReaderLikeButton extends React.Component {
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
-						className="reader-likes-popover" // eslint-disable-line
+						className="reader-likes-popover ignore-click" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						onMouseEnter={ this.showLikesPopover }
 						onMouseLeave={ this.hideLikesPopover }
 						siteId={ siteId }
