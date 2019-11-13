@@ -38,7 +38,7 @@ export default function RadioButton( {
 			<Label checked={ checked } htmlFor={ id }>
 				{ label }
 			</Label>
-			{ children && <div>{ children }</div> }
+			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
 		</RadioButtonWrapper>
 	);
 }
@@ -129,6 +129,11 @@ const Label = styled.label`
 	}
 `;
 
+const RadioButtonChildren = styled.div`
+	height: ${getChildrenHeight};
+	overflow: hidden;
+`;
+
 function getBorderColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
@@ -139,6 +144,10 @@ function getBorderWidth( { checked } ) {
 
 function getRadioBorderWidth( { checked } ) {
 	return checked ? '5px' : '1px';
+}
+
+function getChildrenHeight( { checked } ) {
+	return checked ? 'auto' : '0';
 }
 
 function getGrayscaleValue( { checked } ) {
