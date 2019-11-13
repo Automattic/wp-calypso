@@ -8,7 +8,7 @@ import { __ as NO__ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../store';
+import { STORE_KEY } from '../stores/onboard';
 import { StepInputProps } from './question';
 
 export default function SiteTitle( { onSelect, inputClass }: StepInputProps ) {

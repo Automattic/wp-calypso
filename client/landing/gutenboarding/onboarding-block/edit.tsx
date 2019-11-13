@@ -9,8 +9,8 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import { isFilledFormValue } from '../store/types';
-import { STORE_KEY } from '../store';
+import { isFilledFormValue } from '../stores/onboard/types';
+import { STORE_KEY } from '../stores/onboard';
 import Question from './question';
 import VerticalSelect from './vertical-select';
 import SiteTypeSelect, { siteTypeOptions } from './site-type-select';

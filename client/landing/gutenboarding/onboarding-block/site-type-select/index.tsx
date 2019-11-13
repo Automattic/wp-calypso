@@ -9,8 +9,8 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../store';
-import { SiteType } from '../../store/types';
+import { STORE_KEY } from '../../stores/onboard';
+import { SiteType } from '../../stores/onboard/types';
 import { StepInputProps } from '../question';
 import './style.scss';
 
