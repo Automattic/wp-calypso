@@ -17,7 +17,7 @@ type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 
 export const getDomainSuggestions = (
 	state: State,
 	search: string,
-	options: Partial< Exclude< DomainSuggestionQuery, 'query' > > = {}
+	options: DomainSuggestionSelectorOptions = {}
 ) => {
 	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
