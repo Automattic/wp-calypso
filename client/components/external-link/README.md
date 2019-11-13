@@ -60,7 +60,7 @@ class MyComponent extends React.Component {
 				tracksEventProps={ { foo: 'baz' } }
 			>
 				WordPress.org
-			</ExternalLinkWithTracking>;
+			</ExternalLinkWithTracking>
 		);
 	}
 }
