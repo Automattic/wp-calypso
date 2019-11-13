@@ -201,17 +201,14 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
  * the cases in which FSE supported theme was activated prior to the plugin. This will
  * populate the default header and footer for current theme, and create About and Contact
  * pages provided that they don't already exist.
- *
- * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
- * @param boolean $should_add_pages      True if the pages should also be inserted.
  */
-function populate_wp_template_data( $should_fetch_from_api = true, $should_add_pages = true ) {
+function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 
 	$fse = Full_Site_Editing::get_instance();
-	$fse->insert_default_data( $should_fetch_from_api, $should_add_pages );
+	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 

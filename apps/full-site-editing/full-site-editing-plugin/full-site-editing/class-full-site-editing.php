@@ -87,20 +87,15 @@ class Full_Site_Editing {
 	 *
 	 * This insertion will only happen if theme supports FSE.
 	 * It is hooked into after_switch_theme action.
-	 *
-	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
-	 * @param boolean $should_add_pages      True if the pages should also be inserted.
 	 */
-	public function insert_default_data( $should_fetch_from_api = true, $should_add_pages = true ) {
+	public function insert_default_data() {
 		// Bail if current theme doesn't support FSE.
 		if ( ! is_theme_supported() ) {
 			return;
 		}
 
-		$this->wp_template_inserter->insert_default_template_data( $should_fetch_from_api );
-		if ( $should_add_pages ) {
-			$this->wp_template_inserter->insert_default_pages();
-		}
+		$this->wp_template_inserter->insert_default_template_data();
+		$this->wp_template_inserter->insert_default_pages();
 	}
 
 	/**
