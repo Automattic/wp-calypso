@@ -242,7 +242,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			( 'woocommerce-services-auto-authorize' === from || 'woocommerce-setup-wizard' === from ) || // Auto authorize the old WooCommerce setup wizard only.
+			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -281,7 +281,7 @@ export class JetpackAuthorize extends Component {
 
 	isWooOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
-		return includes( [ 'woocommerce-onboarding' ], from );
+		return 'woocommerce-onboarding' === from;
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {

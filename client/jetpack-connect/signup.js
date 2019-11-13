@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { includes, flowRight, get, noop } from 'lodash';
+import { flowRight, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -87,7 +87,7 @@ export class JetpackSignup extends Component {
 
 	isWoo() {
 		const { authQuery } = this.props;
-		return includes( [ 'woocommerce-onboarding' ], authQuery.from );
+		return 'woocommerce-onboarding' === authQuery.from;
 	}
 
 	getLoginRoute() {
