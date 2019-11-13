@@ -14,6 +14,7 @@ import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+<<<<<<< HEAD
 import SiteAddressChanger from 'blocks/site-address-changer';
 import { getDomainTypeText } from 'lib/domains';
 import { type as domainTypes } from 'lib/domains/constants';
@@ -30,6 +31,15 @@ class WpcomDomain extends React.Component {
 			'Domain Name',
 			domain.name
 		);
+=======
+import { type as domainTypes } from 'lib/domains/constants';
+import { domainManagementChangeSiteAddress } from 'my-sites/domains/paths';
+
+// eslint-disable-next-line react/prefer-es6-class
+const WpcomDomain = createReactClass( {
+	displayName: 'WpcomDomain',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+>>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 		this.props.recordTracksEvent( 'calypso_domain_management_edit_navigation_click', {
 			action: 'edit_site_address',
@@ -37,8 +47,13 @@ class WpcomDomain extends React.Component {
 		} );
 	};
 
+	handleChangeSiteAddressClick() {
+		this.recordEvent( 'navigationClick', 'Change Site Address', this.props.domain );
+	},
+
 	getEditSiteAddressBlock() {
 		const { domain } = this.props;
+<<<<<<< HEAD
 
 		if ( domain.isWpcomStagingDomain ) {
 			return;
@@ -49,15 +64,27 @@ class WpcomDomain extends React.Component {
 			const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
 			return <SiteAddressChanger currentDomain={ domain } currentDomainSuffix={ domainSuffix } />;
 		}
+=======
+		const isWpcomDomain = get( domain, 'type' ) === domainTypes.WPCOM;
+		const path = domainManagementChangeSiteAddress( this.props.selectedSite.slug, domain.name );
+>>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 		return (
 			<VerticalNav>
 				<VerticalNavItem
-					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
-					external={ true }
-					onClick={ this.handleEditSiteAddressClick }
+					path={
+						isWpcomDomain
+							? path
+							: `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }`
+					}
+					external={ isWpcomDomain ? false : true }
+					onClick={
+						isWpcomDomain ? this.handleChangeSiteAddressClick : this.handleEditSiteAddressClick
+					}
 				>
-					{ this.props.translate( 'Edit Site Address' ) }
+					{ isWpcomDomain
+						? this.props.translate( 'Change Site Address' )
+						: this.props.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
 		);
@@ -89,7 +116,12 @@ class WpcomDomain extends React.Component {
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
+<<<<<<< HEAD
 	}
 }
+=======
+	},
+} );
+>>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 export default connect( null, { recordTracksEvent, recordGoogleEvent } )( localize( WpcomDomain ) );

@@ -15,10 +15,11 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import ConfirmationDialog from './dialog';
-import FormSectionHeading from 'components/forms/form-section-heading';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import {
 	requestSiteAddressChange,
@@ -37,7 +38,6 @@ import './style.scss';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
-const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
 const VALIDATION_DEBOUNCE_MS = 800;
 
 export class SiteAddressChanger extends Component {
@@ -313,8 +313,21 @@ export class SiteAddressChanger extends Component {
 						eventProperties={ { blog_id: siteId } }
 					/>
 					<Card className="site-address-changer__content">
-						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
+						<div className="site-address-changer__info">
+							<p>
+								{ translate(
+									'Once you change your site address, %(currentDomainName)s will no longer be available.',
+									{
+										args: { currentDomainName },
+									}
+								) }
+							</p>
+						</div>
+						<FormLabel htmlFor="site-address-changer__text-input">
+							{ translate( 'Enter your new site address' ) }
+						</FormLabel>
 						<FormTextInputWithAffixes
+							id="site-address-changer__text-input"
 							className="site-address-changer__input"
 							type="text"
 							value={ domainFieldValue }
@@ -322,33 +335,18 @@ export class SiteAddressChanger extends Component {
 							onChange={ this.onFieldChange }
 							placeholder={ currentDomainPrefix }
 							isError={ shouldShowValidationMessage && ! isAvailable }
+							noWrap
 						/>
 						<FormInputValidation
 							isHidden={ ! shouldShowValidationMessage }
 							isError={ ! isAvailable }
 							text={ validationMessage || '\u00A0' }
 						/>
-						<div className="site-address-changer__footer">
-							<div className="site-address-changer__info">
-								<Gridicon icon="info-outline" size={ 18 } />
-								<p>
-									{ translate(
-										'Once you change your site address, %(currentDomainName)s will no longer be available.',
-										{
-											args: { currentDomainName },
-										}
-									) }{ ' ' }
-									<a href={ ADDRESS_CHANGE_SUPPORT_URL } target="_blank" rel="noopener noreferrer">
-										{ translate(
-											'Before you confirm the change, please read this important information.'
-										) }
-									</a>
-								</p>
-							</div>
+						<FormButtonsBar className="site-address-changer__form-footer">
 							<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
 								{ translate( 'Change Site Address' ) }
 							</FormButton>
-						</div>
+						</FormButtonsBar>
 					</Card>
 				</form>
 			</div>
