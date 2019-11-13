@@ -29,7 +29,8 @@ class SidebarModalOpener extends Component {
 		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
-	getLastTemplateUsed = ( { templateUsedSlug, templates } = this.props ) => {
+	getLastTemplateUsed = () => {
+		const { templateUsedSlug, templates } = this.props;
 		if ( ! templateUsedSlug || templateUsedSlug === 'blank' ) {
 			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
 			return templates[ 1 ];

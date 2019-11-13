@@ -71,13 +71,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@include screen-reader-text();
 }
 
-// Show close button only in full screen mode.
-// .page-template-modal .components-modal__header::after,
-// .page-template-modal__close-button {
-// 	display: none;
-// }
-
-// body.is-fullscreen-mode {
+// Show close button in all modes.
+// Removed previous condition to only show in fullscreen with PR #37500.
 .page-template-modal__close-button {
 	display: block;
 	position: absolute;
@@ -98,7 +93,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		left: 54px;
 	}
 }
-// }
 
 .page-template-modal .components-modal__content {
 	overflow-y: scroll;
