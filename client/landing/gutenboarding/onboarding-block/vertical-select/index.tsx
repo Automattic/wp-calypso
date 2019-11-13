@@ -9,20 +9,17 @@ import { Suggestions } from '@automattic/components';
 /**
  * Internal dependencies
  */
+
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
+import { StepInputProps } from '../step';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props {
-	inputClass: string;
-	onVerticalSelect: () => void;
-}
-
-export default function VerticalSelect( { inputClass, onVerticalSelect }: Props ) {
+export default function VerticalSelect( { onSelect, inputClass }: StepInputProps ) {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -37,7 +34,6 @@ export default function VerticalSelect( { inputClass, onVerticalSelect }: Props 
 	const [ suggestionsVisibility, setsuggestionsVisibility ] = useState( false );
 
 	const suggestionRef = useRef< Suggestions >( null );
-	const inputRef = useRef< HTMLInputElement >( null );
 
 	const verticals = useSelect( select =>
 		select( STORE_KEY )
@@ -76,10 +72,7 @@ export default function VerticalSelect( { inputClass, onVerticalSelect }: Props 
 		( vertical: SiteVertical ) => {
 			setSiteVertical( vertical );
 			hideSuggestions();
-			onVerticalSelect();
-			if ( inputRef && inputRef.current ) {
-				inputRef.current.blur();
-			}
+			onSelect();
 		},
 		[ setSiteVertical, hideSuggestions ]
 	);
@@ -104,7 +97,6 @@ export default function VerticalSelect( { inputClass, onVerticalSelect }: Props 
 	return (
 		<div className="vertical-select">
 			<input
-				ref={ inputRef }
 				className={ inputClass }
 				placeholder={ NO__( 'enter a topic' ) }
 				onChange={ handleSuggestionChangeEvent }

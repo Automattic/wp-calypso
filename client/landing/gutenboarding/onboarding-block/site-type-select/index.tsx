@@ -9,12 +9,10 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../store';
-import { SiteType } from '../store/types';
-
-interface Props {
-	onSelect: () => void;
-}
+import { STORE_KEY } from '../../store';
+import { SiteType } from '../../store/types';
+import { StepInputProps } from '../step';
+import './style.scss';
 
 export const siteTypeOptions: Record< SiteType, string > = {
 	[ SiteType.BLOG ]: NO__( 'with a blog' ),
@@ -23,11 +21,11 @@ export const siteTypeOptions: Record< SiteType, string > = {
 	[ SiteType.STORE ]: NO__( 'for a store' ),
 };
 
-export default function SiteTypeSelect( { onSelect }: Props ) {
+export default function SiteTypeSelect( { onSelect } : StepInputProps ) {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType } = useDispatch( STORE_KEY );
 
-	const selectSiteType = e => {
+	const selectSiteType = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		setSiteType( e.target.value as SiteType );
 		onSelect();
 	};

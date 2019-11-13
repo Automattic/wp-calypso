@@ -9,12 +9,9 @@ import { __ as NO__ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../store';
+import { StepInputProps } from './step';
 
-interface Props {
-	onSelect: () => void;
-}
-
-export default function SiteTitle( { onSelect }: Props ) {
+export default function SiteTitle( { onSelect, inputClass }: StepInputProps ) {
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
@@ -23,7 +20,7 @@ export default function SiteTitle( { onSelect }: Props ) {
 
 	return (
 		<input
-			className="onboarding-block__question-input"
+			className={ inputClass }
 			placeholder={ NO__( 'enter a title' ) }
 			onChange={ handleChange }
 			onBlur={ onSelect }
