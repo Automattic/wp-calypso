@@ -394,14 +394,13 @@ export class Checkout extends React.Component {
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
-
-			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
-			if ( isJetpackNotAtomic && ! isJetpackProduct ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
-			}
 			// If we just purchased a Jetpack product, redirect to the my plans page.
+			if ( isJetpackNotAtomic && isJetpackProduct ) {
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
+			}
+			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
 			if ( isJetpackNotAtomic ) {
-				return `/plans/my-plan/${ selectedSiteSlug }`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 			}
 
 			return selectedFeature && isValidFeatureKey( selectedFeature )
