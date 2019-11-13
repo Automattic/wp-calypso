@@ -1,3 +1,6 @@
+### next
+- Remove deprecated [`valid-jsdoc`](https://eslint.org/docs/rules/valid-jsdoc) rule.
+
 ### v4.0.1 (2018-09-13)
 - Allow usage of eslint v5 (159e240)
 
