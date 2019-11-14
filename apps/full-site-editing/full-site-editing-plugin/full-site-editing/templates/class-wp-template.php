@@ -41,9 +41,16 @@ class WP_Template {
 
 	/**
 	 * A8C_WP_Template constructor.
+	 *
+	 * @param string $theme Defaults to the current theme slug, but can be
+	 *                      overriden to use this class with themes which are
+	 *                      not currently active.
 	 */
-	public function __construct() {
-		$this->current_theme_name = $this->normalize_theme_slug( get_stylesheet() );
+	public function __construct( $theme = null ) {
+		if ( ! isset( $theme ) ) {
+			$theme = get_stylesheet();
+		}
+		$this->current_theme_name = $this->normalize_theme_slug( $theme );
 	}
 
 	/**

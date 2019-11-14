@@ -34,7 +34,19 @@ function load_full_site_editing() {
 	if ( ! is_full_site_editing_active() ) {
 		return;
 	}
+	// Not dangerous here since we have already checked for eligibility.
+	dangerously_load_full_site_editing_files();
+	Full_Site_Editing::get_instance();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
+/**
+ * NOTE: In most cases, you should NOT use this function. Please use
+ * load_full_site_editing instead. This function should only be used if you need
+ * to include the FSE files somewhere like a script. I.e. if you want to access
+ * a class defined here without needing full FSE functionality.
+ */
+function dangerously_load_full_site_editing_files() {
 	require_once __DIR__ . '/full-site-editing/blocks/navigation-menu/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
@@ -47,10 +59,7 @@ function load_full_site_editing() {
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/serialize-block-fallback.php';
-
-	Full_Site_Editing::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
  * Whether or not FSE is active.
@@ -154,7 +163,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  */
 function load_starter_page_templates() {
 	// We don't want the user to choose a template when copying a post.
-	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}

@@ -83,21 +83,6 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Determines whether provided theme supports FSE.
-	 *
-	 * @deprecated being replaced soon by an is_active static method - don't add new usages
-	 * @param string $theme_slug Theme slug to check support for.
-	 *
-	 * @return bool True if passed theme supports FSE, false otherwise.
-	 */
-	// phpcs:disable
-	public function is_supported_theme( $theme_slug = null ) {
-		// phpcs:enable
-		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
-	}
-
-	/**
 	 * Inserts template data for the theme we are currently switching to.
 	 *
 	 * This insertion will only happen if theme supports FSE.
@@ -105,7 +90,7 @@ class Full_Site_Editing {
 	 */
 	public function insert_default_data() {
 		// Bail if current theme doesn't support FSE.
-		if ( ! $this->is_supported_theme() ) {
+		if ( ! is_theme_supported() ) {
 			return;
 		}
 
