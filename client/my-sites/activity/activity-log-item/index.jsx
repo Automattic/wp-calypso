@@ -252,7 +252,7 @@ class ActivityLogItem extends Component {
 			<div className="activity-log-item__action">
 				<EllipsisMenu>
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
-						{ translate( 'Rewind to this point' ) }
+						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
 
 					<PopoverMenuSeparator />
@@ -336,20 +336,20 @@ class ActivityLogItem extends Component {
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
-						confirmTitle={ translate( 'Confirm Rewind' ) }
+						confirmTitle={ translate( 'Confirm Restore' ) }
 						notice={
 							this.state.disableRestoreButton
-								? translate( 'Please select at least one item to rewind.' )
+								? translate( 'Please select at least one item to restore.' )
 								: translate( 'This will override and remove all content created after this point.' )
 						}
 						onClose={ this.cancelRewindIntent }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
-						title={ translate( 'Rewind Site' ) }
+						title={ translate( 'Restore Site' ) }
 						disableButton={ this.state.disableRestoreButton }
 					>
-						{ translate( '{{time/}} is the selected point for your site Rewind.', {
+						{ translate( '{{time/}} is the selected point for your site Restore.', {
 							components: {
 								time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
 							},
