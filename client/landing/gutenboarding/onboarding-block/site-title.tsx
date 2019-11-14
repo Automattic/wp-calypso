@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent } from 'react';
+import React, { createRef, FunctionComponent, useEffect } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
@@ -28,10 +28,19 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 	const label = NO__( "It's called" );
 	const value = siteTitle.length ? siteTitle : NO__( 'enter a title' );
 
+	// Focus the input when we change to active
+	const inputRef = createRef< HTMLInputElement >();
+	useEffect( () => {
+		if ( isActive ) {
+			inputRef.current?.focus();
+		}
+	}, [ isActive ] );
+
 	return (
 		<>
 			<Question label={ label } displayValue={ value } isActive={ isActive } onExpand={ onExpand }>
 				<input
+					ref={ inputRef }
 					className={ inputClass }
 					placeholder={ NO__( 'enter a title' ) }
 					onChange={ handleChange }

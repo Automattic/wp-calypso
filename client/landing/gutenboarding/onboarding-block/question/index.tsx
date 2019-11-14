@@ -31,6 +31,7 @@ const Question: FunctionComponent< Props > = ( {
 		className={ classNames( 'onboarding-block__question', className, {
 			selected: isActive,
 		} ) }
+		onClick={ () => void ( ! isActive && onExpand() ) }
 	>
 		<span>{ label }</span>
 		<div>

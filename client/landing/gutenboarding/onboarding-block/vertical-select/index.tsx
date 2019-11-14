@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { createRef, useState, useCallback, FunctionComponent } from 'react';
+import React, { createRef, useState, useCallback, FunctionComponent, useEffect } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
@@ -109,6 +109,14 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		? siteVertical.label
 		: NO__( 'enter a topic' );
 
+	// Focus the input when we change to active
+	const inputRef = createRef< HTMLInputElement >();
+	useEffect( () => {
+		if ( isActive ) {
+			inputRef.current?.focus();
+		}
+	}, [ isActive ] );
+
 	return (
 		<Question
 			label={ label }
@@ -118,6 +126,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		>
 			<div className="vertical-select">
 				<input
+					ref={ inputRef }
 					className={ inputClass }
 					placeholder={ NO__( 'enter a topic' ) }
 					onChange={ handleSuggestionChangeEvent }
