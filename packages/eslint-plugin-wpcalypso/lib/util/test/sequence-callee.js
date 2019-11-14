@@ -4,12 +4,10 @@
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-
-const assert = require( 'assert' );
 const getCallee = require( '../get-callee' );
 
-describe( '#getCallee', function() {
-	it( 'should return non-sequence callee', function() {
+describe( '#getCallee', () => {
+	test( 'should return non-sequence callee', () => {
 		const node = {
 			type: 'CallExpression',
 			callee: {
@@ -19,10 +17,10 @@ describe( '#getCallee', function() {
 		};
 		const callee = getCallee( node );
 
-		assert.equal( callee, node.callee );
+		expect( node.callee ).toBe( callee );
 	} );
 
-	it( 'should return first non-sequence callee expression', function() {
+	test( 'should return first non-sequence callee expression', () => {
 		const node = {
 			type: 'CallExpression',
 			callee: {
@@ -41,10 +39,10 @@ describe( '#getCallee', function() {
 		};
 		const callee = getCallee( node );
 
-		assert.equal( callee, node.callee.expressions[ 1 ] );
+		expect( node.callee.expressions[ 1 ] ).toBe( callee );
 	} );
 
-	it( 'should return first non-sequence member property', function() {
+	test( 'should return first non-sequence member property', () => {
 		const node = {
 			type: 'CallExpression',
 			callee: {
@@ -60,6 +58,6 @@ describe( '#getCallee', function() {
 		};
 		const callee = getCallee( node );
 
-		assert.equal( callee, node.callee.property );
+		expect( node.callee.property ).toBe( callee );
 	} );
 } );
