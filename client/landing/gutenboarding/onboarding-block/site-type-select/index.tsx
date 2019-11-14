@@ -3,7 +3,7 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ as NO__ } from '@wordpress/i18n';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { map } from 'lodash';
 
 /**
@@ -11,7 +11,7 @@ import { map } from 'lodash';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteType, isFilledFormValue } from '../../stores/onboard/types';
-import { StepInputProps } from '../stepper-wizard';
+import { InjectedStepProps } from '../stepper-wizard';
 import Question from '../question';
 import './style.scss';
 
@@ -24,7 +24,11 @@ const siteTypeOptions: Record< SiteType, string > = {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const SiteTypeSelect = ( { onSelect, onExpand, isActive }: StepInputProps ) => {
+const SiteTypeSelect: FunctionComponent< InjectedStepProps > = ( {
+	onSelect,
+	onExpand,
+	isActive,
+} ) => {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType } = useDispatch( STORE_KEY );
 

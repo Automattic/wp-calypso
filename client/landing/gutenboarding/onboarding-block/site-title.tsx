@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
@@ -10,10 +10,15 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
-import { StepInputProps } from './stepper-wizard';
+import { InjectedStepProps } from './stepper-wizard';
 import Question from './question';
 
-export default function SiteTitle( { onSelect, inputClass, isActive, onExpand }: StepInputProps ) {
+const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
+	onSelect,
+	inputClass,
+	isActive,
+	onExpand,
+} ) => {
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
@@ -41,4 +46,6 @@ export default function SiteTitle( { onSelect, inputClass, isActive, onExpand }:
 			</div>
 		</>
 	);
-}
+};
+
+export default SiteTitle;

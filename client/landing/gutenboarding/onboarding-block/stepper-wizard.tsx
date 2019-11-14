@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState } from 'react';
 
-export interface StepInputProps {
+export interface InjectedStepProps {
 	isActive: boolean;
 	onExpand: () => void;
 	onSelect: () => void;
@@ -21,7 +21,7 @@ const StepperWizard: FunctionComponent = ( { children } ) => {
 				children,
 				( child, index ) =>
 					React.isValidElement( child ) &&
-					React.cloneElement( child, {
+					React.cloneElement< InjectedStepProps >( child, {
 						isActive: index === activeStep,
 						onExpand: () => setActiveStep( index ),
 						onSelect: handleNext,

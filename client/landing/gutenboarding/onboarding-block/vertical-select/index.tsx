@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, FunctionComponent } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
@@ -11,7 +11,7 @@ import { Suggestions } from '@automattic/components';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
-import { StepInputProps } from '../stepper-wizard';
+import { InjectedStepProps } from '../stepper-wizard';
 import Question from '../question';
 
 /**
@@ -19,12 +19,12 @@ import Question from '../question';
  */
 import './style.scss';
 
-export default function VerticalSelect( {
+const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	onSelect,
 	inputClass,
 	isActive,
 	onExpand,
-}: StepInputProps ) {
+} ) => {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -126,4 +126,6 @@ export default function VerticalSelect( {
 			</div>
 		</Question>
 	);
-}
+};
+
+export default VerticalSelect;
