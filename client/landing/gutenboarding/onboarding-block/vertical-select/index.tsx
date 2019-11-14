@@ -1,27 +1,32 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, useRef } from 'react';
+import React, { createRef, useState, useCallback, FunctionComponent } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
+import { InjectedStepProps } from '../stepper-wizard';
+import Question from '../question';
+import { __TodoAny__ } from 'client/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props {
-	inputClass: string;
-}
-
-export default function VerticalSelect( { inputClass, forceHideSuggestions, onClick }: Props ) {
+const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
+	onSelect,
+	inputClass,
+	isActive,
+	onExpand,
+} ) => {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -35,8 +40,15 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ suggestionsVisibility, setsuggestionsVisibility ] = useState( false );
 
-	const suggestionRef = useRef< Suggestions >( null );
-	const inputRef = useRef< HTMLInputElement >( null );
+	/**
+	 * Ref to the <Suggestions />, necessary for handling input events
+	 *
+	 * This ref is effectively `any` and should therefore be considered _dangerous_.
+	 *
+	 * @TODO: This should be a typed ref to Suggestions, but the component is not typed.
+	 * Using `Suggestions` here would effectively be `any`.
+	 */
+	const suggestionRef = createRef< __TodoAny__ >();
 
 	const verticals = useSelect( select =>
 		select( STORE_KEY )
@@ -53,33 +65,26 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 	const showSuggestions = () => setsuggestionsVisibility( true );
 	const hideSuggestions = () => setsuggestionsVisibility( false );
 
-	const handleSuggestionChangeEvent = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setInputValue( e.target.value as string ),
-		[ setInputValue ]
-	);
+	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) =>
+		setInputValue( e.target.value );
 
-	const handleSuggestionKeyDown = useCallback(
-		( e: React.KeyboardEvent< HTMLInputElement > ) => {
-			if ( suggestionRef && suggestionRef.current ) {
-				if ( suggestionRef.current.props.suggestions.length > 0 && e.key === 'Enter' ) {
-					e.preventDefault();
-				}
-
-				suggestionRef.current.handleKeyEvent( e );
+	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( suggestionRef.current ) {
+			if ( suggestionRef.current.props.suggestions.length && e.keyCode === ENTER ) {
+				e.preventDefault();
 			}
-		},
-		[ setInputValue ]
-	);
+
+			suggestionRef.current.handleKeyEvent( e );
+		}
+	};
 
 	const handleSelect = useCallback(
 		( vertical: SiteVertical ) => {
 			setSiteVertical( vertical );
 			hideSuggestions();
-			if ( inputRef && inputRef.current ) {
-				inputRef.current.blur();
-			}
+			onSelect();
 		},
-		[ setSiteVertical, hideSuggestions ]
+		[ setSiteVertical, hideSuggestions, onSelect ]
 	);
 
 	const value =
@@ -88,7 +93,7 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 	const loadingMessage = [
 		{
 			label: '',
-			category: NO__( 'Loading, please wait...' ),
+			category: NO__( 'Loading, please wait…' ),
 		},
 	];
 
@@ -99,47 +104,38 @@ export default function VerticalSelect( { inputClass, forceHideSuggestions, onCl
 		  } ) )
 		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
+	const label = NO__( 'My site is about' );
+	const displayValue = isFilledFormValue( siteVertical )
+		? siteVertical.label
+		: NO__( 'enter a topic' );
+
 	return (
-		<div className="vertical-select">
-			{ suggestionsVisibility || ! value ? (
-				<>
-					<input
-						ref={ inputRef }
-						className={ inputClass }
-						placeholder={ NO__( 'enter a topic' ) }
-						onChange={ handleSuggestionChangeEvent }
-						onFocus={ showSuggestions }
-						onBlur={ hideSuggestions }
-						onKeyDown={ handleSuggestionKeyDown }
-						onMouseDown={ onClick }
-						autoComplete="off"
-						value={ value }
-					/>
-					{ ! forceHideSuggestions && (
-						<Suggestions
-							ref={ suggestionRef }
-							query={ inputValue }
-							suggestions={ ! verticals.length ? loadingMessage : suggestions }
-							suggest={ handleSelect }
-						/>
-					) }
-				</>
-			) : (
-				<span
-					ref={ inputRef }
+		<Question
+			label={ label }
+			displayValue={ displayValue }
+			isActive={ isActive }
+			onExpand={ onExpand }
+		>
+			<div className="vertical-select">
+				<input
 					className={ inputClass }
-					onClick={ showSuggestions }
-					onMouseDown={ onClick }
-					onFocus={ onClick }
-					onKeyDown={ onClick }
-					onKeyPress={ showSuggestions }
+					placeholder={ NO__( 'enter a topic' ) }
+					onChange={ handleSuggestionChangeEvent }
+					onFocus={ showSuggestions }
+					onBlur={ hideSuggestions }
+					onKeyDown={ handleSuggestionKeyDown }
 					autoComplete="off"
-					role="button"
-					tabIndex="0"
-				>
-					{ value ? value : NO__( 'enter a topic' ) }
-				</span>
-			) }
-		</div>
+					value={ value }
+				/>
+				<Suggestions
+					ref={ suggestionRef }
+					query={ inputValue }
+					suggestions={ ! verticals.length ? loadingMessage : suggestions }
+					suggest={ handleSelect }
+				/>
+			</div>
+		</Question>
 	);
-}
+};
+
+export default VerticalSelect;

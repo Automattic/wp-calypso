@@ -1,0 +1,66 @@
+@import 'assets/stylesheets/gutenberg-base-styles/style';
+
+.onboarding-block__multi-question {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	label {
+		margin-bottom: 36px;
+		display: inline-block;
+	}
+
+	label::after {
+		content: '✓';
+		margin-left: 8px;
+		opacity: 0;
+		font-size: 40px;
+		transition-property: opacity, color;
+		transition-duration: 0.3s;
+		transition-timing-function: 'linear';
+		transition-delay: 0;
+	}
+
+	li.selected label::after {
+		opacity: 1;
+		color: $light-gray-800;
+	}
+
+	li.selected label:hover::after,
+	label:hover::after {
+		opacity: 1;
+		color: var( --studio-jetpack-green-30 );
+	}
+
+	.onboarding-block__multi-question-choice {
+		border-bottom: 3px solid transparent;
+		cursor: pointer;
+		margin: 0 0 0 0.2em;
+		transition-property: border-color;
+		transition-duration: 0.3s;
+		transition-timing-function: 'linear';
+		transition-delay: 0;
+
+		&:hover {
+			border-color: $blue-medium-highlight;
+		}
+
+		&:active,
+		&:focus {
+			border-color: $blue-medium-focus;
+		}
+	}
+
+	// For keyboard navigation
+	input[type='radio']:focus + .onboarding-block__multi-question-choice {
+		border-color: $blue-medium-highlight;
+	}
+
+	// @TODO Deal with a11y concerns
+	// https://medium.com/claritydesignsystem/pure-css-accessible-checkboxes-and-radios-buttons-54063e759bb3
+	input[type='radio'] {
+		opacity: 0;
+		position: absolute;
+		top: -999999px;
+	}
+}
