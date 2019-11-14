@@ -163,10 +163,14 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  */
 export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
-	const nationalNumber = stripNonDigits( inputNumber ).replace(
+	let nationalNumber = stripNonDigits( inputNumber ).replace(
 		new RegExp( '^(0{0,}' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
 		''
 	);
+
+	if ( numberRegion.nationalPrefix === '0' ) {
+		nationalNumber = nationalNumber.replace( /^0+/, '' );
+	}
 
 	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 
