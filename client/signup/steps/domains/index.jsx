@@ -504,10 +504,13 @@ class DomainsStep extends React.Component {
 
 	getSubHeaderText() {
 		const { flowName, siteType, translate } = this.props;
+		const subHeaderPropertyName = this.showTestCopy
+			? 'domainsStepSubheaderTestCopy'
+			: 'domainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding' ], flowName ) &&
-			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
+			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {
 			return onboardingSubHeaderCopy;
@@ -520,7 +523,11 @@ class DomainsStep extends React.Component {
 
 	getHeaderText() {
 		const { headerText, siteType } = this.props;
-		return getSiteTypePropertyValue( 'slug', siteType, 'domainsStepHeader' ) || headerText;
+		const headerPropertyName = this.showTestCopy
+			? 'domainsStepHeaderTestCopy'
+			: 'domainsStepHeader';
+
+		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
 	}
 
 	getAnalyticsSection() {
