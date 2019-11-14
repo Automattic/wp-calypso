@@ -26,7 +26,7 @@
 		color: $light-gray-800;
 	}
 	
-	li.selected	label:hover::after,
+	li.selected label:hover::after,
 	label:hover::after {
 		opacity: 1;
 		color: var( --studio-jetpack-green-30 );
