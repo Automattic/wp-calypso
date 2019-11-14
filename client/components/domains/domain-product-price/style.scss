@@ -6,7 +6,6 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-
 	
 	@include breakpoint( '>660px' ) {
 		align-items: flex-end;

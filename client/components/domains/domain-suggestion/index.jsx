@@ -63,10 +63,6 @@ class DomainSuggestion extends React.Component {
 			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
 		} );
 
-		const actionClassName = classNames( 'domain-suggestion__action', {
-			'domain-suggestion__action-domain-copy-test': showTestCopy && ! isFeatured,
-		} );
-
 		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (
 			<div
@@ -87,7 +83,7 @@ class DomainSuggestion extends React.Component {
 						/>
 					) }
 				</div>
-				<Button className={ actionClassName } { ...this.props.buttonStyles }>
+				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 					{ this.props.buttonContent }
 				</Button>
 				{ this.props.showChevron && (

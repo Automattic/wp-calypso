@@ -136,8 +136,11 @@
 	flex-wrap: wrap;
 
 	&.domain-registration-suggestion__title-domain-copy-test {
-		max-width: 50%;
-		min-width: 50%;
+		@include breakpoint( '>480px' ) {
+			max-width: 50%;
+			min-width: 50%;
+			margin-right: 1em;
+		}
 	}
 
 	.domain-registration-suggestion__title {
@@ -202,20 +205,6 @@
 			flex: 1 0 auto;
 			margin-left: 1em;
 			margin-top: 0;
-		}
-	}
-
-	.is-section-signup &.domain-suggestion__action-domain-copy-test {
-		order: 4;
-		margin: auto 0;
-		
-		@include breakpoint( '<480px' ) {
-			width: 100%;
-		}
-
-		@include breakpoint( '>480px' ) {
-			flex-grow: 0;
-			margin-left: 0;
 		}
 	}
 

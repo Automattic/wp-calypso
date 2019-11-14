@@ -102,11 +102,13 @@ class DomainProductPrice extends React.Component {
 			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
 		} );
 
+		const productPriceClassName = classnames( 'domain-product-price__price', {
+			'domain-product-price__free-price': this.props.showTestCopy,
+		} );
+
 		return (
 			<div className={ className }>
-				<div className="domain-product-price__price domain-product-price__free-price">
-					{ this.props.translate( 'Free' ) }
-				</div>
+				<div className={ productPriceClassName }>{ this.props.translate( 'Free' ) }</div>
 			</div>
 		);
 	}
