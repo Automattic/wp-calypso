@@ -59,7 +59,7 @@ export default function CheckoutStep( {
 CheckoutStep.propTypes = {
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.node.isRequired,
 	finalStep: PropTypes.bool,
 	stepSummary: PropTypes.node,
 	stepContent: PropTypes.node,
@@ -106,7 +106,7 @@ function CheckoutStepHeader( {
 CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	onEdit: PropTypes.func,
@@ -147,9 +147,9 @@ const StepWrapper = styled.div`
 const StepTitle = styled.span`
 	color: ${props =>
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
-	margin-right: 5px;
 	font-weight: ${props =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
+	flex: 1;
 `;
 
 const StepHeader = styled.h2`

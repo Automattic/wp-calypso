@@ -18,6 +18,8 @@ import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
 import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import CheckoutOrderSummary from './checkout-order-summary';
+import { useTotal, renderDisplayValueMarkdown } from '../public-api';
 
 function useRegisterCheckoutStore() {
 	useRegisterStore( 'checkout', {
@@ -67,7 +69,7 @@ export default function Checkout( {
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				{ OrderSummary && <OrderSummaryStep OrderSummary={ OrderSummary } /> }
+				<OrderSummaryStep OrderSummary={ OrderSummary || CheckoutOrderSummary } />
 
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with the payment method form.' ) }
@@ -154,13 +156,21 @@ const CheckoutWrapper = styled.div`
 
 function OrderSummaryStep( { OrderSummary } ) {
 	const localize = useLocalize();
+	const total = useTotal();
 
 	return (
 		<CheckoutStep
 			isActive={ false }
 			isComplete={ true }
 			stepNumber={ 0 }
-			title={ localize( 'You are all set to check out' ) }
+			title={
+				<CheckoutSummaryTitle>
+					<span>{ localize( 'You are all set to check out' ) }</span>
+					<CheckoutSummaryTotal>
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</CheckoutSummaryTotal>
+				</CheckoutSummaryTitle>
+			}
 			stepSummary={ <OrderSummary /> }
 		/>
 	);
@@ -169,6 +179,15 @@ function OrderSummaryStep( { OrderSummary } ) {
 OrderSummaryStep.propTypes = {
 	OrderSummary: PropTypes.elementType,
 };
+
+const CheckoutSummaryTitle = styled.span`
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CheckoutSummaryTotal = styled.span`
+	font-weight: ${props => props.theme.weights.bold};
+`;
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
 	const localize = useLocalize();
