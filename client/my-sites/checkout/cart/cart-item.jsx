@@ -139,6 +139,22 @@ export class CartItem extends React.Component {
 		return <em>{ translate( 'First year free with your plan' ) }</em>;
 	}
 
+	getDomainRenewalExpiryDateText() {
+		const { cartItem, moment } = this.props;
+
+		const domainRenewalExpirationDate =
+			get( cartItem, 'is_domain_registration' ) &&
+			get( cartItem, 'is_renewal' ) &&
+			get( cartItem, 'domain_post_renewal_expiration_date' );
+
+		let domainRenewalExpirationDateText;
+		if ( domainRenewalExpirationDate ) {
+			domainRenewalExpirationDateText = moment( domainRenewalExpirationDate ).format( 'LL' );
+		}
+
+		return domainRenewalExpirationDateText;
+	}
+
 	getFreeTrialPrice() {
 		const freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
 			args: { days: '14' },
@@ -185,6 +201,8 @@ export class CartItem extends React.Component {
 			name += ' - ' + translate( 'never expires' );
 		}
 
+		const domainRenewalExpiryDateText = this.getDomainRenewalExpiryDateText();
+
 		/*eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="cart-item">
@@ -193,6 +211,9 @@ export class CartItem extends React.Component {
 						{ name || translate( 'Loading…' ) }
 					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
+					{ domainRenewalExpiryDateText && (
+						<span className="product-domain">Renew until { domainRenewalExpiryDateText }</span>
+					) }
 				</div>
 
 				<div className="secondary-details">
