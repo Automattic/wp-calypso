@@ -12,6 +12,7 @@ import { find, isEqual } from 'lodash';
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setApp, setDate } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
@@ -92,7 +93,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderDatePopover() {
-		const { dateFilters, filter, translate } = this.props;
+		const { dateFilters, filter, translate, moment } = this.props;
 		const selectedFilter = find( dateFilters, { value: filter.date } );
 		const selectedText = selectedFilter ? selectedFilter.title : translate( 'Date' );
 
@@ -114,7 +115,7 @@ class TransactionsHeader extends React.Component {
 				) }
 				<SelectDropdown.Separator />
 				<SelectDropdown.Label>{ translate( 'By Month' ) }</SelectDropdown.Label>
-				{ dateFilters.map( function( { count, title, value }, index ) {
+				{ dateFilters.map( function( { count, dateString, older, value }, index ) {
 					let analyticsEvent = 'Current Month';
 
 					if ( 1 === index ) {
@@ -122,6 +123,8 @@ class TransactionsHeader extends React.Component {
 					} else if ( 1 < index ) {
 						analyticsEvent = index + ' Months Before';
 					}
+
+					const title = older ? translate( 'Older' ) : moment( dateString ).format( 'MMM YYYY' );
 
 					return this.renderDatePicker( index, title, value, count, analyticsEvent );
 				}, this ) }
@@ -213,4 +216,4 @@ export default connect(
 		setApp,
 		setDate,
 	}
-)( localize( TransactionsHeader ) );
+)( localize( withLocalizedMoment( TransactionsHeader ) ) );

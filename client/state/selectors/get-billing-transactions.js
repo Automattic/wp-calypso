@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get, mapValues } from 'lodash';
 
 /**
