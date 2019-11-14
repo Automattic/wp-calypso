@@ -12,7 +12,7 @@ import * as Actions from './actions';
 import { stringifyDomainQueryObject } from './utils';
 
 const domainSuggestions: Reducer<
-	Record< string, DomainSuggestion[] >,
+	Record< string, DomainSuggestion[] | undefined >,
 	ReturnType< typeof Actions[ 'receiveDomainSuggestions' ] >
 > = ( state = {}, action ) => {
 	if ( action.type === ActionType.RECEIVE_DOMAIN_SUGGESTIONS ) {
