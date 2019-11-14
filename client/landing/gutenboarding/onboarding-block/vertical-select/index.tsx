@@ -14,6 +14,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
 import { InjectedStepProps } from '../stepper-wizard';
 import Question from '../question';
+import { __TodoAny__ } from 'client/types';
 
 /**
  * Style dependencies
@@ -39,7 +40,15 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ suggestionsVisibility, setsuggestionsVisibility ] = useState( false );
 
-	const suggestionRef = createRef();
+	/**
+	 * Ref to the <Suggestions />, necessary for handling input events
+	 *
+	 * This ref is effectively `any` and should therefore be considered _dangerous_.
+	 *
+	 * @TODO: This should be a typed ref to Suggestions, but the component is not typed.
+	 * Using `Suggestions` here would effectively be `any`.
+	 */
+	const suggestionRef = createRef< __TodoAny__ >();
 
 	const verticals = useSelect( select =>
 		select( STORE_KEY )
@@ -60,8 +69,8 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		setInputValue( e.target.value as string );
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
-		if ( suggestionRef && suggestionRef.current ) {
-			if ( suggestionRef.current.props.suggestions.length > 0 && e.keyCode === ENTER ) {
+		if ( suggestionRef.current ) {
+			if ( suggestionRef.current.props.suggestions.length && e.keyCode === ENTER ) {
 				e.preventDefault();
 			}
 
