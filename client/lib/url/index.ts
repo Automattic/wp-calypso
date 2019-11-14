@@ -1,7 +1,7 @@
 /**
  * Re-exports
  */
-export { addQueryArgs } from 'lib/route';
+export { default as addQueryArgs } from './add-query-args';
 export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as omitUrlParams } from './omit-url-params';
 export { default as isExternal } from './is-external';
