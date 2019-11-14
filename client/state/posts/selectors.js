@@ -444,9 +444,7 @@ export const isEditedPostDirty = createSelector(
 				return post[ key ] !== value;
 			}
 
-			return (
-				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
-			);
+			return ! ( key in DEFAULT_NEW_POST_VALUES ) || value !== DEFAULT_NEW_POST_VALUES[ key ];
 		} );
 
 		const { initial, current } = state.ui.editor.rawContent;
