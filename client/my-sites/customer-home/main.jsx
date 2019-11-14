@@ -170,12 +170,10 @@ class Home extends Component {
 						dismissPreferenceName="customer-home-unlaunched-reminder"
 						dismissTemporary={ true }
 						icon="info"
-						callToAction={ translate( 'Launch site' ) }
 						title={ translate( 'Your site is private' ) }
 						description={ translate(
 							'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 						) }
-						onClick={ this.onLaunchBannerClick }
 					/>
 				) }
 
@@ -202,6 +200,7 @@ class Home extends Component {
 			hasCustomDomain,
 			hasChecklistData,
 			siteId,
+			siteIsUnlaunched,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
@@ -211,138 +210,148 @@ class Home extends Component {
 
 		return (
 			<div className="customer-home__layout">
-				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ displayChecklist && (
-					<div className="customer-home__layout-full-width">
-						<ChecklistWpcom displayMode={ checklistMode } />
-					</div>
-				) }
 				<div className="customer-home__layout-col customer-home__layout-col-left">
-					<Card>
-						<CardHeading>{ translate( 'My Site' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Review and update my site' ) }
-						</h6>
-						<div className="customer-home__card-col">
-							<div className="customer-home__card-col-left">
-								<Button
-									href={ site.URL }
-									primary
-									onClick={ () => trackAction( 'my_site', 'view_site' ) }
-								>
-									{ translate( 'View Site' ) }
-								</Button>
-							</div>
-							<div className="customer-home__card-col-right">
-								{ isStaticHomePage ? (
-									<Button
-										href={ editHomePageUrl }
-										onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-									>
-										{ translate( 'Edit Homepage' ) }
-									</Button>
-								) : (
-									<Button
+					{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
+					{ displayChecklist ? (
+						<Card>
+							<ChecklistWpcom displayMode={ checklistMode } />
+						</Card>
+					) : (
+						<>
+							<Card>
+								<CardHeading>{ translate( 'My Site' ) }</CardHeading>
+								<h6 className="customer-home__card-subheader">
+									{ translate( 'Review and update my site' ) }
+								</h6>
+								<div className="customer-home__card-col">
+									<div className="customer-home__card-col-left">
+										<Button
+											href={ site.URL }
+											primary
+											onClick={ () => trackAction( 'my_site', 'view_site' ) }
+										>
+											{ translate( 'View Site' ) }
+										</Button>
+									</div>
+									<div className="customer-home__card-col-right">
+										{ isStaticHomePage ? (
+											<Button
+												href={ editHomePageUrl }
+												onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+											>
+												{ translate( 'Edit Homepage' ) }
+											</Button>
+										) : (
+											<Button
+												onClick={ () => {
+													trackAction( 'my_site', 'write_post' );
+													page( `/post/${ siteSlug }` );
+												} }
+											>
+												{ translate( 'Write Blog Post' ) }
+											</Button>
+										) }
+									</div>
+								</div>
+							</Card>
+							<Card className="customer-home__card-boxes">
+								<div className="customer-home__boxes">
+									<ActionBox
 										onClick={ () => {
-											trackAction( 'my_site', 'write_post' );
-											page( `/post/${ siteSlug }` );
+											trackAction( 'my_site', 'add_page' );
+											page( `/page/${ siteSlug }` );
 										} }
-									>
-										{ translate( 'Write Blog Post' ) }
-									</Button>
-								) }
-							</div>
-						</div>
-					</Card>
-					<Card className="customer-home__card-boxes">
-						<div className="customer-home__boxes">
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'add_page' );
-									page( `/page/${ siteSlug }` );
-								} }
-								label={ translate( 'Add a page' ) }
-								iconSrc="/calypso/images/customer-home/page.svg"
-							/>
-							{ isStaticHomePage ? (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'write_post' );
-										page( `/post/${ siteSlug }` );
-									} }
-									label={ translate( 'Write blog post' ) }
-									iconSrc="/calypso/images/customer-home/post.svg"
-								/>
-							) : (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'manage_comments' );
-										page( `/comments/${ siteSlug }` );
-									} }
-									label={ translate( 'Manage comments' ) }
-									iconSrc="/calypso/images/customer-home/comment.svg"
-								/>
-							) }
-							{ showCustomizer && (
-								<ActionBox
-									href={ customizeUrl }
-									onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
-									label={ translate( 'Customize theme' ) }
-									iconSrc="/calypso/images/customer-home/customize.svg"
-								/>
-							) }
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'change_theme' );
-									page( `/themes/${ siteSlug }` );
-								} }
-								label={ translate( 'Change theme' ) }
-								iconSrc="/calypso/images/customer-home/theme.svg"
-							/>
-							{ showCustomizer && (
-								<ActionBox
-									href={ menusUrl }
-									onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-									label={ translate( 'Edit menus' ) }
-									iconSrc="/calypso/images/customer-home/menus.svg"
-								/>
-							) }
-							<ActionBox
-								href={ `/media/${ siteSlug }` }
-								onClick={ () => trackAction( 'my_site', 'change_images' ) }
-								label={ translate( 'Change images' ) }
-								iconSrc="/calypso/images/customer-home/images.svg"
-							/>
-							<ActionBox
-								href="https://wp.me/logo-maker"
-								onClick={ () => trackAction( 'my_site', 'design_logo' ) }
-								target="_blank"
-								label={ translate( 'Design a logo' ) }
-								iconSrc="/calypso/images/customer-home/logo.svg"
-							/>
-							{ hasCustomDomain ? (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'add_email' );
-										page( `/email/${ siteSlug }` );
-									} }
-									label={ translate( 'Add email' ) }
-									iconSrc="/calypso/images/customer-home/gsuite.svg"
-								/>
-							) : (
-								<ActionBox
-									onClick={ () => {
-										trackAction( 'my_site', 'add_domain' );
-										page( `/domains/add/${ siteSlug }` );
-									} }
-									label={ translate( 'Add a domain' ) }
-									iconSrc="/calypso/images/customer-home/custom-domain.svg"
-								/>
-							) }
-						</div>
-					</Card>
+										label={ translate( 'Add a page' ) }
+										iconSrc="/calypso/images/customer-home/page.svg"
+									/>
+									{ isStaticHomePage ? (
+										<ActionBox
+											onClick={ () => {
+												trackAction( 'my_site', 'write_post' );
+												page( `/post/${ siteSlug }` );
+											} }
+											label={ translate( 'Write blog post' ) }
+											iconSrc="/calypso/images/customer-home/post.svg"
+										/>
+									) : (
+										<ActionBox
+											onClick={ () => {
+												trackAction( 'my_site', 'manage_comments' );
+												page( `/comments/${ siteSlug }` );
+											} }
+											label={ translate( 'Manage comments' ) }
+											iconSrc="/calypso/images/customer-home/comment.svg"
+										/>
+									) }
+									{ showCustomizer && (
+										<ActionBox
+											href={ customizeUrl }
+											onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
+											label={ translate( 'Customize theme' ) }
+											iconSrc="/calypso/images/customer-home/customize.svg"
+										/>
+									) }
+									<ActionBox
+										onClick={ () => {
+											trackAction( 'my_site', 'change_theme' );
+											page( `/themes/${ siteSlug }` );
+										} }
+										label={ translate( 'Change theme' ) }
+										iconSrc="/calypso/images/customer-home/theme.svg"
+									/>
+									{ showCustomizer && (
+										<ActionBox
+											href={ menusUrl }
+											onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+											label={ translate( 'Edit menus' ) }
+											iconSrc="/calypso/images/customer-home/menus.svg"
+										/>
+									) }
+									<ActionBox
+										href={ `/media/${ siteSlug }` }
+										onClick={ () => trackAction( 'my_site', 'change_images' ) }
+										label={ translate( 'Change images' ) }
+										iconSrc="/calypso/images/customer-home/images.svg"
+									/>
+									<ActionBox
+										href="https://wp.me/logo-maker"
+										onClick={ () => trackAction( 'my_site', 'design_logo' ) }
+										target="_blank"
+										label={ translate( 'Design a logo' ) }
+										iconSrc="/calypso/images/customer-home/logo.svg"
+									/>
+									{ hasCustomDomain ? (
+										<ActionBox
+											onClick={ () => {
+												trackAction( 'my_site', 'add_email' );
+												page( `/email/${ siteSlug }` );
+											} }
+											label={ translate( 'Add email' ) }
+											iconSrc="/calypso/images/customer-home/gsuite.svg"
+										/>
+									) : (
+										<ActionBox
+											onClick={ () => {
+												trackAction( 'my_site', 'add_domain' );
+												page( `/domains/add/${ siteSlug }` );
+											} }
+											label={ translate( 'Add a domain' ) }
+											iconSrc="/calypso/images/customer-home/custom-domain.svg"
+										/>
+									) }
+								</div>
+							</Card>
+						</>
+					) }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
+					{ siteIsUnlaunched && (
+						<Card className="customer-home__launch-button">
+							<Button primary onClick={ this.onLaunchBannerClick }>
+								{ translate( 'Launch my site' ) }
+							</Button>
+						</Card>
+					) }
 					<Card className="customer-home__grow-earn">
 						<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
