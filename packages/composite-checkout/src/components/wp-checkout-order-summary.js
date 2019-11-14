@@ -23,8 +23,8 @@ export default function WPCheckoutOrderSummary() {
 		<React.Fragment>
 			<SummaryContent>
 				<ProductList>
-					{ items.map( ( product, index ) => {
-						return <ProductListItem key={ index }>{ product.label }</ProductListItem>;
+					{ items.map( product => {
+						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 					} ) }
 				</ProductList>
 

@@ -69,7 +69,7 @@ export default function Checkout( {
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<OrderSummaryStep OrderSummary={ OrderSummary ? OrderSummary : CheckoutOrderSummary } />
+				<OrderSummaryStep OrderSummary={ OrderSummary || CheckoutOrderSummary } />
 
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with the payment method form.' ) }
