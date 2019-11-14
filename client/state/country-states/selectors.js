@@ -9,7 +9,6 @@ import { get } from 'lodash';
  * if there are not states for the country.
  *
  *
- * @format
  * @param {String} countryCode Country code to check.
  * @return {?Array}             States objects, if known.
  */

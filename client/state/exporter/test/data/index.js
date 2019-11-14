@@ -2,7 +2,6 @@
  * This file contains data for use in tests in the form it could be expected
  * to be received from the wpcom API
  *
- * @format
  */
 
 export const SAMPLE_ADVANCED_SETTINGS = {

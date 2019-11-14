@@ -4,7 +4,6 @@
  * Adapted from WordPress.
  *
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  */

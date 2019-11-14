@@ -2,7 +2,6 @@
  * Returns all of the reader tags cached in calypso
  *
  *
- * @format
  * @param {Object}  state  Global state tree
  * @return {Array}          Reader Tags
  */

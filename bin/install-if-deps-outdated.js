@@ -9,7 +9,6 @@
  * the packages at node_modules may be outdated. That will happen,
  * for example, when switching branches.
  *
- * @format
  */
 
 const fs = require( 'fs' );
