@@ -9,15 +9,15 @@ import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stri
 /**
  * Internal dependencies
  */
-import Field from './field';
-import GridRow from './grid-row';
-import Button from './button';
+import Field from '../../components/field';
+import GridRow from '../../components/grid-row';
+import Button from '../../components/button';
 import {
 	useStripe,
 	createStripePaymentMethod,
 	confirmStripePaymentIntent,
 	StripeHookProvider,
-} from '../lib/stripe';
+} from '../stripe';
 import {
 	useSelect,
 	useDispatch,
@@ -25,15 +25,15 @@ import {
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
-} from '../public-api';
-import useLocalize, { sprintf } from '../lib/localize';
-import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
-import { CreditCardLabel } from '../lib/payment-methods/credit-card';
-import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
-import { SummaryLine, SummaryDetails } from '../lib/styled-components/summary-details';
+} from '../../public-api';
+import useLocalize, { sprintf } from '../localize';
+import { VisaLogo, AmexLogo, MastercardLogo } from '../../components/payment-logos';
+import { CreditCardLabel } from './credit-card';
+import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
+import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields from './credit-card-fields';
-import Spinner from './spinner';
-import ErrorMessage from './error-message';
+import Spinner from '../../components/spinner';
+import ErrorMessage from '../../components/error-message';
 
 export function createStripeMethod( {
 	registerStore,

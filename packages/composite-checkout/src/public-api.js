@@ -24,9 +24,8 @@ import {
 	useSelect,
 	useDispatch,
 } from './lib/registry';
-import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
-import WPCheckoutOrderReview from './components/wp-checkout-order-review';
-import { createStripeMethod } from './components/stripe-credit-card-fields';
+import { WPCheckoutOrderSummary, WPCheckoutOrderReview } from './wpcom/index'; // TODO: remove this
+import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';

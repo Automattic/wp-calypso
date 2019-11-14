@@ -8,15 +8,10 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import joinClasses from '../lib/join-classes';
-import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
-import {
-	OrderReviewLineItems,
-	OrderReviewTotal,
-	OrderReviewSection,
-} from './order-review-line-items';
+import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
+import { useLineItems, renderDisplayValueMarkdown, OrderReviewLineItems, OrderReviewTotal, OrderReviewSection } from '../public-api';
 
 export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();

@@ -9,7 +9,7 @@ import interpolateComponents from 'interpolate-components';
  * Internal dependencies
  */
 import { useHasDomainsInCart } from '../public-api';
-import { useLocalize } from '../lib/localize';
+import { useLocalize } from '../lib/localize'; // TODO: remove this
 
 export default function WPTermsAndConditions() {
 	const isDomainsTermsVisible = useHasDomainsInCart();
