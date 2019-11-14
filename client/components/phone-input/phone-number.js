@@ -15,7 +15,7 @@ const debug = debugFactory( 'phone-input:metadata' );
 
 export const DIGIT_PLACEHOLDER = '\u7003';
 const STANDALONE_DIGIT_PATTERN = /\d(?=[^,}][^,}])/g;
-const CHARACTER_CLASS_PATTERN = /\[([^\[\]])*\]/g;
+const CHARACTER_CLASS_PATTERN = /\[([^[\]])*]/g;
 const LONGEST_NUMBER = '999999999999999';
 const LONGEST_NUMBER_MATCH = /9/g;
 export const MIN_LENGTH_TO_FORMAT = 3;
@@ -42,7 +42,7 @@ export function findCountryFromNumber( inputNumber ) {
 		const query = stripNonDigits( inputNumber )
 			.replace( /^0+/, '' )
 			.substr( 0, i );
-		if ( dialCodeMap.hasOwnProperty( query ) ) {
+		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {
 				return countries[ exactMatch[ 0 ] ];
