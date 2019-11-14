@@ -1,5 +1,6 @@
 # next
 
+- Add `util.IncrementalProgressPlugin` to show incremental build progress
 - Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
 - Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
 
