@@ -175,12 +175,17 @@ export class SharingService extends Component {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
 				requestExternalAccess( service.connect_URL, ( { keyring_id: newKeyringId } ) => {
-					// When the user has finished authorizing the connection
-					// (or otherwise closed the window), force a refresh
-					this.props.requestKeyringConnections();
+					const requestConnections = [
+						// When the user has finished authorizing the connection
+						// (or otherwise closed the window), force a refresh
+						this.props.requestKeyringConnections(),
+						// We also need to refresh site keyrings
+						this.props.requestSiteKeyrings( this.props.siteId ),
+					];
 
-					// We also need to refresh site keyrings
-					this.props.requestSiteKeyrings( this.props.siteId );
+					Promise.all( requestConnections ).then( () => {
+						this.connectNonPublicizeAccount();
+					} );
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -348,23 +353,21 @@ export class SharingService extends Component {
 		if ( ! isEqual( this.props.brokenConnections, nextProps.brokenConnections ) ) {
 			this.setState( { isRefreshing: false } );
 		}
+	}
 
-		if ( this.state.isAwaitingConnections ) {
-			this.setState( { isAwaitingConnections: false } );
-
-			/**
-			 * This immediately connects the account, which is needed for non-publicize accounts
-			 */
-			if (
-				get( nextProps, 'service.type' ) !== 'publicize' &&
-				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
-			) {
-				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
-				this.addConnection( nextProps.service, account.keyringConnectionId );
-				this.setState( { isConnecting: false } );
-			} else if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
-				this.setState( { isSelectingAccount: true } );
-			}
+	/**
+	 * This immediately connects the account, which is needed for non-publicize accounts
+	 */
+	connectNonPublicizeAccount() {
+		if (
+			get( this.props, 'service.type' ) !== 'publicize' &&
+			this.didKeyringConnectionSucceed( this.props.availableExternalAccounts )
+		) {
+			const account = find( this.props.availableExternalAccounts, { isConnected: false } );
+			this.addConnection( this.props.service, account.keyringConnectionId );
+			this.setState( { isConnecting: false } );
+		} else if ( this.didKeyringConnectionSucceed( this.props.availableExternalAccounts ) ) {
+			this.setState( { isSelectingAccount: true } );
 		}
 	}
 
