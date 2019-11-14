@@ -3,20 +3,17 @@
  */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import LocalizeContext from './localize-context';
 
-// TODO: we need to implement this; probably delegated to i18n-calypso
-/* eslint-disable no-unused-vars */
 export default function localizeFactory( locale ) {
-	return text => {
-		return text;
-	};
+	setLocaleData( getLocaleDataForLocale( locale ) );
+	return text => __( text, 'default' );
 }
-/* eslint-enable no-unused-vars */
 
 export function useLocalize() {
 	const localize = useContext( LocalizeContext );
@@ -37,3 +34,57 @@ export function LocalizeProvider( { locale, children } ) {
 LocalizeProvider.propTypes = {
 	locale: PropTypes.string.isRequired,
 };
+
+// TODO: how do we get this data for the locale?
+function getLocaleDataForLocale( locale ) {
+	switch ( locale ) {
+		case 'fr':
+			return {
+				'': {
+					domain: 'default',
+					lang: 'fr',
+					plural_forms: 'nplurals=2; plural=(n != 1);',
+				},
+				'First name': [ 'Prénom' ],
+				'Last name': [ 'Nom' ],
+				'Email address': [ 'Adresse e-mail' ],
+				Address: [ 'Adresse' ],
+				City: [ 'Ville' ],
+				Province: [ 'Province' ],
+				'Postal code': [ 'Code postal' ],
+				Country: [ 'Pays' ],
+				'Phone number (Optional)': [ 'Numéro de téléphone (Optionnel)' ],
+				'Use your billing details for your domain registration contact information.': [
+					'Utilisez vos informations de facturation pour les informations de contact de votre domaine.',
+				],
+				'Enter your billing details': [ 'Entrez vos détails de facturation' ],
+				Continue: [ 'Continuez' ],
+				'Review your order': [ 'Vérifiez votre commande' ],
+				'You are all set to check out': [ 'Vous êtes prêt à partir' ],
+				'Pick a payment method': [ 'Choisissez un mode de paiement' ],
+				'Order Summary': [ 'Apitulatif de la commande' ],
+				'Add a coupon': [ 'Ajouter un coupon' ],
+				'Credit or debit card': [ 'Carte de crédit ou de débit' ],
+				'Card number': [ 'Numéro de carte' ],
+				'Expiry date': [ "Date d'expiration" ],
+				'Security code': [ 'Code de sécurité' ],
+				'Expiry Date': [ "Date d'expiration" ],
+				'Security Code': [ 'Code de sécurité' ],
+				'Cardholder name': [ 'Nom du titulaire' ],
+				"Enter your name as it's written on the card": [
+					"Entrez votre nom tel qu'il est écrit sur la carte",
+				],
+				'Pay %s': [ 'Payez %s' ],
+			};
+		default:
+			return {
+				'': {
+					domain: 'default',
+					lang: 'en',
+					plural_forms: 'nplurals=2; plural=(n != 1);',
+				},
+			};
+	}
+}
+
+export { sprintf };

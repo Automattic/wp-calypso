@@ -138,7 +138,7 @@ function MyCheckout() {
 
 	return (
 		<CheckoutProvider
-			locale={ 'US' }
+			locale={ 'en' }
 			items={ items }
 			total={ total }
 			onSuccess={ onSuccess }
