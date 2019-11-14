@@ -93,7 +93,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const loadingMessage = [
 		{
 			label: '',
-			category: NO__( 'Loading, please wait...' ),
+			category: NO__( 'Loading, please wait…' ),
 		},
 	];
 
