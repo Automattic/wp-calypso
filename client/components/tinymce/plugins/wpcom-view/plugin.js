@@ -2,7 +2,6 @@
  * Adapted from the WordPress wp-view TinyMCE plugin.
  *
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  */

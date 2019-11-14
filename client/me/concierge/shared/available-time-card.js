@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * CalendarCard represents a day of schedulable concierge chats. Each card is expandable to
  * allow the user to select a specific time on the day. If the day has no availability, it will

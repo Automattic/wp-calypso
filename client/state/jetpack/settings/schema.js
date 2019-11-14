@@ -1,5 +1,3 @@
-/** @format */
-
 export const jetpackOnboardingSettingsSchema = {
 	type: 'object',
 	additionalProperties: false,

@@ -1,4 +1,3 @@
-/** @format */
 export const commentsTree = {
 	1: {
 		data: {

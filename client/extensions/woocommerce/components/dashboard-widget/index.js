@@ -2,7 +2,6 @@
  *
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';

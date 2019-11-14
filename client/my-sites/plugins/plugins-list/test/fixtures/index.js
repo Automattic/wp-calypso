@@ -1,4 +1,3 @@
-/** @format */
 export const sites = [
 	{
 		ID: 43889156,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Module dependencies
  */

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -122,7 +120,8 @@ class ProductCategoryCreate extends React.Component {
 		const saveEnabled =
 			hasEdits &&
 			category &&
-			category.name && category.name.length &&
+			category.name &&
+			category.name.length &&
 			! isNull( category.parent ) &&
 			! isUploading;
 

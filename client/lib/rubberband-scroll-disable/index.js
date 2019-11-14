@@ -1,5 +1,3 @@
-/** @format */
-
 function preventScrollBounceOSX( body, event ) {
 	if (
 		( event.deltaY < 0 && body.scrollTop === 0 ) ||

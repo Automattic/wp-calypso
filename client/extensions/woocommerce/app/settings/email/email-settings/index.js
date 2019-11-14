@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import { bindActionCreators } from 'redux';

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Enforce external, internal dependencies docblocks
  * @author Automattic

@@ -1,8 +1,6 @@
-/** @format */
 /**
  * A little module for loading a external script
  *
- * @format
  */
 
 /**

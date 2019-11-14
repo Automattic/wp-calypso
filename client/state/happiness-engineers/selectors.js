@@ -2,7 +2,6 @@
  * Returns happiness engineers
  *
  *
- * @format
  * @param {{}} state currents state
  * @returns {Array} happiness engineers
  */

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -236,9 +234,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				return (
 					foundInTaxonomies ||
 					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
-						( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
-						( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
-						( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
+					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
+					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
 				);
 			}
 			case 'filter': {

@@ -1,5 +1,4 @@
 /* eslint-disable valid-jsdoc */
-/** @format */
 
 /**
  * External dependencies

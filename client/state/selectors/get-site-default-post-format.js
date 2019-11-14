@@ -1,7 +1,6 @@
 /**
  * External
  *
- * @format
  */
 
 import { get } from 'lodash';

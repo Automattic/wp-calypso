@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Handle log in and sign up as part of the Jetpack Connect flow
  *

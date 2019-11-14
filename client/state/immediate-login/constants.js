@@ -1,5 +1,3 @@
-/** @format */
-
 // Login reasons associated with manual subscription renewals. Currently these
 // all have the exact same messaging, so they are included in one constant.
 export const REASONS_FOR_MANUAL_RENEWAL = [

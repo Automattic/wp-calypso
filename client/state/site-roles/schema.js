@@ -1,4 +1,3 @@
-/** @format */
 export const siteRolesSchema = {
 	type: 'object',
 	patternProperties: {

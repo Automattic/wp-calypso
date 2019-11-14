@@ -1,7 +1,6 @@
 /**
  * Returns true if we're currently requesting WordAds approval
  *
- * @format
  * @param {Number} siteId Site Id
  * @returns {boolean}       requesting state
  */

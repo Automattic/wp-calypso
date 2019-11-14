@@ -1,4 +1,3 @@
-/** @format */
 export const RESULT_TYPE = 'type';
 export const RESULT_TITLE = 'title';
 export const RESULT_DESCRIPTION = 'description';

@@ -2,7 +2,6 @@
  * Returns a boolean signifying whether there are settings or not
  *
  *
- * @format
  * @param {Object} state Global state tree
  * @return {Boolean} true is the user has settings object
  */

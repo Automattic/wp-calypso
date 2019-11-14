@@ -1,4 +1,3 @@
-/** @format */
 export const DEFAULT_POST_QUERY = {
 	context: 'display',
 	http_envelope: false,

@@ -1,5 +1,3 @@
-/** @format */
-
 const MAX_COLUMNS = 79;
 const SEPARATORS = [ ' ', '/', ',', ';' ];
 
