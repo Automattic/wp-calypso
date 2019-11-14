@@ -279,7 +279,7 @@ export class CheckoutThankYou extends React.Component {
 			const failedPurchases = getFailedPurchases( props );
 			if ( purchases.length > 0 && ! failedPurchases.length ) {
 				const domainName = find( purchases, isDomainRegistration ).meta;
-				page( domainManagementList( domainName ) );
+				page.redirect( domainManagementList( domainName ) );
 			}
 		}
 	};
