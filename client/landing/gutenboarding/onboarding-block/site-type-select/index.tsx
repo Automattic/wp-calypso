@@ -10,11 +10,12 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { SiteType } from '../../stores/onboard/types';
-import { StepInputProps } from '../question';
+import { SiteType, isFilledFormValue } from '../../stores/onboard/types';
+import { StepInputProps } from '../stepper-wizard';
+import Question from '../question';
 import './style.scss';
 
-export const siteTypeOptions: Record< SiteType, string > = {
+const siteTypeOptions: Record< SiteType, string > = {
 	[ SiteType.BLOG ]: NO__( 'with a blog' ),
 	[ SiteType.BUSINESS ]: NO__( 'for a business' ),
 	[ SiteType.PORTFOLIO ]: NO__( 'to share a portfolio' ),
@@ -23,7 +24,7 @@ export const siteTypeOptions: Record< SiteType, string > = {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-export default function SiteTypeSelect( { onSelect }: StepInputProps ) {
+const SiteTypeSelect = ( { onSelect, ...props }: StepInputProps ) => {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType } = useDispatch( STORE_KEY );
 
@@ -32,21 +33,31 @@ export default function SiteTypeSelect( { onSelect }: StepInputProps ) {
 		onSelect();
 	};
 
+	const questionLabel = isFilledFormValue( siteType )
+		? NO__( 'I want to create a website ' )
+		: NO__( 'Setting up a website ' );
+
+	const displayValue = isFilledFormValue( siteType ) ? siteTypeOptions[ siteType ] : '';
+
 	return (
-		<ul className="onboarding-block__multi-question">
-			{ map( siteTypeOptions, ( label, value ) => (
-				<li key={ value } className={ value === siteType ? 'selected' : '' }>
-					<label>
-						<input
-							name="onboarding_site_type"
-							onChange={ selectSiteType }
-							type="radio"
-							value={ value }
-						/>
-						<span className="onboarding-block__multi-question-choice">{ label }</span>
-					</label>
-				</li>
-			) ) }
-		</ul>
+		<Question label={ questionLabel } displayValue={ displayValue } { ...props }>
+			<ul className="onboarding-block__multi-question">
+				{ map( siteTypeOptions, ( label, value ) => (
+					<li key={ value } className={ value === siteType ? 'selected' : '' }>
+						<label>
+							<input
+								name="onboarding_site_type"
+								onChange={ selectSiteType }
+								type="radio"
+								value={ value }
+							/>
+							<span className="onboarding-block__multi-question-choice">{ label }</span>
+						</label>
+					</li>
+				) ) }
+			</ul>
+		</Question>
 	);
-}
+};
+
+export default SiteTypeSelect;

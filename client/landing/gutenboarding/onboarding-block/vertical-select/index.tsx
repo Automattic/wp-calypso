@@ -12,14 +12,15 @@ import { Suggestions } from '@automattic/components';
 
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
-import { StepInputProps } from '../question';
+import { StepInputProps } from '../stepper-wizard';
+import Question from '../question';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export default function VerticalSelect( { onSelect, inputClass }: StepInputProps ) {
+export default function VerticalSelect( { onSelect, inputClass, ...props }: StepInputProps ) {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -89,24 +90,31 @@ export default function VerticalSelect( { onSelect, inputClass }: StepInputProps
 		  } ) )
 		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
+	const label = NO__( 'My site is about' );
+	const displayValue = isFilledFormValue( siteVertical )
+		? siteVertical.label
+		: NO__( 'enter a topic' );
+
 	return (
-		<div className="vertical-select">
-			<input
-				className={ inputClass }
-				placeholder={ NO__( 'enter a topic' ) }
-				onChange={ handleSuggestionChangeEvent }
-				onFocus={ showSuggestions }
-				onBlur={ hideSuggestions }
-				onKeyDown={ handleSuggestionKeyDown }
-				autoComplete="off"
-				value={ value }
-			/>
-			<Suggestions
-				ref={ suggestionRef }
-				query={ inputValue }
-				suggestions={ ! verticals.length ? loadingMessage : suggestions }
-				suggest={ handleSelect }
-			/>
-		</div>
+		<Question label={ label } displayValue={ displayValue } { ...props }>
+			<div className="vertical-select">
+				<input
+					className={ inputClass }
+					placeholder={ NO__( 'enter a topic' ) }
+					onChange={ handleSuggestionChangeEvent }
+					onFocus={ showSuggestions }
+					onBlur={ hideSuggestions }
+					onKeyDown={ handleSuggestionKeyDown }
+					autoComplete="off"
+					value={ value }
+				/>
+				<Suggestions
+					ref={ suggestionRef }
+					query={ inputValue }
+					suggestions={ ! verticals.length ? loadingMessage : suggestions }
+					suggest={ handleSelect }
+				/>
+			</div>
+		</Question>
 	);
 }

@@ -9,30 +9,17 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export interface StepInputProps {
-	onSelect: () => void;
-	inputClass: string;
-}
-
 interface QuestionProps {
 	label: string;
 	displayValue: string;
-	StepInput: React.FunctionComponent< StepInputProps >;
+	children: React.ReactNode;
 	isActive: boolean;
 	onExpand: () => void;
-	onSelect: () => void;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const Question = ( {
-	isActive,
-	onExpand,
-	onSelect,
-	displayValue,
-	label,
-	StepInput,
-}: QuestionProps ) => (
+const Question = ( { isActive, onExpand, displayValue, label, children }: QuestionProps ) => (
 	<div
 		className={ classNames( {
 			'onboarding-block__question': true,
@@ -42,7 +29,7 @@ const Question = ( {
 		<span>{ label }</span>
 		<div className="">
 			{ isActive ? (
-				<StepInput onSelect={ onSelect } inputClass="onboarding-block__question-input" />
+				children
 			) : (
 				<>
 					<button className="onboarding-block__question-answered" onClick={ onExpand }>
