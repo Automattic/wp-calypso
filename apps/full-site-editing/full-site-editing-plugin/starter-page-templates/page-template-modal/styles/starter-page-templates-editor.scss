@@ -393,6 +393,8 @@ body.is-fullscreen-mode {
 				padding: 0;
 				height: $template-large-preview-title-height;
 				line-height: $template-large-preview-title-height;
+				overflow: hidden;
+				resize: none;
 			}
 		}
 	}
