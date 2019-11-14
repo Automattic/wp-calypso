@@ -47,7 +47,4 @@ export class QuerySiteCommentsTree extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestCommentsTreeForSite }
-)( QuerySiteCommentsTree );
+export default connect( null, { requestCommentsTreeForSite } )( QuerySiteCommentsTree );

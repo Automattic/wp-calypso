@@ -73,7 +73,4 @@ export class SidebarBanner extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { track: recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SidebarBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarBanner ) );

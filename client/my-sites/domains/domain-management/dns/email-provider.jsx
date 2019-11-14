@@ -102,10 +102,7 @@ class EmailProvider extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( EmailProvider ) );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( EmailProvider ) );

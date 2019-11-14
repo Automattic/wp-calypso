@@ -94,15 +94,12 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	( state, props ) => {
-		return {
-			frontPageType: getSiteFrontPageType( state, props.site.ID ),
-			isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
-			postsPage: getSitePostsPage( state, props.site.ID ),
-			frontPage: getSiteFrontPage( state, props.site.ID ),
-			isFullSiteEditing: isSiteUsingFullSiteEditing( state, props.site.ID ),
-		};
-	},
-	mapDispatchToProps
-)( localize( BlogPostsPage ) );
+export default connect( ( state, props ) => {
+	return {
+		frontPageType: getSiteFrontPageType( state, props.site.ID ),
+		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
+		postsPage: getSitePostsPage( state, props.site.ID ),
+		frontPage: getSiteFrontPage( state, props.site.ID ),
+		isFullSiteEditing: isSiteUsingFullSiteEditing( state, props.site.ID ),
+	};
+}, mapDispatchToProps )( localize( BlogPostsPage ) );

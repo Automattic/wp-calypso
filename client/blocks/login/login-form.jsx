@@ -626,7 +626,7 @@ export default connect(
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
-				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),

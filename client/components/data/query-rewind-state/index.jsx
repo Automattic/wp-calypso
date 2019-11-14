@@ -40,7 +40,4 @@ const mapDispatchToProps = {
 	requestState: requestRewindState,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( QueryRewindState );
+export default connect( null, mapDispatchToProps )( QueryRewindState );

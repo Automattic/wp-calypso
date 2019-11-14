@@ -36,9 +36,6 @@ QueryPreferences.defaultProps = {
 	fetchingPreferences: false,
 };
 
-export default connect(
-	state => ( { fetchingPreferences: isFetchingPreferences( state ) } ),
-	{
-		fetchPreferences,
-	}
-)( QueryPreferences );
+export default connect( state => ( { fetchingPreferences: isFetchingPreferences( state ) } ), {
+	fetchPreferences,
+} )( QueryPreferences );

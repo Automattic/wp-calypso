@@ -212,7 +212,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategories ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

@@ -170,7 +170,4 @@ const connectComponent = connect(
 	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( Zone );
+export default flowRight( connectComponent, localize )( Zone );

@@ -224,11 +224,26 @@ describe( 'cart-item', () => {
 		} );
 
 		const expectations = [
-			[ { product_slug: PLAN_BLOGGER, cost: 60 }, { months: 12, monthlyPrice: 5 } ],
-			[ { product_slug: PLAN_PERSONAL, cost: 120 }, { months: 12, monthlyPrice: 10 } ],
-			[ { product_slug: PLAN_PREMIUM, cost: 180 }, { months: 12, monthlyPrice: 15 } ],
-			[ { product_slug: PLAN_BUSINESS_2_YEARS, cost: 480 }, { months: 24, monthlyPrice: 20 } ],
-			[ { product_slug: PLAN_JETPACK_PERSONAL, cost: 288 }, { months: 12, monthlyPrice: 24 } ],
+			[
+				{ product_slug: PLAN_BLOGGER, cost: 60 },
+				{ months: 12, monthlyPrice: 5 },
+			],
+			[
+				{ product_slug: PLAN_PERSONAL, cost: 120 },
+				{ months: 12, monthlyPrice: 10 },
+			],
+			[
+				{ product_slug: PLAN_PREMIUM, cost: 180 },
+				{ months: 12, monthlyPrice: 15 },
+			],
+			[
+				{ product_slug: PLAN_BUSINESS_2_YEARS, cost: 480 },
+				{ months: 24, monthlyPrice: 20 },
+			],
+			[
+				{ product_slug: PLAN_JETPACK_PERSONAL, cost: 288 },
+				{ months: 12, monthlyPrice: 24 },
+			],
 		];
 
 		expectations.forEach( ( [ input, output ] ) => {

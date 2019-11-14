@@ -202,9 +202,11 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
-									sub => this.renderSubscriber( sub )
-								) }
+								{ orderBy(
+									Object.values( this.props.subscribers ),
+									[ 'id' ],
+									[ 'desc' ]
+								).map( sub => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ triggeredByInteraction =>
@@ -360,7 +362,7 @@ class MembershipsSection extends Component {
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{' '}
+						) }{ ' ' }
 						<ExternalLink
 							href="https://support.wordpress.com/recurring-payments-button/"
 							icon={ true }
@@ -408,7 +410,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderOnboarding(
 					<Button primary={ true } href={ this.props.connectUrl }>
-						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
+						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
 				) }
@@ -496,7 +498,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ requestSubscribers }
-)( localize( MembershipsSection ) );
+export default connect( mapStateToProps, { requestSubscribers } )( localize( MembershipsSection ) );

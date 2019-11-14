@@ -254,7 +254,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch an success action', () => {
 			const dispatch = spy();
-			return emailSettingsSubmitSettings( siteId, settings )( dispatch ).then( () => {
+			return emailSettingsSubmitSettings(
+				siteId,
+				settings
+			)( dispatch ).then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 					siteId,

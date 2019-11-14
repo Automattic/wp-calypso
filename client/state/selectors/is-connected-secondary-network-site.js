@@ -22,10 +22,7 @@ import isMainSiteOf from 'state/selectors/is-main-site-of';
  * @param  {Number}    siteId    The ID of the site we're querying
  * @return {Boolean}             Whether site with id equal to siteId is a connected secondary network site
  */
-export default createSelector(
-	( state, siteId ) => {
-		const siteIds = Object.keys( getSitesItems( state ) );
-		return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
-	},
-	getSitesItems
-);
+export default createSelector( ( state, siteId ) => {
+	const siteIds = Object.keys( getSitesItems( state ) );
+	return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
+}, getSitesItems );

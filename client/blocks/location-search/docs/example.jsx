@@ -52,9 +52,6 @@ class LocationSearchExample extends Component {
 	}
 }
 
-const ConnectedLocationSearchExample = connect(
-	null,
-	{ createNotice }
-)( LocationSearchExample );
+const ConnectedLocationSearchExample = connect( null, { createNotice } )( LocationSearchExample );
 ConnectedLocationSearchExample.displayName = 'LocationSearch';
 export default ConnectedLocationSearchExample;

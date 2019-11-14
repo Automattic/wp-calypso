@@ -49,9 +49,6 @@ class QueryPostRevisionAuthors extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		requestPostRevisionAuthors,
-	}
-)( QueryPostRevisionAuthors );
+export default connect( null, {
+	requestPostRevisionAuthors,
+} )( QueryPostRevisionAuthors );

@@ -1788,14 +1788,6 @@ Undocumented.prototype.cancelTransferRequest = function( { domainName, declineTr
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enablePrivacyProtection = function( domainName, callback ) {
-	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/enable', callback );
-};
-
-Undocumented.prototype.disablePrivacyProtection = function( domainName, callback ) {
-	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/disable', callback );
-};
-
 Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
 	const data = {
 		domainStatus: JSON.stringify( { command: 'accept-transfer' } ),
@@ -1958,7 +1950,10 @@ Undocumented.prototype.importWithSiteImporter = function(
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
 		apiNamespace: 'wpcom/v2',
-		formData: [ [ 'import_status', JSON.stringify( importerStatus ) ], [ 'site_url', targetUrl ] ],
+		formData: [
+			[ 'import_status', JSON.stringify( importerStatus ) ],
+			[ 'site_url', targetUrl ],
+		],
 	} );
 };
 
@@ -2534,6 +2529,27 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 		recipient_id: recipientId,
 		token,
 		command,
+	} );
+};
+
+Undocumented.prototype.getMigrationStatus = function( targetSiteId ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ targetSiteId }/migration-status`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+Undocumented.prototype.resetMigration = function( targetSiteId ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ targetSiteId }/reset-migration`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 

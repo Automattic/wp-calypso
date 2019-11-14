@@ -279,7 +279,4 @@ const mapDispatchToProps = dispatch => ( {
 		dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SeoPreviewPane ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );

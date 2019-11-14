@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export default function RadioButton( {
 	checked,
@@ -16,6 +16,7 @@ export default function RadioButton( {
 	ariaLabel,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
+
 	return (
 		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
 			<Radio
@@ -37,7 +38,7 @@ export default function RadioButton( {
 			<Label checked={ checked } htmlFor={ id }>
 				{ label }
 			</Label>
-			{ children }
+			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
 		</RadioButtonWrapper>
 	);
 }
@@ -60,7 +61,7 @@ const RadioButtonWrapper = styled.div`
 	width: 100%;
 	outline: ${getOutline};
 
-	:first-child {
+	:first-of-type {
 		margin: 0;
 	}
 
@@ -128,6 +129,11 @@ const Label = styled.label`
 	}
 `;
 
+const RadioButtonChildren = styled.div`
+	height: ${getChildrenHeight};
+	overflow: hidden;
+`;
+
 function getBorderColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
@@ -138,6 +144,10 @@ function getBorderWidth( { checked } ) {
 
 function getRadioBorderWidth( { checked } ) {
 	return checked ? '5px' : '1px';
+}
+
+function getChildrenHeight( { checked } ) {
+	return checked ? 'auto' : '0';
 }
 
 function getGrayscaleValue( { checked } ) {

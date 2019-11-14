@@ -365,7 +365,6 @@ class ReaderStream extends React.Component {
 		return (
 			<PostLifecycle
 				key={ itemKey }
-				ref={ itemKey }
 				isSelected={ isSelected }
 				handleClick={ showPost }
 				postKey={ postKey }

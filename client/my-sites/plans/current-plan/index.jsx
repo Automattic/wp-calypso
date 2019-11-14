@@ -38,6 +38,7 @@ import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
+import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import { getByPurchaseId } from 'state/purchases/selectors';
 import { isPartnerPurchase } from 'lib/purchases';
 
@@ -95,13 +96,25 @@ class CurrentPlan extends Component {
 		};
 	}
 
+	renderThankYou() {
+		const { isFreePlan, requestProduct } = this.props;
+
+		if ( requestProduct ) {
+			return <BackupProductThankYou />;
+		}
+		if ( isFreePlan ) {
+			return <FreePlanThankYou />;
+		}
+
+		return <PaidPlanThankYou />;
+	}
+
 	render() {
 		const {
 			currentPlan,
 			domains,
 			hasDomainsLoaded,
 			isExpiring,
-			isFreePlan,
 			path,
 			purchase,
 			selectedSite,
@@ -137,7 +150,7 @@ class CurrentPlan extends Component {
 					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
 					isVisible={ showThankYou }
 				>
-					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }
+					{ this.renderThankYou() }
 				</Dialog>
 
 				<PlansNavigation path={ path } />
@@ -191,7 +204,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, { requestThankYou } ) => {
+export default connect( ( state, { requestThankYou, requestProduct } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -216,5 +229,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
+		requestProduct,
 	};
 } )( localize( CurrentPlan ) );

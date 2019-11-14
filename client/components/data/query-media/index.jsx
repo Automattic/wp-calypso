@@ -65,7 +65,4 @@ class QueryMedia extends Component {
 	}
 }
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( QueryMedia );
+export default connect( null, mapDispatchToProps )( QueryMedia );

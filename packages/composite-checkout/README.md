@@ -4,7 +4,7 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 ## Installation
 
-`npm install composite-checkout styled-components`
+`npm install @automattic/composite-checkout`
 
 ## Description
 
@@ -375,11 +375,11 @@ function UpSellCoupon( { onClick } ) {
 
 ## Styles and Themes
 
-Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
+Each component will be styled using [@emotion/styled](https://emotion.sh/docs/styled) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
-When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the classNames from BEM and styled-components.
+When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the above.
 
 ## Payment Methods
 
@@ -403,7 +403,7 @@ Each payment method has the following schema:
 {
 	id: string,
 	LabelComponent: component,
-	PaymentMethodComponent: component,
+	PaymentMethodComponent: ?component,
 	BillingContactComponent: component,
 	SubmitButtonComponent: component,
 	CheckoutWrapper: ?component,

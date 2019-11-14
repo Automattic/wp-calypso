@@ -27,7 +27,4 @@ QueryReaderTeams.propTypes = {
 	request: PropTypes.func,
 };
 
-export default connect(
-	null,
-	{ requestTeams }
-)( QueryReaderTeams );
+export default connect( null, { requestTeams } )( QueryReaderTeams );

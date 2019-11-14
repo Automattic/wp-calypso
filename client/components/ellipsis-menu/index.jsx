@@ -97,15 +97,17 @@ class EllipsisMenu extends Component {
 				>
 					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
 				</Button>
-				<PopoverMenu
-					isVisible={ isMenuVisible }
-					onClose={ this.hideMenu }
-					position={ position }
-					context={ this.popoverContext.current }
-					className={ popoverClasses }
-				>
-					{ children }
-				</PopoverMenu>
+				{ isMenuVisible && (
+					<PopoverMenu
+						isVisible
+						onClose={ this.hideMenu }
+						position={ position }
+						context={ this.popoverContext.current }
+						className={ popoverClasses }
+					>
+						{ children }
+					</PopoverMenu>
+				) }
 			</span>
 		);
 	}

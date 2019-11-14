@@ -128,7 +128,4 @@ class SiteImporter extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( SiteImporter );
+export default connect( null, { recordTracksEvent } )( SiteImporter );

@@ -86,7 +86,4 @@ const connectComponent = connect( ( state, { postId, siteId } ) => ( {
 	previewUrl: getPostPreviewUrl( state, siteId, postId ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

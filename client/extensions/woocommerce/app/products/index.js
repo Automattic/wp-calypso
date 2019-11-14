@@ -153,7 +153,4 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Products ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

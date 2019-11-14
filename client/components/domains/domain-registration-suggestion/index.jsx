@@ -335,7 +335,6 @@ const mapStateToProps = ( state, props ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( DomainRegistrationSuggestion ) );
+export default connect( mapStateToProps, { recordTracksEvent } )(
+	localize( DomainRegistrationSuggestion )
+);

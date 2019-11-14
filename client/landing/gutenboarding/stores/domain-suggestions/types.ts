@@ -6,14 +6,33 @@ export { ActionType };
 
 // See client/state/domains/suggestions/actions.js#requestDomainsSuggestions
 export interface DomainSuggestionQuery {
-	[ key: string ]: string | number | boolean | undefined;
-	query: string; // Domain query
-	quantity: number; // max results
-	vendor: string; // vendor
-	include_wordpressdotcom?: boolean; // adds wordpress subdomain suggestions when true
-}
+	/**
+	 * Domain query
+	 */
+	query: string;
 
-export type SerializedDomainsSuggestionsQuery = string;
+	/**
+	 * Number of results
+	 */
+	quantity: number;
+
+	/**
+	 * Vendor
+	 */
+	vendor: string;
+
+	/**
+	 * True to include WordPress.com subdomain suggestions
+	 */
+	include_wordpressdotcom: boolean;
+
+	recommendation_context?: string;
+
+	/**
+	 * The site vertical
+	 */
+	vertical?: string;
+}
 
 export interface DomainSuggestion {
 	domain_name: string;

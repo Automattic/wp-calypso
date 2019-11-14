@@ -266,7 +266,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PromotionUpdate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionUpdate ) );

@@ -372,9 +372,6 @@ const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	null,
-	{ forwardRef: true }
-)( localize( NoteList ) );
+export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(
+	localize( NoteList )
+);

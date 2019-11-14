@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,6 +56,10 @@ export const getDomainsBySite = ( state, site ) => {
  */
 export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
+};
+
+export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
+	return get( state, [ 'sites', 'domains', 'updatingPrivacy', siteId, domain ] );
 };
 
 /**

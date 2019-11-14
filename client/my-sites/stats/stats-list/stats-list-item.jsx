@@ -276,7 +276,7 @@ class StatsListItem extends React.Component {
 				<span className={ wrapperClassSet } key={ i }>
 					{ gridiconSpan }
 					{ icon }
-					{ itemLabel }{' '}
+					{ itemLabel }{ ' ' }
 				</span>
 			);
 		}, this );

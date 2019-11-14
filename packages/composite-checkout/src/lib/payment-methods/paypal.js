@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -80,7 +80,6 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 	return {
 		id: 'paypal',
 		LabelComponent: PaypalLabel,
-		PaymentMethodComponent: () => null,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: PaypalSubmitButton,
 		SummaryComponent: () => {

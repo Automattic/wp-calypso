@@ -12,7 +12,10 @@ const successfulPostRevisionsDiffsResponse = {
 			from: 5,
 			to: 6,
 			diff: {
-				post_content: [ { op: 'add', value: 'Things and ' }, { op: 'copy', value: 'stuff' } ],
+				post_content: [
+					{ op: 'add', value: 'Things and ' },
+					{ op: 'copy', value: 'stuff' },
+				],
 				post_title: [ { op: 'copy', value: 'A REALLY big fan of yours' } ],
 			},
 		},

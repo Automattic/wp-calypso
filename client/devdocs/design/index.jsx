@@ -318,10 +318,7 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssetsExport = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	DesignAssetsExport = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default DesignAssetsExport;

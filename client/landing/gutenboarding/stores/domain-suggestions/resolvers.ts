@@ -7,10 +7,12 @@ import { apiFetch } from '@wordpress/data-controls';
 /**
  * Internal dependencies
  */
-import { DomainSuggestionQuery } from './types';
 import { receiveDomainSuggestions } from './actions';
 
-export function* getDomainSuggestions( queryObject: DomainSuggestionQuery ) {
+export function* __internalGetDomainSuggestions(
+	// Resolver has the same signature as corresponding selector without the initial state argument
+	queryObject: Parameters< typeof import('./selectors').__internalGetDomainSuggestions >[ 1 ]
+) {
 	const url = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions';
 
 	// `credentials` and `mode` args are needed since we're accessing the WP.com REST API

@@ -488,7 +488,4 @@ const mapDispatchToProps = {
 	showQandAOnInlineHelpContactForm,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( HelpContactForm ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

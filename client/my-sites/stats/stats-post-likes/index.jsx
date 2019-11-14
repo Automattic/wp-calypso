@@ -98,8 +98,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	toggleInfo,
-	localize
-)( StatsPostLikes );
+export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );

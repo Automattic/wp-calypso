@@ -92,7 +92,10 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 }
 
 function compose( ...functions ) {
-	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
+	return functions.reduceRight(
+		( composed, f ) => () => f( composed ),
+		() => {}
+	);
 }
 
 export function getNormalizedPath( pathname, query ) {

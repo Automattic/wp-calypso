@@ -17,6 +17,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import DataLossWarning from './data-loss-warning';
@@ -26,7 +27,10 @@ import DataLossWarning from './data-loss-warning';
  */
 import './style.scss';
 
-const Hosting = ( { translate, isDisabled } ) => {
+const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
+	if ( ! canViewAtomicHosting ) {
+		return null;
+	}
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
@@ -56,5 +60,6 @@ export default connect( state => {
 
 	return {
 		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 } )( localize( Hosting ) );

@@ -216,7 +216,7 @@ class Unlocked extends React.Component {
 
 		return (
 			<p>
-				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{' '}
+				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{ ' ' }
 				{ sent
 					? translate(
 							'Our Happiness Engineers have been notified about ' +

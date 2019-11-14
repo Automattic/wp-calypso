@@ -282,7 +282,4 @@ const mapDispatchToProps = dispatch => {
 	);
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddressFields ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressFields ) );

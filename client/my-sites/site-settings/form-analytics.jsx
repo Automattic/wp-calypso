@@ -302,12 +302,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-const connectComponent = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-);
+const connectComponent = connect( mapStateToProps, mapDispatchToProps, null, { pure: false } );
 
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 

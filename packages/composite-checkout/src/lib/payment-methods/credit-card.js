@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ export function createCreditCardMethod() {
 	return {
 		id: 'card',
 		LabelComponent: CreditCardLabel,
-		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
+		PaymentMethodComponent: CreditCardFields,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		SummaryComponent: CreditCardSummary,

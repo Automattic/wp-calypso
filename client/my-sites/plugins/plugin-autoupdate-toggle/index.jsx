@@ -184,10 +184,7 @@ PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( PluginAutoUpdateToggle ) );
+export default connect( null, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( PluginAutoUpdateToggle ) );

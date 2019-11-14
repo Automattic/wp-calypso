@@ -58,7 +58,4 @@ PrimaryDomainButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{ recordMakePrimaryClick }
-)( localize( PrimaryDomainButton ) );
+export default connect( null, { recordMakePrimaryClick } )( localize( PrimaryDomainButton ) );

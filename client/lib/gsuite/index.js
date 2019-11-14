@@ -90,7 +90,10 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	}
 
 	// Orders domains with the primary domain in first position, if any
-	const supportedDomains = sortBy( getGSuiteSupportedDomains( domains ), ( domain ) => ! domain.isPrimary );
+	const supportedDomains = sortBy(
+		getGSuiteSupportedDomains( domains ),
+		domain => ! domain.isPrimary
+	);
 
 	return get( supportedDomains, '[0].name', '' );
 }
@@ -107,7 +110,8 @@ function getGSuiteSupportedDomains( domains ) {
 			return false;
 		}
 
-		const isHostedOnWpcom = isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
+		const isHostedOnWpcom =
+			isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
 
 		if ( ! isHostedOnWpcom && ! isMappedDomainWithWpcomNameservers( domain ) ) {
 			return false;

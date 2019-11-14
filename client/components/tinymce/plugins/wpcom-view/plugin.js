@@ -355,9 +355,7 @@ function wpview( editor ) {
 			if ( imageMatch ) {
 				// If the link looks like an image, replace the pasted content with an <img> tag.
 				// As a side effect, this won't request an embed code to the REST API anymore.
-				event.content = `<img src="${ imageMatch[ 1 ] }${
-					imageMatch[ 2 ]
-				}" style="max-width:100%;" />`;
+				event.content = `<img src="${ imageMatch[ 1 ] }${ imageMatch[ 2 ] }" style="max-width:100%;" />`;
 			} else if ( /^https?:\/\/\S+$/i.test( pastedStr ) ) {
 				// Otherwise replace the content with the cleaned URL.
 				event.content = pastedStr;

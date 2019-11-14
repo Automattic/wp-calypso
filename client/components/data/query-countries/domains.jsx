@@ -11,7 +11,4 @@ import { connect } from 'react-redux';
 import QueryCountries from 'components/data/query-countries';
 import { fetchDomainCountries } from 'state/countries/actions';
 
-export default connect(
-	null,
-	{ requestCountries: fetchDomainCountries }
-)( QueryCountries );
+export default connect( null, { requestCountries: fetchDomainCountries } )( QueryCountries );

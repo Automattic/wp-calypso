@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -35,6 +35,11 @@ export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Real-Time Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 };
+
+export const PRODUCT_SHORT_NAMES = {
+	...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
+};
+
 export const JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME = (
 	<Fragment>
 		{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
@@ -68,7 +73,17 @@ export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
 	{
 		components: {
-			a: <ExternalLink href="https://jetpack.com/upgrade/backup/" icon />,
+			a: (
+				<ExternalLinkWithTracking
+					href="https://jetpack.com/upgrade/backup/"
+					tracksEventName="calypso_plan_link_click"
+					tracksEventProps={ {
+						link_location: 'product_jetpack_backup_description',
+						link_slug: 'which-one-do-i-need',
+					} }
+					icon
+				/>
+			),
 		},
 	}
 );

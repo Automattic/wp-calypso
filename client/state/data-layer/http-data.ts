@@ -30,15 +30,15 @@ interface ResourceData {
 }
 
 type Resource =
-	| ResourceData & {
+	| ( ResourceData & {
 			state: DataState.Uninitialized;
 			data: undefined;
 			error: undefined;
 			pendingSince: undefined;
-	  }
-	| ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS }
-	| ResourceData & { state: DataState.Failure; pendingSince: undefined }
-	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined };
+	  } )
+	| ( ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS } )
+	| ( ResourceData & { state: DataState.Failure; pendingSince: undefined } )
+	| ( ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined } );
 
 type DataId = string;
 

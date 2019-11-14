@@ -61,11 +61,6 @@ const mapStateToProps = ( state, { exclude, search } ) => {
 	};
 };
 
-const connectComponent = connect(
-	mapStateToProps,
-	null,
-	null,
-	{ forwardRef: true }
-);
+const connectComponent = connect( mapStateToProps, null, null, { forwardRef: true } );
 
 export default connectComponent( PostSuggestions );

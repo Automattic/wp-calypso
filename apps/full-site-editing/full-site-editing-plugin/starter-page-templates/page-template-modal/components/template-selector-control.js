@@ -77,7 +77,4 @@ export const TemplateSelectorControl = ( {
 	);
 };
 
-export default compose(
-	memo,
-	withInstanceId
-)( TemplateSelectorControl );
+export default compose( memo, withInstanceId )( TemplateSelectorControl );

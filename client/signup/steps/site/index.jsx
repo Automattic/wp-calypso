@@ -305,7 +305,4 @@ class Site extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ saveSignupStep, submitSignupStep }
-)( localize( Site ) );
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( Site ) );

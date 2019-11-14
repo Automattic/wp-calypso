@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useState, useContext, useEffect } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled from '@emotion/styled';
+import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -18,7 +19,6 @@ import {
 	StripeHookProvider,
 } from '../lib/stripe';
 import {
-	useLocalize,
 	useSelect,
 	useDispatch,
 	useCheckoutHandlers,
@@ -26,6 +26,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../public-api';
+import useLocalize from '../lib/localize';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
@@ -153,9 +154,9 @@ export function createStripeMethod( {
 	};
 }
 
-function StripeCreditCardFields( { isActive, summary } ) {
+function StripeCreditCardFields() {
 	const localize = useLocalize();
-	const theme = useContext( ThemeContext );
+	const theme = useTheme();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ cardNumberElementData, setCardNumberElementData ] = useState();
@@ -165,6 +166,12 @@ function StripeCreditCardFields( { isActive, summary } ) {
 	const brand = useSelect( select => select( 'stripe' ).getBrand() );
 	const { changeCardholderName } = useDispatch( 'stripe' );
 	const { changeBrand } = useDispatch( 'stripe' );
+
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			onFailure( stripeLoadingError );
+		}
+	}, [ onFailure, stripeLoadingError ] );
 
 	const handleStripeFieldChange = ( input, setCardElementData ) => {
 		if ( input.elementType === 'cardNumber' ) {
@@ -194,11 +201,7 @@ function StripeCreditCardFields( { isActive, summary } ) {
 		},
 	};
 
-	if ( ! isActive || summary ) {
-		return null;
-	}
 	if ( stripeLoadingError ) {
-		onFailure( stripeLoadingError );
 		return <span>Error!</span>;
 	}
 	if ( isStripeLoading ) {
@@ -288,7 +291,7 @@ const CreditCardFieldsWrapper = styled.div`
 const CreditCardField = styled( Field )`
 	margin-top: 16px;
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;
@@ -354,7 +357,7 @@ const LockIconGraphic = styled( LockIcon )`
 	display: block;
 	position: absolute;
 	right: 10px;
-	top: 14px
+	top: 14px;
 	width: 20px;
 	height: 20px;
 `;

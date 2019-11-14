@@ -63,7 +63,6 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 	return {
 		id: 'apple-pay',
 		LabelComponent: ApplePayLabel,
-		PaymentMethodComponent: () => null,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
 		SummaryComponent: ApplePaySummary,

@@ -59,7 +59,4 @@ class InvitesListEnd extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ bumpStat }
-)( localize( InvitesListEnd ) );
+export default connect( null, { bumpStat } )( localize( InvitesListEnd ) );

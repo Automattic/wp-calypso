@@ -89,20 +89,11 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	verticalSuggestedThemes: {
-		datestamp: '20191031',
-		variations: {
-			control: 90,
-			test: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
-		datestamp: '20191029',
+		datestamp: '20291029',
 		variations: {
-			passwordless: 10,
-			default: 90,
+			passwordless: 0,
+			default: 100,
 		},
 		defaultVariation: 'default',
 	},
@@ -123,6 +114,14 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: 'any',
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20291111',
+		variations: {
+			variantShowUpdates: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

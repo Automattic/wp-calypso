@@ -288,11 +288,8 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName
 		} )
 	);
 
-export default connect(
-	state => ( { selectedSite: getSelectedSite( state ) } ),
-	{
-		recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
-		recordChooseAnotherDomainButtonClickInTrademarkNotice,
-		recordShowTrademarkNoticeButtonClickInTrademarkNotice,
-	}
-)( localize( TrademarkClaimsNotice ) );
+export default connect( state => ( { selectedSite: getSelectedSite( state ) } ), {
+	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
+	recordChooseAnotherDomainButtonClickInTrademarkNotice,
+	recordShowTrademarkNoticeButtonClickInTrademarkNotice,
+} )( localize( TrademarkClaimsNotice ) );

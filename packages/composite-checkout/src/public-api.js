@@ -17,7 +17,6 @@ import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
-import { useLocalize } from './lib/localize';
 import {
 	createRegistry,
 	useRegistry,
@@ -27,31 +26,38 @@ import {
 } from './lib/registry';
 import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
 import WPCheckoutOrderReview from './components/wp-checkout-order-review';
+import { createStripeMethod } from './components/stripe-credit-card-fields';
+import { createApplePayMethod } from './lib/payment-methods/apple-pay';
+import { createPayPalMethod } from './lib/payment-methods/paypal';
+import { createCreditCardMethod } from './lib/payment-methods/credit-card';
 
 // Re-export the public API
 export {
 	Checkout,
-	createRegistry,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	WPCheckoutOrderReview,
+	WPCheckoutOrderSummary,
+	createApplePayMethod,
+	createCreditCardMethod,
+	createPayPalMethod,
+	createRegistry,
+	createStripeMethod,
 	renderDisplayValueMarkdown,
 	useAllPaymentMethods,
 	useCheckoutHandlers,
-	useLineItems,
 	useCheckoutRedirects,
+	useDispatch,
+	useHasDomainsInCart,
+	useLineItems,
 	usePaymentMethod,
 	usePaymentMethodId,
 	useRegisterStore,
 	useRegistry,
 	useSelect,
-	useDispatch,
-	useLocalize,
 	useTotal,
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderReview,
-	useHasDomainsInCart,
 };

@@ -20,7 +20,12 @@ describe( 'hasNavigated()', () => {
 
 	test( 'should return true if more than one ROUTE_SET has occurred', () => {
 		const state = {
-			ui: { actionLog: [ { type: ROUTE_SET, path: 'a' }, { type: ROUTE_SET, path: 'b' } ] },
+			ui: {
+				actionLog: [
+					{ type: ROUTE_SET, path: 'a' },
+					{ type: ROUTE_SET, path: 'b' },
+				],
+			},
 		};
 
 		expect( hasNavigated( state ) ).to.be.true;

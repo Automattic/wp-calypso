@@ -44,7 +44,4 @@ class NoDirectAccessError extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( NoDirectAccessError ) );
+export default connect( null, { recordTracksEvent } )( localize( NoDirectAccessError ) );

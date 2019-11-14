@@ -108,7 +108,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { exitPrintingFlow }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PurchaseDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseDialog ) );

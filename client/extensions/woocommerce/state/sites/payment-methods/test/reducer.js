@@ -36,7 +36,10 @@ describe( 'reducer', () => {
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 			siteId,
-			data: [ { id: 'foo', title: 'foo' }, { id: 'bar', title: 'bar' } ],
+			data: [
+				{ id: 'foo', title: 'foo' },
+				{ id: 'bar', title: 'bar' },
+			],
 		};
 
 		const newState = reducer( state, action );

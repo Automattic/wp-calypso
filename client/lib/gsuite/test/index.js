@@ -78,11 +78,13 @@ describe( 'index', () => {
 				name: 'primary-domain.blog',
 				type: 'REGISTERED',
 				isPrimary: true,
-			}
+			},
 		];
 
 		test( 'Returns selected domain if selected domain is valid', () => {
-			expect( getEligibleGSuiteDomain( 'selected-valid-domain.blog', domains ) ).toEqual( 'selected-valid-domain.blog' );
+			expect( getEligibleGSuiteDomain( 'selected-valid-domain.blog', domains ) ).toEqual(
+				'selected-valid-domain.blog'
+			);
 		} );
 
 		test( 'Returns primary domain if no selected domain', () => {
@@ -92,7 +94,9 @@ describe( 'index', () => {
 		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
 			const domainsWithoutPrimaryDomain = domains.slice( 0, -1 );
 
-			expect( getEligibleGSuiteDomain( '', domainsWithoutPrimaryDomain ) ).toEqual( 'mapped-domain-with-wpcom-nameservers.blog' );
+			expect( getEligibleGSuiteDomain( '', domainsWithoutPrimaryDomain ) ).toEqual(
+				'mapped-domain-with-wpcom-nameservers.blog'
+			);
 		} );
 
 		test( 'Returns empty string if no selected domain and no valid domain in domains', () => {

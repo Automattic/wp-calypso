@@ -1,7 +1,9 @@
-.migrate__card {
-	min-height: 400px;
+.migrate__placeholder {
+	color: transparent;
+	background-color: var( --studio-gray-10 );
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.migrate__source-site {
+.migrate__source-site, .migrate__confirmation, .migrate__status {
 	margin-bottom: 16px;
 }

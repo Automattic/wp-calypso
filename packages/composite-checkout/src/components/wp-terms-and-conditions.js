@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -107,7 +107,7 @@ const TermsParagraph = styled.p`
 		text-decoration: underline;
 	}
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import joinClasses from '../lib/join-classes';
 import RadioButton from './radio-button';
 import { useLocalize } from '../lib/localize';
 import { useAllPaymentMethods } from '../public-api';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
 export default function CheckoutPaymentMethods( {
 	summary,
@@ -31,12 +32,16 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod
-					{ ...paymentMethod }
-					checked={ true }
-					summary
-					ariaLabel={ paymentMethod.getAriaLabel( localize ) }
-				/>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with this payment method.' ) }
+				>
+					<PaymentMethod
+						{ ...paymentMethod }
+						checked={ true }
+						summary
+						ariaLabel={ paymentMethod.getAriaLabel( localize ) }
+					/>
+				</CheckoutErrorBoundary>
 			</div>
 		);
 	}
@@ -49,13 +54,19 @@ export default function CheckoutPaymentMethods( {
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			<RadioButtons>
 				{ paymentMethodsToDisplay.map( method => (
-					<PaymentMethod
-						{ ...method }
+					<CheckoutErrorBoundary
 						key={ method.id }
-						checked={ paymentMethod.id === method.id }
-						onClick={ onChange }
-						ariaLabel={ method.getAriaLabel( localize ) }
-					/>
+						errorMessage={
+							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
+						}
+					>
+						<PaymentMethod
+							{ ...method }
+							checked={ paymentMethod.id === method.id }
+							onClick={ onChange }
+							ariaLabel={ method.getAriaLabel( localize ) }
+						/>
+					</CheckoutErrorBoundary>
 				) ) }
 			</RadioButtons>
 		</div>

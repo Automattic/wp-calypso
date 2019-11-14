@@ -214,10 +214,7 @@ const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		trackEvent,
-	}
-)( PendingGSuiteTosNoticeDialog );
+export default connect( null, {
+	errorNotice,
+	trackEvent,
+} )( PendingGSuiteTosNoticeDialog );

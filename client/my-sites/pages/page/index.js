@@ -723,10 +723,4 @@ const mapDispatch = {
 	updateSiteFrontPage,
 };
 
-export default flow(
-	localize,
-	connect(
-		mapState,
-		mapDispatch
-	)
-)( Page );
+export default flow( localize, connect( mapState, mapDispatch ) )( Page );

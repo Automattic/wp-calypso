@@ -434,7 +434,7 @@ export default connect(
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{ recordTracksEvent }

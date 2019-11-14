@@ -52,7 +52,4 @@ class TrackComponentView extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ bumpStat, recordTracksEvent }
-)( TrackComponentView );
+export default connect( null, { bumpStat, recordTracksEvent } )( TrackComponentView );

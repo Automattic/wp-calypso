@@ -7,9 +7,33 @@
 			"rangeStrategy": "replace"
 		},
 		{
-			"packagePatterns": [ "^@wordpress" ],
-			"groupName": "wordpress-monorepo",
-			"separateMajorMinor": false
+			"extends": "monorepo:wordpress",
+			"separateMajorMinor": false,
+			"prPriority": 2
+		},
+		{
+			"extends": "monorepo:babel",
+			"prPriority": 1
+		},
+		{
+			"extends": "monorepo:lodash",
+			"prPriority": 1
+		},
+		{
+			"extends": "monorepo:react",
+			"prPriority": 1
+		},
+		{
+			"packagePatterns": [ "^redux$", "^react-redux$" ],
+			"prPriority": 1
+		},
+		{
+			"packageName": "typescript",
+			"prPriority": 1
+		},
+		{
+			"packagePatterns": [ "^webpack" ],
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,
@@ -19,10 +43,10 @@
 		"enabled": true,
 		"schedule": "every weekday"
 	},
-	"prConcurrentLimit": 0,
+	"prConcurrentLimit": 10,
 	"prHourlyLimit": 6,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
 	"masterIssue": true,
-	"masterIssueTitle": "Outstanding Dependency Updates"
+	"masterIssueTitle": "Renovate Dependency Updates"
 }

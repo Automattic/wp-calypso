@@ -374,10 +374,7 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect(
-		state => ( { username: getCurrentUserName( state ) } ),
-		{ recordGoogleEvent }
-	),
+	connect( state => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );

@@ -160,7 +160,4 @@ class Team extends React.Component {
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Team ) );
+export default connect( null, { recordGoogleEvent } )( localize( Team ) );

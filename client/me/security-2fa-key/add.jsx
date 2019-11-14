@@ -81,11 +81,8 @@ class Security2faKeyAdd extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		warningNotice,
-		successNotice,
-	}
-)( localize( Security2faKeyAdd ) );
+export default connect( null, {
+	errorNotice,
+	warningNotice,
+	successNotice,
+} )( localize( Security2faKeyAdd ) );

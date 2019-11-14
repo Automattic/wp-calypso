@@ -118,7 +118,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( HelloDollyPage );
+export default connect( mapStateToProps, mapDispatchToProps )( HelloDollyPage );

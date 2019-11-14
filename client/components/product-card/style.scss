@@ -204,7 +204,7 @@
 	line-height: 20px;
 	color: var( --color-text-subtle );
 
-	a {
+	a:not( .button ) {
 		@extend %product-card-link-plain;
 	}
 

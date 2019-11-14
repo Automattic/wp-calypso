@@ -214,10 +214,7 @@ class DnsAddNew extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( DnsAddNew ) );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( DnsAddNew ) );

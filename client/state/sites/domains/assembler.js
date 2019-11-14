@@ -26,6 +26,8 @@ export const createSiteDomainObject = domain => {
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
+		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
+		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),

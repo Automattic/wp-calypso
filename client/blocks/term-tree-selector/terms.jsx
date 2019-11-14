@@ -192,13 +192,13 @@ class TermTreeSelectorList extends Component {
 	hasNoSearchResults = () => {
 		return (
 			! this.props.loading &&
-			( this.props.terms && ! this.props.terms.length ) &&
+			this.props.terms && ! this.props.terms.length &&
 			!! this.state.searchTerm.length
 		);
 	};
 
 	hasNoTerms = () => {
-		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
+		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
 	};
 
 	getItem = index => {

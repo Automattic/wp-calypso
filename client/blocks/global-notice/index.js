@@ -36,10 +36,7 @@ export class GlobalNotice extends Component {
 	}
 }
 
-export const InfoNotice = connect(
-	null,
-	{
-		displayNotice: infoNotice,
-		removeNotice,
-	}
-)( GlobalNotice );
+export const InfoNotice = connect( null, {
+	displayNotice: infoNotice,
+	removeNotice,
+} )( GlobalNotice );

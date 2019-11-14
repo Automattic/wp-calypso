@@ -76,10 +76,9 @@ const getToursFromFeaturesReached = createSelector(
  * Returns the names of the tours that the user has previously seen, both
  * recently and in the past.
  */
-const getToursSeen = createSelector(
-	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
-	[ getToursHistory ]
-);
+const getToursSeen = createSelector( state => uniq( map( getToursHistory( state ), 'tourName' ) ), [
+	getToursHistory,
+] );
 
 /*
  * Returns the name and timestamp of the tour requested via the URL's query

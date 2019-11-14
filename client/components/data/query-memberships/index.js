@@ -46,7 +46,4 @@ class QueryMemberships extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestProducts }
-)( QueryMemberships );
+export default connect( null, { requestProducts } )( QueryMemberships );

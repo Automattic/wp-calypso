@@ -72,7 +72,4 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = null;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( SiteLink );
+export default connect( mapStateToProps, mapDispatchToProps )( SiteLink );

@@ -173,7 +173,4 @@ const mapDispatchToProps = {
 	infoNotice,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentsManagement ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentsManagement ) );

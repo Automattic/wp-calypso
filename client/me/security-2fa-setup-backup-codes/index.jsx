@@ -110,9 +110,6 @@ class Security2faSetupBackupCodes extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faSetupBackupCodes ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faSetupBackupCodes ) );

@@ -41,7 +41,4 @@ class EmailCategory extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ toggleWPcomEmailSetting }
-)( EmailCategory );
+export default connect( null, { toggleWPcomEmailSetting } )( EmailCategory );

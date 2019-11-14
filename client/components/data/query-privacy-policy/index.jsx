@@ -27,7 +27,4 @@ export class QueryPrivacyPolicy extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestPrivacyPolicy }
-)( QueryPrivacyPolicy );
+export default connect( null, { requestPrivacyPolicy } )( QueryPrivacyPolicy );

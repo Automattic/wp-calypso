@@ -138,7 +138,6 @@ class PublicizeMessage extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordEditorStat, recordEditorEvent }
-)( localize( PublicizeMessage ) );
+export default connect( null, { recordEditorStat, recordEditorEvent } )(
+	localize( PublicizeMessage )
+);

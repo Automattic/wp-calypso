@@ -87,7 +87,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsVideoSummary );
+export default flowRight( connectComponent, localize )( StatsVideoSummary );

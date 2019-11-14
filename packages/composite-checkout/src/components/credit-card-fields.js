@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -187,7 +187,7 @@ const CreditCardFieldsWrapper = styled.div`
 const CreditCardField = styled( Field )`
 	margin-top: 16px;
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

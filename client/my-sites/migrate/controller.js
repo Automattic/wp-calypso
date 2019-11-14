@@ -13,7 +13,7 @@ import { isEnabled } from 'config';
 
 export function migrateSite( context, next ) {
 	if ( isEnabled( 'tools/migrate' ) ) {
-		context.primary = <SectionMigrate />;
+		context.primary = <SectionMigrate sourceSiteId={ context.params.sourceSiteId || null } />;
 		return next();
 	}
 

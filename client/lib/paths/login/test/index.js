@@ -79,7 +79,7 @@ describe( 'index', () => {
 		test( 'should return the login url with WooCommerce from handler', () => {
 			const url = login( { isNative: true, isJetpack: true, isWoo: true } );
 
-			expect( url ).toEqual( '/log-in/jetpack?from=woocommerce-setup-wizard' );
+			expect( url ).toEqual( '/log-in/jetpack?from=woocommerce-onboarding' );
 		} );
 
 		test( 'should return the login url with WooCommerce.com handler', () => {

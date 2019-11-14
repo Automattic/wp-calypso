@@ -817,14 +817,11 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-		setLayoutFocus,
-		setNextLayoutFocus,
-		expandSection,
-		toggleSection,
-	}
-)( localize( MySitesSidebar ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+	setLayoutFocus,
+	setNextLayoutFocus,
+	expandSection,
+	toggleSection,
+} )( localize( MySitesSidebar ) );

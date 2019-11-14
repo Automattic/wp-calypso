@@ -255,7 +255,7 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{' '}
+				{ ' ' }
 				{ translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{

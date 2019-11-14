@@ -44,7 +44,6 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ addBlogSticker, removeBlogSticker }
-)( ReaderPostOptionsMenuBlogStickerMenuItem );
+export default connect( null, { addBlogSticker, removeBlogSticker } )(
+	ReaderPostOptionsMenuBlogStickerMenuItem
+);

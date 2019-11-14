@@ -72,7 +72,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( DomainToPaidPlanNotice ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainToPaidPlanNotice ) );

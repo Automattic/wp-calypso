@@ -122,7 +122,10 @@ describe( '#getConnectionsBySiteId()', () => {
 			2916284
 		);
 
-		expect( connections ).to.eql( [ { ID: 1, site_ID: 2916284 }, { ID: 2, site_ID: 2916284 } ] );
+		expect( connections ).to.eql( [
+			{ ID: 1, site_ID: 2916284 },
+			{ ID: 2, site_ID: 2916284 },
+		] );
 	} );
 } );
 

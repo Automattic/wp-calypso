@@ -31,7 +31,6 @@ QueryProductsList.propTypes = {
 	requestProductsList: PropTypes.func,
 };
 
-export default connect(
-	state => ( { isFetching: isFetching( state ) } ),
-	{ requestProductsList }
-)( QueryProductsList );
+export default connect( state => ( { isFetching: isFetching( state ) } ), { requestProductsList } )(
+	QueryProductsList
+);

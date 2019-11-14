@@ -37,7 +37,4 @@ class QuerySiteBlocks extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSiteBlocks }
-)( QuerySiteBlocks );
+export default connect( null, { requestSiteBlocks } )( QuerySiteBlocks );

@@ -200,7 +200,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDatePicker );
+export default flowRight( connectComponent, localize )( StatsDatePicker );

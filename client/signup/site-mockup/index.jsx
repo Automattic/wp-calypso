@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +23,7 @@ import {
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-styles';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-theme';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';

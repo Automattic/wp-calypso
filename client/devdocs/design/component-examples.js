@@ -52,9 +52,7 @@ export { default as LanguagePicker } from 'components/language-picker/docs/examp
 export { default as LineChart } from 'components/line-chart/docs/example';
 export { default as ListEnd } from 'components/list-end/docs/example';
 export { default as MarkedLinesExample } from 'components/marked-lines/docs/example';
-export {
-	default as MultipleChoiceQuestionExample,
-} from 'components/multiple-choice-question/docs/example';
+export { default as MultipleChoiceQuestionExample } from 'components/multiple-choice-question/docs/example';
 export { default as Notices } from 'components/notice/docs/example';
 export { default as PaginationExample } from 'components/pagination/docs/example';
 export { default as PaymentLogo } from 'components/payment-logo/docs/example';
@@ -66,9 +64,7 @@ export { default as PromoCard } from 'components/promo-section/promo-card/docs/e
 export { default as Ranges } from 'components/forms/range/docs/example';
 export { default as Rating } from 'components/rating/docs/example';
 export { default as Ribbon } from '@automattic/components/src/ribbon/docs/example';
-export {
-	default as ScreenReaderTextExample,
-} from '@automattic/components/src/screen-reader-text/docs/example';
+export { default as ScreenReaderTextExample } from '@automattic/components/src/screen-reader-text/docs/example';
 export { default as SearchDemo } from 'components/search/docs/example';
 export { default as SectionHeader } from 'components/section-header/docs/example';
 export { default as SectionNav } from 'components/section-nav/docs/example';

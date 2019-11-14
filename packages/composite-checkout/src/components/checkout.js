@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
 import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
 function useRegisterCheckoutStore() {
 	useRegisterStore( 'checkout', {
@@ -59,6 +60,7 @@ export default function Checkout( {
 	className,
 } ) {
 	useRegisterCheckoutStore();
+	const localize = useLocalize();
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
 	const { changeStep } = useDispatch( 'checkout' );
 
@@ -67,25 +69,41 @@ export default function Checkout( {
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
 				{ OrderSummary && <OrderSummaryStep OrderSummary={ OrderSummary } /> }
 
-				<PaymentMethodsStep
-					availablePaymentMethods={ availablePaymentMethods }
-					setStepNumber={ changeStep }
-					isActive={ stepNumber === 1 }
-					isComplete={ stepNumber > 1 }
-				/>
-				<BillingDetailsStep
-					setStepNumber={ changeStep }
-					isActive={ stepNumber === 2 }
-					isComplete={ stepNumber > 2 }
-				/>
-				<ReviewOrderStep
-					setStepNumber={ changeStep }
-					isActive={ stepNumber === 3 }
-					isComplete={ stepNumber > 3 }
-					ReviewContent={ ReviewContent }
-				/>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the payment method form.' ) }
+				>
+					<PaymentMethodsStep
+						availablePaymentMethods={ availablePaymentMethods }
+						setStepNumber={ changeStep }
+						isActive={ stepNumber === 1 }
+						isComplete={ stepNumber > 1 }
+					/>
+				</CheckoutErrorBoundary>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
+				>
+					<BillingDetailsStep
+						setStepNumber={ changeStep }
+						isActive={ stepNumber === 2 }
+						isComplete={ stepNumber > 2 }
+					/>
+				</CheckoutErrorBoundary>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the review form.' ) }
+				>
+					<ReviewOrderStep
+						setStepNumber={ changeStep }
+						isActive={ stepNumber === 3 }
+						isComplete={ stepNumber > 3 }
+						ReviewContent={ ReviewContent }
+					/>
+				</CheckoutErrorBoundary>
 				<CheckoutWrapper>
-					<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+					<CheckoutErrorBoundary
+						errorMessage={ localize( 'There was a problem with the submit button.' ) }
+					>
+						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
 
 				{ UpSell && <UpSell /> }

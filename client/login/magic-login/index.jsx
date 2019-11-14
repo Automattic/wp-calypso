@@ -139,7 +139,4 @@ const mapDispatch = {
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( MagicLogin ) );
+export default connect( mapState, mapDispatch )( localize( MagicLogin ) );

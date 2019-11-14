@@ -311,10 +311,7 @@ class CancelPurchaseButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		clearPurchases,
-		refreshSitePlans,
-	}
-)( localize( CancelPurchaseButton ) );
+export default connect( null, {
+	clearPurchases,
+	refreshSitePlans,
+} )( localize( CancelPurchaseButton ) );

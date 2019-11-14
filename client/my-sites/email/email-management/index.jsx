@@ -165,7 +165,8 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL: 'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL:
+					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};
@@ -237,16 +238,13 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		return {
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
-			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
-			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	{}
-)( localize( EmailManagement ) );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+		isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
+		selectedSiteId,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	};
+}, {} )( localize( EmailManagement ) );

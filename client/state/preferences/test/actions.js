@@ -140,7 +140,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
-			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
+			return savePreference(
+				'preferenceKey',
+				'preferenceValue'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
 					values: responseShape[ USER_SETTING_KEY ],
@@ -149,7 +152,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
-			return savePreference( 'loggedOut', true )( spy ).then( () => {
+			return savePreference(
+				'loggedOut',
+				true
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_FAILURE,
 					error: sinon.match( {
@@ -161,7 +167,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
-			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
+			return savePreference(
+				'preferenceKey',
+				'preferenceValue'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_SUCCESS,
 					key: 'preferenceKey',

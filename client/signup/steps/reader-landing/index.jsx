@@ -47,7 +47,6 @@ class ReaderLandingStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent, submitSignupStep }
-)( localize( ReaderLandingStep ) );
+export default connect( null, { recordTracksEvent, submitSignupStep } )(
+	localize( ReaderLandingStep )
+);

@@ -146,7 +146,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddItemDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddItemDialog ) );
