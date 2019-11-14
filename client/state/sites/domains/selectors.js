@@ -65,7 +65,7 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 };
 
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
-	return get( state, [ 'sites', 'domains', 'updatingPrivacy', siteId, domain ] );
+	return state?.sites?.domains?.updatingPrivacy?.[ siteId ]?.[ domain ];
 };
 
 /**
