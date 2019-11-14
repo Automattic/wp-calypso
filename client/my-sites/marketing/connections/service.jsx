@@ -39,6 +39,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -177,6 +178,9 @@ export class SharingService extends Component {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.props.requestKeyringConnections();
+
+					// We also need to refresh site keyrings
+					this.props.requestSiteKeyrings( this.props.siteId );
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -634,6 +638,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			recordGoogleEvent,
 			recordTracksEvent,
 			requestKeyringConnections,
+			requestSiteKeyrings,
 			updateSiteConnection,
 			warningNotice,
 			...mapDispatchToProps,
