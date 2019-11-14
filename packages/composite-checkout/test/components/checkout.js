@@ -81,10 +81,10 @@ describe( 'Checkout', () => {
 
 		it( 'renders the review step', () => {
 			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
+			expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 2 );
 		} );
 
 		it( 'renders the payment method SubmitButtonComponent', () => {
@@ -153,10 +153,10 @@ describe( 'Checkout', () => {
 
 		it( 'renders the review step', () => {
 			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 1 );
-			expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
+			expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
+			expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 2 );
 		} );
 
 		it( 'renders the payment method SubmitButtonComponent', () => {
