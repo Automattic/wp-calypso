@@ -23,6 +23,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -146,6 +147,13 @@ class Home extends Component {
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
+				<SidebarNavigation />
+				<FormattedHeader
+					className="customer-home__page-heading"
+					headerText={ translate( 'Welcome' ) }
+					subHeaderText={ translate( 'Your website on WordPress.com.' ) }
+					align="left"
+				/>
 				<StatsBanners siteId={ siteId } slug={ siteSlug } />
 				{ renderChecklistCompleteBanner && (
 					<Banner
@@ -203,7 +211,6 @@ class Home extends Component {
 
 		return (
 			<div className="customer-home__layout">
-				<SidebarNavigation />
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
 				{ displayChecklist && (
 					<div className="customer-home__layout-full-width">
@@ -472,8 +479,4 @@ const connectHome = connect(
 	} )
 );
 
-export default flowRight(
-	connectHome,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Home );
+export default flowRight( connectHome, localize, withTrackingTool( 'HotJar' ) )( Home );
