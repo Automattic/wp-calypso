@@ -36,19 +36,6 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
-	renderDomainSuggestAction() {
-		const className = classNames( 'domain-suggestion__action', {
-			'domain-suggestion__action-domain-copy-test':
-				this.props.showTestCopy && ! this.props.isFeatured,
-		} );
-
-		return (
-			<Button className={ className } { ...this.props.buttonStyles }>
-				{ this.props.buttonContent }
-			</Button>
-		);
-	}
-
 	render() {
 		const {
 			children,
@@ -72,6 +59,14 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
+		const contentClassName = classNames( 'domain-suggestion__content', {
+			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
+		} );
+
+		const actionClassName = classNames( 'domain-suggestion__action', {
+			'domain-suggestion__action-domain-copy-test': showTestCopy && ! isFeatured,
+		} );
+
 		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (
 			<div
@@ -81,7 +76,7 @@ class DomainSuggestion extends React.Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
-				<div className="domain-suggestion__content">
+				<div className={ contentClassName }>
 					{ children }
 					{ ! hidePrice && (
 						<DomainProductPrice
@@ -91,10 +86,10 @@ class DomainSuggestion extends React.Component {
 							showTestCopy={ showTestCopy }
 						/>
 					) }
-					{ showTestCopy && ! isFeatured && this.renderDomainSuggestAction() }
 				</div>
-				{ ( ! showTestCopy || isFeatured ) && this.renderDomainSuggestAction() }
-
+				<Button className={ actionClassName } { ...this.props.buttonStyles }>
+					{ this.props.buttonContent }
+				</Button>
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }

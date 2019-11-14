@@ -62,6 +62,10 @@
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
+
+		&.domain-suggestion__content-domain-copy-test {
+			justify-content: initial;
+		}
 	}
 
 	.notice.is-compact {
@@ -132,8 +136,8 @@
 	flex-wrap: wrap;
 
 	&.domain-registration-suggestion__title-domain-copy-test {
-		max-width: 300px;
-		min-width: 300px;
+		max-width: 50%;
+		min-width: 50%;
 	}
 
 	.domain-registration-suggestion__title {

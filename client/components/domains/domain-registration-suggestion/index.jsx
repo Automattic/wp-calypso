@@ -193,9 +193,13 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
+			'domain-registration-suggestion__title-domain-copy-test':
+				this.props.showTestCopy && ! this.props.isFeatured,
+		} );
 
 		return (
-			<div className="domain-registration-suggestion__title-wrapper domain-registration-suggestion__title-domain-copy-test">
+			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
