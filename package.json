@@ -64,7 +64,7 @@
 		"@wordpress/element": "2.8.2",
 		"@wordpress/format-library": "1.9.3",
 		"@wordpress/i18n": "3.6.1",
-		"@wordpress/keycodes": "2.7.0",
+		"@wordpress/keycodes": "2.6.2",
 		"@wordpress/notices": "1.8.2",
 		"@wordpress/nux": "3.7.2",
 		"@wordpress/plugins": "2.7.2",
