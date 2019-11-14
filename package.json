@@ -342,6 +342,7 @@
 		"eslint": "6.6.0",
 		"eslint-config-prettier": "4.3.0",
 		"eslint-config-wpcalypso": "file:./packages/eslint-config-wpcalypso",
+		"eslint-formatter-compassion": "1.1.2",
 		"eslint-plugin-import": "2.18.2",
 		"eslint-plugin-jest": "23.0.3",
 		"eslint-plugin-jsx-a11y": "6.2.3",
