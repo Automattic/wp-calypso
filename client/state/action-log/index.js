@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Action Log Redux store enhancer
  *

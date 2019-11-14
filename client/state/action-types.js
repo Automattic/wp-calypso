@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Any new action type should be added to the set of exports below, with the
  * value mirroring its exported name.

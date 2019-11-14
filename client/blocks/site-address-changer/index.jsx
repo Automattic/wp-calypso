@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-onchange */
-/** @format */
+
 /**
  * External dependencies
  */

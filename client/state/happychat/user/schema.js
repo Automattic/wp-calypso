@@ -1,5 +1,3 @@
-/** @format */
-
 export const geoLocationSchema = {
 	type: [ 'object', 'null' ],
 	properties: {

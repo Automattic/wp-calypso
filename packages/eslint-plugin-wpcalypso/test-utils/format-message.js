@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Utility for replacing placeholders in eslint rule messages
  * @author Automattic

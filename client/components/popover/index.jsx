@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -250,7 +248,9 @@ class Popover extends Component {
 			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
 			shouldClose =
 				shouldClose &&
-				ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target );
+				ignoreContext &&
+				ignoreContext.contains &&
+				! ignoreContext.contains( event.target );
 		}
 
 		if ( shouldClose ) {

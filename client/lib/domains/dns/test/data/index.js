@@ -1,4 +1,3 @@
-/** @format */
 export const DOMAIN_NAME = 'dummy.com';
 
 export const RECORD_A = {

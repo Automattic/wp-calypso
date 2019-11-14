@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * These are the parameters kept in metadata (custom fields)
  */

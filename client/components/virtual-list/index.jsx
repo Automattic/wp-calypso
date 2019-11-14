@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -94,8 +92,10 @@ export class VirtualList extends Component {
 	hasNoSearchResults() {
 		return (
 			! this.props.loading &&
-			this.props.items && ! this.props.items.length &&
-			this.props.query.search && !! this.props.query.search.length
+			this.props.items &&
+			! this.props.items.length &&
+			this.props.query.search &&
+			!! this.props.query.search.length
 		);
 	}
 

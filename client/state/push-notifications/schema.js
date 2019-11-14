@@ -1,5 +1,3 @@
-/** @format */
-
 const boolType = { type: 'boolean' };
 const stringType = { type: 'string' };
 const numberType = { type: 'number' };

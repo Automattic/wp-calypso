@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	ID: 1234,
 	URL: 'http://example.com',

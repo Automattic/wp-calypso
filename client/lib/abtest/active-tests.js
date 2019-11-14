@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',

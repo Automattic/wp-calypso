@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Disallow multiple unnamed placeholders
  * @author Automattic

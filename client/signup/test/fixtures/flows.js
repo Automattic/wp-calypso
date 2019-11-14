@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	main: {
 		steps: [ 'user', 'site' ],
