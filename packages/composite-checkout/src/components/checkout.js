@@ -19,7 +19,7 @@ import CheckoutSubmitButton from './checkout-submit-button';
 import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutOrderSummary from './checkout-order-summary';
-import { useTotal } from '../public-api';
+import { useTotal, renderDisplayValueMarkdown } from '../public-api';
 
 function useRegisterCheckoutStore() {
 	useRegisterStore( 'checkout', {
@@ -166,7 +166,9 @@ function OrderSummaryStep( { OrderSummary } ) {
 			title={
 				<CheckoutSummaryTitle>
 					<span>{ localize( 'You are all set to check out' ) }</span>
-					<CheckoutSummaryTotal>{ total.amount.displayValue }</CheckoutSummaryTotal>
+					<CheckoutSummaryTotal>
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</CheckoutSummaryTotal>
 				</CheckoutSummaryTitle>
 			}
 			stepSummary={ <OrderSummary /> }
