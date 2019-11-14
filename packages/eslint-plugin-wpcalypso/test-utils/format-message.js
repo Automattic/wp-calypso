@@ -17,7 +17,7 @@
  */
 function formatMessage( message, terms ) {
 	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function( fullMatch, term ) {
-		if ( terms.hasOwnProperty( term ) ) {
+		if ( Object.prototype.hasOwnProperty.call( terms, term ) ) {
 			return terms[ term ];
 		}
 
