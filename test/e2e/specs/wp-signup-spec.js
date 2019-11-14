@@ -971,7 +971,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @signup', function() {
+	describe.skip( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @signup', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
