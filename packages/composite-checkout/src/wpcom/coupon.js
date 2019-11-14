@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
-import joinClasses from '../lib/join-classes';
+import { useLocalize } from '../lib/localize'; // TODO: remove this
+import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 

@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
+import { useLocalize } from '../lib/localize'; // TODO: remove this
 import { useLineItems } from '../public-api';
 import Button from './button';
 import Coupon from './coupon';
