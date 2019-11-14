@@ -106,7 +106,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		return (
 			<div className="template-selector-preview">
 				<div className="template-selector-preview__placeholder">
-					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
+					{ __( 'Select a layout to preview.', 'full-site-editing' ) }
 				</div>
 			</div>
 		);

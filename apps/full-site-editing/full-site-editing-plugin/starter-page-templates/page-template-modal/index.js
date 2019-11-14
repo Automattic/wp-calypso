@@ -172,7 +172,7 @@ class PageTemplateModal extends Component {
 
 		return (
 			<Modal
-				title={ __( 'Select Page Template', 'full-site-editing' ) }
+				title={ __( 'Select Page Layout', 'full-site-editing' ) }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
@@ -200,17 +200,17 @@ class PageTemplateModal extends Component {
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
-							{ __( 'Inserting template…', 'full-site-editing' ) }
+							{ __( 'Adding layout…', 'full-site-editing' ) }
 						</div>
 					) : (
 						<>
 							<form className="page-template-modal__form">
 								<fieldset className="page-template-modal__list">
 									<legend className="page-template-modal__form-title">
-										{ __( 'Choose a template…', 'full-site-editing' ) }
+										{ __( 'Choose a layout…', 'full-site-editing' ) }
 									</legend>
 									<TemplateSelectorControl
-										label={ __( 'Template', 'full-site-editing' ) }
+										label={ __( 'Layout', 'full-site-editing' ) }
 										templates={ templates }
 										blocksByTemplates={ blocksByTemplateSlug }
 										onTemplateSelect={ this.previewTemplate }
@@ -241,7 +241,7 @@ class PageTemplateModal extends Component {
 						onClick={ this.handleConfirmation }
 					>
 						{ sprintf(
-							__( 'Use %s template', 'full-site-editing' ),
+							__( 'Use %s layout', 'full-site-editing' ),
 							this.getTitleByTemplateSlug( previewedTemplate )
 						) }
 					</Button>
