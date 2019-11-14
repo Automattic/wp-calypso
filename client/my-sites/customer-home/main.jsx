@@ -138,8 +138,7 @@ class Home extends Component {
 			case 'gsuite':
 				return translate(
 					'We emailed %(email)s with instructions to complete your G Suite setup. ' +
-						'In the mean time, let’s get your new site ready for you to share. ' +
-						'We’ve prepared a list of things that will help you get there quickly.',
+						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
 					{
 						args: {
 							email: user.email,
@@ -150,8 +149,7 @@ class Home extends Component {
 			case 'concierge':
 				return translate(
 					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
-						'In the mean time, let’s get your new site ready for you to share. ' +
-						'We’ve prepared a list of things that will help you get there quickly.',
+						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
 					{
 						args: {
 							email: user.email,
@@ -162,8 +160,7 @@ class Home extends Component {
 			case 'theme':
 				return translate(
 					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
-						"Now that your site has been created, it's time to get it ready for you to share. " +
-						"We've prepared a list of things that will help you get there quickly.",
+						'Next, use this quick list of setup tasks to get it ready to share.',
 					{
 						args: {
 							themeName: currentTheme && currentTheme.name,
