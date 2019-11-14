@@ -509,6 +509,10 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+
+	.template-selector-item__label {
+		max-width: 300px;
+	}
 	
 	.template-selector-item__template-title {
 		font-size: 1.2rem;
