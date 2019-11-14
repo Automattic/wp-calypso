@@ -13,7 +13,7 @@ import { Falsy } from 'utility-types';
 /**
  * Re-exports
  */
-export { addQueryArgs } from 'lib/route';
+export { default as addQueryArgs } from './add-query-args';
 export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as isExternal } from './is-external';
 export { default as resemblesUrl } from './resembles-url';
