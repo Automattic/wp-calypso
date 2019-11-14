@@ -130,8 +130,7 @@ const Label = styled.label`
 `;
 
 const RadioButtonChildren = styled.div`
-	height: ${getChildrenHeight};
-	overflow: hidden;
+	display: ${props => ( props.checked ? 'block' : 'none' )};
 `;
 
 function getBorderColor( { checked, theme } ) {
@@ -144,10 +143,6 @@ function getBorderWidth( { checked } ) {
 
 function getRadioBorderWidth( { checked } ) {
 	return checked ? '5px' : '1px';
-}
-
-function getChildrenHeight( { checked } ) {
-	return checked ? 'auto' : '0';
 }
 
 function getGrayscaleValue( { checked } ) {
