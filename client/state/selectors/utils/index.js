@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map } from 'lodash';
-import { getLocaleSlug } from 'i18n-calypso';
-import moment from 'moment';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,23 +18,20 @@ import getPublicizeConnection from 'state/selectors/get-publicize-connection';
  * @return {Array} richest post actions array
  */
 export function enrichPublicizeActionsWithConnections( state, postShareActions ) {
-	const localeSlug = getLocaleSlug();
-
 	return map(
 		postShareActions,
 		( { ID, connection_id, message, result, share_date, status, external_url: url } ) => {
 			const connection = getPublicizeConnection( state, connection_id );
-			const actionDate = moment( share_date ).locale( localeSlug );
+			const actionDate = new Date( share_date );
 
 			return {
 				ID,
-				connectionId: get( connection, 'ID' ),
+				connectionId: connection?.ID,
 				connection,
-				connectionName: get( connection, 'external_display' ),
+				connectionName: connection?.external_display,
 				message,
 				result,
-				service: get( connection, 'service', 'twitter' ),
-				shareDate: actionDate.format( 'llll' ),
+				service: connection?.service?.twitter,
 				date: actionDate,
 				status,
 				url,

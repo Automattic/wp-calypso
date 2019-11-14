@@ -248,7 +248,7 @@ class PostShare extends Component {
 	};
 
 	renderSharingButtons() {
-		const { siteId, translate, publishedActions, scheduledActions } = this.props;
+		const { siteId, translate, moment, publishedActions, scheduledActions } = this.props;
 
 		const shareButton = (
 			<Button
@@ -278,7 +278,7 @@ class PostShare extends Component {
 				id: ID,
 				type: 'published-action',
 				title: message,
-				date,
+				date: moment( date ),
 				socialIcon: service === 'google_plus' ? 'google-plus' : service,
 			} )
 		);
