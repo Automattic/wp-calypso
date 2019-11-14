@@ -484,12 +484,16 @@ class TransferDomainStep extends React.Component {
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
 			this.setState( prevState => {
-				const { notice, submittingAvailability, submittingWhois } = prevState;
+				const { notice, submittingAvailability, submittingWhois, suggestion } = prevState;
 
 				return {
 					domain,
 					precheck:
-						prevState.domain !== null && ! notice && ! submittingAvailability && ! submittingWhois,
+						prevState.domain !== null &&
+						! notice &&
+						! suggestion &&
+						! submittingAvailability &&
+						! submittingWhois,
 				};
 			} );
 
