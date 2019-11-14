@@ -13,9 +13,7 @@ import { clearJITM, insertJITM } from 'state/jitm/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
@@ -59,8 +57,8 @@ const unescapeDecimalEntities = str => {
  */
 const transformApiRequest = ( { data: jitms } ) =>
 	jitms.map( jitm => ( {
-		message: unescapeDecimalEntities( jitm.content.message ),
-		description: unescapeDecimalEntities( jitm.content.description ),
+		message: unescapeDecimalEntities( jitm.content.message || '' ),
+		description: unescapeDecimalEntities( jitm.content.description || '' ),
 		featureClass: jitm.feature_class,
 		callToAction: unescapeDecimalEntities( jitm.CTA.message ),
 		id: jitm.id,
@@ -75,11 +73,6 @@ export const fetchJITM = action => ( dispatch, getState ) => {
 	}
 
 	const currentSite = process.lastSite;
-
-	if ( ! isJetpackSite( getState(), currentSite ) ) {
-		return;
-	}
-
 	const currentRoute = getCurrentRoute( getState() );
 	const isIgnoredRoute = some( routesToIgnore, route => startsWith( currentRoute, route ) );
 	if ( isIgnoredRoute ) {
