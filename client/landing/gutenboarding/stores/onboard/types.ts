@@ -30,6 +30,17 @@ export type Vertical = ApiVertical | UserVertical;
 
 export interface UserVertical {
 	is_user_input_vertical: true;
+
+	vertical_id: '';
+	vertical_slug: string;
+	vertical_name: string;
+	preview: string;
+	preview_styles_url: string;
+}
+
+export interface ApiVertical {
+	is_user_input_vertical: false;
+
 	vertical_id: string;
 	vertical_slug: string;
 	vertical_name: string;
@@ -37,14 +48,4 @@ export interface UserVertical {
 	preview: string;
 	preview_styles_url: string;
 	synonyms: string[];
-}
-
-export interface ApiVertical {
-	is_user_input_vertical: false;
-	vertical_id: '';
-	vertical_slug: string;
-	vertical_name: string;
-	parent: string;
-	preview: '';
-	preview_styles_url: string;
 }
