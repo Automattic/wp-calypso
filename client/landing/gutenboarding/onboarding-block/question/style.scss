@@ -13,11 +13,11 @@
 		font-size: 40px;
 		margin-top: 18px;
 		margin-bottom: 28px;
-	
+
 		&:first-of-type {
 			margin-top: 0;
 		}
-	
+
 		&:last-of-type {
 			margin-bottom: 0;
 		}
@@ -32,11 +32,11 @@
 		margin: 0 0 0 0.2em;
 		padding: 0;
 		color: $blue-medium-900;
-	
+
 		&:hover {
 			border-color: $blue-medium-highlight;
 		}
-	
+
 		&:active,
 		&:focus {
 			border-color: $blue-medium-focus;
@@ -54,11 +54,11 @@
 		transition-duration: 0.3s;
 		transition-timing-function: 'linear';
 		transition-delay: 0;
-	
+
 		&:hover {
 			border-color: $blue-medium-highlight;
 		}
-	
+
 		&:active,
 		&:focus {
 			border-color: $blue-medium-focus;

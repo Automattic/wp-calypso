@@ -25,7 +25,7 @@
 		opacity: 1;
 		color: $light-gray-800;
 	}
-	
+
 	li.selected label:hover::after,
 	label:hover::after {
 		opacity: 1;
@@ -33,7 +33,6 @@
 	}
 
 	.onboarding-block__multi-question-choice {
-		color: $blue-medium-900;
 		border-bottom: 3px solid transparent;
 		cursor: pointer;
 		margin: 0 0 0 0.2em;
