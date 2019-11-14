@@ -66,7 +66,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const hideSuggestions = () => setsuggestionsVisibility( false );
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) =>
-		setInputValue( e.target.value as string );
+		setInputValue( e.target.value );
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
 		if ( suggestionRef.current ) {
