@@ -99,7 +99,7 @@
 
 		@mixin card-col-left-two-col {
 			margin-bottom: 0;
-			width: 60%;
+			width: 50%;
 
 			.button {
 				margin-right: 12px;
@@ -116,7 +116,7 @@
 		width: 100%;
 
 		@mixin card-col-right-two-col {
-			width: 40%;
+			width: 50%;
 
 			.button {
 				margin-left: 12px;
@@ -200,6 +200,7 @@
 
 		@include breakpoint('>960px') {
 			width: 40%;
+
 			.card {
 				margin-left: 8px;
 			}
