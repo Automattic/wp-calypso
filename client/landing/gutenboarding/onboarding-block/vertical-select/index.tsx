@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, useRef, FunctionComponent } from 'react';
+import React, { createRef, useState, useCallback, FunctionComponent } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
@@ -39,7 +39,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ suggestionsVisibility, setsuggestionsVisibility ] = useState( false );
 
-	const suggestionRef = useRef< Suggestions >( null );
+	const suggestionRef = createRef();
 
 	const verticals = useSelect( select =>
 		select( STORE_KEY )
