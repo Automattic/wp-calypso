@@ -33,6 +33,7 @@ import BillingFields, { getDomainDetailsFromPaymentData } from '../components/bi
 import { SummaryLine, SummaryDetails } from '../lib/styled-components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import Spinner from './spinner';
+import ErrorMessage from './error-message';
 
 export function createStripeMethod( {
 	registerStore,
@@ -205,8 +206,17 @@ function StripeCreditCardFields() {
 	};
 
 	if ( stripeLoadingError ) {
-		return <span>Error!</span>;
+		return (
+			<CreditCardFieldsWrapper isLoaded={ true }>
+				<ErrorMessage>
+					{ localize(
+						'Our payment processor failed to load, please refresh your screen to try again or pick another payment method to proceed.'
+					) }
+				</ErrorMessage>
+			</CreditCardFieldsWrapper>
+		);
 	}
+
 	if ( isStripeLoading ) {
 		return (
 			<StripeFields>
