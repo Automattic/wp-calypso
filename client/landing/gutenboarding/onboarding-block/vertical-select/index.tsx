@@ -5,6 +5,7 @@ import React, { useState, useCallback, useRef, FunctionComponent } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
@@ -60,7 +61,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
 		if ( suggestionRef && suggestionRef.current ) {
-			if ( suggestionRef.current.props.suggestions.length > 0 && e.key === 'Enter' ) {
+			if ( suggestionRef.current.props.suggestions.length > 0 && e.keyCode === ENTER ) {
 				e.preventDefault();
 			}
 
