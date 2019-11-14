@@ -173,10 +173,7 @@ class Home extends Component {
 				);
 
 			default:
-				return translate(
-					"Now that your site has been created, it's time to get it ready for you to share. " +
-						"We've prepared a list of things that will help you get there quickly."
-				);
+				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
 		}
 	};
 
@@ -192,7 +189,7 @@ class Home extends Component {
 
 		if ( isNewlyCreatedSite && displayChecklist ) {
 			return (
-				<>
+				<React.Fragment>
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -207,7 +204,7 @@ class Home extends Component {
 						}
 						subHeaderText={ this.getChecklistSubHeaderText() }
 					/>
-				</>
+				</React.Fragment>
 			);
 		}
 
@@ -234,7 +231,7 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, isChecklistComplete, siteIsUnlaunched } = this.props;
+		const { siteId } = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -254,18 +251,6 @@ class Home extends Component {
 						description={ translate( "You've completed each item in your checklist." ) }
 					/>
 				) }
-				{ hasChecklistData && isChecklistComplete && siteIsUnlaunched && (
-					<Banner
-						dismissPreferenceName="customer-home-unlaunched-reminder"
-						dismissTemporary={ true }
-						icon="info"
-						title={ translate( 'Your site is private' ) }
-						description={ translate(
-							'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
-						) }
-					/>
-				) }
-
 				{ this.renderCustomerHome() }
 			</Main>
 		);
@@ -304,7 +289,7 @@ class Home extends Component {
 					{ displayChecklist ? (
 						<WpcomChecklist displayMode={ checklistMode } />
 					) : (
-						<>
+						<React.Fragment>
 							<Card>
 								<CardHeading>{ translate( 'My Site' ) }</CardHeading>
 								<h6 className="customer-home__card-subheader">
@@ -428,12 +413,21 @@ class Home extends Component {
 									) }
 								</div>
 							</Card>
-						</>
+						</React.Fragment>
 					) }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && (
 						<Card className="customer-home__launch-button">
+							<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">
+								{ translate( 'Your site is private' ) }
+							</h6>
+							<p>
+								{ translate(
+									'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
+								) }
+							</p>
 							<Button primary onClick={ this.onLaunchBannerClick }>
 								{ translate( 'Launch my site' ) }
 							</Button>
@@ -524,13 +518,13 @@ class Home extends Component {
 }
 
 const connectHome = connect(
-	( state, props ) => {
+	( state, { displayMode } ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const domains = getDomainsBySiteId( state, siteId );
 		let themeInfo = {};
-		if ( props.displayMode && 'theme' === props.displayMode ) {
+		if ( 'theme' === displayMode ) {
 			const currentThemeId = getActiveTheme( state, siteId );
 			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 			themeInfo = { currentTheme, currentThemeId };

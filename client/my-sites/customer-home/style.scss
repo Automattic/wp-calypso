@@ -8,15 +8,10 @@
 		margin: 0 auto;
 	}
 	&__launch-button {
-		background: none;
-		padding: 0;
-		border: 0;
-		box-shadow: none;
-
 		& .button {
 			font-size: 18px;
 			width: 100%;
-			height: 70px;
+			height: 50px;
 		}
 	}
 	&__box-action {
@@ -220,6 +215,15 @@
 			.android-app-badge {
 				margin-left: -8px;
 			}
+		}
+	}
+
+	.checklist__tasks {
+
+		margin-bottom: 8px;
+
+		&-completed-title {
+			margin-top: 16px;
 		}
 	}
 }
