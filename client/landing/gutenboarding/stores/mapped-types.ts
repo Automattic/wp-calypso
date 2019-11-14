@@ -18,7 +18,7 @@
 export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any > > = {
 	[ selector in keyof S ]: (
 		...args: TailParameters< S[ selector ] >
-	) => ReturnType< S[ selector ] >;
+	) => ReturnType< S[ selector ] > | undefined;
 };
 
 /**
