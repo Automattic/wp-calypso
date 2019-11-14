@@ -14,11 +14,16 @@ import { stringifyDomainQueryObject } from './utils';
 export const getState = ( state: State ) => state;
 
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
+
 export const getDomainSuggestions = (
 	state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
+	// The endpoint returns 404 if there are no alphanumeric characters
+	if ( search === '' ) {
+		return [];
+	}
 	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
 	// We need to go through the `select` store to get the resolver action
