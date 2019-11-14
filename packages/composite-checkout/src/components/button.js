@@ -45,7 +45,7 @@ const CallToAction = styled.button`
 	border-style: solid;
 	border-color: ${ getBorderColor };
 	color: ${ getTextColor };
-	box-shadow: ${ getBoxShadow }
+	box-shadow: ${ getBoxShadow };
 	font-weight: ${ getFontWeight };
 	text-decoration: ${ getTextDecoration };
 
@@ -55,12 +55,12 @@ const CallToAction = styled.button`
 		border-width: ${ getBorderWeight };
 		border-style: solid;
 		border-color: ${ getRollOverBorderColor };
-		box-shadow: ${ getBoxShadowHover }
+		box-shadow: ${ getBoxShadowHover };
 		text-decoration: none;
 		color: ${ props =>
-			props.buttonState === 'default' ? props.theme.colors.surface : getTextColor( props ) }
+			props.buttonState === 'default' ? props.theme.colors.surface : getTextColor( props ) };
 		cursor: ${ ( { buttonState } ) =>
-			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' }
+			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' };
 	}
 
 	:active {
