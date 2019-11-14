@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -9,25 +9,29 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-interface QuestionProps {
-	label: string;
+interface Props {
 	displayValue: string;
-	children: React.ReactNode;
 	isActive: boolean;
+	label: string;
 	onExpand: () => void;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const Question = ( { isActive, onExpand, displayValue, label, children }: QuestionProps ) => (
+const Question: FunctionComponent< Props > = ( {
+	isActive,
+	onExpand,
+	displayValue,
+	label,
+	children,
+} ) => (
 	<div
-		className={ classNames( {
-			'onboarding-block__question': true,
+		className={ classNames( 'onboarding-block__question', {
 			selected: isActive,
 		} ) }
 	>
 		<span>{ label }</span>
-		<div className="">
+		<div>
 			{ isActive ? (
 				children
 			) : (
