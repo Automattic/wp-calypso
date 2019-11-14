@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 
 export interface StepInputProps {
 	isActive: boolean;
@@ -10,11 +10,7 @@ export interface StepInputProps {
 	inputClass: string;
 }
 
-interface Props {
-	children: React.ReactChildren;
-}
-
-export default function StepperWizard( props: Props ) {
+const StepperWizard: FunctionComponent = ( { children } ) => {
 	const [ activeStep, setActiveStep ] = useState( 0 );
 
 	const handleNext = () => setActiveStep( activeStep + 1 );
@@ -30,4 +26,5 @@ export default function StepperWizard( props: Props ) {
 				inputClass: 'onboarding-block__question-input',
 			} )
 	);
-}
+};
+export default StepperWizard;
