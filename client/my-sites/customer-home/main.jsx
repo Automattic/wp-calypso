@@ -31,6 +31,7 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
+	isNewSite,
 } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -47,6 +48,9 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -127,6 +131,96 @@ class Home extends Component {
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
+	getChecklistSubHeaderText = () => {
+		const { displayMode, currentTheme, translate, user } = this.props;
+
+		switch ( displayMode ) {
+			case 'gsuite':
+				return translate(
+					'We emailed %(email)s with instructions to complete your G Suite setup. ' +
+						'In the mean time, let’s get your new site ready for you to share. ' +
+						'We’ve prepared a list of things that will help you get there quickly.',
+					{
+						args: {
+							email: user.email,
+						},
+					}
+				);
+
+			case 'concierge':
+				return translate(
+					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
+						'In the mean time, let’s get your new site ready for you to share. ' +
+						'We’ve prepared a list of things that will help you get there quickly.',
+					{
+						args: {
+							email: user.email,
+						},
+					}
+				);
+
+			case 'theme':
+				return translate(
+					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
+						"Now that your site has been created, it's time to get it ready for you to share. " +
+						"We've prepared a list of things that will help you get there quickly.",
+					{
+						args: {
+							themeName: currentTheme && currentTheme.name,
+							themeAuthor: currentTheme && currentTheme.author,
+						},
+					}
+				);
+
+			default:
+				return translate(
+					"Now that your site has been created, it's time to get it ready for you to share. " +
+						"We've prepared a list of things that will help you get there quickly."
+				);
+		}
+	};
+
+	renderCustomerHomeHeader() {
+		const {
+			isNewlyCreatedSite,
+			translate,
+			hasChecklistData,
+			isAtomic,
+			isChecklistComplete,
+		} = this.props;
+		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
+
+		if ( isNewlyCreatedSite && displayChecklist ) {
+			return (
+				<>
+					<img
+						src="/calypso/images/signup/confetti.svg"
+						aria-hidden="true"
+						className="customer-home__confetti"
+						alt=""
+					/>
+					<FormattedHeader
+						headerText={
+							this.props.siteHasPaidPlan
+								? translate( 'Thank you for your purchase!' )
+								: translate( 'Your site has been created!' )
+						}
+						subHeaderText={ this.getChecklistSubHeaderText() }
+					/>
+				</>
+			);
+		}
+
+		return (
+			<FormattedHeader
+				className="customer-home__page-heading"
+				headerText={ translate( 'Welcome' ) }
+				subHeaderText={ 'WordPress.com Customer Home' }
+				align="left"
+			/>
+		);
+	}
+
 	render() {
 		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
 
@@ -148,12 +242,7 @@ class Home extends Component {
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="customer-home__page-heading"
-					headerText={ translate( 'Welcome' ) }
-					subHeaderText={ translate( 'Your website on WordPress.com.' ) }
-					align="left"
-				/>
+				{ this.renderCustomerHomeHeader() }
 				<StatsBanners siteId={ siteId } slug={ siteSlug } />
 				{ renderChecklistCompleteBanner && (
 					<Banner
@@ -437,11 +526,17 @@ class Home extends Component {
 }
 
 const connectHome = connect(
-	state => {
+	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const domains = getDomainsBySiteId( state, siteId );
+		let themeInfo = {};
+		if ( props.displayMode && 'theme' === props.displayMode ) {
+			const currentThemeId = getActiveTheme( state, siteId );
+			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+			themeInfo = { currentTheme, currentThemeId };
+		}
 
 		return {
 			site: getSelectedSite( state ),
@@ -454,10 +549,14 @@ const connectHome = connect(
 			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
 			isAtomic: isAtomicSite( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
+			isNewlyCreatedSite: isNewSite( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
+			user: getCurrentUser( state ),
+			...themeInfo,
 		};
 	},
 	dispatch => ( {
