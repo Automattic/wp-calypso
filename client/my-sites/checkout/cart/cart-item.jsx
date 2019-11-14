@@ -149,7 +149,6 @@ export class CartItem extends React.Component {
 
 	getProductInfo() {
 		const { cartItem, selectedSite } = this.props;
-
 		const domain =
 			cartItem.meta ||
 			get( cartItem, 'extra.domain_to_bundle' ) ||
