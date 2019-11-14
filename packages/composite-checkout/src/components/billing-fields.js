@@ -88,6 +88,7 @@ function isElligibleForVat() {
 }
 
 function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
+	const localize = useLocalize();
 	return (
 		<DomainRegistrationCheckBoxWrapper>
 			<DomainRegistrationCheckbox
@@ -98,7 +99,7 @@ function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
 				onChange={ toggleVisibility }
 			/>
 			<DomainRegistrationLabel htmlFor="domain-registration">
-				Use your billing details for your domain registration contact information.
+				{ localize( 'Use your billing details for your domain registration contact information.' ) }
 			</DomainRegistrationLabel>
 		</DomainRegistrationCheckBoxWrapper>
 	);
