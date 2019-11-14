@@ -15,16 +15,20 @@ const StepperWizard: FunctionComponent = ( { children } ) => {
 
 	const handleNext = () => setActiveStep( activeStep + 1 );
 
-	return React.Children.map(
-		props.children,
-		( child, index ) =>
-			child &&
-			React.cloneElement( child, {
-				isActive: index === activeStep,
-				onExpand: () => setActiveStep( index ),
-				onSelect: handleNext,
-				inputClass: 'onboarding-block__question-input',
-			} )
+	return (
+		<>
+			{ React.Children.map(
+				children,
+				( child, index ) =>
+					React.isValidElement( child ) &&
+					React.cloneElement( child, {
+						isActive: index === activeStep,
+						onExpand: () => setActiveStep( index ),
+						onSelect: handleNext,
+						inputClass: 'onboarding-block__question-input',
+					} )
+			) }
+		</>
 	);
 };
 export default StepperWizard;
