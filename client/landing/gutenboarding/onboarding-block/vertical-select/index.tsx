@@ -9,7 +9,6 @@ import { Suggestions } from '@automattic/components';
 /**
  * Internal dependencies
  */
-
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
 import { StepInputProps } from '../stepper-wizard';
@@ -20,7 +19,12 @@ import Question from '../question';
  */
 import './style.scss';
 
-export default function VerticalSelect( { onSelect, inputClass, ...props }: StepInputProps ) {
+export default function VerticalSelect( {
+	onSelect,
+	inputClass,
+	isActive,
+	onExpand,
+}: StepInputProps ) {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -96,7 +100,12 @@ export default function VerticalSelect( { onSelect, inputClass, ...props }: Step
 		: NO__( 'enter a topic' );
 
 	return (
-		<Question label={ label } displayValue={ displayValue } { ...props }>
+		<Question
+			label={ label }
+			displayValue={ displayValue }
+			isActive={ isActive }
+			onExpand={ onExpand }
+		>
 			<div className="vertical-select">
 				<input
 					className={ inputClass }

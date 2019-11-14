@@ -13,7 +13,7 @@ import { STORE_KEY } from '../stores/onboard';
 import { StepInputProps } from './stepper-wizard';
 import Question from './question';
 
-export default function SiteTitle( { onSelect, inputClass, ...props }: StepInputProps ) {
+export default function SiteTitle( { onSelect, inputClass, isActive, onExpand }: StepInputProps ) {
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
@@ -25,7 +25,7 @@ export default function SiteTitle( { onSelect, inputClass, ...props }: StepInput
 
 	return (
 		<>
-			<Question label={ label } displayValue={ value } { ...props }>
+			<Question label={ label } displayValue={ value } isActive={ isActive } onExpand={ onExpand }>
 				<input
 					className={ inputClass }
 					placeholder={ NO__( 'enter a title' ) }

@@ -24,7 +24,7 @@ const siteTypeOptions: Record< SiteType, string > = {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const SiteTypeSelect = ( { onSelect, ...props }: StepInputProps ) => {
+const SiteTypeSelect = ( { onSelect, onExpand, isActive }: StepInputProps ) => {
 	const { siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType } = useDispatch( STORE_KEY );
 
@@ -40,7 +40,12 @@ const SiteTypeSelect = ( { onSelect, ...props }: StepInputProps ) => {
 	const displayValue = isFilledFormValue( siteType ) ? siteTypeOptions[ siteType ] : '';
 
 	return (
-		<Question label={ questionLabel } displayValue={ displayValue } { ...props }>
+		<Question
+			label={ questionLabel }
+			displayValue={ displayValue }
+			isActive={ isActive }
+			onExpand={ onExpand }
+		>
 			<ul className="onboarding-block__multi-question">
 				{ map( siteTypeOptions, ( label, value ) => (
 					<li key={ value } className={ value === siteType ? 'selected' : '' }>
