@@ -103,6 +103,8 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ): typeo
 	}
 };
 
+export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
+
 export const update = ( id: DataId, state: DataState, data?: unknown ) => {
 	const updated = updateData( id, state, data );
 
