@@ -164,7 +164,7 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
 export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
 	const nationalNumber = stripNonDigits( inputNumber ).replace(
-		new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
+		new RegExp( '^(0{0,}' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
 		''
 	);
 
