@@ -17,7 +17,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
-import ChecklistWpcom from 'my-sites/checklist/main';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -39,6 +38,7 @@ import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
@@ -302,9 +302,7 @@ class Home extends Component {
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
 					{ displayChecklist ? (
-						<Card>
-							<ChecklistWpcom displayMode={ checklistMode } />
-						</Card>
+						<WpcomChecklist displayMode={ checklistMode } />
 					) : (
 						<>
 							<Card>
