@@ -26,7 +26,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../public-api';
-import useLocalize from '../lib/localize';
+import useLocalize, { sprintf } from '../lib/localize';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
@@ -539,9 +539,9 @@ function StripePayButton() {
 		localize,
 	] );
 
-	// TODO: we need to use a placeholder for the value so the localization string can be generic
-	const buttonString = localize(
-		`Pay ${ renderDisplayValueMarkdown( total.amount.displayValue ) }`
+	const buttonString = sprintf(
+		localize( 'Pay %s' ),
+		renderDisplayValueMarkdown( total.amount.displayValue )
 	);
 	return (
 		<Button

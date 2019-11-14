@@ -3,7 +3,7 @@
  */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { __, setLocaleData } from '@wordpress/i18n';
+import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -86,3 +86,5 @@ function getLocaleDataForLocale( locale ) {
 			};
 	}
 }
+
+export { sprintf };
