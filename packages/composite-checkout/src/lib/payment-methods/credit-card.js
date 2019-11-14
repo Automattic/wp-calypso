@@ -11,7 +11,7 @@ import Button from '../../components/button';
 import { useLocalize, sprintf } from '../../lib/localize';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
-import CreditCardFields from '../../components/credit-card-fields';
+import CreditCardFields from './credit-card-fields';
 import BillingFields from '../../components/billing-fields';
 
 export function createCreditCardMethod() {

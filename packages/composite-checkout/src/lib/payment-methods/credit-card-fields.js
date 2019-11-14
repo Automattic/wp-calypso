@@ -7,11 +7,11 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import Field from './field';
-import GridRow from './grid-row';
-import { useLocalize } from '../lib/localize';
-import { AmexLogo, VisaLogo, MastercardLogo } from './payment-logos';
-import { useSelect, useDispatch } from '../public-api';
+import Field from '../../components/field';
+import GridRow from '../../components/grid-row';
+import { useLocalize } from '../localize';
+import { AmexLogo, VisaLogo, MastercardLogo } from '../../components/payment-logos';
+import { useSelect, useDispatch } from '../../public-api';
 
 export default function CreditCardFields( { disabled } ) {
 	const localize = useLocalize();
