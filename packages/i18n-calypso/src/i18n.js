@@ -295,7 +295,8 @@ I18N.prototype.setLocale = function( localeData ) {
 	// - the translation for the special string "ltr" (standard in Core, not present in Calypso)
 	// - or the `momentjs_locale.textDirection` property present in Calypso translation files
 	this.state.textDirection =
-		this.state.locale.ltr || this.state.locale[ '' ]?.momentjs_locale?.textDirection;
+		this.state.locale[ 'text direction\u0004ltr' ]?.[ 0 ] ||
+		this.state.locale[ '' ]?.momentjs_locale?.textDirection;
 
 	this.state.jed = new Jed( {
 		locale_data: {
