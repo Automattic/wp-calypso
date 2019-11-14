@@ -71,32 +71,26 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@include screen-reader-text();
 }
 
-// Show close button only in full screen mode.
-.page-template-modal .components-modal__header::after,
+// Show close button in all modes.
+// Removed previous condition to only show in fullscreen with PR #37500.
 .page-template-modal__close-button {
-	display: none;
+	display: block;
+	position: absolute;
+	z-index: 20;
+	top: 9px;
+	width: 36px;
+	height: 36px;
+	left: 8px;
 }
 
-body.is-fullscreen-mode {
-	.page-template-modal__close-button {
+.page-template-modal .components-modal__header {
+	&::after {
 		display: block;
 		position: absolute;
-		z-index: 20;
-		top: 9px;
-		width: 36px;
-		height: 36px;
-		left: 8px;
-	}
-
-	.page-template-modal .components-modal__header {
-		&::after {
-			display: block;
-			position: absolute;
-			content: ' ';
-			border-right: 1px solid #e2e4e7;
-			height: 100%;
-			left: 54px;
-		}
+		content: ' ';
+		border-right: 1px solid #e2e4e7;
+		height: 100%;
+		left: 54px;
 	}
 }
 
@@ -130,7 +124,8 @@ body.is-fullscreen-mode {
 	}
 }
 
-.page-template-modal__list {
+.page-template-modal__list,
+.sidebar-modal-opener {
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
@@ -506,4 +501,39 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	.components-spinner {
 		float: none;
 	}
+}
+
+// Sidebar modal opener goo.
+.sidebar-modal-opener {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	
+	.template-selector-item__template-title {
+		font-size: 1.2rem;
+	}
+}
+
+.sidebar-modal-opener__button {
+	margin-top: 20px;
+}
+
+.sidebar-modal-opener__warning-modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidebar-modal-opener__warning-text {
+	max-width: 300px;
+	font-size: 1rem;
+	line-height: 1.5rem;
+}
+
+.sidebar-modal-opener__warning-options {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
 }
