@@ -104,7 +104,7 @@ export default function CreditCardFields( { disabled } ) {
 				id="card-holder-name"
 				type="Text"
 				label={ localize( 'Cardholder name' ) }
-				description={ localize( 'Enter your name as it’s written on the card' ) }
+				description={ localize( "Enter your name as it's written on the card" ) }
 				autoComplete="cc-name"
 				value={ currentCreditCardData.cardHolderName || '' }
 				onChange={ value => {
