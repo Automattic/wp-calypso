@@ -11,6 +11,7 @@ import moment from 'moment';
 import createSelector from 'lib/create-selector';
 import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const PAGE_SIZE = 5;
 
@@ -108,6 +109,10 @@ export default createSelector(
 		};
 	},
 	( state, transactionType ) => [
+		// Since this selector allows for user-defined searches on localized dates, we need to
+		// invalidate the cache whenever the user locale changes.
+		// Ideally, we shouldn't allow for full-text search matching against localized dates.
+		getCurrentLocaleSlug( state ),
 		getBillingTransactionsByType( state, transactionType ),
 		...values( getBillingTransactionFilters( state, transactionType ) ),
 	]
