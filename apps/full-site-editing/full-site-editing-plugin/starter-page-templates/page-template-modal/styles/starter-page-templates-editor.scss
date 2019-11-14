@@ -388,6 +388,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 				padding: 0;
 				height: $template-large-preview-title-height;
 				line-height: $template-large-preview-title-height;
+				overflow: hidden;
+				resize: none;
 			}
 		}
 	}
