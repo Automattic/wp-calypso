@@ -31,6 +31,8 @@ import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
 import { SummaryLine, SummaryDetails } from '../lib/styled-components/summary-details';
+import CreditCardFields from './credit-card-fields';
+import Spinner from './spinner';
 
 export function createStripeMethod( {
 	registerStore,
@@ -162,6 +164,7 @@ function StripeCreditCardFields() {
 	const [ cardNumberElementData, setCardNumberElementData ] = useState();
 	const [ cardExpiryElementData, setCardExpiryElementData ] = useState();
 	const [ cardCvcElementData, setCardCvcElementData ] = useState();
+	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const brand = useSelect( select => select( 'stripe' ).getBrand() );
 	const { changeCardholderName } = useDispatch( 'stripe' );
@@ -193,7 +196,7 @@ function StripeCreditCardFields() {
 			fontFamily: theme.fonts.body,
 			fontWeight: theme.weights.normal,
 			'::placeholder': {
-				color: theme.colors.textColorLight,
+				color: theme.colors.placeHolderTextColor,
 			},
 		},
 		invalid: {
@@ -205,75 +208,92 @@ function StripeCreditCardFields() {
 		return <span>Error!</span>;
 	}
 	if ( isStripeLoading ) {
-		return <span>Loading...</span>;
+		return (
+			<StripeFields>
+				<LoadingFields />
+			</StripeFields>
+		);
 	}
 
 	return (
-		<CreditCardFieldsWrapper>
-			<Label>
-				<LabelText>{ localize( 'Card number' ) }</LabelText>
-				<StripeFieldWrapper hasError={ cardNumberElementData }>
-					<CardNumberElement
-						style={ cardNumberStyle }
-						onChange={ input => {
-							handleStripeFieldChange( input, setCardNumberElementData );
-						} }
-					/>
-					<CardFieldIcon brand={ brand } />
+		<StripeFields>
+			{ ! isStripeFullyLoaded && <LoadingFields /> }
 
-					{ cardNumberElementData && (
-						<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
-					) }
-				</StripeFieldWrapper>
-			</Label>
-			<FieldRow gap="4%" columnWidths="48% 48%">
+			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
-					<LabelText>{ localize( 'Expiry date' ) }</LabelText>
-					<StripeFieldWrapper hasError={ cardExpiryElementData }>
-						<CardExpiryElement
+					<LabelText>{ localize( 'Card number' ) }</LabelText>
+					<StripeFieldWrapper hasError={ cardNumberElementData }>
+						<CardNumberElement
 							style={ cardNumberStyle }
+							onReady={ () => {
+								setIsStripeFullyLoaded( true );
+							} }
 							onChange={ input => {
-								handleStripeFieldChange( input, setCardExpiryElementData );
+								handleStripeFieldChange( input, setCardNumberElementData );
 							} }
 						/>
+						<CardFieldIcon brand={ brand } />
+
+						{ cardNumberElementData && (
+							<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
+						) }
 					</StripeFieldWrapper>
-					{ cardExpiryElementData && (
-						<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
-					) }
 				</Label>
-				<GridRow gap="4%" columnWidths="67% 29%">
+				<FieldRow gap="4%" columnWidths="48% 48%">
 					<Label>
-						<LabelText>{ localize( 'Security code' ) }</LabelText>
-						<StripeFieldWrapper hasError={ cardCvcElementData }>
-							<CardCvcElement
+						<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+						<StripeFieldWrapper hasError={ cardExpiryElementData }>
+							<CardExpiryElement
 								style={ cardNumberStyle }
 								onChange={ input => {
-									handleStripeFieldChange( input, setCardCvcElementData );
+									handleStripeFieldChange( input, setCardExpiryElementData );
 								} }
 							/>
 						</StripeFieldWrapper>
-						{ cardCvcElementData && (
-							<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+						{ cardExpiryElementData && (
+							<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
 						) }
 					</Label>
-					<CVVImage />
-				</GridRow>
-			</FieldRow>
+					<GridRow gap="4%" columnWidths="67% 29%">
+						<Label>
+							<LabelText>{ localize( 'Security code' ) }</LabelText>
+							<StripeFieldWrapper hasError={ cardCvcElementData }>
+								<CardCvcElement
+									style={ cardNumberStyle }
+									onChange={ input => {
+										handleStripeFieldChange( input, setCardCvcElementData );
+									} }
+								/>
+							</StripeFieldWrapper>
+							{ cardCvcElementData && (
+								<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+							) }
+						</Label>
+						<CVVImage />
+					</GridRow>
+				</FieldRow>
 
-			<CreditCardField
-				id="cardholderName"
-				type="Text"
-				label={ localize( 'Cardholder name' ) }
-				description={ localize( 'Enter your name as it’s written on the card' ) }
-				value={ cardholderName }
-				onChange={ changeCardholderName }
-			/>
-		</CreditCardFieldsWrapper>
+				<CreditCardField
+					id="cardholderName"
+					type="Text"
+					label={ localize( 'Cardholder name' ) }
+					description={ localize( 'Enter your name as it’s written on the card' ) }
+					value={ cardholderName }
+					onChange={ changeCardholderName }
+				/>
+			</CreditCardFieldsWrapper>
+		</StripeFields>
 	);
 }
 
+const StripeFields = styled.div`
+	position: relative;
+`;
+
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
+	position: relative;
+	display: ${props => ( props.isLoaded ? 'block' : 'none' )};
 	position: relative;
 
 	:after {
@@ -286,6 +306,12 @@ const CreditCardFieldsWrapper = styled.div`
 		top: 0;
 		left: 3px;
 	}
+`;
+
+const LoadingIndicator = styled( Spinner )`
+	position: absolute;
+	right: 15px;
+	top: 10px;
 `;
 
 const CreditCardField = styled( Field )`
@@ -401,6 +427,15 @@ const BrandLogo = styled.span`
 	right: ${props => ( props.isSummary ? '0' : '10px' )};
 	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
 `;
+
+function LoadingFields() {
+	return (
+		<React.Fragment>
+			<LoadingIndicator />
+			<CreditCardFields disabled={ true } />
+		</React.Fragment>
+	);
+}
 
 function CVV( { className } ) {
 	const localize = useLocalize();

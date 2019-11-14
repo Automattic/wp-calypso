@@ -26,6 +26,7 @@ export default function Field( {
 	description,
 	errorMessage,
 	autoComplete,
+	disabled,
 } ) {
 	const fieldOnChange = event => {
 		if ( onChange ) {
@@ -41,7 +42,11 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			{ label && <Label htmlFor={ id }>{ label }</Label> }
+			{ label && (
+				<Label htmlFor={ id } disabled={ disabled }>
+					{ label }
+				</Label>
+			) }
 
 			<InputWrapper>
 				<Input
@@ -55,6 +60,7 @@ export default function Field( {
 					tabIndex={ tabIndex }
 					isError={ isError }
 					autoComplete={ autoComplete }
+					disabled={ disabled }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -83,6 +89,7 @@ Field.propTypes = {
 	description: PropTypes.string,
 	errorMessage: PropTypes.string,
 	autoComplete: PropTypes.string,
+	disabled: PropTypes.bool,
 };
 
 const Label = styled.label`
@@ -93,7 +100,7 @@ const Label = styled.label`
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: pointer;
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
 	}
 `;
 
@@ -104,7 +111,7 @@ const Input = styled.input`
 	font-size: 16px;
 	border: 1px solid
 		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-	padding: 12px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px;
+	padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px;
 
 	:focus {
 		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
@@ -120,6 +127,14 @@ const Input = styled.input`
 	[type='number'] {
 		-moz-appearance: none;
 		appearance: none;
+	}
+
+	::placeholder {
+		color: ${props => props.theme.colors.placeHolderTextColor};
+	}
+
+	:disabled {
+		background: ${props => props.theme.colors.disabledField};
 	}
 `;
 
