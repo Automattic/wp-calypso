@@ -35,7 +35,6 @@ function load_full_site_editing() {
 	dangerously_load_full_site_editing_files();
 	Full_Site_Editing::get_instance();
 }
-// Full Site Editing should load after theme setup finishes.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
