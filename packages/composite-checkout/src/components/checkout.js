@@ -59,6 +59,7 @@ export default function Checkout( {
 	ReviewContent,
 	UpSell,
 	OrderSummary,
+	ContactSlot,
 	className,
 } ) {
 	useRegisterCheckoutStore();
@@ -88,6 +89,7 @@ export default function Checkout( {
 						setStepNumber={ changeStep }
 						isActive={ stepNumber === 2 }
 						isComplete={ stepNumber > 2 }
+						ContactSlot={ ContactSlot }
 					/>
 				</CheckoutErrorBoundary>
 				<CheckoutErrorBoundary
@@ -120,6 +122,7 @@ Checkout.propTypes = {
 	ReviewContent: PropTypes.elementType,
 	UpSell: PropTypes.elementType,
 	OrderSummary: PropTypes.elementType,
+	ContactSlot: PropTypes.elementType,
 };
 
 const Container = styled.div`
@@ -241,7 +244,7 @@ PaymentMethodsStep.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 };
 
-function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
+function BillingDetailsStep( { isActive, isComplete, setStepNumber, ContactSlot } ) {
 	const localize = useLocalize();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
@@ -263,6 +266,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
 			stepContent={
 				<React.Fragment>
 					<BillingContactComponent isActive={ isActive } isComplete={ isComplete } />
+					{ ContactSlot && <ContactSlot /> }
 					<CheckoutNextStepButton
 						value={ localize( 'Continue' ) }
 						onClick={ () => setStepNumber( 3 ) }
@@ -281,6 +285,7 @@ BillingDetailsStep.propTypes = {
 	setStepNumber: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
+	ContactSlot: PropTypes.elementType,
 };
 
 function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
