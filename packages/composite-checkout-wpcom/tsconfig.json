@@ -3,7 +3,7 @@
 		"allowJs": true,
 		"jsx": "react",
 		"target": "es5",
-		"module": "es2015",
+		"module": "esnext",
 		"declaration": true,
 		"declarationDir": "types",
 		"outDir": "./dist/esm",
