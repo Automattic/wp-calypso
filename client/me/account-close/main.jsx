@@ -23,12 +23,13 @@ import ActionPanelFigureListItem from 'components/action-panel/figure-list-item'
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
-import SiteSelector from 'components/site-selector';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import getSites from 'state/selectors/get-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import isAccountClosed from 'state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -86,11 +87,6 @@ class AccountSettingsClose extends Component {
 		}
 	};
 
-	siteListFilter = site => {
-		// Do not display sites that cannot be deleted.
-		return ! site.jetpack && userCan( 'manage_options', site );
-	};
-
 	render() {
 		const {
 			translate,
@@ -99,12 +95,20 @@ class AccountSettingsClose extends Component {
 			hasCancelablePurchases,
 			isLoading,
 			purchasedPremiumThemes,
+			siteToBeDeleted,
 		} = this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
+
+		const listSites = siteToBeDeleted.map( siteToBeDeleted => (
+			<li>
+				{ [ siteToBeDeleted.name ] }
+				<span>{ [ siteToBeDeleted.URL ] }</span>
+			</li>
+		) );
 
 		return (
 			<div className={ containerClasses } role="main">
@@ -127,19 +131,30 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem className="account-close__sites-item">
-										{ translate( 'Sites' ) }
-										<Gridicon size={ 18 } onClick={ this.handleSiteDropdown } icon="chevron-down" />
-									</ActionPanelFigureListItem>
-									{ this.state.showSiteDropdown && (
-										<SiteSelector
-											filter={ this.siteListFilter }
-											noResultsMessage={ translate( 'You have no sites that will be deleted' ) }
-										/>
+									{ listSites !== '' && (
+										<Fragment>
+											<ActionPanelFigureListItem className="account-close__sites-item">
+												{ translate( 'Sites' ) }
+												<Gridicon
+													size={ 18 }
+													onClick={ this.handleSiteDropdown }
+													icon="chevron-down"
+												/>
+												{ this.state.showSiteDropdown && (
+													<ul className="account-close__sites-list">{ listSites }</ul>
+												) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Posts' ) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Pages' ) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Media' ) }
+											</ActionPanelFigureListItem>
+										</Fragment>
 									) }
-									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 									{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
@@ -282,7 +297,11 @@ export default connect( state => {
 		isLoading,
 		hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
 		purchasedPremiumThemes,
+		isJetpackSite: isJetpackSite( state, site.ID ),
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
+		siteToBeDeleted: getSites( state ).filter(
+			site => ! isJetpackSite( state, site.ID ) && userCan( 'manage_options', site )
+		),
 	};
 } )( localize( AccountSettingsClose ) );
