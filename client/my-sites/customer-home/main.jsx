@@ -208,8 +208,7 @@ class Home extends Component {
 		return (
 			<FormattedHeader
 				className="customer-home__page-heading"
-				headerText={ translate( 'Welcome' ) }
-				subHeaderText={ 'WordPress.com Customer Home' }
+				headerText={ translate( 'Customer Home' ) }
 				align="left"
 			/>
 		);
@@ -278,6 +277,7 @@ class Home extends Component {
 
 		/* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
 		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
+		const isPrimary = hasChecklistData && ! isAtomic && isChecklistComplete;
 
 		return (
 			<div className="customer-home__layout">
@@ -425,7 +425,7 @@ class Home extends Component {
 									'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 								) }
 							</p>
-							<Button primary onClick={ this.onLaunchBannerClick }>
+							<Button primary={ isPrimary } onClick={ this.onLaunchBannerClick }>
 								{ translate( 'Launch my site' ) }
 							</Button>
 						</Card>
