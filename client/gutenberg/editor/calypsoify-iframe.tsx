@@ -306,7 +306,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 	};
 
-	handlePostStatusChange = status => {
+	handlePostStatusChange = ( status: string ) => {
 		if ( this.props.creatingNewHomepage && 'publish' === status ) {
 			this.setFrontPage();
 		}
