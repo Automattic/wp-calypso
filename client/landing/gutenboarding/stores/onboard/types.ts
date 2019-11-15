@@ -1,5 +1,4 @@
-// With a _real_ TypeScript compiler, we could use const enums.
-/* const */ enum ActionType {
+enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
 	SET_SITE_TITLE = 'SET_SITE_TITLE',

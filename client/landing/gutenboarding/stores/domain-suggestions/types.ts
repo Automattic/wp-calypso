@@ -1,5 +1,4 @@
-// With a _real_ TypeScript compiler, we could use const enums.
-/* const */ enum ActionType {
+enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
 export { ActionType };
