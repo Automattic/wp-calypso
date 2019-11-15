@@ -36,7 +36,7 @@ function load_full_site_editing() {
 	Full_Site_Editing::get_instance();
 }
 // Full Site Editing should load after theme setup finishes.
-add_action( 'after_setup_theme', __NAMESPACE__ . '\load_full_site_editing', 99 );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
  * NOTE: In most cases, you should NOT use this function. Please use
