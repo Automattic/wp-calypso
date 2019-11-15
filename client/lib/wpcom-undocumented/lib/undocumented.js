@@ -1,5 +1,3 @@
-/* eslint-disable valid-jsdoc */
-
 /**
  * External dependencies
  */
@@ -35,7 +33,7 @@ function restrictByOauthKeys( query ) {
 /**
  * Create an `Undocumented` instance
  *
- * @param {WPCOM} wpcom - The request handler
+ * @param {object} wpcom - The request handler
  * @returns {Undocumented} - An instance of Undocumented
  */
 function Undocumented( wpcom ) {
@@ -61,9 +59,8 @@ Undocumented.prototype.mailingList = function( category ) {
  * Retrieve Jetpack modules data for a site with id siteid.
  * Uses the REST API of the Jetpack site.
  *
- * @param {int}      [siteId]
+ * @param {number}      [siteId]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
 	return this.wpcom.req.get(
@@ -77,10 +74,9 @@ Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
  * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
  * Uses the REST API of the Jetpack site.
  *
- * @param {int} [siteId]
+ * @param {number} [siteId]
  * @param {string} [moduleSlug]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn ) {
 	return this.wpcom.req.post(
@@ -97,10 +93,9 @@ Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn 
  * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
  * Uses the REST API of the Jetpack site.
  *
- * @param {int} [siteId]
+ * @param {number} [siteId]
  * @param {string} [moduleSlug]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, fn ) {
 	return this.wpcom.req.post(
@@ -116,9 +111,8 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
 /**
  * Fetches settings for the Monitor module.
  *
- * @param {int} [siteId] The site ID
+ * @param {number} [siteId] The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.fetchMonitorSettings = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id: query' );
@@ -143,9 +137,9 @@ Undocumented.prototype.updateMonitorSettings = function(
 /**
  * Disconnects a Jetpack site with id siteId from WP.com
  *
- * @param {int} [siteId] The site ID
+ * @param {number} [siteId] The site ID
  * @param {Function} fn The callback function
- * @api public
+ *
  */
 Undocumented.prototype.disconnectJetpack = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/mine/delete query' );
@@ -155,9 +149,8 @@ Undocumented.prototype.disconnectJetpack = function( siteId, fn ) {
 /**
  * Fetches plugin registration keys for WordPress.org sites with paid services
  *
- * @param {int} [siteId] The site ID
+ * @param {number} [siteId] The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.fetchJetpackKeys = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/keys query' );
@@ -167,9 +160,8 @@ Undocumented.prototype.fetchJetpackKeys = function( siteId, fn ) {
 /**
  * Test if a Jetpack Site is connected to .com
  *
- * @param {int} [siteId] The site ID
+ * @param {number} [siteId] The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
@@ -179,9 +171,8 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 /*
  * Retrieve current connection status of a Jetpack site.
  *
- * @param {int}      [siteId]
+ * @param {number}      [siteId]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 	return this.wpcom.req.get(
@@ -194,9 +185,8 @@ Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 /*
  * Retrieve current user's connection data for a Jetpack site.
  *
- * @param {int}      [siteId]
+ * @param {number}      [siteId]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.getJetpackUserConnectionData = function( siteId, fn ) {
 	return this.wpcom.req.get(
@@ -251,9 +241,8 @@ Undocumented.prototype.jetpackIsUserConnected = function( siteId ) {
 /**
  * Gets the current status of a full sync for a Jetpack site.
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getJetpackSyncStatus = function( siteId, fn ) {
 	debug( '/sites/:site_id:/sync/status query' );
@@ -264,9 +253,8 @@ Undocumented.prototype.getJetpackSyncStatus = function( siteId, fn ) {
 /**
  * Schedules a full sync for a Jetpack site.
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	debug( '/sites/:site_id:/sync query' );
@@ -351,11 +339,10 @@ function encode_backslash( value ) {
 /**
  * GET/POST site settings
  *
- * @param {int|string} [siteId] The site ID
+ * @param {number|string} [siteId] The site ID
  * @param {string} [method] The request method
  * @param {object} [data] The POST data
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, fn ) {
 	debug( '/sites/:site_id:/settings query' );
@@ -388,9 +375,8 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 /**
  * Get site keyrings
  *
- * @param {int|string} [siteId] The site ID
+ * @param {number|string} [siteId] The site ID
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {Promise} A promise that resolves when the request completes
  */
@@ -401,13 +387,12 @@ Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) 
 /**
  * Create a site keyring
  *
- * @param {int|string} [siteId] The site ID
- * @param {Object} [data] site keyring object to create with properties:
- * 	- keyring_id {int} the keyring id link the site to
+ * @param {number|string} [siteId] The site ID
+ * @param {object} [data] site keyring object to create with properties:
+ * 	- keyring_id {number} the keyring id link the site to
  * 	- external_user_id {string} Optional. The external user id to link the site to
  * 	- service {string} service name for this keyring id
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {Promise} A promise that resolves when the request completes
  */
@@ -418,11 +403,10 @@ Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, d
 /**
  * Update a site keyring
  *
- * @param {int|string} [siteId] The site ID
- * @param {int} [keyringId] The keyring id to update,
+ * @param {number|string} [siteId] The site ID
+ * @param {number} [keyringId] The keyring id to update,
  * @param {string} [externalUserId] The external user id to update on the site keyring
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {Promise} A promise that resolves when the request completes
  */
@@ -445,11 +429,10 @@ Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
 /**
  * Delete a site keyring
  *
- * @param {int|string} [siteId] The site ID
- * @param {int} keyringId The keyring id
+ * @param {number|string} [siteId] The site ID
+ * @param {number} keyringId The keyring id
  * @param {string|null} externalUserId Optional, the external user id
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {Promise} A promise that resolves when the request completes
  */
@@ -490,11 +473,10 @@ Undocumented.prototype._sendRequest = function( originalParams, fn ) {
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
- * @param {int} blogId - Optional blogId to determine if domain is used on another site.
+ * @param {number} blogId - Optional blogId to determine if domain is used on another site.
  * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.isDomainAvailable = function( domain, blogId, isCartPreCheck, fn ) {
 	return this.wpcom.req.get(
@@ -515,7 +497,6 @@ Undocumented.prototype.isDomainAvailable = function( domain, blogId, isCartPreCh
  * @param {string} authCode - The auth code for the given domain to check.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.checkAuthCode = function( domain, authCode, fn ) {
 	return this.wpcom.req.get(
@@ -531,7 +512,6 @@ Undocumented.prototype.checkAuthCode = function( domain, authCode, fn ) {
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 	return this.wpcom.req.get(
@@ -545,12 +525,11 @@ Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 /**
  * Starts an inbound domain transfer that is in the pending_start state.
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {string} domain The domain name
  * @param {string} authCode The auth code for the transfer
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.startInboundTransfer = function( siteId, domain, authCode, fn ) {
 	let query = {};
@@ -567,10 +546,10 @@ Undocumented.prototype.startInboundTransfer = function( siteId, domain, authCode
 
 /**
  * Initiates a resend of the inbound transfer verification email.
+ *
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
 	return this.wpcom.req.get(
@@ -586,7 +565,6 @@ Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
  *
  * @param {object} query Optional query parameters
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.getAvailableTlds = function( query = {} ) {
 	return this.wpcom.req.get( '/domains/suggestions/tlds', query );
@@ -595,11 +573,10 @@ Undocumented.prototype.getAvailableTlds = function( query = {} ) {
 /**
  * Determine whether a domain name can be used for Site Redirect
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {string} domain The domain name to check
- * @param {function} fn The callback function
+ * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.canRedirect = function( siteId, domain, fn ) {
 	domain = encodeURIComponent( domain.toLowerCase() );
@@ -610,9 +587,8 @@ Undocumented.prototype.canRedirect = function( siteId, domain, fn ) {
 /**
  * Retrieves the target of the site redirect.
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getSiteRedirect = function( siteId, fn ) {
 	debug( '/sites/:site_id/domains/redirect query' );
@@ -623,10 +599,9 @@ Undocumented.prototype.getSiteRedirect = function( siteId, fn ) {
 /**
  * Points the site redirect to the specified location.
  *
- * @param {int|string} siteId The site ID
+ * @param {number|string} siteId The site ID
  * @param {string} location The location to redirect the site to
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.setSiteRedirect = function( siteId, location, fn ) {
 	debug( '/sites/:site_id/domains/redirect' );
@@ -642,7 +617,6 @@ Undocumented.prototype.setSiteRedirect = function( siteId, location, fn ) {
  * Retrieves the domain contact information of the user.
  *
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getDomainContactInformation = function( fn ) {
 	debug( '/me/domain-contact-information query' );
@@ -693,10 +667,9 @@ function mapKeysRecursively( object, fn ) {
 /**
  * Validates the specified domain contact information against a list of domain names.
  *
- * @param {Object} contactInformation - user's contact information
+ * @param {object} contactInformation - user's contact information
  * @param {string[]} domainNames - list of domain names
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.validateDomainContactInformation = function(
 	contactInformation,
@@ -730,10 +703,9 @@ Undocumented.prototype.validateDomainContactInformation = function(
 /**
  * Validates the specified Google Apps contact information
  *
- * @param {Object} contactInformation - user's contact information
+ * @param {object} contactInformation - user's contact information
  * @param {Function} callback The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.validateGoogleAppsContactInformation = function(
 	contactInformation,
@@ -762,7 +734,6 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function(
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getProducts = function( fn ) {
 	debug( '/products query' );
@@ -780,7 +751,6 @@ Undocumented.prototype.getProducts = function( fn ) {
  *
  * @param {Function} siteDomain The site slug
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 	debug( '/sites/:site_domain:/plans query' );
@@ -805,7 +775,6 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
  *
  * @param {string} cartKey The cart's key.
  * @param {Function} fn The callback function.
- * @api public
  */
 Undocumented.prototype.getCart = function( cartKey, fn ) {
 	debug( 'GET: /me/shopping-cart/:cart-key' );
@@ -825,7 +794,6 @@ Undocumented.prototype.getCart = function( cartKey, fn ) {
  * @param {string} cartKey The cart's key.
  * @param {object} data The POST data.
  * @param {Function} fn The callback function.
- * @api public
  */
 Undocumented.prototype.setCart = function( cartKey, data, fn ) {
 	debug( 'POST: /me/shopping-cart/:cart-key', data );
@@ -844,7 +812,6 @@ Undocumented.prototype.setCart = function( cartKey, data, fn ) {
  * Get a list of the user's stored cards
  *
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getStoredCards = function( fn ) {
 	debug( '/me/stored-cards query' );
@@ -855,8 +822,7 @@ Undocumented.prototype.getStoredCards = function( fn ) {
  * Return a list of third-party services that WordPress.com can integrate with
  *
  * @param {Function} fn The callback function
- * @return {Promise} A Promise to resolve when complete
- * @api public
+ * @returns {Promise} A Promise to resolve when complete
  */
 Undocumented.prototype.metaKeyring = function( fn ) {
 	debug( '/meta/external-services query' );
@@ -872,10 +838,9 @@ Undocumented.prototype.metaKeyring = function( fn ) {
 /**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
- * @param {int|string} siteId The site ID or domain
+ * @param {number|string} siteId The site ID or domain
  * @param {Function} fn The callback function
- * @return {Promise} A Promise to resolve when complete
- * @api public
+ * @returns {Promise} A Promise to resolve when complete
  */
 
 Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
@@ -893,7 +858,6 @@ Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
  * Return a list of happiness engineers gravatar urls
  *
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getHappinessEngineers = function( fn ) {
 	debug( 'meta/happiness-engineers/ query' );
@@ -905,10 +869,9 @@ Undocumented.prototype.getHappinessEngineers = function( fn ) {
  * Return a list of sharing buttons for the specified site, with optional
  * query parameters
  *
- * @param {int|string} siteId The site ID or domain
+ * @param {number|string} siteId The site ID or domain
  * @param {object} query Optional query parameters
  * @param {Function} fn Method to invoke when request is complete
- * @api public
  */
 Undocumented.prototype.sharingButtons = function( siteId, query, fn ) {
 	if ( 'undefined' === typeof fn && 'function' === typeof query ) {
@@ -923,10 +886,9 @@ Undocumented.prototype.sharingButtons = function( siteId, query, fn ) {
 /**
  * Saves the set of sharing buttons for the specified site
  *
- * @param {int|string} siteId The site ID or domain
+ * @param {number|string} siteId The site ID or domain
  * @param {Array} buttons An array of sharing button objects
  * @param {Function} fn Method to invoke when request is complete
- * @api public
  */
 Undocumented.prototype.saveSharingButtons = function( siteId, buttons, fn ) {
 	debug( '/sites/:site_id:/sharing-buttons query' );
@@ -943,9 +905,9 @@ Undocumented.prototype.saveSharingButtons = function( siteId, buttons, fn ) {
 /**
  * Return a list of user's connected services
  *
+ * @param {*} forceExternalUsersRefetch ???
  * @param {Function} fn The callback function
- * @api public
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetch, fn ) {
 	debug( '/me/keyring-connections query' );
@@ -966,7 +928,7 @@ Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetc
 /**
  * Deletes a single keyring connection for the current user
  *
- * @param {int} keyringConnectionId The keyring connection ID to remove
+ * @param {number} keyringConnectionId The keyring connection ID to remove
  * @param {Function} fn Method to invoke when request is complete
  */
 Undocumented.prototype.deletekeyringConnection = function( keyringConnectionId, fn ) {
@@ -983,10 +945,9 @@ Undocumented.prototype.deletekeyringConnection = function( keyringConnectionId, 
 /**
  * Return a list of user's connected publicize services for the given site
  *
- * @param {Number|String} siteId The site ID or domain
+ * @param {number|string} siteId The site ID or domain
  * @param {Function}      fn     The callback function
- * @api public
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.siteConnections = function( siteId, fn ) {
 	debug( '/sites/:site_id:/publicize-connections query' );
@@ -1002,10 +963,10 @@ Undocumented.prototype.siteConnections = function( siteId, fn ) {
 /**
  * Deletes a single site connection
  *
- * @param {Number|String} siteId       The site ID or domain
- * @param {Number}        connectionId The connection ID to remove
+ * @param {number|string} siteId       The site ID or domain
+ * @param {number}        connectionId The connection ID to remove
  * @param {Function}      fn           Method to invoke when request is complete
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.deleteSiteConnection = function( siteId, connectionId, fn ) {
 	debug( '/sites/:site_id:/publicize-connections/:connection_id:/delete query' );
@@ -1021,7 +982,7 @@ Undocumented.prototype.deleteSiteConnection = function( siteId, connectionId, fn
 /**
  * Delete a site
  *
- * @param  {int|string} siteId The site ID or domain
+ * @param  {number|string} siteId The site ID or domain
  * @param  {Function} fn Function to invoke when request is complete
  */
 Undocumented.prototype.deleteSite = function( siteId, fn ) {
@@ -1033,13 +994,13 @@ Undocumented.prototype.deleteSite = function( siteId, fn ) {
  * Creates a single connection using the specified Keyring connection ID and an
  *  optional `options` object, which can include a `shared` property
  *
- * @param {Number}        keyringConnectionId The Keyring connection ID to use
- * @param {Number|String} siteId              The site ID or domain
- * @param {String}        externalUserId      User ID if not connecting to primary account
- * @param {Object}        options             Optional options
- * @param {Boolean}       options.shared      Whether this connection is available to other users.
+ * @param {number}        keyringConnectionId The Keyring connection ID to use
+ * @param {number|string} siteId              The site ID or domain
+ * @param {string}        externalUserId      User ID if not connecting to primary account
+ * @param {object}        options             Optional options
+ * @param {boolean}       options.shared      Whether this connection is available to other users.
  * @param {Function}      fn                  Method to invoke when request is complete
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.createConnection = function(
 	keyringConnectionId,
@@ -1074,12 +1035,13 @@ Undocumented.prototype.createConnection = function(
 /**
  * Share an arbitrary post using publicize connection
  *
- * @param {int}       siteId            The site ID
- * @param {int}       postId            The post ID
- * @param {String}    message           Message for social media
- * @param {Array(int)}skipped           CKeyring connection ids to skip publicizing
+ * @param {number}       siteId            The site ID
+ * @param {number}       postId            The post ID
+ * @param {string}    message           Message for social media
+ * @param {Array(int)} skippedConnections           Keyring connection ids to skip publicizing
+ * @param {Function}      fn           Function to invoke when request is complete
  *
- * @returns {Promise}
+ * @returns {Promise} A promise representing the request
  */
 Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
 	const body = { skipped_connections: [] };
@@ -1099,11 +1061,11 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 /**
  * Updates a single publicize connection
  *
- * @param {Number|String} siteId       An optional site ID or domain
- * @param {Number}        connectionId The connection ID to update
- * @param {Object}        data         The update request body
+ * @param {number|string} siteId       An optional site ID or domain
+ * @param {number}        connectionId The connection ID to update
+ * @param {object}        data         The update request body
  * @param {Function}      fn           Function to invoke when request is complete
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.updateConnection = function( siteId, connectionId, data, fn ) {
 	let path;
@@ -1132,7 +1094,6 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  *
  * The post data format is: {
  *		payment_method: {string} The payment gateway,
@@ -1163,9 +1124,8 @@ Undocumented.prototype.updateCreditCard = function( params, fn ) {
 /**
  * GET paygate configuration
  *
- * @param {Object} query - query parameters
+ * @param {object} query - query parameters
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 	debug( '/me/paygate-configuration query' );
@@ -1176,9 +1136,8 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 /**
  * GET stripe configuration
  *
- * @param {Object} query - query parameters
+ * @param {object} query - query parameters
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.stripeConfiguration = function( query, fn ) {
 	debug( '/me/stripe-configuration query' );
@@ -1189,9 +1148,8 @@ Undocumented.prototype.stripeConfiguration = function( query, fn ) {
 /**
  * GET ebanx js configuration
  *
- * @param {Object} query - query parameters
+ * @param {object} query - query parameters
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {Promise} promise
  */
@@ -1206,7 +1164,6 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
  *
  * @param {object} [data] The GET data
  * @param {Function} fn The callback function
- * @api public
  *
  * @returns {string} Url
  *
@@ -1227,10 +1184,9 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
 /**
  * Update primary domain for blog
  *
- * @param {int} siteId The site ID
+ * @param {number} siteId The site ID
  * @param {string} domain The domain to set as primary
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
 	debug( '/sites/:site_id/domains/primary' );
@@ -1361,8 +1317,7 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
  * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
  * @param {string} variation - The variation the user is assigned to
  * @param {Function} callback - Function to invoke when request is complete
- * @api public
- * @returns {Object} wpcomRequest
+ * @returns {object} wpcomRequest
  */
 Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
 	const body = {
@@ -1407,7 +1362,7 @@ Undocumented.prototype.usersNew = function( query, fn ) {
  * @param {object} query - an object with the following values: service, access_token, id_token (optional), signup_flow_name
  * @param {Function} fn - callback
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
 Undocumented.prototype.usersSocialNew = function( query, fn ) {
 	query.locale = getLocaleSlug();
@@ -1497,6 +1452,7 @@ Undocumented.prototype.usersEmailVerification = function( query, fn ) {
 
 /**
  * Request a "Magic Login" email be sent to a user so they can use it to log in
+ *
  * @param  {object} data - object containing an email address
  * @param  {Function} fn - Function to invoke when request is complete
  * @returns {Promise} promise
@@ -1547,7 +1503,7 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 /**
  * Launches a private site
  *
- * @param {string} - ID or slug of the site to be launched
+ * @param {string} siteIdOrSlug - ID or slug of the site to be launched
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.launchSite = function( siteIdOrSlug, fn ) {
@@ -1601,8 +1557,8 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
  * Whether the theme is installed from .com or .org is controlled by the themeId string
  * if it has a -wpcom suffix, .com is used.
  *
- * @param {String}    siteId   The site ID
- * @param {String}    themeId  WordPress.com theme with -wpcom suffix, WordPress.org otherwise
+ * @param {string}    siteId   The site ID
+ * @param {string}    themeId  WordPress.com theme with -wpcom suffix, WordPress.org otherwise
  * @param {Function}  fn       The callback function
  * @returns {Promise} promise
  */
@@ -1621,8 +1577,8 @@ Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
 /**
  * Delete a theme from Jetpack site.
  *
- * @param {Number}    siteId   The site ID
- * @param {String}    themeId  The theme ID
+ * @param {number}    siteId   The site ID
+ * @param {string}    themeId  The theme ID
  * @param {Function}  fn       The callback function
  * @returns {Promise} promise
  */
@@ -1813,9 +1769,9 @@ Undocumented.prototype.transferToUser = function( siteId, domainName, targetUser
 /**
  * Transfers a domain to the specified site
  *
- * @param {int} [siteId] The site ID
+ * @param {number} siteId The site ID
  * @param {string} [domainName] Name of the domain
- * @param {int} [targetSiteId] The target site ID
+ * @param {number} [targetSiteId] The target site ID
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  */
@@ -1841,7 +1797,7 @@ Undocumented.prototype.fetchWhois = function( domainName, fn ) {
  * Updates WHOIS data for given domain.
  *
  * @param {string} [domainName]
- * @param {Object} [whois]
+ * @param {object} [whois]
  * @param {Function} [fn]
  */
 Undocumented.prototype.updateWhois = function( domainName, whois, transferLock, fn ) {
@@ -1862,7 +1818,7 @@ Undocumented.prototype.updateWhois = function( domainName, whois, transferLock, 
 /**
  * Add domain mapping for VIP clients.
  *
- * @param {int} [siteId] The site ID
+ * @param {number} siteId The site ID
  * @param {string} [domainName] Name of the domain mapping
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
@@ -1886,7 +1842,6 @@ Undocumented.prototype.addVipDomainMapping = function( siteId, domainName, fn ) 
  * @param {string} [siteSlug]
  * @param {string} [data]
  * @param {Function} fn
- * @api public
  */
 Undocumented.prototype.changeTheme = function( siteSlug, data, fn ) {
 	debug( '/site/:site_id/themes/mine' );
@@ -1983,7 +1938,6 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
  *
  * @param {string} searchQuery User input for help search
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	debug( 'help-search/ searchQuery' );
@@ -2065,7 +2019,6 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
  *
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
 	return this.wpcom.req.get(
@@ -2101,9 +2054,8 @@ Undocumented.prototype.getKayakoConfiguration = function( fn ) {
 /**
  * Get the olark configuration for the current user
  *
- * @param {Object} client - current user
+ * @param {object} client - current user
  * @param {Function} fn The callback function
- * @api public
  */
 Undocumented.prototype.getOlarkConfiguration = function( client, fn ) {
 	return this.wpcom.req.get(
@@ -2129,10 +2081,9 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, lo
 /**
  * Get the available export configuration settings for a site
  *
- * @param {int}       siteId            The site ID
+ * @param {number}       siteId            The site ID
  * @param {Function}  fn                The callback function
  * @returns {Promise} A promise that resolves when the request completes
- * @api public
  */
 Undocumented.prototype.getExportSettings = function( siteId, fn ) {
 	return this.wpcom.req.get(
@@ -2147,8 +2098,8 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
 /*
  * Start an export
  *
- * @param {int}       siteId            The site ID
- * @param {Object}    advancedSettings  Advanced export configuration
+ * @param {number}       siteId            The site ID
+ * @param {object}    advancedSettings  Advanced export configuration
  * @param {Function}  fn                The callback function
  * @returns {Promise}                   A promise that resolves when the export started
  */
@@ -2166,8 +2117,8 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
 /**
  * Check the status of an export
  *
- * @param {Number|String} siteId - The site ID
- * @param {Object} exportId - Export ID (for future use)
+ * @param {number|string} siteId - The site ID
+ * @param {object} exportId - Export ID (for future use)
  * @param {Function} fn - The callback function
  * @returns {Promise}  promise
  */
@@ -2185,7 +2136,7 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param  {string}  inputUrl The url of the site to check. Must use http or https protocol.
- * @return {Promise} promise  Request promise
+ * @returns {Promise} promise  Request promise
  */
 Undocumented.prototype.getSiteConnectInfo = function( inputUrl ) {
 	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
@@ -2197,7 +2148,7 @@ Undocumented.prototype.getSiteConnectInfo = function( inputUrl ) {
  * in the `opml` field.
  *
  * @param  {Function} fn      The callback function
- * @return {Promise}  promise
+ * @returns {Promise}  promise
  */
 Undocumented.prototype.exportReaderFeed = function( fn ) {
 	debug( '/read/following/mine/export' );
@@ -2233,9 +2184,9 @@ Undocumented.prototype.importReaderFeed = function( file, fn ) {
 /**
  * Creates a Push Notification registration for the device
  *
- * @param {String}     registration   The registration to be stored
- * @param {String}     deviceFamily   The device family
- * @param {String}     deviceName     The device name
+ * @param {string}     registration   The registration to be stored
+ * @param {string}     deviceFamily   The device family
+ * @param {string}     deviceName     The device name
  * @param {Function}   fn             The callback function
  * @returns {XMLHttpRequest}          The XHR instance
  */
@@ -2256,7 +2207,7 @@ Undocumented.prototype.registerDevice = function( registration, deviceFamily, de
 /**
  * Removes a Push Notification registration for the device
  *
- * @param {int}        deviceId       The device ID for the registration to be removed
+ * @param {number}        deviceId       The device ID for the registration to be removed
  * @param {Function}   fn             The callback function
  * @returns {XMLHttpRequest}          The XHR instance
  */
@@ -2268,8 +2219,8 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
 /**
  * Requests streamlined approval to WordAds program
  *
- * @param {int}       siteId            The site ID
- * @returns {Promise}
+ * @param {number}       siteId            The site ID
+ * @returns {Promise} A promise representing the request
  */
 Undocumented.prototype.wordAdsApprove = function( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
@@ -2280,7 +2231,7 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *
- * @param {int} siteId -- the ID of the site
+ * @param {number} siteId -- the ID of the site
  * @param {string} [plugin] -- .org plugin slug
  * @param {File} [theme] -- theme zip to upload
  * @param {Function} [onProgress] -- called with upload progress status
@@ -2314,7 +2265,7 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
  * Returns a list of media from an external media service. Similar to Site.mediaList in use, but
  * with a more restricted set of query params.
  *
- * @param {Object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
+ * @param {object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
  * @param {Function} fn - The callback function
  *
  * @returns {Promise} promise for handling result
@@ -2328,8 +2279,8 @@ Undocumented.prototype.externalMediaList = function( query, fn ) {
 /**
  * Fetch the status of an Automated Transfer.
  *
- * @param {int} siteId -- the ID of the site being transferred
- * @param {int} transferId -- ID of the specific transfer
+ * @param {number} siteId -- the ID of the site being transferred
+ * @param {number} transferId -- ID of the specific transfer
  *
  * @returns {Promise} promise for handling result
  */
@@ -2342,10 +2293,11 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 
 /**
  * Submit a response to the NPS Survey.
+ *
  * @param {string}     surveyName     The name of the NPS survey being submitted
- * @param {int}        score          The value for the survey response
+ * @param {number}        score          The value for the survey response
  * @param {Function}   fn             The callback function
- * @returns {Promise}
+ * @returns {Promise} A promise representing the request.
  */
 Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
 	return this.wpcom.req.post(
@@ -2358,9 +2310,10 @@ Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
 
 /**
  * Dismiss the NPS Survey.
+ *
  * @param {string}     surveyName     The name of the NPS survey being submitted
  * @param {Function}   fn             The callback function
- * @returns {Promise}
+ * @returns {Promise} A promise representing the request.
  */
 Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
 	return this.wpcom.req.post(
@@ -2373,8 +2326,9 @@ Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
 
 /**
  * Check the eligibility status for the NPS Survey.
+ *
  * @param {Function}   fn             The callback function
- * @returns {Promise}
+ * @returns {Promise} A promise representing the request.
  */
 Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
@@ -2382,10 +2336,11 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 
 /**
  * Send the optional feedback for the NPS Survey.
+ *
  * @param {string}   surveyName   The name of the NPS survey being submitted
  * @param {string}   feedback     The content
  * @param {Function} fn           The callback function
- * @returns {Promise} A promise
+ * @returns {Promise} A promise representing the request.
  */
 Undocumented.prototype.sendNPSSurveyFeedback = function( surveyName, feedback, fn ) {
 	return this.wpcom.req.post(
@@ -2398,9 +2353,10 @@ Undocumented.prototype.sendNPSSurveyFeedback = function( surveyName, feedback, f
 
 /**
  * Get OAuth2 Client data for a given client ID
+ *
  * @param {string}     clientId       The client ID
  * @param {Function}   fn             The callback function
- * @returns {Promise}  A promise
+ * @returns {Promise} A promise representing the request.
  */
 Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 	return this.wpcom.req.get(
@@ -2412,6 +2368,7 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 
 /**
  * Fetch the curated list of featured plugins.
+ *
  * @param {Function}   fn             The callback function
  * @returns {Promise}  A promise
  */
@@ -2421,7 +2378,8 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 
 /**
  * Fetch a nonce to use in the `updateSiteAddress` call
- * @param {int}   siteId  The ID of the site for which to get a nonce.
+ *
+ * @param {number}   siteId  The ID of the site for which to get a nonce.
  * @returns {Promise}     A promise
  */
 Undocumented.prototype.getRequestSiteAddressChangeNonce = function( siteId ) {
@@ -2434,7 +2392,7 @@ Undocumented.prototype.getRequestSiteAddressChangeNonce = function( siteId ) {
 /**
  * Request server-side validation (including an availibility check) of the given site address.
  *
- * @param {int} [siteId] The siteId for which to validate
+ * @param {number} siteId The siteId for which to validate
  * @param {object} [siteAddress]	The site address to validate
  * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
  * @param {string} [type] blog/dotblog - blog for wordpress.com, dotblog for .blog domains
@@ -2454,13 +2412,13 @@ Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddres
 /**
  * Request a new .wordpress.com or .*.blog address for a site with the option to discard the current.
  *
- * @param {int} [siteId] The siteId for which to change the address
- * @param {object} [blogname]	The desired new site address
+ * @param {number} siteId The siteId for which to change the address
+ * @param {object} [blogname] The desired new site address
  * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
  * @param {string} [oldDomain] The full domain name of the original site (ex. mysite.news.blog, mysite.wordpress.com, etc.)
  * @param {string} [type] blog/dotblog - blog for wordpress.com->wordpress.com, dotblog if the old and/or new domain is .blog
- * @param {bool} [discard]			Should the old site address name be discarded?
- * @param {string} [nonce]		A nonce provided by the API
+ * @param {boolean} [discard] Should the old site address name be discarded?
+ * @param {string} [nonce] A nonce provided by the API
  * @returns {Promise}  A promise
  */
 Undocumented.prototype.updateSiteAddress = function(
