@@ -100,7 +100,7 @@ describe( 'Checkout', () => {
 
 		beforeEach( () => {
 			const registry = createRegistry();
-			MyCheckout = () => (
+			MyCheckout = ( { ContactSlot, UpSell, OrderSummary, ReviewContent } ) => (
 				<CheckoutProvider
 					locale="en-us"
 					items={ items }
@@ -112,7 +112,12 @@ describe( 'Checkout', () => {
 					paymentMethods={ [ mockMethod ] }
 					registry={ registry }
 				>
-					<Checkout />
+					<Checkout
+						ContactSlot={ ContactSlot }
+						UpSell={ UpSell }
+						OrderSummary={ OrderSummary }
+						ReviewContent={ ReviewContent }
+					/>
 				</CheckoutProvider>
 			);
 		} );
@@ -162,6 +167,32 @@ describe( 'Checkout', () => {
 		it( 'renders the payment method SubmitButtonComponent', () => {
 			const { getByText } = render( <MyCheckout /> );
 			expect( getByText( 'Pay Please' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the ReviewContent if provided', () => {
+			const { getByText } = render(
+				<MyCheckout ReviewContent={ () => <div>Some Review Text</div> } />
+			);
+			expect( getByText( 'Some Review Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the OrderSummary if provided', () => {
+			const { getByText } = render(
+				<MyCheckout OrderSummary={ () => <div>Some OrderSummary Text</div> } />
+			);
+			expect( getByText( 'Some OrderSummary Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the UpSell if provided', () => {
+			const { getByText } = render( <MyCheckout UpSell={ () => <div>Some Upsell Text</div> } /> );
+			expect( getByText( 'Some Upsell Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the ContactSlot if provided', () => {
+			const { getByText } = render(
+				<MyCheckout ContactSlot={ () => <div>Some Contact Form</div> } />
+			);
+			expect( getByText( 'Some Contact Form' ) ).toBeTruthy();
 		} );
 	} );
 
