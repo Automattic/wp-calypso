@@ -317,9 +317,9 @@ class Home extends Component {
 											</Button>
 										) : (
 											<Button
+												href={ `/post/${ siteSlug }` }
 												onClick={ () => {
 													trackAction( 'my_site', 'write_post' );
-													page( `/post/${ siteSlug }` );
 												} }
 											>
 												{ translate( 'Write Blog Post' ) }
