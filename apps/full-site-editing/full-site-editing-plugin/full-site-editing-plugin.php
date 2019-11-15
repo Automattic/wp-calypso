@@ -179,7 +179,8 @@ function is_theme_supported() {
 function did_insert_template_parts() {
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 
-	$inserter = new WP_Template_Inserter( get_theme_slug() );
+	$theme_slug = normalize_theme_slug( get_theme_slug() );
+	$inserter   = new WP_Template_Inserter( $theme_slug );
 	return $inserter->is_template_data_inserted();
 }
 
