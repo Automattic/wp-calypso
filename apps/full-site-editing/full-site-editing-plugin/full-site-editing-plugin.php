@@ -158,8 +158,7 @@ function is_site_eligible_for_full_site_editing() {
  */
 function is_theme_supported() {
 	// Use un-normalized theme slug because get_theme requires the full string.
-	$theme_slug = get_theme_slug();
-	$theme      = wp_get_theme( $theme_slug );
+	$theme = wp_get_theme( get_theme_slug() );
 	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
 }
 
