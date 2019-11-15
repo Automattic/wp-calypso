@@ -64,7 +64,7 @@ function dangerously_load_full_site_editing_files() {
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	return is_site_eligible_for_full_site_editing() && is_theme_supported();
+	return is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
 }
 
 /**
@@ -160,6 +160,27 @@ function is_theme_supported() {
 	// Use un-normalized theme slug because get_theme requires the full string.
 	$theme = wp_get_theme( get_theme_slug() );
 	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
+}
+
+/**
+ * Determines if the template parts have been inserted for the current theme.
+ *
+ * We want to gate on this check in is_full_site_editing_active so that we don't
+ * load FSE for sites which did not get template parts for some reason or another.
+ *
+ * For example, if a user activates theme A on their site and gets FSE, but then
+ * activates theme B which does not have FSE, they will not get FSE flows. If we
+ * retroactively add FSE support to theme B, the user should not get FSE flows
+ * because their site would be modified. Instead, FSE flows would become active
+ * when they specifically take action to re-activate the theme.
+ *
+ * @return bool True if the template parts have been inserted. False otherwise.
+ */
+function did_insert_template_parts() {
+	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
+
+	$inserter = new WP_Template_Inserter( get_theme_slug() );
+	return $inserter->is_template_data_inserted();
 }
 
 /**
