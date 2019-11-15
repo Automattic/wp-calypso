@@ -50,14 +50,16 @@ function QuerySingle( { siteId } ) {
 }
 
 const requestPrimary = siteId => ( dispatch, getState ) => {
-	if ( siteId && ! hasAllSitesList( getState() ) && ! isRequestingSite( getState(), siteId ) ) {
+	const state = getState();
+	if ( siteId && ! hasAllSitesList( state ) && ! isRequestingSite( state, siteId ) ) {
 		dispatch( requestSite( siteId ) );
 	}
 };
 
 const requestRecent = siteIds => ( dispatch, getState ) => {
-	if ( siteIds.length && ! hasAllSitesList( getState() ) ) {
-		const isRequestingSomeSite = siteIds.some( siteId => isRequestingSite( getState(), siteId ) );
+	const state = getState();
+	if ( siteIds.length && ! hasAllSitesList( state ) ) {
+		const isRequestingSomeSite = siteIds.some( siteId => isRequestingSite( state, siteId ) );
 
 		if ( ! isRequestingSomeSite ) {
 			siteIds.forEach( siteId => dispatch( requestSite( siteId ) ) );
