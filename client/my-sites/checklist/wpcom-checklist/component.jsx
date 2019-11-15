@@ -284,7 +284,7 @@ class WpcomChecklistComponent extends PureComponent {
 					taskList={ taskList }
 					phase2={ phase2 }
 					onExpandTask={ this.trackExpandTask }
-					showChecklistHeader={ true }
+					showChecklistHeader={ false }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
@@ -401,7 +401,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Give your site a name' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -426,7 +427,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload a site icon' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -451,7 +453,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a tagline' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -476,7 +479,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload your profile picture' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -501,7 +505,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Personalize your Contact page' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -524,7 +529,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Publish your first blog post' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -549,7 +555,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Register a custom domain' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -574,7 +581,8 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Get the WordPress app' ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -609,7 +617,7 @@ class WpcomChecklistComponent extends PureComponent {
 				}
 				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				showSkip={ true }
+				showSkip={ false }
 				title={ translate( 'Launch your site' ) }
 			/>
 		);
@@ -638,8 +646,9 @@ class WpcomChecklistComponent extends PureComponent {
 					'Subscribe to G Suite to get a dedicated inbox with a personalized email address using your domain and collaborate in real-time on documents, spreadsheets, and slides.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				showSkip={ true }
+				showSkip={ false }
 				{ ...clickProps }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -673,7 +682,8 @@ class WpcomChecklistComponent extends PureComponent {
 					page( emailManagement( siteSlug ) );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -732,6 +742,7 @@ class WpcomChecklistComponent extends PureComponent {
 							sub_step_name: 'gsuite_tos_accepted',
 						} );
 					} }
+					buttonText={ translate( 'Start' ) }
 				/>
 
 				<PendingGSuiteTosNoticeDialog
@@ -781,7 +792,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -821,7 +833,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -849,7 +862,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -886,7 +900,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -921,7 +936,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -965,7 +981,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
@@ -1000,7 +1017,8 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
-				showSkip={ true }
+				showSkip={ false }
+				buttonText={ translate( 'Start' ) }
 			/>
 		);
 	};
