@@ -58,13 +58,17 @@ const requestPrimary = siteId => ( dispatch, getState ) => {
 
 const requestRecent = siteIds => ( dispatch, getState ) => {
 	const state = getState();
-	if ( siteIds.length && ! hasAllSitesList( state ) ) {
-		const isRequestingSomeSite = siteIds.some( siteId => isRequestingSite( state, siteId ) );
-
-		if ( ! isRequestingSomeSite ) {
-			siteIds.forEach( siteId => dispatch( requestSite( siteId ) ) );
-		}
+	if ( ! siteIds.length || hasAllSitesList( state ) ) {
+		return;
 	}
+
+	const isRequestingSomeSite = siteIds.some( siteId => isRequestingSite( state, siteId ) );
+
+	if ( ! isRequestingSomeSite ) {
+		return;
+	}
+
+	siteIds.forEach( siteId => dispatch( requestSite( siteId ) ) );
 };
 
 function QueryPrimaryAndRecent() {
