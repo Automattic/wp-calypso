@@ -69,27 +69,38 @@ function is_full_site_editing_active() {
 }
 
 /**
- * Returns normalized theme slug for the current theme.
+ * Returns the slug for the current theme.
  *
- * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
- * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
- * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
+ * This even works for the WordPress.com context where the current theme is not
+ * correct. The filter correctly switches to the correct blog context if that is
+ * the case.
  *
- * @return string Normalized theme slug.
+ * @return string Theme slug.
  */
 function get_theme_slug() {
 	/**
 	 * Used to get the correct theme in certain contexts.
 	 *
-	 * For example, in the wpcom API context, the theme slug is a8c/public-api, so we need
-	 * to grab the correct one with the filter.
+	 * For example, in the wpcom API context, the theme slug is a8c/public-api,
+	 * so we need to grab the correct one with the filter.
 	 *
 	 * @since 0.7
 	 *
 	 * @param string current theme slug is the default if nothing overrides it.
 	 */
-	$theme_slug = apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
+	return apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
+}
 
+/**
+ * Returns a normalized slug for the current theme.
+ *
+ * In some cases, the theme is located in a subfolder like `pub/maywood`. Use
+ * this function to get the slug without the prefix.
+ *
+ * @param string $theme_slug The raw theme_slug to normalize.
+ * @return string Theme slug.
+ */
+function normalize_theme_slug( $theme_slug ) {
 	// Normalize the theme slug.
 	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
 		$theme_slug = substr( $theme_slug, 4 );
@@ -125,9 +136,8 @@ function normalize_theme_slug( $theme_slug ) {
 }
 
 /**
- * Whether or not the site is eligible for FSE.
- * This is essentially a feature gate to disable FSE
- * on some sites which could theoretically otherwise use it.
+ * Whether or not the site is eligible for FSE. This is essentially a feature
+ * gate to disable FSE on some sites which could theoretically otherwise use it.
  *
  * @return bool True if current site is eligible for FSE, false otherwise.
  */
@@ -148,22 +158,10 @@ function is_site_eligible_for_full_site_editing() {
  * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
-	// This only works when the action `after_setup_theme` finishes.
-	// Shortcut to avoid loading the full theme if not neccessary.
-	if ( current_theme_supports( 'full-site-editing' ) ) {
-		return true;
-	}
-	/**
-	 * Used to check if the theme supports FSE.
-	 *
-	 * Needed to get theme support in the WordPress.com API context since the
-	 * theme in that context can be different. Additionally, in the API, theme
-	 * PHP files are not loaded, so we have to use a different method to check
-	 * theme support.
-	 *
-	 * @param bool true if the theme supports FSE locally.
-	 */
-	return apply_filters( 'a8c_fse_check_theme_support', false );
+	// Use un-normalized theme slug because get_theme requires the full string.
+	$theme_slug = get_theme_slug();
+	$theme      = wp_get_theme( $theme_slug );
+	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
 }
 
 /**
