@@ -31,7 +31,7 @@ export default function CreditCardFields( { disabled } ) {
 						<AmexLogo />
 					</PaymentLogo>
 				);
-				updateCreditCard( 'brand', 'brand' );
+				updateCreditCard( 'brand', 'Amex' );
 				break;
 			case 4:
 				setPaymentIcon(
@@ -39,6 +39,7 @@ export default function CreditCardFields( { disabled } ) {
 						<VisaLogo />
 					</PaymentLogo>
 				);
+				updateCreditCard( 'brand', 'Visa' );
 				break;
 			case 5:
 				setPaymentIcon(
@@ -46,6 +47,7 @@ export default function CreditCardFields( { disabled } ) {
 						<MastercardLogo />
 					</PaymentLogo>
 				);
+				updateCreditCard( 'brand', 'Mastercard' );
 				break;
 			default:
 				setPaymentIcon( <LockIcon /> );
