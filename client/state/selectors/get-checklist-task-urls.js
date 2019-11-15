@@ -48,7 +48,6 @@ export default createSelector(
 			getSiteOption( state, siteId, 'page_on_front' )
 		);
 		const updateHomepageUrl =
-			// TODO: Add a query param that instructs the editor to "promote" the new page to the front page on publish
 			abtest( 'checklistUpdateHomepage' ) === 'templateSelector'
 				? addQueryArgs( getEditorUrl( state, siteId, null, 'page' ), { 'new-homepage': 1 } )
 				: frontPageUrl;
