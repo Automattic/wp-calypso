@@ -248,21 +248,20 @@ class Page extends Component {
 		];
 	}
 
-	setPostsPage = () =>
+	setPostsPage = pageId => () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
 			show_on_front: 'page',
-			page_for_posts: this.props.page.ID,
+			page_for_posts: pageId,
 		} );
 
 	getPostsPageItem() {
-		const { canManageOptions, isFullSiteEditing, translate } = this.props;
+		const { canManageOptions, isFullSiteEditing, page, translate } = this.props;
 
 		if (
 			! canManageOptions ||
 			isFullSiteEditing ||
 			! this.props.hasStaticFrontPage ||
-			'publish' !== this.props.page.status ||
-			this.props.isPostsPage ||
+			'publish' !== page.status ||
 			this.props.isFrontPage
 		) {
 			return null;
@@ -270,10 +269,18 @@ class Page extends Component {
 
 		return [
 			<MenuSeparator key="separator" />,
-			<PopoverMenuItem key="item" onClick={ this.setPostsPage }>
-				<Gridicon icon="posts" size={ 18 } />
-				{ translate( 'Set as Posts Page' ) }
-			</PopoverMenuItem>,
+			this.props.isPostsPage && (
+				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
+					<Gridicon icon="undo" size={ 18 } />
+					{ translate( 'Set as Normal Page' ) }
+				</PopoverMenuItem>
+			),
+			! this.props.isPostsPage && (
+				<PopoverMenuItem key="item" onClick={ this.setPostsPage( page.ID ) }>
+					<Gridicon icon="posts" size={ 18 } />
+					{ translate( 'Set as Posts Page' ) }
+				</PopoverMenuItem>
+			),
 		];
 	}
 
