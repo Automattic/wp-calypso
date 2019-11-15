@@ -23,7 +23,7 @@ class MagicSearchWelcome extends React.Component {
 	state = { suggestionPosition: -1 };
 
 	onMouseDown = event => {
-		this.props.suggestionsCallback( event.target.textContent + ':' );
+		this.props.suggestionsCallback( event.target.getAttribute( 'data-key' ) + ':' );
 		event.stopPropagation();
 		event.preventDefault();
 	};
@@ -106,6 +106,7 @@ class MagicSearchWelcome extends React.Component {
 				className={ themesTokenTypeClass }
 				onMouseDownCapture={ this.onMouseDown }
 				key={ taxonomy }
+				data-key={ taxonomy }
 			>
 				<Gridicon
 					icon={ taxonomyToGridicon( taxonomy ) }
