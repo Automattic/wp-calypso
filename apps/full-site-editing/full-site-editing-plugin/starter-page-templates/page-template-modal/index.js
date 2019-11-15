@@ -226,7 +226,7 @@ class PageTemplateModal extends Component {
 								</fieldset>
 								<fieldset className="page-template-modal__list">
 									<legend className="page-template-modal__form-title">
-										{ __( 'Homepage Layouts', 'full-site-editing' ) }
+										{ __( 'Homepage layouts', 'full-site-editing' ) }
 									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Layout', 'full-site-editing' ) }
