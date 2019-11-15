@@ -46,7 +46,6 @@ import {
 } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import Search from 'components/search';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
@@ -96,7 +95,6 @@ import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
 
 /**
  * Style dependencies
@@ -389,11 +387,9 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	getPlaceholderText() {
-		const { showTestCopy, siteType, translate } = this.props;
+		const { showTestCopy, translate } = this.props;
 
-		return showTestCopy
-			? getSiteTypePropertyValue( 'slug', siteType, 'domainStepPlaceholder' )
-			: translate( 'Enter a name or keyword' );
+		return showTestCopy ? 'Type the domain you want here' : translate( 'Enter a name or keyword' );
 	}
 
 	render() {
@@ -1347,7 +1343,6 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
-			siteType: getSiteType( state ),
 		};
 	},
 	{
