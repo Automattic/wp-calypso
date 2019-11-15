@@ -137,6 +137,11 @@
 			display: none;
 		}
 	}
+
+	.badge--blue {
+		background: var( --color-primary );
+		color: var( --color-text-inverted );
+	}
 }
 
 @include breakpoint( '<660px' ) {
