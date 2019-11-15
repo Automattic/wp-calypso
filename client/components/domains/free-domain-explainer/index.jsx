@@ -6,8 +6,6 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Button from 'components/button';
-
 /**
  * Style dependencies
  */
@@ -32,10 +30,9 @@ class FreeDomainExplainer extends React.Component {
 					<p className="free-domain-explainer__subtitle">
 						If you’re not ready to choose, go with any paid plan and claim your free custom domain
 						when you’re ready.
-						{ /* <a className="free-domain-explainer__subtitle-link">
-							Review our plan options to get started.{' '}
-						</a> */ }
-						<Button borderless>Review our plan options to get started. </Button>
+						<div className="button is-borderless free-domain-explainer__subtitle-link">
+							Review our plan options to get started.{ ' ' }
+						</div>
 					</p>
 				</header>
 			</div>

@@ -6,6 +6,10 @@
     margin: 0;
     margin-bottom: 0.7em;
 
+    @include breakpoint( '<480px' ) {
+        padding: 0 24px;
+    }
+
     .card & {
         color: var( --color-text );
     }
@@ -14,10 +18,13 @@
 .free-domain-explainer__subtitle {
     color: var( --color-text-inverted );
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     margin: 0;
     margin-bottom: 0.3em;
-
+    
+    @include breakpoint( '<480px' ) {
+        padding: 0 24px;
+    }
     .card & {
         color: var( --color-text );
     }
@@ -29,25 +36,9 @@
         text-decoration: underline;
         color: var( --color-text-inverted );
         margin-left: 0.3em;
+        display: inline;
 
         .card & {
-            color: var( --color-text );
-        }
-    }
-
-    & .free-domain-explainer__subtitle-link {
-        color: var( --color-text-inverted );
-        display: inline;
-        vertical-align: baseline;
-        text-decoration: underline;
-        margin-left: 0.3em;
-        cursor: pointer;
-    }
-
-    .card & {
-        color: var( --color-text );
-
-        .free-domain-explainer__subtitle-link {
             color: var( --color-link );
         }
     }
