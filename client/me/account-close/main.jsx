@@ -297,7 +297,6 @@ export default connect( state => {
 		isLoading,
 		hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
 		purchasedPremiumThemes,
-		isJetpackSite: isJetpackSite( state, site.ID ),
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
 		siteToBeDeleted: getSites( state ).filter(
