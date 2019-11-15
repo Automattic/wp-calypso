@@ -384,6 +384,12 @@ class RegisterDomainStep extends React.Component {
 		return suggestions;
 	}
 
+	getPlaceholderText() {
+		const { showTestCopy, translate } = this.props;
+
+		return showTestCopy ? 'Type the domain you want here' : translate( 'Enter a name or keyword' );
+	}
+
 	render() {
 		const queryObject = getQueryObject( this.props );
 		const {
@@ -425,7 +431,7 @@ class RegisterDomainStep extends React.Component {
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
-							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
+							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
 						/>
 						{ this.renderSearchFilters() }
