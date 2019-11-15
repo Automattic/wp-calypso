@@ -22,11 +22,6 @@ export const getDomainSuggestions = (
 ) => {
 	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
-	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
-	if ( ! normalizedQuery.query ) {
-		return [];
-	}
-
 	// We need to go through the `select` store to get the resolver action
 	return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
 };
