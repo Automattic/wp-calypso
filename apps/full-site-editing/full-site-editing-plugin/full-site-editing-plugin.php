@@ -70,9 +70,9 @@ function is_full_site_editing_active() {
 /**
  * Returns the slug for the current theme.
  *
- * This even works for the WordPress.com context where the current theme is not
- * correct. The filter correctly switches to the correct blog context if that is
- * the case.
+ * This even works for the WordPress.com API context where the current theme is
+ * not correct. The filter correctly switches to the correct blog context if
+ * that is the case.
  *
  * @return string Theme slug.
  */
