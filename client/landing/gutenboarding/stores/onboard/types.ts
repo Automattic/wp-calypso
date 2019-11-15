@@ -25,27 +25,10 @@ export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
 	return value !== EMPTY_FORM_VALUE;
 }
 
-export type Vertical = ApiVertical | UserVertical;
-
 /**
- * An ad-hoc vertical object based on user input
- *
- * A vertical like this is included with vertical suggestions if the query term does not match any known vertical.
+ * Representation of well-known verticals
  */
-export interface UserVertical {
-	is_user_input_vertical: true;
-
-	vertical_id: '';
-	vertical_slug: string;
-	vertical_name: string;
-	preview: string;
-	preview_styles_url: string;
-}
-
-/**
- * Known vertical
- */
-export interface ApiVertical {
+export interface Vertical {
 	is_user_input_vertical: false;
 
 	vertical_id: string;
