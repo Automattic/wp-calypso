@@ -415,9 +415,13 @@ class RegisterDomainStep extends React.Component {
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
 			? getAvailabilityNotice( lastDomainSearched, availabilityError, availabilityErrorData )
 			: {};
+
+		const searchBoxClassName = classNames( 'register-domain-step__search', {
+			'register-domain-step__search-domain-step-test': this.props.showTestCopy,
+		} );
 		return (
 			<div className="register-domain-step">
-				<StickyPanel className="register-domain-step__search">
+				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
 						<Search
 							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }

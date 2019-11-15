@@ -2,6 +2,11 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
+	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
+		padding-top: 18px;
+		padding-bottom: 48px;
+	}
+
 	.register-domain-step__search-card {
 		padding: 0;
 		display: flex;
