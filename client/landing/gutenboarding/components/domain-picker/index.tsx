@@ -20,21 +20,21 @@ const DomainPicker: FunctionComponent = () => {
 	// Without user search, we can provide recommendations based on title + vertical
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 
+	let search = domainSearch.trim();
+	if ( ! search && isFilledFormValue( siteTitle ) ) {
+		search = siteTitle;
+	}
+
 	const suggestions = useSelect(
 		select => {
-			if ( domainSearch.trim() ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
+			if ( search ) {
+				return select( DOMAIN_STORE ).getDomainSuggestions( search, {
 					include_wordpressdotcom: true,
-					...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
-				} );
-			} else if ( isFilledFormValue( siteTitle ) ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions( siteTitle, {
-					include_wordpressdotcom: false,
 					...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
 				} );
 			}
 		},
-		[ domainSearch, siteTitle, siteVertical ]
+		[ search, siteVertical ]
 	);
 
 	const label = NO__( 'Search for a domain' );
