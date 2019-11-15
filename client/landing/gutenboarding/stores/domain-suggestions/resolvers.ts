@@ -15,6 +15,11 @@ export function* __internalGetDomainSuggestions(
 ) {
 	const url = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions';
 
+	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
+	if ( ! queryObject.query ) {
+		return receiveDomainSuggestions( queryObject, [] );
+	}
+
 	// `credentials` and `mode` args are needed since we're accessing the WP.com REST API
 	// (rather than the WP Core REST API)
 	const suggestions = yield apiFetch( {

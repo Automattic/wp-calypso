@@ -14,6 +14,7 @@ import { stringifyDomainQueryObject } from './utils';
 export const getState = ( state: State ) => state;
 
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
+
 export const getDomainSuggestions = (
 	state: State,
 	search: string,
@@ -68,6 +69,6 @@ function normalizeDomainSuggestionQuery(
 		...queryOptions,
 
 		// Add the search query
-		query: search.toLocaleLowerCase(),
+		query: search.trim().toLocaleLowerCase(),
 	};
 }
