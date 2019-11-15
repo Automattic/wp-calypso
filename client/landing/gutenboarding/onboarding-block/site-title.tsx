@@ -31,7 +31,7 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 	// Focus the input when we change to active
 	const inputRef = createRef< HTMLInputElement >();
 	useEffect( () => {
-		if ( isActive ) {
+		if ( isActive && document.activeElement !== inputRef.current ) {
 			inputRef.current?.focus();
 		}
 	}, [ isActive ] );
