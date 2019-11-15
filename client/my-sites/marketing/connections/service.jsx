@@ -266,7 +266,7 @@ export class SharingService extends Component {
 	refresh = ( connections = this.props.brokenConnections ) => {
 		this.getConnections( connections ).map( connection => {
 			const keyringConnection = find( this.props.keyringConnections, {
-				ID: connection.keyring_connection_ID,
+				ID: connection.keyring_connection_ID || connection.ID,
 			} );
 
 			if ( keyringConnection ) {
