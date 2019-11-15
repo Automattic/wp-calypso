@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 /**
@@ -21,11 +21,33 @@ const requestAll = () => ( dispatch, getState ) => {
 	}
 };
 
+function QueryAll() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( requestAll() );
+	}, [ dispatch ] );
+
+	return null;
+}
+
 const requestSingle = siteId => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSite( getState(), siteId ) ) {
 		dispatch( requestSite( siteId ) );
 	}
 };
+
+function QuerySingle( { siteId } ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( requestSingle( siteId ) );
+		}
+	}, [ dispatch, siteId ] );
+
+	return null;
+}
 
 const requestPrimary = siteId => ( dispatch, getState ) => {
 	if ( siteId && ! hasAllSitesList( getState() ) && ! isRequestingSite( getState(), siteId ) ) {
@@ -43,36 +65,18 @@ const requestRecent = siteIds => ( dispatch, getState ) => {
 	}
 };
 
-export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
+function QueryPrimaryAndRecent() {
 	const primarySiteId = useSelector( getPrimarySiteId );
 	// This should return the same reference every time, so we can compare by reference.
 	const recentSiteIds = useSelector( getRecentSites );
-
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( allSites ) {
-			dispatch( requestAll() );
-		}
-		// We only want this to run on mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ dispatch ] );
-
-	useEffect( () => {
-		if ( siteId ) {
-			dispatch( requestSingle( siteId ) );
-		}
-	}, [ dispatch, siteId ] );
-
-	useEffect( () => {
-		if ( primaryAndRecent ) {
-			dispatch( requestPrimary( primarySiteId ) );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch( requestPrimary( primarySiteId ) );
 	}, [ dispatch, primarySiteId ] );
 
 	useEffect( () => {
-		if ( primaryAndRecent && recentSiteIds && recentSiteIds.length ) {
+		if ( recentSiteIds && recentSiteIds.length ) {
 			dispatch(
 				requestRecent( recentSiteIds.filter( recentSiteId => recentSiteId !== primarySiteId ) )
 			);
@@ -81,6 +85,16 @@ export default function QuerySites( { siteId, allSites = false, primaryAndRecent
 	}, [ dispatch, recentSiteIds ] );
 
 	return null;
+}
+
+export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
+	return (
+		<Fragment>
+			{ allSites && <QueryAll /> }
+			{ siteId && <QuerySingle siteId={ siteId } /> }
+			{ primaryAndRecent && <QueryPrimaryAndRecent /> }
+		</Fragment>
+	);
 }
 
 QuerySites.propTypes = {
