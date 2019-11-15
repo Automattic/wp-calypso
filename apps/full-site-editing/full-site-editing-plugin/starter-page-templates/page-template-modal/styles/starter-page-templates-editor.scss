@@ -125,13 +125,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 1200px ) {
 		max-width: 100%;
 	}
-
-	@media screen and ( min-width: 1441px ) {
-		max-width: 1440px;
-		display: flex;
-		align-content: flex-start;
-		justify-content: space-between;
-	}
 }
 
 .page-template-modal__list {
@@ -306,10 +299,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 783px ) {
 		max-width: 30%;
 	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: 30%;
-	}
 }
 
 .page-template-modal__form-title {
@@ -352,12 +341,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	@media screen and ( min-width: 783px ) {
 		width: calc( 70% - 50px );
-	}
-
-	@media screen and ( min-width: 1441px ) {
-		position: unset;
-		width: calc( 70% - 84px );
-		height: calc( 100vh - 130px );
 	}
 
 	@media screen and ( min-width: 660px ) {
