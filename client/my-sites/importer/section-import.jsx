@@ -14,6 +14,7 @@ import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
@@ -299,8 +300,13 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import' ) } />
+				<DocumentHead title={ translate( 'Import Your Content' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="importer__page-heading"
+					headerText={ translate( 'Import Your Content' ) }
+					align="left"
+				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>

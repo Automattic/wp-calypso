@@ -48,6 +48,7 @@ import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 
 /**
  * Style dependencies
@@ -169,6 +170,11 @@ export class List extends React.Component {
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="domain-management__page-heading"
+					headerText={ this.props.translate( 'Domains' ) }
+					align="left"
+				/>
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
 

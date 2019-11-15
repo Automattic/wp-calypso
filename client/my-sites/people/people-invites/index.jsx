@@ -14,6 +14,7 @@ import { map } from 'lodash';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
@@ -71,7 +72,7 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
@@ -92,6 +93,11 @@ class PeopleInvites extends React.PureComponent {
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
+				<FormattedHeader
+					className="people-invites__page-heading"
+					headerText={ translate( 'People' ) }
+					align="left"
+				/>
 				<PeopleSectionNav
 					filter="invites"
 					site={ site }

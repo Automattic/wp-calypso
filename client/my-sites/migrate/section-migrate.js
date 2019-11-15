@@ -214,6 +214,7 @@ class SectionMigrate extends Component {
 					className="migrate__section-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
+					align="left"
 				/>
 				{ migrationElement }
 			</Main>

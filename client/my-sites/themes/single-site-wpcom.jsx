@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
@@ -69,6 +70,11 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 	return (
 		<Main className="themes">
 			<SidebarNavigation />
+			<FormattedHeader
+				className="themes__page-heading"
+				headerText={ translate( 'Themes' ) }
+				align="left"
+			/>
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }
 

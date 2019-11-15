@@ -19,6 +19,7 @@ import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -86,6 +87,7 @@ export class CommentsManagement extends Component {
 				{ showJetpackUpdateScreen && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
+				<SidebarNavigation />
 				{ showJetpackUpdateScreen && (
 					<EmptyContent
 						title={ preventWidows( translate( "Looking to manage this site's comments?" ) ) }
@@ -97,7 +99,13 @@ export class CommentsManagement extends Component {
 						actionCallback={ this.updateJetpackHandler }
 					/>
 				) }
-				{ ! showJetpackUpdateScreen && <SidebarNavigation /> }
+				{ ! showJetpackUpdateScreen && ! showPermissionError && (
+					<FormattedHeader
+						className="comments__page-heading"
+						headerText={ translate( 'Comments' ) }
+						align="left"
+					/>
+				) }
 				{ ! showJetpackUpdateScreen && showPermissionError && (
 					<EmptyContent
 						title={ preventWidows(

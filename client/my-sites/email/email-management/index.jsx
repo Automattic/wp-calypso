@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import {
 	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
@@ -67,6 +68,11 @@ class EmailManagement extends React.Component {
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="email-management__page-heading"
+					headerText={ this.props.translate( 'Email' ) }
+					align="left"
+				/>
 				{ this.headerOrPlansNavigation() }
 				{ this.content() }
 			</Main>
