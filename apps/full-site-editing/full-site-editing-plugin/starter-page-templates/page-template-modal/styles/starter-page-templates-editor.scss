@@ -31,13 +31,23 @@ $wp-org-sidebar-full: 160px;
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
-body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
-	@media screen and ( min-width: 783px ) {
-		left: $wp-org-sidebar-reduced;
-	}
+body:not( .is-fullscreen-mode ) {
+	.page-template-modal-screen-overlay {
+		@media screen and ( min-width: 783px ) {
+			left: $wp-org-sidebar-reduced;
+		}
 
-	@media screen and ( min-width: 961px ) {
-		left: $wp-org-sidebar-full;
+		@media screen and ( min-width: 961px ) {
+			left: $wp-org-sidebar-full;
+		}
+	}
+	@media screen and ( min-width: 783px ) {
+		&.folded .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-reduced;
+		}
+		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-full;
+		}
 	}
 }
 
@@ -407,17 +417,23 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-body:not( .is-fullscreen-mode ) .template-selector-preview {
+body:not( .is-fullscreen-mode ) {
+	.template-selector-preview {
+		@media screen and ( min-width: 783px ) {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+
+		@media screen and ( min-width: 961px ) {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
+	}
 	@media screen and ( min-width: 783px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-	}
-
-	@media screen and ( min-width: 961px ) {
-		width: calc( 70% - #{$wp-org-sidebar-full } );
-	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		&.folded .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+		&:not( .folded ):not( .auto-fold ) .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
 	}
 }
 
