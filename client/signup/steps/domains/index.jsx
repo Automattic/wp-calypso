@@ -213,7 +213,7 @@ class DomainsStep extends React.Component {
 
 	handleSkip = ( skipToPaidPlanOptions = false ) => {
 		const domainItem = undefined;
-		// console.log( 'hideFreePlan: ' + hideFreePlan );
+
 		this.props.submitSignupStep(
 			{ stepName: this.props.stepName, domainItem },
 			{ domainItem, skipToPaidPlanOptions }
