@@ -11,16 +11,29 @@
     }
 }
 
-.card .free-domain-explainer__title {
-    color: var( --color-text );
-}
-
 .free-domain-explainer__subtitle {
     color: var( --color-text-inverted );
     font-weight: 400;
     font-size: 14px;
     margin: 0;
-    margin-bottom: 0.7em;
+    margin-bottom: 0.3em;
+
+    .card & {
+        color: var( --color-text );
+    }
+    
+    & .button,
+    & .button:hover,
+    & .button:focus {
+        vertical-align: baseline;
+        text-decoration: underline;
+        color: var( --color-text-inverted );
+        margin-left: 0.3em;
+
+        .card & {
+            color: var( --color-text );
+        }
+    }
 
     & .free-domain-explainer__subtitle-link {
         color: var( --color-text-inverted );
