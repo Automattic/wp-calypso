@@ -49,7 +49,8 @@ class ListItem extends React.PureComponent {
 
 	content() {
 		return (
-			<button className="domain-management-list-item__link" onClick={ this.handleClick }>
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+			<div className="domain-management-list-item__link" onClick={ this.handleClick }>
 				{ this.icon() }
 				<div className="domain-management-list-item__title">{ this.props.domain.name }</div>
 				<span className="domain-management-list-item__meta">
@@ -61,7 +62,7 @@ class ListItem extends React.PureComponent {
 					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
-			</button>
+			</div>
 		);
 	}
 
