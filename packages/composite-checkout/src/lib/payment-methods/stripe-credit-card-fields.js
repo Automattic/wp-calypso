@@ -27,7 +27,15 @@ import {
 	renderDisplayValueMarkdown,
 } from '../../public-api';
 import useLocalize, { sprintf } from '../localize';
-import { VisaLogo, AmexLogo, MastercardLogo } from '../../components/payment-logos';
+import {
+	VisaLogo,
+	AmexLogo,
+	MastercardLogo,
+	JcbLogo,
+	DinersLogo,
+	UnionpayLogo,
+	DiscoverLogo,
+} from '../../components/payment-logos';
 import { CreditCardLabel } from './credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
@@ -411,15 +419,43 @@ function CardFieldIcon( { brand, isSummary } ) {
 			break;
 		case 'mastercard':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<SmallBrandLogo isSummary={ isSummary }>
 					<MastercardLogo />
-				</BrandLogo>
+				</SmallBrandLogo>
 			);
 			break;
 		case 'amex':
 			cardFieldIcon = (
 				<BrandLogo isSummary={ isSummary }>
 					<AmexLogo />
+				</BrandLogo>
+			);
+			break;
+		case 'jcb':
+			cardFieldIcon = (
+				<SmallBrandLogo isSummary={ isSummary }>
+					<JcbLogo />
+				</SmallBrandLogo>
+			);
+			break;
+		case 'diners':
+			cardFieldIcon = (
+				<SmallBrandLogo isSummary={ isSummary }>
+					<DinersLogo />
+				</SmallBrandLogo>
+			);
+			break;
+		case 'unionpay':
+			cardFieldIcon = (
+				<SmallBrandLogo isSummary={ isSummary }>
+					<UnionpayLogo />
+				</SmallBrandLogo>
+			);
+			break;
+		case 'discover':
+			cardFieldIcon = (
+				<BrandLogo isSummary={ isSummary }>
+					<DiscoverLogo />
 				</BrandLogo>
 			);
 			break;
@@ -436,6 +472,10 @@ const BrandLogo = styled.span`
 	top: ${props => ( props.isSummary ? '0' : '15px' )};
 	right: ${props => ( props.isSummary ? '0' : '10px' )};
 	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
+`;
+
+const SmallBrandLogo = styled( BrandLogo )`
+	transform: translate( ${props => ( props.isSummary ? '-10px, 4px' : '10px, 0' )} );
 `;
 
 function LoadingFields() {
