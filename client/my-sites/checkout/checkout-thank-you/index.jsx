@@ -78,6 +78,7 @@ import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
@@ -285,27 +286,38 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	primaryCta = () => {
+		const { selectedSite, upgradeIntent } = this.props;
+
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
-			const site = this.props.selectedSite.slug;
+			const siteSlug = selectedSite?.slug;
 
-			if ( ! site && getFailedPurchases( this.props ).length > 0 ) {
+			if ( ! siteSlug && getFailedPurchases( this.props ).length > 0 ) {
 				return page( '/start/domain-first' );
 			}
 
+			switch ( upgradeIntent ) {
+				case 'plugins':
+				case 'themes':
+					return page( `/${ upgradeIntent }/${ siteSlug }` );
+			}
+
 			if ( purchases.some( isPlan ) ) {
-				return page( `/plans/my-plan/${ site }` );
-			} else if (
+				return page( `/plans/my-plan/${ siteSlug }` );
+			}
+
+			if (
 				purchases.some( isDomainProduct ) ||
 				purchases.some( isDomainTransfer ) ||
 				purchases.some( isDomainRedemption ) ||
 				purchases.some( isSiteRedirect )
 			) {
-				return page( domainManagementList( this.props.selectedSite.slug ) );
-			} else if ( purchases.some( isGoogleApps ) ) {
-				const purchase = find( purchases, isGoogleApps );
+				return page( domainManagementList( siteSlug ) );
+			}
 
-				return page( emailManagement( this.props.selectedSite.slug, purchase.meta ) );
+			if ( purchases.some( isGoogleApps ) ) {
+				const purchase = find( purchases, isGoogleApps );
+				return page( emailManagement( siteSlug, purchase.meta ) );
 			}
 		}
 
@@ -617,6 +629,7 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
+			upgradeIntent: getCheckoutUpgradeIntent( state ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
