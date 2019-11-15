@@ -174,6 +174,14 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			siteType ||
 			getSiteVertical( state );
 		newSiteParams.find_available_url = true;
+	} else if ( get( getSignupDependencyStore( state ), 'skipToPaidPlanOptions' ) ) {
+		newSiteParams.blog_name =
+			get( user.get(), 'username' ) ||
+			get( getSignupDependencyStore( state ), 'username' ) ||
+			siteTitle ||
+			siteType ||
+			getSiteVertical( state );
+		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
