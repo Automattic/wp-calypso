@@ -43,7 +43,7 @@ function getLocation( path ) {
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-	if ( path === '/' ) {
+	if ( path === '/read' ) {
 		return 'following';
 	}
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {

@@ -291,7 +291,7 @@ const sections = [
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
-		paths: [ '/read' ],
+		paths: [ '/', '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -463,12 +463,6 @@ const sections = [
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
-	},
-	{
-		name: 'root',
-		paths: [ '/' ],
-		module: 'root',
-		secondary: false,
 	},
 ];
 
