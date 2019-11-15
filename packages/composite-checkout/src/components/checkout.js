@@ -250,8 +250,8 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, ContactSlot 
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );
 	}
-	const { BillingContactComponent } = paymentMethod;
 
+	// TODO: make ContactSlot required
 	return (
 		<CheckoutStep
 			className="checkout__billing-details-step"
@@ -265,8 +265,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, ContactSlot 
 			editButtonAriaLabel={ localize( 'Edit the billing details' ) }
 			stepContent={
 				<React.Fragment>
-					<BillingContactComponent isActive={ isActive } isComplete={ isComplete } />
-					{ ContactSlot && <ContactSlot /> }
+					<ContactSlot isActive={ isActive } isComplete={ isComplete } />
 					<CheckoutNextStepButton
 						value={ localize( 'Continue' ) }
 						onClick={ () => setStepNumber( 3 ) }
@@ -274,9 +273,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, ContactSlot 
 					/>
 				</React.Fragment>
 			}
-			stepSummary={
-				<BillingContactComponent summary isActive={ isActive } isComplete={ isComplete } />
-			}
+			stepSummary={ <ContactSlot summary isActive={ isActive } isComplete={ isComplete } /> }
 		/>
 	);
 }

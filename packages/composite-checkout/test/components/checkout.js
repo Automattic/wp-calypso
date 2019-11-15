@@ -74,11 +74,6 @@ describe( 'Checkout', () => {
 			expect( summaryComponent ).toHaveTextContent( 'Name Summary' );
 		} );
 
-		it( 'renders the payment method BillingContactComponent', () => {
-			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( 'Mock Details' )[ 0 ] ).toBeInTheDocument();
-		} );
-
 		it( 'renders the review step', () => {
 			const { getAllByText } = render( <MyCheckout /> );
 			expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
@@ -149,11 +144,6 @@ describe( 'Checkout', () => {
 			const [ activeComponent, summaryComponent ] = getAllByTestId( 'mock-payment-form' );
 			expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
 			expect( summaryComponent ).toHaveTextContent( 'Name Summary' );
-		} );
-
-		it( 'renders the payment method BillingContactComponent', () => {
-			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( 'Mock Details' )[ 0 ] ).toBeInTheDocument();
 		} );
 
 		it( 'renders the review step', () => {
@@ -358,8 +348,12 @@ function createMockMethod() {
 	return {
 		id: 'mock',
 		LabelComponent: () => <span data-testid="mock-label">Mock Label</span>,
-		PaymentMethodComponent: () => <span data-testid="mock-payment-details">Mock Details</span>,
-		BillingContactComponent: MockPaymentForm,
+		PaymentMethodComponent: () => (
+			<span data-testid="mock-payment-details">
+				Mock Details
+				<MockPaymentForm />
+			</span>
+		),
 		SubmitButtonComponent: () => <button>Pay Please</button>,
 		SummaryComponent: () => 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
