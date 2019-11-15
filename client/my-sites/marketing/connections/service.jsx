@@ -303,9 +303,7 @@ export class SharingService extends Component {
 	 * @param {Object} connection Connection to update.
 	 * @return {Function} Action thunk
 	 */
-	fetchConnection = connection => {
-		return this.props.fetchConnection( this.props.siteId, connection.ID );
-	};
+	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
 
 	/**
 	 * Checks whether any connection can be removed.
