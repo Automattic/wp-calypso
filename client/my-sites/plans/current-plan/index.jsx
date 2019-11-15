@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get, invoke } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -23,7 +24,9 @@ import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
-import CurrentPlanHeader from './header';
+import Button from 'components/button';
+import Card from 'components/card';
+import MyPlanCard from 'components/my-plan-card';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
@@ -41,7 +44,9 @@ import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import { getByPurchaseId } from 'state/purchases/selectors';
-import { isPartnerPurchase } from 'lib/purchases';
+import { isPartnerPurchase, shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
+import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
+import { managePurchase } from 'me/purchases/paths';
 
 /**
  * Style dependencies
@@ -76,34 +81,135 @@ class CurrentPlan extends Component {
 		return ! selectedSite || isRequestingPlans;
 	}
 
-	getHeaderWording( planConstObj ) {
-		const { translate } = this.props;
+	isFreePlan() {
+		const { currentPlan } = this.props;
 
-		const title = translate( 'My Plan: %(planName)s', {
-			args: {
-				planName: planConstObj.getTitle(),
-			},
+		return ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
+	}
+
+	getPlanObject() {
+		const { selectedSite } = this.props;
+		const currentPlanSlug = get( selectedSite, 'plan.product_slug' );
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return getPlan( currentPlanSlug );
+	}
+
+	getActionButton() {
+		const { currentPlan, purchase, selectedSite, translate } = this.props;
+		const siteSlug = selectedSite ? selectedSite.slug : null;
+
+		if ( ! currentPlan || ! siteSlug ) {
+			return null;
+		}
+
+		// For free plan show a button redirecting to the plans comparison.
+		if ( this.isFreePlan() ) {
+			return <Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>;
+		}
+
+		// Do not show the action button for partner plans.
+		const isPartnerPlan = purchase && isPartnerPurchase( purchase );
+		if ( isPartnerPlan ) {
+			return null;
+		}
+
+		// Show action button only to site owners.
+		if ( ! currentPlan.userIsOwner || ! currentPlan.id ) {
+			return null;
+		}
+
+		const hasAutoRenew = !! currentPlan.autoRenew;
+		let label = translate( 'Manage Plan' );
+		if (
+			! hasAutoRenew &&
+			! shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.expiryMoment )
+		) {
+			label = translate( 'Renew Now' );
+		}
+
+		return (
+			<Button href={ managePurchase( siteSlug, currentPlan.id ) } compact>
+				{ label }
+			</Button>
+		);
+	}
+
+	getPlanExpiration() {
+		const { currentPlan, purchase, translate } = this.props;
+		const isPartnerPlan = purchase && isPartnerPurchase( purchase );
+
+		if ( this.isFreePlan() || isPartnerPlan ) {
+			return null;
+		}
+
+		const hasAutoRenew = !! currentPlan.autoRenew;
+		if ( hasAutoRenew && currentPlan.autoRenewDateMoment ) {
+			return translate( 'Set to auto-renew on %s.', {
+				args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
+			} );
+		}
+
+		return translate( 'Expires on %s.', {
+			args: invoke( currentPlan, 'expiryMoment.format', 'LL' ),
 		} );
+	}
 
-		const tagLine = planConstObj.getTagline
-			? planConstObj.getTagline()
-			: translate(
-					'Unlock the full potential of your site with all the features included in your plan.'
-			  );
+	getPlanTitle() {
+		const planObject = this.getPlanObject();
 
-		return {
-			title: title,
-			tagLine: tagLine,
-		};
+		if ( planObject.getTitle ) {
+			return planObject.getTitle();
+		}
+
+		return null;
+	}
+
+	getPlanTagLine() {
+		const { translate } = this.props;
+		const planObject = this.getPlanObject();
+
+		if ( planObject.getTagline ) {
+			return planObject.getTagline();
+		}
+
+		return translate(
+			'Unlock the full potential of your site with all the features included in your plan.'
+		);
+	}
+
+	renderPlan() {
+		const { isExpiring, selectedSite, translate } = this.props;
+		const currentPlanSlug = get( selectedSite, 'plan.product_slug' );
+
+		return (
+			<Fragment>
+				<Card compact>
+					<strong>{ translate( 'My Plan' ) }</strong>
+				</Card>
+				<MyPlanCard
+					action={ this.getActionButton() }
+					expiration={ this.getPlanExpiration() }
+					isExpiring={ isExpiring }
+					isPlaceholder={ this.isLoading() }
+					plan={ currentPlanSlug }
+					title={ this.getPlanTitle() }
+					tagLine={ this.getPlanTagLine() }
+				/>
+			</Fragment>
+		);
 	}
 
 	renderThankYou() {
-		const { isFreePlan, requestProduct } = this.props;
+		const { requestProduct } = this.props;
 
 		if ( requestProduct ) {
 			return <BackupProductThankYou />;
 		}
-		if ( isFreePlan ) {
+		if ( this.isFreePlan() ) {
 			return <FreePlanThankYou />;
 		}
 
@@ -112,12 +218,9 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
-			currentPlan,
 			domains,
 			hasDomainsLoaded,
-			isExpiring,
 			path,
-			purchase,
 			selectedSite,
 			selectedSiteId,
 			shouldShowDomainWarnings,
@@ -133,8 +236,6 @@ class CurrentPlan extends Component {
 			planFeaturesHeader = translate( '%(planName)s plan features', {
 				args: { planName: planConstObj.getTitle() },
 			} );
-
-		const { title, tagLine } = this.getHeaderWording( planConstObj );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -178,15 +279,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<CurrentPlanHeader
-					isPlaceholder={ isLoading }
-					title={ title }
-					tagLine={ tagLine }
-					currentPlan={ currentPlan }
-					isExpiring={ isExpiring }
-					isPartnerPlan={ purchase && isPartnerPurchase( purchase ) }
-					siteSlug={ selectedSite ? selectedSite.slug : null }
-				/>
+				{ this.renderPlan() }
 
 				{ showJetpackChecklist && (
 					<Fragment>
