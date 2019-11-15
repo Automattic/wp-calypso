@@ -266,6 +266,9 @@ export class SharingService extends Component {
 	refresh = ( connections = this.props.brokenConnections ) => {
 		this.getConnections( connections ).map( connection => {
 			const keyringConnection = find( this.props.keyringConnections, {
+				// Publicize connections store the keyring ID in keyring_connection_ID
+				// Since keyring connections don't have a keyring_connection_ID property,
+				// we need to check both the keyring_connection_ID and the ID
 				ID: connection.keyring_connection_ID || connection.ID,
 			} );
 
