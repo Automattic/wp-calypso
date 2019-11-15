@@ -104,7 +104,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 					...verticals.find( vertical => vertical.slug === slug ),
 					category: NO__( 'Popular' ),
 				} ) )
-				.filter( x => x.hasOwnProperty( 'label' ) )
+				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
 		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
 	const label = NO__( 'My site is about' );
