@@ -1,4 +1,4 @@
-@import 'assets/stylesheets/gutenberg-base-styles/style';
+@import 'assets/stylesheets/gutenberg-base-styles';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -36,7 +36,6 @@
 }
 .gutenboarding__header-site-heading {
 	font-weight: bold;
-
 }
 
 .gutenboarding__header-actions {

@@ -1,4 +1,4 @@
-@import 'assets/stylesheets/gutenberg-base-styles/style';
+@import 'assets/stylesheets/gutenberg-base-styles';
 
 .vertical-select {
 	.suggestions__category-heading {
@@ -22,7 +22,7 @@
 			font-weight: normal;
 			color: $blue-medium-900;
 		}
-		&:focus, 
+		&:focus,
 		&:active {
 			.suggestions__label.is-emphasized {
 				color: $blue-medium-focus;
