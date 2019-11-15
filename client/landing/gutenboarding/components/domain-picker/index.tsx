@@ -25,6 +25,7 @@ const DomainPicker: FunctionComponent = () => {
 			if ( domainSearch.trim() ) {
 				return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
 					include_wordpressdotcom: true,
+					...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
 				} );
 			} else if ( isFilledFormValue( siteTitle ) ) {
 				return select( DOMAIN_STORE ).getDomainSuggestions( siteTitle, {
@@ -50,7 +51,7 @@ const DomainPicker: FunctionComponent = () => {
 						value={ domainSearch }
 					/>
 				</PanelRow>
-				{ suggestions?.length /* @TODO: Add optional chain */ ? (
+				{ suggestions?.length ? (
 					<PanelRow>
 						<ul>
 							{ suggestions.map( ( { domain_name } ) => (
