@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual, startsWith } from 'lodash';
+import { find, get, includes, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
+import { isJetpackBackup } from 'lib/products-values';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -569,10 +570,7 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 const hasBackupProduct = purchases => {
-	return find(
-		purchases,
-		purchase => purchase.active && startsWith( purchase.productSlug, 'jetpack_backup_' )
-	);
+	return find( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
 };
 
 export default connect(
