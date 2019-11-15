@@ -21,19 +21,19 @@
 		}
 	}
 
-	.site-selector {
-		pointer-events: none;
+	.account-close__sites-list {
+		margin-top: 12px;
 
-		&__no-results {
-			padding-top: 0;
+		li {
+			margin-bottom: 8px;
 		}
 
-		.site-selector__sites {
-			border: 0;
-		}
-
-		.search {
-			display: none;
+		span {
+			display: block;
+			font-size: 10px;
+			margin-left: 3px;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 
@@ -54,4 +54,3 @@
 .account-close.is-loading .action-panel__footer .button {
 	border: 0;
 }
-
