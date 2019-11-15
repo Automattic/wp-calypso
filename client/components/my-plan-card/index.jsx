@@ -3,12 +3,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
 
@@ -17,18 +16,14 @@ import PlanIcon from 'components/plans/plan-icon';
  */
 import './style.scss';
 
-const MyPlanCard = ( {
-	buttonLabel,
-	buttonTarget,
-	expirationDate,
-	moment,
-	plan,
-	tagLine,
-	title,
-	translate,
-} ) => {
+const MyPlanCard = ( { action, isExpiring, isPlaceholder, expiration, plan, tagLine, title } ) => {
+	const cardClassNames = classNames( 'my-plan-card', {
+		'is-expiring': isExpiring,
+		'is-placeholder': isPlaceholder,
+	} );
+
 	return (
-		<Card className="my-plan-card" compact>
+		<Card className={ cardClassNames } compact>
 			<div className="my-plan-card__primary">
 				{ plan && (
 					<div className="my-plan-card__icon">
@@ -41,38 +36,21 @@ const MyPlanCard = ( {
 				</div>
 			</div>
 			<div className="my-plan-card__secondary">
-				{ expirationDate && (
-					<div className="my-plan-card__expiration-date">
-						{ translate( 'Expires on %(expirationDate)s', {
-							args: {
-								expirationDate: moment( expirationDate ).format( 'MMMM D, YYYY' ),
-							},
-						} ) }
-					</div>
-				) }
-				{ buttonTarget && buttonLabel && (
-					<div className="my-plan-card__action">
-						<Button href={ buttonTarget } compact>
-							{ buttonLabel }
-						</Button>
-					</div>
-				) }
+				{ expiration && <div className="my-plan-card__expiration">{ expiration }</div> }
+				{ action && <div className="my-plan-card__action">{ action }</div> }
 			</div>
 		</Card>
 	);
 };
 
 MyPlanCard.propTypes = {
-	buttonLabel: PropTypes.string,
-	buttonTarget: PropTypes.string,
-	expirationDate: PropTypes.string,
+	action: PropTypes.oneOfType( [ PropTypes.node, PropTypes.element ] ),
+	isExpiring: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
+	expiration: PropTypes.string,
 	plan: PropTypes.string,
 	tagLine: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
-
-	// From localize HoC
-	moment: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default localize( MyPlanCard );
+export default MyPlanCard;

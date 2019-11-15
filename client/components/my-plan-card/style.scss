@@ -38,7 +38,7 @@
 	height: 64px;
 	margin: 8px 20px 0 0;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -77,7 +77,7 @@
 	}
 }
 
-.my-plan-card__expiration-date {
+.my-plan-card__expiration {
 	padding-top: 8px;
 	white-space: nowrap;
 	color: var( --color-text-subtle );
@@ -85,8 +85,13 @@
 	@include breakpoint( '>960px' ) {
 		padding-top: 0;
 	}
+
+	.is-expiring & {
+		color: var( --color-error );
+	}
 }
 
 .my-plan-card__action {
 	padding-top: 8px;
+	white-space: nowrap;
 }
