@@ -491,7 +491,7 @@ export function generateSteps( {
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'hideFreePlan' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,

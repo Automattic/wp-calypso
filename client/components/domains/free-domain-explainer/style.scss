@@ -32,11 +32,12 @@
     & .button,
     & .button:hover,
     & .button:focus {
-        vertical-align: baseline;
-        text-decoration: underline;
         color: var( --color-text-inverted );
-        margin-left: 0.3em;
         display: inline;
+        font-size: 16px;
+        margin-left: 0.3em;
+        text-decoration: underline;
+        vertical-align: baseline;
 
         .card & {
             color: var( --color-link );

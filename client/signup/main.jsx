@@ -503,8 +503,10 @@ class Signup extends React.Component {
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		// console.log(get( currentStepProgress, 'hideFreePlan', false ));
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		// console.log( propsFromConfig );
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
@@ -512,7 +514,10 @@ class Signup extends React.Component {
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite;
+		const hideFreePlan =
+			planWithDomain ||
+			this.props.isDomainOnlySite ||
+			get( currentStepProgress, 'hideFreePlan', false );
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (

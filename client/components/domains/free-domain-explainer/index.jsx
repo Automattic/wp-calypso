@@ -7,11 +7,21 @@ import React from 'react';
 import classNames from 'classnames';
 
 /**
+ * Internal dependencies
+ */
+import Button from 'components/button';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
 class FreeDomainExplainer extends React.Component {
+	handleClick = () => {
+		const hideFreePlan = true;
+
+		this.props.onSkip( hideFreePlan );
+	};
 	render() {
 		const className = classNames( 'free-domain-explainer is-compact', {
 			card: this.props.isCard,
@@ -30,9 +40,14 @@ class FreeDomainExplainer extends React.Component {
 					<p className="free-domain-explainer__subtitle">
 						If you’re not ready to choose, go with any paid plan and claim your free custom domain
 						when you’re ready.
-						<div className="button is-borderless free-domain-explainer__subtitle-link">
+						<Button
+							borderless
+							className="free-domain-explainer__subtitle-link"
+							onClick={ this.handleClick }
+							href
+						>
 							Review our plan options to get started.{ ' ' }
-						</div>
+						</Button>
 					</p>
 				</header>
 			</div>

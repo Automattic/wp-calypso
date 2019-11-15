@@ -211,9 +211,13 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
-	handleSkip = () => {
+	handleSkip = ( hideFreePlan = false ) => {
 		const domainItem = undefined;
-		this.props.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
+		// console.log( 'hideFreePlan: ' + hideFreePlan );
+		this.props.submitSignupStep(
+			{ stepName: this.props.stepName, domainItem, hideFreePlan },
+			{ domainItem, hideFreePlan }
+		);
 		this.props.goToNextStep();
 	};
 
