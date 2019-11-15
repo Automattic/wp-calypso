@@ -292,43 +292,9 @@ class Home extends Component {
 						<WpcomChecklist displayMode={ checklistMode } />
 					) : (
 						<React.Fragment>
-							<Card>
-								<CardHeading>{ translate( 'My Site' ) }</CardHeading>
-								<h6 className="customer-home__card-subheader">
-									{ translate( 'Review and update my site' ) }
-								</h6>
-								<div className="customer-home__card-col">
-									<div className="customer-home__card-col-left">
-										<Button
-											href={ site.URL }
-											primary
-											onClick={ () => trackAction( 'my_site', 'view_site' ) }
-										>
-											{ translate( 'View Site' ) }
-										</Button>
-									</div>
-									<div className="customer-home__card-col-right">
-										{ isStaticHomePage ? (
-											<Button
-												href={ editHomePageUrl }
-												onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-											>
-												{ translate( 'Edit Homepage' ) }
-											</Button>
-										) : (
-											<Button
-												href={ `/post/${ siteSlug }` }
-												onClick={ () => {
-													trackAction( 'my_site', 'write_post' );
-												} }
-											>
-												{ translate( 'Write Blog Post' ) }
-											</Button>
-										) }
-									</div>
-								</div>
-							</Card>
 							<Card className="customer-home__card-boxes">
+								<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
+								<h6 className="customer-home__card-subheader">Manage your site</h6>
 								<div className="customer-home__boxes">
 									<ActionBox
 										onClick={ () => {
@@ -433,6 +399,44 @@ class Home extends Component {
 							<Button primary={ isPrimary } onClick={ this.onLaunchBannerClick }>
 								{ translate( 'Launch my site' ) }
 							</Button>
+						</Card>
+					) }
+					{ ! siteIsUnlaunched && (
+						<Card>
+							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">
+								{ translate( 'Review and update my site' ) }
+							</h6>
+							<div className="customer-home__card-col">
+								<div className="customer-home__card-col-left">
+									<Button
+										href={ site.URL }
+										primary
+										onClick={ () => trackAction( 'my_site', 'view_site' ) }
+									>
+										{ translate( 'View Site' ) }
+									</Button>
+								</div>
+								<div className="customer-home__card-col-right">
+									{ isStaticHomePage ? (
+										<Button
+											href={ editHomePageUrl }
+											onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+										>
+											{ translate( 'Edit Homepage' ) }
+										</Button>
+									) : (
+										<Button
+											href={ `/post/${ siteSlug }` }
+											onClick={ () => {
+												trackAction( 'my_site', 'write_post' );
+											} }
+										>
+											{ translate( 'Write Blog Post' ) }
+										</Button>
+									) }
+								</div>
+							</div>
 						</Card>
 					) }
 					<Card className="customer-home__grow-earn">

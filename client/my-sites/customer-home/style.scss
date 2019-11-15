@@ -22,6 +22,7 @@
 			border-width: 1px;
 			display: block;
 			min-height: 85px;
+			height: 100%;
 			min-width: 100%;
 			padding: 24px;
 			text-align: center;
@@ -36,12 +37,11 @@
 
 		@mixin box-action-two-col {
 			margin-bottom: 24px;
-			width: 50%;
+			width: 48%;
 
 			.button {
-				margin: 0 12px;
-				min-height: 105px;
-				min-width: 90%;
+				flex: 1;
+				margin: 0 auto;
 				padding: 30px 24px;
 			}
 		}
@@ -52,28 +52,21 @@
 			@include box-action-two-col;
 		}
 	}
+	&__card-boxes {
+		padding-bottom: 0;
+	}
 	&__boxes {
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-between;
-	}
-	&__card-boxes {
-		margin-top: rem( -15px );
-		padding: 24px 24px 0;
-
-		@include breakpoint('>1280px') {
-			padding: 24px 12px 0;
-		}
-		@include breakpoint('800px-960px') {
-			padding: 24px 12px 0;
-		}
+		align-items: stretch;
 	}
 	&__card-col {
 		display: block;
 
 		.button {
 			display: block;
-			text-align:center;
+			text-align: center;
 			width: 100%;
 		}
 
@@ -102,7 +95,7 @@
 			width: 50%;
 
 			.button {
-				margin-right: 12px;
+				margin-right: 6px;
 			}
 		}
 		@include breakpoint('>1040px') {
@@ -119,7 +112,7 @@
 			width: 50%;
 
 			.button {
-				margin-left: 12px;
+				margin-left: 6px;
 			}
 		}
 		@include breakpoint('>1040px') {
@@ -182,10 +175,6 @@
 		}
 	}
 	&__layout-col-right {
-		h6 {
-			margin-bottom: 6px;
-		}
-
 		.vertical-nav {
 			margin-top: 0;
 		}
