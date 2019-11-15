@@ -264,14 +264,14 @@ export class SharingService extends Component {
 	 *                            Default: All broken connections for this service.
 	 */
 	refresh = ( connections = this.props.brokenConnections ) => {
-		this.setState( { isRefreshing: true } );
-
 		this.getConnections( connections ).map( connection => {
 			const keyringConnection = find( this.props.keyringConnections, {
 				ID: connection.keyring_connection_ID,
 			} );
 
 			if ( keyringConnection ) {
+				this.setState( { isRefreshing: true } );
+
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
 				requestExternalAccess( connection.refresh_URL, () => {
