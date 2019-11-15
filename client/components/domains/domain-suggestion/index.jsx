@@ -63,7 +63,8 @@ class DomainSuggestion extends React.Component {
 			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
 		} );
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -91,7 +92,8 @@ class DomainSuggestion extends React.Component {
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 }
 
