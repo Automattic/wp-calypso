@@ -51,6 +51,8 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser } from 'state/current-user/selectors';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
 /**
  * Style dependencies
@@ -132,9 +134,9 @@ class Home extends Component {
 	};
 
 	getChecklistSubHeaderText = () => {
-		const { displayMode, currentTheme, translate, user } = this.props;
+		const { checklistMode, currentTheme, translate, user } = this.props;
 
-		switch ( displayMode ) {
+		switch ( checklistMode ) {
 			case 'gsuite':
 				return translate(
 					'We emailed %(email)s with instructions to complete your G Suite setup. ' +
@@ -181,12 +183,17 @@ class Home extends Component {
 			hasChecklistData,
 			isAtomic,
 			isChecklistComplete,
+			checklistMode,
+			siteId,
+			currentThemeId,
 		} = this.props;
 		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
 
 		if ( isNewlyCreatedSite && displayChecklist ) {
 			return (
 				<React.Fragment>
+					{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
+					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -215,7 +222,7 @@ class Home extends Component {
 	}
 
 	render() {
-		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
+		const { translate, canUserUseCustomerHome, siteSlug, siteId } = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
 			const title = translate( 'This page is not available on this site.' );
@@ -226,8 +233,6 @@ class Home extends Component {
 				/>
 			);
 		}
-
-		const { siteId } = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -515,13 +520,13 @@ class Home extends Component {
 }
 
 const connectHome = connect(
-	( state, { displayMode } ) => {
+	( state, { checklistMode } ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const domains = getDomainsBySiteId( state, siteId );
 		let themeInfo = {};
-		if ( 'theme' === displayMode ) {
+		if ( 'theme' === checklistMode ) {
 			const currentThemeId = getActiveTheme( state, siteId );
 			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 			themeInfo = { currentTheme, currentThemeId };
