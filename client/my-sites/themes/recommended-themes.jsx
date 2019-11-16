@@ -41,17 +41,4 @@ class RecommendedThemes extends React.Component {
 	}
 }
 
-// function bindIsThemeActive( state, siteId ) {
-// 	return themeId => isThemeActive( state, themeId, siteId );
-// }
-
-// const ConnectedRecommendedThemes = connect(
-// 	( state, { /*filter, page, search, tier, vertical, */ siteId /*source*/ } ) => {
-// 		return {
-// 			isThemeActive: bindIsThemeActive( state, siteId ),
-// 		};
-// 	},
-// 	{ setThemePreviewOptions }
-// )( RecommendedThemes );
-
 export default RecommendedThemes;
