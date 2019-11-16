@@ -148,7 +148,7 @@ class ThemesSelection extends Component {
 				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.themes }
+					themes={ this.props.recommendedThemes || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
