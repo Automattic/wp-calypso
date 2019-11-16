@@ -34,6 +34,7 @@ import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
+import RecommendedThemes from './recommended-themes';
 
 /**
  * Style dependencies
@@ -89,6 +90,11 @@ class ThemeShowcase extends React.Component {
 	state = {
 		page: 1,
 		showPreview: false,
+		isShowcaseOpen: false,
+	};
+
+	toggleShowcase = () => {
+		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
 	};
 
 	doSearch = searchBoxContent => {
@@ -112,14 +118,14 @@ class ThemeShowcase extends React.Component {
 	/**
 	 * Returns a full showcase url from current props.
 	 *
-	 * @param {Object} sections fields from this object will override current props.
-	 * @param {String} sections.vertical override vertical prop
-	 * @param {String} sections.tier override tier prop
-	 * @param {String} sections.filter override filter prop
-	 * @param {String} sections.siteSlug override siteSlug prop
-	 * @param {String} sections.searchString override searchString prop
+	 * @param {object} sections fields from this object will override current props.
+	 * @param {string} sections.vertical override vertical prop
+	 * @param {string} sections.tier override tier prop
+	 * @param {string} sections.filter override filter prop
+	 * @param {string} sections.siteSlug override siteSlug prop
+	 * @param {string} sections.searchString override searchString prop
 	 *
-	 * @returns {String} Theme showcase url
+	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = sections => {
 		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
@@ -208,85 +214,94 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
+		const { isShowcaseOpen } = this.state;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
-				<DocumentHead title={ title } meta={ metas } link={ links } />
-				<PageViewTracker
-					path={ this.props.analyticsPath }
-					title={ this.props.analyticsPageTitle }
-				/>
-				{ ! isLoggedIn && (
-					<SubMasterbarNav
-						options={ headerIcons }
-						fallback={ headerIcons[ 0 ] }
-						uri={ this.constructUrl() }
-					/>
-				) }
-				<div className="themes__content">
-					<QueryThemeFilters />
-					{ showBanners &&
-						abtest &&
-						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-							<UpworkBanner location={ 'theme-banner' } />
+				<RecommendedThemes />
+				<Button onClick={ this.toggleShowcase }>
+					{ isShowcaseOpen ? 'Hide Extra Themes' : 'Show All Themes' }
+				</Button>
+				{ this.state.isShowcaseOpen && (
+					<div>
+						<DocumentHead title={ title } meta={ metas } link={ links } />
+						<PageViewTracker
+							path={ this.props.analyticsPath }
+							title={ this.props.analyticsPageTitle }
+						/>
+						{ ! isLoggedIn && (
+							<SubMasterbarNav
+								options={ headerIcons }
+								fallback={ headerIcons[ 0 ] }
+								uri={ this.constructUrl() }
+							/>
 						) }
-					<ThemesSearchCard
-						onSearch={ this.doSearch }
-						search={ filterString + search }
-						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
-						select={ this.onTierSelect }
-					/>
-					{ this.props.upsellBanner }
-					{ this.showUploadButton() && (
-						<Button
-							className="themes__upload-button"
-							compact
-							onClick={ this.onUploadClick }
-							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install Theme' ) }
-						</Button>
-					) }
-					<ThemesSelection
-						upsellUrl={ this.props.upsellUrl }
-						search={ search }
-						tier={ this.props.tier }
-						filter={ filter }
-						vertical={ this.props.vertical }
-						siteId={ this.props.siteId }
-						listLabel={ this.props.listLabel }
-						defaultOption={ this.props.defaultOption }
-						secondaryOption={ this.props.secondaryOption }
-						placeholderCount={ this.props.placeholderCount }
-						getScreenshotUrl={ function( theme ) {
-							if ( ! getScreenshotOption( theme ).getUrl ) {
-								return null;
-							}
-							return getScreenshotOption( theme ).getUrl( theme );
-						} }
-						onScreenshotClick={ function( themeId ) {
-							if ( ! getScreenshotOption( themeId ).action ) {
-								return;
-							}
-							getScreenshotOption( themeId ).action( themeId );
-						} }
-						getActionLabel={ function( theme ) {
-							return getScreenshotOption( theme ).label;
-						} }
-						getOptions={ function( theme ) {
-							return pickBy(
-								addTracking( options ),
-								option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-							);
-						} }
-						trackScrollPage={ this.props.trackScrollPage }
-						emptyContent={ this.props.emptyContent }
-					/>
-					<ThemePreview />
-					{ this.props.children }
-				</div>
+						<div className="themes__content">
+							<QueryThemeFilters />
+							{ showBanners &&
+								abtest &&
+								abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+									<UpworkBanner location={ 'theme-banner' } />
+								) }
+							<ThemesSearchCard
+								onSearch={ this.doSearch }
+								search={ filterString + search }
+								tier={ tier }
+								showTierThemesControl={ ! isMultisite }
+								select={ this.onTierSelect }
+							/>
+							{ this.props.upsellBanner }
+							{ this.showUploadButton() && (
+								<Button
+									className="themes__upload-button"
+									compact
+									onClick={ this.onUploadClick }
+									href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
+								>
+									<Gridicon icon="cloud-upload" />
+									{ translate( 'Install Theme' ) }
+								</Button>
+							) }
+							<ThemesSelection
+								upsellUrl={ this.props.upsellUrl }
+								search={ search }
+								tier={ this.props.tier }
+								filter={ filter }
+								vertical={ this.props.vertical }
+								siteId={ this.props.siteId }
+								listLabel={ this.props.listLabel }
+								defaultOption={ this.props.defaultOption }
+								secondaryOption={ this.props.secondaryOption }
+								placeholderCount={ this.props.placeholderCount }
+								getScreenshotUrl={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
+									return getScreenshotOption( theme ).getUrl( theme );
+								} }
+								onScreenshotClick={ function( themeId ) {
+									if ( ! getScreenshotOption( themeId ).action ) {
+										return;
+									}
+									getScreenshotOption( themeId ).action( themeId );
+								} }
+								getActionLabel={ function( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								getOptions={ function( theme ) {
+									return pickBy(
+										addTracking( options ),
+										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									);
+								} }
+								trackScrollPage={ this.props.trackScrollPage }
+								emptyContent={ this.props.emptyContent }
+							/>
+							<ThemePreview />
+							{ this.props.children }
+						</div>
+					</div>
+				) }
 			</div>
 		);
 	}
