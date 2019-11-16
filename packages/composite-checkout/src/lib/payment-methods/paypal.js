@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { useDispatch, useSelect } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
 
@@ -115,7 +114,7 @@ export function PaypalSubmitButton() {
 			successUrl: successRedirectUrl,
 			cancelUrl: failureRedirectUrl,
 			postalCode: billing.zipCode || billing.postalCode,
-			domainDetails: getDomainDetailsFromPaymentData( paymentData ),
+			domainDetails: null, // TODO: get this somehow
 		} );
 	return (
 		<Button onClick={ onClick } buttonState="primary" buttonType="paypal" fullWidth>
