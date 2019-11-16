@@ -251,7 +251,6 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, ContactSlot 
 		throw new Error( 'Cannot render Billing details without a payment method' );
 	}
 
-	// TODO: make ContactSlot required
 	return (
 		<CheckoutStep
 			className="checkout__billing-details-step"
@@ -282,7 +281,7 @@ BillingDetailsStep.propTypes = {
 	setStepNumber: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
-	ContactSlot: PropTypes.elementType,
+	ContactSlot: PropTypes.elementType.isRequired,
 };
 
 function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
