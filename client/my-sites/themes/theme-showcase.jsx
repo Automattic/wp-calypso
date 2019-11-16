@@ -218,7 +218,21 @@ class ThemeShowcase extends React.Component {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
-				<RecommendedThemes />
+				<RecommendedThemes
+					upselUrl={ this.props.upsellUrl }
+					getOptions={ function( theme ) {
+						return pickBy(
+							addTracking( options ),
+							option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+						);
+					} }
+					onScreenshotClick={ function( themeId ) {
+						if ( ! getScreenshotOption( themeId ).action ) {
+							return;
+						}
+						getScreenshotOption( themeId ).action( themeId );
+					} }
+				/>
 				<Button onClick={ this.toggleShowcase }>
 					{ isShowcaseOpen ? 'Hide Extra Themes' : 'Show All Themes' }
 				</Button>
