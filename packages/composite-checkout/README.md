@@ -10,13 +10,12 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
 
-The form has three steps:
+The form has two steps:
 
 1. Payment method
-2. Billing contact
-3. Review order
+2. Review order
 
-The steps can be customized using various props.
+The steps can be customized using various props, including adding additional steps.
 
 For more detailed customization, it's possible to build a custom form using the other components exported by this package.
 
@@ -26,19 +25,9 @@ The payment method options displayed on the form are chosen automatically by the
 
 ![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
 
-Any previously stored payment methods (eg: saved credit cards) will be fetched automatically and displayed in the relevant payment method section of this step.
-
-The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
-
-### Billing contact
-
-This step contains various form fields to collect billing contact information from the customer.
-
-![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
-
 ### Review order
 
-The third step presents a simple list of line items and a total, followed by a purchase button.
+The review step presents a simple list of line items and a total, followed by a purchase button.
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
 
@@ -46,11 +35,13 @@ The third step presents a simple list of line items and a total, followed by a p
 
 Some content can be overridden using "customization slots" passed as props to the `Checkout` component. Each of these is a React element type (a component class or function) which will be rendered by `Checkout` in a particular place. The slot components can access all the custom hooks in the package and will also be passed props appropriate to that component; see each customization slot for details about what props are provided.
 
-There are several other optional props aside from `ReviewContent` which allow customizing the contents of the form. `UpSell` is a section at the bottom of the form, `CheckoutHeader` is the header of the form, `OrderReviewTOS` is displayed just below the payment button, and `OrderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
+The `ReviewContent` slot replaces the content of the Review order step.
 
-![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/checkout-slots.png 'Highlighted component slots')
+`UpSell` is a section at the bottom of the form.
 
-Any component within `Checkout` can use the custom React Hook `useLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
+`OrderSummary` is a block of content at the top of the form styled to look like a completed step.
+
+`ContactSlot` is a step displayed between the payment method and review order steps.
 
 ### Submitting the form
 
@@ -60,11 +51,9 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## Examples
+## Example
 
-### Example 1
-
-Here is a very simple example of using the `Checkout` component with default options. Its review section is very basic and line items cannot be removed or added.
+Here is a very simple example of using the `Checkout` component with default options. Its review section is very basic and line items cannot be removed or added. For a more detailed example, see the file `demo/index.js`.
 
 ```js
 import React, { useState } from 'react';
@@ -141,238 +130,6 @@ function useShoppingCart() {
 }
 ```
 
-### Example 2
-
-The following bigger example demonstrates a checkout page using many of the options available. Notably this uses a custom review section and line items can be added, removed, and modified.
-
-```js
-import React, { useState } from 'react';
-import {
-	Checkout,
-	useLineItems,
-	OrderReviewLineItems,
-	OrderReviewSection,
-	OrderReviewTotal,
-	renderDisplayValueMarkdown,
-} from '@automattic/composite-checkout';
-import {
-	PlanLengthSelector,
-	formatValueForCurrency,
-	adjustItemPricesForCountry,
-	replacePlanWithDifferentLength,
-} from 'composite-checkout/wpcom';
-
-const initialItems = [
-	{
-		label: 'WordPress.com Personal Plan',
-		id: 'wpcom-personal',
-		type: 'plan',
-		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
-	},
-	{
-		label: 'Domain registration',
-		subLabel: 'example.com',
-		id: 'wpcom-domain',
-		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
-	},
-];
-
-// These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
-const availablePaymentMethods = [ 'apple-pay', 'card', 'paypal', 'ebanx', 'ideal' ];
-
-// These are used only for non-redirect payment methods
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
-async function makePayPalExpressRequest() {
-	return 'https://paypal.com';
-}
-
-const paypalMethod = createPayPalMethod( { makePayPalExpressRequest } );
-
-// This is the parent component which would be included on a host page
-export default function MyCheckout() {
-	const {
-		itemsWithTax,
-		total,
-		addItem,
-		deleteItem,
-		changePlanLength,
-		updatePricesForAddress,
-	} = useShoppingCart();
-
-	// Some parts of the checkout can be customized
-	const ReviewContent = () => (
-		<OrderReview onDeleteItem={ deleteItem } onChangePlanLength={ changePlanLength } />
-	);
-
-	// Modification of the line items must be done outside checkout
-	const quickStartItem = {
-		label: 'Quick Start',
-		id: 'quickstart',
-		type: 'quickstart',
-		amount: { currency: 'USD', value: 2500, displayValue: '~~$50~~ $25' },
-	};
-	const addQuickStart = () => addItem( quickStartItem );
-	const UpSell = () => <UpSellCoupon onClick={ addQuickStart } />;
-
-	return (
-		<CheckoutProvider
-			locale={ 'US' }
-			items={ itemsWithTax }
-			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ [ paypalMethod ] }
-		>
-			<Checkout
-				availablePaymentMethods={ availablePaymentMethods }
-				ReviewContent={ ReviewContent }
-				UpSell={ UpSell }
-			/>
-		</CheckoutProvider>
-	);
-}
-
-// This is a simple shopping cart manager which allows CRUD operations
-function useShoppingCart() {
-	const [ items, setItems ] = useState( initialItems );
-
-	// Tax calculation must be performed outside checkout
-	const lineItemTotalWithoutTax = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const taxRate = 0.09;
-	const taxValue = taxRate * lineItemTotalWithoutTax;
-	const taxItem = {
-		label: 'Taxes',
-		id: 'tax',
-		type: 'tax',
-		amount: {
-			currency: 'USD',
-			value: taxValue,
-			displayValue: formatValueForCurrency( currency, taxValue ),
-		},
-	};
-	const itemsWithTax = [ ...items, taxItem ];
-
-	// The checkout itself does not trigger any events apart from success/failure
-	const deleteItem = itemToDelete =>
-		setItems( items.filter( item => item.id !== itemToDelete.id ) );
-	const changePlanLength = ( plan, planLength ) =>
-		setItems( replacePlanWithDifferentLength( items, planLength ) );
-	const updatePricesForAddress = address =>
-		setItems( adjustItemPricesForCountry( items, address.country ) );
-	const addItem = item => setItems( [ ...items, item ] );
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = itemsWithTax.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
-		label: 'Total',
-		amount: {
-			currency,
-			value: lineItemTotal,
-			displayValue: formatValueForCurrency( currency, lineItemTotal ),
-		},
-	};
-
-	return {
-		items,
-		itemsWithTax,
-		total,
-		addItem,
-		deleteItem,
-		changePlanLength,
-		updatePricesForAddress,
-	};
-}
-
-function OrderReview( { onDeleteItem, onChangePlanLength } ) {
-	const [ items, total ] = useLineItems();
-	const planItems = items.filter( item => item.type === 'plan' );
-	const domainItems = items.filter( item => item.type === 'domain' );
-	const taxItems = items.filter( item => item.type === 'tax' );
-	const miscItems = items.filter( item => ! [ 'plan', 'domain', 'tax' ].includes( item.type ) );
-
-	return (
-		<React.Fragment>
-			<OrderReviewSection>
-				{ planItems.map( plan => (
-					<PlanItem
-						key={ plan.id }
-						plan={ plan }
-						onDeleteItem={ onDeleteItem }
-						onChangePlanLength={ onChangePlanLength }
-					/>
-				) ) }
-				<OrderReviewLineItems items={ miscItems } />
-			</OrderReviewSection>
-			<OrderReviewSection>
-				{ domainItems.map( item => (
-					<DomainItem key={ item.id } item={ item } onDeleteItem={ onDeleteItem } />
-				) ) }
-			</OrderReviewSection>
-			<OrderReviewSection>
-				<OrderReviewLineItems items={ taxItems } />
-				<OrderReviewTotal total={ total } />
-			</OrderReviewSection>
-		</React.Fragment>
-	);
-}
-
-function PlanItem( { plan, onDeleteItem, onChangePlanLength } ) {
-	const changePlanLength = planLength => onChangePlanLength( plan, planLength );
-	const deleteItem = () => onDeleteItem( plan );
-	return (
-		<React.Fragment>
-			<div>
-				<span>
-					<div>{ plan.label }</div>
-					{ plan.subLabel && <div>{ plan.subLabel }</div> }
-				</span>
-				<span>{ renderDisplayValueMarkdown( plan.amount.displayValue ) }</span>
-				<button onClick={ deleteItem } />
-			</div>
-			<PlanLengthSelector onChange={ changePlanLength } />
-		</React.Fragment>
-	);
-}
-
-function DomainItem( { item, onDeleteItem } ) {
-	const deleteItem = () => onDeleteItem( plan );
-	return (
-		<React.Fragment>
-			<div>
-				<span>
-					<div>{ item.label }</div>
-					{ item.subLabel && <div>{ item.subLabel }</div> }
-				</span>
-				<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
-				<button onClick={ deleteItem } />
-			</div>
-		</React.Fragment>
-	);
-}
-
-function UpSellCoupon( { onClick } ) {
-	return (
-		<div>
-			<h4>Exclusive offer</h4>
-			<p>Buy a quick start session and get 50% off.</p>
-			<a href="#" onClick={ onClick }>
-				Add to cart
-			</a>
-		</div>
-	);
-}
-```
-
 ## Styles and Themes
 
 Each component will be styled using [@emotion/styled](https://emotion.sh/docs/styled) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
@@ -385,16 +142,13 @@ When using the individual API components, you can also pass a `className` prop, 
 
 A payment method, in the context of this package, consists of the following pieces:
 
-- A unique id.
-- A data object that holds any data needed by the payment method, including data from any payment method components.
-- A component that displays that payment method selection button which can be as simple as the name and an icon. It will receive the props of the `CheckoutStep`.
-- A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It will receive the props of the `CheckoutStep`.
-- A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
-- (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
-- A component that renders a summary of the selected payment method when the step is inactive.
-- A function to return the name of the Payment Method. It will receive the localize function as an argument.
-
-Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
+- `id`: A unique id.
+- `LabelComponent`: A component that displays that payment method selection button which can be as simple as the name and an icon. It will receive the props of the `CheckoutStep`.
+- `PaymentMethodComponent`: A component that displays that payment method (this can return null or something like a credit card form). It will receive the props of the `CheckoutStep`.
+- `SubmitButtonComponent`: A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
+- `CheckoutWrapper`: (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
+- `SummaryComponent`: A component that renders a summary of the selected payment method when the step is inactive.
+- `getAriaLabel`: A function to return the name of the Payment Method. It will receive the localize function as an argument.
 
 Each payment method has the following schema:
 
@@ -410,7 +164,7 @@ Each payment method has the following schema:
 }
 ```
 
-Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
+Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
 ## Data Stores
 
@@ -431,9 +185,8 @@ The main component in this package. It has the following props.
 - availablePaymentMethods: array
 - ReviewContent: component
 - UpSell: component
-- CheckoutHeader: component
-- OrderReviewTOS: component
-- OrderReviewFeatures: component
+- OrderSummary: component
+- ContactSlot: component
 
 ### CheckoutNextStepButton
 
@@ -478,15 +231,15 @@ Renders a list of the line items and their `displayValue` properties followed by
 
 ### CheckoutStep
 
-Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. There are two boolean props that can be used to control the step's current state: `isComplete` and `isActive`. Typically the step will be hidden when `isActive` is false and may have a different appearance when `isComplete` is true.
+Each of the steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. There are two boolean props that can be used to control the step's current state: `isComplete` and `isActive`. Typically the step will be hidden when `isActive` is false and may have a different appearance when `isComplete` is true.
 
 Each should include in its `children` a `CheckoutNextStepButton` if there is a following step.
 
 If a step has the `onEdit` prop, it will include an "Edit" link when `isComplete` is true which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way (perhaps by setting `isActive` to true). The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
-### getPaymentMethods()
+### useAllPaymentMethods()
 
-A helper function that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
 
 ### OrderReviewLineItems
 
