@@ -496,8 +496,9 @@ export function generateSteps( {
 				'siteSlug',
 				'domainItem',
 				'themeItem',
-				'skipToPaidPlanOptions',
+				'shouldHideFreePlan',
 			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,

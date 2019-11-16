@@ -18,7 +18,7 @@ class FreeDomainExplainer extends React.Component {
 	handleClick = () => {
 		const hideFreePlan = true;
 
-		this.props.onSkip( hideFreePlan );
+		this.props.onSkip( undefined, hideFreePlan );
 	};
 	render() {
 		const className = classNames( 'free-domain-explainer is-compact', {

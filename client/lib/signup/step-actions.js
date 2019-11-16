@@ -174,7 +174,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			siteType ||
 			getSiteVertical( state );
 		newSiteParams.find_available_url = true;
-	} else if ( get( getSignupDependencyStore( state ), 'skipToPaidPlanOptions' ) ) {
+	} else if ( get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( getSignupDependencyStore( state ), 'username' ) ||

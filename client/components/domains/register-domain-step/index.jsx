@@ -1127,7 +1127,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer( isCard = false ) {
-		return <FreeDomainExplainer isCard={ isCard } onSkip={ this.props.onSkip } />;
+		return <FreeDomainExplainer isCard={ isCard } onSkip={ this.props.hideFreePlan } />;
 	}
 
 	onAddDomain = suggestion => {

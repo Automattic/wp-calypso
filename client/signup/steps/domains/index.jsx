@@ -211,22 +211,21 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
-	handleSkip = ( skipToPaidPlanOptions = false ) => {
+	handleSkip = () => {
 		const domainItem = undefined;
 
-		this.props.submitSignupStep(
-			{ stepName: this.props.stepName, domainItem },
-			{ domainItem, skipToPaidPlanOptions }
-		);
+		this.props.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
 		this.props.goToNextStep();
 	};
 
-	submitWithDomain = googleAppsCartItem => {
+	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const suggestion = this.props.step.suggestion,
-			isPurchasingItem = Boolean( suggestion.product_slug ),
-			siteUrl = isPurchasingItem
-				? suggestion.domain_name
-				: suggestion.domain_name.replace( '.wordpress.com', '' ),
+			isPurchasingItem = suggestion && Boolean( suggestion.product_slug ),
+			siteUrl =
+				suggestion &&
+				( isPurchasingItem
+					? suggestion.domain_name
+					: suggestion.domain_name.replace( '.wordpress.com', '' ) ),
 			domainItem = isPurchasingItem
 				? domainRegistration( {
 						domain: suggestion.domain_name,
@@ -234,7 +233,9 @@ class DomainsStep extends React.Component {
 				  } )
 				: undefined;
 
-		this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
+		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
+
+		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -248,14 +249,14 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{ domainItem }
+			Object.assign( { domainItem }, shouldHideFreePlanItem )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
-		this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
+		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
@@ -434,6 +435,7 @@ class DomainsStep extends React.Component {
 				showSkipButton={ this.props.showSkipButton }
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
+				hideFreePlan={ this.submitWithDomain }
 			/>
 		);
 	};
