@@ -513,12 +513,8 @@ class Signup extends React.Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 		// Hide the free option as part of 'domainStepCopyUpdates' a/b test
-		const skipToPaidPlanOptions = get(
-			this.props,
-			'signupDependencies.skipToPaidPlanOptions',
-			false
-		);
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || skipToPaidPlanOptions;
+		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
