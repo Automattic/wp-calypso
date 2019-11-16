@@ -130,7 +130,7 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									{ listSites !== '' && (
+									{ siteToBeDeleted.length > 0 && (
 										<Fragment>
 											<ActionPanelFigureListItem className="account-close__sites-item">
 												{ translate( 'Sites' ) }
