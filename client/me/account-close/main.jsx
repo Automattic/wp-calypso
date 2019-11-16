@@ -27,16 +27,14 @@ import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import getSites from 'state/selectors/get-sites';
+import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import isAccountClosed from 'state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
-import { userCan } from 'lib/site/utils';
 
 /**
  * Style dependencies
@@ -103,10 +101,11 @@ class AccountSettingsClose extends Component {
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
 
+		/* eslint-disable-next-line no-shadow */
 		const listSites = siteToBeDeleted.map( siteToBeDeleted => (
-			<li>
+			<li key={ siteToBeDeleted.slug }>
 				{ [ siteToBeDeleted.name ] }
-				<span>{ [ siteToBeDeleted.URL ] }</span>
+				<span>{ [ siteToBeDeleted.slug ] }</span>
 			</li>
 		) );
 
@@ -299,8 +298,6 @@ export default connect( state => {
 		purchasedPremiumThemes,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
-		siteToBeDeleted: getSites( state ).filter(
-			site => ! isJetpackSite( state, site.ID ) && userCan( 'manage_options', site )
-		),
+		siteToBeDeleted: getAccountClosureSites( state ),
 	};
 } )( localize( AccountSettingsClose ) );
