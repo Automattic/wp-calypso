@@ -266,6 +266,103 @@ describe( 'Checkout', () => {
 			expect( reviewStepContent ).toHaveStyle( 'display: block' );
 		} );
 	} );
+
+	describe( 'with a ContactSlot', function() {
+		describe( 'before clicking a button', function() {
+			let container;
+			const ContactForm = ( { summary } ) => summary || <div>Contact Form Here</div>;
+
+			beforeEach( () => {
+				const mockMethod = createMockMethod();
+				const { items, total } = createMockItems();
+				const MyCheckout = () => (
+					<CheckoutProvider
+						locale="en-us"
+						items={ items }
+						total={ total }
+						onSuccess={ noop }
+						onFailure={ noop }
+						successRedirectUrl="#"
+						failureRedirectUrl="#"
+						paymentMethods={ [ mockMethod ] }
+					>
+						<Checkout ContactSlot={ ContactForm } />
+					</CheckoutProvider>
+				);
+				const renderResult = render( <MyCheckout /> );
+				container = renderResult.container;
+			} );
+
+			it( 'makes the first step visible', () => {
+				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				expect( firstStepContent ).toHaveStyle( 'display: block' );
+			} );
+
+			it( 'makes the contact step invisible', () => {
+				const contactStep = container.querySelector( '.checkout__billing-details-step' );
+				const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
+				expect( contactStepContent ).toHaveStyle( 'display: none' );
+			} );
+
+			it( 'makes the review step invisible', () => {
+				const reviewStep = container.querySelector( '.checkout__review-order-step' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+			} );
+		} );
+
+		describe( 'when clicking continue from the payment method step', function() {
+			let renderResult;
+			const ContactForm = ( { summary } ) => summary || <div>Contact Form Here</div>;
+
+			beforeEach( () => {
+				const mockMethod = createMockMethod();
+				const { items, total } = createMockItems();
+				const MyCheckout = () => (
+					<CheckoutProvider
+						locale="en-us"
+						items={ items }
+						total={ total }
+						onSuccess={ noop }
+						onFailure={ noop }
+						successRedirectUrl="#"
+						failureRedirectUrl="#"
+						paymentMethods={ [ mockMethod ] }
+					>
+						<Checkout ContactSlot={ ContactForm } />
+					</CheckoutProvider>
+				);
+				renderResult = render( <MyCheckout /> );
+				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
+				fireEvent.click( firstStepContinue );
+			} );
+
+			it( 'makes the first step invisible', () => {
+				const firstStep = renderResult.container.querySelector( '.checkout__payment-methods-step' );
+				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
+			} );
+
+			it( 'makes the contact step visible', () => {
+				const contactStep = renderResult.container.querySelector(
+					'.checkout__billing-details-step'
+				);
+				const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
+				expect( contactStepContent ).toHaveStyle( 'display: block' );
+			} );
+
+			it( 'displays the contact form', () => {
+				expect( renderResult.getByText( 'Contact Form Here' ) ).toBeTruthy();
+			} );
+
+			it( 'makes the review step invisible', () => {
+				const reviewStep = renderResult.container.querySelector( '.checkout__review-order-step' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+			} );
+		} );
+	} );
 } );
 
 function createMockMethod() {
