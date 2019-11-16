@@ -78,7 +78,7 @@ export default function Checkout( {
 					<PaymentMethodsStep
 						stepNumber={ 1 }
 						availablePaymentMethods={ availablePaymentMethods }
-						onComplete={ () => changeStep( ContactSlot ? 2 : 3 ) }
+						onComplete={ () => changeStep( 2 ) }
 						onEdit={ () => changeStep( 1 ) }
 						isActive={ stepNumber === 1 }
 						isComplete={ stepNumber > 1 }
@@ -102,9 +102,9 @@ export default function Checkout( {
 					errorMessage={ localize( 'There was a problem with the review form.' ) }
 				>
 					<ReviewOrderStep
-						stepNumber={ 3 }
-						isActive={ stepNumber === 3 }
-						isComplete={ stepNumber > 3 }
+						stepNumber={ ContactSlot ? 3 : 2 }
+						isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) }
+						isComplete={ stepNumber > ( ContactSlot ? 3 : 2 ) }
 						ReviewContent={ ReviewContent }
 					/>
 				</CheckoutErrorBoundary>
@@ -112,7 +112,7 @@ export default function Checkout( {
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+						<CheckoutSubmitButton isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) } />
 					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
 
