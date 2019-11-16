@@ -264,12 +264,15 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
- * Inserts default full site editing data for current theme during plugin activation.
+ * Inserts default full site editing data for current theme on plugin/theme activation.
  *
- * We usually perform this on theme activation hook, but this is needed to handle
- * the cases in which FSE supported theme was activated prior to the plugin. This will
- * populate the default header and footer for current theme, and create About and Contact
- * pages provided that they don't already exist.
+ * We put this here outside of the normal FSE class because FSE is not active
+ * until the template parts are inserted. This makes sure we insert the template
+ * parts when switching to a theme which supports FSE.
+ *
+ * This will populate the default header and footer for current theme, and create
+ * About and Contact pages. Nothing will populate if the data already exists, or
+ * if the theme is unsupported.
  */
 function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
@@ -280,6 +283,7 @@ function populate_wp_template_data() {
 	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
+add_action( 'after_switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.

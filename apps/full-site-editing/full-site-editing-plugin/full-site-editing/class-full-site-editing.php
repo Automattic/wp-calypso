@@ -50,7 +50,6 @@ class Full_Site_Editing {
 		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
 		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
 		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
-		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
 		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
