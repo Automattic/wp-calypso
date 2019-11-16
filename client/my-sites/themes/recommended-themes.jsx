@@ -30,7 +30,6 @@ class RecommendedThemes extends React.Component {
 
 	render() {
 		const { themes } = this.state;
-		const { upselUrl } = this.props;
 
 		return (
 			<>
