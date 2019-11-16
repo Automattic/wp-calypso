@@ -218,13 +218,34 @@ class ThemeShowcase extends React.Component {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
+				<DocumentHead title={ title } meta={ metas } link={ links } />
+				<PageViewTracker
+					path={ this.props.analyticsPath }
+					title={ this.props.analyticsPageTitle }
+				/>
+				{ ! isLoggedIn && (
+					<SubMasterbarNav
+						options={ headerIcons }
+						fallback={ headerIcons[ 0 ] }
+						uri={ this.constructUrl() }
+					/>
+				) }
 				<RecommendedThemes
-					upselUrl={ this.props.upsellUrl }
-					getOptions={ function( theme ) {
-						return pickBy(
-							addTracking( options ),
-							option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-						);
+					upsellUrl={ this.props.upsellUrl }
+					search={ search }
+					tier={ this.props.tier }
+					filter={ filter }
+					vertical={ this.props.vertical }
+					siteId={ this.props.siteId }
+					listLabel={ this.props.listLabel }
+					defaultOption={ this.props.defaultOption }
+					secondaryOption={ this.props.secondaryOption }
+					placeholderCount={ this.props.placeholderCount }
+					getScreenshotUrl={ function( theme ) {
+						if ( ! getScreenshotOption( theme ).getUrl ) {
+							return null;
+						}
+						return getScreenshotOption( theme ).getUrl( theme );
 					} }
 					onScreenshotClick={ function( themeId ) {
 						if ( ! getScreenshotOption( themeId ).action ) {
@@ -232,24 +253,24 @@ class ThemeShowcase extends React.Component {
 						}
 						getScreenshotOption( themeId ).action( themeId );
 					} }
+					getActionLabel={ function( theme ) {
+						return getScreenshotOption( theme ).label;
+					} }
+					getOptions={ function( theme ) {
+						return pickBy(
+							addTracking( options ),
+							option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+						);
+					} }
+					trackScrollPage={ this.props.trackScrollPage }
+					emptyContent={ this.props.emptyContent }
 				/>
 				<Button onClick={ this.toggleShowcase }>
 					{ isShowcaseOpen ? 'Hide Extra Themes' : 'Show All Themes' }
 				</Button>
+
 				{ this.state.isShowcaseOpen && (
 					<div>
-						<DocumentHead title={ title } meta={ metas } link={ links } />
-						<PageViewTracker
-							path={ this.props.analyticsPath }
-							title={ this.props.analyticsPageTitle }
-						/>
-						{ ! isLoggedIn && (
-							<SubMasterbarNav
-								options={ headerIcons }
-								fallback={ headerIcons[ 0 ] }
-								uri={ this.constructUrl() }
-							/>
-						) }
 						<div className="themes__content">
 							<QueryThemeFilters />
 							{ showBanners &&
@@ -311,11 +332,11 @@ class ThemeShowcase extends React.Component {
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
 							/>
-							<ThemePreview />
-							{ this.props.children }
 						</div>
 					</div>
 				) }
+				<ThemePreview />
+				{ this.props.children }
 			</div>
 		);
 	}

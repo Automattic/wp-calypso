@@ -47,6 +47,7 @@ class ThemesSelection extends Component {
 		// connected props
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
+		recommendedThemes: PropTypes.array,
 		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
@@ -62,9 +63,12 @@ class ThemesSelection extends Component {
 	};
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		const { query, themes, filterString } = this.props;
+		// TODO do we need different query if from RecommendedThemes?
+		const { query, filterString } = this.props;
+		const themes = this.props.recommendedThemes || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
+
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
@@ -148,7 +152,7 @@ class ThemesSelection extends Component {
 				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.themes }
+					themes={ this.props.recommendedThemes || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
