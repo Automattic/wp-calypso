@@ -82,18 +82,18 @@ export default function Checkout( {
 						isComplete={ stepNumber > 1 }
 					/>
 				</CheckoutErrorBoundary>
-				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
-				>
-					{ ContactSlot && (
+				{ ContactSlot && (
+					<CheckoutErrorBoundary
+						errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
+					>
 						<BillingDetailsStep
 							setStepNumber={ changeStep }
 							isActive={ stepNumber === 2 }
 							isComplete={ stepNumber > 2 }
 							ContactSlot={ ContactSlot }
 						/>
-					) }
-				</CheckoutErrorBoundary>
+					</CheckoutErrorBoundary>
+				) }
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with the review form.' ) }
 				>
