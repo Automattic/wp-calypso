@@ -13,12 +13,24 @@ import Field from './field';
 import GridRow from './grid-row';
 // TODO: remove or replace all the below imports as they are not in wpcom
 import { useLocalize } from '../lib/localize';
+import {
+	SummaryLine,
+	SummaryDetails,
+	SummarySpacerLine,
+} from '../lib/styled-components/summary-details';
 
-export default function WPContactForm() {
+export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const { isDomainContactSame = true } = paymentData;
+
+	if ( summary && isComplete ) {
+		return <ContactFormSummary />;
+	}
+	if ( ! isActive ) {
+		return null;
+	}
 
 	const toggleDomainFieldsVisibility = () => {
 		updatePaymentData( 'isDomainContactSame', ! isDomainContactSame );
@@ -402,6 +414,70 @@ const DomainContactFieldsDescription = styled.p`
 	color: ${props => props.theme.colors.textColor};
 	margin: 0 0 16px;
 `;
+
+function ContactFormSummary() {
+	const localize = useLocalize();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+
+	//Check if paymentData is empty
+	if ( Object.entries( paymentData ).length === 0 ) {
+		return null;
+	}
+
+	const postalCode = billing.zipCode || billing.postalCode;
+	const domainPostalCode = domains.zipCode || domains.postalCode;
+	return (
+		<GridRow gap="4%" columnWidths="48% 48%">
+			<div>
+				<SummaryDetails>
+					<SummaryLine>
+						{ billing.firstName || '' } { billing.lastName || '' }
+					</SummaryLine>
+					<SummarySpacerLine>{ billing.email || '' }</SummarySpacerLine>
+					<SummaryLine>{ billing.address || '' } </SummaryLine>
+					<SummaryLine>
+						{ billing.city && billing.city + ', ' } { billing.state || billing.province || '' }
+					</SummaryLine>
+					<SummaryLine>
+						{ postalCode && postalCode + ', ' }
+						{ billing.country }
+					</SummaryLine>
+				</SummaryDetails>
+				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
+					<SummaryDetails>
+						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
+						{ isElligibleForVat() && (
+							<SummaryLine>
+								{ localize( 'VAT indentification number:' ) }
+								{ billing.vatId }
+							</SummaryLine>
+						) }
+					</SummaryDetails>
+				) }
+			</div>
+			{ domains && ! isDomainContactSame && (
+				<div>
+					<SummaryDetails>
+						<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
+						<SummarySpacerLine>{ domains.email }</SummarySpacerLine>
+						<SummaryLine>{ domains.address }</SummaryLine>
+						<SummaryLine>
+							{ domains.city && domains.city + ', ' } { domains.state || domains.province }
+						</SummaryLine>
+						<SummaryLine>
+							{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
+						</SummaryLine>
+					</SummaryDetails>
+
+					<SummaryDetails>
+						<SummaryLine>{ domains.phoneNumber }</SummaryLine>
+					</SummaryDetails>
+				</div>
+			) }
+		</GridRow>
+	);
+}
 
 export function getDomainDetailsFromPaymentData( paymentData ) {
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
