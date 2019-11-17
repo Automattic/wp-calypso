@@ -112,7 +112,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const nonWPCOMDomains = reject(
+		const eligibleDomains = reject(
 			this.props.domains,
 			domain =>
 				domain.isWPCOMDomain ||
@@ -123,7 +123,7 @@ export class SiteNotice extends React.Component {
 						.isAfter() )
 		);
 
-		if ( nonWPCOMDomains.length !== 1 ) {
+		if ( eligibleDomains.length !== 1 ) {
 			return null;
 		}
 
