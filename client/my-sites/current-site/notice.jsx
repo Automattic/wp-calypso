@@ -114,10 +114,16 @@ export class SiteNotice extends React.Component {
 
 		const nonWPCOMDomains = reject(
 			this.props.domains,
-			domain => domain.isWPCOMDomain || domain.name.endsWith( '.wpcomstaging.com' )
+			domain =>
+				domain.isWPCOMDomain ||
+				domain.name.endsWith( '.wpcomstaging.com' ) ||
+				( domain.registrationDate &&
+					moment( domain.registrationDate )
+						.add( 7, 'days' )
+						.isAfter() )
 		);
 
-		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
+		if ( nonWPCOMDomains.length !== 1 ) {
 			return null;
 		}
 
