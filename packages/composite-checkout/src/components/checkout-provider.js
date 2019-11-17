@@ -15,37 +15,27 @@ import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
 import defaultTheme from '../theme';
 
-export const CheckoutProvider = ( {
-	locale,
-	total,
-	items,
-	onSuccess,
-	onFailure,
-	successRedirectUrl,
-	failureRedirectUrl,
-	theme,
-	paymentMethods: allPaymentMethods,
-	registry,
-	children,
-} ) => {
+export const CheckoutProvider = props => {
+	const {
+		locale,
+		total,
+		items,
+		onSuccess,
+		onFailure,
+		successRedirectUrl,
+		failureRedirectUrl,
+		theme,
+		paymentMethods,
+		registry,
+		children,
+	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		allPaymentMethods ? allPaymentMethods[ 0 ].id : null
+		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
-	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
-	validateArg( total, 'CheckoutProvider missing required prop: total' );
-	validateTotal( total );
-	validateArg( items, 'CheckoutProvider missing required prop: items' );
-	validateLineItems( items );
-	validateArg( allPaymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
-	validatePaymentMethods( allPaymentMethods );
-	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
-	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
-	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
-	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
-		...new Set( allPaymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
 	];
 
 	// Create the registry automatically if it's not a prop
@@ -53,7 +43,7 @@ export const CheckoutProvider = ( {
 	registryRef.current = registryRef.current || createRegistry();
 
 	const value = {
-		allPaymentMethods,
+		allPaymentMethods: paymentMethods,
 		paymentMethodId,
 		setPaymentMethodId,
 		onSuccess,
@@ -61,22 +51,26 @@ export const CheckoutProvider = ( {
 		successRedirectUrl,
 		failureRedirectUrl,
 	};
+
+	// This error message cannot be translated because translation hasn't loaded yet.
+	const errorMessage = 'Sorry, there was an error loading this page';
 	return (
-		<ThemeProvider theme={ theme || defaultTheme }>
-			<RegistryProvider value={ registryRef.current }>
-				<LocalizeProvider locale={ locale }>
-					<LineItemsProvider items={ items } total={ total }>
-						<CheckoutContext.Provider value={ value }>
-							<CheckoutErrorBoundary>
+		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+			<CheckoutProviderPropValidator propsToValidate={ props } />
+			<ThemeProvider theme={ theme || defaultTheme }>
+				<RegistryProvider value={ registryRef.current }>
+					<LocalizeProvider locale={ locale }>
+						<LineItemsProvider items={ items } total={ total }>
+							<CheckoutContext.Provider value={ value }>
 								<PaymentMethodWrapperProvider wrappers={ wrappers }>
 									{ children }
 								</PaymentMethodWrapperProvider>
-							</CheckoutErrorBoundary>
-						</CheckoutContext.Provider>
-					</LineItemsProvider>
-				</LocalizeProvider>
-			</RegistryProvider>
-		</ThemeProvider>
+							</CheckoutContext.Provider>
+						</LineItemsProvider>
+					</LocalizeProvider>
+				</RegistryProvider>
+			</ThemeProvider>
+		</CheckoutErrorBoundary>
 	);
 };
 
@@ -94,6 +88,31 @@ CheckoutProvider.propTypes = {
 	failureRedirectUrl: PropTypes.string.isRequired,
 };
 
+function CheckoutProviderPropValidator( { propsToValidate } ) {
+	const {
+		locale,
+		total,
+		items,
+		onSuccess,
+		onFailure,
+		successRedirectUrl,
+		failureRedirectUrl,
+		paymentMethods,
+	} = propsToValidate;
+	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
+	validateArg( total, 'CheckoutProvider missing required prop: total' );
+	validateTotal( total );
+	validateArg( items, 'CheckoutProvider missing required prop: items' );
+	validateLineItems( items );
+	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
+	validatePaymentMethods( paymentMethods );
+	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
+	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
+	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
+	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+	return null;
+}
+
 function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	return wrappers.reduce( ( whole, Wrapper ) => {
 		return <Wrapper>{ whole }</Wrapper>;
@@ -101,7 +120,7 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 }
 
 function validateArg( value, errorMessage ) {
-	if ( ! value ) {
+	if ( value === null || value === undefined ) {
 		throw new Error( errorMessage );
 	}
 }
@@ -131,9 +150,8 @@ function validateLineItems( items ) {
 	items.map( validateLineItem );
 }
 
-function validateTotal( { label, amount, type } ) {
+function validateTotal( { label, amount } ) {
 	validateArg( label, `Invalid total; missing label property` );
-	validateArg( type, `Invalid total; missing type property` );
 	validateArg( amount, `Invalid total; missing amount property` );
 	validateAmount( 'total', amount );
 }
