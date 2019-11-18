@@ -34,6 +34,7 @@ const {
 	siteInformation = {},
 	screenAction,
 	theme,
+	isFrontPage,
 } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
@@ -52,14 +53,7 @@ class PageTemplateModal extends Component {
 		this.state.isOpen = hasTemplates;
 		if ( hasTemplates ) {
 			// Select the first template automatically.
-			if ( theme && find( props.templates, [ 'slug', theme ] ) ) {
-				this.state.previewedTemplate = theme;
-			} else if ( find( props.templates, [ 'slug', 'maywood' ] ) ) {
-				this.state.previewedTemplate = 'maywood';
-			} else {
-				// Blank template
-				this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
-			}
+			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
 			// Extract titles for faster lookup.
 			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
 		}
@@ -85,6 +79,21 @@ class PageTemplateModal extends Component {
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { blocksByTemplateSlug } );
 	}
+
+	getDefaultSelectedTemplate = props => {
+		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
+
+		if ( ! isFrontPage ) {
+			return blankTemplate;
+		}
+
+		if ( theme && find( props.templates, [ 'slug', theme ] ) ) {
+			return theme;
+		} else if ( isFrontPage && find( props.templates, [ 'slug', 'maywood' ] ) ) {
+			return 'maywood';
+		}
+		return blankTemplate;
+	};
 
 	setTemplate = slug => {
 		// Track selection and mark post as using a template in its postmeta.
@@ -194,7 +203,7 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const [ homepage_templates, default_templates ] = partition( templates, {
+		const [ homepageTemplates, defaultTemplates ] = partition( templates, {
 			category: 'home',
 		} );
 
@@ -233,13 +242,28 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ this.renderTemplatesList(
-									homepage_templates,
-									__( 'Choose a layout…', 'full-site-editing' )
-								) }
-								{ this.renderTemplatesList(
-									default_templates,
-									__( 'Other layouts', 'full-site-editing' )
+								{ isFrontPage ? (
+									<>
+										{ this.renderTemplatesList(
+											homepageTemplates,
+											__( 'Choose a layout…', 'full-site-editing' )
+										) }
+										{ this.renderTemplatesList(
+											defaultTemplates,
+											__( 'Other layouts', 'full-site-editing' )
+										) }
+									</>
+								) : (
+									<>
+										{ this.renderTemplatesList(
+											defaultTemplates,
+											__( 'Choose a layout…', 'full-site-editing' )
+										) }
+										{ this.renderTemplatesList(
+											homepageTemplates,
+											__( 'Homepage layouts', 'full-site-editing' )
+										) }
+									</>
 								) }
 							</form>
 							<TemplateSelectorPreview
