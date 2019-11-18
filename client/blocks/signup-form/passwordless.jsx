@@ -48,7 +48,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	onFormSubmit = event => {
+	onFormSubmit = async event => {
 		event.preventDefault();
 
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
@@ -78,31 +78,33 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const recaptchaPromise =
+		const recaptchaToken =
 			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
-				: Promise.resolve();
+				? await recordGoogleRecaptchaAction(
+						this.state.recaptchaClientId,
+						'calypso/signup/formSubmit'
+				  )
+				: undefined;
 
-		recaptchaPromise.then( recaptchaToken => {
-			wpcom
-				.undocumented()
-				.usersNew(
-					{
-						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-						'g-recaptcha-response': recaptchaToken || undefined,
-						is_passwordless: true,
-						signup_flow_name: this.props.flowName,
-						validate: false,
-						ab_test_variations: getSavedVariations(),
-					},
-					null
-				)
-				.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-				.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
-		} );
+		try {
+			const response = await wpcom.undocumented().usersNew(
+				{
+					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-response': recaptchaToken || undefined,
+					is_passwordless: true,
+					signup_flow_name: this.props.flowName,
+					validate: false,
+					ab_test_variations: getSavedVariations(),
+				},
+				null
+			);
+			this.createAccountCallback( null, response );
+		} catch ( err ) {
+			this.createAccountCallback( err );
+		}
 	};
 
-	createUserAccountFromEmailAddressCallback = ( error, response ) => {
+	createAccountCallback = ( error, response ) => {
 		if ( error ) {
 			const errorMessage = this.getErrorMessage( error );
 			this.setState( {
