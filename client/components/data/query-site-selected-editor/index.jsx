@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
  */
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 
-export default function QuerySiteDomains( { siteId } ) {
+export default function QuerySiteSelectedEditor( { siteId } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -20,4 +20,4 @@ export default function QuerySiteDomains( { siteId } ) {
 	return null;
 }
 
-QuerySiteDomains.propTypes = { siteId: PropTypes.number };
+QuerySiteSelectedEditor.propTypes = { siteId: PropTypes.number };

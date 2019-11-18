@@ -17,7 +17,7 @@ const request = ( siteId, type ) => ( dispatch, getState ) => {
 	}
 };
 
-export default function QuerySiteDomains( { siteId, type } ) {
+export default function QueryPostCounts( { siteId, type } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -27,7 +27,7 @@ export default function QuerySiteDomains( { siteId, type } ) {
 	return null;
 }
 
-QuerySiteDomains.propTypes = {
+QueryPostCounts.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	type: PropTypes.string.isRequired,
 };
