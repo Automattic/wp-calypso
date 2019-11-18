@@ -14,7 +14,7 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
 
@@ -42,10 +42,11 @@ export const requestPmaLink = siteId =>
 
 const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 	useEffect( () => {
-		if ( token && ! loading ) {
+		if ( token ) {
 			window.open( `https://wordpress.com/pma-login?token=${ token }` );
 		}
-	}, [ token, loading ] );
+		return () => resetHttpData( requestId( siteId ) );
+	}, [ token, siteId ] );
 
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 
