@@ -246,18 +246,18 @@ class PageTemplateModal extends Component {
 									<>
 										{ this.renderTemplatesList(
 											homepageTemplates,
-											__( 'Choose a layout…', 'full-site-editing' )
+											__( 'Homepage layouts', 'full-site-editing' )
 										) }
 										{ this.renderTemplatesList(
 											defaultTemplates,
-											__( 'Other layouts', 'full-site-editing' )
+											__( 'Other page layouts', 'full-site-editing' )
 										) }
 									</>
 								) : (
 									<>
 										{ this.renderTemplatesList(
 											defaultTemplates,
-											__( 'Choose a layout…', 'full-site-editing' )
+											__( 'Page layouts', 'full-site-editing' )
 										) }
 										{ this.renderTemplatesList(
 											homepageTemplates,
