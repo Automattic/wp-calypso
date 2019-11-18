@@ -148,7 +148,6 @@ export class CartItem extends React.Component {
 
 	getProductInfo() {
 		const { cartItem, selectedSite } = this.props;
-
 		const domain =
 			cartItem.meta ||
 			get( cartItem, 'extra.domain_to_bundle' ) ||
@@ -169,6 +168,35 @@ export class CartItem extends React.Component {
 			info = domain;
 		}
 		return info;
+	}
+
+	getDomainRenewalExpiryDate() {
+		const { cartItem } = this.props;
+
+		return (
+			get( cartItem, 'is_domain_registration' ) &&
+			get( cartItem, 'is_renewal' ) &&
+			get( cartItem, 'domain_post_renewal_expiration_date' )
+		);
+	}
+
+	renderDomainRenewalExpiryDate() {
+		const domainRenewalExpiryDate = this.getDomainRenewalExpiryDate();
+
+		if ( ! domainRenewalExpiryDate ) {
+			return null;
+		}
+
+		const { moment, translate } = this.props;
+		const domainRenewalExpiryDateText = translate( 'Renew until %(renewalDate)s', {
+			args: {
+				renewalDate: moment( domainRenewalExpiryDate ).format( 'LL' ),
+			},
+		} );
+
+		/*eslint-disable wpcalypso/jsx-classname-namespace*/
+		return <span className="product-domain-renewal-date">{ domainRenewalExpiryDateText }</span>;
+		/*eslint-enable wpcalypso/jsx-classname-namespace*/
 	}
 
 	render() {
@@ -192,6 +220,7 @@ export class CartItem extends React.Component {
 						{ name || translate( 'Loading…' ) }
 					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
+					{ this.renderDomainRenewalExpiryDate() }
 				</div>
 
 				<div className="secondary-details">
