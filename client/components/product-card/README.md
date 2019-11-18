@@ -59,6 +59,7 @@ The following props can be passed to the Product Card component:
  displayed as a price range
 * `fullPrice`: ( number | array ) Full price of a product. If an array of 2 numbers is passed, it will be displayed as
  a price range
+* `isCurrent`: ( bool ) Flag indicating if a product is a currently purchased product
 * `isPlaceholder`: ( bool ) Flag indicating if a product price is in a loading state and should be rendered as a
   placeholder
 * `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag
