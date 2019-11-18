@@ -154,6 +154,18 @@
 			justify-content: space-between;
 			flex-wrap: wrap;
 		}
+
+		.checklist__tasks {
+			margin-bottom: 8px;
+
+			&-completed-title {
+				margin-top: 24px;
+			}
+		}
+
+		.checklist__task::before {
+			display: none;
+		}
 	}
 	&__layout-col {
 		.card-heading {
@@ -209,18 +221,5 @@
 
 	&__loading-placeholder {
 		@include placeholder();
-	}
-
-
-	.checklist__tasks {
-		margin-bottom: 8px;
-
-		&-completed-title {
-			margin-top: 16px;
-		}
-	}
-
-	.checklist__task::before {
-		display: none;
 	}
 }
