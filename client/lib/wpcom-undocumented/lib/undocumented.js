@@ -779,7 +779,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 Undocumented.prototype.getCart = function( cartKey, fn ) {
 	debug( 'GET: /me/shopping-cart/:cart-key' );
 
-	this._sendRequest(
+	return this._sendRequest(
 		{
 			path: '/me/shopping-cart/' + cartKey,
 			method: 'GET',
@@ -798,7 +798,7 @@ Undocumented.prototype.getCart = function( cartKey, fn ) {
 Undocumented.prototype.setCart = function( cartKey, data, fn ) {
 	debug( 'POST: /me/shopping-cart/:cart-key', data );
 
-	this._sendRequest(
+	return this._sendRequest(
 		{
 			path: '/me/shopping-cart/' + cartKey,
 			method: 'POST',

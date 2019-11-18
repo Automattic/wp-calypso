@@ -38,6 +38,7 @@
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
+		"composite-checkout-wpcom": false,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
