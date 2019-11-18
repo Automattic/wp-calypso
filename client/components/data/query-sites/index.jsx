@@ -49,26 +49,13 @@ function QuerySingle( { siteId } ) {
 	return null;
 }
 
-const requestPrimary = siteId => ( dispatch, getState ) => {
-	const state = getState();
-	if ( siteId && ! hasAllSitesList( state ) && ! isRequestingSite( state, siteId ) ) {
-		dispatch( requestSite( siteId ) );
-	}
-};
-
-const requestRecent = siteIds => ( dispatch, getState ) => {
+const requestPrimaryAndRecent = siteIds => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteIds.length || hasAllSitesList( state ) ) {
 		return;
 	}
 
-	const isRequestingSomeSite = siteIds.some( siteId => isRequestingSite( state, siteId ) );
-
-	if ( ! isRequestingSomeSite ) {
-		return;
-	}
-
-	siteIds.forEach( siteId => dispatch( requestSite( siteId ) ) );
+	siteIds.forEach( siteId => dispatch( requestSingle( siteId ) ) );
 };
 
 function QueryPrimaryAndRecent() {
@@ -78,17 +65,12 @@ function QueryPrimaryAndRecent() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( requestPrimary( primarySiteId ) );
-	}, [ dispatch, primarySiteId ] );
+		const siteIds = [ ...( primarySiteId ? [ primarySiteId ] : [] ), ...( recentSiteIds ?? [] ) ];
 
-	useEffect( () => {
-		if ( recentSiteIds && recentSiteIds.length ) {
-			dispatch(
-				requestRecent( recentSiteIds.filter( recentSiteId => recentSiteId !== primarySiteId ) )
-			);
+		if ( siteIds && siteIds.length ) {
+			dispatch( requestPrimaryAndRecent( siteIds ) );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ dispatch, recentSiteIds ] );
+	}, [ dispatch, primarySiteId, recentSiteIds ] );
 
 	return null;
 }
