@@ -108,7 +108,7 @@ function CreditCardLogos() {
 	);
 }
 
-const LogoWrapper = styled.div`
+const LogoWrapper = styled.span`
 	display: flex;
 `;
 
