@@ -290,97 +290,95 @@ class Home extends Component {
 					{ displayChecklist ? (
 						<WpcomChecklist displayMode={ checklistMode } />
 					) : (
-						<React.Fragment>
-							<Card className="customer-home__card-boxes">
-								<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
-								<h6 className="customer-home__card-subheader">Manage your site</h6>
-								<div className="customer-home__boxes">
+						<Card className="customer-home__card-boxes">
+							<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">Manage your site</h6>
+							<div className="customer-home__boxes">
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'add_page' );
+										page( `/page/${ siteSlug }` );
+									} }
+									label={ translate( 'Add a page' ) }
+									iconSrc="/calypso/images/customer-home/page.svg"
+								/>
+								{ isStaticHomePage ? (
 									<ActionBox
 										onClick={ () => {
-											trackAction( 'my_site', 'add_page' );
-											page( `/page/${ siteSlug }` );
+											trackAction( 'my_site', 'write_post' );
+											page( `/post/${ siteSlug }` );
 										} }
-										label={ translate( 'Add a page' ) }
-										iconSrc="/calypso/images/customer-home/page.svg"
+										label={ translate( 'Write blog post' ) }
+										iconSrc="/calypso/images/customer-home/post.svg"
 									/>
-									{ isStaticHomePage ? (
-										<ActionBox
-											onClick={ () => {
-												trackAction( 'my_site', 'write_post' );
-												page( `/post/${ siteSlug }` );
-											} }
-											label={ translate( 'Write blog post' ) }
-											iconSrc="/calypso/images/customer-home/post.svg"
-										/>
-									) : (
-										<ActionBox
-											onClick={ () => {
-												trackAction( 'my_site', 'manage_comments' );
-												page( `/comments/${ siteSlug }` );
-											} }
-											label={ translate( 'Manage comments' ) }
-											iconSrc="/calypso/images/customer-home/comment.svg"
-										/>
-									) }
-									{ showCustomizer && (
-										<ActionBox
-											href={ customizeUrl }
-											onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
-											label={ translate( 'Customize theme' ) }
-											iconSrc="/calypso/images/customer-home/customize.svg"
-										/>
-									) }
+								) : (
 									<ActionBox
 										onClick={ () => {
-											trackAction( 'my_site', 'change_theme' );
-											page( `/themes/${ siteSlug }` );
+											trackAction( 'my_site', 'manage_comments' );
+											page( `/comments/${ siteSlug }` );
 										} }
-										label={ translate( 'Change theme' ) }
-										iconSrc="/calypso/images/customer-home/theme.svg"
+										label={ translate( 'Manage comments' ) }
+										iconSrc="/calypso/images/customer-home/comment.svg"
 									/>
-									{ showCustomizer && (
-										<ActionBox
-											href={ menusUrl }
-											onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-											label={ translate( 'Edit menus' ) }
-											iconSrc="/calypso/images/customer-home/menus.svg"
-										/>
-									) }
+								) }
+								{ showCustomizer && (
 									<ActionBox
-										href={ `/media/${ siteSlug }` }
-										onClick={ () => trackAction( 'my_site', 'change_images' ) }
-										label={ translate( 'Change images' ) }
-										iconSrc="/calypso/images/customer-home/images.svg"
+										href={ customizeUrl }
+										onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
+										label={ translate( 'Customize theme' ) }
+										iconSrc="/calypso/images/customer-home/customize.svg"
 									/>
+								) }
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'change_theme' );
+										page( `/themes/${ siteSlug }` );
+									} }
+									label={ translate( 'Change theme' ) }
+									iconSrc="/calypso/images/customer-home/theme.svg"
+								/>
+								{ showCustomizer && (
 									<ActionBox
-										href="https://wp.me/logo-maker"
-										onClick={ () => trackAction( 'my_site', 'design_logo' ) }
-										target="_blank"
-										label={ translate( 'Design a logo' ) }
-										iconSrc="/calypso/images/customer-home/logo.svg"
+										href={ menusUrl }
+										onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+										label={ translate( 'Edit menus' ) }
+										iconSrc="/calypso/images/customer-home/menus.svg"
 									/>
-									{ hasCustomDomain ? (
-										<ActionBox
-											onClick={ () => {
-												trackAction( 'my_site', 'add_email' );
-												page( `/email/${ siteSlug }` );
-											} }
-											label={ translate( 'Add email' ) }
-											iconSrc="/calypso/images/customer-home/gsuite.svg"
-										/>
-									) : (
-										<ActionBox
-											onClick={ () => {
-												trackAction( 'my_site', 'add_domain' );
-												page( `/domains/add/${ siteSlug }` );
-											} }
-											label={ translate( 'Add a domain' ) }
-											iconSrc="/calypso/images/customer-home/custom-domain.svg"
-										/>
-									) }
-								</div>
-							</Card>
-						</React.Fragment>
+								) }
+								<ActionBox
+									href={ `/media/${ siteSlug }` }
+									onClick={ () => trackAction( 'my_site', 'change_images' ) }
+									label={ translate( 'Change images' ) }
+									iconSrc="/calypso/images/customer-home/images.svg"
+								/>
+								<ActionBox
+									href="https://wp.me/logo-maker"
+									onClick={ () => trackAction( 'my_site', 'design_logo' ) }
+									target="_blank"
+									label={ translate( 'Design a logo' ) }
+									iconSrc="/calypso/images/customer-home/logo.svg"
+								/>
+								{ hasCustomDomain ? (
+									<ActionBox
+										onClick={ () => {
+											trackAction( 'my_site', 'add_email' );
+											page( `/email/${ siteSlug }` );
+										} }
+										label={ translate( 'Add email' ) }
+										iconSrc="/calypso/images/customer-home/gsuite.svg"
+									/>
+								) : (
+									<ActionBox
+										onClick={ () => {
+											trackAction( 'my_site', 'add_domain' );
+											page( `/domains/add/${ siteSlug }` );
+										} }
+										label={ translate( 'Add a domain' ) }
+										iconSrc="/calypso/images/customer-home/custom-domain.svg"
+									/>
+								) }
+							</div>
+						</Card>
 					) }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
