@@ -289,7 +289,7 @@ class Home extends Component {
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					{ displayChecklist ? (
 						<>
-							<Card className="customer-home__card-checklist">
+							<Card className="customer-home__card-checklist-heading">
 								<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
 							</Card>
 							<WpcomChecklist displayMode={ checklistMode } />
@@ -413,7 +413,7 @@ class Home extends Component {
 								<div className="customer-home__card-col-left">
 									<Button
 										href={ site.URL }
-										primary
+										primary={ isPrimary }
 										onClick={ () => trackAction( 'my_site', 'view_site' ) }
 									>
 										{ translate( 'View Site' ) }

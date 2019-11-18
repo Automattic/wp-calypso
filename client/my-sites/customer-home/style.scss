@@ -49,7 +49,7 @@
 			@include box-action-two-col;
 		}
 	}
-	&__card-checklist {
+	&__card-checklist-heading {
 		margin-bottom: -16px;
 	}
 	&__card-boxes {
@@ -207,6 +207,11 @@
 		}
 	}
 
+	&__loading-placeholder {
+		@include placeholder();
+	}
+
+
 	.checklist__tasks {
 		margin-bottom: 8px;
 
@@ -214,8 +219,8 @@
 			margin-top: 16px;
 		}
 	}
-}
 
-.customer-home__loading-placeholder {
-	@include placeholder();
+	.checklist__task::before {
+		display: none;
+	}
 }
