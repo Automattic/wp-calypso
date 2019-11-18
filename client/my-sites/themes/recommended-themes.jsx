@@ -16,6 +16,10 @@ class RecommendedThemes extends React.Component {
 	};
 
 	async componentDidMount() {
+		this.getRecommendedThemes();
+	}
+
+	getRecommendedThemes = async () => {
 		const query = {
 			search: 'varia',
 			number: 50,
@@ -26,7 +30,7 @@ class RecommendedThemes extends React.Component {
 		const res = await wpcom.undocumented().themes( null, query );
 
 		this.setState( { themes: res.themes } );
-	}
+	};
 
 	render() {
 		const { themes } = this.state;
