@@ -3,17 +3,27 @@
 /**
  * External dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
+/* eslint-disable import/no-extraneous-dependencies */
+
+/**
+ * Internal dependencies
+ */
 import './style.scss';
 
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
 	// Only alter for the page and template part editors.
-	if ( 'wp_template_part' !== editorPostType && 'page' !== editorPostType ) {
+	if (
+		'wp_template_part' !== editorPostType &&
+		'page' !== editorPostType &&
+		'post' !== editorPostType
+	) {
 		return;
 	}
 
@@ -50,12 +60,25 @@ domReady( () => {
 			newCloseButton.prepend( thinContent );
 		} else if ( 'page' === editorPostType ) {
 			newCloseButton.href = 'edit.php?post_type=page';
-			const newLabel = __( 'Back to Page List' );
+			const newLabel = __( 'Pages' );
 			newCloseButton.setAttribute( 'aria-label', newLabel );
 
 			ReactDOM.render(
 				<Button className="components-button components-icon-button">
 					<Dashicon icon="arrow-left-alt2" />
+					<div className="close-button-override__label">{ newLabel }</div>
+				</Button>,
+				newCloseButton
+			);
+		} else if ( 'post' === editorPostType ) {
+			newCloseButton.href = 'edit.php?post_type=post';
+			const newLabel = __( 'Posts' );
+			newCloseButton.setAttribute( 'aria-label', newLabel );
+
+			ReactDOM.render(
+				<Button className="components-button components-icon-button">
+					<Dashicon icon="arrow-left-alt2" />
+					<div className="close-button-override__label">{ newLabel }</div>
 				</Button>,
 				newCloseButton
 			);
