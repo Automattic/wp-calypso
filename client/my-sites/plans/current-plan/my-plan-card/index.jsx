@@ -32,11 +32,7 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagLine, t
 	return (
 		<Card className={ cardClassNames } compact>
 			<div className="my-plan-card__primary">
-				{ plan && (
-					<div className="my-plan-card__icon">
-						<PlanIcon plan={ plan } />
-					</div>
-				) }
+				{ plan && <PlanIcon plan={ plan } /> }
 				<div className="my-plan-card__header">
 					{ title && <h2 className="my-plan-card__title">{ title }</h2> }
 					{ tagLine && <p className="my-plan-card__tag-line">{ tagLine }</p> }
