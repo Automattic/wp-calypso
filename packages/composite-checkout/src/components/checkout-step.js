@@ -77,6 +77,8 @@ function CheckoutStepHeader( {
 	editButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
+	const shouldShowEditButton = onEdit && isComplete && ! isActive;
+
 	return (
 		<StepHeader
 			isComplete={ isComplete }
@@ -86,7 +88,11 @@ function CheckoutStepHeader( {
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
 				{ stepNumber }
 			</Stepper>
-			<StepTitle className="checkout-step__title" stepNumber={ stepNumber } isActive={ isActive }>
+			<StepTitle
+				className="checkout-step__title"
+				fullWidth={ ! shouldShowEditButton }
+				isActive={ isActive }
+			>
 				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
@@ -149,8 +155,8 @@ const StepTitle = styled.span`
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
 	font-weight: ${props =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
-	margin-right: ${props => ( props.stepNumber === 0 ? '0' : '8px' )};
-	flex: ${props => ( props.stepNumber === 0 ? '1' : 'inherit' )};
+	margin-right: ${props => ( props.fullWidth ? '0' : '8px' )};
+	flex: ${props => ( props.fullWidth ? '1' : 'inherit' )};
 `;
 
 const StepHeader = styled.h2`
