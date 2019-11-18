@@ -11,6 +11,7 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { isBusinessPlan } from 'lib/plans';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
 /**
  * TODO: this selector should be backed by an API response instead
@@ -30,6 +31,10 @@ export default function canSiteViewAtomicHosting( state ) {
 	// ID of site added 31 Oct 2019, so only sites newer currently eligible
 	const isEligibleSite = siteId > 168768859;
 	if ( ! isEligibleSite ) {
+		return false;
+	}
+
+	if ( ! isSiteOnAtomicPlan( state, siteId ) ) {
 		return false;
 	}
 
