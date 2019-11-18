@@ -213,6 +213,7 @@ class Home extends Component {
 			<FormattedHeader
 				className="customer-home__page-heading"
 				headerText={ translate( 'My Home' ) }
+				subHeaderText={ translate( 'Manage your website' ) }
 				align="left"
 			/>
 		);
