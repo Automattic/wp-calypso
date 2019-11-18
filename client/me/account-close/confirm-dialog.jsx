@@ -5,6 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -50,7 +51,7 @@ class AccountCloseConfirmDialog extends React.Component {
 
 	handleConfirm = () => {
 		this.props.closeAccount();
-		this.props.closeConfirmDialog();
+		page( '/me/account/closed' );
 	};
 
 	render() {
