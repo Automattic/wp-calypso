@@ -32,13 +32,13 @@
 	}
 }
 
-.my-plan-card__icon {
+.my-plan-card .plan-icon {
 	flex: 0 0 auto;
 	width: 64px;
 	height: 64px;
 	margin: 8px 20px 0 0;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -53,9 +53,9 @@
 
 	@include breakpoint( '>960px' ) {
 		flex-flow: column nowrap;
-		justify-content: flex-start;
+		justify-content: center;
 		align-items: flex-end;
-		padding: 14px 0 0 16px;
+		padding: 0 0 0 24px;
 	}
 
 	&::before {
@@ -75,9 +75,18 @@
 			content: none;
 		}
 	}
+
+	.has-action-only & {
+		padding-top: 0;
+		justify-content: center;
+
+		&::before {
+			content: none;
+		}
+	}
 }
 
-.my-plan-card__expiration-date {
+.my-plan-card__details {
 	padding-top: 8px;
 	white-space: nowrap;
 	color: var( --color-text-subtle );
@@ -85,8 +94,33 @@
 	@include breakpoint( '>960px' ) {
 		padding-top: 0;
 	}
+
+	&.is-error {
+		color: var( --color-error );
+	}
+
+	&.is-placeholder::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 180px;
+		height: 18px;
+	}
 }
 
 .my-plan-card__action {
 	padding-top: 8px;
+	white-space: nowrap;
+
+	.has-action-only & {
+		padding-top: 0;
+	}
+
+	&.is-placeholder::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 110px;
+		height: 29px;
+	}
 }
