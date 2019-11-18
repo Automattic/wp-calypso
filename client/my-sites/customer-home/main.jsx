@@ -412,18 +412,10 @@ class Home extends Component {
 							</h6>
 							<div className="customer-home__card-col">
 								<div className="customer-home__card-col-left">
-									<Button
-										href={ site.URL }
-										primary={ isPrimary }
-										onClick={ () => trackAction( 'my_site', 'view_site' ) }
-									>
-										{ translate( 'View Site' ) }
-									</Button>
-								</div>
-								<div className="customer-home__card-col-right">
 									{ isStaticHomePage ? (
 										<Button
 											href={ editHomePageUrl }
+											primary={ isPrimary }
 											onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
 										>
 											{ translate( 'Edit Homepage' ) }
@@ -431,6 +423,7 @@ class Home extends Component {
 									) : (
 										<Button
 											href={ `/post/${ siteSlug }` }
+											primary={ isPrimary }
 											onClick={ () => {
 												trackAction( 'my_site', 'write_post' );
 											} }
@@ -438,6 +431,11 @@ class Home extends Component {
 											{ translate( 'Write Blog Post' ) }
 										</Button>
 									) }
+								</div>
+								<div className="customer-home__card-col-right">
+									<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+										{ translate( 'View Site' ) }
+									</Button>
 								</div>
 							</div>
 						</Card>
