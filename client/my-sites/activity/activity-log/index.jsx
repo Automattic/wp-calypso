@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -570,7 +570,7 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 const hasBackupProduct = purchases => {
-	return find( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
+	return some( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
 };
 
 export default connect(
