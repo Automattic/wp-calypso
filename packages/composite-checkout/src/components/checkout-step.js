@@ -95,7 +95,7 @@ function CheckoutStepHeader( {
 			>
 				{ title }
 			</StepTitle>
-			{ onEdit && isComplete && ! isActive && (
+			{ shouldShowEditButton && (
 				<Button
 					buttonState="text-button"
 					className="checkout-step__edit"
