@@ -1,5 +1,5 @@
-$task-left-padding: 58px;
-$task-right-padding: 85px;
+$task-left-padding: 55px;
+$task-right-padding: 50px;
 $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 .checklist__header {
@@ -9,12 +9,11 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 .checklist__tasks {
 	display: flex;
 	flex-direction: column;
-	margin-bottom: 8px;
 }
 
 .checklist__tasks-completed-title {
 	order: 3;
-	margin: 32px 0 12px 25px;
+	margin: 40px 0 8px 25px;
 
 	@include breakpoint( '>660px' ) {
 		margin-left: 0;
@@ -37,11 +36,22 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		padding: 0;
 	}
 
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 34px;
+		border-left: 1px solid var( --color-neutral-10 );
+		z-index: 1;
+	}
+
 	.checklist__task-icon {
 		display: block;
 		position: absolute;
 		top: 16px;
-		left: 16px;
+		left: 24px;
 		width: 16px;
 		height: 16px;
 		border: 2px solid var( --color-neutral-10 );
@@ -49,11 +59,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		background: var( --color-surface );
 		cursor: pointer;
 		z-index: 2;
-
-		@include breakpoint( '>660px' ) {
-			top: 24px;
-			left: 24px;
-		}
 
 		.gridicons-checkmark {
 			display: none;
@@ -114,7 +119,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	.checklist__task-title-button.button {
 		position: relative;
 		display: block;
-		padding: 16px $task-right-padding 8px $task-left-padding;
+		padding: 16px $task-right-padding 4px $task-left-padding;
 		width: 100%;
 		text-align: left;
 		color: var( --color-neutral-dark );
@@ -123,21 +128,12 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		border-radius: 0;
 		z-index: 0;
 
-		@include breakpoint( '>660px' ) {
-			padding: 24px $task-right-padding 12px $task-left-padding;
-		}
-
 		.checklist__toggle-icon {
-			display: none;
 			position: absolute;
-			right: 18px;
-			top: 18px;
+			right: 12px;
+			top: 16px;
 			fill: var( --color-neutral-light );
 			transition: $chevron-animation;
-
-			@include breakpoint( '>660px' ) {
-				top: 26px;
-			}
 		}
 
 		&:hover {
@@ -151,33 +147,18 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.checklist__task-content {
-		display: flex;
-		flex-direction: column;
-		padding: 0 16px 16px $task-left-padding;
-
-		@include breakpoint( '>660px' ) {
-			padding: 0 24px 24px $task-left-padding;
-			flex-direction: row;
-			justify-content: space-between;
-		}
+		padding: 0 $task-right-padding 16px $task-left-padding;
 	}
 
 	.checklist__task-description {
 		word-break: break-word;
 		font-size: 14px;
 		margin-bottom: 16px;
-		margin-right: 16px;
 	}
 
-	.checklist__task-action-wrapper {
+	.checklist__task-action-duration-wrapper {
 		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		margin-top: 8px;
-
-		@include breakpoint( '>660px' ) {
-			margin-top: -32px;
-		}
+		flex-direction: column-reverse;
 	}
 
 	.checklist__task-duration {
@@ -195,16 +176,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	.checklist__task-skip {
 		margin-left: 8px;
-	}
-
-	&.is-collapsed {
-		.checklist__task-title-button.button .checklist__toggle-icon {
-			display: block;
-		}
-
-		.checklist__task-content {
-			padding-right: $task-right-padding;
-		}
 	}
 
 	&.warning {
@@ -225,10 +196,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			background: var( --color-success );
 			border-color: var( --color-success );
 
-			@include breakpoint( '>660px' ) {
-				top: 16px;
-			}
-
 			&:hover {
 				cursor: default;
 			}
@@ -239,16 +206,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			font-size: 14px;
 			padding-top: 8px;
 
-			@include breakpoint( '>660px' ) {
-				padding-top: 16px;
-			}
-
 			.checklist__toggle-icon {
 				top: 8px;
-
-				@include breakpoint( '>660px' ) {
-					top: 18px;
-				}
 			}
 		}
 
@@ -260,19 +219,11 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	&.is-unexpandable {
 		.checklist__task-title {
 			padding: 16px $task-right-padding 16px $task-left-padding;
-
-			@include breakpoint( '>660px' ) {
-				padding: 16px $task-right-padding 16px $task-left-padding;
-			}
 		}
 
 		&.is-completed .checklist__task-title {
 			padding: 8px $task-right-padding 8px $task-left-padding;
 			font-size: 14px;
-
-			@include breakpoint( '>660px' ) {
-				padding: 16px $task-right-padding 16px $task-left-padding;
-			}
 		}
 	}
 
@@ -309,10 +260,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			font-weight: 400;
 			padding-bottom: 16px;
 
-			@include breakpoint( '>660px' ) {
-				padding-bottom: 24px;
-			}
-
 			&:hover {
 				background: var( --color-neutral-5 );
 			}
@@ -320,10 +267,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		&.is-completed .checklist__task-title-button {
 			padding-bottom: 8px;
-
-			@include breakpoint( '>660px' ) {
-				padding-bottom: 16px;
-			}
 		}
 
 		.checklist__toggle-icon {
@@ -334,10 +277,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	&.is-placeholder {
 		&.card {
 			padding: 16px $task-right-padding 16px $task-left-padding;
-
-			@include breakpoint( '>660px' ) {
-				padding: 24px $task-right-padding 24px $task-left-padding;
-			}
 		}
 
 		.checklist__task-title,

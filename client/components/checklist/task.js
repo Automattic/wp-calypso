@@ -189,37 +189,39 @@ class Task extends PureComponent {
 
 					{ ! _collapsed && (
 						<div className="checklist__task-content">
-							<div className="checklist__task-description-duration-wrapper">
-								<p className="checklist__task-description">{ description }</p>
+							<p className="checklist__task-description">{ description }</p>
+
+							<div className="checklist__task-action-duration-wrapper">
 								{ duration && (
 									<small className="checklist__task-duration">
 										{ translate( 'Estimated time:' ) } { duration }
 									</small>
 								) }
-							</div>
-							<div className="checklist__task-action-wrapper">
-								{ !! taskActionButtonText && (
-									<Button
-										className="checklist__task-action"
-										disabled={ isButtonDisabled }
-										href={ href }
-										onClick={ onClick }
-										primary={ ! _collapsed }
-										target={ target }
-									>
-										{ taskActionButtonText }
-									</Button>
-								) }
-								{ ! completed && showSkip && (
-									<Button className="checklist__task-skip" onClick={ onDismiss }>
-										{ translate( 'Skip' ) }
-									</Button>
-								) }
-								{ !! noticeText && (
-									<Notice className="checklist__task-notice" showDismiss={ false }>
-										{ noticeText }
-									</Notice>
-								) }
+
+								<div className="checklist__task-action-wrapper">
+									{ !! taskActionButtonText && (
+										<Button
+											className="checklist__task-action"
+											disabled={ isButtonDisabled }
+											href={ href }
+											onClick={ onClick }
+											primary={ ! _collapsed }
+											target={ target }
+										>
+											{ taskActionButtonText }
+										</Button>
+									) }
+									{ ! completed && showSkip && (
+										<Button className="checklist__task-skip" onClick={ onDismiss }>
+											{ translate( 'Skip' ) }
+										</Button>
+									) }
+									{ !! noticeText && (
+										<Notice className="checklist__task-notice" showDismiss={ false }>
+											{ noticeText }
+										</Notice>
+									) }
+								</div>
 							</div>
 						</div>
 					) }
