@@ -51,7 +51,7 @@ function QuerySingle( { siteId } ) {
 
 const requestPrimaryAndRecent = siteIds => ( dispatch, getState ) => {
 	const state = getState();
-	if ( ! siteIds.length || hasAllSitesList( state ) ) {
+	if ( hasAllSitesList( state ) ) {
 		return;
 	}
 
