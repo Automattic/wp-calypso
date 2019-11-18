@@ -205,8 +205,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
  */
 function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	// These files define functions/classes used by the main FSE class.
 	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
+	require_once __DIR__ . '/full-site-editing/blocks/site-credit/index.php';
 
 	$fse = Full_Site_Editing::get_instance();
 	$fse->insert_default_data();
