@@ -178,16 +178,13 @@ class Home extends Component {
 
 	renderCustomerHomeHeader() {
 		const {
+			displayChecklist,
 			isNewlyCreatedSite,
 			translate,
-			hasChecklistData,
-			isAtomic,
-			isChecklistComplete,
 			checklistMode,
 			siteId,
 			currentThemeId,
 		} = this.props;
-		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
 
 		if ( isNewlyCreatedSite && displayChecklist ) {
 			return (
@@ -239,6 +236,7 @@ class Home extends Component {
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
 				{ this.renderCustomerHomeHeader() }
 				<StatsBanners siteId={ siteId } slug={ siteSlug } />
@@ -259,6 +257,7 @@ class Home extends Component {
 
 	renderCustomerHome = () => {
 		const {
+			displayChecklist,
 			isAtomic,
 			isChecklistComplete,
 			translate,
@@ -274,20 +273,20 @@ class Home extends Component {
 			showCustomizer,
 			hasCustomDomain,
 			hasChecklistData,
-			siteId,
 			siteIsUnlaunched,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 
-		/* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
-		const displayChecklist = hasChecklistData && ! isAtomic && ! isChecklistComplete;
-		const isPrimary = hasChecklistData && ! isAtomic && isChecklistComplete;
+		if ( ! hasChecklistData ) {
+			return <div className="customer-home__loading-placeholder"></div>;
+		}
+
+		const isPrimary = ! isAtomic && isChecklistComplete;
 
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
-					{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
 					{ displayChecklist ? (
 						<WpcomChecklist displayMode={ checklistMode } />
 					) : (
@@ -536,7 +535,12 @@ const connectHome = connect(
 			themeInfo = { currentTheme, currentThemeId };
 		}
 
+		const isAtomic = isAtomicSite( state, siteId );
+		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+
 		return {
+			// For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information
+			displayChecklist: ! isAtomic && hasChecklistData && ! isChecklistComplete,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -544,8 +548,8 @@ const connectHome = connect(
 			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
-			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
-			isAtomic: isAtomicSite( state, siteId ),
+			isChecklistComplete,
+			isAtomic,
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite: isNewSite( state, siteId ),

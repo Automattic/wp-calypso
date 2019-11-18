@@ -205,11 +205,14 @@
 	}
 
 	.checklist__tasks {
-
 		margin-bottom: 8px;
 
 		&-completed-title {
 			margin-top: 16px;
 		}
 	}
+}
+
+.customer-home__loading-placeholder {
+	@include placeholder();
 }
