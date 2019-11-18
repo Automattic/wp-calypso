@@ -67,8 +67,8 @@ export default function Checkout( {
 	const { changeStep } = useDispatch( 'checkout' );
 
 	return (
-		<Container className={ joinClasses( [ className, 'checkout-wrapper' ] ) }>
-			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
+		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+			<MainContent className={ joinClasses( [ className, 'composite-checkout__content' ] ) }>
 				<OrderSummaryStep OrderSummary={ OrderSummary || CheckoutOrderSummary } />
 
 				<CheckoutErrorBoundary
@@ -243,7 +243,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
 
 	return (
 		<CheckoutStep
-			className="checkout__billing-details-step"
+			className="composite-checkout__billing-details-step"
 			isActive={ isActive }
 			isComplete={ isComplete }
 			stepNumber={ 2 }
@@ -281,7 +281,7 @@ function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 	return (
 		<CheckoutStep
 			finalStep
-			className="checkout__review-order-step"
+			className="composite-checkout__review-order-step"
 			isActive={ isActive }
 			isComplete={ isComplete }
 			stepNumber={ 3 }
