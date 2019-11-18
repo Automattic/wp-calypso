@@ -177,6 +177,7 @@ class Starter_Page_Templates {
 				'vertical'        => $vertical,
 				'segment'         => $segment,
 				'screenAction'    => $screen->action,
+				'theme'           => get_stylesheet(),
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );

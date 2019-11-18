@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, get, keyBy, mapValues, partition } from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, partition } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -33,6 +33,7 @@ const {
 	tracksUserData,
 	siteInformation = {},
 	screenAction,
+	theme,
 } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
@@ -51,7 +52,14 @@ class PageTemplateModal extends Component {
 		this.state.isOpen = hasTemplates;
 		if ( hasTemplates ) {
 			// Select the first template automatically.
-			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
+			if ( theme && find( props.templates, [ 'slug', theme ] ) ) {
+				this.state.previewedTemplate = theme;
+			} else if ( find( props.templates, [ 'slug', 'maywood' ] ) ) {
+				this.state.previewedTemplate = 'maywood';
+			} else {
+				// Blank template
+				this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
+			}
 			// Extract titles for faster lookup.
 			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
 		}
@@ -226,12 +234,12 @@ class PageTemplateModal extends Component {
 						<>
 							<form className="page-template-modal__form">
 								{ this.renderTemplatesList(
-									default_templates,
+									homepage_templates,
 									__( 'Choose a layout…', 'full-site-editing' )
 								) }
 								{ this.renderTemplatesList(
-									homepage_templates,
-									__( 'Homepage layouts', 'full-site-editing' )
+									default_templates,
+									__( 'Other layouts', 'full-site-editing' )
 								) }
 							</form>
 							<TemplateSelectorPreview
