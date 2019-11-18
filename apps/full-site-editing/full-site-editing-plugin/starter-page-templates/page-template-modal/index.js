@@ -160,9 +160,25 @@ class PageTemplateModal extends Component {
 		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
 	}
 
+	renderTemplatesList = ( templatesList, legendLabel ) => (
+		<fieldset className="page-template-modal__list">
+			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
+			<TemplateSelectorControl
+				label={ __( 'Layout', 'full-site-editing' ) }
+				templates={ templatesList }
+				blocksByTemplates={ this.state.blocksByTemplateSlug }
+				onTemplateSelect={ this.previewTemplate }
+				useDynamicPreview={ false }
+				siteInformation={ siteInformation }
+				selectedTemplate={ this.state.previewedTemplate }
+				handleTemplateConfirmation={ this.handleConfirmation }
+			/>
+		</fieldset>
+	);
+
 	render() {
 		/* eslint-disable no-shadow */
-		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
+		const { previewedTemplate, isOpen, isLoading } = this.state;
 		const { templates, isPromptedFromSidebar } = this.props;
 		/* eslint-enable no-shadow */
 
@@ -209,36 +225,14 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								<fieldset className="page-template-modal__list">
-									<legend className="page-template-modal__form-title">
-										{ __( 'Choose a layout…', 'full-site-editing' ) }
-									</legend>
-									<TemplateSelectorControl
-										label={ __( 'Layout', 'full-site-editing' ) }
-										templates={ default_templates }
-										blocksByTemplates={ blocksByTemplateSlug }
-										onTemplateSelect={ this.previewTemplate }
-										useDynamicPreview={ false }
-										siteInformation={ siteInformation }
-										selectedTemplate={ previewedTemplate }
-										handleTemplateConfirmation={ this.handleConfirmation }
-									/>
-								</fieldset>
-								<fieldset className="page-template-modal__list">
-									<legend className="page-template-modal__form-title">
-										{ __( 'Homepage layouts', 'full-site-editing' ) }
-									</legend>
-									<TemplateSelectorControl
-										label={ __( 'Layout', 'full-site-editing' ) }
-										templates={ homepage_templates }
-										blocksByTemplates={ blocksByTemplateSlug }
-										onTemplateSelect={ this.previewTemplate }
-										useDynamicPreview={ false }
-										siteInformation={ siteInformation }
-										selectedTemplate={ previewedTemplate }
-										handleTemplateConfirmation={ this.handleConfirmation }
-									/>
-								</fieldset>
+								{ this.renderTemplatesList(
+									default_templates,
+									__( 'Choose a layout…', 'full-site-editing' )
+								) }
+								{ this.renderTemplatesList(
+									homepage_templates,
+									__( 'Homepage layouts', 'full-site-editing' )
+								) }
 							</form>
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
