@@ -272,7 +272,7 @@ class Page extends Component {
 			this.props.isPostsPage && (
 				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
 					<Gridicon icon="undo" size={ 18 } />
-					{ translate( 'Set as Normal Page' ) }
+					{ translate( 'Set as Regular Page' ) }
 				</PopoverMenuItem>
 			),
 			! this.props.isPostsPage && (
