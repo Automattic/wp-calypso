@@ -246,22 +246,22 @@ class PageTemplateModal extends Component {
 									<>
 										{ this.renderTemplatesList(
 											homepageTemplates,
-											__( 'Homepage layouts', 'full-site-editing' )
+											__( 'Recommended Layouts', 'full-site-editing' )
 										) }
 										{ this.renderTemplatesList(
 											defaultTemplates,
-											__( 'Other page layouts', 'full-site-editing' )
+											__( 'Other Page Layouts', 'full-site-editing' )
 										) }
 									</>
 								) : (
 									<>
 										{ this.renderTemplatesList(
 											defaultTemplates,
-											__( 'Page layouts', 'full-site-editing' )
+											__( 'Recommended Layouts', 'full-site-editing' )
 										) }
 										{ this.renderTemplatesList(
 											homepageTemplates,
-											__( 'Homepage layouts', 'full-site-editing' )
+											__( 'Homepage Layouts', 'full-site-editing' )
 										) }
 									</>
 								) }
