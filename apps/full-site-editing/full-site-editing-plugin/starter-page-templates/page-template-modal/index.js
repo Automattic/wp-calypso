@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, partition, sortBy } from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, partition, reject, sortBy } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -24,6 +24,8 @@ import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
 import SidebarTemplatesPlugin from './components/sidebar-modal-opener';
 /* eslint-enable import/no-extraneous-dependencies */
+
+const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
 // Load config passed from backend.
 const {
@@ -87,10 +89,10 @@ class PageTemplateModal extends Component {
 			return blankTemplate;
 		}
 
-		if ( theme && find( props.templates, { slug: theme } ) ) {
+		if ( find( props.templates, { slug: theme } ) ) {
 			return theme;
-		} else if ( isFrontPage && find( props.templates, { slug: 'maywood' } ) ) {
-			return 'maywood';
+		} else if ( find( props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } ) ) {
+			return DEFAULT_HOMEPAGE_TEMPLATE;
 		}
 		return blankTemplate;
 	};
@@ -182,12 +184,20 @@ class PageTemplateModal extends Component {
 			category: 'home',
 		} );
 
-		const [ themeTemplate, otherHomepageTemplates ] = partition( homepageTemplates, {
-			slug: theme,
-		} );
+		// If we are not editing the front page, just return the homepage templates sorted by title.
+		if ( ! isFrontPage ) {
+			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
+		}
+
+		// If we are editing the front page, extract the current theme's template and put it first.
+		const currentThemeTemplate =
+			find( this.props.templates, { slug: theme } ) ||
+			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
+
+		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
 
 		const sortedHomepageTemplates = [
-			...themeTemplate,
+			currentThemeTemplate,
 			...sortBy( otherHomepageTemplates, 'title' ),
 		];
 
