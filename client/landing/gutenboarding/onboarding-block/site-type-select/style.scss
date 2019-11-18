@@ -33,7 +33,8 @@
 	}
 
 	.onboarding-block__multi-question-choice {
-		border-bottom: 3px solid transparent;
+		color: $blue-medium-900;
+		border-bottom: 3px solid $blue-medium-900;
 		cursor: pointer;
 		margin: 0 0 0 0.2em;
 		transition-property: border-color;
