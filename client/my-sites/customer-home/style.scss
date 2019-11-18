@@ -1,6 +1,6 @@
 .customer-home {
 	&__confetti {
-	    display: block;
+		display: block;
 		width: 320px;
 		margin: 0 auto;
 	}
@@ -42,10 +42,10 @@
 				padding: 30px 24px;
 			}
 		}
-		@include breakpoint('>1280px') {
+		@include breakpoint( '>1280px' ) {
 			@include box-action-two-col;
 		}
-		@include breakpoint('800px-960px') {
+		@include breakpoint( '800px-960px' ) {
 			@include box-action-two-col;
 		}
 	}
@@ -76,10 +76,10 @@
 				width: auto;
 			}
 		}
-		@include breakpoint('>1040px') {
+		@include breakpoint( '>1040px' ) {
 			@include card-col-two-col;
 		}
-		@include breakpoint('800px-960px') {
+		@include breakpoint( '800px-960px' ) {
 			@include card-col-two-col;
 		}
 	}
@@ -95,10 +95,10 @@
 				margin-right: 6px;
 			}
 		}
-		@include breakpoint('>1040px') {
+		@include breakpoint( '>1040px' ) {
 			@include card-col-left-two-col;
 		}
-		@include breakpoint('800px-960px') {
+		@include breakpoint( '800px-960px' ) {
 			@include card-col-left-two-col;
 		}
 	}
@@ -112,10 +112,10 @@
 				margin-left: 6px;
 			}
 		}
-		@include breakpoint('>1040px') {
+		@include breakpoint( '>1040px' ) {
 			@include card-col-right-two-col;
 		}
-		@include breakpoint('800px-960px') {
+		@include breakpoint( '800px-960px' ) {
 			@include card-col-right-two-col;
 		}
 	}
@@ -146,7 +146,7 @@
 		padding-bottom: 12px;
 	}
 	&__layout {
-		@include breakpoint('>960px') {
+		@include breakpoint( '>960px' ) {
 			display: flex;
 			justify-content: space-between;
 			flex-wrap: wrap;
@@ -162,7 +162,7 @@
 		}
 	}
 	&__layout-col-left {
-		@include breakpoint('>960px') {
+		@include breakpoint( '>960px' ) {
 			width: 60%;
 
 			.card,
@@ -186,7 +186,7 @@
 			}
 		}
 
-		@include breakpoint('>960px') {
+		@include breakpoint( '>960px' ) {
 			width: 40%;
 
 			.card {
@@ -197,7 +197,7 @@
 				margin-left: 0;
 			}
 		}
-		@include breakpoint('960px-1040px') {
+		@include breakpoint( '960px-1040px' ) {
 			.android-app-badge {
 				margin-left: -8px;
 			}
