@@ -46,6 +46,10 @@ const DomainPickerButton: FunctionComponent = () => {
 
 	return (
 		<Button onClick={ () => setDomainPopoverVisibility( s => ! s ) }>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<span className="gutenboarding__header-site-heading">
+				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+			</span>
 			{ domainName ? sprintf( NO__( '%s is available' ), domainName ) : null }
 			{ isDomainPopoverVisible && (
 				<Popover
