@@ -59,6 +59,7 @@ export default function Checkout( {
 	ReviewContent,
 	UpSell,
 	OrderSummary,
+	ContactSlot,
 	className,
 } ) {
 	useRegisterCheckoutStore();
@@ -75,28 +76,35 @@ export default function Checkout( {
 					errorMessage={ localize( 'There was a problem with the payment method form.' ) }
 				>
 					<PaymentMethodsStep
+						stepNumber={ 1 }
 						availablePaymentMethods={ availablePaymentMethods }
-						setStepNumber={ changeStep }
+						onComplete={ () => changeStep( 2 ) }
+						onEdit={ () => changeStep( 1 ) }
 						isActive={ stepNumber === 1 }
 						isComplete={ stepNumber > 1 }
 					/>
 				</CheckoutErrorBoundary>
-				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
-				>
-					<BillingDetailsStep
-						setStepNumber={ changeStep }
-						isActive={ stepNumber === 2 }
-						isComplete={ stepNumber > 2 }
-					/>
-				</CheckoutErrorBoundary>
+				{ ContactSlot && (
+					<CheckoutErrorBoundary
+						errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
+					>
+						<BillingDetailsStep
+							stepNumber={ 2 }
+							onComplete={ () => changeStep( 3 ) }
+							onEdit={ () => changeStep( 2 ) }
+							isActive={ stepNumber === 2 }
+							isComplete={ stepNumber > 2 }
+							ContactSlot={ ContactSlot }
+						/>
+					</CheckoutErrorBoundary>
+				) }
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with the review form.' ) }
 				>
 					<ReviewOrderStep
-						setStepNumber={ changeStep }
-						isActive={ stepNumber === 3 }
-						isComplete={ stepNumber > 3 }
+						stepNumber={ ContactSlot ? 3 : 2 }
+						isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) }
+						isComplete={ stepNumber > ( ContactSlot ? 3 : 2 ) }
 						ReviewContent={ ReviewContent }
 					/>
 				</CheckoutErrorBoundary>
@@ -104,7 +112,7 @@ export default function Checkout( {
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+						<CheckoutSubmitButton isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) } />
 					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
 
@@ -120,6 +128,7 @@ Checkout.propTypes = {
 	ReviewContent: PropTypes.elementType,
 	UpSell: PropTypes.elementType,
 	OrderSummary: PropTypes.elementType,
+	ContactSlot: PropTypes.elementType,
 };
 
 const Container = styled.div`
@@ -189,7 +198,14 @@ const CheckoutSummaryTotal = styled.span`
 	font-weight: ${props => props.theme.weights.bold};
 `;
 
-function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
+function PaymentMethodsStep( {
+	stepNumber,
+	onEdit,
+	onComplete,
+	isActive,
+	isComplete,
+	availablePaymentMethods,
+} ) {
 	const localize = useLocalize();
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
@@ -199,9 +215,9 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 			className="checkout__payment-methods-step"
 			isActive={ isActive }
 			isComplete={ isComplete }
-			stepNumber={ 1 }
+			stepNumber={ stepNumber }
 			title={ isComplete ? localize( 'Payment method' ) : localize( 'Pick a payment method' ) }
-			onEdit={ () => setStepNumber( 1 ) }
+			onEdit={ onEdit }
 			editButtonAriaLabel={ localize( 'Edit the payment method' ) }
 			stepContent={
 				<React.Fragment>
@@ -215,7 +231,7 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 
 					<CheckoutNextStepButton
 						value={ localize( 'Continue' ) }
-						onClick={ () => setStepNumber( 2 ) }
+						onClick={ onComplete }
 						ariaLabel={ localize( 'Continue with the selected payment method' ) }
 					/>
 				</React.Fragment>
@@ -235,55 +251,64 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 }
 
 PaymentMethodsStep.propTypes = {
-	setStepNumber: PropTypes.func.isRequired,
+	stepNumber: PropTypes.number.isRequired,
+	onComplete: PropTypes.func.isRequired,
+	onEdit: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 };
 
-function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
+function BillingDetailsStep( {
+	stepNumber,
+	isActive,
+	isComplete,
+	onComplete,
+	onEdit,
+	ContactSlot,
+} ) {
 	const localize = useLocalize();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );
 	}
-	const { BillingContactComponent } = paymentMethod;
 
 	return (
 		<CheckoutStep
 			className="checkout__billing-details-step"
 			isActive={ isActive }
 			isComplete={ isComplete }
-			stepNumber={ 2 }
+			stepNumber={ stepNumber }
 			title={
 				isComplete ? localize( 'Billing details' ) : localize( 'Enter your billing details' )
 			}
-			onEdit={ () => setStepNumber( 2 ) }
+			onEdit={ onEdit }
 			editButtonAriaLabel={ localize( 'Edit the billing details' ) }
 			stepContent={
 				<React.Fragment>
-					<BillingContactComponent isActive={ isActive } isComplete={ isComplete } />
+					<ContactSlot isActive={ isActive } isComplete={ isComplete } />
 					<CheckoutNextStepButton
 						value={ localize( 'Continue' ) }
-						onClick={ () => setStepNumber( 3 ) }
+						onClick={ onComplete }
 						ariaLabel={ localize( 'Continue with the entered billing details' ) }
 					/>
 				</React.Fragment>
 			}
-			stepSummary={
-				<BillingContactComponent summary isActive={ isActive } isComplete={ isComplete } />
-			}
+			stepSummary={ <ContactSlot summary isActive={ isActive } isComplete={ isComplete } /> }
 		/>
 	);
 }
 
 BillingDetailsStep.propTypes = {
-	setStepNumber: PropTypes.func.isRequired,
+	stepNumber: PropTypes.number.isRequired,
+	onEdit: PropTypes.func.isRequired,
+	onComplete: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
+	ContactSlot: PropTypes.elementType.isRequired,
 };
 
-function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
+function ReviewOrderStep( { stepNumber, isActive, isComplete, ReviewContent } ) {
 	const localize = useLocalize();
 
 	return (
@@ -292,7 +317,7 @@ function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 			className="checkout__review-order-step"
 			isActive={ isActive }
 			isComplete={ isComplete }
-			stepNumber={ 3 }
+			stepNumber={ stepNumber }
 			title={ localize( 'Review your order' ) }
 			stepContent={
 				ReviewContent ? (
@@ -308,4 +333,6 @@ function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 ReviewOrderStep.propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
+	stepNumber: PropTypes.number.isRequired,
+	ReviewContent: PropTypes.elementType,
 };

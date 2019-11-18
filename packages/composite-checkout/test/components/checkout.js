@@ -68,15 +68,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'renders the payment method PaymentMethodComponent', () => {
-			const { getAllByTestId } = render( <MyCheckout /> );
-			const [ activeComponent, summaryComponent ] = getAllByTestId( 'mock-payment-form' );
+			const { getByTestId } = render( <MyCheckout /> );
+			const activeComponent = getByTestId( 'mock-payment-form' );
 			expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
-			expect( summaryComponent ).toHaveTextContent( 'Name Summary' );
-		} );
-
-		it( 'renders the payment method BillingContactComponent', () => {
-			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( 'Mock Details' )[ 0 ] ).toBeInTheDocument();
 		} );
 
 		it( 'renders the review step', () => {
@@ -100,7 +94,7 @@ describe( 'Checkout', () => {
 
 		beforeEach( () => {
 			const registry = createRegistry();
-			MyCheckout = () => (
+			MyCheckout = ( { ContactSlot, UpSell, OrderSummary, ReviewContent } ) => (
 				<CheckoutProvider
 					locale="en-us"
 					items={ items }
@@ -112,7 +106,12 @@ describe( 'Checkout', () => {
 					paymentMethods={ [ mockMethod ] }
 					registry={ registry }
 				>
-					<Checkout />
+					<Checkout
+						ContactSlot={ ContactSlot }
+						UpSell={ UpSell }
+						OrderSummary={ OrderSummary }
+						ReviewContent={ ReviewContent }
+					/>
 				</CheckoutProvider>
 			);
 		} );
@@ -140,15 +139,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'renders the payment method PaymentMethodComponent', () => {
-			const { getAllByTestId } = render( <MyCheckout /> );
-			const [ activeComponent, summaryComponent ] = getAllByTestId( 'mock-payment-form' );
+			const { getByTestId } = render( <MyCheckout /> );
+			const activeComponent = getByTestId( 'mock-payment-form' );
 			expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
-			expect( summaryComponent ).toHaveTextContent( 'Name Summary' );
-		} );
-
-		it( 'renders the payment method BillingContactComponent', () => {
-			const { getAllByText } = render( <MyCheckout /> );
-			expect( getAllByText( 'Mock Details' )[ 0 ] ).toBeInTheDocument();
 		} );
 
 		it( 'renders the review step', () => {
@@ -162,6 +155,32 @@ describe( 'Checkout', () => {
 		it( 'renders the payment method SubmitButtonComponent', () => {
 			const { getByText } = render( <MyCheckout /> );
 			expect( getByText( 'Pay Please' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the ReviewContent if provided', () => {
+			const { getByText } = render(
+				<MyCheckout ReviewContent={ () => <div>Some Review Text</div> } />
+			);
+			expect( getByText( 'Some Review Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the OrderSummary if provided', () => {
+			const { getByText } = render(
+				<MyCheckout OrderSummary={ () => <div>Some OrderSummary Text</div> } />
+			);
+			expect( getByText( 'Some OrderSummary Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the UpSell if provided', () => {
+			const { getByText } = render( <MyCheckout UpSell={ () => <div>Some Upsell Text</div> } /> );
+			expect( getByText( 'Some Upsell Text' ) ).toBeTruthy();
+		} );
+
+		it( 'renders the ContactSlot if provided', () => {
+			const { getByText } = render(
+				<MyCheckout ContactSlot={ ( { summary } ) => summary || <div>Some Contact Form</div> } />
+			);
+			expect( getByText( 'Some Contact Form' ) ).toBeTruthy();
 		} );
 	} );
 
@@ -201,13 +220,6 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
-		it( 'makes the contact step invisible', () => {
-			const contactStep = container.querySelector( '.checkout__billing-details-step' );
-			expect( contactStep ).toHaveTextContent( 'Enter your billing details' );
-			const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
-			expect( contactStepContent ).toHaveStyle( 'display: none' );
-		} );
-
 		it( 'makes the review step invisible', () => {
 			const reviewStep = container.querySelector( '.checkout__review-order-step' );
 			expect( reviewStep ).toHaveTextContent( 'Review your order' );
@@ -242,83 +254,113 @@ describe( 'Checkout', () => {
 			fireEvent.click( firstStepContinue );
 		} );
 
-		it( 'makes the contact step active', () => {
-			const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
-			expect( activeSteps ).toHaveLength( 1 );
-			expect( activeSteps[ 0 ] ).toHaveTextContent( 'Enter your billing details' );
-		} );
-
-		it( 'makes the contact step visible', () => {
-			const contactStep = container.querySelector( '.checkout__billing-details-step' );
-			expect( contactStep ).toHaveTextContent( 'Enter your billing details' );
-			const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
-			expect( contactStepContent ).toHaveStyle( 'display: block' );
-		} );
-
 		it( 'makes the first step invisible', () => {
 			const firstStep = container.querySelector( '.checkout__payment-methods-step' );
 			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
-		} );
-
-		it( 'makes the review step invisible', () => {
-			const reviewStep = container.querySelector( '.checkout__review-order-step' );
-			const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
-			expect( reviewStepContent ).toHaveStyle( 'display: none' );
-		} );
-	} );
-
-	describe( 'when clicking continue from the contact step', function() {
-		let container;
-
-		beforeEach( () => {
-			const mockMethod = createMockMethod();
-			const { items, total } = createMockItems();
-			const MyCheckout = () => (
-				<CheckoutProvider
-					locale="en-us"
-					items={ items }
-					total={ total }
-					onSuccess={ noop }
-					onFailure={ noop }
-					successRedirectUrl="#"
-					failureRedirectUrl="#"
-					paymentMethods={ [ mockMethod ] }
-				>
-					<Checkout />
-				</CheckoutProvider>
-			);
-			const renderResult = render( <MyCheckout /> );
-			container = renderResult.container;
-			const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
-			const secondStepContinue = renderResult.getAllByText( 'Continue' )[ 1 ];
-			fireEvent.click( secondStepContinue );
-		} );
-
-		it( 'makes the review step active', () => {
-			const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
-			expect( activeSteps ).toHaveLength( 1 );
-			expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 		} );
 
 		it( 'makes the review step visible', () => {
 			const reviewStep = container.querySelector( '.checkout__review-order-step' );
-			expect( reviewStep ).toHaveTextContent( 'Review your order' );
 			const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
 			expect( reviewStepContent ).toHaveStyle( 'display: block' );
 		} );
+	} );
 
-		it( 'makes the first step invisible', () => {
-			const firstStep = container.querySelector( '.checkout__payment-methods-step' );
-			const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
-			expect( firstStepContent ).toHaveStyle( 'display: none' );
+	describe( 'with a ContactSlot', function() {
+		describe( 'before clicking a button', function() {
+			let container;
+			const ContactForm = ( { summary } ) => summary || <div>Contact Form Here</div>;
+
+			beforeEach( () => {
+				const mockMethod = createMockMethod();
+				const { items, total } = createMockItems();
+				const MyCheckout = () => (
+					<CheckoutProvider
+						locale="en-us"
+						items={ items }
+						total={ total }
+						onSuccess={ noop }
+						onFailure={ noop }
+						successRedirectUrl="#"
+						failureRedirectUrl="#"
+						paymentMethods={ [ mockMethod ] }
+					>
+						<Checkout ContactSlot={ ContactForm } />
+					</CheckoutProvider>
+				);
+				const renderResult = render( <MyCheckout /> );
+				container = renderResult.container;
+			} );
+
+			it( 'makes the first step visible', () => {
+				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				expect( firstStepContent ).toHaveStyle( 'display: block' );
+			} );
+
+			it( 'makes the contact step invisible', () => {
+				const contactStep = container.querySelector( '.checkout__billing-details-step' );
+				const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
+				expect( contactStepContent ).toHaveStyle( 'display: none' );
+			} );
+
+			it( 'makes the review step invisible', () => {
+				const reviewStep = container.querySelector( '.checkout__review-order-step' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+			} );
 		} );
 
-		it( 'makes the contact step invisible', () => {
-			const secondStep = container.querySelector( '.checkout__billing-details-step' );
-			const secondStepContent = secondStep.querySelector( '.checkout-step__content' );
-			expect( secondStepContent ).toHaveStyle( 'display: none' );
+		describe( 'when clicking continue from the payment method step', function() {
+			let renderResult;
+			const ContactForm = ( { summary } ) => summary || <div>Contact Form Here</div>;
+
+			beforeEach( () => {
+				const mockMethod = createMockMethod();
+				const { items, total } = createMockItems();
+				const MyCheckout = () => (
+					<CheckoutProvider
+						locale="en-us"
+						items={ items }
+						total={ total }
+						onSuccess={ noop }
+						onFailure={ noop }
+						successRedirectUrl="#"
+						failureRedirectUrl="#"
+						paymentMethods={ [ mockMethod ] }
+					>
+						<Checkout ContactSlot={ ContactForm } />
+					</CheckoutProvider>
+				);
+				renderResult = render( <MyCheckout /> );
+				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
+				fireEvent.click( firstStepContinue );
+			} );
+
+			it( 'makes the first step invisible', () => {
+				const firstStep = renderResult.container.querySelector( '.checkout__payment-methods-step' );
+				const firstStepContent = firstStep.querySelector( '.checkout-step__content' );
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
+			} );
+
+			it( 'makes the contact step visible', () => {
+				const contactStep = renderResult.container.querySelector(
+					'.checkout__billing-details-step'
+				);
+				const contactStepContent = contactStep.querySelector( '.checkout-step__content' );
+				expect( contactStepContent ).toHaveStyle( 'display: block' );
+			} );
+
+			it( 'displays the contact form', () => {
+				expect( renderResult.getByText( 'Contact Form Here' ) ).toBeTruthy();
+			} );
+
+			it( 'makes the review step invisible', () => {
+				const reviewStep = renderResult.container.querySelector( '.checkout__review-order-step' );
+				const reviewStepContent = reviewStep.querySelector( '.checkout-step__content' );
+				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+			} );
 		} );
 	} );
 } );
@@ -327,8 +369,7 @@ function createMockMethod() {
 	return {
 		id: 'mock',
 		LabelComponent: () => <span data-testid="mock-label">Mock Label</span>,
-		PaymentMethodComponent: () => <span data-testid="mock-payment-details">Mock Details</span>,
-		BillingContactComponent: MockPaymentForm,
+		PaymentMethodComponent: MockPaymentForm,
 		SubmitButtonComponent: () => <button>Pay Please</button>,
 		SummaryComponent: () => 'Mock Method',
 		getAriaLabel: () => 'Mock Method',

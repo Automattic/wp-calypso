@@ -12,14 +12,12 @@ import { useLocalize, sprintf } from '../../lib/localize';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from './credit-card-fields';
-import BillingFields from '../../components/billing-fields';
 
 export function createCreditCardMethod() {
 	return {
 		id: 'card',
 		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: CreditCardFields,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		SummaryComponent: CreditCardSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
