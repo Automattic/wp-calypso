@@ -20,4 +20,4 @@ export default function QuerySiteChecklist( { siteId } ) {
 	return null;
 }
 
-QuerySiteChecklist.propTypes = { siteId: PropTypes.number };
+QuerySiteChecklist.propTypes = { siteId: PropTypes.number.isRequired };

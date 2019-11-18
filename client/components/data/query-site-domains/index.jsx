@@ -27,4 +27,4 @@ export default function QuerySiteDomains( { siteId } ) {
 	return null;
 }
 
-QuerySiteDomains.propTypes = { siteId: PropTypes.number };
+QuerySiteDomains.propTypes = { siteId: PropTypes.number.isRequired };
