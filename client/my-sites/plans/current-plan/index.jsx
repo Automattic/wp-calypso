@@ -26,7 +26,7 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
 import Button from 'components/button';
 import Card from 'components/card';
-import MyPlanCard from 'components/my-plan-card';
+import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
@@ -192,8 +192,8 @@ class CurrentPlan extends Component {
 				</Card>
 				<MyPlanCard
 					action={ this.getActionButton() }
-					expiration={ this.getPlanExpiration() }
-					isExpiring={ isExpiring }
+					details={ this.getPlanExpiration() }
+					isError={ isExpiring }
 					isPlaceholder={ this.isLoading() }
 					plan={ currentPlanSlug }
 					title={ this.getPlanTitle() }
