@@ -32,6 +32,10 @@
 			"prPriority": 1
 		},
 		{
+			"packagePatterns": [ "^@types/" ],
+			"prPriority": 1
+		},
+		{
 			"packagePatterns": [ "^webpack" ],
 			"prPriority": 1
 		}
