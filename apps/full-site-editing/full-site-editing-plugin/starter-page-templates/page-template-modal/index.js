@@ -184,15 +184,13 @@ class PageTemplateModal extends Component {
 			category: 'home',
 		} );
 
-		// If we are not editing the front page, just return the homepage templates sorted by title.
-		if ( ! isFrontPage ) {
-			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
-		}
-
-		// If we are editing the front page, extract the current theme's template and put it first.
 		const currentThemeTemplate =
 			find( this.props.templates, { slug: theme } ) ||
 			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
+
+		if ( ! isFrontPage || ! currentThemeTemplate ) {
+			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
+		}
 
 		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
 
