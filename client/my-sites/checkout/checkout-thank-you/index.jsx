@@ -7,7 +7,6 @@ import { find, get, identity } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -43,7 +42,6 @@ import {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
-	isDotComPlan,
 	isEcommerce,
 	isGoogleApps,
 	isGuidedTransfer,
@@ -328,10 +326,6 @@ export class CheckoutThankYou extends React.Component {
 		return isJetpackBusinessPlan( this.props.planSlug );
 	};
 
-	isNewUser = () => {
-		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
-	};
-
 	getAnalyticsProperties = () => {
 		const { gsuiteReceiptId, receiptId, selectedFeature: feature, selectedSite } = this.props;
 		const site = get( selectedSite, 'slug' );
@@ -380,7 +374,6 @@ export class CheckoutThankYou extends React.Component {
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
-		let wasDotcomPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let delayedTransferPurchase = false;
 
@@ -388,7 +381,6 @@ export class CheckoutThankYou extends React.Component {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
-			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
@@ -434,7 +426,7 @@ export class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if ( wasDotcomPlanPurchased && delayedTransferPurchase && this.isNewUser() ) {
+		} else if ( delayedTransferPurchase ) {
 			const planProps = {
 				action: (
 					// eslint-disable-next-line
