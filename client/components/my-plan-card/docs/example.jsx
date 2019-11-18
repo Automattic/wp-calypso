@@ -38,19 +38,19 @@ function MyPlanCardExample() {
 			<MyPlanCard
 				action={ isPlaceholder ? null : <Button compact>Manage Product</Button> }
 				isPlaceholder={ isPlaceholder }
-				expiration={ isPlaceholder ? null : 'Expires on November 6, 2019' }
+				details={ isPlaceholder ? null : 'Expires on November 6, 2019' }
 				tagLine="Your data is being securely backed up as you edit."
 				title={
 					<Fragment>
 						Jetpack Backup <em>Real-Time</em>
 					</Fragment>
 				}
-				isExpiring
+				isError
 			/>
 			<MyPlanCard
 				action={ isPlaceholder ? null : <Button compact>Manage Product</Button> }
 				isPlaceholder={ isPlaceholder }
-				expiration={ isPlaceholder ? null : 'Set to auto-renew on August 29, 2020' }
+				details={ isPlaceholder ? null : 'Set to auto-renew on August 29, 2020' }
 				tagLine="Your data is being scanned for malware."
 				title="Jetpack Scan"
 			/>

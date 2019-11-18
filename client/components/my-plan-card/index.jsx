@@ -16,18 +16,18 @@ import PlanIcon from 'components/plans/plan-icon';
  */
 import './style.scss';
 
-const MyPlanCard = ( { action, isExpiring, isPlaceholder, expiration, plan, tagLine, title } ) => {
+const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagLine, title } ) => {
 	const cardClassNames = classNames( 'my-plan-card', {
-		'is-expiring': isExpiring,
-		'has-action-only': action && ! expiration && ! isPlaceholder,
+		'has-action-only': action && ! details && ! isPlaceholder,
 	} );
-	const expirationClassNames = classNames( 'my-plan-card__expiration', {
-		'is-placeholder': isPlaceholder && ! expiration,
+	const detailsClassNames = classNames( 'my-plan-card__details', {
+		'is-error': isError,
+		'is-placeholder': isPlaceholder && ! details,
 	} );
 	const actionClassNames = classNames( 'my-plan-card__action', {
 		'is-placeholder': isPlaceholder && ! action,
 	} );
-	const hasSecondaryArea = expiration || action || isPlaceholder;
+	const hasSecondaryArea = details || action || isPlaceholder;
 
 	return (
 		<Card className={ cardClassNames } compact>
@@ -44,7 +44,7 @@ const MyPlanCard = ( { action, isExpiring, isPlaceholder, expiration, plan, tagL
 			</div>
 			{ hasSecondaryArea && (
 				<div className="my-plan-card__secondary">
-					<div className={ expirationClassNames }>{ expiration }</div>
+					<div className={ detailsClassNames }>{ details }</div>
 					<div className={ actionClassNames }>{ action }</div>
 				</div>
 			) }
@@ -54,9 +54,9 @@ const MyPlanCard = ( { action, isExpiring, isPlaceholder, expiration, plan, tagL
 
 MyPlanCard.propTypes = {
 	action: PropTypes.oneOfType( [ PropTypes.node, PropTypes.element ] ),
-	isExpiring: PropTypes.bool,
+	isError: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	expiration: PropTypes.string,
+	details: PropTypes.string,
 	plan: PropTypes.string,
 	tagLine: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),

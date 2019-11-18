@@ -86,7 +86,7 @@
 	}
 }
 
-.my-plan-card__expiration {
+.my-plan-card__details {
 	padding-top: 8px;
 	white-space: nowrap;
 	color: var( --color-text-subtle );
@@ -95,7 +95,7 @@
 		padding-top: 0;
 	}
 
-	.is-expiring & {
+	&.is-error {
 		color: var( --color-error );
 	}
 
