@@ -212,7 +212,7 @@ class Home extends Component {
 		return (
 			<FormattedHeader
 				className="customer-home__page-heading"
-				headerText={ translate( 'Customer Home' ) }
+				headerText={ translate( 'My Home' ) }
 				align="left"
 			/>
 		);
@@ -288,7 +288,12 @@ class Home extends Component {
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					{ displayChecklist ? (
-						<WpcomChecklist displayMode={ checklistMode } />
+						<>
+							<Card className="customer-home__card-checklist">
+								<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
+							</Card>
+							<WpcomChecklist displayMode={ checklistMode } />
+						</>
 					) : (
 						<Card className="customer-home__card-boxes">
 							<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>

@@ -49,6 +49,9 @@
 			@include box-action-two-col;
 		}
 	}
+	&__card-checklist {
+		margin-bottom: -16px;
+	}
 	&__card-boxes {
 		padding-bottom: 0;
 	}
