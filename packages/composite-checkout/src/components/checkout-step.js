@@ -86,7 +86,7 @@ function CheckoutStepHeader( {
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
 				{ stepNumber }
 			</Stepper>
-			<StepTitle className="checkout-step__title" isActive={ isActive }>
+			<StepTitle className="checkout-step__title" stepNumber={ stepNumber } isActive={ isActive }>
 				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
@@ -149,7 +149,8 @@ const StepTitle = styled.span`
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
 	font-weight: ${props =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
-	flex: 1;
+	margin-right: ${props => ( props.stepNumber === 0 ? '0' : '8px' )};
+	flex: ${props => ( props.stepNumber === 0 ? '1' : 'inherit' )};
 `;
 
 const StepHeader = styled.h2`

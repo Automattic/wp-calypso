@@ -600,7 +600,6 @@ function StripePayButton() {
 				} )
 			}
 			buttonState="primary"
-			buttonType="apple-pay"
 			fullWidth
 		>
 			{ buttonString }

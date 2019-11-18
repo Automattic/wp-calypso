@@ -67,7 +67,7 @@ export default function Checkout( {
 	const { changeStep } = useDispatch( 'checkout' );
 
 	return (
-		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
+		<Container className={ joinClasses( [ className, 'checkout-wrapper' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
 				<OrderSummaryStep OrderSummary={ OrderSummary || CheckoutOrderSummary } />
 
@@ -123,14 +123,6 @@ Checkout.propTypes = {
 };
 
 const Container = styled.div`
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		max-width: 910px;
-		margin: 0 auto;
-	}
-
 	*:focus {
 		outline: ${props => props.theme.colors.outline} auto 5px;
 	}
