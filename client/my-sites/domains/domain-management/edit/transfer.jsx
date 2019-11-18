@@ -60,7 +60,7 @@ class Transfer extends React.PureComponent {
 					</Notice>
 				);
 			}
-		} else {
+		} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
 			transferNotice = (
 				<Notice status={ 'is-error' } showDismiss={ false }>
 					{ translate( 'The transfer has failed. {{a}}Learn more{{/a}}.', {
@@ -77,6 +77,14 @@ class Transfer extends React.PureComponent {
 				</Notice>
 			);
 
+			cancelNavItem = (
+				<VerticalNav>
+					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+						{ translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
+			);
+		} else {
 			cancelNavItem = (
 				<VerticalNav>
 					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
