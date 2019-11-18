@@ -85,6 +85,7 @@ class Page extends Component {
 
 	static defaultProps = {
 		onShadowStatusChange: noop,
+		showPublishedStatus: false,
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -424,7 +425,14 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { editorUrl, page, shadowStatus, translate, isPostsPage: latestPostsPage } = this.props;
+		const {
+			editorUrl,
+			page,
+			shadowStatus,
+			showPublishedStatus,
+			translate,
+			isPostsPage: latestPostsPage,
+		} = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -525,6 +533,7 @@ class Page extends Component {
 					<PageCardInfo
 						page={ page }
 						showTimestamp
+						showPublishedStatus={ showPublishedStatus }
 						siteUrl={ this.props.multisite && this.getSiteDomain() }
 					/>
 				</div>
