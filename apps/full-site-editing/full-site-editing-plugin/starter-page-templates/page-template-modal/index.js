@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, partition } from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, partition, sortBy } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -87,9 +87,9 @@ class PageTemplateModal extends Component {
 			return blankTemplate;
 		}
 
-		if ( theme && find( props.templates, [ 'slug', theme ] ) ) {
+		if ( theme && find( props.templates, { slug: theme } ) ) {
 			return theme;
-		} else if ( isFrontPage && find( props.templates, [ 'slug', 'maywood' ] ) ) {
+		} else if ( isFrontPage && find( props.templates, { slug: 'maywood' } ) ) {
 			return 'maywood';
 		}
 		return blankTemplate;
@@ -177,6 +177,23 @@ class PageTemplateModal extends Component {
 		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
 	}
 
+	getTemplateGroups = () => {
+		const [ homepageTemplates, defaultTemplates ] = partition( this.props.templates, {
+			category: 'home',
+		} );
+
+		const [ themeTemplate, otherHomepageTemplates ] = partition( homepageTemplates, {
+			slug: theme,
+		} );
+
+		const sortedHomepageTemplates = [
+			...themeTemplate,
+			...sortBy( otherHomepageTemplates, 'title' ),
+		];
+
+		return { homepageTemplates: sortedHomepageTemplates, defaultTemplates };
+	};
+
 	renderTemplatesList = ( templatesList, legendLabel ) => (
 		<fieldset className="page-template-modal__list">
 			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
@@ -194,18 +211,14 @@ class PageTemplateModal extends Component {
 	);
 
 	render() {
-		/* eslint-disable no-shadow */
 		const { previewedTemplate, isOpen, isLoading } = this.state;
-		const { templates, isPromptedFromSidebar } = this.props;
-		/* eslint-enable no-shadow */
+		const { isPromptedFromSidebar } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
 		}
 
-		const [ homepageTemplates, defaultTemplates ] = partition( templates, {
-			category: 'home',
-		} );
+		const { homepageTemplates, defaultTemplates } = this.getTemplateGroups();
 
 		return (
 			<Modal
