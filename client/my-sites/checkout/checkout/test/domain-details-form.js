@@ -14,6 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
+import PrivacyProtection from '../privacy-protection';
 import { domainRegistration } from 'lib/cart-values/cart-items';
 
 jest.mock( 'lib/analytics', () => ( {
@@ -21,10 +22,7 @@ jest.mock( 'lib/analytics', () => ( {
 		record: () => {},
 	},
 } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
-} ) );
+
 jest.mock( 'lib/wp', () => {
 	const wpcomMock = {
 		undocumented: () => wpcomMock,
@@ -37,9 +35,6 @@ jest.mock( 'lib/wp', () => {
 
 	return wpcomMock;
 } );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Domain Details Form', () => {
 	const defaultProps = {
@@ -91,7 +86,7 @@ describe( 'Domain Details Form', () => {
 	test( 'does not render privacy with no domains', () => {
 		const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 0 );
 	} );
 
 	test( 'should render the privacy upsell with a domain with privacy support', () => {
@@ -101,7 +96,7 @@ describe( 'Domain Details Form', () => {
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomain } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render privacy upsell for domain with support', () => {
@@ -111,7 +106,7 @@ describe( 'Domain Details Form', () => {
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomainWithPrivacy } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 1 );
 	} );
 
 	test( "should not render the privacy upsell with a domain that doesn't support privacy", () => {
@@ -120,7 +115,7 @@ describe( 'Domain Details Form', () => {
 		} );
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomainWithNoPrivacy } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 0 );
 	} );
 
 	test( 'should not render the privacy upsell with mixed privacy support', () => {
@@ -129,13 +124,13 @@ describe( 'Domain Details Form', () => {
 		} );
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 0 );
 	} );
 
 	test( 'should render privacy upsell without explicit privacy support', () => {
 		const mixedSupportProps = merge( {}, defaultProps, { cart: { products: [ domainProduct ] } } );
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
-		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
+		expect( wrapper.find( PrivacyProtection ) ).to.have.length( 1 );
 	} );
 } );
