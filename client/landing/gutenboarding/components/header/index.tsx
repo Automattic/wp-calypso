@@ -40,7 +40,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 					{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 				</span>
 				<Button onClick={ () => setDomainPopoverVisibility( s => ! s ) }>
-					Pick a domain
+					{ NO__( 'Pick a domain' ) }
 					{ isDomainPopoverVisible && (
 						<Popover
 							/* Prevent interaction in the domain picker from affecting the popover */
