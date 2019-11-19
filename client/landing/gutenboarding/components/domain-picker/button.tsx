@@ -13,6 +13,7 @@ import DomainPicker from './list';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
+import { useDebounce } from 'use-debounce';
 
 import './style.scss';
 
@@ -27,11 +28,24 @@ const DomainPickerButton: FunctionComponent = () => {
 	// Without user search, we can provide recommendations based on title + vertical
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 
-	let search = domainSearch.trim();
-	if ( ! search && isFilledFormValue( siteTitle ) ) {
-		search = siteTitle;
-	}
-
+	/**
+	 * Debounce our input + HTTP dependent select changes
+	 *
+	 * Rapidly changing input generates excessive HTTP requests.
+	 * It also leads to jarring UI changes.
+	 *
+	 * @see https://stackoverflow.com/a/44755058/1432801
+	 */
+	const inputDebounce = 400;
+	const [ search ] = useDebounce(
+		// Use trimmed domainSearch if non-empty
+		domainSearch.trim() ||
+			// Otherwise use a filled form value
+			( isFilledFormValue( siteTitle ) && siteTitle ) ||
+			// Otherwise use empty string
+			'',
+		inputDebounce
+	);
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
