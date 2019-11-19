@@ -31,6 +31,58 @@ import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
+	static propTypes = {
+		basePlansPath: PropTypes.string,
+		intervalType: PropTypes.string.isRequired,
+		products: PropTypes.arrayOf(
+			PropTypes.shape( {
+				title: PropTypes.string,
+				id: PropTypes.string,
+				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
+				optionDescriptions: PropTypes.objectOf(
+					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
+				),
+				optionDisplayNames: PropTypes.objectOf(
+					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+				),
+				optionShortNames: PropTypes.objectOf(
+					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+				),
+				optionsLabel: PropTypes.string,
+			} )
+		).isRequired,
+		productPriceMatrix: PropTypes.shape( {
+			relatedProduct: PropTypes.string,
+			ratio: PropTypes.number,
+		} ),
+		siteId: PropTypes.number,
+
+		// Connected props
+		availableProducts: PropTypes.object,
+		currencyCode: PropTypes.string,
+		currentPlanSlug: PropTypes.string,
+		fetchingPlans: PropTypes.bool,
+		fetchingSitePlans: PropTypes.bool,
+		fetchingSitePurchases: PropTypes.bool,
+		productSlugs: PropTypes.arrayOf( PropTypes.string ),
+		purchases: PropTypes.array,
+		recordTracksEvent: PropTypes.func.isRequired,
+		selectedSiteId: PropTypes.number,
+		selectedSiteSlug: PropTypes.string,
+		storeProducts: PropTypes.object,
+
+		// From localize() HoC
+		translate: PropTypes.func.isRequired,
+
+		// From withLocalizedMoment() HoC
+		moment: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		productPriceMatrix: {},
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -466,58 +518,6 @@ export class ProductSelector extends Component {
 		);
 	}
 }
-
-ProductSelector.propTypes = {
-	basePlansPath: PropTypes.string,
-	intervalType: PropTypes.string.isRequired,
-	products: PropTypes.arrayOf(
-		PropTypes.shape( {
-			title: PropTypes.string,
-			id: PropTypes.string,
-			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
-			optionDescriptions: PropTypes.objectOf(
-				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-			),
-			optionDisplayNames: PropTypes.objectOf(
-				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-			),
-			optionShortNames: PropTypes.objectOf(
-				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-			),
-			optionsLabel: PropTypes.string,
-		} )
-	).isRequired,
-	productPriceMatrix: PropTypes.shape( {
-		relatedProduct: PropTypes.string,
-		ratio: PropTypes.number,
-	} ),
-	siteId: PropTypes.number,
-
-	// Connected props
-	availableProducts: PropTypes.object,
-	currencyCode: PropTypes.string,
-	currentPlanSlug: PropTypes.string,
-	fetchingPlans: PropTypes.bool,
-	fetchingSitePlans: PropTypes.bool,
-	fetchingSitePurchases: PropTypes.bool,
-	productSlugs: PropTypes.arrayOf( PropTypes.string ),
-	purchases: PropTypes.array,
-	recordTracksEvent: PropTypes.func.isRequired,
-	selectedSiteId: PropTypes.number,
-	selectedSiteSlug: PropTypes.string,
-	storeProducts: PropTypes.object,
-
-	// From localize() HoC
-	translate: PropTypes.func.isRequired,
-
-	// From withLocalizedMoment() HoC
-	moment: PropTypes.func.isRequired,
-};
-
-ProductSelector.defaultProps = {
-	productPriceMatrix: {},
-};
 
 const connectComponent = connect(
 	( state, { products, siteId } ) => {
