@@ -131,6 +131,7 @@ class ProductPlanOverlapNotices extends Component {
 
 				{ this.hasOverlap() && (
 					<Notice
+						showDismiss={ false }
 						status="is-warning"
 						text={ translate(
 							'Your %(planName)s Plan includes %(featureName)s. ' +
