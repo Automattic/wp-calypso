@@ -636,13 +636,12 @@ class WpcomChecklistComponent extends PureComponent {
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
 		const {
-			needsVerification,
 			needsEmailVerification,
 			needsDomainVerification,
 			siteIsUnlaunched,
 			translate,
 		} = this.props;
-		const disabled = ! baseProps.completed && needsVerification;
+		const disabled = ! baseProps.completed && ( needsEmailVerification || needsDomainVerification );
 		let noticeText;
 		if ( disabled ) {
 			if ( needsDomainVerification ) {
@@ -1113,7 +1112,6 @@ export default connect(
 			userEmail: ( user && user.email ) || '',
 			needsEmailVerification,
 			needsDomainVerification,
-			needsVerification: needsEmailVerification || needsDomainVerification,
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
 		};
