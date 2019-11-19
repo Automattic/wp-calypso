@@ -31,3 +31,9 @@ export function usePrimarySelect( callback ) {
 export function usePrimaryDispatch() {
 	return useDispatch( primaryStoreId );
 }
+
+export function usePaymentData() {
+	const paymentData = usePrimarySelect( select => select().getPaymentData() );
+	const { updatePaymentData } = usePrimaryDispatch();
+	return [ paymentData, updatePaymentData ];
+}

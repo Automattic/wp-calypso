@@ -20,6 +20,7 @@ import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
 import {
 	createRegistry,
 	useDispatch,
+	usePaymentData,
 	usePrimaryDispatch,
 	usePrimarySelect,
 	useRegisterStore,
@@ -69,6 +70,7 @@ export {
 	useDispatch,
 	useHasDomainsInCart,
 	useLineItems,
+	usePaymentData,
 	usePaymentMethod,
 	usePaymentMethodId,
 	usePrimaryDispatch,
