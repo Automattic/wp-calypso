@@ -27,6 +27,7 @@ import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
 import { isJetpackBackup } from 'lib/products-values';
+import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -141,6 +142,7 @@ class ActivityLog extends Component {
 
 	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.
+	 *
 	 * @param {string} type Type of dialog to close.
 	 */
 	handleCloseDialog = type => {
@@ -160,7 +162,7 @@ class ActivityLog extends Component {
 	 * times need to be formatted for display to ensure all times are displayed as site times.
 	 *
 	 * @param   {object} date Moment to adjust.
-	 * @returns {Moment}      Moment adjusted for site timezone or gmtOffset.
+	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
 	 */
 	applySiteOffset = date => {
 		const { timezone, gmtOffset } = this.props;
@@ -213,7 +215,8 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display the status of the operation currently being performed.
-	 * @param   {integer} siteId         Id of the site where the operation is performed.
+	 *
+	 * @param   {number} siteId         Id of the site where the operation is performed.
 	 * @param   {object}  actionProgress Current status of operation performed.
 	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
 	 * @returns {object}                 Card showing progress.
@@ -247,7 +250,8 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display a success or error card based on the last status of operation.
-	 * @param   {integer} siteId   Id of the site where the operation was performed.
+	 *
+	 * @param   {number} siteId   Id of the site where the operation was performed.
 	 * @param   {object}  progress Last status of operation.
 	 * @returns {object}           Card showing success or error.
 	 */
@@ -363,7 +367,6 @@ class ActivityLog extends Component {
 			rewindState,
 			siteId,
 			siteHasNoLog,
-			slug,
 			translate,
 			isAtomic,
 			isJetpack,
@@ -422,20 +425,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ 'awaitingCredentials' === rewindState.state && ! siteHasNoLog && (
-					<Banner
-						icon="history"
-						href={
-							rewindState.canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
-						}
-						title={ translate( 'Add site credentials' ) }
-						description={ translate(
-							'Backups and security scans require access to your site to work properly.'
-						) }
-					/>
-				) }
+				<JetpackBackupCredsBanner />
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
