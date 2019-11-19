@@ -454,9 +454,9 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/create-tagline.svg"
 				buttonText={ translate( 'Verify' ) }
 				completedButtonText={ translate( 'Change' ) }
-				completedTitle={ translate( 'You verified your domain name' ) }
+				completedTitle={ translate( 'You verified the email address for your domain(s)' ) }
 				description={ translate(
-					'Email assigned to your domains has to be verified so we can get in touch with you when needed.'
+					'The email address for your domains has to be verified to allow your domains to work properly.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 				onClick={ this.handleTaskStart( {
@@ -470,10 +470,10 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={
 					task.unverifiedDomains.length === 1
-						? translate( 'Verify %(domainName)s', {
+						? translate( 'Verify email address for domain %(domainName)s', {
 								args: { domainName: task.unverifiedDomains[ 0 ] },
 						  } )
-						: translate( 'Verify your domains' )
+						: translate( 'Verify email address for domains' )
 				}
 				showSkip={ false }
 			/>
@@ -635,13 +635,19 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { needsVerification, needsDomainVerification, siteIsUnlaunched, translate } = this.props;
+		const {
+			needsVerification,
+			needsEmailVerification,
+			needsDomainVerification,
+			siteIsUnlaunched,
+			translate,
+		} = this.props;
 		const disabled = ! baseProps.completed && needsVerification;
 		let noticeText;
 		if ( disabled ) {
 			if ( needsDomainVerification ) {
 				noticeText = translate( 'Verify your domain before launching your site.' );
-			} else if ( needsDomainVerification ) {
+			} else if ( needsEmailVerification ) {
 				noticeText = translate( 'Confirm your email address before launching your site.' );
 			}
 		}
