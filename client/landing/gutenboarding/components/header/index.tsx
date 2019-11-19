@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -33,9 +33,6 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 		>
 			<div className="gutenboarding__header-site">
 				<Icon icon="wordpress-alt" color="#066188" />
-				<span className="gutenboarding__header-site-heading">
-					{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-				</span>
 				<DomainPickerButton />
 			</div>
 			<div

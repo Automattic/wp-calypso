@@ -33,13 +33,15 @@ export interface DomainSuggestionQuery {
 	vertical?: string;
 }
 
+export type DomainName = string;
+
 export interface DomainSuggestion {
 	/**
 	 * The domain name
 	 *
 	 * @example "example.com"
 	 */
-	domain_name: string;
+	domain_name: DomainName;
 
 	/**
 	 * Relevance as a percent: 0 <= relevance <= 1
