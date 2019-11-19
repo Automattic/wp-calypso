@@ -86,7 +86,7 @@ export class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
+		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
 		const { siteId: prevSiteId } = prevProps;
@@ -429,7 +429,7 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate } = this.props;
+		const { basePlansPath, intervalType, plansWithScroll, translate } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -445,6 +445,8 @@ export class PlansFeaturesMain extends Component {
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 				/>
+
+				{ ! plansWithScroll && this.renderToggle() }
 			</div>
 		);
 	}

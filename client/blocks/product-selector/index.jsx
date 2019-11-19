@@ -30,6 +30,11 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ProductSelector extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
