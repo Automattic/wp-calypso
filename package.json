@@ -205,6 +205,7 @@
 		"tracekit": "0.4.5",
 		"twemoji": "11.2.0",
 		"url": "0.11.0",
+		"use-debounce": "3.1.0",
 		"use-subscription": "1.2.0",
 		"utility-types": "3.9.0",
 		"uuid": "3.3.3",
