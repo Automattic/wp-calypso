@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { moment } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,6 +43,17 @@ export const getDomainsBySite = ( state, site ) => {
 	}
 
 	return getDomainsBySiteId( state, site.ID );
+};
+
+/**
+ * Determines whether the list of domains for the specified site has loaded.
+ *
+ * @param {Object} state - global state tree
+ * @param {Number} siteId - identifier of the site
+ * @return {Boolean} true if the list of domains has loaded, false otherwise
+ */
+export const hasLoadedSiteDomains = ( state, siteId ) => {
+	return has( state, [ 'sites', 'domains', 'items', siteId ] );
 };
 
 /**
