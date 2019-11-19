@@ -34,8 +34,8 @@ const DomainPickerButton: FunctionComponent = () => {
 
 	const suggestions = useSelect(
 		select => {
-			if ( isFilledFormValue( search ) ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions( siteTitle, {
+			if ( search ) {
+				return select( DOMAIN_STORE ).getDomainSuggestions( search, {
 					include_wordpressdotcom: true,
 					...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
 				} );
