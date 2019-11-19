@@ -102,6 +102,7 @@ export const JETPACK_PRODUCTS = [
 		title: translate( 'Jetpack Backup' ),
 		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
 		id: PRODUCT_JETPACK_BACKUP,
+		landingPageUrl: 'https://jetpack.com/upgrade/backup/',
 		options: {
 			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,

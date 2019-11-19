@@ -41,6 +41,7 @@ export class ProductSelector extends Component {
 				title: PropTypes.string,
 				id: PropTypes.string,
 				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+				landingPageUrl: PropTypes.string,
 				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 				optionDescriptions: PropTypes.objectOf(
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
@@ -185,8 +186,13 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
+		// Default product description, without a landing page link.
+		let linkUrl = product.landingPageUrl;
+		if ( ! linkUrl ) {
+			return description;
+		}
+
 		// If we have a site in this context, add it to the landing page URL.
-		let linkUrl = 'https://jetpack.com/upgrade/backup/';
 		if ( selectedSiteSlug ) {
 			linkUrl = addQueryArgs( { site: selectedSiteSlug }, linkUrl );
 		}
