@@ -316,7 +316,7 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/full-site-editing' ) ) {
 		flows[ 'test-fse' ] = {
-			steps: [ 'passwordless-user', 'site-title', 'domains', 'plans' ],
+			steps: [ 'user', 'site-title', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'User testing Signup flow for Full Site Editing',
 			lastModified: '2019-11-19',
