@@ -229,7 +229,6 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 

@@ -140,15 +140,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
 			designType: designType || undefined,
-			// the theme can be provided in this step's dependencies or the
+			// The theme can be provided in this step's dependencies or the
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
-			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo || siteTypeTheme,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
@@ -658,7 +659,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
  * It differs from `createPasswordlessUser` in that we don't require a verification step before the user can continue with onboarding.
  * Returns the dependencies for the step.
  *
- * @param {function} callback API callback function
+ * @param {Function} callback API callback function
  * @param {object}   data     An object sent via POST to WPCOM API with the following values: `email`
  */
 export function createUserAccountFromEmailAddress( callback, { email } ) {
@@ -675,7 +676,7 @@ export function createUserAccountFromEmailAddress( callback, { email } ) {
  * Creates a user account and sends the user a verification code via email to confirm the account.
  * Returns the dependencies for the step.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
 export function createPasswordlessUser( callback, { email } ) {
@@ -689,7 +690,7 @@ export function createPasswordlessUser( callback, { email } ) {
 /**
  * Verifies a passwordless user code.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
 export function verifyPasswordlessUser( callback, { email, code } ) {
