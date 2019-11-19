@@ -135,6 +135,16 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
+	handleLaunchTaskDismiss = taskId => () => {
+		const { siteId } = this.props;
+
+		if ( taskId ) {
+			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
+			this.trackTaskDismiss( taskId );
+			this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+		}
+	};
+
 	trackTaskDismiss = taskId => {
 		if ( taskId ) {
 			this.props.recordTracksEvent( 'calypso_checklist_task_dismiss', {
@@ -616,7 +626,7 @@ class WpcomChecklistComponent extends PureComponent {
 					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
 				}
 				onClick={ this.handleLaunchSite }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
+				onDismiss={ this.handleLaunchTaskDismiss( task.id ) }
 				showSkip={ false }
 				title={ translate( 'Launch your site' ) }
 			/>
