@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState } from 'react';
-import { __ as NO__, sprintf } from '@wordpress/i18n';
+import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Popover } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
@@ -46,7 +46,7 @@ const DomainPickerButton: FunctionComponent = () => {
 
 	// Free .wordpress.com subdomain at index 0,
 	// Best premium domain match at index 1.
-	const domainName = suggestions?.[ 1 ]?.domain_name;
+	const [ freeDomainSuggestion, ...paidDomainSuggestions ] = suggestions ?? [];
 
 	return (
 		<Button
@@ -56,7 +56,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</div>
-			<div>{ domainName ? sprintf( NO__( '%s is available' ), domainName ) : null }</div>
+			<div>{ freeDomainSuggestion?.domain_name }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
@@ -66,7 +66,7 @@ const DomainPickerButton: FunctionComponent = () => {
 					<DomainPicker
 						domainSearch={ domainSearch }
 						setDomainSearch={ setDomainSearch }
-						suggestions={ suggestions }
+						suggestions={ paidDomainSuggestions }
 					/>
 				</Popover>
 			) }
