@@ -21,6 +21,7 @@ import {
 } from '../stripe';
 import {
 	useSelect,
+	usePrimarySelect,
 	useDispatch,
 	useCheckoutHandlers,
 	useLineItems,
@@ -553,7 +554,7 @@ function StripePayButton() {
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const paymentData = usePrimarySelect( select => select().getPaymentData() );
 	const { billing = {}, domains = {} } = paymentData;
 
 	useEffect( () => {

@@ -13,7 +13,7 @@ import { useLocalize, sprintf } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
+import { usePrimarySelect, usePrimaryDispatch, useRegisterPrimaryStore } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useActiveStep, ActiveStepProvider } from '../lib/active-step';
 import CheckoutOrderSummary, { CheckoutOrderSummaryTitle } from './checkout-order-summary';
@@ -21,7 +21,7 @@ import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review
 import CheckoutPaymentMethods, { CheckoutPaymentMethodsTitle } from './checkout-payment-methods';
 
 function useRegisterCheckoutStore() {
-	useRegisterStore( 'checkout', {
+	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
@@ -58,8 +58,8 @@ export default function Checkout( { steps, className } ) {
 	const localize = useLocalize();
 
 	// stepNumber is the displayed number of the active step, not its index
-	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
-	const { changeStep } = useDispatch( 'checkout' );
+	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
+	const { changeStep } = usePrimaryDispatch();
 	steps = steps || makeDefaultSteps();
 
 	// Assign step numbers to all steps with numbers
