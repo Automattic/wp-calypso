@@ -35,7 +35,6 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
-import { getByPurchaseId } from 'state/purchases/selectors';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 
 /**
@@ -49,7 +48,6 @@ class CurrentPlan extends Component {
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
 		path: PropTypes.string.isRequired,
-		purchase: PropTypes.object,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		requestThankYou: PropTypes.bool,
@@ -191,7 +189,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		domains,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		selectedSite,
 		selectedSiteId,
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
