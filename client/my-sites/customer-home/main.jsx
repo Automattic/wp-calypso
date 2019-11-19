@@ -213,7 +213,9 @@ class Home extends Component {
 			<FormattedHeader
 				className="customer-home__page-heading"
 				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Manage your website' ) }
+				subHeaderText={ translate(
+					'Your home base for all the posting, editing, and growing of your site'
+				) }
 				align="left"
 			/>
 		);
@@ -298,7 +300,6 @@ class Home extends Component {
 					) : (
 						<Card className="customer-home__card-boxes">
 							<CardHeading>{ translate( 'Site Tools' ) }</CardHeading>
-							<h6 className="customer-home__card-subheader">Manage your site</h6>
 							<div className="customer-home__boxes">
 								<ActionBox
 									onClick={ () => {
@@ -408,7 +409,7 @@ class Home extends Component {
 						<Card>
 							<CardHeading>{ translate( 'My Site' ) }</CardHeading>
 							<h6 className="customer-home__card-subheader">
-								{ translate( 'Review and update my site' ) }
+								{ translate( 'Make changes to your site or view its current state' ) }
 							</h6>
 							<div className="customer-home__card-col">
 								<div className="customer-home__card-col-left">
@@ -444,7 +445,7 @@ class Home extends Component {
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
 							<h6 className="customer-home__card-subheader">
-								{ translate( 'Grow my audience and earn money' ) }
+								{ translate( 'Grow your audience and earn money' ) }
 							</h6>
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
