@@ -750,14 +750,6 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	unverifiedDomainsCannotManage = () => {
-		if (
-			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
-			this.props.siteIsUnlaunched
-		) {
-			// Customer Home nudges this on unlaunched sites
-			return;
-		}
-
 		const domains = this.getDomains().filter(
 			domain => domain.isPendingIcannVerification && ! domain.currentUserCanManage
 		);
