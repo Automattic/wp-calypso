@@ -7,3 +7,14 @@
 .domain-picker__site-title {
 	font-weight: bold;
 }
+
+.domain-picker__choose-domain-header,
+.domain-picker__recommended-header {
+	font-weight: bold;
+}
+
+.domain-picker {
+	.components-panel__row {
+		display: block;
+	}
+}

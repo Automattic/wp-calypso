@@ -27,6 +27,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		<Panel className="domain-picker">
 			<PanelBody>
 				<PanelRow>
+					<h3 className="domain-picker__choose-domain-header">{ NO__( 'Choose a new domain' ) }</h3>
 					<TextControl
 						hideLabelFromVision
 						label={ label }
@@ -35,8 +36,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						value={ domainSearch }
 					/>
 				</PanelRow>
+
 				{ suggestions?.length ? (
 					<PanelRow>
+						<h3 className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</h3>
 						<ul>
 							{ suggestions.map( ( { domain_name } ) => (
 								<li key={ domain_name }>{ domain_name }</li>
