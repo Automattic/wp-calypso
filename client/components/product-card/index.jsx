@@ -42,7 +42,7 @@ export class ProductCard extends Component {
 	handleManagePurchase( purchase ) {
 		return () => {
 			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
-				slug: purchase.productSlug,
+				plan: purchase.productSlug,
 			} );
 		};
 	}
@@ -91,6 +91,7 @@ export class ProductCard extends Component {
 					{ description && <p>{ description }</p> }
 					{ purchase && isCurrent && (
 						<ProductCardAction
+							onClick={ this.handleManagePurchase( purchase ) }
 							href={ managePurchase( purchase.domain, purchase.id ) }
 							label={ translate( 'Manage Subscription' ) }
 							primary={ false }
