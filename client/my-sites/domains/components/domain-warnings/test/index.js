@@ -275,7 +275,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain( 'lease verify ownership of domains' );
+			expect( textContent ).to.contain( 'Please verify ownership of domains' );
 			assert(
 				links.some( link =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )

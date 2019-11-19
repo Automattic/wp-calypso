@@ -15,7 +15,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import isUnlaunchedSite from '../../state/selectors/is-unlaunched-site';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const ruleWhiteList = [
 	'unverifiedDomainsCanManage',
