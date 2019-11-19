@@ -24,6 +24,7 @@
 		"comments/management/threaded-view": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
+		"checkout-upgrade-intent": true,
 		"code-splitting": true,
 		"desktop-promo": true,
 		"devdocs": true,
