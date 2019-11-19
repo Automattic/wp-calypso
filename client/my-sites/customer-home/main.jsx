@@ -364,7 +364,7 @@ class Home extends Component {
 					<Card>
 						<CardHeading>{ translate( 'Support' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
-							{ translate( 'Get all of the help you need' ) }
+							{ translate( 'Get all the help you need' ) }
 						</h6>
 						<div className="customer-home__card-support">
 							<img
