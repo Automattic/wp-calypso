@@ -78,13 +78,17 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const recaptchaToken =
-			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-				? await recordGoogleRecaptchaAction(
-						this.state.recaptchaClientId,
-						'calypso/signup/formSubmit'
-				  )
-				: undefined;
+		const shouldRecordRecaptchaAction =
+			typeof this.props.recaptchaClientId === 'number' &&
+			'onboarding' === this.props.flowName &&
+			'show' === abtest( 'userStepRecaptcha' );
+
+		const recaptchaToken = shouldRecordRecaptchaAction
+			? await recordGoogleRecaptchaAction(
+					this.props.recaptchaClientId,
+					'calypso/signup/formSubmit'
+			  )
+			: undefined;
 
 		try {
 			const response = await wpcom.undocumented().usersNew(

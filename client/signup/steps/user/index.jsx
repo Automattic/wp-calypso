@@ -49,10 +49,6 @@ export class UserStep extends Component {
 		submitting: false,
 		subHeaderText: '',
 		recaptchaClientId: null,
-		isLoadingRecaptcha:
-			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-				? true
-				: false,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -157,10 +153,7 @@ export class UserStep extends Component {
 	}
 
 	saveRecaptchaToken = ( { token, clientId } ) => {
-		this.setState( {
-			isLoadingRecaptcha: false,
-			recaptchaClientId: clientId,
-		} );
+		this.setState( { recaptchaClientId: clientId } );
 
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -207,10 +200,14 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		const recaptchaPromise =
-			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
-				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
-				: Promise.resolve();
+		const shouldRecordRecaptchaAction =
+			typeof this.state.recaptchaClientId === 'number' &&
+			'onboarding' === this.props.flowName &&
+			'show' === abtest( 'userStepRecaptcha' );
+
+		const recaptchaPromise = shouldRecordRecaptchaAction
+			? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+			: Promise.resolve();
 
 		recaptchaPromise.then( token => {
 			this.submit( {
@@ -225,11 +222,11 @@ export class UserStep extends Component {
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
 	 *
-	 * @param {String} service      The name of the social service
-	 * @param {String} access_token An OAuth2 acccess token
-	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
+	 * @param {string} service      The name of the social service
+	 * @param {string} access_token An OAuth2 acccess token
+	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
-	 * @param {Object} userData     (Optional) extra user information that can be used to create a new account
+	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
 		this.submit( {
@@ -362,7 +359,6 @@ export class UserStep extends Component {
 					{ ...omit( this.props, [ 'translate' ] ) }
 					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 					disabled={ this.userCreationStarted() }
-					disableSubmitButton={ this.state.isLoadingRecaptcha }
 					submitting={ this.userCreationStarted() }
 					save={ this.save }
 					submitForm={ this.submitForm }
