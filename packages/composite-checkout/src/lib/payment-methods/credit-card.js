@@ -13,6 +13,7 @@ import joinClasses from '../../lib/join-classes';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from './credit-card-fields';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createCreditCardMethod() {
 	return {
@@ -101,17 +102,13 @@ function CreditCardLogos( className ) {
 	//TODO: Determine which logos to show
 
 	return (
-		<LogoWrapper className={ joinClasses( [ className, 'payment-logos' ] ) }>
+		<PaymentMethodLogos className={ joinClasses( [ className, 'payment-logos' ] ) }>
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
-		</LogoWrapper>
+		</PaymentMethodLogos>
 	);
 }
-
-const LogoWrapper = styled.span`
-	display: flex;
-`;
 
 function submitCreditCardPayment() {
 	alert( 'Thank you!' );
