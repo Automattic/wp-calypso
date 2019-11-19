@@ -69,10 +69,6 @@ export function addCreditCard( context, next ) {
 }
 
 export function cancelPurchase( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/cancel' );
-	}
-
 	setTitle( context, titles.cancelPurchase );
 
 	context.primary = (

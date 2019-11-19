@@ -228,7 +228,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.siteSlug ) {
 			return null;
 		}
 
