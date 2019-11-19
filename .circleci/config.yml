@@ -545,7 +545,6 @@ jobs:
               echo 'PRs from external authors cannot run on calypso.live'
               exit 1
             fi
-      - prepare
       - run:
           name: Wait for calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh
