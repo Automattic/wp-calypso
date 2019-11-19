@@ -83,4 +83,9 @@ export interface DomainSuggestion {
 	 * The product slug
 	 */
 	product_slug: string;
+
+	/**
+	 * Whether the domain is free
+	 */
+	is_free?: true;
 }

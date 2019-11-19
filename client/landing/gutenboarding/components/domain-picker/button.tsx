@@ -13,11 +13,15 @@ import DomainPicker from './list';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
+import { DomainSuggestion } from '../../stores/domain-suggestions/types'; // eslint-disable-line @typescript-eslint/no-unused-vars
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 const DomainPickerButton: FunctionComponent = () => {
-	// // User can search for a domain
+	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState(
@@ -44,9 +48,16 @@ const DomainPickerButton: FunctionComponent = () => {
 		[ search, siteVertical ]
 	);
 
-	// Free .wordpress.com subdomain at index 0,
-	// Best paid domain match at index 1.
-	const [ freeDomainSuggestion, ...paidDomainSuggestions ] = suggestions ?? [];
+	const [ freeDomainSuggestions, paidDomainSuggestions ] =
+		suggestions?.reduce< [ DomainSuggestion[], DomainSuggestion[] ] >(
+			( partitionedSuggestions, suggestion ) => {
+				// Internally mutating reducer
+				partitionedSuggestions[ suggestion.is_free ? 0 : 1 ].push( suggestion );
+
+				return partitionedSuggestions;
+			},
+			[ [], [] ]
+		) ?? [];
 
 	return (
 		<Button
@@ -56,7 +67,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</div>
-			<div>{ freeDomainSuggestion?.domain_name }</div>
+			<div>{ freeDomainSuggestions?.[ 0 ].domain_name }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
