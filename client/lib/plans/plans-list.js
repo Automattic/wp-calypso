@@ -414,6 +414,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_BLOGGER ]: {
@@ -664,6 +666,8 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM ]: {
