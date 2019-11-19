@@ -28,10 +28,18 @@ const DomainPickerButton: FunctionComponent = () => {
 	// Without user search, we can provide recommendations based on title + vertical
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 
-	// Debounce changes to input at 200ms
-	const [ debouncedDomainSearch ] = useDebounce( domainSearch.trim(), 200 );
+	/**
+	 * Debounce our input + HTTP dependent select changes
+	 *
+	 * Rapidly changing input generates excessive HTTP requests.
+	 * It also leads to jarring UI changes.
+	 *
+	 * @see https://stackoverflow.com/a/44755058/1432801
+	 */
+	const inputDebounce = 200;
+	const [ debouncedDomainSearch ] = useDebounce( domainSearch.trim(), inputDebounce );
 	const search =
-		! debouncedDomainSearch && isFilledFormValue( siteTitle ) ? debouncedDomainSearch : siteTitle;
+		! debouncedDomainSearch && isFilledFormValue( siteTitle ) ? siteTitle : debouncedDomainSearch;
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
