@@ -21,6 +21,7 @@
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
+		"checklist-homepage-template-select": true,
 		"checkout-upgrade-intent": true,
 		"code-splitting": true,
 		"devdocs": false,
