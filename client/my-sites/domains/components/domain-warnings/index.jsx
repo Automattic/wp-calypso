@@ -618,14 +618,6 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	unverifiedDomainsCanManage = () => {
-		if (
-			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
-			this.props.siteIsUnlaunched
-		) {
-			// Customer Home nudges this on unlaunched sites
-			return;
-		}
-
 		const domains = this.getDomains().filter(
 			domain => domain.isPendingIcannVerification && domain.currentUserCanManage
 		);
@@ -641,6 +633,16 @@ export class DomainWarnings extends React.PureComponent {
 					.add( 2, 'days' )
 					.isAfter()
 		);
+		if (
+			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
+			this.props.siteIsUnlaunched &&
+			! isWithinTwoDays
+		) {
+			// Customer Home nudges this on unlaunched sites.
+			// After two days let's re-display the nudge
+			return;
+		}
+
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
 		const { translate } = this.props;
 		const action = translate( 'Fix' );
