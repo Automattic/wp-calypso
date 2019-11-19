@@ -5,17 +5,18 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, invoke } from 'lodash';
+import { invoke } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	getCurrentPlan,
+	getSitePlanSlug,
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
 import MyPlanCard from './my-plan-card';
@@ -31,17 +32,22 @@ import { managePurchase } from 'me/purchases/paths';
 class PurchasesListing extends Component {
 	static propTypes = {
 		currentPlan: PropTypes.object,
+		currentPlanSlug: PropTypes.string,
 		isPlanExpiring: PropTypes.bool,
 		isRequestingSitePlans: PropTypes.bool,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
+		selectedSiteSlug: PropTypes.string,
 		purchase: PropTypes.object,
+
+		// From localize() HoC
+		translate: PropTypes.func.isRequired,
 	};
 
 	isLoading() {
-		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
+		const { currentPlanSlug, selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 
-		return ! selectedSite || isRequestingPlans;
+		return ! currentPlanSlug || ! selectedSite || isRequestingPlans;
 	}
 
 	isFreePlan() {
@@ -51,8 +57,7 @@ class PurchasesListing extends Component {
 	}
 
 	getPlanObject() {
-		const { selectedSite } = this.props;
-		const currentPlanSlug = get( selectedSite, 'plan.product_slug' );
+		const { currentPlanSlug } = this.props;
 
 		if ( ! currentPlanSlug ) {
 			return null;
@@ -62,16 +67,17 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton() {
-		const { currentPlan, purchase, selectedSite, translate } = this.props;
-		const siteSlug = selectedSite ? selectedSite.slug : null;
+		const { currentPlan, purchase, selectedSiteSlug, translate } = this.props;
 
-		if ( ! currentPlan || ! siteSlug ) {
+		if ( ! currentPlan || ! selectedSiteSlug ) {
 			return null;
 		}
 
 		// For free plan show a button redirecting to the plans comparison.
 		if ( this.isFreePlan() ) {
-			return <Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>;
+			return (
+				<Button href={ `/plans/${ selectedSiteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
+			);
 		}
 
 		// Do not show the action button for partner plans.
@@ -95,7 +101,7 @@ class PurchasesListing extends Component {
 		}
 
 		return (
-			<Button href={ managePurchase( siteSlug, currentPlan.id ) } compact>
+			<Button href={ managePurchase( selectedSiteSlug, currentPlan.id ) } compact>
 				{ label }
 			</Button>
 		);
@@ -124,29 +130,23 @@ class PurchasesListing extends Component {
 	getPlanTitle() {
 		const planObject = this.getPlanObject();
 
-		if ( planObject.getTitle ) {
-			return planObject.getTitle();
-		}
-
-		return null;
+		return planObject?.getTitle?.();
 	}
 
 	getPlanTagLine() {
 		const { translate } = this.props;
 		const planObject = this.getPlanObject();
 
-		if ( planObject.getTagline ) {
-			return planObject.getTagline();
-		}
-
-		return translate(
-			'Unlock the full potential of your site with all the features included in your plan.'
+		return (
+			planObject?.getTagline?.() ??
+			translate(
+				'Unlock the full potential of your site with all the features included in your plan.'
+			)
 		);
 	}
 
 	renderPlan() {
-		const { isPlanExpiring, selectedSite, translate } = this.props;
-		const currentPlanSlug = get( selectedSite, 'plan.product_slug' );
+		const { currentPlanSlug, isPlanExpiring, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -187,10 +187,12 @@ export default connect( state => {
 
 	return {
 		currentPlan,
+		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		selectedSite,
 		selectedSiteId,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
 } )( localize( PurchasesListing ) );

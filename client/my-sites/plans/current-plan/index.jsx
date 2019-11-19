@@ -56,6 +56,9 @@ class CurrentPlan extends Component {
 		hasDomainsLoaded: PropTypes.bool,
 		showJetpackChecklist: PropTypes.bool,
 		showThankYou: PropTypes.bool,
+
+		// From localize() HoC
+		translate: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
