@@ -111,9 +111,12 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
 
+		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
+
 		// Load content.
 		const blocks = this.getBlocksByTemplateSlug( slug );
-		const title = this.getTitleByTemplateSlug( slug );
+		// Only overwrite the page title if the template is not one of the Homepage Layouts
+		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
@@ -356,7 +359,9 @@ export const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				editorDispatcher.editPost( { title } );
+				if ( title ) {
+					editorDispatcher.editPost( { title } );
+				}
 
 				// Replace blocks.
 				const postContentBlock = ownProps.postContentBlock;
