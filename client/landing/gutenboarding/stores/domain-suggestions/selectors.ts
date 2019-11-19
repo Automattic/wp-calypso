@@ -33,7 +33,7 @@ export const getDomainSuggestions = (
  *
  * @param state Store state
  * @param queryObject Normalized object representing the query
- * @return suggestions
+ * @returns suggestions
  */
 export const __internalGetDomainSuggestions = (
 	state: State,
@@ -53,7 +53,7 @@ export const __internalGetDomainSuggestions = (
  *
  * @param search       Domain search string
  * @param queryOptions Optional paramaters for the query
- * @return Normalized query object
+ * @returns Normalized query object
  */
 function normalizeDomainSuggestionQuery(
 	search: string,
