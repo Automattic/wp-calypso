@@ -84,13 +84,22 @@ class PageTemplateModal extends Component {
 
 	getDefaultSelectedTemplate = props => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
+		let previouslyChosenTemplate = props._starter_page_template;
 
-		if ( ! isFrontPage ) {
+		// Usally the "new page" case.
+		if ( ! isFrontPage && ! previouslyChosenTemplate ) {
 			return blankTemplate;
 		}
 
-		if ( find( props.templates, { slug: theme } ) ) {
-			return theme;
+		// Normalize "home" slug into the current theme.
+		if ( previouslyChosenTemplate === 'home' ) {
+			previouslyChosenTemplate = theme;
+		}
+
+		const slug = previouslyChosenTemplate || theme;
+
+		if ( find( props.templates, { slug } ) ) {
+			return slug;
 		} else if ( find( props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } ) ) {
 			return DEFAULT_HOMEPAGE_TEMPLATE;
 		}
@@ -318,12 +327,17 @@ class PageTemplateModal extends Component {
 }
 
 export const PageTemplatesPlugin = compose(
-	withSelect( select => ( {
-		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
-		postContentBlock: select( 'core/editor' )
-			.getBlocks()
-			.find( block => block.name === 'a8c/post-content' ),
-	} ) ),
+	withSelect( select => {
+		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const { _starter_page_template } = getMeta();
+		return {
+			getMeta,
+			_starter_page_template,
+			postContentBlock: select( 'core/editor' )
+				.getBlocks()
+				.find( block => block.name === 'a8c/post-content' ),
+		};
+	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		// Disable tips right away as the collide with the modal window.
 		dispatch( 'core/nux' ).disableTips();
