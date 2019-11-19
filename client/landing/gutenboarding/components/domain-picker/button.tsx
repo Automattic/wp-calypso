@@ -14,6 +14,8 @@ import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
 
+import './style.scss';
+
 const DomainPickerButton: FunctionComponent = () => {
 	// // User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
@@ -49,8 +51,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			className="domain-picker__button"
 			onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 		>
-			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-			<span className="gutenboarding__header-site-heading">
+			<span className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</span>
 			{ domainName ? sprintf( NO__( '%s is available' ), domainName ) : null }
