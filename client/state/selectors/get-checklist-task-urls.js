@@ -11,7 +11,7 @@ import { getPostsForQuery } from 'state/posts/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getSiteOption } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
-import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
@@ -47,10 +47,9 @@ export default createSelector(
 			siteId,
 			getSiteOption( state, siteId, 'page_on_front' )
 		);
-		const updateHomepageUrl =
-			abtest( 'checklistUpdateHomepage' ) === 'templateSelector'
-				? addQueryArgs( getEditorUrl( state, siteId, null, 'page' ), { 'new-homepage': 1 } )
-				: frontPageUrl;
+		const updateHomepageUrl = isEnabled( 'checklist-homepage-template-select' )
+			? addQueryArgs( getEditorUrl( state, siteId, null, 'page' ), { 'new-homepage': 1 } )
+			: frontPageUrl;
 
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
