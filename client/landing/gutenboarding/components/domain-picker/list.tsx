@@ -12,8 +12,8 @@ import { DomainSuggestion } from '../../stores/domain-suggestions/types';
 
 interface Props {
 	domainSearch: string;
-	setDomainSearch: ( domainSearch: string ) => {};
-	suggestions: DomainSuggestion[];
+	setDomainSearch: ( domainSearch: string ) => void;
+	suggestions: DomainSuggestion[] | undefined;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
