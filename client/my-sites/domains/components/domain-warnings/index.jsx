@@ -636,7 +636,7 @@ export class DomainWarnings extends React.PureComponent {
 		if (
 			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
 			this.props.siteIsUnlaunched &&
-			! isWithinTwoDays
+			isWithinTwoDays
 		) {
 			// Customer Home nudges this on unlaunched sites.
 			// After two days let's re-display the nudge
