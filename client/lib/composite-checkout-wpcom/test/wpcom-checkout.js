@@ -1,4 +1,11 @@
 /**
+ * Need to force the test environment to be browser-like.
+ *
+ * @see https://github.com/Automattic/wp-calypso/blob/master/docs/testing/unit-tests.md#testing-globals
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';

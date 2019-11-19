@@ -3,16 +3,16 @@
  */
 import React from 'react';
 import { createRegistry, createPayPalMethod } from '@automattic/composite-checkout';
-import {
-	WPCOMCheckout,
-	makeShoppingCartHook,
-	mockPayPalExpressRequest,
-} from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
  */
 import wp from 'lib/wp';
+import {
+	WPCOMCheckout,
+	makeShoppingCartHook,
+	mockPayPalExpressRequest,
+} from 'lib/composite-checkout-wpcom';
 
 const initialCart = {
 	coupon: '',

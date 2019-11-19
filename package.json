@@ -37,7 +37,6 @@
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:./packages/components",
 		"@automattic/composite-checkout": "file:./packages/composite-checkout",
-		"@automattic/composite-checkout-wpcom": "file:./packages/composite-checkout-wpcom",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
@@ -296,7 +295,7 @@
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
 		"whybundled": "whybundled stats.json",
 		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
-		"composite-checkout-wpcom-demo": "webpack-dev-server --config ./packages/composite-checkout-wpcom/webpack.config.demo.js --mode development"
+		"composite-checkout-wpcom-demo": "webpack-dev-server --config ./client/lib/composite-checkout-wpcom/webpack.config.demo.js --mode development"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
