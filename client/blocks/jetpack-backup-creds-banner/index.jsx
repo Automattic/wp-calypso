@@ -29,7 +29,7 @@ class JetpackBackupCredsBanner extends Component {
 						href={
 							rewindState.canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+								: `/settings/security/${ slug }`
 						}
 						title={ translate( 'Add site credentials' ) }
 						description={ translate(
