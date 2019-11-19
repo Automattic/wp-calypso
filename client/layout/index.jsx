@@ -188,8 +188,11 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForRoute = isJetpackLogin || 'account-closed' === sectionName;
-	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
+	const noMasterbarForRoute = isJetpackLogin;
+	const noMasterbarForSection =
+		'signup' === sectionName ||
+		'jetpack-connect' === sectionName ||
+		'account-closed' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
