@@ -85,7 +85,7 @@ const CouponWrapper = styled.form`
 
 const ApplyButton = styled( Button )`
 	position: absolute;
-	top: 4px;
+	top: 5px;
 	right: 4px;
 	padding: 7px;
 	animation: ${animateIn} 0.2s ease-out;
