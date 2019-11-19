@@ -37,9 +37,15 @@ const DomainPickerButton: FunctionComponent = () => {
 	 * @see https://stackoverflow.com/a/44755058/1432801
 	 */
 	const inputDebounce = 400;
-	const [ debouncedDomainSearch ] = useDebounce( domainSearch.trim(), inputDebounce );
-	const search =
-		! debouncedDomainSearch && isFilledFormValue( siteTitle ) ? siteTitle : debouncedDomainSearch;
+	const [ search ] = useDebounce(
+		// Use trimmed domainSearch if non-empty
+		domainSearch.trim() ||
+			// Otherwise use a filled form value
+			( isFilledFormValue( siteTitle ) && siteTitle ) ||
+			// Otherwise use empty string
+			'',
+		inputDebounce
+	);
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
