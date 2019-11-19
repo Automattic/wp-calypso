@@ -51,10 +51,10 @@ const DomainPickerButton: FunctionComponent = () => {
 			className="domain-picker__button"
 			onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 		>
-			<span className="domain-picker__site-title">
+			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-			</span>
-			{ domainName ? sprintf( NO__( '%s is available' ), domainName ) : null }
+			</div>
+			<div>{ domainName ? sprintf( NO__( '%s is available' ), domainName ) : null }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
