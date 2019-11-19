@@ -148,8 +148,12 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
-				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
+				{ ! this.props.recommendedThemes && (
+					<>
+						<QueryThemes query={ query } siteId={ source } />
+						<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
+					</>
+				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.recommendedThemes || this.props.themes }
@@ -183,7 +187,11 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	themeId => getPremiumThemePrice( state, themeId, siteId );
 }
 
-const ConnectedThemesSelection = connect(
+/**
+ * Exporting this for use in recommended-themes.jsx
+ * We do not want pagination triggered in that use of the component.
+ */
+export const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;

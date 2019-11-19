@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
+import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
 
-import ThemesSelection from './themes-selection';
+import { ConnectedThemesSelection } from './themes-selection';
 import wpcom from 'lib/wp';
 
 class RecommendedThemes extends React.Component {
@@ -20,6 +20,7 @@ class RecommendedThemes extends React.Component {
 	}
 
 	getRecommendedThemes = async () => {
+		// Query to get all template-first themes.
 		const query = {
 			search: 'varia',
 			number: 50,
@@ -37,8 +38,8 @@ class RecommendedThemes extends React.Component {
 
 		return (
 			<>
-				<h1>We are the greatest Themes! Choose us...</h1>
-				<ThemesSelection recommendedThemes={ themes } { ...this.props } />
+				<h1>{ __( 'Recommended Themes:' ) }</h1>
+				<ConnectedThemesSelection recommendedThemes={ themes } { ...this.props } />
 				<hr />
 			</>
 		);
