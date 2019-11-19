@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
-import { Button, Popover } from '@wordpress/components';
+import React, { FunctionComponent, useState, useRef } from 'react';
+import { Button, Popover, Dashicon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { head, partition } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -22,6 +22,8 @@ import { useDebounce } from 'use-debounce';
 import './style.scss';
 
 const DomainPickerButton: FunctionComponent = () => {
+	const popoverAnchor = useRef< HTMLElement >();
+
 	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
@@ -40,7 +42,7 @@ const DomainPickerButton: FunctionComponent = () => {
 	 *
 	 * @see https://stackoverflow.com/a/44755058/1432801
 	 */
-	const inputDebounce = 400;
+	const inputDebounce = 300;
 	const [ search ] = useDebounce(
 		// Use trimmed domainSearch if non-empty
 		domainSearch.trim() ||
@@ -65,20 +67,19 @@ const DomainPickerButton: FunctionComponent = () => {
 	const [ freeDomainSuggestions, paidDomainSuggestions ] = partition( suggestions, 'is_free' );
 
 	return (
-		<Button
-			className="domain-picker__button"
-			onClick={ () => setDomainPopoverVisibility( s => ! s ) }
-		>
-			<div className="domain-picker__site-title">
-				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-			</div>
-			<div>{ head( freeDomainSuggestions )?.domain_name }</div>
+		<>
+			<Button
+				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
+				aria-pressed={ isDomainPopoverVisible }
+				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
+			>
+				{ /* This empty span gives us a good place to anchor our popover */ }
+				<span ref={ popoverAnchor } />
+				{ head( freeDomainSuggestions )?.domain_name ?? '\u00a0' }
+				<Dashicon icon="arrow-down-alt2" />
+			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover
-					/* Prevent interaction in the domain picker from affecting the popover */
-					onClick={ e => e.stopPropagation() }
-					onKeyDown={ e => e.stopPropagation() }
-				>
+				<Popover anchorRect={ popoverAnchor.current?.getBoundingClientRect() }>
 					<DomainPicker
 						domainSearch={ domainSearch }
 						setDomainSearch={ setDomainSearch }
@@ -86,7 +87,7 @@ const DomainPickerButton: FunctionComponent = () => {
 					/>
 				</Popover>
 			) }
-		</Button>
+		</>
 	);
 };
 

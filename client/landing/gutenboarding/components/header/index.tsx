@@ -5,8 +5,9 @@ import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon, IconButton } from '@wordpress/components';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { isEmpty } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -39,30 +40,42 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div className="gutenboarding__header-site">
-				<Icon icon="wordpress-alt" color="#066188" />
-				<DomainPickerButton />
-			</div>
-			<div
-				aria-label={ NO__( 'Document tools' ) }
-				aria-orientation="horizontal"
-				className="gutenboarding__header-toolbar"
-				role="toolbar"
-			></div>
-			<div className="gutenboarding__header-actions">
-				<Button isPrimary isLarge disabled={ isEmpty( siteVertical ) }>
-					{ NO__( 'Next' ) }
-				</Button>
-				<IconButton
-					icon="admin-generic"
-					label={ NO__( 'Site block settings' ) }
-					onClick={ toggleGeneralSidebar }
-					isToggled={ isEditorSidebarOpened }
-					aria-expanded={ isEditorSidebarOpened }
-					shortcut={ toggleSidebarShortcut }
-				/>
-			</div>
+			<HeaderSection>
+				<HeaderGroup>
+					<Icon icon="wordpress-alt" color="#066188" />
+				</HeaderGroup>
+				<HeaderGroup>
+					<div className="gutenboarding__site-title">
+						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+					</div>
+					<DomainPickerButton />
+				</HeaderGroup>
+			</HeaderSection>
+			<HeaderSection>
+				<HeaderGroup>
+					<Button isPrimary isLarge disabled={ isEmpty( siteVertical ) }>
+						{ NO__( 'Next' ) }
+					</Button>
+				</HeaderGroup>
+				<HeaderGroup>
+					<IconButton
+						icon="admin-generic"
+						label={ NO__( 'Site block settings' ) }
+						onClick={ toggleGeneralSidebar }
+						isToggled={ isEditorSidebarOpened }
+						aria-expanded={ isEditorSidebarOpened }
+						shortcut={ toggleSidebarShortcut }
+					/>
+				</HeaderGroup>
+			</HeaderSection>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
+
+const HeaderGroup: FunctionComponent< { className?: string } > = ( { children, className } ) => (
+	<div className={ classnames( 'gutenboarding__header-group', className ) }>{ children }</div>
+);
+const HeaderSection: FunctionComponent< { className?: string } > = ( { children, className } ) => (
+	<div className={ classnames( 'gutenboarding__header-section', className ) }>{ children }</div>
+);
