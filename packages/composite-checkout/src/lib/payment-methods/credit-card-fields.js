@@ -12,13 +12,12 @@ import GridRow from '../../components/grid-row';
 import { useLocalize } from '../localize';
 import { AmexLogo, VisaLogo, MastercardLogo } from '../../components/payment-logos';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
-import { usePrimarySelect, usePrimaryDispatch } from '../../public-api';
+import { usePaymentData } from '../../public-api';
 
 export default function CreditCardFields( { disabled } ) {
 	const localize = useLocalize();
 	const [ paymentIcon, setPaymentIcon ] = useState( <LockIcon /> );
-	const paymentData = usePrimarySelect( select => select().getPaymentData() );
-	const { updatePaymentData } = usePrimaryDispatch();
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentCreditCardData = paymentData.creditCard || {};
 	const updateCreditCard = ( key, value ) =>
 		updatePaymentData( 'creditCard', { ...currentCreditCardData, [ key ]: value } );
