@@ -44,7 +44,7 @@ import {
 } from 'state/inline-help/actions';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
-import { domainManagementEdit, domainManagementList } from '../../domains/paths';
+import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 
 const userLib = userFactory();
 
@@ -456,7 +456,7 @@ class WpcomChecklistComponent extends PureComponent {
 				completedButtonText={ translate( 'Change' ) }
 				completedTitle={ translate( 'You verified the email address for your domain' ) }
 				description={ translate(
-					'The email address for your domain has to be verified to allow your domains to work properly.'
+					'We need to check your contact information to make sure you can be reached. Please verify your details using the email we sent you, or your domain will stop working.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 				onClick={ this.handleTaskStart( {
@@ -470,10 +470,10 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={
 					task.unverifiedDomains.length === 1
-						? translate( 'Verify email address for domain %(domainName)s', {
+						? translate( 'Verify the email address for %(domainName)s', {
 								args: { domainName: task.unverifiedDomains[ 0 ] },
 						  } )
-						: translate( 'Verify email address for domains' )
+						: translate( 'Verify the email address for your domains' )
 				}
 				showSkip={ false }
 			/>
@@ -647,7 +647,7 @@ class WpcomChecklistComponent extends PureComponent {
 		if ( disabled ) {
 			if ( needsDomainVerification ) {
 				noticeText = translate(
-					'Verify email address for your domain before launching your site.'
+					'Verify the email address for your domain before launching your site.'
 				);
 			} else if ( needsEmailVerification ) {
 				noticeText = translate( 'Confirm your email address before launching your site.' );
