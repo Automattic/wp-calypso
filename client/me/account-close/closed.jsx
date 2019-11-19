@@ -42,7 +42,7 @@ class AccountSettingsClosedComponent extends Component {
 		return (
 			<EmptyContent
 				title={ translate( 'Your account has been closed' ) }
-				line={ translate( 'Thank you for flying with WordPress.com' ) }
+				line={ translate( 'Thanks for flying with WordPress.com' ) }
 			/>
 		);
 	}
