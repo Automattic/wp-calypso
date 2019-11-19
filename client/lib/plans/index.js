@@ -78,9 +78,9 @@ export function getPlanClass( planKey ) {
  *
  * Collects features for a plan by calling all possible feature methods for the plan.
  *
- * @param   {Object|String} plan    Plan object or plan name.
- * @param   {String}        feature Feature name.
- * @returns {Boolean}               Whether the specified plan has the specified feature.
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has the specified feature.
  */
 export function planHasFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
@@ -102,6 +102,19 @@ export function planHasFeature( plan, feature ) {
 	);
 
 	return includes( allFeatures, feature );
+}
+
+/**
+ * Determines if a plan has a superior version of a specific feature.
+ *
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has a superior version of a feature.
+ */
+export function planHasSuperiorFeature( plan, feature ) {
+	const planConstantObj = getPlan( plan );
+
+	return includes( planConstantObj.getInferiorHiddenFeatures(), feature );
 }
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
@@ -150,8 +163,8 @@ export function filterPlansBySiteAndProps(
  * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to monthly.
- * @return {String}          Monthly version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to monthly.
+ * @returns {string}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
@@ -161,8 +174,8 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to yearly.
- * @return {String}          Yearly version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to yearly.
+ * @returns {string}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
@@ -172,8 +185,8 @@ export function getYearlyPlanByMonthly( planSlug ) {
  * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to biennial.
- * @return {String}          Biennial version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to biennial.
+ * @returns {string}          Biennial version slug or "" if the slug could not be converted.
  */
 export function getBiennialPlan( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
@@ -187,9 +200,9 @@ export function getBiennialPlan( planSlug ) {
  *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
  *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
  *
- * @param  {String}  planSlugA One of the plan slugs to compare
- * @param  {String}  planSlugB One of the plan slugs to compare
- * @return {Boolean}           Whether the plan "types" match regardless of interval
+ * @param  {string}  planSlugA One of the plan slugs to compare
+ * @param  {string}  planSlugB One of the plan slugs to compare
+ * @returns {boolean}           Whether the plan "types" match regardless of interval
  */
 export function planLevelsMatch( planSlugA, planSlugB ) {
 	const planA = getPlan( planSlugA );
@@ -266,7 +279,7 @@ export function isJetpackFreePlan( planSlug ) {
  *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
- * @return {string|undefined} Matched plan
+ * @returns {string|undefined} Matched plan
  */
 export function findFirstSimilarPlanKey( planKey, diff ) {
 	return findSimilarPlansKeys( planKey, diff )[ 0 ];
@@ -285,7 +298,7 @@ export function findFirstSimilarPlanKey( planKey, diff ) {
  *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
- * @return {string[]} Matched plans keys
+ * @returns {string[]} Matched plans keys
  */
 export function findSimilarPlansKeys( planKey, diff = {} ) {
 	const plan = getPlan( planKey );
@@ -308,7 +321,7 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
  * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
  *
  * @param {object} query @see planMatches
- * @return {string[]} Matched plans keys
+ * @returns {string[]} Matched plans keys
  */
 export function findPlansKeys( query = {} ) {
 	const plans = getPlans();
@@ -329,7 +342,7 @@ export function findPlansKeys( query = {} ) {
  *
  * @param {string|object} planKey Plan to match
  * @param {object} query Properties that should match
- * @return {bool} Does `planKey` match?
+ * @returns {boolean} Does `planKey` match?
  */
 export function planMatches( planKey, query = {} ) {
 	const acceptedKeys = [ 'type', 'group', 'term' ];

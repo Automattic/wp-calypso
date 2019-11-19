@@ -24,6 +24,12 @@ $template-large-preview-title-height: 120px;
 $wp-org-sidebar-reduced: 36px;
 $wp-org-sidebar-full: 160px;
 
+// Preview positioning
+$preview-max-width: 960px;
+$preview-right-margin: 24px;
+$preview-left-sidebar-reduced: calc( 30% + #{$wp-org-sidebar-reduced} );
+$preview-left-sidebar-full: calc( 30% + #{$wp-org-sidebar-full} );
+
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
@@ -31,13 +37,23 @@ $wp-org-sidebar-full: 160px;
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
-body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
-	@media screen and ( min-width: 783px ) {
-		left: $wp-org-sidebar-reduced;
-	}
+body:not( .is-fullscreen-mode ) {
+	.page-template-modal-screen-overlay {
+		@media screen and ( min-width: 783px ) {
+			left: $wp-org-sidebar-reduced;
+		}
 
-	@media screen and ( min-width: 961px ) {
-		left: $wp-org-sidebar-full;
+		@media screen and ( min-width: 961px ) {
+			left: $wp-org-sidebar-full;
+		}
+	}
+	@media screen and ( min-width: 783px ) {
+		&.folded .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-reduced;
+		}
+		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-full;
+		}
 	}
 }
 
@@ -114,13 +130,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	@media screen and ( min-width: 1200px ) {
 		max-width: 100%;
-	}
-
-	@media screen and ( min-width: 1441px ) {
-		max-width: 1440px;
-		display: flex;
-		align-content: flex-start;
-		justify-content: space-between;
 	}
 }
 
@@ -296,10 +305,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 783px ) {
 		max-width: 30%;
 	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: 30%;
-	}
 }
 
 .page-template-modal__form-title {
@@ -344,12 +349,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		width: calc( 70% - 50px );
 	}
 
-	@media screen and ( min-width: 1441px ) {
-		position: unset;
-		width: calc( 70% - 84px );
-		height: calc( 100vh - 130px );
-	}
-
 	@media screen and ( min-width: 660px ) {
 		&.is-blank-preview {
 			align-items: center;
@@ -358,10 +357,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
+	@media screen and ( min-width: 1648px ) {
+		right: unset;
+		left: calc( #{$preview-left-sidebar-full} + ( 100vw - #{$preview-left-sidebar-full} - #{$preview-max-width} - #{$preview-right-margin} ) / 2 );
+		body.folded & {
+			left: calc( #{$preview-left-sidebar-reduced} + ( 100vw - #{$preview-left-sidebar-reduced} - #{$preview-max-width} - #{$preview-right-margin} ) / 2 );
+		}
+	}
+
 	position: fixed;
 	top: 111px;
 	bottom: 24px;
-	right: 24px;
+	right: $preview-right-margin;
 	width: calc( 80% - 50px );
 	background: $template-selector-empty-background;
 	border-radius: 2px;
@@ -407,17 +414,23 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-body:not( .is-fullscreen-mode ) .template-selector-preview {
+body:not( .is-fullscreen-mode ) {
+	.template-selector-preview {
+		@media screen and ( min-width: 783px ) {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+
+		@media screen and ( min-width: 961px ) {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
+	}
 	@media screen and ( min-width: 783px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-	}
-
-	@media screen and ( min-width: 961px ) {
-		width: calc( 70% - #{$wp-org-sidebar-full } );
-	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		&.folded .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+		&:not( .folded ):not( .auto-fold ) .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
 	}
 }
 
@@ -431,6 +444,8 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 // Tweak styles which are inside of the preview container.
 .block-editor-block-preview__container,
 .template-selector-preview {
+	max-width: $preview-max-width;
+
 	.editor-styles-wrapper {
 		.wp-block {
 			width: 100%;

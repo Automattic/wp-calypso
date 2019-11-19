@@ -16,6 +16,7 @@ import {
 	createCreditCardMethod,
 	WPCheckoutOrderSummary,
 	WPCheckoutOrderReview,
+	WPContactForm,
 } from '../src/public-api';
 import { stripeKey } from './private';
 
@@ -150,7 +151,11 @@ function MyCheckout() {
 				Boolean
 			) }
 		>
-			<Checkout OrderSummary={ WPCheckoutOrderSummary } ReviewContent={ WPCheckoutOrderReview } />
+			<Checkout
+				OrderSummary={ WPCheckoutOrderSummary }
+				ReviewContent={ WPCheckoutOrderReview }
+				ContactSlot={ WPContactForm }
+			/>
 		</CheckoutProvider>
 	);
 }

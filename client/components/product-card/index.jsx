@@ -27,6 +27,7 @@ const ProductCard = ( {
 	description,
 	discountedPrice,
 	fullPrice,
+	isCurrent,
 	isPlaceholder,
 	purchase,
 	subtitle,
@@ -61,7 +62,7 @@ const ProductCard = ( {
 			</div>
 			<div className="product-card__description">
 				{ description && <p>{ description }</p> }
-				{ purchase && (
+				{ purchase && isCurrent && (
 					<ProductCardAction
 						href={ managePurchase( purchase.domain, purchase.id ) }
 						label={ translate( 'Manage Subscription' ) }
@@ -83,6 +84,7 @@ ProductCard.propTypes = {
 		PropTypes.arrayOf( PropTypes.number ),
 	] ),
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+	isCurrent: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),

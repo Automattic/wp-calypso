@@ -2,12 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-
-/**
- * Internal dependencies
- */
-import { useLocalize } from '../lib/localize';
 
 export default class CheckoutErrorBoundary extends React.Component {
 	constructor( props ) {
@@ -27,13 +23,12 @@ export default class CheckoutErrorBoundary extends React.Component {
 	}
 }
 
+CheckoutErrorBoundary.propTypes = {
+	errorMessage: PropTypes.string.isRequired,
+};
+
 function ErrorFallback( { errorMessage } ) {
-	const localize = useLocalize();
-	return (
-		<ErrorContainer>
-			{ errorMessage || localize( 'Sorry, there was an error on this page.' ) }
-		</ErrorContainer>
-	);
+	return <ErrorContainer>{ errorMessage }</ErrorContainer>;
 }
 
 const ErrorContainer = styled.div`

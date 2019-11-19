@@ -1,5 +1,4 @@
-// With a _real_ TypeScript compiler, we could use const enums.
-/* const */ enum ActionType {
+enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
 	SET_SITE_TITLE = 'SET_SITE_TITLE',
@@ -26,10 +25,12 @@ export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
 	return value !== EMPTY_FORM_VALUE;
 }
 
-export type Vertical = ApiVertical | UserVertical;
+/**
+ * Representation of well-known verticals
+ */
+export interface Vertical {
+	is_user_input_vertical: false;
 
-export interface UserVertical {
-	is_user_input_vertical: true;
 	vertical_id: string;
 	vertical_slug: string;
 	vertical_name: string;
@@ -37,14 +38,4 @@ export interface UserVertical {
 	preview: string;
 	preview_styles_url: string;
 	synonyms: string[];
-}
-
-export interface ApiVertical {
-	is_user_input_vertical: false;
-	vertical_id: '';
-	vertical_slug: string;
-	vertical_name: string;
-	parent: string;
-	preview: '';
-	preview_styles_url: string;
 }

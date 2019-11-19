@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button, Icon, IconButton, Popover } from '@wordpress/components';
+import { Button, Icon, IconButton } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import React, { useState } from 'react';
+import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
 import { isEmpty } from 'lodash';
 
@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
-import DomainPicker from '../domain-picker';
+import { DomainPickerButton } from '../domain-picker';
 
 interface Props {
 	isEditorSidebarOpened: boolean;
@@ -21,10 +21,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState(
-		true /* @TODO: should be `false` by default, true for dev */
-	);
-	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -36,21 +33,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 		>
 			<div className="gutenboarding__header-site">
 				<Icon icon="wordpress-alt" color="#066188" />
-				<span className="gutenboarding__header-site-heading">
-					{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-				</span>
-				<Button onClick={ () => setDomainPopoverVisibility( s => ! s ) }>
-					Pick a domain
-					{ isDomainPopoverVisible && (
-						<Popover
-							/* Prevent interaction in the domain picker from affecting the popover */
-							onClick={ e => e.stopPropagation() }
-							onKeyDown={ e => e.stopPropagation() }
-						>
-							<DomainPicker />
-						</Popover>
-					) }
-				</Button>
+				<DomainPickerButton />
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }

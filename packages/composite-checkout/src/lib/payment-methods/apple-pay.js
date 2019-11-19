@@ -9,7 +9,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { StripeHookProvider, useStripe } from '../../lib/stripe';
 import { useLineItems, useCheckoutHandlers } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
-import BillingFields from '../../components/billing-fields';
 import PaymentRequestButton from '../../components/payment-request-button';
 
 export function createApplePayMethod( { registerStore, fetchStripeConfiguration } ) {
@@ -63,7 +62,6 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 	return {
 		id: 'apple-pay',
 		LabelComponent: ApplePayLabel,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
 		SummaryComponent: ApplePaySummary,
 		CheckoutWrapper: StripeHookProvider,

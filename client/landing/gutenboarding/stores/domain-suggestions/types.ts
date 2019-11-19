@@ -1,5 +1,4 @@
-// With a _real_ TypeScript compiler, we could use const enums.
-/* const */ enum ActionType {
+enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
 export { ActionType };
@@ -34,13 +33,54 @@ export interface DomainSuggestionQuery {
 	vertical?: string;
 }
 
+export type DomainName = string;
+
 export interface DomainSuggestion {
-	domain_name: string;
-	relevance: number; // Percentage, <= 1
+	/**
+	 * The domain name
+	 *
+	 * @example "example.com"
+	 */
+	domain_name: DomainName;
+
+	/**
+	 * Relevance as a percent: 0 <= relevance <= 1
+	 *
+	 * @example 0.9
+	 */
+	relevance: number;
+
+	/**
+	 * Whether the domain supports privacy
+	 */
 	supports_privacy: boolean;
-	vendor: string; // List of possible values? E.g. "dotdomains"
-	match_reasons: string[]; // E.g. [ "exact-match" ]
-	cost: string; // With currency, e.g. "€15.00"
+
+	/**
+	 * The domain vendor
+	 */
+	vendor: string;
+
+	/**
+	 * Reasons for suggestion the domain
+	 *
+	 * @example [ "exact-match" ]
+	 */
+	match_reasons: string[];
+
+	/**
+	 * Rendered cost with currency
+	 *
+	 * @example "€15.00"
+	 */
+	cost: string;
+
+	/**
+	 * The product ID
+	 */
 	product_id: number;
-	product_slug: string; // List of possible values? E.g. "dotart_domain"
+
+	/**
+	 * The product slug
+	 */
+	product_slug: string;
 }

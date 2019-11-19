@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"jsx": "react",
+		"target": "es5",
+		"module": "esnext",
+		"declaration": true,
+		"declarationDir": "types",
+		"outDir": "./dist/esm",
+
+		"strict": true,
+		"noImplicitAny": false,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"strictNullChecks": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
+}

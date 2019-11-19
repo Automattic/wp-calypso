@@ -8,32 +8,33 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import { useSelect, useDispatch, useHasDomainsInCart } from '../public-api';
-import GridRow from './grid-row';
 import Field from './field';
+import GridRow from './grid-row';
+// TODO: remove or replace all the below imports as they are not in wpcom
+import { useLocalize } from '../lib/localize';
 import {
 	SummaryLine,
 	SummaryDetails,
 	SummarySpacerLine,
 } from '../lib/styled-components/summary-details';
 
-export default function BillingFields( { summary, isActive, isComplete } ) {
+export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const { isDomainContactSame = true } = paymentData;
 
 	if ( summary && isComplete ) {
-		return <BillingFormSummary />;
+		return <ContactFormSummary />;
 	}
 	if ( ! isActive ) {
 		return null;
 	}
 
-	function toggleDomainFieldsVisibility() {
+	const toggleDomainFieldsVisibility = () => {
 		updatePaymentData( 'isDomainContactSame', ! isDomainContactSame );
-	}
+	};
 
 	return (
 		<BillingFormFields>
@@ -56,12 +57,6 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 		</BillingFormFields>
 	);
 }
-
-BillingFields.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	isComplete: PropTypes.bool.isRequired,
-	summary: PropTypes.bool,
-};
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -420,7 +415,7 @@ const DomainContactFieldsDescription = styled.p`
 	margin: 0 0 16px;
 `;
 
-function BillingFormSummary() {
+function ContactFormSummary() {
 	const localize = useLocalize();
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;

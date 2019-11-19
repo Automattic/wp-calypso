@@ -13,14 +13,14 @@ See p1HpG7-7ET-p2 for more details.
 ```jsx
 import React from 'react';
 import MyPlanCard from 'components/my-plan-card';
+import Button from 'components/button';
 
 export default class extends React.Component {
 	render() {
 		return (
 			<MyPlanCard
-				buttonLabel="Manage Plan"
-				buttonTarget="/me/purchases/"
-				expirationDate="2020-10-27T10:37:04+00:00"
+				action={ <Button compact>Manage Payment</Button> }
+				details="Expires on October 27, 2020"
 				plan="jetpack_personal"
 				tagLine="Your data is being securely backed up and you have access to priority support."
 				title="Jetpack Personal"
@@ -34,9 +34,10 @@ export default class extends React.Component {
 
 The following props can be passed to the My Plan Card component:
 
-* `buttonLabel`: ( string ) Action button label
-* `buttonTarget`: ( string ) Action button target (`href`)
-* `expirationDate`: ( string ) Plan or product expiration date, e.g. `2019-11-14T16:53:25+00:00 ` (ISO 8601)
+* `action`: ( element | node ) Action button element or node.
+* `isError`: ( bool ) With this flag being set the details string is in an error state (red copy).
+* `isPlaceholder`: ( bool ) Flag indicating that the component in is a loading state
+* `details`: ( string ) Details about a plan or product, e.g. expiration or auto-renew date like `Expires on October 27, 2020`
 * `plan`: ( string ) Plan or product slug
 * `tagLine`: ( string | element | node ) Plan or product tag line. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element | node ) Plan or product title. It can be a string, a node or a React element (e.g. `<Fragment>`)

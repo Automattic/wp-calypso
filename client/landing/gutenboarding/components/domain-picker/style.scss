@@ -1,0 +1,21 @@
+.domain-picker__button {
+	display: block;
+	margin-left: 20px;
+	text-align: left;
+}
+
+.domain-picker__site-title {
+	font-weight: bold;
+}
+
+.domain-picker__choose-domain-header,
+.domain-picker__recommended-header {
+	font-weight: bold;
+}
+
+.domain-picker {
+	.components-panel__row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

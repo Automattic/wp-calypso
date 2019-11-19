@@ -37,7 +37,6 @@ import {
 	DiscoverLogo,
 } from '../../components/payment-logos';
 import { CreditCardLabel } from './credit-card';
-import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import Spinner from '../../components/spinner';
@@ -157,7 +156,6 @@ export function createStripeMethod( {
 		id: 'stripe-card',
 		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: StripeCreditCardFields,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,
 		SummaryComponent: StripeSummary,
@@ -600,7 +598,6 @@ function StripePayButton() {
 				} )
 			}
 			buttonState="primary"
-			buttonType="apple-pay"
 			fullWidth
 		>
 			{ buttonString }
@@ -719,7 +716,7 @@ function formatDataForStripeTransaction( {
 			postalCode,
 			subdivisionCode,
 		} ),
-		domain_details: getDomainDetailsFromPaymentData( paymentData ),
+		domainDetails: paymentData, // TODO: get this somehow
 		payment,
 	};
 }
