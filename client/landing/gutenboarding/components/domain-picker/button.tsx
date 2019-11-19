@@ -5,6 +5,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Popover } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import DomainPicker from './list';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
-import { DomainSuggestion } from '../../stores/domain-suggestions/types'; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * Style dependencies
@@ -48,16 +48,7 @@ const DomainPickerButton: FunctionComponent = () => {
 		[ search, siteVertical ]
 	);
 
-	const [ freeDomainSuggestions, paidDomainSuggestions ] =
-		suggestions?.reduce< [ DomainSuggestion[], DomainSuggestion[] ] >(
-			( partitionedSuggestions, suggestion ) => {
-				// Internally mutating reducer
-				partitionedSuggestions[ suggestion.is_free ? 0 : 1 ].push( suggestion );
-
-				return partitionedSuggestions;
-			},
-			[ [], [] ]
-		) ?? [];
+	const [ freeDomainSuggestions, paidDomainSuggestions ] = partition( suggestions, 'is_free' );
 
 	return (
 		<Button
