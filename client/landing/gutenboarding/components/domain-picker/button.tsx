@@ -58,7 +58,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</div>
-			<div>{ freeDomainSuggestions?.[ 0 ].domain_name }</div>
+			<div>{ freeDomainSuggestions[ 0 ]?.domain_name }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
