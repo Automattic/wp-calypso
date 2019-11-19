@@ -78,22 +78,25 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const shouldRecordRecaptchaAction =
-			typeof this.props.recaptchaClientId === 'number' &&
-			'onboarding' === this.props.flowName &&
-			'show' === abtest( 'userStepRecaptcha' );
+		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
+		const isRecaptchaABTest =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
-		const recaptchaToken = shouldRecordRecaptchaAction
-			? await recordGoogleRecaptchaAction(
-					this.props.recaptchaClientId,
-					'calypso/signup/formSubmit'
-			  )
-			: undefined;
+		const recaptchaToken =
+			isRecaptchaABTest && isRecaptchaLoaded
+				? await recordGoogleRecaptchaAction(
+						this.props.recaptchaClientId,
+						'calypso/signup/formSubmit'
+				  )
+				: undefined;
 
 		try {
 			const response = await wpcom.undocumented().usersNew(
 				{
 					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-didnt-load': ( isRecaptchaABTest && ! isRecaptchaLoaded ) || undefined,
+					'g-recaptcha-failed':
+						( isRecaptchaABTest && isRecaptchaLoaded && ! recaptchaToken ) || undefined,
 					'g-recaptcha-response': recaptchaToken || undefined,
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,

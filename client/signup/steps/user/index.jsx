@@ -208,20 +208,22 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		const shouldRecordRecaptchaAction =
-			typeof this.state.recaptchaClientId === 'number' &&
-			'onboarding' === this.props.flowName &&
-			'show' === abtest( 'userStepRecaptcha' );
+		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
+		const isRecaptchaABTest =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
-		const recaptchaPromise = shouldRecordRecaptchaAction
-			? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
-			: Promise.resolve();
+		const recaptchaPromise =
+			isRecaptchaABTest && isRecaptchaLoaded
+				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+				: Promise.resolve();
 
 		recaptchaPromise.then( token => {
 			this.submit( {
 				userData,
 				form: formWithoutPassword,
 				queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+				recaptchaDidntLoad: isRecaptchaABTest && ! isRecaptchaLoaded,
+				recaptchaFailed: isRecaptchaABTest && isRecaptchaLoaded && ! token,
 				recaptchaToken: token || undefined,
 			} );
 		} );
