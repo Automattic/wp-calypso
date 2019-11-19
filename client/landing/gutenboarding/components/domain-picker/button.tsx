@@ -36,7 +36,7 @@ const DomainPickerButton: FunctionComponent = () => {
 	 *
 	 * @see https://stackoverflow.com/a/44755058/1432801
 	 */
-	const inputDebounce = 200;
+	const inputDebounce = 400;
 	const [ debouncedDomainSearch ] = useDebounce( domainSearch.trim(), inputDebounce );
 	const search =
 		! debouncedDomainSearch && isFilledFormValue( siteTitle ) ? siteTitle : debouncedDomainSearch;
