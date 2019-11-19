@@ -49,6 +49,7 @@ class CurrentPlan extends Component {
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
 		path: PropTypes.string.isRequired,
+		purchase: PropTypes.object,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		requestThankYou: PropTypes.bool,
