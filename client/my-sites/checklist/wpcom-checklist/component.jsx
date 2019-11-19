@@ -454,9 +454,9 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/create-tagline.svg"
 				buttonText={ translate( 'Verify' ) }
 				completedButtonText={ translate( 'Change' ) }
-				completedTitle={ translate( 'You verified the email address for your domain(s)' ) }
+				completedTitle={ translate( 'You verified the email address for your domain' ) }
 				description={ translate(
-					'The email address for your domains has to be verified to allow your domains to work properly.'
+					'The email address for your domain has to be verified to allow your domains to work properly.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 				onClick={ this.handleTaskStart( {
