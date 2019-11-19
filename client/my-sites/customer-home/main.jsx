@@ -13,7 +13,6 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -48,6 +47,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import MobileDownloadCard from 'blocks/get-apps/mobile-download-card.jsx';
 
 /**
  * Style dependencies
@@ -391,30 +391,8 @@ class Home extends Component {
 							</VerticalNav>
 						</div>
 					</Card>
-					<Card className="customer-home__go-mobile">
-						<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Make updates on the go' ) }
-						</h6>
-						<div className="customer-home__card-button-pair customer-home__card-mobile">
-							<AppsBadge
-								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-								storeName={ 'ios' }
-								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-								altText={ translate( 'Apple App Store download badge' ) }
-							>
-								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
-							</AppsBadge>
-							<AppsBadge
-								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-								storeName={ 'android' }
-								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-								altText={ translate( 'Google Play Store download badge' ) }
-							>
-								<img src="/calypso/images/customer-home/google-play.png" alt="" />
-							</AppsBadge>
-						</div>
-					</Card>
+
+					<MobileDownloadCard />
 				</div>
 			</div>
 		);
