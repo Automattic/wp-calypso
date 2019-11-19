@@ -44,6 +44,8 @@ const DomainPickerButton: FunctionComponent = () => {
 		[ search, siteVertical ]
 	);
 
+	// Free .wordpress.com subdomain at index 0,
+	// Best premium domain match at index 1.
 	const domainName = suggestions?.[ 1 ]?.domain_name;
 
 	return (
