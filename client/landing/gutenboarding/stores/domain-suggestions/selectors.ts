@@ -26,6 +26,18 @@ export const getDomainSuggestions = (
 	return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
 };
 
+export const isLoadingDomainSuggestions = (
+	state: State,
+	search: string,
+	options: DomainSuggestionSelectorOptions = {}
+) => {
+	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
+
+	return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
+		normalizedQuery,
+	] );
+};
+
 /**
  * Do not use this selector. It is for internal use.
  *
