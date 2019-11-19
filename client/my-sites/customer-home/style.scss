@@ -135,13 +135,21 @@
 		justify-content: space-between;
 
 		img {
-			margin: 0 7%;
-			height: 119px;
+			margin: 0 7% 0 0;
 			width: 137px;
+			height: 119px;
+
+			@include breakpoint( '960px-1040px' ) {
+				display: none;
+			}
 		}
 
 		.vertical-nav {
-			width: 50%;
+			width: 60%;
+
+			@include breakpoint( '960px-1040px' ) {
+				width: 100%;
+			}
 		}
 	}
 	&__go-mobile,
