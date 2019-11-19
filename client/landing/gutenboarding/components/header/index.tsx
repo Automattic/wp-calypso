@@ -29,7 +29,7 @@ interface Props {
 	toggleGeneralSidebar: () => void;
 }
 
-export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
+const Header: FunctionComponent< Props > = ( { isEditorSidebarOpened, toggleGeneralSidebar } ) => {
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -71,7 +71,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
 
 const HeaderGroup: FunctionComponent< { className?: string } > = ( { children, className } ) => (
 	<div className={ classnames( 'gutenboarding__header-group', className ) }>{ children }</div>
@@ -79,3 +79,5 @@ const HeaderGroup: FunctionComponent< { className?: string } > = ( { children, c
 const HeaderSection: FunctionComponent< { className?: string } > = ( { children, className } ) => (
 	<div className={ classnames( 'gutenboarding__header-section', className ) }>{ children }</div>
 );
+
+export default Header;
