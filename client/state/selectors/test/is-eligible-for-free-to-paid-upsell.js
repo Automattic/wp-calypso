@@ -11,11 +11,13 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import isVipSite from 'state/selectors/is-vip-site';
+import getSiteDomain from 'state/sites/selectors/get-site-domain';
 
 jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
+jest.mock( 'state/sites/selectors/get-site-domain', () => require( 'sinon' ).stub() );
 
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
@@ -26,6 +28,7 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 		isMappedDomainSite.withArgs( state, siteId ).returns( false );
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( true );
 		isVipSite.withArgs( state, siteId ).returns( false );
+		getSiteDomain.withArgs( state, siteId ).returns( 'test.home.blog' );
 	};
 
 	test( 'should return false when user can not manage options', () => {
@@ -34,10 +37,17 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
 	} );
 
-	test( 'should return false when site has mapped domain', () => {
+	test( 'should return false when site has custom mapped domain', () => {
 		meetAllConditions();
 		isMappedDomainSite.withArgs( state, siteId ).returns( true );
+		getSiteDomain.withArgs( state, siteId ).returns( 'testingdomain.com' );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+	} );
+
+	test( 'should return true when site has mapped .home.blog domain', () => {
+		meetAllConditions();
+		isMappedDomainSite.withArgs( state, siteId ).returns( true );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.true;
 	} );
 
 	test( 'should return false when site is not on a free plan', () => {
