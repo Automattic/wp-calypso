@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -15,16 +16,21 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 
 class JetpackBackupCredsBanner extends Component {
+	static propTypes = {
+		// Banner location, passed to tracks event, single word to follow tracks naming conventions.
+		location: PropTypes.string.isRequired,
+	};
+
 	render() {
 		const { isJetpack, rewindState, siteId, slug, translate } = this.props;
-
+		const location = this.props.location || 'nolocation';
+		const event = `calpyso_jetpack_backup_credential_banner_${ location }_click`;
 		return (
-			// TODO: prop for tracks event
-			// TODO: link to settings for creds entry
 			<Fragment>
 				{ siteId && isJetpack && <QueryRewindState siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
+						event={ event }
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
