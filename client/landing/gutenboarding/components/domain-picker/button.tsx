@@ -13,6 +13,7 @@ import DomainPicker from './list';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
+import { useDebounce } from 'use-debounce';
 
 import './style.scss';
 
@@ -27,11 +28,10 @@ const DomainPickerButton: FunctionComponent = () => {
 	// Without user search, we can provide recommendations based on title + vertical
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 
-	let search = domainSearch.trim();
-	if ( ! search && isFilledFormValue( siteTitle ) ) {
-		search = siteTitle;
-	}
-
+	// Debounce changes to input at 200ms
+	const [ debouncedDomainSearch ] = useDebounce( domainSearch.trim(), 200 );
+	const search =
+		! debouncedDomainSearch && isFilledFormValue( siteTitle ) ? debouncedDomainSearch : siteTitle;
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
