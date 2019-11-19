@@ -105,6 +105,28 @@ function get_theme_slug() {
 }
 
 /**
+ * Returns a normalized slug for the current theme.
+ *
+ * In some cases, the theme is located in a subfolder like `pub/maywood`. Use
+ * this function to get the slug without the prefix.
+ *
+ * @param string $theme_slug The raw theme_slug to normalize.
+ * @return string Theme slug.
+ */
+function normalize_theme_slug( $theme_slug ) {
+	// Normalize the theme slug.
+	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
+		$theme_slug = substr( $theme_slug, 4 );
+	}
+
+	if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+		$theme_slug = substr( $theme_slug, 0, -6 );
+	}
+
+	return $theme_slug;
+}
+
+/**
  * Whether or not the site is eligible for FSE.
  * This is essentially a feature gate to disable FSE
  * on some sites which could theoretically otherwise use it.

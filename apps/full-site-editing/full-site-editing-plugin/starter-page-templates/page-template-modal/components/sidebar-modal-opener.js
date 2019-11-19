@@ -17,7 +17,7 @@ import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const { theme } = starterPageTemplatesConfig;
+const { theme, isFrontPage } = starterPageTemplatesConfig;
 
 class SidebarModalOpener extends Component {
 	state = {
@@ -39,7 +39,7 @@ class SidebarModalOpener extends Component {
 		// Try to match the homepage of the theme. Note that as folks transition
 		// to using the slug-based version of the homepage (e.g. "shawburn"), the
 		// slug will work normally without going through this check.
-		if ( lastTemplateUsedSlug === 'home' ) {
+		if ( ! lastTemplateUsedSlug && isFrontPage ) {
 			lastTemplateUsedSlug = theme;
 		}
 

@@ -177,7 +177,7 @@ class Starter_Page_Templates {
 				'vertical'        => $vertical,
 				'segment'         => $segment,
 				'screenAction'    => $screen->action,
-				'theme'           => get_stylesheet(),
+				'theme'           => normalize_theme_slug( get_stylesheet() ),
 				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 				'isFrontPage'     => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
 			]
