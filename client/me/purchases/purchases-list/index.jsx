@@ -19,7 +19,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { getPurchasesBySite } from 'lib/purchases';
 import getSites from 'state/selectors/get-sites';
 import {
@@ -42,9 +42,6 @@ import {
 } from 'me/concierge/constants';
 import userFactory from 'lib/user';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
-
-const user = userFactory();
-const userHasNoSites = () => user.get().site_count <= 0;
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -118,7 +115,7 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
-			if ( userHasNoSites() ) {
+			if ( this.props.hasMoreThanOneSite ) {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
@@ -166,6 +163,7 @@ PurchasesList.propTypes = {
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
+	hasMoreThanOneSite: PropTypes.bool.isRequired,
 };
 
 export default connect(
@@ -181,6 +179,7 @@ export default connect(
 			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 			scheduleId: getConciergeScheduleId( state ),
 			userId,
+			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 		};
 	},
 	{ recordTracksEvent }
