@@ -2,11 +2,17 @@
  * External dependencies
  */
 import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { JETPACK_PRODUCTS_LIST, JETPACK_BACKUP_PRODUCTS } from './constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_PRODUCT_DISPLAY_NAMES,
+	JETPACK_PRODUCT_TAG_LINES,
+} from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -380,6 +386,25 @@ export function getProductClass( productSlug ) {
 	}
 
 	return '';
+}
+
+export function getJetpackProductDisplayName( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product?.productSlug ];
+}
+
+export function getJetpackProductTagLine( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return JETPACK_PRODUCT_TAG_LINES?.[ product?.productSlug ];
+}
+
+export function isProductExpiring( product ) {
+	const expiration = product?.expiryMoment ?? null;
+	return expiration < moment().add( 30, 'days' );
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
