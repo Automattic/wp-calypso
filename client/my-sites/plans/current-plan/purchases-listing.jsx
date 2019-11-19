@@ -60,12 +60,11 @@ class PurchasesListing extends Component {
 	isFreePlan( purchase ) {
 		const { currentPlan } = this.props;
 
-		const isCurrentPlanFree =
-			! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
-		const isPurchaseFreePlan =
-			purchase && ( isFreePlan( purchase ) || isFreeJetpackPlan( purchase ) );
+		if ( purchase && isJetpackBackup( purchase ) ) {
+			return false;
+		}
 
-		return isCurrentPlanFree || isPurchaseFreePlan;
+		return ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
 	}
 
 	getTitle( purchase ) {
