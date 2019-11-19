@@ -4,6 +4,28 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.migrate__source-site, .migrate__confirmation, .migrate__status {
+.migrate__source-site, .migrate__confirmation, .migrate__status, .migrate__explain {
 	margin-bottom: 16px;
+}
+
+.migrate__card {
+	.site__content, .site-selector__hidden-sites-message {
+		border-bottom: 1px solid var( --color-neutral-10 );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.site-selector .search {
+		margin: 0;
+	}
+}
+
+.migrate__card-footer {
+	color: var( --color-neutral-40 );
+	font-size: 13px;
+
+	a {
+		color: var( --color-neutral-40 );
+		text-decoration: underline;
+	}
 }
