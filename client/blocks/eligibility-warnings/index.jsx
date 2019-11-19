@@ -133,10 +133,18 @@ export const EligibilityWarnings = ( {
 
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && translate( 'Please clear all issues above to proceed.' ) }
-					{ isEligible &&
-						warnings.length > 0 &&
-						translate( 'If you proceed you will no longer be able to use these features. ' ) }
+					{ ! isEligible && (
+						<>
+							{ translate( 'Please clear all issues above to proceed.' ) }
+							&nbsp;
+						</>
+					) }
+					{ isEligible && warnings.length > 0 && (
+						<>
+							{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
+							&nbsp;
+						</>
+					) }
 					{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
 						components: {
 							a: (
