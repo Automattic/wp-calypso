@@ -19,10 +19,12 @@ import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './li
 import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
 import {
 	createRegistry,
-	useRegistry,
-	useRegisterStore,
-	useSelect,
 	useDispatch,
+	usePrimaryDispatch,
+	usePrimarySelect,
+	useRegisterStore,
+	useRegistry,
+	useSelect,
 } from './lib/registry';
 import {
 	WPCheckoutOrderSummary,
@@ -69,6 +71,8 @@ export {
 	useLineItems,
 	usePaymentMethod,
 	usePaymentMethodId,
+	usePrimaryDispatch,
+	usePrimarySelect,
 	useRegisterStore,
 	useRegistry,
 	useSelect,
