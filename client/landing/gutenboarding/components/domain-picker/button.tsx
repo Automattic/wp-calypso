@@ -5,6 +5,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Popover } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { head, partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +16,13 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { isFilledFormValue } from '../../stores/onboard/types';
 import { useDebounce } from 'use-debounce';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 const DomainPickerButton: FunctionComponent = () => {
-	// // User can search for a domain
+	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState(
@@ -58,9 +62,7 @@ const DomainPickerButton: FunctionComponent = () => {
 		[ search, siteVertical ]
 	);
 
-	// Free .wordpress.com subdomain at index 0,
-	// Best paid domain match at index 1.
-	const [ freeDomainSuggestion, ...paidDomainSuggestions ] = suggestions ?? [];
+	const [ freeDomainSuggestions, paidDomainSuggestions ] = partition( suggestions, 'is_free' );
 
 	return (
 		<Button
@@ -70,7 +72,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</div>
-			<div>{ freeDomainSuggestion?.domain_name }</div>
+			<div>{ head( freeDomainSuggestions )?.domain_name }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
