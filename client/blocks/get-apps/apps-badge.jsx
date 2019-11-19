@@ -16,6 +16,11 @@ import { getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import TranslatableString from 'components/translatable/proptype';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
 const APP_STORE_BADGE_URLS = {
