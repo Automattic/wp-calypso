@@ -1,55 +1,20 @@
-.hosting__cards {
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-	align-items: flex-start;
-
-	@include breakpoint( '>1280px' ) {
-		flex-direction: row;
-	}
-
+.hosting {
 	.card {
-		display: flex;
-		flex-direction: row;
-		width: 100%;
-		margin-left: 0;
-		margin-right: 0;
+		padding-left: 80px;
 
-		.card-heading {
+		> .material-icon {
+			position: absolute;
+			left: 24px;
+		}
+
+		> .card-heading {
 			margin-top: 0;
 		}
-
-		@include breakpoint( '>1280px' ) {
-			&:first-child {
-				width: calc( 60% - 5px );
-				margin-left: 0;
-				margin-right: 5px;
-			}
-
-			&:last-child {
-				width: calc( 40% - 5px );
-				margin-left: 5px;
-				margin-right: 0;
-			}
-		}
-
-		.spinner {
-			width: 100%;
-		}
 	}
 
-	.sftp-card {
-		flex-wrap: wrap;
-
-		.sftp-card__body {
-			width: calc( 100% - 24px - 32px );
-		}
+	.spinner {
+		width: 100%;
 	}
-}
-
-.phpmyadmin-card__icon, .sftp-card__icon {
-	margin-right: 24px;
 }
 
 .sftp-card__info-table {

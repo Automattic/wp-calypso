@@ -153,6 +153,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-hosting',
+		paths: [ '/settings/hosting' ],
+		module: 'my-sites/site-settings/hosting',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
@@ -459,13 +466,6 @@ const sections = [
 		name: 'home',
 		paths: [ '/home' ],
 		module: 'my-sites/customer-home',
-		secondary: true,
-		group: 'sites',
-	},
-	{
-		name: 'hosting',
-		paths: [ '/hosting-admin' ],
-		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
 	},

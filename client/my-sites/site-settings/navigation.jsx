@@ -14,6 +14,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { getSelectedSite } from 'state/ui/selectors';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -30,11 +31,12 @@ export class SiteSettingsNavigation extends Component {
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
+			hosting: translate( 'Hosting Access', { context: 'settings screen' } ),
 		};
 	}
 
 	render() {
-		const { section, site } = this.props;
+		const { canViewAtomicHosting, section, site } = this.props;
 		const strings = this.getStrings();
 		const selectedText = strings[ section ];
 
@@ -87,6 +89,16 @@ export class SiteSettingsNavigation extends Component {
 					>
 						{ strings.discussion }
 					</NavItem>
+
+					{ canViewAtomicHosting && (
+						<NavItem
+							path={ `/settings/hosting/${ site.slug }` }
+							preloadSectionName="settings-hosting"
+							selected={ section === 'hosting' }
+						>
+							{ strings.hosting }
+						</NavItem>
+					) }
 				</NavTabs>
 			</SectionNav>
 		);
@@ -95,4 +107,5 @@ export class SiteSettingsNavigation extends Component {
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
+	canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 } ) )( localize( SiteSettingsNavigation ) );

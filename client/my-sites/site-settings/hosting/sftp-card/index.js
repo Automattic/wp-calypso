@@ -113,11 +113,9 @@ const SftpCard = ( {
 
 	return (
 		<Card className="sftp-card">
-			<div className="sftp-card__icon">
-				<MaterialIcon icon="cloud" size={ 32 } />
-			</div>
+			<MaterialIcon icon="cloud" size={ 32 } />
+			<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 			<div className="sftp-card__body">
-				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 				{ disabled || username || isLoading ? (
 					<p>
 						{ translate( "Access and edit your website's files directly using an FTP client." ) }
