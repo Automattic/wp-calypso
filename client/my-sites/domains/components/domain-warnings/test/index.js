@@ -247,6 +247,121 @@ describe( 'index', () => {
 		} );
 	} );
 
+	describe( 'verification nudge', () => {
+		test( 'should show a verification nudge with weak message for any unverified domains younger than 2 days', () => {
+			const props = {
+				translate: identity,
+				domains: [
+					{
+						name: 'blog.example.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 1, 'days' ),
+					},
+					{
+						name: 'mygroovysite.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 1, 'days' ),
+					},
+				],
+				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).to.contain( 'lease verify ownership of domains' );
+			assert(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
+				)
+			);
+			assert(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
+				)
+			);
+		} );
+
+		test( 'should show a verification nudge with strong message for any unverified domains older than 2 days', () => {
+			const props = {
+				translate: identity,
+				domains: [
+					{
+						name: 'blog.example.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 3, 'days' ),
+					},
+					{
+						name: 'mygroovysite.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 3, 'days' ),
+					},
+				],
+				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).to.contain(
+				'Your domains may be suspended because your email address is not verified.'
+			);
+			assert(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
+				)
+			);
+			assert(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
+				)
+			);
+		} );
+
+		test( "should show a verification nudge with strong message for users who can't manage the domain", () => {
+			const props = {
+				translate: identity,
+				domains: [
+					{
+						name: 'blog.example.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: false,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 1, 'days' ),
+					},
+					{
+						name: 'mygroovysite.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: false,
+						isPendingIcannVerification: true,
+						registrationMoment: moment().subtract( 1, 'days' ),
+					},
+				],
+				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent;
+
+			expect( textContent ).to.contain(
+				'Some domains on this site are about to be suspended because their owner has not'
+			);
+		} );
+	} );
+
 	describe( 'Mutations', () => {
 		test( 'should not mutate domain objects', () => {
 			const props = {
