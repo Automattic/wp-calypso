@@ -440,32 +440,34 @@ class Home extends Component {
 							</div>
 						</Card>
 					) }
-					<Card className="customer-home__grow-earn">
-						<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
-						<h6 className="customer-home__card-subheader">
-							{ translate( 'Grow my audience and earn money' ) }
-						</h6>
-						<VerticalNav className="customer-home__card-links">
-							<VerticalNavItem
-								path={ `/marketing/connections/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
-							>
-								{ translate( 'Share my site' ) }
-							</VerticalNavItem>
-							<VerticalNavItem
-								path={ `/marketing/tools/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
-							>
-								{ translate( 'Grow my audience' ) }
-							</VerticalNavItem>
-							<VerticalNavItem
-								path={ `/earn/${ siteSlug }` }
-								onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
-							>
-								{ translate( 'Earn money' ) }
-							</VerticalNavItem>
-						</VerticalNav>
-					</Card>
+					{ ! siteIsUnlaunched && (
+						<Card className="customer-home__grow-earn">
+							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
+							<h6 className="customer-home__card-subheader">
+								{ translate( 'Grow my audience and earn money' ) }
+							</h6>
+							<VerticalNav className="customer-home__card-links">
+								<VerticalNavItem
+									path={ `/marketing/connections/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
+								>
+									{ translate( 'Share my site' ) }
+								</VerticalNavItem>
+								<VerticalNavItem
+									path={ `/marketing/tools/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
+								>
+									{ translate( 'Grow my audience' ) }
+								</VerticalNavItem>
+								<VerticalNavItem
+									path={ `/earn/${ siteSlug }` }
+									onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
+								>
+									{ translate( 'Earn money' ) }
+								</VerticalNavItem>
+							</VerticalNav>
+						</Card>
+					) }
 					<Card>
 						<CardHeading>{ translate( 'Support' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
