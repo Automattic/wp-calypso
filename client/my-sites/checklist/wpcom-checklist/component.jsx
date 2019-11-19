@@ -646,7 +646,9 @@ class WpcomChecklistComponent extends PureComponent {
 		let noticeText;
 		if ( disabled ) {
 			if ( needsDomainVerification ) {
-				noticeText = translate( 'Verify your domain before launching your site.' );
+				noticeText = translate(
+					'Verify email address for your domain before launching your site.'
+				);
 			} else if ( needsEmailVerification ) {
 				noticeText = translate( 'Confirm your email address before launching your site.' );
 			}
