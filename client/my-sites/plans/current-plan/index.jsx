@@ -173,7 +173,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, { requestThankYou, requestProduct } ) => {
+export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -191,7 +191,6 @@ export default connect( ( state, { requestThankYou, requestProduct } ) => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
-		requestProduct,
 		selectedSite,
 		selectedSiteId,
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
