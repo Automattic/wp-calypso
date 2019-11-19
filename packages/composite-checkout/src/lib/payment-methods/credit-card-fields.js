@@ -12,6 +12,7 @@ import GridRow from '../../components/grid-row';
 import { useLocalize } from '../localize';
 import { AmexLogo, VisaLogo, MastercardLogo } from '../../components/payment-logos';
 import { useSelect, useDispatch } from '../../public-api';
+import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 
 export default function CreditCardFields( { disabled } ) {
 	const localize = useLocalize();
@@ -73,33 +74,41 @@ export default function CreditCardFields( { disabled } ) {
 				disabled={ disabled }
 			/>
 			<FieldRow gap="4%" columnWidths="48% 48%">
-				<Field
-					id="card-expiry"
-					type="Number"
-					label={ localize( 'Expiry date' ) }
-					placeholder="MM / YY"
-					autoComplete="cc-exp"
-					value={ currentCreditCardData.cardExpiry || '' }
-					onChange={ value => {
-						updateCreditCard( 'cardExpiry', value );
-					} }
-					disabled={ disabled }
-				/>
-				<GridRow gap="4%" columnWidths="67% 29%">
+				<LeftColumn>
 					<Field
-						id="card-cvc"
+						id="card-expiry"
 						type="Number"
-						label={ localize( 'Security code' ) }
-						placeholder="CVC"
-						autoComplete="cc-csc"
-						value={ currentCreditCardData.cardCvc || '' }
+						label={ localize( 'Expiry date' ) }
+						placeholder="MM / YY"
+						autoComplete="cc-exp"
+						value={ currentCreditCardData.cardExpiry || '' }
 						onChange={ value => {
-							updateCreditCard( 'cardCvc', value );
+							updateCreditCard( 'cardExpiry', value );
 						} }
 						disabled={ disabled }
 					/>
-					<CVVImage />
-				</GridRow>
+				</LeftColumn>
+				<RightColumn>
+					<GridRow gap="4%" columnWidths="67% 29%">
+						<LeftColumn>
+							<Field
+								id="card-cvc"
+								type="Number"
+								label={ localize( 'Security code' ) }
+								placeholder="CVC"
+								autoComplete="cc-csc"
+								value={ currentCreditCardData.cardCvc || '' }
+								onChange={ value => {
+									updateCreditCard( 'cardCvc', value );
+								} }
+								disabled={ disabled }
+							/>
+						</LeftColumn>
+						<RightColumn>
+							<CVVImage />
+						</RightColumn>
+					</GridRow>
+				</RightColumn>
 			</FieldRow>
 
 			<CreditCardField
@@ -117,6 +126,47 @@ export default function CreditCardFields( { disabled } ) {
 		</CreditCardFieldsWrapper>
 	);
 }
+
+const CreditCardFieldsWrapper = styled.div`
+	padding: 16px;
+	position: relative;
+
+	:after {
+		display: block;
+		width: calc( 100% - 6px );
+		height: 1px;
+		content: '';
+		background: ${props => props.theme.colors.borderColorLight};
+		position: absolute;
+		top: 0;
+		left: 3px;
+	}
+`;
+
+const CreditCardField = styled( Field )`
+	margin-top: 16px;
+
+	:first-of-type {
+		margin-top: 0;
+	}
+`;
+
+const FieldRow = styled( GridRow )`
+	margin-top: 16px;
+`;
+
+const CVVImage = styled( CVV )`
+	margin-top: 23px;
+	display: block;
+	width: 100%;
+`;
+
+const LockIconGraphic = styled.svg`
+	width: 20px;
+	height: 20px;
+	display: block;
+	transform: translateY( 1px );
+`;
 
 const PaymentLogo = styled.span`
 	display: inline-block;
@@ -173,44 +223,3 @@ function LockIcon( { className } ) {
 		</LockIconGraphic>
 	);
 }
-
-const CreditCardFieldsWrapper = styled.div`
-	padding: 16px;
-	position: relative;
-
-	:after {
-		display: block;
-		width: calc( 100% - 6px );
-		height: 1px;
-		content: '';
-		background: ${props => props.theme.colors.borderColorLight};
-		position: absolute;
-		top: 0;
-		left: 3px;
-	}
-`;
-
-const CreditCardField = styled( Field )`
-	margin-top: 16px;
-
-	:first-of-type {
-		margin-top: 0;
-	}
-`;
-
-const FieldRow = styled( GridRow )`
-	margin-top: 16px;
-`;
-
-const CVVImage = styled( CVV )`
-	margin-top: 21px;
-	display: block;
-	width: 100%;
-`;
-
-const LockIconGraphic = styled.svg`
-	width: 20px;
-	height: 20px;
-	display: block;
-	transform: translateY( 1px );
-`;
