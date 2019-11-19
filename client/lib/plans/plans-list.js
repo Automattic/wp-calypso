@@ -66,6 +66,7 @@ const getPlanBloggerDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
@@ -121,6 +122,7 @@ const getPlanPersonalDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -210,6 +212,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -280,6 +283,7 @@ const getPlanPremiumDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -363,6 +367,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -723,6 +728,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -785,6 +791,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -830,6 +837,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -874,6 +882,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -938,6 +947,10 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -1000,6 +1013,10 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
 	},
 };
