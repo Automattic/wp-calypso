@@ -5,7 +5,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Popover } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { partition } from 'lodash';
+import { head, partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +58,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			<div className="domain-picker__site-title">
 				{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 			</div>
-			<div>{ freeDomainSuggestions[ 0 ]?.domain_name }</div>
+			<div>{ head( freeDomainSuggestions )?.domain_name }</div>
 			{ isDomainPopoverVisible && (
 				<Popover
 					/* Prevent interaction in the domain picker from affecting the popover */
