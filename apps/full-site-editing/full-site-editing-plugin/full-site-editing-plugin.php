@@ -51,7 +51,6 @@ function dangerously_load_full_site_editing_files() {
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-title/index.php';
-	require_once __DIR__ . '/full-site-editing/blocks/site-credit/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-rest-templates-controller.php';
@@ -163,7 +162,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  */
 function load_starter_page_templates() {
 	// We don't want the user to choose a template when copying a post.
-	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}

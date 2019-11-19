@@ -65,8 +65,6 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
-
-		$this->register_footer_credit_setting();
 	}
 
 	/**
@@ -159,8 +157,6 @@ class Full_Site_Editing {
 				'closeButtonLabel'    => $this->get_close_button_label(),
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
-				'footerCreditOptions' => get_footer_credit_options(),
-				'defaultCreditOption' => get_default_footer_credit_option(),
 			)
 		);
 
