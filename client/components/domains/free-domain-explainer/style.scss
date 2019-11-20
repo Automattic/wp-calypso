@@ -1,6 +1,8 @@
 .free-domain-explainer {
-    @include breakpoint( '<480px' ) {
-        padding: 0 16px;
+    &:not( .card ) {
+        @include breakpoint( '<480px' ) {
+            padding: 0 16px;
+        }
     }
 }
 
