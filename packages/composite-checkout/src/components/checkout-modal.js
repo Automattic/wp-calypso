@@ -151,7 +151,7 @@ function preventClose( event ) {
 
 function useModalScreen( isVisible, closeModal ) {
 	useEffect( () => {
-		document.body.style = isVisible ? 'overflow: hidden' : 'overflow: scroll';
+		document.body.style.cssText = isVisible ? 'overflow: hidden' : 'overflow: scroll';
 		const keyPressHandler = makeHandleKeyPress( closeModal );
 		if ( isVisible ) {
 			document.addEventListener( 'keydown', keyPressHandler, false );

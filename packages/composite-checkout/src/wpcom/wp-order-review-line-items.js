@@ -14,7 +14,7 @@ import { useLocalize } from '../lib/localize';
 import Button from './button';
 import CheckoutModal from '../components/checkout-modal';
 
-export function OrderReviewSection( { children, className } ) {
+export function WPOrderReviewSection( { children, className } ) {
 	return (
 		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
 			{ children }
@@ -22,7 +22,7 @@ export function OrderReviewSection( { children, className } ) {
 	);
 }
 
-OrderReviewSection.propTypes = {
+WPOrderReviewSection.propTypes = {
 	className: PropTypes.string,
 };
 
@@ -30,7 +30,7 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function LineItem( { item, className, hasDeleteButtons, removeProduct } ) {
+function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 	const localize = useLocalize();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
@@ -72,7 +72,7 @@ function LineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 	);
 }
 
-LineItem.propTypes = {
+WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
@@ -86,7 +86,7 @@ LineItem.propTypes = {
 	} ),
 };
 
-const LineItemUI = styled( LineItem )`
+const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	justify-content: space-between;
 	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
@@ -154,7 +154,7 @@ function DeleteIcon( { uniqueID } ) {
 	);
 }
 
-export function OrderReviewTotal( { total, className } ) {
+export function WPOrderReviewTotal( { total, className } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
 			<LineItemUI total item={ total } />
@@ -162,7 +162,7 @@ export function OrderReviewTotal( { total, className } ) {
 	);
 }
 
-export function OrderReviewLineItems( {
+export function WPOrderReviewLineItems( {
 	items,
 	className,
 	isSummaryVisible,
@@ -184,7 +184,7 @@ export function OrderReviewLineItems( {
 	);
 }
 
-OrderReviewLineItems.propTypes = {
+WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,

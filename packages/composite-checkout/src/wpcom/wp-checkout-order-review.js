@@ -11,11 +11,11 @@ import styled from '@emotion/styled';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
-import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLineItems } from '../public-api';
 import {
-	OrderReviewLineItems,
-	OrderReviewTotal,
-	OrderReviewSection,
+	WPOrderReviewLineItems,
+	WPOrderReviewTotal,
+	WPOrderReviewSection,
 } from './wp-order-review-line-items';
 
 export default function WPCheckoutOrderReview( { className } ) {
@@ -24,19 +24,19 @@ export default function WPCheckoutOrderReview( { className } ) {
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-			<OrderReviewSection>
-				<OrderReviewLineItems
+			<WPOrderReviewSection>
+				<WPOrderReviewLineItems
 					items={ items }
 					hasDeleteButtons={ true }
 					removeProduct={ removeProductFromCart }
 				/>
-			</OrderReviewSection>
+			</WPOrderReviewSection>
 
 			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
 
-			<OrderReviewSection>
-				<OrderReviewTotal total={ total } hasDeleteButtons={ true } />
-			</OrderReviewSection>
+			<WPOrderReviewSection>
+				<WPOrderReviewTotal total={ total } hasDeleteButtons={ true } />
+			</WPOrderReviewSection>
 
 			<WPTermsAndConditions />
 		</div>
@@ -59,22 +59,3 @@ const CouponField = styled( Coupon )`
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
 `;
-
-function LineItem( { item, className } ) {
-	return (
-		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<span>•</span>
-			<span>{ item.label }</span>
-			<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
-		</div>
-	);
-}
-
-LineItem.propTypes = {
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
-};
