@@ -48,9 +48,7 @@ const onboardingBlock = createBlock( name, {} );
 export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 
-	function toggleGeneralSidebar() {
-		updateIsEditorSidebarOpened( ! isEditorSidebarOpened );
-	}
+	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
