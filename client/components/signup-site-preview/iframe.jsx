@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { debounce, forEach } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import shallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies

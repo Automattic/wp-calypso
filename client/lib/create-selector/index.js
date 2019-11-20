@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { memoize, includes } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import shallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
