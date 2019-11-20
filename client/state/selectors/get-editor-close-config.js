@@ -38,7 +38,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( getLastNonEditorRoute( state ).match( /^\/checklist\/?/ ) ) {
 		return {
 			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Home' ),
+			label: translate( 'Checklist' ),
 		};
 	}
 
