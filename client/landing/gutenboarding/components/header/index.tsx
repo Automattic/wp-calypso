@@ -6,7 +6,6 @@ import { Button, Icon, IconButton } from '@wordpress/components';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +13,7 @@ import { isEmpty } from 'lodash';
 import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
+import { isFilledFormValue } from '../../stores/onboard/types';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
 // to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
@@ -52,7 +52,11 @@ const Header: FunctionComponent< Props > = ( { isEditorSidebarOpened, toggleGene
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button isPrimary isLarge disabled={ isEmpty( siteVertical ) }>
+					<Button
+						isPrimary
+						isLarge
+						disabled={ isFilledFormValue( siteVertical ) || ! siteVertical }
+					>
 						{ NO__( 'Next' ) }
 					</Button>
 				</div>
