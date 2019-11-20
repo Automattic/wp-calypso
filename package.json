@@ -207,7 +207,7 @@
 		"url": "0.11.0",
 		"use-debounce": "3.1.0",
 		"use-subscription": "1.2.0",
-		"utility-types": "3.9.0",
+		"utility-types": "3.10.0",
 		"uuid": "3.3.3",
 		"valid-url": "1.0.9",
 		"webpack-bundle-analyzer": "3.6.0",
