@@ -33,7 +33,7 @@ import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		selectedSite: PropTypes.object,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,

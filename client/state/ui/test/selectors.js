@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.be.false;
+			expect( selected ).to.be.null;
 		} );
 
 		test( 'should return the object for the selected site', () => {
