@@ -22,7 +22,7 @@ import { managePurchase } from 'me/purchases/paths';
  */
 import './style.scss';
 
-export class ProductCard extends Component {
+class ProductCard extends Component {
 	static propTypes = {
 		billingTimeFrame: PropTypes.string,
 		currencyCode: PropTypes.string,
@@ -39,13 +39,14 @@ export class ProductCard extends Component {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	};
 
-	handleManagePurchase( purchase ) {
+	handleManagePurchase( productSlug ) {
 		return () => {
 			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
-				plan: purchase.productSlug,
+				slug: productSlug,
 			} );
 		};
 	}
+
 	render() {
 		const {
 			billingTimeFrame,
@@ -91,7 +92,7 @@ export class ProductCard extends Component {
 					{ description && <p>{ description }</p> }
 					{ purchase && isCurrent && (
 						<ProductCardAction
-							onClick={ this.handleManagePurchase( purchase ) }
+							onClick={ this.handleManagePurchase( purchase.productSlug ) }
 							href={ managePurchase( purchase.domain, purchase.id ) }
 							label={ translate( 'Manage Subscription' ) }
 							primary={ false }
