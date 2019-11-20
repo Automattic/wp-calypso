@@ -12,12 +12,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import { addQueryArgs } from 'lib/route';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -39,6 +41,7 @@ export class ProductSelector extends Component {
 				title: PropTypes.string,
 				id: PropTypes.string,
 				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+				landingPageUrl: PropTypes.string,
 				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 				optionDescriptions: PropTypes.objectOf(
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
@@ -168,6 +171,7 @@ export class ProductSelector extends Component {
 	}
 
 	getDescriptionByProduct( product ) {
+		const { selectedSiteSlug, translate } = this.props;
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
@@ -182,8 +186,34 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
-		// Default product description
-		return description;
+		// Default product description, without a landing page link.
+		let linkUrl = product.landingPageUrl;
+		if ( ! linkUrl ) {
+			return description;
+		}
+
+		// If we have a site in this context, add it to the landing page URL.
+		if ( selectedSiteSlug ) {
+			linkUrl = addQueryArgs( { site: selectedSiteSlug }, linkUrl );
+		}
+
+		// Default product description, with a link to the landing page appended to it.
+		return (
+			<Fragment>
+				{ description }{ ' ' }
+				<ExternalLinkWithTracking
+					href={ linkUrl }
+					tracksEventName="calypso_plan_link_click"
+					tracksEventProps={ {
+						link_location: 'product_jetpack_backup_description',
+						link_slug: 'which-one-do-i-need',
+					} }
+					icon
+				>
+					{ translate( 'Which one do I need?' ) }
+				</ExternalLinkWithTracking>
+			</Fragment>
+		);
 	}
 
 	getProductName( product, productSlug ) {
