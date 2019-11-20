@@ -50,7 +50,7 @@ import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
@@ -274,6 +274,7 @@ class Home extends Component {
 			displayChecklist,
 			isAtomic,
 			isChecklistComplete,
+			needsEmailVerification,
 			translate,
 			customizeUrl,
 			checklistMode,
@@ -400,7 +401,7 @@ class Home extends Component {
 					) }
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
-					{ siteIsUnlaunched && (
+					{ siteIsUnlaunched && ! needsEmailVerification && (
 						<Card className="customer-home__launch-button">
 							<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
 							<h6 className="customer-home__card-subheader">
@@ -566,6 +567,7 @@ const connectHome = connect(
 			hasChecklistData,
 			isChecklistComplete,
 			isAtomic,
+			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite: isNewSite( state, siteId ),
