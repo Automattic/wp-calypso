@@ -86,7 +86,7 @@ export class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
+		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
 		const { siteId: prevSiteId } = prevProps;
@@ -435,7 +435,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
 					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
+					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
 					compactOnMobile
 				/>
 				<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_BACKUP_PRODUCTS } />
