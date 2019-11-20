@@ -572,7 +572,7 @@ function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 
-		const { port1, port2 } = new MessageChannel();
+		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
 				action: 'closeEditor',
@@ -582,15 +582,6 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
-
-		// We only want to navigate back if the client tells us to.
-		// We need to give it a chance to set if the post is dirty
-		// before we can navigate away.
-		port1.onmessage = ( { data } ) => {
-			port1.close(); // We only want to recieve this once.
-			// data is the URL to which we go back:
-			window.open( data, '_top' );
-		};
 	} );
 }
 

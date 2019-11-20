@@ -246,7 +246,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
+			this.navigate( this.props.closeUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -501,13 +501,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		return templateEditorUrl;
 	};
 
-	sendTemplateEditorUrl = ( templateId: T.PostId ) => {
-		const templateEditorUrl = this.getTemplateEditorUrl( templateId );
-		const port = this.templatePorts.find(
-			( [ portTemplateId ] ) => portTemplateId === templateId
-		)[ 1 ];
-		port.postMessage( `${ window.location.origin }${ templateEditorUrl }` );
-	};
+	navigate = ( navUrl: string, unsavedChanges: boolean ) => {
+		const { markChanged, markSaved } = this.props;
+		unsavedChanges ? markChanged() : markSaved();
+		this.props.navigate( navUrl );
+	}
 
 	handleConversionResponse = ( confirmed: boolean ) => {
 		this.setState( { isConversionPromptVisible: false } );
