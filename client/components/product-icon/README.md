@@ -1,17 +1,17 @@
 ProductIcon Component
 =============
 
-ProductIcon component is a React component to display plans or products icons in SVG format.
+ProductIcon component is a React component to display plan or product icons in SVG format.
 
-We have four different plans icons:
+We have the following different plans icons:
 - Free
 - Personal
 - Premium
-- Business
+- Business (Professional)
 
 Jetpack plans also use these plans icons.
 
-There is also one product icon:
+There are also the following product icons:
 - Jetpack Backup
 
 ## Usage
