@@ -21,7 +21,7 @@ import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
  * @returns {?boolean}        Whether site can display the atomic hosting section
  */
 export default function canSiteViewAtomicHosting( state ) {
-	if ( ! isEnabled( 'hosting/sftp-phpmyadmin' ) ) {
+	if ( ! isEnabled( 'hosting' ) ) {
 		return false;
 	}
 
