@@ -67,6 +67,7 @@
 		"@wordpress/element": "2.9.0",
 		"@wordpress/format-library": "1.10.0",
 		"@wordpress/i18n": "3.7.0",
+		"@wordpress/is-shallow-equal": "1.6.1",
 		"@wordpress/keycodes": "2.7.0",
 		"@wordpress/notices": "1.9.0",
 		"@wordpress/nux": "3.8.0",

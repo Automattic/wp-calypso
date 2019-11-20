@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
@@ -24,10 +24,10 @@ export interface SiteVertical {
 	id: string;
 }
 
-export const EMPTY_FORM_VALUE = Object.freeze( {} );
+export const EMPTY_FORM_VALUE = Object.freeze( { __EFV__: '__EFV__' } );
 export type FormValue< T > = T | typeof EMPTY_FORM_VALUE;
 export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
-	return value !== EMPTY_FORM_VALUE && ! isEmpty( value );
+	return value !== EMPTY_FORM_VALUE && ! isShallowEqual( value, EMPTY_FORM_VALUE );
 }
 
 /**
