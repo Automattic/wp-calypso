@@ -9,7 +9,12 @@ import {
 	WritingFlow,
 	ObserveTyping,
 } from '@wordpress/block-editor';
-import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
+import {
+	Popover,
+	SlotFillProvider,
+	DropZoneProvider,
+	KeyboardShortcuts,
+} from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import classnames from 'classnames';
@@ -48,6 +53,12 @@ export function Gutenboard() {
 							'is-sidebar-opened': isEditorSidebarOpened,
 						} ) }
 					>
+						<KeyboardShortcuts
+							bindGlobal
+							shortcuts={ {
+								'mod+shift+,': toggleGeneralSidebar,
+							} }
+						/>
 						<Header
 							isEditorSidebarOpened={ isEditorSidebarOpened }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
