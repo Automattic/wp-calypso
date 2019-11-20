@@ -4,18 +4,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import { managePurchase } from 'me/purchases/paths';
 import ProductCardAction from './action';
 import ProductCardPriceGroup from './price-group';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { managePurchase } from 'me/purchases/paths';
 
 /**
  * Style dependencies
