@@ -2,16 +2,18 @@
  * External dependencies
  */
 import React from 'react';
-import { __ } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
+import Spinner from 'components/spinner';
 import wpcom from 'lib/wp';
 
 class RecommendedThemes extends React.Component {
 	state = {
 		themes: [],
+		isLoading: true,
 	};
 
 	async componentDidMount() {
@@ -29,7 +31,7 @@ class RecommendedThemes extends React.Component {
 		};
 		const res = await wpcom.undocumented().themes( null, query );
 
-		this.setState( { themes: res.themes } );
+		this.setState( { themes: res.themes, isLoading: false } );
 	};
 
 	render() {
@@ -37,8 +39,12 @@ class RecommendedThemes extends React.Component {
 
 		return (
 			<>
-				<h1>{ __( 'Recommended Themes:' ) }</h1>
-				<ConnectedThemesSelection recommendedThemes={ themes } { ...this.props } />
+				<h1>{ translate( 'Recommended Themes:' ) }</h1>
+				{ this.state.isLoading ? (
+					<Spinner size={ 100 } />
+				) : (
+					<ConnectedThemesSelection recommendedThemes={ themes } { ...this.props } />
+				) }
 			</>
 		);
 	}
