@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
+exports[`GSuitePurchaseCta renders correctly 1`] = `
 <EmailVerificationGate
   noticeStatus="is-info"
   noticeText="You must verify your email to purchase G Suite."
@@ -44,7 +44,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
           >
             <span>
               <strong>
-                $6
+                €6,40
               </strong>
                per user / month
             </span>
@@ -52,7 +52,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
           <h5
             className="gsuite-price__annual-price"
           >
-            $72 billed yearly
+            €76 billed yearly
           </h5>
         </div>
         <button

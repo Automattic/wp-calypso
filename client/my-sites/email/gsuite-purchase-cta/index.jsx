@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductCost } from 'state/products-list/selectors';
+import { getProductBySlug } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteFeatures from 'components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
@@ -32,7 +32,7 @@ import './style.scss';
 export const GSuitePurchaseCta = ( {
 	currencyCode,
 	domainName,
-	gsuiteBasicCost,
+	product,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
@@ -90,7 +90,7 @@ export const GSuitePurchaseCta = ( {
 					</p>
 
 					<div>
-						<GSuitePrice cost={ gsuiteBasicCost } currencyCode={ currencyCode } />
+						<GSuitePrice product={ product } currencyCode={ currencyCode } />
 
 						{ upgradeAvailable && (
 							<Button
@@ -122,15 +122,15 @@ export const GSuitePurchaseCta = ( {
 GSuitePurchaseCta.propTypes = {
 	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
-	gsuiteBasicCost: PropTypes.number,
+	product: PropTypes.object,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
 	state => ( {
-		gsuiteBasicCost: getProductCost( state, 'gapps' ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		product: getProductBySlug( state, 'gapps' ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

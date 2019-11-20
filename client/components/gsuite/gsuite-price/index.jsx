@@ -15,27 +15,26 @@ import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
  */
 import './style.scss';
 
-const GSuitePrice = ( { cost, currencyCode } ) => {
+const GSuitePrice = ( { currencyCode, product } ) => {
 	const translate = useTranslate();
 
+	const cost = product?.cost ?? null;
 	const annualPrice = cost && currencyCode ? getAnnualPrice( cost, currencyCode ) : '-';
 	const monthlyPrice = cost && currencyCode ? getMonthlyPrice( cost, currencyCode ) : '-';
-
-	const renderPerUserPerMonth = () => {
-		return translate( '{{strong}}%(price)s{{/strong}} per user / month', {
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				price: monthlyPrice,
-			},
-		} );
-	};
 
 	return (
 		<div className="gsuite-price">
 			<h4 className="gsuite-price__price-per-user">
-				<span>{ renderPerUserPerMonth() }</span>
+				<span>
+					{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							price: monthlyPrice,
+						},
+					} ) }
+				</span>
 			</h4>
 
 			<h5 className="gsuite-price__annual-price">
@@ -50,8 +49,8 @@ const GSuitePrice = ( { cost, currencyCode } ) => {
 };
 
 GSuitePrice.propTypes = {
-	cost: PropTypes.number,
 	currencyCode: PropTypes.string,
+	product: PropTypes.object,
 };
 
 export default GSuitePrice;
