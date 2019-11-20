@@ -451,7 +451,6 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/create-tagline.svg"
 				buttonText={ translate( 'Verify' ) }
 				completedButtonText={ translate( 'Change' ) }
 				completedTitle={ translate( 'You verified the email address for your domain' ) }
