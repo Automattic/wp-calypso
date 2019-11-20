@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
 import { getSiteSlug } from 'state/sites/selectors';
 import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import isLastNonEditorRouteChecklist from 'state/selectors/is-last-non-editor-route-checklist';
 import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
 
 /**
@@ -33,18 +32,29 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		};
 	}
 
-	// Checking if we should navigate back to the checklist
-	if ( isLastNonEditorRouteChecklist( state ) ) {
+	// @TODO: See if more generic back navigation would work.
+
+	// Back to the checklist.
+	if ( getLastNonEditorRoute( state ).match( /^\/checklist\/?/ ) ) {
 		return {
-			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Checklist' ),
+			url: `/home/${ getSiteSlug( state, siteId ) }`,
+			label: translate( 'Home' ),
 		};
 	}
 
+	// Customer Home.
 	if ( getLastNonEditorRoute( state ).match( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Home' ),
+		};
+	}
+
+	// Back to the themes list.
+	if ( getLastNonEditorRoute( state ).match( /^\/themes\/?/ ) ) {
+		return {
+			url: `/themes/${ getSiteSlug( state, siteId ) }`,
+			label: translate( 'Themes' ),
 		};
 	}
 

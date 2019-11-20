@@ -24,6 +24,11 @@ const blockEditorAction = { type: ROUTE_SET, path: '/block-editor/page/1' };
 const checklistAction = { type: ROUTE_SET, path: checklistUrl };
 const customerHomeAction = { type: ROUTE_SET, path: customerHomeUrl };
 
+// A small wrapper to translate the old tests into the new format.
+function getEditorCloseUrl() {
+	return getEditorCloseConfig( ...arguments ).url;
+}
+
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for post type listings as default', () => {
 		const state = {
@@ -36,8 +41,8 @@ describe( 'getEditorCloseConfig()', () => {
 		};
 
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
-		const { url } = getEditorCloseConfig( state, siteId, postType );
-		expect( url ).to.equal( allPostsUrl );
+
+		expect( getEditorCloseUrl( state, siteId, postType ) ).to.equal( allPostsUrl );
 	} );
 
 	test( 'should return parent URL if current post is a FSE template part', () => {
@@ -70,8 +75,9 @@ describe( 'getEditorCloseConfig()', () => {
 
 		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
 
-		const { url } = getEditorCloseConfig( state, siteId, templatePostType, parentPostId );
-		expect( url ).to.equal( parentPostEditorUrl );
+		expect( getEditorCloseUrl( state, siteId, templatePostType, parentPostId ) ).to.equal(
+			parentPostEditorUrl
+		);
 	} );
 
 	test( 'should return URL for checklist if previous nav was from the checklist', () => {
@@ -92,8 +98,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		const { url } = getEditorCloseConfig( state, siteId, postType );
-		expect( url ).to.equal( checklistUrl );
+		expect( getEditorCloseUrl( state, siteId, postType ) ).to.equal( checklistUrl );
 	} );
 
 	test( 'should return URL for checklist if most recent non-editor nav was from the checklist', () => {
