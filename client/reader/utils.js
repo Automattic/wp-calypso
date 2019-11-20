@@ -40,7 +40,7 @@ export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 
 	// normal
 	let mappedPost;
-	if ( !! postKey.feedId ) {
+	if ( postKey.feedId ) {
 		mappedPost = {
 			feed_ID: postKey.feedId,
 			feed_item_ID: postKey.postId,
