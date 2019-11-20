@@ -4,8 +4,7 @@
 import classnames from 'classnames';
 import React from 'react';
 import { createSlotFill, Animate } from '@wordpress/components';
-import { compose, ifCondition } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
+import { ifCondition } from '@wordpress/compose';
 
 const { Fill, Slot } = createSlotFill( 'Sidebar' );
 
@@ -32,10 +31,7 @@ function AnimatedSidebarFill( props ) {
 	);
 }
 
-const WrappedSidebar = compose(
-	withSelect( ( select, { isActive } ) => ( { isActive } ) ),
-	ifCondition( ( { isActive } ) => isActive )
-)( AnimatedSidebarFill );
+const WrappedSidebar = ifCondition( ( { isActive } ) => isActive )( AnimatedSidebarFill );
 
 WrappedSidebar.Slot = Slot;
 
