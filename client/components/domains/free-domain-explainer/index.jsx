@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,12 +20,8 @@ class FreeDomainExplainer extends React.Component {
 		this.props.onSkip( undefined, hideFreePlan );
 	};
 	render() {
-		const className = classNames( 'free-domain-explainer is-compact', {
-			card: this.props.isCard,
-		} );
-
 		return (
-			<div className={ className }>
+			<div className="free-domain-explainer card is-compact">
 				<header>
 					<h1 className="free-domain-explainer__title">
 						Get a free one-year domain registration with any paid plan.

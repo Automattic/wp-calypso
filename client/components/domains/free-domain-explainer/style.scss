@@ -1,49 +1,29 @@
-.free-domain-explainer {
-    &:not( .card ) {
-        @include breakpoint( '<480px' ) {
-            padding: 0 16px;
-        }
-    }
-}
-
 .free-domain-explainer__title {
 
-    color: var( --color-text-inverted );
+    color: var( --color-text );
     font-weight: 400;
     font-size: 20px;
     line-height: 1.3;
     margin: 0;
     margin-bottom: 0.7em;
-
-    .card & {
-        color: var( --color-text );
-    }
 }
 
 .free-domain-explainer__subtitle {
-    color: var( --color-text-inverted );
+    color: var( --color-text );
     font-weight: 400;
     font-size: 15px;
     margin: 0;
     margin-bottom: 0.3em;
 
-    .card & {
-        color: var( --color-text );
-    }
-
     & .button,
     & .button:hover,
     & .button:focus {
-        color: var( --color-text-inverted );
+        color: var( --color-link );
         display: inline;
         font-size: 15px;
         margin-left: 0.3em;
         text-decoration: underline;
         vertical-align: baseline;
-
-        .card & {
-            color: var( --color-link );
-        }
 
         & .free-domain-explainer__chevron-right {
             display: inline-flex;

@@ -583,10 +583,6 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
-		if ( this.props.showTestCopy ) {
-			return this.renderFreeDomainExplainer();
-		}
-
 		return this.renderInitialSuggestions();
 	}
 
@@ -1126,8 +1122,8 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
-	renderFreeDomainExplainer( isCard = false ) {
-		return <FreeDomainExplainer isCard={ isCard } onSkip={ this.props.hideFreePlan } />;
+	renderFreeDomainExplainer() {
+		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
 	onAddDomain = suggestion => {
@@ -1185,10 +1181,6 @@ class RegisterDomainStep extends React.Component {
 			if ( this.props.showExampleSuggestions ) {
 				return this.renderExampleSuggestions();
 			}
-
-			if ( this.props.showTestCopy ) {
-				return this.renderFreeDomainExplainer();
-			}
 		}
 
 		const showTldFilterBar =
@@ -1234,7 +1226,7 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
 			>
-				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer( true ) }
+				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar
