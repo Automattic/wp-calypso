@@ -36,5 +36,10 @@
         .card & {
             color: var( --color-link );
         }
+
+        & .free-domain-explainer__chevron-right {
+            display: inline-flex;
+            width: 4px;
+        }
     }
 }

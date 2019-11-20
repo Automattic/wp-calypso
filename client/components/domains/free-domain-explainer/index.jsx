@@ -32,19 +32,20 @@ class FreeDomainExplainer extends React.Component {
 						Get a free one-year domain registration with any paid plan.
 					</h1>
 					<p className="free-domain-explainer__subtitle">
-						We'll pay the registration fees for your new domain when you choose a paid plan on the
-						next page.
+						We'll pay the registration fees for your new domain when you choose a paid plan during
+						the next step.
 					</p>
 					<p className="free-domain-explainer__subtitle">
-						If you’re not ready to choose, go with any paid plan and claim your free custom domain
-						when you’re ready.
+						You can claim your free custom domain later if you aren't ready yet.
 						<Button
 							borderless
 							className="free-domain-explainer__subtitle-link"
 							onClick={ this.handleClick }
 							href
 						>
-							Review our plan options to get started.{ ' ' }
+							Review our plans to get started{ ' ' }
+							<span className="free-domain-explainer__chevron-right">&rsaquo;</span>
+							<span className="free-domain-explainer__chevron-right">&rsaquo;</span>
 						</Button>
 					</p>
 				</header>
