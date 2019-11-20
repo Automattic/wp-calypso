@@ -339,6 +339,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		display: none;
 	}
 
+	@media screen and ( min-width: 660px ) {
+		&.is-blank-preview {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
 	position: fixed;
 	top: 111px;
 	bottom: 24px;
