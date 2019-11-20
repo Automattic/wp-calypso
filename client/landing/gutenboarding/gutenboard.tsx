@@ -4,7 +4,6 @@
 import '@wordpress/editor'; // This shouldn't be necessary
 import { __ } from '@wordpress/i18n';
 import {
-	BlockEditorKeyboardShortcuts,
 	BlockEditorProvider,
 	BlockList,
 	WritingFlow,
@@ -55,7 +54,6 @@ export function Gutenboard() {
 						/>
 						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 							<div className="edit-post-layout__content">
-								<BlockEditorKeyboardShortcuts />
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"
 									role="region"
