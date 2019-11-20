@@ -40,6 +40,7 @@ export default function MyComponent() {
 Plan constant from `lib/plans/constants` or product constant from `lib/products-values/constants`. Can be one of:
 
 - PLAN_FREE,
+- PLAN_PERSONAL,
 - PLAN_PREMIUM,
 - PLAN_BUSINESS,
 - PLAN_JETPACK_FREE,
@@ -47,7 +48,6 @@ Plan constant from `lib/plans/constants` or product constant from `lib/products-
 - PLAN_JETPACK_BUSINESS_MONTHLY,
 - PLAN_JETPACK_PREMIUM,
 - PLAN_JETPACK_PREMIUM_MONTHLY,
-- PLAN_PERSONAL,
 - PRODUCT_JETPACK_BACKUP_DAILY,
 - PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 - PRODUCT_JETPACK_BACKUP_REALTIME,
