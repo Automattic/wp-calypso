@@ -383,7 +383,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			} else {
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '.page-template-modal__buttons .components-button' )
+					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 			}
 		}
