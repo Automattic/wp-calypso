@@ -119,7 +119,7 @@ class PurchasesList extends Component {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-						<PurchasesHeader section={ 'purchases' } />
+						<PurchasesHeader section="purchases" />
 						<NoSitesMessage />
 					</Main>
 				);
