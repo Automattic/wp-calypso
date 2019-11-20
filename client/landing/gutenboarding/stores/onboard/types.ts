@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
 enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
@@ -22,7 +27,7 @@ export interface SiteVertical {
 export const EMPTY_FORM_VALUE = Object.freeze( {} );
 export type FormValue< T > = T | typeof EMPTY_FORM_VALUE;
 export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
-	return value !== EMPTY_FORM_VALUE;
+	return value !== EMPTY_FORM_VALUE && ! isEmpty( value );
 }
 
 /**
