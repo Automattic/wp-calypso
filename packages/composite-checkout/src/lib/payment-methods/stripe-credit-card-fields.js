@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
+import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 
 /**
  * Internal dependencies
@@ -256,37 +257,45 @@ function StripeCreditCardFields() {
 					</StripeFieldWrapper>
 				</Label>
 				<FieldRow gap="4%" columnWidths="48% 48%">
-					<Label>
-						<LabelText>{ localize( 'Expiry date' ) }</LabelText>
-						<StripeFieldWrapper hasError={ cardExpiryElementData }>
-							<CardExpiryElement
-								style={ cardNumberStyle }
-								onChange={ input => {
-									handleStripeFieldChange( input, setCardExpiryElementData );
-								} }
-							/>
-						</StripeFieldWrapper>
-						{ cardExpiryElementData && (
-							<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
-						) }
-					</Label>
-					<GridRow gap="4%" columnWidths="67% 29%">
+					<LeftColumn>
 						<Label>
-							<LabelText>{ localize( 'Security code' ) }</LabelText>
-							<StripeFieldWrapper hasError={ cardCvcElementData }>
-								<CardCvcElement
+							<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+							<StripeFieldWrapper hasError={ cardExpiryElementData }>
+								<CardExpiryElement
 									style={ cardNumberStyle }
 									onChange={ input => {
-										handleStripeFieldChange( input, setCardCvcElementData );
+										handleStripeFieldChange( input, setCardExpiryElementData );
 									} }
 								/>
 							</StripeFieldWrapper>
-							{ cardCvcElementData && (
-								<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+							{ cardExpiryElementData && (
+								<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
 							) }
 						</Label>
-						<CVVImage />
-					</GridRow>
+					</LeftColumn>
+					<RightColumn>
+						<GridRow gap="4%" columnWidths="67% 29%">
+							<LeftColumn>
+								<Label>
+									<LabelText>{ localize( 'Security code' ) }</LabelText>
+									<StripeFieldWrapper hasError={ cardCvcElementData }>
+										<CardCvcElement
+											style={ cardNumberStyle }
+											onChange={ input => {
+												handleStripeFieldChange( input, setCardCvcElementData );
+											} }
+										/>
+									</StripeFieldWrapper>
+									{ cardCvcElementData && (
+										<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+									) }
+								</Label>
+							</LeftColumn>
+							<RightColumn>
+								<CVVImage />
+							</RightColumn>
+						</GridRow>
+					</RightColumn>
 				</FieldRow>
 
 				<CreditCardField
@@ -343,7 +352,7 @@ const FieldRow = styled( GridRow )`
 `;
 
 const CVVImage = styled( CVV )`
-	margin-top: 21px;
+	margin-top: 23px;
 	display: block;
 	width: 100%;
 `;
