@@ -287,7 +287,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl } = this.props;
-			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+			ports[ 0 ].postMessage( {
+				closeUrl: `${ window.location.origin }${ closeUrl }`,
+				label: 'TODO',
+			} );
 		}
 
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:

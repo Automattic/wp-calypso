@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg */
+/* global fullSiteEditing */
 
 /**
  * External dependencies
@@ -348,7 +350,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	 * Updates all the blocks containing a given edited image.
 	 *
 	 * @param {Array} blocks Array of block objects for the current post.
-	 * @param {Object} image The edited image.
+	 * @param {object} image The edited image.
 	 * @param {number} image.id The image ID.
 	 * @param {string} image.url The new image URL.
 	 * @param {string} image.status The new image status. "deleted" or "updated" (default).
@@ -721,8 +723,10 @@ function getCloseButtonUrl( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		// data is the closeUrl:
-		calypsoifyGutenberg.closeUrl = data;
+		const { closeUrl, label } = data;
+		calypsoifyGutenberg.closeUrl = closeUrl;
+		fullSiteEditing.closeButtonLabel = label;
+		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
 	};
 }
 
