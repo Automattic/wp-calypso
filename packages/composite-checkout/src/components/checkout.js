@@ -172,6 +172,7 @@ function CheckoutStepContainer( {
 								value={ localize( 'Continue' ) }
 								onClick={ goToNextStep }
 								ariaLabel={ getNextStepButtonLabel && getNextStepButtonLabel( localize ) }
+								disabled={ ! isComplete }
 							/>
 						) }
 					</React.Fragment>
