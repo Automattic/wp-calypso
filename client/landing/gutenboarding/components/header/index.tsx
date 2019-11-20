@@ -71,10 +71,7 @@ const Header: FunctionComponent< Props > = ( {
 						isToggled={ isEditorSidebarOpened }
 						label={ NO__( 'Site block settings' ) }
 						onClick={ toggleGeneralSidebar }
-						shortcut={
-							/* @TODO: this shortcut based on Gutenberg doesn't seem to be handled at this time. */
-							toggleSidebarShortcut
-						}
+						shortcut={ toggleSidebarShortcut }
 					/>
 				</div>
 			</div>
