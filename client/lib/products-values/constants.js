@@ -24,6 +24,8 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
 
+export const PRODUCTS_LIST = [ ...JETPACK_BACKUP_PRODUCTS ];
+
 export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Daily Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Daily Backups' ),
