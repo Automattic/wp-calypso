@@ -87,7 +87,7 @@ export default function WPTermsAndConditions() {
 
 const TermsAndConditionsWrapper = styled.div`
 	padding: 24px 0 0;
-	margin: 24px 0 8px;
+	margin: 24px 30px 8px 0;
 	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
 `;
 
