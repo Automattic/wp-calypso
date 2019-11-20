@@ -13,7 +13,7 @@ import getSelectedSiteId from './get-selected-site-id';
 export default function getSelectedSite( state ) {
 	const siteId = getSelectedSiteId( state );
 	if ( ! siteId ) {
-		return null;
+		return false;
 	}
 
 	return getSite( state, siteId );
