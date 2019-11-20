@@ -59,11 +59,13 @@ const Header: FunctionComponent< Props > = ( { isEditorSidebarOpened, toggleGene
 				</HeaderGroup>
 				<HeaderGroup>
 					<IconButton
+						aria-expanded={ isEditorSidebarOpened }
+						aria-haspopup="menu"
+						aria-pressed={ isEditorSidebarOpened }
 						icon="admin-generic"
+						isToggled={ isEditorSidebarOpened }
 						label={ NO__( 'Site block settings' ) }
 						onClick={ toggleGeneralSidebar }
-						isToggled={ isEditorSidebarOpened }
-						aria-expanded={ isEditorSidebarOpened }
 						shortcut={ toggleSidebarShortcut }
 					/>
 				</HeaderGroup>

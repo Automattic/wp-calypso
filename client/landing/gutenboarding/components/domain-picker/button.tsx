@@ -69,8 +69,10 @@ const DomainPickerButton: FunctionComponent = () => {
 	return (
 		<>
 			<Button
-				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
+				aria-expanded={ isDomainPopoverVisible }
+				aria-haspopup="menu"
 				aria-pressed={ isDomainPopoverVisible }
+				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 			>
 				{ /* This empty span gives us a good place to anchor our popover */ }
