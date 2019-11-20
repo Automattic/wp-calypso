@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,7 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import ScreenReaderText from 'components/screen-reader-text';
+import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
@@ -50,18 +51,73 @@ class Task extends PureComponent {
 	}
 
 	renderCheckmarkIcon() {
-		const { completed, translate } = this.props;
+		const { completed, disableIcon, inProgress, isWarning, translate } = this.props;
+		const onDismiss = ! completed ? this.props.onDismiss : undefined;
+
+		if ( inProgress ) {
+			return (
+				<Fragment>
+					<ScreenReaderText>{ translate( 'In progress' ) }</ScreenReaderText>
+					{ this.renderGridicon() }
+				</Fragment>
+			);
+		}
+
+		if ( disableIcon ) {
+			return (
+				<div className="checklist__task-icon is-disabled">
+					<ScreenReaderText>{ translate( 'Waiting to complete' ) }</ScreenReaderText>
+				</div>
+			);
+		}
+
+		if ( onDismiss ) {
+			return (
+				<div className="checklist__task-icon">
+					<ScreenReaderText>
+						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+					</ScreenReaderText>
+					{ this.renderGridicon() }
+				</div>
+			);
+		}
 
 		if ( completed ) {
 			return (
 				<div className="checklist__task-icon">
 					<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
-					<Gridicon icon={ 'checkmark' } size={ 18 } />
+					{ this.renderGridicon() }
+				</div>
+			);
+		}
+
+		if ( isWarning ) {
+			return (
+				<div>
+					<ScreenReaderText>{ translate( 'Warning' ) }</ScreenReaderText>
+					{ this.renderGridicon() }
 				</div>
 			);
 		}
 
 		return null;
+	}
+
+	renderGridicon() {
+		if ( this.props.inProgress ) {
+			return <Spinner size={ 20 } />;
+		}
+
+		if ( this.props.isWarning ) {
+			return (
+				<div>
+					<div className="checklist__task-warning-background" />
+					<Gridicon icon={ 'notice-outline' } size={ 24 } />
+				</div>
+			);
+		}
+
+		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
 	}
 
 	render() {

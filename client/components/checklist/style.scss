@@ -1,4 +1,4 @@
-$task-left-padding: 24px;
+$task-left-padding: 55px;
 $task-right-padding: 50px;
 $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
@@ -54,10 +54,9 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		left: 24px;
 		width: 16px;
 		height: 16px;
-		border: 2px solid var( --color-neutral-10 );
+		border: 2px solid var( --color-neutral-5 );
 		border-radius: 16px;
 		background: var( --color-surface );
-		z-index: 2;
 
 		.gridicons-checkmark {
 			display: none;
@@ -66,6 +65,34 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			top: -1px;
 			left: 1px;
 		}
+
+		&.is-disabled,
+		&.is-disabled:focus,
+		&.is-disabled:hover,
+		&.is-disabled:active {
+			border: 2px solid var( --color-neutral-10 );
+			background: var( --color-surface );
+			cursor: default;
+		}
+	}
+
+	.spinner {
+		display: none;
+		position: absolute;
+		top: 17px;
+		left: 24px;
+	}
+
+	.checklist__task-warning-background {
+		display: block;
+		position: absolute;
+		top: -1px;
+		left: 0;
+		width: 18px;
+		height: 18px;
+		border-radius: 16px;
+		background: var( --color-surface );
+		cursor: pointer;
 	}
 
 	.checklist__task-title {
@@ -86,7 +113,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.checklist__toggle-icon {
 			position: absolute;
-			right: 18px;
+			right: 12px;
 			top: 16px;
 			fill: var( --color-neutral-light );
 			transition: $chevron-animation;
@@ -161,15 +188,10 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			font-weight: 600;
 			font-size: 14px;
 			padding-top: 8px;
-			padding-left: 62px;
 
 			.checklist__toggle-icon {
 				top: 8px;
 			}
-		}
-
-		.checklist__task-content {
-			padding-left: 62px;
 		}
 
 		.gridicons-checkmark {
