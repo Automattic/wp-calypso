@@ -142,6 +142,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
@@ -158,13 +161,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			site_information: {
 				title: siteTitle,
 			},
+			site_creation_flow: flowToCheck,
 		},
 		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
 
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
 
