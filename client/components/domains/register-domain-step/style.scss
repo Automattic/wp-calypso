@@ -3,8 +3,11 @@
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
-		padding-top: 18px;
 		padding-bottom: 28px;
+
+		@include breakpoint( '>660px' ) {
+			padding-top: 18px;
+		}
 	}
 
 	.register-domain-step__search-card {

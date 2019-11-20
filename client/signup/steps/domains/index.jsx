@@ -121,7 +121,10 @@ class DomainsStep extends React.Component {
 			props.goToNextStep();
 		}
 
+		this.showTestCopy = false;
+
 		if (
+			false !== this.props.showTestCopy &&
 			config.isEnabled( 'domain-step-copy-update' ) &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
