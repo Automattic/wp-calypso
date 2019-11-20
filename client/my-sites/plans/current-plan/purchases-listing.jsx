@@ -76,7 +76,7 @@ class PurchasesListing extends Component {
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
-			return planObject?.getTitle?.();
+			return planObject.getTitle();
 		}
 
 		return null;
