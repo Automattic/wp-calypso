@@ -16,7 +16,7 @@ import PlanIcon from 'components/plans/plan-icon';
  */
 import './style.scss';
 
-const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagLine, title } ) => {
+const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagline, title } ) => {
 	const cardClassNames = classNames( 'my-plan-card', {
 		'is-placeholder': isPlaceholder,
 		'has-action-only': action && ! details && ! isPlaceholder,
@@ -29,7 +29,7 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagLine, t
 				<div className="my-plan-card__icon">{ plan && <PlanIcon plan={ plan } /> }</div>
 				<div className="my-plan-card__header">
 					{ title && <h2 className="my-plan-card__title">{ title }</h2> }
-					{ tagLine && <p className="my-plan-card__tag-line">{ tagLine }</p> }
+					{ tagline && <p className="my-plan-card__tagline">{ tagline }</p> }
 				</div>
 			</div>
 			{ ( details || action || isPlaceholder ) && (
@@ -48,7 +48,7 @@ MyPlanCard.propTypes = {
 	isPlaceholder: PropTypes.bool,
 	details: PropTypes.string,
 	plan: PropTypes.string,
-	tagLine: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
+	tagline: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 };
 

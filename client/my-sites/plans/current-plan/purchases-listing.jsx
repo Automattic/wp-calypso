@@ -33,7 +33,7 @@ import {
 	isJetpackBackup,
 	isProductExpiring,
 	getJetpackProductDisplayName,
-	getJetpackProductTagLine,
+	getJetpackProductTagline,
 } from 'lib/products-values';
 
 class PurchasesListing extends Component {
@@ -82,17 +82,17 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getTagLine( purchase ) {
+	getTagline( purchase ) {
 		const { currentPlanSlug, translate } = this.props;
 
 		if ( isJetpackBackup( purchase ) ) {
-			return getJetpackProductTagLine( purchase );
+			return getJetpackProductTagline( purchase );
 		}
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
-				planObject?.getTagline?.() ??
+				planObject.getTagline?.() ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -183,7 +183,7 @@ class PurchasesListing extends Component {
 						details={ this.getExpirationInfo( currentPlan ) }
 						isError={ isPlanExpiring }
 						plan={ currentPlanSlug }
-						tagLine={ this.getTagLine( currentPlan ) }
+						tagline={ this.getTagline( currentPlan ) }
 						title={ this.getTitle( currentPlan ) }
 					/>
 				) }
@@ -215,7 +215,7 @@ class PurchasesListing extends Component {
 						isError={ isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						plan={ purchase?.productSlug }
-						tagLine={ this.getTagLine( purchase ) }
+						tagline={ this.getTagline( purchase ) }
 						title={ this.getTitle( purchase ) }
 					/>
 				) ) }

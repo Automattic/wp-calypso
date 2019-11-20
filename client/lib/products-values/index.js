@@ -11,7 +11,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_DISPLAY_NAMES,
-	JETPACK_PRODUCT_TAG_LINES,
+	JETPACK_PRODUCT_TAGLINES,
 } from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
@@ -392,14 +392,14 @@ export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product?.productSlug ];
+	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product.productSlug ];
 }
 
-export function getJetpackProductTagLine( product ) {
+export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return JETPACK_PRODUCT_TAG_LINES?.[ product?.productSlug ];
+	return JETPACK_PRODUCT_TAGLINES?.[ product.productSlug ];
 }
 
 export function isProductExpiring( product ) {
