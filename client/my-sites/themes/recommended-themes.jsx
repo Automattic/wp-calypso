@@ -39,7 +39,6 @@ class RecommendedThemes extends React.Component {
 			<>
 				<h1>{ __( 'Recommended Themes:' ) }</h1>
 				<ConnectedThemesSelection recommendedThemes={ themes } { ...this.props } />
-				<hr />
 			</>
 		);
 	}

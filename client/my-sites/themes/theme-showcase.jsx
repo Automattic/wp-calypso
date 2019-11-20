@@ -271,9 +271,13 @@ class ThemeShowcase extends React.Component {
 						emptyContent={ this.props.emptyContent }
 					/>
 				</div>
-				<Button onClick={ this.toggleShowcase }>
-					{ isShowcaseOpen ? 'Hide Extra Themes' : 'Show All Themes' }
-				</Button>
+				<div className="theme-showcase__open-showcase-button-holder">
+					{ isShowcaseOpen ? (
+						<hr />
+					) : (
+						<Button onClick={ this.toggleShowcase }>{ translate( 'Show All Themes' ) }</Button>
+					) }
+				</div>
 
 				{ this.state.isShowcaseOpen && (
 					<div>
