@@ -89,25 +89,27 @@ export default function CreditCardFields( { disabled } ) {
 					/>
 				</LeftColumn>
 				<RightColumn>
-					<GridRow gap="4%" columnWidths="67% 29%">
-						<LeftColumn>
-							<Field
-								id="card-cvc"
-								type="Number"
-								label={ localize( 'Security code' ) }
-								placeholder="CVC"
-								autoComplete="cc-csc"
-								value={ currentCreditCardData.cardCvc || '' }
-								onChange={ value => {
-									updateCreditCard( 'cardCvc', value );
-								} }
-								disabled={ disabled }
-							/>
-						</LeftColumn>
-						<RightColumn>
-							<CVVImage />
-						</RightColumn>
-					</GridRow>
+					<label>
+						<LabelText>{ localize( 'Security code' ) }</LabelText>
+						<GridRow gap="4%" columnWidths="67% 29%">
+							<LeftColumn>
+								<Field
+									id="card-cvc"
+									type="Number"
+									placeholder="CVC"
+									autoComplete="cc-csc"
+									value={ currentCreditCardData.cardCvc || '' }
+									onChange={ value => {
+										updateCreditCard( 'cardCvc', value );
+									} }
+									disabled={ disabled }
+								/>
+							</LeftColumn>
+							<RightColumn>
+								<CVVImage />
+							</RightColumn>
+						</GridRow>
+					</label>
 				</RightColumn>
 			</FieldRow>
 
@@ -151,12 +153,19 @@ const CreditCardField = styled( Field )`
 	}
 `;
 
+const LabelText = styled.label`
+	font-weight: ${props => props.theme.weights.bold};
+	margin-bottom: 8px;
+	display: block;
+	font-size: ${props => props.theme.fontSize.small};
+	color: ${props => props.theme.colors.textColor};
+`;
+
 const FieldRow = styled( GridRow )`
 	margin-top: 16px;
 `;
 
 const CVVImage = styled( CVV )`
-	margin-top: 23px;
 	display: block;
 	width: 100%;
 `;
@@ -179,8 +188,6 @@ function CVV( { className } ) {
 	return (
 		<svg
 			className={ className }
-			width="68"
-			height="41"
 			viewBox="0 0 68 41"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"

@@ -94,7 +94,7 @@ export function PaypalLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Paypal' ) }</span>
-			<PaypalLogo />
+			<PaypalLogo className="paypal__logo payment-logos" />
 		</React.Fragment>
 	);
 }
