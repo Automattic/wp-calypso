@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { TextControl, Panel, PanelBody, PanelRow } from '@wordpress/components';
+import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { __ as NO__ } from '@wordpress/i18n';
 
 /**
@@ -23,11 +23,23 @@ const DomainPicker: FunctionComponent< Props > = ( {
 } ) => {
 	const label = NO__( 'Search for a domain' );
 
+	const handleDomainPick = suggestion => () => {
+		// eslint-disable-next-line no-console
+		console.log( 'Picked domain: %o', suggestion );
+	};
+
+	const handleHasDomain = () => {
+		// eslint-disable-next-line no-console
+		console.log( 'Already has a domain.' );
+	};
+
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
-				<PanelRow>
-					<h3 className="domain-picker__choose-domain-header">{ NO__( 'Choose a new domain' ) }</h3>
+				<PanelRow className="domain-picker__panel-row">
+					<div className="domain-picker__choose-domain-header">
+						{ NO__( 'Choose a new domain' ) }
+					</div>
 					<TextControl
 						hideLabelFromVision
 						label={ label }
@@ -37,16 +49,28 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					/>
 				</PanelRow>
 
+				<hr />
+
 				{ suggestions?.length ? (
-					<PanelRow>
-						<h3 className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</h3>
-						<ul>
-							{ suggestions.map( ( { domain_name } ) => (
-								<li key={ domain_name }>{ domain_name }</li>
-							) ) }
-						</ul>
+					<PanelRow className="domain-picker__panel-row">
+						<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
+						{ suggestions.map( suggestion => (
+							<Button
+								onClick={ handleDomainPick( suggestion ) }
+								className="domain-picker__suggestion-item"
+								key={ suggestion.domain_name }
+							>
+								<div className="domain-picker__suggestion-item-name">
+									{ suggestion.domain_name }
+								</div>
+								<div className="domain-picker__suggestion-action">{ NO__( 'Upgrade' ) }</div>
+							</Button>
+						) ) }
 					</PanelRow>
 				) : null }
+				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
+					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
+				</PanelRow>
 			</PanelBody>
 		</Panel>
 	);
