@@ -169,7 +169,9 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && <StatsBanners siteId={ siteId } slug={ slug } /> }
+					{ ! isCustomerHomeEnabled && (
+						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
+					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }

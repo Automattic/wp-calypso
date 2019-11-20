@@ -222,7 +222,14 @@ class Home extends Component {
 	}
 
 	render() {
-		const { translate, canUserUseCustomerHome, siteSlug, siteId } = this.props;
+		const {
+			translate,
+			canUserUseCustomerHome,
+			siteSlug,
+			siteId,
+			isChecklistComplete,
+			siteIsUnlaunched,
+		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
 			const title = translate( 'This page is not available on this site.' );
@@ -242,7 +249,11 @@ class Home extends Component {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
 				{ this.renderCustomerHomeHeader() }
-				<StatsBanners siteId={ siteId } slug={ siteSlug } />
+				<StatsBanners
+					siteId={ siteId }
+					slug={ siteSlug }
+					primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
+				/>
 				{ renderChecklistCompleteBanner && (
 					<Banner
 						dismissPreferenceName="checklist-complete"
