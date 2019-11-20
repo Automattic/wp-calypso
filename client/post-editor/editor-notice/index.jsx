@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,6 +17,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -263,4 +263,4 @@ export default connect(
 		setLayoutFocus,
 		recordTracksEvent,
 	}
-)( localize( EditorNotice ) );
+)( localize( withLocalizedMoment( EditorNotice ) ) );
