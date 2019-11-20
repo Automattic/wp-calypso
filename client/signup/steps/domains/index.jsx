@@ -615,7 +615,7 @@ class DomainsStep extends React.Component {
 				allowBackFirstStep={ !! selectedSite }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
-				isLargeSkipLayout={ showSkip }
+				isTopButtons={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
