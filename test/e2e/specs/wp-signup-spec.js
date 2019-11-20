@@ -1761,7 +1761,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	// Disable test while Passwordless functionality is completely switched off		describe( 'Passwordless signup @parallel', function() {
+	// Disable test while Passwordless functionality is completely switched off
 	// https://github.com/Automattic/wp-calypso/pull/37054
 	describe.skip( 'Passwordless signup @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
