@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState, useRef } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { head, partition } from 'lodash';
@@ -22,8 +22,6 @@ import { useDebounce } from 'use-debounce';
 import './style.scss';
 
 const DomainPickerButton: FunctionComponent = () => {
-	const popoverAnchor = useRef< HTMLElement >();
-
 	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
@@ -75,13 +73,11 @@ const DomainPickerButton: FunctionComponent = () => {
 				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 			>
-				{ /* This empty span gives us a good place to anchor our popover */ }
-				<span ref={ popoverAnchor } />
 				{ head( freeDomainSuggestions )?.domain_name ?? '\u00a0' }
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover anchorRect={ popoverAnchor.current?.getBoundingClientRect() }>
+				<Popover>
 					<DomainPicker
 						domainSearch={ domainSearch }
 						setDomainSearch={ setDomainSearch }
