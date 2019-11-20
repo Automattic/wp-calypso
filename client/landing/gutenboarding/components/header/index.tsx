@@ -7,7 +7,6 @@ import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keyc
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { isEmpty } from 'lodash';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -40,24 +39,24 @@ const Header: FunctionComponent< Props > = ( { isEditorSidebarOpened, toggleGene
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<HeaderSection>
-				<HeaderGroup>
+			<div className="gutenboarding__header-section">
+				<div className="gutenboarding__header-group">
 					<Icon icon="wordpress-alt" color="#066188" />
-				</HeaderGroup>
-				<HeaderGroup>
+				</div>
+				<div className="gutenboarding__header-group">
 					<div className="gutenboarding__site-title">
 						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 					</div>
 					<DomainPickerButton />
-				</HeaderGroup>
-			</HeaderSection>
-			<HeaderSection>
-				<HeaderGroup>
+				</div>
+			</div>
+			<div className="gutenboarding__header-section">
+				<div className="gutenboarding__header-group">
 					<Button isPrimary isLarge disabled={ isEmpty( siteVertical ) }>
 						{ NO__( 'Next' ) }
 					</Button>
-				</HeaderGroup>
-				<HeaderGroup>
+				</div>
+				<div className="gutenboarding__header-group">
 					<IconButton
 						aria-expanded={ isEditorSidebarOpened }
 						aria-haspopup="menu"
@@ -68,18 +67,11 @@ const Header: FunctionComponent< Props > = ( { isEditorSidebarOpened, toggleGene
 						onClick={ toggleGeneralSidebar }
 						shortcut={ toggleSidebarShortcut }
 					/>
-				</HeaderGroup>
-			</HeaderSection>
+				</div>
+			</div>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
-
-const HeaderGroup: FunctionComponent< { className?: string } > = ( { children, className } ) => (
-	<div className={ classnames( 'gutenboarding__header-group', className ) }>{ children }</div>
-);
-const HeaderSection: FunctionComponent< { className?: string } > = ( { children, className } ) => (
-	<div className={ classnames( 'gutenboarding__header-section', className ) }>{ children }</div>
-);
 
 export default Header;
