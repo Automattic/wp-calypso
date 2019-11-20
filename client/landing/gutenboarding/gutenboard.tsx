@@ -9,8 +9,14 @@ import {
 	WritingFlow,
 	ObserveTyping,
 } from '@wordpress/block-editor';
-import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
+import {
+	Popover,
+	SlotFillProvider,
+	DropZoneProvider,
+	KeyboardShortcuts,
+} from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
+import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useState } from 'react';
@@ -27,6 +33,14 @@ import './stores/domain-suggestions';
 import './stores/onboard';
 import './style.scss';
 
+// Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
+// to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
+const toggleSidebarShortcut = {
+	raw: rawShortcut.primaryShift( ',' ),
+	display: displayShortcut.primaryShift( ',' ),
+	ariaLabel: shortcutAriaLabel.primaryShift( ',' ),
+};
+
 registerBlockType( name, settings );
 
 const onboardingBlock = createBlock( name, {} );
@@ -34,9 +48,7 @@ const onboardingBlock = createBlock( name, {} );
 export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 
-	function toggleGeneralSidebar() {
-		updateIsEditorSidebarOpened( ! isEditorSidebarOpened );
-	}
+	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -48,9 +60,16 @@ export function Gutenboard() {
 							'is-sidebar-opened': isEditorSidebarOpened,
 						} ) }
 					>
+						<KeyboardShortcuts
+							bindGlobal
+							shortcuts={ {
+								[ toggleSidebarShortcut.raw ]: toggleGeneralSidebar,
+							} }
+						/>
 						<Header
 							isEditorSidebarOpened={ isEditorSidebarOpened }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
+							toggleSidebarShortcut={ toggleSidebarShortcut }
 						/>
 						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 							<div className="edit-post-layout__content">
