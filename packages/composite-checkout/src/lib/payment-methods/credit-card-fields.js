@@ -186,6 +186,7 @@ function CVV( { className } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby="cvv-image-title"
 			role="img"
+			focusable="false"
 		>
 			<title id="cvv-image-title">
 				{ localize( 'An image of the back of the card where you find the security code' ) }
@@ -211,6 +212,7 @@ function LockIcon( { className } ) {
 			height="24"
 			viewBox="0 0 24 24"
 			aria-hidden="true"
+			focusable="false"
 		>
 			<g fill="none">
 				<path d="M0 0h24v24H0V0z" />
