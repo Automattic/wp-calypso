@@ -31,7 +31,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlan,
 	isJetpackBackup,
-	isProductExpiring,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 } from 'lib/products-values';
@@ -48,6 +47,7 @@ class PurchasesListing extends Component {
 		purchases: PropTypes.array,
 
 		// From localize() HoC
+		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -65,6 +65,16 @@ class PurchasesListing extends Component {
 		}
 
 		return ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
+	}
+
+	isProductExpiring( product ) {
+		const { moment } = this.props;
+
+		if ( ! product.expiryMoment ) {
+			return false;
+		}
+
+		return product.expiryMoment < moment().add( 30, 'days' );
 	}
 
 	getTitle( purchase ) {
@@ -212,7 +222,7 @@ class PurchasesListing extends Component {
 						key={ purchase.id }
 						action={ this.getActionButton( purchase ) }
 						details={ this.getExpirationInfo( purchase ) }
-						isError={ isProductExpiring( purchase ) }
+						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						plan={ purchase?.productSlug }
 						tagline={ this.getTagline( purchase ) }

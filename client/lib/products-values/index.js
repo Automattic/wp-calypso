@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -400,11 +399,6 @@ export function getJetpackProductTagline( product ) {
 	assertValidProduct( product );
 
 	return JETPACK_PRODUCT_TAGLINES?.[ product.productSlug ];
-}
-
-export function isProductExpiring( product ) {
-	const expiration = product?.expiryMoment ?? null;
-	return expiration < moment().add( 30, 'days' );
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
