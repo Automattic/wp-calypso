@@ -35,17 +35,10 @@ const sections = [
 	},
 	{
 		name: 'account-close',
-		paths: [ '/me/account/close' ],
+		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'me/account-close',
 		group: 'me',
 		secondary: true,
-	},
-	{
-		name: 'account-closed',
-		paths: [ '/me/account/closed' ],
-		module: 'me/account-close',
-		group: 'me',
-		secondary: false,
 	},
 	{
 		name: 'activity',

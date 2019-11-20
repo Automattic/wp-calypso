@@ -169,7 +169,7 @@ class Layout extends Component {
 				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
 					this.props.currentRoute !== '/log-in/jetpack' &&
-					'account-closed' !== this.props.sectionName &&
+					this.props.currentRoute !== '/me/account/closed' &&
 					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 					) }
@@ -188,11 +188,8 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForRoute = isJetpackLogin;
-	const noMasterbarForSection =
-		'signup' === sectionName ||
-		'jetpack-connect' === sectionName ||
-		'account-closed' === sectionName;
+	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&

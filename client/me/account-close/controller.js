@@ -8,6 +8,11 @@ import React from 'react';
  */
 import AccountSettingsCloseComponent from 'me/account-close/main';
 import AccountSettingsClosedComponent from 'me/account-close/closed';
+import { setSection } from 'state/ui/actions';
+
+const removeSidebar = context => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+};
 
 export function accountClose( context, next ) {
 	context.primary = React.createElement( AccountSettingsCloseComponent );
@@ -15,6 +20,7 @@ export function accountClose( context, next ) {
 }
 
 export function accountClosed( context, next ) {
+	removeSidebar( context );
 	context.primary = React.createElement( AccountSettingsClosedComponent );
 	next();
 }
