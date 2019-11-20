@@ -1412,26 +1412,6 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
 };
 
 /**
- * Sign up for a new user account and login immediately
- * Onboard a new user
- *
- * @param {object} query - an object with the following values: email
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.createUserAccountFromEmailAddress = function( query, fn ) {
-	debug( '/users/email/onboard' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/email/onboard',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
  * Verify a new passwordless user account
  *
  * @param {object} query - an object with the following values: email, code
