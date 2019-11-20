@@ -634,7 +634,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state,
-	{ postId, postType, duplicatePostId, fseParentPageId }: Props
+	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -652,6 +652,7 @@ const mapStateToProps = (
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
+		'new-homepage': creatingNewHomepage,
 	} );
 
 	// needed for loading the editor in SU sessions

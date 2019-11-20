@@ -9,7 +9,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import { getPostsForQuery } from 'state/posts/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import { getSiteOption } from 'state/sites/selectors';
+import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
 import createSelector from 'lib/create-selector';
 import { isEnabled } from 'config';
 
@@ -42,13 +42,12 @@ export default createSelector(
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl(
-			state,
-			siteId,
-			getSiteOption( state, siteId, 'page_on_front' )
-		);
+		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
+
 		const updateHomepageUrl = isEnabled( 'checklist-homepage-template-select' )
-			? addQueryArgs( getEditorUrl( state, siteId, null, 'page' ), { 'new-homepage': 1 } )
+			? addQueryArgs( frontPageUrl || getEditorUrl( state, siteId, null, 'page' ), {
+					'new-homepage': 1,
+			  } )
 			: frontPageUrl;
 
 		return {
