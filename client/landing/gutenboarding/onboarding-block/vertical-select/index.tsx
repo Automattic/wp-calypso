@@ -98,10 +98,12 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	];
 
 	const suggestions = ! inputValue.length
-		? popular.map( label => ( {
-				...verticals.find( vertical => vertical.label.includes( label ) ),
-				category: NO__( 'Popular' ),
-		  } ) )
+		? popular
+				.map( label => ( {
+					...verticals.find( vertical => vertical.label.includes( label ) ),
+					category: NO__( 'Popular' ),
+				} ) )
+				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
 		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
 	const label = NO__( 'My site is about' );

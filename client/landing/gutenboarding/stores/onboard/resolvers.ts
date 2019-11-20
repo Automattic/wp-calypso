@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
+import { addQueryArgs } from '@wordpress/url';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
 import { receiveVerticals } from './actions';
+import { getLanguage } from 'lib/i18n-utils';
 
 /**
  * Fetch verticals from the verticals endpoint.
@@ -21,7 +23,24 @@ import { receiveVerticals } from './actions';
  */
 export function* getVerticals() {
 	const url = 'https://public-api.wordpress.com/wpcom/v2/verticals';
-	const verticals = yield apiFetch( { url } );
+	let locale;
+	if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
+		for ( const langSlug of navigator.languages ) {
+			const language = getLanguage( langSlug.toLowerCase() );
+			if ( language ) {
+				locale = language.langSlug;
+				break;
+			}
+		}
+	}
+
+	let localeQueryParam;
+	if ( locale && locale !== 'en' ) {
+		// v2 api request
+		localeQueryParam = { _locale: locale };
+	}
+
+	const verticals = yield apiFetch( { url: addQueryArgs( url, localeQueryParam ) } );
 
 	// @TODO: validate and normalize verticals?
 
