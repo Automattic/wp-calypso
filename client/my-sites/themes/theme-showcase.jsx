@@ -62,6 +62,11 @@ const optionShape = PropTypes.shape( {
 } );
 
 class ThemeShowcase extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.scrollRef = React.createRef();
+	}
+
 	static propTypes = {
 		currentThemeId: PropTypes.string,
 		emptyContent: PropTypes.element,
@@ -113,6 +118,7 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
+		this.scrollRef.current.scrollIntoView();
 	};
 
 	/**
@@ -145,6 +151,7 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
+		this.scrollRef.current.scrollIntoView();
 	};
 
 	onUploadClick = () => {
@@ -273,7 +280,7 @@ class ThemeShowcase extends React.Component {
 				</div>
 				<div className="theme-showcase__open-showcase-button-holder">
 					{ isShowcaseOpen ? (
-						<hr />
+						<hr ref={ this.scrollRef } />
 					) : (
 						<Button onClick={ this.toggleShowcase }>{ translate( 'Show All Themes' ) }</Button>
 					) }
