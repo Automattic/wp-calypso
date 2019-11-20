@@ -151,7 +151,7 @@ function getGrayscaleValue( { checked } ) {
 
 function getOutline( { isFocused, theme } ) {
 	if ( isFocused ) {
-		return theme.colors.outline + ' auto 5px';
+		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';
 }
