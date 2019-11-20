@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import { localize } from 'i18n-calypso';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import { withLocalizedMoment } from 'components/localized-moment';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import { domainManagementTransfer } from 'my-sites/domains/paths';
 import { getSelectedDomain, getTopLevelOfTld } from 'lib/domains';
@@ -51,10 +51,7 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
-		} else if (
-			transferAwayEligibleAtDate &&
-			this.props.moment( transferAwayEligibleAtDate ).isAfter()
-		) {
+		} else if ( transferAwayEligibleAtDate && moment( transferAwayEligibleAtDate ).isAfter() ) {
 			section = TransferLock;
 		} else if ( 'uk' === topLevelOfTld ) {
 			section = SelectIpsTag;
@@ -93,4 +90,4 @@ class Transfer extends React.Component {
 	}
 }
 
-export default localize( withLocalizedMoment( Transfer ) );
+export default localize( Transfer );
