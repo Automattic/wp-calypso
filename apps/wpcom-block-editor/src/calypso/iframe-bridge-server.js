@@ -633,66 +633,30 @@ function openCustomizer( calypsoPort ) {
 }
 
 /**
- * Ensures the Calypso block editor is opened when editing a template part.
+ * Sends a message to Calypso when clicking the "Edit Header" or "Edit Footer"
+ * buttons in order to perform the navigation in Calypso instead of in the iFrame.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function setupEditTemplateLinks( calypsoPort ) {
-	// We only want this when editing an FSE page.
-	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
-		return;
-	}
+function openTemplatePartLinks( calypsoPort ) {
+	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', e => {
+		e.preventDefault();
+		e.stopPropagation(); // Otherwise it will port the message twice.
 
-	const handledLinks = [];
-	const handleNewTemplateLinks = link => {
-		// Don't do anything if we already saw this link:
-		if ( handledLinks.some( existingLink => existingLink.isSameNode( link ) ) ) {
-			return;
-		}
+		// Get the template part ID from the current href.
+		const templatePartId = parseInt( getQueryArg( e.target.href, 'post' ), 10 );
 
-		handledLinks.push( link );
-		const templateId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
-
-		const { port1, port2 } = new MessageChannel();
-
-		port1.onmessage = ( { data } ) => {
-			link.setAttribute( 'target', '_parent' );
-			link.setAttribute( 'href', data );
-		};
-
-		// Ask for an updated URL for the button:
+		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
-				action: 'getTemplateEditorUrl',
-				payload: { templateId },
+				action: 'openTemplatePart',
+				payload: {
+					templatePartId,
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				},
 			},
 			[ port2 ]
 		);
-	};
-
-	const unsubscribe = subscribe( () => {
-		const currentPost = select( 'core/editor' ).getCurrentPost();
-		const initialized = currentPost && currentPost.id;
-
-		if ( ! initialized ) {
-			return;
-		}
-
-		unsubscribe();
-
-		const getImpendingLinks = setInterval( () => {
-			const editTemplateLinks = document.querySelectorAll(
-				'.template__block-container .template-block__overlay a'
-			);
-
-			// We want to stop looking after the header/footer have been handled:
-			if ( handledLinks.length === 2 ) {
-				clearInterval( getImpendingLinks );
-			}
-
-			// Handle the links:
-			editTemplateLinks.forEach( handleNewTemplateLinks );
-		} );
 	} );
 }
 
@@ -823,7 +787,7 @@ function initPort( message ) {
 
 		openCustomizer( calypsoPort );
 
-		setupEditTemplateLinks( calypsoPort );
+		openTemplatePartLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
 
