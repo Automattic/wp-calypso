@@ -1,74 +1,93 @@
-.hosting__cards {
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-	align-items: flex-start;
+.hosting {
+	.card > .material-icon {
+		display: inline-block;
+		margin-right: 16px;
+		margin-bottom: 16px;
+		vertical-align: middle;
+	}
+
+	.card > .card-heading {
+		display: inline-block;
+		margin-top: 0;
+		margin-bottom: 16px;
+		vertical-align: middle;
+		line-height: 32px;
+	}
+
+	&__layout {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	&__layout-col {
+		flex-basis: 100%;
+	}
 
 	@include breakpoint( '>1280px' ) {
-		flex-direction: row;
+		&__layout-col:first-child {
+			box-sizing: border-box;
+			flex-basis: 70%;
+			padding-right: 8px;
+
+			.card {
+				padding-left: 72px;
+
+				> .material-icon {
+					display: block;
+					position: absolute;
+					left: 24px;
+				}
+			}
+		}
+
+		&__layout-col:last-child {
+			box-sizing: border-box;
+			flex-basis: 30%;
+			padding-left: 8px;
+		}
 	}
 
-	.card {
-		display: flex;
-		flex-direction: row;
+	.spinner {
 		width: 100%;
-		margin-left: 0;
-		margin-right: 0;
-
-		.card-heading {
-			margin-top: 0;
-		}
-
-		@include breakpoint( '>1280px' ) {
-			&:first-child {
-				width: calc( 60% - 5px );
-				margin-left: 0;
-				margin-right: 5px;
-			}
-
-			&:last-child {
-				width: calc( 40% - 5px );
-				margin-left: 5px;
-				margin-right: 0;
-			}
-		}
-
-		.spinner {
-			width: 100%;
-		}
 	}
-
-	.sftp-card {
-		flex-wrap: wrap;
-
-		.sftp-card__body {
-			width: calc( 100% - 24px - 32px );
-		}
-	}
-}
-
-.phpmyadmin-card__icon, .sftp-card__icon {
-	margin-right: 24px;
 }
 
 .sftp-card__info-table {
-	border: 1px solid var( --color-border-subtle );
+	border-top: 1px solid var( --color-border-subtle );
 	margin: 0;
-	table-layout: fixed;
+
+	th, td {
+		padding: 8px;
+	}
 
 	th {
 		text-align: right;
-		width: 20%;
-		background-color: var( --color-surface-backdrop );
+		width: 1%; // Hack to take the minimum space possible.
+		padding-left: 0;
+		padding-right: 0;
+	}
 
-		@include breakpoint( '<960px' ) {
-			width: 100px;
+	td {
+		padding-right: 0;
+	}
+
+	tr:first-child {
+		th, td {
+			padding-top: 16px;
 		}
 	}
 
-	th, td {
-		padding: 10px;
+	tr:last-child {
+		th, td {
+			padding-bottom: 0;
+		}
+	}
+
+	tr.has-action {
+		th, td {
+			padding-top: 4px;
+			padding-bottom: 4px;
+		}
 	}
 
 	p {
@@ -82,13 +101,20 @@
 	}
 
 	.sftp-card__password-warning {
+		margin-top: 16px;
+		margin-bottom: 0;
 		color: var( --color-text-subtle );
-		margin-top: 1.5em;
+		font-size: 13px;
 	}
 
 	&.is-placeholder span {
 		padding: 0 35%;
 		background-color: var( --color-surface-backdrop );
+	}
+
+	button {
+		margin-left: 16px;
+		vertical-align: middle;
 	}
 }
 
@@ -107,7 +133,6 @@
 	margin-top: 16px;
 	color: var( --color-text-subtle );
 	font-size: 13px;
-	font-style: italic;
 
 	button.is-compact.is-borderless {
 		text-decoration: underline;

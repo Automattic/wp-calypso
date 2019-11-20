@@ -52,54 +52,50 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 
 	return (
 		<Card className="phpmyadmin-card">
-			<div className="phpmyadmin-card__icon">
-				<MaterialIcon icon="dns" size={ 32 } />
-			</div>
-			<div>
-				<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
-				<p>
-					{ translate(
-						'Manage your databases with phpMyAdmin and run a wide range of operations with MySQL.'
-					) }
-				</p>
-				<Button
-					onClick={ () => requestPmaLink( siteId ) }
-					busy={ ! disabled && loading }
-					disabled={ disabled }
-				>
-					<span>{ translate( 'Open phpMyAdmin' ) }</span>
-					<MaterialIcon icon="launch" size={ 16 } />
-				</Button>
-				{ ! disabled && (
-					<div className="phpmyadmin-card__restore-password">
-						{ translate(
-							'Problems accessing the database? Try {{a}}restoring the database password{{/a}}. This is useful for cases where the password has accidentally been changed in phpMyAdmin.',
-							{
-								components: {
-									a: (
-										<Button
-											compact
-											borderless
-											onClick={ () => {
-												setIsRestorePasswordDialogVisible( true );
-											} }
-										/>
-									),
-								},
-							}
-						) }
-					</div>
+			<MaterialIcon icon="dns" size={ 32 } />
+			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
+			<p>
+				{ translate(
+					'Manage your databases with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
-				<RestorePasswordDialog
-					isVisible={ isRestorePasswordDialogVisible }
-					onCancel={ () => {
-						setIsRestorePasswordDialogVisible( false );
-					} }
-					onRestore={ () => {
-						setIsRestorePasswordDialogVisible( false );
-					} }
-				/>
-			</div>
+			</p>
+			<Button
+				onClick={ () => requestPmaLink( siteId ) }
+				busy={ ! disabled && loading }
+				disabled={ disabled }
+			>
+				<span>{ translate( 'Open phpMyAdmin' ) }</span>
+				<MaterialIcon icon="launch" size={ 16 } />
+			</Button>
+			{ ! disabled && (
+				<div className="phpmyadmin-card__restore-password">
+					{ translate(
+						'Problems accessing your database? Try {{a}}restoring the database password{{/a}}.',
+						{
+							components: {
+								a: (
+									<Button
+										compact
+										borderless
+										onClick={ () => {
+											setIsRestorePasswordDialogVisible( true );
+										} }
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			) }
+			<RestorePasswordDialog
+				isVisible={ isRestorePasswordDialogVisible }
+				onCancel={ () => {
+					setIsRestorePasswordDialogVisible( false );
+				} }
+				onRestore={ () => {
+					setIsRestorePasswordDialogVisible( false );
+				} }
+			/>
 		</Card>
 	);
 };

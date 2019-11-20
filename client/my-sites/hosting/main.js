@@ -33,11 +33,15 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 
 	const sftpPhpMyAdminFeatures = isEnabled( 'hosting/sftp-phpmyadmin' ) ? (
 		<>
-			<div className="hosting__cards">
-				<SFTPCard disabled={ isDisabled } />
-				<PhpMyAdminCard disabled={ isDisabled } />
+			<div className="hosting__layout">
+				<div className="hosting__layout-col">
+					<SFTPCard disabled={ isDisabled } />
+					<PhpMyAdminCard disabled={ isDisabled } />
+				</div>
+				<div className="hosting__layout-col">
+					<DataLossWarning />
+				</div>
 			</div>
-			{ ! isDisabled && <DataLossWarning /> }
 		</>
 	) : null;
 
