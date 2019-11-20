@@ -17,7 +17,7 @@ describe( 'GSuitePrice', () => {
 
 	test( 'it renders GSuitePrice with monthly prices', () => {
 		const tree = renderer
-			.create( <GSuitePrice cost={ 144 } currencyCode={ 'USD' } showMonthlyPrice /> )
+			.create( <GSuitePrice cost={ 144 } currencyCode={ 'USD' } /> )
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );

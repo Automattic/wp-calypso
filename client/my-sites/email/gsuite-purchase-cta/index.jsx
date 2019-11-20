@@ -90,7 +90,7 @@ export const GSuitePurchaseCta = ( {
 					</p>
 
 					<div>
-						<GSuitePrice cost={ gsuiteBasicCost } currencyCode={ currencyCode } showMonthlyPrice />
+						<GSuitePrice cost={ gsuiteBasicCost } currencyCode={ currencyCode } />
 
 						{ upgradeAvailable && (
 							<Button

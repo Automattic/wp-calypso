@@ -29,7 +29,7 @@ function GSuiteUpsellProductDetails( { currencyCode, cost, domain, plan } ) {
 					) }
 				</p>
 
-				<GSuitePrice cost={ cost } currencyCode={ currencyCode } showMonthlyPrice />
+				<GSuitePrice cost={ cost } currencyCode={ currencyCode } />
 			</div>
 
 			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
