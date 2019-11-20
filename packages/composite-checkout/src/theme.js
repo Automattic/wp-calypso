@@ -36,6 +36,7 @@ const theme = {
 	},
 	breakpoints: {
 		tabletUp: 'min-width: 700px',
+		smallPhoneUp: 'min-width: 400px',
 	},
 	weights: {
 		bold: '600',

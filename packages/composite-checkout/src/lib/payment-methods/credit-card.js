@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize, sprintf } from '../../lib/localize';
+import joinClasses from '../../lib/join-classes';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from './credit-card-fields';
@@ -96,11 +97,11 @@ const PaymentLogoWrapper = styled( CreditCardDetail )`
 	transform: translateY( 4px );
 `;
 
-function CreditCardLogos() {
+function CreditCardLogos( className ) {
 	//TODO: Determine which logos to show
 
 	return (
-		<LogoWrapper>
+		<LogoWrapper className={ joinClasses( [ className, 'payment-logos' ] ) }>
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />

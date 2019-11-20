@@ -52,9 +52,11 @@ export default function WPCheckoutOrderSummary() {
 }
 
 const SummaryContent = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-end;
+	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
 `;
 
 const ProductList = styled.ul`
@@ -74,6 +76,11 @@ const CouponField = styled( Coupon )`
 
 const AddCouponButton = styled( Button )`
 	font-size: ${props => props.theme.fontSize.small};
+	margin-top: 8px;
+
+	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		margin-top: 0;
+	}
 `;
 
 function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {

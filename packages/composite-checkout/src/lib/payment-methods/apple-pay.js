@@ -75,7 +75,7 @@ export function ApplePayLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Apple Pay' ) }</span>
-			<ApplePayIcon fill="black" />
+			<ApplePayIcon className="apple-pay__logo payment-logos" fill="black" />
 		</React.Fragment>
 	);
 }

@@ -274,10 +274,10 @@ function StripeCreditCardFields() {
 						</Label>
 					</LeftColumn>
 					<RightColumn>
-						<GridRow gap="4%" columnWidths="67% 29%">
-							<LeftColumn>
-								<Label>
-									<LabelText>{ localize( 'Security code' ) }</LabelText>
+						<Label>
+							<LabelText>{ localize( 'Security code' ) }</LabelText>
+							<GridRow gap="4%" columnWidths="67% 29%">
+								<LeftColumn>
 									<StripeFieldWrapper hasError={ cardCvcElementData }>
 										<CardCvcElement
 											style={ cardNumberStyle }
@@ -286,15 +286,15 @@ function StripeCreditCardFields() {
 											} }
 										/>
 									</StripeFieldWrapper>
-									{ cardCvcElementData && (
-										<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
-									) }
-								</Label>
-							</LeftColumn>
-							<RightColumn>
-								<CVVImage />
-							</RightColumn>
-						</GridRow>
+								</LeftColumn>
+								<RightColumn>
+									<CVVImage />
+								</RightColumn>
+							</GridRow>
+							{ cardCvcElementData && (
+								<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+							) }
+						</Label>
 					</RightColumn>
 				</FieldRow>
 
@@ -352,7 +352,6 @@ const FieldRow = styled( GridRow )`
 `;
 
 const CVVImage = styled( CVV )`
-	margin-top: 23px;
 	display: block;
 	width: 100%;
 `;
@@ -500,8 +499,6 @@ function CVV( { className } ) {
 	return (
 		<svg
 			className={ className }
-			width="68"
-			height="41"
 			viewBox="0 0 68 41"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
