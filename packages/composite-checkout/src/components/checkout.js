@@ -13,7 +13,12 @@ import { useLocalize, sprintf } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { usePrimarySelect, usePrimaryDispatch, useRegisterPrimaryStore } from '../lib/registry';
+import {
+	usePrimarySelect,
+	usePrimaryDispatch,
+	useRegisterPrimaryStore,
+	usePaymentData,
+} from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useActiveStep, ActiveStepProvider } from '../lib/active-step';
 import CheckoutOrderSummary, { CheckoutOrderSummaryTitle } from './checkout-order-summary';
@@ -143,8 +148,9 @@ function CheckoutStepContainer( {
 } ) {
 	const localize = useLocalize();
 	const currentStep = useActiveStep();
+	const [ paymentData ] = usePaymentData();
 	const isActive = currentStep.id === id;
-	const isComplete = isCompleteCallback();
+	const isComplete = !! isCompleteCallback( { paymentData } );
 
 	return (
 		<CheckoutErrorBoundary
