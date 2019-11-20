@@ -229,7 +229,7 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
 	 *
-	 * @return {array} a list of dependency names
+	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
 		return flatMap(
@@ -307,9 +307,10 @@ export default class SignupFlowController {
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
 		if (
-			'onboarding' === this._flowName &&
-			get( step, 'isPasswordlessSignupForm' ) &&
-			'passwordless' === abtest( 'passwordlessSignup' )
+			( 'test-fse' === this._flowName && get( step, 'isPasswordlessSignupForm' ) ) ||
+			( 'onboarding' === this._flowName &&
+				get( step, 'isPasswordlessSignupForm' ) &&
+				'passwordless' === abtest( 'passwordlessSignup' ) )
 		) {
 			this._processingSteps.delete( step.stepName );
 			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
