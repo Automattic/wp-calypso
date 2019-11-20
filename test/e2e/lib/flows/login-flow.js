@@ -104,6 +104,9 @@ export default class LoginFlow {
 		usingGutenberg = false,
 		{ useFreshLogin = false } = {}
 	) {
+		if ( usingGutenberg ) {
+			this.timeout( 40000 );
+		}
 		if (
 			siteURL ||
 			( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' )
