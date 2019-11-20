@@ -12,8 +12,9 @@ import createSelector from 'lib/create-selector';
 
 /**
  * Get the last non-editor route while ignoring navigation in block editor.
- * @param {Object} state  Global state tree
- * @return {string} The last non block editor route -- empty string if none.
+ *
+ * @param {object} state  Global state tree
+ * @returns {string} The last non block editor route -- empty string if none.
  */
 const getLastNonEditorRoute = createSelector(
 	state => {

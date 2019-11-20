@@ -9,11 +9,12 @@ import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
 
 /**
  * Gets the URL for the close button for the block editor, dependent previous referral state
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
+ *
+ * @param {object} state  Global state tree
+ * @param {object} siteId Site ID
  * @param {string} postType The type of the current post being edited
  * @param {string} fseParentPageId The ID of the parent post for the FSE template part
- * @return {string} The URL that should be used when the block editor close button is clicked
+ * @returns {string} The URL that should be used when the block editor close button is clicked
  */
 
 export default function getEditorCloseUrl( state, siteId, postType, fseParentPageId ) {
