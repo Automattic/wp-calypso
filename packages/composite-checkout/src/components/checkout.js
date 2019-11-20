@@ -61,6 +61,7 @@ function useRegisterCheckoutStore() {
 export default function Checkout( { steps, className } ) {
 	useRegisterCheckoutStore();
 	const localize = useLocalize();
+	const [ paymentData ] = usePaymentData();
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
@@ -72,11 +73,14 @@ export default function Checkout( { steps, className } ) {
 		let numberedStepNumber = 0;
 		return steps.map( ( step, index ) => {
 			numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
-			return step.hasStepNumber
-				? { ...step, stepNumber: numberedStepNumber, stepIndex: index }
-				: step;
+			return {
+				...step,
+				stepNumber: step.hasStepNumber ? numberedStepNumber : null,
+				stepIndex: index,
+				isComplete: !! step.isCompleteCallback( { paymentData } ),
+			};
 		} );
-	}, [ steps ] );
+	}, [ steps, paymentData ] );
 
 	if ( annotatedSteps.length < 1 ) {
 		throw new Error( 'No steps found' );
@@ -90,7 +94,8 @@ export default function Checkout( { steps, className } ) {
 	const nextStep = annotatedSteps.find( ( step, index ) => {
 		return index > activeStep.stepIndex && step.hasStepNumber;
 	} );
-	const isThereAnotherNumberedStep = nextStep && nextStep.hasStepNumber;
+	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
+	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
 
 	return (
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
@@ -118,7 +123,9 @@ export default function Checkout( { steps, className } ) {
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton isActive={ ! isThereAnotherNumberedStep } />
+						<CheckoutSubmitButton
+							disabled={ isThereAnIncompleteStep || isThereAnotherNumberedStep }
+						/>
 					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
 			</MainContent>
@@ -138,19 +145,17 @@ function CheckoutStepContainer( {
 	activeStepContent,
 	incompleteStepContent,
 	completeStepContent,
-	isCompleteCallback,
 	stepNumber,
 	shouldShowNextButton,
 	goToNextStep,
 	getNextStepButtonLabel,
 	onEdit,
 	getEditButtonAriaLabel,
+	isComplete,
 } ) {
 	const localize = useLocalize();
 	const currentStep = useActiveStep();
-	const [ paymentData ] = usePaymentData();
 	const isActive = currentStep.id === id;
-	const isComplete = !! isCompleteCallback( { paymentData } );
 
 	return (
 		<CheckoutErrorBoundary
