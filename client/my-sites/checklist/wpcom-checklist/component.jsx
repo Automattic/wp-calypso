@@ -44,6 +44,7 @@ import {
 } from 'state/inline-help/actions';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
+import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 
 const userLib = userFactory();
 
@@ -60,6 +61,7 @@ class WpcomChecklistComponent extends PureComponent {
 		super();
 
 		this.taskFunctions = {
+			domain_verified: this.renderDomainVerifiedTask,
 			email_verified: this.renderEmailVerifiedTask,
 			site_created: this.renderSiteCreatedTask,
 			address_picked: this.renderAddressPickedTask,
@@ -443,6 +445,39 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
+	renderDomainVerifiedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, siteSlug } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				buttonText={ translate( 'Verify' ) }
+				completedTitle={ translate( 'You verified the email address for your domain' ) }
+				description={ translate(
+					'We need to check your contact information to make sure you can be reached. Please verify your details using the email we sent you, or your domain will stop working.'
+				) }
+				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					tourId: 'checklistSiteTagline',
+					url:
+						task.unverifiedDomains.length === 1
+							? domainManagementEdit( siteSlug, task.unverifiedDomains[ 0 ] )
+							: domainManagementList( siteSlug ),
+				} ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				title={
+					task.unverifiedDomains.length === 1
+						? translate( 'Verify the email address for %(domainName)s', {
+								args: { domainName: task.unverifiedDomains[ 0 ] },
+						  } )
+						: translate( 'Verify the email address for your domains' )
+				}
+				showSkip={ false }
+			/>
+		);
+	};
+
 	renderBlogDescriptionSetTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, siteSlug } = this.props;
 
@@ -598,8 +633,23 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { needsVerification, siteIsUnlaunched, translate } = this.props;
-		const disabled = ! baseProps.completed && needsVerification;
+		const {
+			needsEmailVerification,
+			needsDomainVerification,
+			siteIsUnlaunched,
+			translate,
+		} = this.props;
+		const disabled = ! baseProps.completed && ( needsEmailVerification || needsDomainVerification );
+		let noticeText;
+		if ( disabled ) {
+			if ( needsDomainVerification ) {
+				noticeText = translate(
+					'Verify the email address for your domain before launching your site.'
+				);
+			} else if ( needsEmailVerification ) {
+				noticeText = translate( 'Confirm your email address before launching your site.' );
+			}
+		}
 
 		return (
 			<TaskComponent
@@ -622,9 +672,7 @@ class WpcomChecklistComponent extends PureComponent {
 				}
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
-				noticeText={
-					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
-				}
+				noticeText={ noticeText }
 				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleLaunchTaskDismiss( task.id ) }
 				showSkip={ false }
@@ -1043,6 +1091,13 @@ export default connect(
 		const taskUrls = getChecklistTaskUrls( state, siteId );
 		const taskList = getSiteTaskList( state, siteId );
 
+		const needsEmailVerification = ! isCurrentUserEmailVerified( state );
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
+		const needsDomainVerification =
+			taskList.getAll().filter( task => task.id === 'domain_verified' && ! task.isCompleted )
+				.length > 0;
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
+
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
 			phase2: get( siteChecklist, 'phase2' ),
@@ -1053,7 +1108,8 @@ export default connect(
 			taskUrls,
 			taskList,
 			userEmail: ( user && user.email ) || '',
-			needsVerification: ! isCurrentUserEmailVerified( state ),
+			needsEmailVerification,
+			needsDomainVerification,
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
 		};
