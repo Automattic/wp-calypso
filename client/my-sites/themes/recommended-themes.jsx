@@ -3,51 +3,41 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
 import Spinner from 'components/spinner';
-import wpcom from 'lib/wp';
+import { getRecommendedThemes } from 'state/themes/actions';
 
 class RecommendedThemes extends React.Component {
-	state = {
-		themes: [],
-		isLoading: true,
-	};
-
-	async componentDidMount() {
-		this.getRecommendedThemes();
+	componentDidMount() {
+		this.props.getRecommendedThemes();
 	}
 
-	getRecommendedThemes = async () => {
-		// Query to get all template-first themes.
-		const query = {
-			search: '',
-			number: 50,
-			tier: '',
-			filter: 'auto-loading-homepage',
-			apiVersion: '1.2',
-		};
-		const res = await wpcom.undocumented().themes( null, query );
-
-		this.setState( { themes: res.themes, isLoading: false } );
-	};
-
 	render() {
-		const { themes } = this.state;
-
 		return (
 			<>
 				<h1>{ translate( 'Recommended Themes:' ) }</h1>
-				{ this.state.isLoading ? (
+				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
 				) : (
-					<ConnectedThemesSelection recommendedThemes={ themes } { ...this.props } />
+					<ConnectedThemesSelection { ...this.props } />
 				) }
 			</>
 		);
 	}
 }
 
-export default RecommendedThemes;
+const ConnectedRecommendedThemes = connect(
+	state => {
+		return {
+			recommendedThemes: state.themes.recommendedThemes.themes || [],
+			isLoading: state.themes.recommendedThemes.isLoading,
+		};
+	},
+	{ getRecommendedThemes }
+)( RecommendedThemes );
+
+export default ConnectedRecommendedThemes;

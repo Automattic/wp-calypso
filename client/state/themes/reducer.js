@@ -14,6 +14,9 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	DESERIALIZE,
 	SERIALIZE,
+	RECOMMENDED_THEMES_FAIL,
+	RECOMMENDED_THEMES_FETCH,
+	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -459,6 +462,28 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 	return state;
 } );
 
+/**
+ * Returns updated state for recommended themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+const recommendedThemes = ( state = { isLoading: false, themes: [] }, action ) => {
+	switch ( action.type ) {
+		case RECOMMENDED_THEMES_FETCH:
+			return { ...state, isLoading: true };
+		case RECOMMENDED_THEMES_SUCCESS: {
+			return { ...state, isLoading: false, themes: action.payload.themes };
+		}
+		case RECOMMENDED_THEMES_FAIL:
+			return { ...state, isLoading: false };
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	queries,
 	queryRequests,
@@ -476,4 +501,5 @@ export default combineReducers( {
 	themePreviewOptions,
 	themePreviewVisibility,
 	themeFilters,
+	recommendedThemes,
 } );
