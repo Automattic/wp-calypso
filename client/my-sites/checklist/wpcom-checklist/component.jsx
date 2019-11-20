@@ -452,7 +452,6 @@ class WpcomChecklistComponent extends PureComponent {
 			<TaskComponent
 				{ ...baseProps }
 				buttonText={ translate( 'Verify' ) }
-				completedButtonText={ translate( 'Change' ) }
 				completedTitle={ translate( 'You verified the email address for your domain' ) }
 				description={ translate(
 					'We need to check your contact information to make sure you can be reached. Please verify your details using the email we sent you, or your domain will stop working.'
