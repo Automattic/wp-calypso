@@ -112,7 +112,8 @@ const CheckoutModalContent = styled.div`
 	background: ${props => props.theme.colors.surface};
 	display: block;
 	width: 100%;
-	max-width: 300px;
+	max-width: 350px;
+	border: 1px solid ${props => props.theme.colors.borderColorLight};
 	padding: 32px;
 	animation: ${animateIn} 0.2s 0.1s ease-out;
 	animation-fill-mode: backwards;

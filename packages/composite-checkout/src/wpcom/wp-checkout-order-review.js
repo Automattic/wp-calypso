@@ -11,7 +11,12 @@ import styled from '@emotion/styled';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
-import { useLineItems, renderDisplayValueMarkdown, OrderReviewLineItems, OrderReviewTotal, OrderReviewSection } from '../public-api';
+import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import {
+	OrderReviewLineItems,
+	OrderReviewTotal,
+	OrderReviewSection,
+} from './wp-order-review-line-items';
 
 export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();
@@ -20,13 +25,17 @@ export default function WPCheckoutOrderReview( { className } ) {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<OrderReviewSection>
-				<OrderReviewLineItems items={ items } />
+				<OrderReviewLineItems
+					items={ items }
+					hasDeleteButtons={ true }
+					removeProduct={ removeProductFromCart }
+				/>
 			</OrderReviewSection>
 
 			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
 
 			<OrderReviewSection>
-				<OrderReviewTotal total={ total } />
+				<OrderReviewTotal total={ total } hasDeleteButtons={ true } />
 			</OrderReviewSection>
 
 			<WPTermsAndConditions />
@@ -40,8 +49,13 @@ WPCheckoutOrderReview.propTypes = {
 	className: PropTypes.string,
 };
 
+function removeProductFromCart( id ) {
+	// TODO: Replace with code to remove product and also show notification saying the product has bene removed.
+	alert( id );
+}
+
 const CouponField = styled( Coupon )`
-	margin: 24px 0;
+	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
 `;
