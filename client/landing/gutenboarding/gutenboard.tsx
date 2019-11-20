@@ -68,7 +68,6 @@ export function Gutenboard() {
 										</ObserveTyping>
 									</WritingFlow>
 								</div>
-								<Popover.Slot />
 							</div>
 							<div>
 								<SettingsSidebar isActive={ isEditorSidebarOpened } />
@@ -78,6 +77,7 @@ export function Gutenboard() {
 					</div>
 				</DropZoneProvider>
 			</SlotFillProvider>
+			<Popover.Slot />
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
