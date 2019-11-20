@@ -29,7 +29,7 @@ import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import getEditorCloseUrl from 'state/selectors/get-editor-close-url';
+import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -286,10 +286,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
-			const { closeUrl } = this.props;
+			const { closeUrl, closeLabel } = this.props;
 			ports[ 0 ].postMessage( {
 				closeUrl: `${ window.location.origin }${ closeUrl }`,
-				label: 'TODO',
+				label: closeLabel,
 			} );
 		}
 
@@ -670,8 +670,16 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
+	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
+		state,
+		siteId,
+		postType,
+		fseParentPageId
+	);
+
 	return {
-		closeUrl: getEditorCloseUrl( state, siteId, postType, fseParentPageId ),
+		closeUrl,
+		closeLabel,
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',

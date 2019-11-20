@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { getSiteSlug } from 'state/sites/selectors';
@@ -14,18 +19,26 @@ import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
  * @param {object} siteId Site ID
  * @param {string} postType The type of the current post being edited
  * @param {string} fseParentPageId The ID of the parent post for the FSE template part
- * @returns {string} The URL that should be used when the block editor close button is clicked
+ * @returns {object} The URL that should be used when the block editor close button is clicked
+ * @property {string} url The URL that should be used when the block editor close button is clicked
+ * @property {string} label The label that should be used for the block editor back button
  */
 
-export default function getEditorCloseUrl( state, siteId, postType, fseParentPageId ) {
+export default function getEditorCloseConfig( state, siteId, postType, fseParentPageId ) {
 	// Handle returning to parent editor for full site editing templates
 	if ( 'wp_template_part' === postType ) {
-		return getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
+		return {
+			url: getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' ),
+			label: fseParentPageId ? translate( 'Back to page' ) : translate( 'Back' ),
+		}
 	}
 
 	// Checking if we should navigate back to the checklist
 	if ( isLastNonEditorRouteChecklist( state ) ) {
-		return `/checklist/${ getSiteSlug( state, siteId ) }`;
+		return {
+			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
+			label: translate( 'Checklist' ),
+		}
 	}
 
 	if ( getLastNonEditorRoute( state ).match( /^\/home\/?/ ) ) {
@@ -33,5 +46,7 @@ export default function getEditorCloseUrl( state, siteId, postType, fseParentPag
 	}
 
 	// Otherwise, just return to post type listings
-	return getPostTypeAllPostsUrl( state, postType );
+	return { 
+		url: getPostTypeAllPostsUrl( state, postType )
+	}
 }
