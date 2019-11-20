@@ -13,7 +13,7 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
 import CrossPost from './x-post';
-import { shallowEquals } from 'reader/utils';
+import shallowEquals from '@wordpress/is-shallow-equal';
 import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
