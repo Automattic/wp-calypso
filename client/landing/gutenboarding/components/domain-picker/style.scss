@@ -1,11 +1,11 @@
 .domain-picker__button {
-	display: block;
-	margin-left: 20px;
-	text-align: left;
-}
-
-.domain-picker__site-title {
-	font-weight: bold;
+	.dashicon {
+		margin-left: 0.5em;
+		transition: transform 180ms ease-in-out;
+	}
+	&.is-open .dashicon {
+		transform: rotate( 180deg );
+	}
 }
 
 .domain-picker__choose-domain-header,
