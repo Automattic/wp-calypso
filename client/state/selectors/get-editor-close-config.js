@@ -30,7 +30,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		return {
 			url: getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' ),
 			label: fseParentPageId ? translate( 'Back to page' ) : translate( 'Back' ),
-		}
+		};
 	}
 
 	// Checking if we should navigate back to the checklist
@@ -38,15 +38,18 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		return {
 			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Checklist' ),
-		}
+		};
 	}
 
 	if ( getLastNonEditorRoute( state ).match( /^\/home\/?/ ) ) {
-		return `/home/${ getSiteSlug( state, siteId ) }`;
+		return {
+			url: `/home/${ getSiteSlug( state, siteId ) }`,
+			label: translate( 'Home' ),
+		};
 	}
 
 	// Otherwise, just return to post type listings
-	return { 
-		url: getPostTypeAllPostsUrl( state, postType )
-	}
+	return {
+		url: getPostTypeAllPostsUrl( state, postType ),
+	};
 }
