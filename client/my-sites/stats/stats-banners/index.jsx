@@ -63,27 +63,35 @@ class StatsBanners extends Component {
 	}
 
 	renderGoogleMyBusinessBanner() {
-		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
+		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug, primaryButton } = this.props;
 
 		return (
 			<GoogleMyBusinessStatsNudge
 				siteSlug={ slug }
 				siteId={ siteId }
 				visible={ isGoogleMyBusinessStatsNudgeVisible }
+				primaryButton={ primaryButton }
 			/>
 		);
 	}
 
 	renderGSuiteBanner() {
-		const { gsuiteDomainName, siteId, slug } = this.props;
+		const { gsuiteDomainName, siteId, slug, primaryButton } = this.props;
 
-		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } domainSlug={ gsuiteDomainName } />;
+		return (
+			<GSuiteStatsNudge
+				siteSlug={ slug }
+				siteId={ siteId }
+				domainSlug={ gsuiteDomainName }
+				primaryButton={ primaryButton }
+			/>
+		);
 	}
 
 	renderUpworkBanner() {
-		const { siteId, slug } = this.props;
+		const { siteId, slug, primaryButton } = this.props;
 
-		return <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } />;
+		return <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } primaryButton={ primaryButton } />;
 	}
 
 	showGoogleMyBusinessBanner() {
