@@ -387,11 +387,11 @@ const StripeFieldWrapper = styled.span`
 	}
 
 	.StripeElement--focus {
-		outline: ${props => props.theme.colors.outline} auto 5px;
+		outline: ${props => props.theme.colors.outline} solid 2px;
 	}
 
 	.StripeElement--focus.StripeElement--invalid {
-		outline: ${props => props.theme.colors.error} auto 5px;
+		outline: ${props => props.theme.colors.error} solid 2px;
 	}
 `;
 

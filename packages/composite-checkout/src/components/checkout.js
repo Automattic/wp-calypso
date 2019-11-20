@@ -133,7 +133,7 @@ Checkout.propTypes = {
 
 const Container = styled.div`
 	*:focus {
-		outline: ${props => props.theme.colors.outline} auto 5px;
+		outline: ${props => props.theme.colors.outline} solid 2px;
 	}
 `;
 
