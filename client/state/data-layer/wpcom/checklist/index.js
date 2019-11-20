@@ -22,15 +22,14 @@ const fromApi = payload => get( payload, 'body', payload );
 export const fetchChecklist = action =>
 	http(
 		{
-			path:
-				`/sites/${ action.siteId }/checklist` +
-				( config.isEnabled( 'experience/domain-verification-in-checklist' )
-					? '?with_domain_verification=1'
-					: '' ),
+			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
 			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
+				with_domain_verification: config.isEnabled( 'experience/domain-verification-in-checklist' )
+					? 1
+					: 0,
 			},
 		},
 		action
