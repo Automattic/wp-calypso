@@ -1,3 +1,9 @@
+.free-domain-explainer {
+    @include breakpoint( '<480px' ) {
+        padding: 0 16px;
+    }
+}
+
 .free-domain-explainer__title {
 
     color: var( --color-text-inverted );

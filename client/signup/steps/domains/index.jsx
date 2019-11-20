@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -568,8 +569,12 @@ class DomainsStep extends React.Component {
 			);
 		}
 
+		const stepContentClassName = classNames( 'domains__step-content', {
+			'domains__step-content-domain-step-test': this.showTestCopy,
+		} );
+
 		return (
-			<div key={ this.props.step + this.props.stepSectionName } className="domains__step-content">
+			<div key={ this.props.step + this.props.stepSectionName } className={ stepContentClassName }>
 				{ content }
 			</div>
 		);
