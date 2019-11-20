@@ -187,6 +187,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
 
+	// Provide the default business starter content for the FSE user testing flow.
+	if ( 'test-fse' === lastKnownFlow ) {
+		newSiteParams.options.site_segment = 1;
+	}
+
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
 	}
