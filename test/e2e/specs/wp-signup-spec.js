@@ -1761,8 +1761,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Passwordless signup @parallel', function() {
-		const blogName = dataHelper.getNewBlogName();
+	// Disable test while Passwordless functionality is completely switched off
+	// https://github.com/Automattic/wp-calypso/pull/37054
+	describe.skip( 'Passwordless signup @parallel', function() {
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		let verificationLink;
