@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.15
+ * Version: 0.15.1
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -20,7 +20,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.15' );
+define( 'PLUGIN_VERSION', '0.15.1' );
 
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
 const SUPPORTED_THEMES = [ 'maywood' ];
