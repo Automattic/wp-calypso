@@ -33,23 +33,8 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 		return null;
 	}
 
-	let sftpPhpMyAdminFeatures = null;
-
-	if ( isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859 ) {
-		sftpPhpMyAdminFeatures = (
-			<>
-				<div className="hosting__layout">
-					<div className="hosting__layout-col">
-						<SFTPCard disabled={ isDisabled } />
-						<PhpMyAdminCard disabled={ isDisabled } />
-					</div>
-					<div className="hosting__layout-col">
-						<SupportCard />
-					</div>
-				</div>
-			</>
-		);
-	}
+	const sftpPhpMyAdminFeaturesEnabled = true;
+	isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
 
 	return (
 		<Main className="hosting is-wide-layout">
@@ -69,8 +54,16 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 					disableHref
 				/>
 			) }
-			<div className="hosting__cards">{ <PhpVersionCard /> }</div>
-			{ sftpPhpMyAdminFeatures }
+			<div className="hosting__layout">
+				<div className="hosting__layout-col">
+					<PhpVersionCard />
+					{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
+					{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
+				</div>
+				<div className="hosting__layout-col">
+					<SupportCard />
+				</div>
+			</div>
 		</Main>
 	);
 };

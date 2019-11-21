@@ -20,6 +20,11 @@ import Spinner from 'components/spinner';
 import FormRadiosBar from 'components/forms/form-radios-bar';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const requestId = ( siteId, method ) => `hosting-php-version-${ method }-${ siteId }`;
 
 export const requestPhpVersion = siteId => {
@@ -170,7 +175,11 @@ class PhpVersionCard extends React.Component {
 						items={ this.getPhpVersions() }
 					/>
 				</div>
-				<Button onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) } busy={ updating }>
+				<Button
+					className="php-version-card__set-version"
+					onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
+					busy={ updating }
+				>
 					<span>{ translate( 'Update PHP Version' ) }</span>
 				</Button>
 			</div>
@@ -182,13 +191,9 @@ class PhpVersionCard extends React.Component {
 
 		return (
 			<Card className="php-version-card">
-				<div className="php-version-card__icon">
-					<MaterialIcon icon="dns" size={ 32 } />
-				</div>
-				<div className="php-version-card__body">
-					<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
-					{ this.getContent() }
-				</div>
+				<MaterialIcon icon="dns" size={ 32 } />
+				<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
+				{ this.getContent() }
 				{ loading && <Spinner /> }
 			</Card>
 		);
