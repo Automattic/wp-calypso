@@ -11,7 +11,6 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import ExternalLink from 'components/external-link';
 import { recordPermalinkClick } from 'reader/stats';
 import TimeSince from 'components/time-since';
 import ReaderFullPostHeaderTags from './header-tags';
@@ -44,15 +43,14 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 			{ post.title ? (
 				<AutoDirection>
 					<h1 className="reader-full-post__header-title">
-						<ExternalLink
-							className="reader-full-post__header-title-link"
+						<a
+							className="external-link reader-full-post__header-title-link"
 							href={ externalHref }
 							target="_blank"
-							icon={ false }
 							onClick={ handlePermalinkClick }
-						>
-							{ post.title }
-						</ExternalLink>
+							rel="external noopener noreferrer"
+							dangerouslySetInnerHTML={ { __html: post.title } }
+						></a>
 					</h1>
 				</AutoDirection>
 			) : null }
