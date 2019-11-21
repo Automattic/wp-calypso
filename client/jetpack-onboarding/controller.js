@@ -10,7 +10,7 @@ import JetpackOnboardingMain from './main';
 import { hideSidebar } from 'state/ui/actions';
 
 export const onboarding = ( context, next ) => {
-	hideSidebar( context );
+	context.store.dispatch( hideSidebar() );
 
 	// We validate siteSlug inside the component
 	context.primary = (
