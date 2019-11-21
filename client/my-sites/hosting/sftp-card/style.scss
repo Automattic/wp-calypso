@@ -37,6 +37,11 @@
 		}
 	}
 
+	@include breakpoint( '>1280px' ) {
+		margin-left: -48px;
+		width: calc( 100% + 48px );
+	}
+
 	@include breakpoint( '>960px' ) {
 		th, td {
 			padding: 8px;
