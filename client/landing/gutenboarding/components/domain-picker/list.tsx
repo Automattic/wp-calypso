@@ -2,7 +2,14 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
+import {
+	Button,
+	HorizontalRule,
+	Panel,
+	PanelBody,
+	PanelRow,
+	TextControl,
+} from '@wordpress/components';
 import { __ as NO__ } from '@wordpress/i18n';
 
 /**
@@ -49,7 +56,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					/>
 				</PanelRow>
 
-				<hr />
+				<HorizontalRule className="domain-picker__divider" />
 
 				{ suggestions?.length ? (
 					<PanelRow className="domain-picker__panel-row">
