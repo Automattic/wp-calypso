@@ -12,6 +12,7 @@ const theme = {
 		primaryBorder: swatches.pink70,
 		highlightBorder: swatches.wordpressBlue80,
 		success: swatches.green50,
+		discount: swatches.green50,
 		disabledPaymentButtons: swatches.gray0,
 		disabledButtons: swatches.gray20,
 		borderColorLight: swatches.gray5,
