@@ -231,7 +231,7 @@ WPOrderReviewLineItems.propTypes = {
 function PlanTermOptions() {
 	const localize = useLocalize();
 	const [ termDuration, setTermDuration ] = useState( 'one-year' );
-
+	//TODO: Make these options dynamic and update the cart when a choice is selected.
 	return (
 		<TermOptions>
 			<TermOptionsItem>
