@@ -23,20 +23,18 @@
 	}
 }
 
-.gutenboarding__header-section {
+.gutenboarding__header-site {
 	display: flex;
-	align-items: center;
-}
-
-.gutenboarding__header-group {
-	display: flex;
-	flex-direction: column;
-	margin: 10px;
+	flex-direction: row;
+	margin-left: 20px;
 	font-size: 14px;
-	align-items: flex-start;
-}
+	align-items: center;
 
-.gutenboarding__site-title {
+	span {
+		margin-left: 20px;
+	}
+}
+.gutenboarding__header-site-heading {
 	font-weight: bold;
 }
 

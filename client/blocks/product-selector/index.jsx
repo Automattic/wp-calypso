@@ -12,14 +12,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { addQueryArgs } from 'lib/route';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -29,63 +27,9 @@ import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selec
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
-	static propTypes = {
-		basePlansPath: PropTypes.string,
-		intervalType: PropTypes.string.isRequired,
-		products: PropTypes.arrayOf(
-			PropTypes.shape( {
-				title: PropTypes.string,
-				id: PropTypes.string,
-				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-				landingPageUrl: PropTypes.string,
-				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
-				optionDescriptions: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-				),
-				optionDisplayNames: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-				),
-				optionShortNames: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-				),
-				optionsLabel: PropTypes.string,
-			} )
-		).isRequired,
-		productPriceMatrix: PropTypes.shape( {
-			relatedProduct: PropTypes.string,
-			ratio: PropTypes.number,
-		} ),
-		siteId: PropTypes.number,
-
-		// Connected props
-		availableProducts: PropTypes.object,
-		currencyCode: PropTypes.string,
-		currentPlanSlug: PropTypes.string,
-		fetchingPlans: PropTypes.bool,
-		fetchingSitePlans: PropTypes.bool,
-		fetchingSitePurchases: PropTypes.bool,
-		productSlugs: PropTypes.arrayOf( PropTypes.string ),
-		purchases: PropTypes.array,
-		recordTracksEvent: PropTypes.func.isRequired,
-		selectedSiteId: PropTypes.number,
-		selectedSiteSlug: PropTypes.string,
-		storeProducts: PropTypes.object,
-
-		// From localize() HoC
-		translate: PropTypes.func.isRequired,
-
-		// From withLocalizedMoment() HoC
-		moment: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		productPriceMatrix: {},
-	};
-
 	constructor( props ) {
 		super( props );
 
@@ -171,7 +115,6 @@ export class ProductSelector extends Component {
 	}
 
 	getDescriptionByProduct( product ) {
-		const { selectedSiteSlug, translate } = this.props;
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
@@ -186,34 +129,8 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
-		// Default product description, without a landing page link.
-		let linkUrl = product.landingPageUrl;
-		if ( ! linkUrl ) {
-			return description;
-		}
-
-		// If we have a site in this context, add it to the landing page URL.
-		if ( selectedSiteSlug ) {
-			linkUrl = addQueryArgs( { site: selectedSiteSlug }, linkUrl );
-		}
-
-		// Default product description, with a link to the landing page appended to it.
-		return (
-			<Fragment>
-				{ description }{ ' ' }
-				<ExternalLinkWithTracking
-					href={ linkUrl }
-					tracksEventName="calypso_plan_link_click"
-					tracksEventProps={ {
-						link_location: 'product_jetpack_backup_description',
-						link_slug: 'which-one-do-i-need',
-					} }
-					icon
-				>
-					{ translate( 'Which one do I need?' ) }
-				</ExternalLinkWithTracking>
-			</Fragment>
-		);
+		// Default product description
+		return description;
 	}
 
 	getProductName( product, productSlug ) {
@@ -377,34 +294,6 @@ export class ProductSelector extends Component {
 		return productPriceMatrix[ yearlyProductSlug ].relatedProduct;
 	}
 
-	getPurchaseBillingTimeframe( purchase ) {
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( this.getRelatedYearlyProductSlug( purchase.productSlug ) ) {
-			return 'monthly';
-		} else if ( this.getRelatedMonthlyProductSlug( purchase.productSlug ) ) {
-			return 'yearly';
-		}
-
-		return null;
-	}
-
-	isCurrentPlanInSelectedTimeframe() {
-		const { currentPlanSlug, intervalType } = this.props;
-		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
-
-		if ( ! currentPlan ) {
-			return false;
-		}
-
-		return (
-			( currentPlan.term === TERM_ANNUALLY && 'yearly' === intervalType ) ||
-			( currentPlan.term === TERM_MONTHLY && 'monthly' === intervalType )
-		);
-	}
-
 	getProductOptionFullPrice( productSlug ) {
 		const { productPriceMatrix, storeProducts } = this.props;
 
@@ -468,18 +357,15 @@ export class ProductSelector extends Component {
 
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
-		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			let purchase = this.getPurchaseByProduct( product );
-			let isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
 			const hasProductPurchase = !! purchase;
 
 			if ( currentPlanIncludesProduct && ! hasProductPurchase ) {
 				purchase = this.getPurchaseByCurrentPlan();
-				isCurrent = currentPlanInSelectedTimeframe;
 			}
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
@@ -514,7 +400,6 @@ export class ProductSelector extends Component {
 					currencyCode={ currencyCode }
 					purchase={ purchase }
 					subtitle={ subtitle }
-					isCurrent={ isCurrent }
 				>
 					{ ! purchase && ! currentPlanIncludesProduct && (
 						<Fragment>
@@ -548,6 +433,58 @@ export class ProductSelector extends Component {
 		);
 	}
 }
+
+ProductSelector.propTypes = {
+	basePlansPath: PropTypes.string,
+	intervalType: PropTypes.string.isRequired,
+	products: PropTypes.arrayOf(
+		PropTypes.shape( {
+			title: PropTypes.string,
+			id: PropTypes.string,
+			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
+			optionDescriptions: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
+			),
+			optionDisplayNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionShortNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionsLabel: PropTypes.string,
+		} )
+	).isRequired,
+	productPriceMatrix: PropTypes.shape( {
+		relatedProduct: PropTypes.string,
+		ratio: PropTypes.number,
+	} ),
+	siteId: PropTypes.number,
+
+	// Connected props
+	availableProducts: PropTypes.object,
+	currencyCode: PropTypes.string,
+	currentPlanSlug: PropTypes.string,
+	fetchingPlans: PropTypes.bool,
+	fetchingSitePlans: PropTypes.bool,
+	fetchingSitePurchases: PropTypes.bool,
+	productSlugs: PropTypes.arrayOf( PropTypes.string ),
+	purchases: PropTypes.array,
+	recordTracksEvent: PropTypes.func.isRequired,
+	selectedSiteId: PropTypes.number,
+	selectedSiteSlug: PropTypes.string,
+	storeProducts: PropTypes.object,
+
+	// From localize() HoC
+	translate: PropTypes.func.isRequired,
+
+	// From withLocalizedMoment() HoC
+	moment: PropTypes.func.isRequired,
+};
+
+ProductSelector.defaultProps = {
+	productPriceMatrix: {},
+};
 
 const connectComponent = connect(
 	( state, { products, siteId } ) => {

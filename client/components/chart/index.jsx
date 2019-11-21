@@ -3,7 +3,7 @@
  */
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { localize, withRtl } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
 /**
@@ -13,6 +13,7 @@ import { hasTouch } from 'lib/touch-detect';
 import { useWindowResizeCallback } from 'lib/track-element-size';
 import Tooltip from 'components/tooltip';
 import Notice from 'components/notice';
+import { withRtl } from 'components/rtl';
 import BarContainer from './bar-container';
 
 /**

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -16,7 +17,6 @@ import DomainTransferFlag from 'my-sites/domains/domain-management/components/do
 import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -185,4 +185,4 @@ class ListItem extends React.PureComponent {
 	}
 }
 
-export default localize( withLocalizedMoment( ListItem ) );
+export default localize( ListItem );

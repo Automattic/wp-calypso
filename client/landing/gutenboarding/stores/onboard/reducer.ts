@@ -7,16 +7,18 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, FormValue, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
-import { DomainName } from '../domain-suggestions/types';
+import { ActionType, FormValue, SiteType, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
 import * as Actions from './actions';
 
-const domain: Reducer< DomainName | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
-	state = null,
-	action
-) => {
-	if ( action.type === ActionType.SET_DOMAIN ) {
-		return action.domain;
+const siteType: Reducer<
+	FormValue< SiteType >,
+	ReturnType< typeof Actions[ 'resetSiteType' ] > | ReturnType< typeof Actions[ 'setSiteType' ] >
+> = ( state = EMPTY_FORM_VALUE, action ) => {
+	if ( action.type === ActionType.RESET_SITE_TYPE ) {
+		return EMPTY_FORM_VALUE;
+	}
+	if ( action.type === ActionType.SET_SITE_TYPE ) {
+		return action.siteType;
 	}
 	return state;
 };
@@ -51,7 +53,7 @@ const siteVertical: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { domain, siteTitle, verticals, siteVertical } );
+const reducer = combineReducers( { siteType, siteTitle, verticals, siteVertical } );
 
 export type State = ReturnType< typeof reducer >;
 

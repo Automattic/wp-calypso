@@ -17,8 +17,8 @@ import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { hideSidebar } from 'state/ui/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { setSection } from 'state/ui/actions';
+import { getSelectedSite, getSection } from 'state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 
 /**
@@ -115,7 +115,10 @@ function renderPluginWarnings( context ) {
 }
 
 function renderProvisionPlugins( context ) {
-	context.store.dispatch( hideSidebar() );
+	const state = context.store.getState();
+	const section = getSection( state );
+
+	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 
 	context.primary = React.createElement( PlanSetup, {
 		whitelist: context.query.only || false,

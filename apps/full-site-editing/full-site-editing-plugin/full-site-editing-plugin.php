@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.15.1
+ * Version: 0.14
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -20,7 +20,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.15.1' );
+define( 'PLUGIN_VERSION', '0.14' );
 
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
 const SUPPORTED_THEMES = [ 'maywood' ];
@@ -51,6 +51,7 @@ function dangerously_load_full_site_editing_files() {
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-title/index.php';
+	require_once __DIR__ . '/full-site-editing/blocks/site-credit/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-rest-templates-controller.php';
@@ -92,28 +93,6 @@ function get_theme_slug() {
 	 */
 	$theme_slug = apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
 
-	// Normalize the theme slug.
-	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-		$theme_slug = substr( $theme_slug, 4 );
-	}
-
-	if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
-		$theme_slug = substr( $theme_slug, 0, -6 );
-	}
-
-	return $theme_slug;
-}
-
-/**
- * Returns a normalized slug for the current theme.
- *
- * In some cases, the theme is located in a subfolder like `pub/maywood`. Use
- * this function to get the slug without the prefix.
- *
- * @param string $theme_slug The raw theme_slug to normalize.
- * @return string Theme slug.
- */
-function normalize_theme_slug( $theme_slug ) {
 	// Normalize the theme slug.
 	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
 		$theme_slug = substr( $theme_slug, 4 );
@@ -184,7 +163,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  */
 function load_starter_page_templates() {
 	// We don't want the user to choose a template when copying a post.
-	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}

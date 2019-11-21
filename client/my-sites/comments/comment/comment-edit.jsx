@@ -21,7 +21,6 @@ import InfoPopover from 'components/info-popover';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -283,7 +282,4 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( withLocalizedMoment( CommentEdit ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentEdit ) );

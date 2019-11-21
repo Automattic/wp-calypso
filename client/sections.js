@@ -277,9 +277,7 @@ const sections = [
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
-		secondary: false,
 		enableLoggedOut: true,
-		group: 'me',
 	},
 	{
 		name: 'feature-upsell',

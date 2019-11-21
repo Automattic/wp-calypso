@@ -62,7 +62,7 @@ exports[`DateRange should render 1`] = `
         onInputFocus={[Function]}
         startDateValue="MM/DD/YYYY"
       />
-      <Localized(WithLocalizedMoment(DatePicker))
+      <Localized(DatePicker)
         calendarViewDate={null}
         disabledDays={
           Array [

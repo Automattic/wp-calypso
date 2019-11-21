@@ -336,59 +336,6 @@ export default Greeting;
 Unlike the `localize` HOC, the component doesn't need to be wrapped and receives the `translate`
 function from the hook call rather than a prop.
 
-## React Localization Helpers for RTL
-
-This module provides React helpers to figure out the LTR/RTL flag of the current `i18n-calypso`
-locale, make it available to React components and update automatically on locale change.
-
-### `useRtl` React Hook
-
-Hook function that returns the `isRtl` boolean flag and automatically rerenders the component
-(i.e., updates its internal state) when app locale changes from LTR to RTL language and back.
-
-Example:
-
-```jsx
-import React from 'react';
-import Gridicon from 'components/gridicon';
-import { useRtl } from 'i18n-calypso';
-
-export default function Header() {
-	const isRtl = useRtl();
-	const icon = isRtl ? 'arrow-left' : 'arrow-right';
-	return (
-		<div>
-			<Gridicon icon={ icon } />
-			Header With Back Arrow
-		</div>
-	);
-}
-```
-
-# `withRtl` Higher-Order Component
-
-The same functionality is also exposed as a HOC that passes an `isRtl` prop to the wrapped component.
-
-Example:
-
-```jsx
-import React from 'react';
-import Gridicon from 'components/gridicon';
-import { withRtl } from 'i18n-calypso';
-
-function Header( { isRtl } ) {
-	const icon = isRtl ? 'arrow-left' : 'arrow-right';
-	return (
-		<div>
-			<Gridicon icon={ icon } />
-			Header With Back Arrow
-		</div>
-	);
-}
-
-export default withRtl( Header );
-```
-
 ## Some Background
 
 I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](https://messageformat.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.

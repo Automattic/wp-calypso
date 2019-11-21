@@ -19,7 +19,6 @@ import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
 import analytics from 'lib/analytics';
 
 /**
@@ -209,4 +208,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
-)( localize( withLocalizedMoment( JetpackSyncPanel ) ) );
+)( localize( JetpackSyncPanel ) );

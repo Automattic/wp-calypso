@@ -55,7 +55,6 @@ module.exports = {
 		'no-nested-ternary': 2,
 		'no-new': 2,
 		'no-process-exit': 2,
-		'no-prototype-builtins': 0, // we've been using this for years without real issue
 		'no-redeclare': 2,
 		'no-shadow': 2,
 		'no-spaced-func': 2,

@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { Moment } from 'moment';
+import moment from 'moment';
 import Gridicon from 'components/gridicon';
 import { localize, LocalizeProps } from 'i18n-calypso';
 
 interface Props {
 	statType?: string;
-	startOfPeriod?: Moment;
+	startOfPeriod?: moment.Moment;
 }
 
 // File downloads were only recorded from 1st July 2019 onwards,

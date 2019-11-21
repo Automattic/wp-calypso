@@ -5,12 +5,6 @@
 	position: relative;
 }
 
-// Override some very specific theme styles.
-.post-type-page .editor-styles-wrapper .template-block .fse-template-part {
-	padding-left: 0;
-	padding-right: 0;
-}
-
 .template__block-container {
 	&.is-hovered {
 		cursor: pointer;
@@ -43,6 +37,13 @@
 	.block-editor-block-list__breadcrumb,
 	.block-editor-block-list__block-edit::before {
 		display: none;
+	}
+
+	@media ( min-width: 600px ) {
+		.block-editor-block-list__layout .block-editor-block-list__block[data-align='full'] {
+			margin-left: 14px;
+			margin-right: 14px;
+		}
 	}
 }
 

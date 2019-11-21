@@ -1,15 +1,11 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
-
-/**
- * Internal dependencies
- */
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -105,4 +101,4 @@ class InputChrono extends React.Component {
 	}
 }
 
-export default localize( withLocalizedMoment( InputChrono ) );
+export default localize( InputChrono );

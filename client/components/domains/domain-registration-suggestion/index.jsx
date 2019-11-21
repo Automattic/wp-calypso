@@ -348,21 +348,15 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const showTestCopy = get( props, 'showTestCopy', false );
-	const stripZeros = showTestCopy ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
-		productSaleCost: getDomainSalePrice(
-			productSlug,
-			productsList,
-			currentUserCurrencyCode,
-			stripZeros
-		),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
+		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
 	};
 };
 
-export default connect( mapStateToProps, { recordTracksEvent } )(
-	localize( DomainRegistrationSuggestion )
-);
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( localize( DomainRegistrationSuggestion ) );

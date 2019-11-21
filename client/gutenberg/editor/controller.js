@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ function waitForSiteIdAndSelectedEditor( context ) {
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
  *
- * @param {object} context  Shared context in the route.
+ * @param {Object} context  Shared context in the route.
  * @param {Function} next   Next registered callback for the route.
  * @returns {*}             Whatever the next callback returns.
  */
@@ -177,7 +177,6 @@ export const post = ( context, next ) => {
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
 			fseParentPageId={ fseParentPageId }
-			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 		/>
 	);
 

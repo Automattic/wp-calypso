@@ -1,3 +1,14 @@
+// Placeholder selectors
+%product-card-link-plain {
+	color: var( --color-link-light );
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: var( --color-link-dark );
+	}
+}
+
 // Header
 .product-card__header {
 	margin: -16px -16px 16px;
@@ -9,7 +20,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		flex-flow: row wrap;
 		align-items: baseline;
 	}
 }
@@ -28,7 +38,7 @@
 .product-card__header-primary {
 	display: flex;
 	padding-top: 16px;
-	padding-bottom: 4px;
+	padding-bottom: 8px;
 
 	@include breakpoint( '>480px' ) {
 		padding-top: 24px;
@@ -36,7 +46,8 @@
 
 	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
-		padding-top: 16px;
+		padding-top: 12px;
+		padding-bottom: 0;
 	}
 
 	.gridicon {
@@ -60,22 +71,16 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		padding-bottom: 16px;
-	}
-
-	.is-purchased & {
-		@include breakpoint( '>660px' ) {
-			padding-left: 40px;
-		}
+		padding-bottom: 12px;
 	}
 }
 
 .product-card__title {
-	font-size: 20px;
+	font-size: 22px;
 	line-height: 24px;
 
-	@include breakpoint( '>960px' ) {
-		font-size: 22px;
+	@include breakpoint( '>660px' ) {
+		font-size: 17px;
 	}
 
 	em,
@@ -99,6 +104,10 @@
 	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
+
+	a {
+		@extend %product-card-link-plain;
+	}
 }
 
 // Price group
@@ -194,6 +203,10 @@
 	font-size: 14px;
 	line-height: 20px;
 	color: var( --color-text-subtle );
+
+	a:not( .button ) {
+		@extend %product-card-link-plain;
+	}
 
 	p:last-child {
 		margin: 0;

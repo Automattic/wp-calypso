@@ -2,31 +2,27 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { createSlotFill, Animate } from '@wordpress/components';
-import { ifCondition } from '@wordpress/compose';
+import { compose, ifCondition } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 
 const { Fill, Slot } = createSlotFill( 'Sidebar' );
 
-interface Props {
-	className: string;
-	label: string;
-}
-
-const Sidebar: FunctionComponent< Props > = ( { children, className, label } ) => {
+function Sidebar( { children, label, className } ) {
 	return (
 		<div
 			className={ classnames( 'edit-post-sidebar', className ) }
 			role="region"
 			aria-label={ label }
-			tabIndex={ -1 }
+			tabIndex="-1"
 		>
 			{ children }
 		</div>
 	);
-};
+}
 
-const AnimatedSidebarFill: FunctionComponent< Props > = props => {
+function AnimatedSidebarFill( props ) {
 	return (
 		<Fill>
 			<Animate type="slide-in" options={ { origin: 'left' } }>
@@ -34,15 +30,13 @@ const AnimatedSidebarFill: FunctionComponent< Props > = props => {
 			</Animate>
 		</Fill>
 	);
-};
-
-interface WrappedProps extends Props {
-	isActive: boolean;
 }
 
-const WrappedSidebar = ifCondition< WrappedProps >( ( { isActive } ) => isActive )(
-	AnimatedSidebarFill
-);
+const WrappedSidebar = compose(
+	withSelect( ( select, { isActive } ) => ( { isActive } ) ),
+	ifCondition( ( { isActive } ) => isActive )
+)( AnimatedSidebarFill );
 
-export { Slot };
+WrappedSidebar.Slot = Slot;
+
 export default WrappedSidebar;

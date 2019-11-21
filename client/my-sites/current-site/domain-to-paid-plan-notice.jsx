@@ -29,7 +29,7 @@ export class DomainToPaidPlanNotice extends Component {
 	render() {
 		const { eligible, isConflicting, isDomainOnly, isJetpack, site, translate } = this.props;
 
-		if ( ! site || ! eligible || isConflicting || isJetpack ) {
+		if ( ! site || ! eligible || isConflicting ) {
 			return null;
 		}
 
@@ -39,13 +39,17 @@ export class DomainToPaidPlanNotice extends Component {
 			  ) }&siteId=${ encodeURIComponent( site.ID ) }`
 			: `/plans/${ site.slug }`;
 
+		const text = isJetpack
+			? translate( 'Upgrade for full site backups.' )
+			: translate( 'Upgrade your site and save.' );
+
 		return (
 			<SidebarBanner
 				ctaName="domain-to-paid-sidebar"
 				ctaText={ translate( 'Go' ) }
 				href={ href }
 				icon="info-outline"
-				text={ translate( 'Upgrade your site and save.' ) }
+				text={ text }
 			/>
 		);
 	}

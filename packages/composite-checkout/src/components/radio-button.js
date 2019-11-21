@@ -82,14 +82,6 @@ const RadioButtonWrapper = styled.div`
 		border: 3px solid ${props => props.theme.colors.highlight};
 	}
 
-	.payment-logos {
-		display: none;
-
-		@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
-			display: block;
-		}
-	}
-
 	svg {
 		filter: grayscale( ${getGrayscaleValue} );
 	}
@@ -159,7 +151,7 @@ function getGrayscaleValue( { checked } ) {
 
 function getOutline( { isFocused, theme } ) {
 	if ( isFocused ) {
-		return theme.colors.outline + ' solid 2px';
+		return theme.colors.outline + ' auto 5px';
 	}
 	return '0';
 }

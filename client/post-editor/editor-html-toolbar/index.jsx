@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -39,7 +40,6 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -722,7 +722,4 @@ const mapDispatchToProps = {
 	settingsUpdate,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );

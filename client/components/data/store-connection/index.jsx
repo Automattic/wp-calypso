@@ -8,7 +8,7 @@ import { isEqual } from 'lodash';
 
 class StoreConnection extends React.Component {
 	static propTypes = {
-		component: PropTypes.elementType,
+		component: PropTypes.func,
 		getStateFromStores: PropTypes.func.isRequired,
 		isDataLoading: PropTypes.func,
 		loadingPlaceholder: PropTypes.func,

@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,9 +22,8 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { withLocalizedMoment } from 'components/localized-moment';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
-import { recordPaymentSettingsClick } from './payment-settings-analytics';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
@@ -69,7 +67,7 @@ class RegisteredDomain extends React.Component {
 	}
 
 	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
+		this.props.paymentSettingsClick( this.props.domain );
 	};
 
 	domainWarnings() {
@@ -196,8 +194,19 @@ class RegisteredDomain extends React.Component {
 	}
 }
 
-export default compose(
-	connect( null, { recordPaymentSettingsClick } ),
-	localize,
-	withLocalizedMoment
-)( RegisteredDomain );
+const paymentSettingsClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
+			section: domain.type,
+		} )
+	);
+
+export default connect( null, {
+	paymentSettingsClick,
+} )( localize( RegisteredDomain ) );

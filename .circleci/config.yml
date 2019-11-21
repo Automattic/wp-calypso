@@ -545,9 +545,7 @@ jobs:
               echo 'PRs from external authors cannot run on calypso.live'
               exit 1
             fi
-      - restore_cache: *restore-git-cache
-      - checkout
-      # Don't bother updating the git cache here, it would be the second time in the workflow
+      - prepare
       - run:
           name: Wait for calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh

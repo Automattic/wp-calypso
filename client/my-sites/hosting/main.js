@@ -19,7 +19,6 @@ import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosti
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import DataLossWarning from './data-loss-warning';
-import { isEnabled } from 'config';
 
 /**
  * Style dependencies
@@ -30,17 +29,6 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 	if ( ! canViewAtomicHosting ) {
 		return null;
 	}
-
-	const sftpPhpMyAdminFeatures = isEnabled( 'hosting/sftp-phpmyadmin' ) ? (
-		<>
-			<div className="hosting__cards">
-				<SFTPCard disabled={ isDisabled } />
-				<PhpMyAdminCard disabled={ isDisabled } />
-			</div>
-			{ ! isDisabled && <DataLossWarning /> }
-		</>
-	) : null;
-
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
@@ -56,7 +44,11 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 					disableHref
 				/>
 			) }
-			{ sftpPhpMyAdminFeatures }
+			<div className="hosting__cards">
+				<SFTPCard disabled={ isDisabled } />
+				<PhpMyAdminCard disabled={ isDisabled } />
+			</div>
+			{ ! isDisabled && <DataLossWarning /> }
 		</Main>
 	);
 };

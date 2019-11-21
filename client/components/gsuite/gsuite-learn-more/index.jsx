@@ -18,7 +18,6 @@ import './style.scss';
 
 const GSuiteLearnMore = ( { onLearnMoreClick } ) => {
 	const translate = useTranslate();
-
 	return (
 		<div className="gsuite-learn-more">
 			<p>

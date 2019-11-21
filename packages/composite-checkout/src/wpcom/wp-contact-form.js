@@ -18,7 +18,6 @@ import {
 	SummaryDetails,
 	SummarySpacerLine,
 } from '../lib/styled-components/summary-details';
-import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
@@ -157,7 +156,7 @@ const DomainRegistrationCheckbox = styled.input`
 	}
 
 	:focus + label:before {
-		outline: ${props => props.theme.colors.outline} solid 2px;
+		outline: ${props => props.theme.colors.outline} auto 5px;
 	}
 `;
 
@@ -172,31 +171,27 @@ function AddressFields( { fieldType } ) {
 	return (
 		<React.Fragment>
 			<FieldRow gap="4%" columnWidths="48% 48%">
-				<LeftColumn>
-					<Field
-						id={ fieldType + '-first-name' }
-						type="text"
-						label={ localize( 'First name' ) }
-						value={ currentLocationData.firstName || '' }
-						onChange={ value => {
-							updateLocationData( 'firstName', value );
-						} }
-						autoComplete="given-name"
-					/>
-				</LeftColumn>
+				<Field
+					id={ fieldType + '-first-name' }
+					type="text"
+					label={ localize( 'First name' ) }
+					value={ currentLocationData.firstName || '' }
+					onChange={ value => {
+						updateLocationData( 'firstName', value );
+					} }
+					autoComplete="given-name"
+				/>
 
-				<RightColumn>
-					<Field
-						id={ fieldType + '-last-name' }
-						type="text"
-						label={ localize( 'Last name' ) }
-						value={ currentLocationData.lastName || '' }
-						onChange={ value => {
-							updateLocationData( 'lastName', value );
-						} }
-						autoComplete="family-name"
-					/>
-				</RightColumn>
+				<Field
+					id={ fieldType + '-last-name' }
+					type="text"
+					label={ localize( 'Last name' ) }
+					value={ currentLocationData.lastName || '' }
+					onChange={ value => {
+						updateLocationData( 'lastName', value );
+					} }
+					autoComplete="family-name"
+				/>
 			</FieldRow>
 
 			<FormField
@@ -223,44 +218,40 @@ function AddressFields( { fieldType } ) {
 			/>
 
 			<FieldRow gap="4%" columnWidths="48% 48%">
-				<LeftColumn>
-					<Field
-						id={ fieldType + '-city' }
-						type="text"
-						label={ localize( 'City' ) }
-						value={ currentLocationData.city || '' }
-						onChange={ value => {
-							updateLocationData( 'city', value );
-						} }
-						autoComplete={ fieldType + ' address-level2' }
-					/>
-				</LeftColumn>
+				<Field
+					id={ fieldType + '-city' }
+					type="text"
+					label={ localize( 'City' ) }
+					value={ currentLocationData.city || '' }
+					onChange={ value => {
+						updateLocationData( 'city', value );
+					} }
+					autoComplete={ fieldType + ' address-level2' }
+				/>
 
-				<RightColumn>
-					{ isStateorProvince() === 'state' ? (
-						<Field
-							id={ fieldType + '-state' }
-							type="text"
-							label={ localize( 'State' ) }
-							value={ currentLocationData.state || '' }
-							onChange={ value => {
-								updateLocationData( 'state', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
-						/>
-					) : (
-						<Field
-							id={ fieldType + '-province' }
-							type="text"
-							label={ localize( 'Province' ) }
-							value={ currentLocationData.province || '' }
-							onChange={ value => {
-								updateLocationData( 'province', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
-						/>
-					) }
-				</RightColumn>
+				{ isStateorProvince() === 'state' ? (
+					<Field
+						id={ fieldType + '-state' }
+						type="text"
+						label={ localize( 'State' ) }
+						value={ currentLocationData.state || '' }
+						onChange={ value => {
+							updateLocationData( 'state', value );
+						} }
+						autoComplete={ fieldType + ' address-level1' }
+					/>
+				) : (
+					<Field
+						id={ fieldType + '-province' }
+						type="text"
+						label={ localize( 'Province' ) }
+						value={ currentLocationData.province || '' }
+						onChange={ value => {
+							updateLocationData( 'province', value );
+						} }
+						autoComplete={ fieldType + ' address-level1' }
+					/>
+				) }
 			</FieldRow>
 		</React.Fragment>
 	);
@@ -336,44 +327,40 @@ function TaxFields( { fieldType } ) {
 	return (
 		<React.Fragment>
 			<FieldRow gap="4%" columnWidths="48% 48%">
-				<LeftColumn>
-					{ isZipOrPostal() === 'zip' ? (
-						<Field
-							id={ fieldType + '-zip-code' }
-							type="text"
-							label={ localize( 'Zip code' ) }
-							value={ currentLocationData.zipCode || '' }
-							onChange={ value => {
-								updateLocationData( 'zipCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) : (
-						<Field
-							id={ fieldType + '-postal-code' }
-							type="text"
-							label={ localize( 'Postal code' ) }
-							value={ currentLocationData.postalCode || '' }
-							onChange={ value => {
-								updateLocationData( 'postalCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) }
-				</LeftColumn>
-
-				<RightColumn>
+				{ isZipOrPostal() === 'zip' ? (
 					<Field
-						id={ fieldType + '-country' }
+						id={ fieldType + '-zip-code' }
 						type="text"
-						label={ localize( 'Country' ) }
-						value={ currentLocationData.country || '' }
+						label={ localize( 'Zip code' ) }
+						value={ currentLocationData.zipCode || '' }
 						onChange={ value => {
-							updateLocationData( 'country', value );
+							updateLocationData( 'zipCode', value );
 						} }
-						autoComplete={ fieldType + ' country' }
+						autoComplete={ fieldType + ' postal-code' }
 					/>
-				</RightColumn>
+				) : (
+					<Field
+						id={ fieldType + '-postal-code' }
+						type="text"
+						label={ localize( 'Postal code' ) }
+						value={ currentLocationData.postalCode || '' }
+						onChange={ value => {
+							updateLocationData( 'postalCode', value );
+						} }
+						autoComplete={ fieldType + ' postal-code' }
+					/>
+				) }
+
+				<Field
+					id={ fieldType + '-country' }
+					type="text"
+					label={ localize( 'Country' ) }
+					value={ currentLocationData.country || '' }
+					onChange={ value => {
+						updateLocationData( 'country', value );
+					} }
+					autoComplete={ fieldType + ' country' }
+				/>
 			</FieldRow>
 		</React.Fragment>
 	);

@@ -1,8 +1,3 @@
-4.1.0
------
-
-* Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
-
 4.0.0
 -----
 

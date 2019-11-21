@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
@@ -15,9 +16,11 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { domainManagementRedirectSettings } from 'my-sites/domains/paths';
-import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
-class SiteRedirect extends React.Component {
+const SiteRedirect = createReactClass( {
+	displayName: 'SiteRedirect',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
@@ -34,16 +37,15 @@ class SiteRedirect extends React.Component {
 				{ domain.expirationMoment.format( 'LL' ) }
 			</Property>
 		);
-	}
+	},
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
+	handlePaymentSettingsClick() {
+		this.recordEvent( 'paymentSettingsClick', this.props.domain );
+	},
 
 	render() {
 		const { domain, translate } = this.props;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				<div className="domain-details-card">
@@ -68,8 +70,7 @@ class SiteRedirect extends React.Component {
 				<VerticalNav>{ this.siteRedirectNavItem() }</VerticalNav>
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
+	},
 
 	siteRedirectNavItem() {
 		return (
@@ -82,7 +83,7 @@ class SiteRedirect extends React.Component {
 				{ this.props.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);
-	}
-}
+	},
+} );
 
-export default connect( null, { recordPaymentSettingsClick } )( localize( SiteRedirect ) );
+export default localize( SiteRedirect );

@@ -16,6 +16,11 @@ import { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export { STORE_KEY };
 
+/**
+ * Persistence configuration for the store
+ */
+const persist: ( keyof State )[] = [ 'siteTitle', 'siteType', 'siteVertical' ];
+
 use( plugins.persistence, {} );
 
 registerStore< State >( STORE_KEY, {
@@ -24,7 +29,7 @@ registerStore< State >( STORE_KEY, {
 	reducer,
 	resolvers,
 	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical' ],
+	persist,
 } );
 
 declare module '@wordpress/data' {

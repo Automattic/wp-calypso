@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import isShallowEqual from '@wordpress/is-shallow-equal';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ class QueryPostRevisionAuthors extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if (
-			isShallowEqual( this.props.userIds, prevProps.userIds ) &&
+			shallowEqual( this.props.userIds, prevProps.userIds ) &&
 			this.props.siteId === prevProps.siteId
 		) {
 			return;

@@ -29,7 +29,7 @@ import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
-import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
+import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
@@ -57,7 +57,8 @@ const analyticsPageTitleByType = {
 	pro: 'Jetpack Install Pro',
 };
 
-const removeSidebar = context => context.store.dispatch( hideSidebar() );
+const removeSidebar = context =>
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -322,8 +323,9 @@ export function siteTopic( context, next ) {
  * and switches to that locale if the user is logged out.
  * If the user is logged in we remove the fragment and defer to the user's settings.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
+ * @returns {Undefined} next()
  */
 export function setLoggedOutLocale( context, next ) {
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );

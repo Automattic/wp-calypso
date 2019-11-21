@@ -50,6 +50,7 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {

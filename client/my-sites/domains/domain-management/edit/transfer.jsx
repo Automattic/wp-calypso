@@ -14,6 +14,7 @@ import Card from 'components/card';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -24,7 +25,6 @@ import { Notice } from 'components/notice';
 import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class Transfer extends React.PureComponent {
 	render() {
@@ -136,7 +136,7 @@ class Transfer extends React.PureComponent {
 	};
 
 	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
+		this.props.paymentSettingsClick( this.props.domain );
 	};
 
 	startTransfer = () => {
@@ -164,9 +164,22 @@ class Transfer extends React.PureComponent {
 	}
 }
 
+const paymentSettingsClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
+			section: domain.type,
+		} )
+	);
+
 export default connect( null, {
 	errorNotice,
 	fetchSiteDomains,
-	recordPaymentSettingsClick,
+	paymentSettingsClick,
 	successNotice,
 } )( localize( Transfer ) );

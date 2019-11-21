@@ -39,7 +39,6 @@
 		"help/courses": true,
 		"hosting": false,
 		"hosting/non-atomic-support": false,
-		"hosting/sftp-phpmyadmin": false,
 		"i18n/translation-scanner": true,
 		"jetpack/api-cache": false,
 		"jetpack/concierge-sessions": false,

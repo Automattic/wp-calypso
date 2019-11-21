@@ -381,9 +381,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 				await this.closeSidebar();
 			} else {
-				await driverHelper.clickWhenClickable(
+				await driverHelper.selectElementByText(
 					this.driver,
-					By.css( '.page-template-modal__buttons .components-button.is-primary' )
+					By.css( '.page-template-modal__buttons .components-button' ),
+					'Use Blank template'
 				);
 			}
 		}

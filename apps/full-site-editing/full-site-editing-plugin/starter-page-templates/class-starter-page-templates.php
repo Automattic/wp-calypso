@@ -176,11 +176,7 @@ class Starter_Page_Templates {
 				'templates'       => array_merge( $default_templates, $vertical_templates ),
 				'vertical'        => $vertical,
 				'segment'         => $segment,
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'screenAction'    => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'           => normalize_theme_slug( get_stylesheet() ),
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'isFrontPage'     => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
+				'screenAction'    => $screen->action,
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );

@@ -8,12 +8,12 @@ import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
 import { defer, uniqueId } from 'lodash';
-import { withRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { RootChild } from '@automattic/components';
+import { withRtl } from 'components/rtl';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,

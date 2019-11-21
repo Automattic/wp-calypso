@@ -17,8 +17,8 @@ import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
  * TODO: this selector should be backed by an API response instead
  * Returns true if hosting section should be viewable
  *
- * @param  {object}  state  Global state tree
- * @returns {?boolean}        Whether site can display the atomic hosting section
+ * @param  {Object}  state  Global state tree
+ * @return {?Boolean}        Whether site can display the atomic hosting section
  */
 export default function canSiteViewAtomicHosting( state ) {
 	if ( ! isEnabled( 'hosting' ) ) {

@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -60,7 +59,6 @@ export class DomainWarnings extends React.PureComponent {
 		ruleWhiteList: PropTypes.array,
 		domain: PropTypes.object,
 		isCompact: PropTypes.bool,
-		siteIsUnlaunched: PropTypes.bool,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
@@ -633,16 +631,6 @@ export class DomainWarnings extends React.PureComponent {
 					.add( 2, 'days' )
 					.isAfter()
 		);
-		if (
-			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
-			this.props.siteIsUnlaunched &&
-			isWithinTwoDays
-		) {
-			// Customer Home nudges this on unlaunched sites.
-			// After two days let's re-display the nudge
-			return;
-		}
-
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
 		const { translate } = this.props;
 		const action = translate( 'Fix' );

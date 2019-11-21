@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
@@ -48,7 +48,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	onFormSubmit = async event => {
+	onFormSubmit = event => {
 		event.preventDefault();
 
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
@@ -78,37 +78,27 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const shouldRecordRecaptchaAction =
-			typeof this.props.recaptchaClientId === 'number' &&
-			'onboarding' === this.props.flowName &&
-			'show' === abtest( 'userStepRecaptcha' );
+		const recaptchaPromise =
+			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' )
+				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
+				: Promise.resolve();
 
-		const recaptchaToken = shouldRecordRecaptchaAction
-			? await recordGoogleRecaptchaAction(
-					this.props.recaptchaClientId,
-					'calypso/signup/formSubmit'
-			  )
-			: undefined;
-
-		try {
-			const response = await wpcom.undocumented().usersNew(
-				{
-					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-					'g-recaptcha-response': recaptchaToken || undefined,
-					is_passwordless: true,
-					signup_flow_name: this.props.flowName,
-					validate: false,
-					ab_test_variations: getSavedVariations(),
-				},
-				null
-			);
-			this.createAccountCallback( null, response );
-		} catch ( err ) {
-			this.createAccountCallback( err );
-		}
+		recaptchaPromise.then( recaptchaToken => {
+			wpcom
+				.undocumented()
+				.createUserAccountFromEmailAddress(
+					{
+						email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+						'g-recaptcha-response': recaptchaToken || undefined,
+					},
+					null
+				)
+				.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
+				.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+		} );
 	};
 
-	createAccountCallback = ( error, response ) => {
+	createUserAccountFromEmailAddressCallback = ( error, response ) => {
 		if ( error ) {
 			const errorMessage = this.getErrorMessage( error );
 			this.setState( {
@@ -135,7 +125,7 @@ class PasswordlessSignupForm extends Component {
 
 		this.submitStep( {
 			username: response.username,
-			bearer_token: response.bearer_token,
+			bearer_token: response.token.access_token,
 		} );
 	};
 
@@ -145,7 +135,6 @@ class PasswordlessSignupForm extends Component {
 		switch ( errorObj.error ) {
 			case 'already_taken':
 			case 'already_active':
-			case 'email_exists':
 				return (
 					<>
 						{ translate( 'An account with this email address already exists.' ) }
@@ -164,8 +153,11 @@ class PasswordlessSignupForm extends Component {
 					</>
 				);
 			default:
-				return translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
+				return (
+					errorObj.message ||
+					translate(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					)
 				);
 		}
 	}

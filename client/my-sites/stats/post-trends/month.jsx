@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -8,7 +9,6 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
 import Week from './week';
 
 class PostTrendsMonth extends Component {
@@ -63,4 +63,4 @@ class PostTrendsMonth extends Component {
 	}
 }
 
-export default localize( withLocalizedMoment( PostTrendsMonth ) );
+export default localize( PostTrendsMonth );

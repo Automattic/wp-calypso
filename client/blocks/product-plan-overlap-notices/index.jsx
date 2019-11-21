@@ -18,7 +18,7 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
+import { planHasFeature } from 'lib/plans';
 import { PRODUCT_SHORT_NAMES } from 'lib/products-values/constants';
 
 class ProductPlanOverlapNotices extends Component {
@@ -55,13 +55,11 @@ class ProductPlanOverlapNotices extends Component {
 			return false;
 		}
 
-		// Does the current plan include the current product as a feature, or have a superior version of it?
+		// Does the current plan include the current product as a feature?
 		return some(
 			products,
 			productSlug =>
-				productSlug === currentProductSlug &&
-				( planHasFeature( currentPlanSlug, productSlug ) ||
-					planHasSuperiorFeature( currentPlanSlug, productSlug ) )
+				productSlug === currentProductSlug && planHasFeature( currentPlanSlug, productSlug )
 		);
 	}
 
@@ -133,7 +131,6 @@ class ProductPlanOverlapNotices extends Component {
 
 				{ this.hasOverlap() && (
 					<Notice
-						showDismiss={ false }
 						status="is-warning"
 						text={ translate(
 							'Your %(planName)s Plan includes %(featureName)s. ' +

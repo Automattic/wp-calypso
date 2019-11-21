@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,7 +21,6 @@ import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -170,4 +170,4 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostPerformance );
+export default flowRight( connectComponent, localize )( StatsPostPerformance );

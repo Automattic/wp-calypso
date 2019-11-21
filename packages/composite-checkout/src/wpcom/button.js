@@ -100,7 +100,7 @@ function getBoxShadowHover( props ) {
 }
 
 function getBorderWeight( { buttonState } ) {
-	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '1px';
+	return buttonState === 'text-button' ? '0' : '1px';
 }
 
 function getRollOverColor( { buttonState, buttonType, theme } ) {
@@ -119,8 +119,6 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 		case 'disabled':
 			return colors.disabledPaymentButtons;
 		case 'text-button':
-			return 'none';
-		case 'borderless':
 			return 'none';
 		default:
 			return colors.highlight;

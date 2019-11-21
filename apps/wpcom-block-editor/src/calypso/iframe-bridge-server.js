@@ -290,38 +290,6 @@ function handlePostLockTakeover( calypsoPort ) {
 	} );
 }
 
-function handlePostStatusChange( calypsoPort ) {
-	// Keep a reference to the current status
-	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-
-	subscribe( () => {
-		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-		if ( status === newStatus ) {
-			// The status has not changed
-			return;
-		}
-
-		if ( select( 'core/editor' ).isEditedPostDirty() ) {
-			// Wait for the status change to be confirmed by the server
-			return;
-		}
-
-		// Did the client know about the status before this update?
-		const hadStatus = !! status;
-
-		// Update our reference to the current status
-		status = newStatus;
-
-		if ( ! hadStatus ) {
-			// We didn't have a status before this update, so, don't notify
-			return;
-		}
-
-		// Notify that the status has changed
-		calypsoPort.postMessage( { action: 'postStatusChange', payload: { status } } );
-	} );
-}
-
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
@@ -813,8 +781,6 @@ function initPort( message ) {
 
 		// handle post lock state change to takeover
 		handlePostLockTakeover( calypsoPort );
-
-		handlePostStatusChange( calypsoPort );
 
 		handleUpdateImageBlocks( calypsoPort );
 

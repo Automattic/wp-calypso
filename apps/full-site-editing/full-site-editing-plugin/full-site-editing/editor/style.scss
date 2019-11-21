@@ -33,32 +33,6 @@
 		}
 	}
 
-	.block-editor-block-list__layout {
-		padding-left: 0;
-		padding-right: 0;
-	}
-
-	.block-editor-block-list__block[data-align=full] > .block-editor-block-list__block-edit {
-		margin-right: 0;
-		margin-left: 0;
-	}
-
-	.block-editor-block-list__block[data-align=wide] > .block-editor-block-list__block-edit {
-		margin-right: 14px;
-		margin-left: 14px;
-	}
-
-	@media( max-width: 1200px ) {
-		// Try to ensure that normally-aligned blocks work properly.
-		.wp-block:not( [data-align=full] ):not( [data-align=wide] ) {
-			max-width: 580px;
-
-		}
-		.is-sidebar-opened .wp-block:not( [data-align=full] ):not( [data-align=wide] ) {
-			max-width: 400px;
-		}
-	}
-
 	// Remove the 50vh bottom padding that looks off with the FSE frame.
 	.editor-writing-flow__click-redirect {
 		display: none;

@@ -37,7 +37,6 @@
 		"help/courses": true,
 		"hosting": false,
 		"hosting/non-atomic-support": false,
-		"hosting/sftp-phpmyadmin": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,

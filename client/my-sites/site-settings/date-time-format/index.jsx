@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -10,7 +11,6 @@ import { capitalize, includes } from 'lodash';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import { withLocalizedMoment } from 'components/localized-moment';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
@@ -166,4 +166,4 @@ export class DateTimeFormat extends Component {
 	}
 }
 
-export default localize( withLocalizedMoment( DateTimeFormat ) );
+export default localize( DateTimeFormat );

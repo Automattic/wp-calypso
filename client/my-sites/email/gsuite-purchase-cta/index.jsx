@@ -66,7 +66,6 @@ export const GSuitePurchaseCta = ( {
 			noticeStatus="is-info"
 		>
 			<QueryProductsList />
-
 			<CompactCard>
 				<header>
 					<h3 className="gsuite-purchase-cta__product-logo">
@@ -75,7 +74,6 @@ export const GSuitePurchaseCta = ( {
 					</h3>
 				</header>
 			</CompactCard>
-
 			<CompactCard className="gsuite-purchase-cta__header">
 				<div className="gsuite-purchase-cta__header-description">
 					<h2 className="gsuite-purchase-cta__header-description-title">
@@ -88,10 +86,8 @@ export const GSuitePurchaseCta = ( {
 								'storage, docs, calendars, and more integrated with your site.'
 						) }
 					</p>
-
 					<div>
 						<GSuitePrice cost={ gsuiteBasicCost } currencyCode={ currencyCode } showMonthlyPrice />
-
 						{ upgradeAvailable && (
 							<Button
 								className="gsuite-purchase-cta__get-gsuite-button"
@@ -110,10 +106,9 @@ export const GSuitePurchaseCta = ( {
 					<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 				</div>
 			</CompactCard>
-
 			<CompactCard className="gsuite-purchase-cta__info">
 				<GSuiteFeatures domainName={ domainName } productSlug={ 'gapps' } />
-				<GSuiteLearnMore onLearnMoreClick={ handleLearnMoreClick } />
+				<GSuiteLearnMore onClick={ handleLearnMoreClick } />
 			</CompactCard>
 		</EmailVerificationGate>
 	);

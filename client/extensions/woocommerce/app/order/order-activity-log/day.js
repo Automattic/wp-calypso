@@ -9,7 +9,6 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 class OrderEventsByDay extends Component {
 	static propTypes = {
@@ -54,4 +53,4 @@ class OrderEventsByDay extends Component {
 	}
 }
 
-export default localize( withLocalizedMoment( OrderEventsByDay ) );
+export default localize( OrderEventsByDay );

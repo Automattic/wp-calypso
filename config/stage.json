@@ -41,7 +41,6 @@
 		"help/courses": true,
 		"hosting": false,
 		"hosting/non-atomic-support": false,
-		"hosting/sftp-phpmyadmin": false,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,

@@ -11,12 +11,7 @@ import styled from '@emotion/styled';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
-import { useLineItems } from '../public-api';
-import {
-	WPOrderReviewLineItems,
-	WPOrderReviewTotal,
-	WPOrderReviewSection,
-} from './wp-order-review-line-items';
+import { useLineItems, renderDisplayValueMarkdown, OrderReviewLineItems, OrderReviewTotal, OrderReviewSection } from '../public-api';
 
 export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();
@@ -24,19 +19,15 @@ export default function WPCheckoutOrderReview( { className } ) {
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-			<WPOrderReviewSection>
-				<WPOrderReviewLineItems
-					items={ items }
-					hasDeleteButtons={ true }
-					removeProduct={ removeProductFromCart }
-				/>
-			</WPOrderReviewSection>
+			<OrderReviewSection>
+				<OrderReviewLineItems items={ items } />
+			</OrderReviewSection>
 
 			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
 
-			<WPOrderReviewSection>
-				<WPOrderReviewTotal total={ total } hasDeleteButtons={ true } />
-			</WPOrderReviewSection>
+			<OrderReviewSection>
+				<OrderReviewTotal total={ total } />
+			</OrderReviewSection>
 
 			<WPTermsAndConditions />
 		</div>
@@ -49,13 +40,27 @@ WPCheckoutOrderReview.propTypes = {
 	className: PropTypes.string,
 };
 
-function removeProductFromCart( id ) {
-	// TODO: Replace with code to remove product and also show notification saying the product has bene removed.
-	alert( id );
-}
-
 const CouponField = styled( Coupon )`
-	margin: 24px 30px 24px 0;
+	margin: 24px 0;
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
 `;
+
+function LineItem( { item, className } ) {
+	return (
+		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
+			<span>•</span>
+			<span>{ item.label }</span>
+			<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
+		</div>
+	);
+}
+
+LineItem.propTypes = {
+	item: PropTypes.shape( {
+		label: PropTypes.string,
+		amount: PropTypes.shape( {
+			displayValue: PropTypes.string,
+		} ),
+	} ),
+};

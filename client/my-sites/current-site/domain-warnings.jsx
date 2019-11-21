@@ -15,7 +15,6 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const ruleWhiteList = [
 	'unverifiedDomainsCanManage',
@@ -31,13 +30,7 @@ const ruleWhiteList = [
 	'pendingConsent',
 ];
 
-const CurrentSiteDomainWarnings = ( {
-	domains,
-	isAtomic,
-	isJetpack,
-	selectedSite,
-	siteIsUnlaunched,
-} ) => {
+const CurrentSiteDomainWarnings = ( { domains, isAtomic, isJetpack, selectedSite } ) => {
 	if ( ! selectedSite || ( isJetpack && ! isAtomic ) ) {
 		// Simple and Atomic sites. Not Jetpack sites.
 		return null;
@@ -52,7 +45,6 @@ const CurrentSiteDomainWarnings = ( {
 				selectedSite={ selectedSite }
 				domains={ domains }
 				ruleWhiteList={ ruleWhiteList }
-				siteIsUnlaunched={ siteIsUnlaunched }
 			/>
 		</div>
 	);
@@ -72,6 +64,5 @@ export default connect( state => {
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
-		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
 	};
 } )( CurrentSiteDomainWarnings );

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +17,6 @@ import EditorStatusLabelPlaceholder from './placeholder';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -140,4 +140,4 @@ export default connect( state => {
 	const isNew = isEditorNewPost( state );
 
 	return { isNew, post };
-} )( localize( withLocalizedMoment( EditorStatusLabel ) ) );
+} )( localize( EditorStatusLabel ) );

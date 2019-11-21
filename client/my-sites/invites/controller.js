@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  */
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
-import { hideSidebar } from 'state/ui/actions';
+import { setSection } from 'state/ui/actions';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
@@ -46,7 +46,7 @@ export function acceptInvite( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
 
-	context.store.dispatch( hideSidebar() );
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {

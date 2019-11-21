@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { BlockInspector } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';
 
@@ -13,11 +13,7 @@ import Sidebar from '../sidebar';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-interface Props {
-	isActive: boolean;
-}
-
-const SettingsSidebar: FunctionComponent< Props > = ( { isActive } ) => {
+export default function SettingsSidebar( { isActive } ) {
 	return (
 		<Sidebar
 			label={ NO__( 'Site block settings' ) }
@@ -31,6 +27,4 @@ const SettingsSidebar: FunctionComponent< Props > = ( { isActive } ) => {
 			</Panel>
 		</Sidebar>
 	);
-};
-
-export default SettingsSidebar;
+}

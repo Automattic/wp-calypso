@@ -94,7 +94,7 @@ export function PaypalLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Paypal' ) }</span>
-			<PaypalLogo className="paypal__logo payment-logos" />
+			<PaypalLogo />
 		</React.Fragment>
 	);
 }
@@ -158,7 +158,6 @@ function PaypalLogo( { className } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
-			focusable="false"
 		>
 			<g clipPath="url(#clip0)">
 				<path

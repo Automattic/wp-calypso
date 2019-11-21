@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,7 +46,7 @@ const recordMakePrimaryClick = domain =>
 			domain.name
 		),
 		recordTracksEvent( 'calypso_domain_management_edit_make_primary_click', {
-			section: domain.type,
+			section: snakeCase( getDomainTypeText( domain ) ),
 		} )
 	);
 

@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.15.1
+Stable tag: 0.14
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,15 +41,6 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
-
-= 0.15.1 =
-
-* Always open the layout selector if the `?new-homepage` query argument exists.
-
-= 0.15 =
-
-* Add ability to change page layout for existing pages.
-* Expose Homepage layouts from other themes in page layout picker.
 
 = 0.14 =
 

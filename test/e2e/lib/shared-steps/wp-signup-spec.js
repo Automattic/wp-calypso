@@ -52,7 +52,9 @@ export const canSeeTheOnboardingChecklist = () => {
 
 		const checklistPage = await ChecklistPage.Expect( this.driver );
 		const header = await checklistPage.headerExists();
+		const subheader = await checklistPage.subheaderExists();
 
-		return assert( header, 'The checklist header does not exist.' );
+		assert( header, 'The checklist header does not exist.' );
+		return assert( subheader, 'The checklist subheader does not exist.' );
 	} );
 };

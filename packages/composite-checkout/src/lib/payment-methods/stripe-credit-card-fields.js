@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
-import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 
 /**
  * Internal dependencies
@@ -257,45 +256,37 @@ function StripeCreditCardFields() {
 					</StripeFieldWrapper>
 				</Label>
 				<FieldRow gap="4%" columnWidths="48% 48%">
-					<LeftColumn>
+					<Label>
+						<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+						<StripeFieldWrapper hasError={ cardExpiryElementData }>
+							<CardExpiryElement
+								style={ cardNumberStyle }
+								onChange={ input => {
+									handleStripeFieldChange( input, setCardExpiryElementData );
+								} }
+							/>
+						</StripeFieldWrapper>
+						{ cardExpiryElementData && (
+							<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
+						) }
+					</Label>
+					<GridRow gap="4%" columnWidths="67% 29%">
 						<Label>
-							<LabelText>{ localize( 'Expiry date' ) }</LabelText>
-							<StripeFieldWrapper hasError={ cardExpiryElementData }>
-								<CardExpiryElement
+							<LabelText>{ localize( 'Security code' ) }</LabelText>
+							<StripeFieldWrapper hasError={ cardCvcElementData }>
+								<CardCvcElement
 									style={ cardNumberStyle }
 									onChange={ input => {
-										handleStripeFieldChange( input, setCardExpiryElementData );
+										handleStripeFieldChange( input, setCardCvcElementData );
 									} }
 								/>
 							</StripeFieldWrapper>
-							{ cardExpiryElementData && (
-								<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
-							) }
-						</Label>
-					</LeftColumn>
-					<RightColumn>
-						<Label>
-							<LabelText>{ localize( 'Security code' ) }</LabelText>
-							<GridRow gap="4%" columnWidths="67% 29%">
-								<LeftColumn>
-									<StripeFieldWrapper hasError={ cardCvcElementData }>
-										<CardCvcElement
-											style={ cardNumberStyle }
-											onChange={ input => {
-												handleStripeFieldChange( input, setCardCvcElementData );
-											} }
-										/>
-									</StripeFieldWrapper>
-								</LeftColumn>
-								<RightColumn>
-									<CVVImage />
-								</RightColumn>
-							</GridRow>
 							{ cardCvcElementData && (
 								<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
 							) }
 						</Label>
-					</RightColumn>
+						<CVVImage />
+					</GridRow>
 				</FieldRow>
 
 				<CreditCardField
@@ -352,6 +343,7 @@ const FieldRow = styled( GridRow )`
 `;
 
 const CVVImage = styled( CVV )`
+	margin-top: 21px;
 	display: block;
 	width: 100%;
 `;
@@ -386,11 +378,11 @@ const StripeFieldWrapper = styled.span`
 	}
 
 	.StripeElement--focus {
-		outline: ${props => props.theme.colors.outline} solid 2px;
+		outline: ${props => props.theme.colors.outline} auto 5px;
 	}
 
 	.StripeElement--focus.StripeElement--invalid {
-		outline: ${props => props.theme.colors.error} solid 2px;
+		outline: ${props => props.theme.colors.error} auto 5px;
 	}
 `;
 
@@ -499,6 +491,8 @@ function CVV( { className } ) {
 	return (
 		<svg
 			className={ className }
+			width="68"
+			height="41"
 			viewBox="0 0 68 41"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
@@ -529,7 +523,6 @@ function LockIcon( { className } ) {
 			height="24"
 			viewBox="0 0 24 24"
 			aria-hidden="true"
-			focusable="false"
 		>
 			<g fill="none">
 				<path d="M0 0h24v24H0V0z" />
@@ -605,6 +598,7 @@ function StripePayButton() {
 				} )
 			}
 			buttonState="primary"
+			buttonType="apple-pay"
 			fullWidth
 		>
 			{ buttonString }

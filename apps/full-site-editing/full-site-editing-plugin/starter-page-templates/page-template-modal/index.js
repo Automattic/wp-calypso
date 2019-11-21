@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, partition, reject, sortBy } from 'lodash';
+import { isEmpty, reduce, get, keyBy, mapValues, partition } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -25,8 +25,6 @@ import ensureAssets from './utils/ensure-assets';
 import SidebarTemplatesPlugin from './components/sidebar-modal-opener';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
-
 // Load config passed from backend.
 const {
 	templates = [],
@@ -35,8 +33,6 @@ const {
 	tracksUserData,
 	siteInformation = {},
 	screenAction,
-	theme,
-	isFrontPage,
 } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
@@ -55,7 +51,7 @@ class PageTemplateModal extends Component {
 		this.state.isOpen = hasTemplates;
 		if ( hasTemplates ) {
 			// Select the first template automatically.
-			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
+			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
 			// Extract titles for faster lookup.
 			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
 		}
@@ -82,41 +78,14 @@ class PageTemplateModal extends Component {
 		this.setState( { blocksByTemplateSlug } );
 	}
 
-	getDefaultSelectedTemplate = props => {
-		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
-		let previouslyChosenTemplate = props._starter_page_template;
-
-		// Usally the "new page" case.
-		if ( ! isFrontPage && ! previouslyChosenTemplate ) {
-			return blankTemplate;
-		}
-
-		// Normalize "home" slug into the current theme.
-		if ( previouslyChosenTemplate === 'home' ) {
-			previouslyChosenTemplate = theme;
-		}
-
-		const slug = previouslyChosenTemplate || theme;
-
-		if ( find( props.templates, { slug } ) ) {
-			return slug;
-		} else if ( find( props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } ) ) {
-			return DEFAULT_HOMEPAGE_TEMPLATE;
-		}
-		return blankTemplate;
-	};
-
 	setTemplate = slug => {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
 
-		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
-
 		// Load content.
 		const blocks = this.getBlocksByTemplateSlug( slug );
-		// Only overwrite the page title if the template is not one of the Homepage Layouts
-		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
+		const title = this.getTitleByTemplateSlug( slug );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
@@ -191,54 +160,19 @@ class PageTemplateModal extends Component {
 		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
 	}
 
-	getTemplateGroups = () => {
-		const [ homepageTemplates, defaultTemplates ] = partition( this.props.templates, {
-			category: 'home',
-		} );
-
-		const currentThemeTemplate =
-			find( this.props.templates, { slug: theme } ) ||
-			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
-
-		if ( ! isFrontPage || ! currentThemeTemplate ) {
-			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
-		}
-
-		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
-
-		const sortedHomepageTemplates = [
-			currentThemeTemplate,
-			...sortBy( otherHomepageTemplates, 'title' ),
-		];
-
-		return { homepageTemplates: sortedHomepageTemplates, defaultTemplates };
-	};
-
-	renderTemplatesList = ( templatesList, legendLabel ) => (
-		<fieldset className="page-template-modal__list">
-			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
-			<TemplateSelectorControl
-				label={ __( 'Layout', 'full-site-editing' ) }
-				templates={ templatesList }
-				blocksByTemplates={ this.state.blocksByTemplateSlug }
-				onTemplateSelect={ this.previewTemplate }
-				useDynamicPreview={ false }
-				siteInformation={ siteInformation }
-				selectedTemplate={ this.state.previewedTemplate }
-				handleTemplateConfirmation={ this.handleConfirmation }
-			/>
-		</fieldset>
-	);
-
 	render() {
-		const { previewedTemplate, isOpen, isLoading } = this.state;
-		const { isPromptedFromSidebar } = this.props;
+		/* eslint-disable no-shadow */
+		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
+		const { templates, isPromptedFromSidebar } = this.props;
+		/* eslint-enable no-shadow */
 
 		if ( ! isOpen ) {
 			return null;
 		}
 
-		const { homepageTemplates, defaultTemplates } = this.getTemplateGroups();
+		const [ homepage_templates, default_templates ] = partition( templates, {
+			category: 'home',
+		} );
 
 		return (
 			<Modal
@@ -275,29 +209,36 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ isFrontPage ? (
-									<>
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Other Page Layouts', 'full-site-editing' )
-										) }
-									</>
-								) : (
-									<>
-										{ this.renderTemplatesList(
-											defaultTemplates,
-											__( 'Recommended Layouts', 'full-site-editing' )
-										) }
-										{ this.renderTemplatesList(
-											homepageTemplates,
-											__( 'Homepage Layouts', 'full-site-editing' )
-										) }
-									</>
-								) }
+								<fieldset className="page-template-modal__list">
+									<legend className="page-template-modal__form-title">
+										{ __( 'Choose a layout…', 'full-site-editing' ) }
+									</legend>
+									<TemplateSelectorControl
+										label={ __( 'Layout', 'full-site-editing' ) }
+										templates={ default_templates }
+										blocksByTemplates={ blocksByTemplateSlug }
+										onTemplateSelect={ this.previewTemplate }
+										useDynamicPreview={ false }
+										siteInformation={ siteInformation }
+										selectedTemplate={ previewedTemplate }
+										handleTemplateConfirmation={ this.handleConfirmation }
+									/>
+								</fieldset>
+								<fieldset className="page-template-modal__list">
+									<legend className="page-template-modal__form-title">
+										{ __( 'Homepage layouts', 'full-site-editing' ) }
+									</legend>
+									<TemplateSelectorControl
+										label={ __( 'Layout', 'full-site-editing' ) }
+										templates={ homepage_templates }
+										blocksByTemplates={ blocksByTemplateSlug }
+										onTemplateSelect={ this.previewTemplate }
+										useDynamicPreview={ false }
+										siteInformation={ siteInformation }
+										selectedTemplate={ previewedTemplate }
+										handleTemplateConfirmation={ this.handleConfirmation }
+									/>
+								</fieldset>
 							</form>
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
@@ -330,17 +271,12 @@ class PageTemplateModal extends Component {
 }
 
 export const PageTemplatesPlugin = compose(
-	withSelect( select => {
-		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
-		const { _starter_page_template } = getMeta();
-		return {
-			getMeta,
-			_starter_page_template,
-			postContentBlock: select( 'core/editor' )
-				.getBlocks()
-				.find( block => block.name === 'a8c/post-content' ),
-		};
-	} ),
+	withSelect( select => ( {
+		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+		postContentBlock: select( 'core/editor' )
+			.getBlocks()
+			.find( block => block.name === 'a8c/post-content' ),
+	} ) ),
 	withDispatch( ( dispatch, ownProps ) => {
 		// Disable tips right away as the collide with the modal window.
 		dispatch( 'core/nux' ).disableTips();
@@ -359,9 +295,7 @@ export const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				if ( title ) {
-					editorDispatcher.editPost( { title } );
-				}
+				editorDispatcher.editPost( { title } );
 
 				// Replace blocks.
 				const postContentBlock = ownProps.postContentBlock;

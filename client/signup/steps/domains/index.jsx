@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -122,13 +121,19 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
+		this.showExampleSuggestions = this.props.showExampleSuggestions;
 
-		if (
-			false !== this.props.shouldShowDomainTestCopy &&
-			config.isEnabled( 'domain-step-copy-update' ) &&
-			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-		) {
-			this.showTestCopy = true;
+		if ( 'undefined' === typeof this.showExampleSuggestions ) {
+			if (
+				config.isEnabled( 'domain-step-copy-update' ) &&
+				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
+			) {
+				this.showExampleSuggestions = false;
+				this.showTestCopy = true;
+			} else {
+				this.showExampleSuggestions = true;
+				this.showTestCopy = false;
+			}
 		}
 	}
 
@@ -208,32 +213,24 @@ class DomainsStep extends React.Component {
 
 	handleSkip = () => {
 		const domainItem = undefined;
-
 		this.props.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
 		this.props.goToNextStep();
 	};
 
-	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const suggestion = this.props.step.suggestion;
-
-		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
-
-		const siteUrl =
-			suggestion &&
-			( isPurchasingItem
+	submitWithDomain = googleAppsCartItem => {
+		const suggestion = this.props.step.suggestion,
+			isPurchasingItem = Boolean( suggestion.product_slug ),
+			siteUrl = isPurchasingItem
 				? suggestion.domain_name
-				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+				: suggestion.domain_name.replace( '.wordpress.com', '' ),
+			domainItem = isPurchasingItem
+				? domainRegistration( {
+						domain: suggestion.domain_name,
+						productSlug: suggestion.product_slug,
+				  } )
+				: undefined;
 
-		const domainItem = isPurchasingItem
-			? domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug,
-			  } )
-			: undefined;
-
-		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
-
-		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
+		this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -247,14 +244,14 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem )
+			{ domainItem }
 		);
 
 		this.props.setDesignType( this.getDesignType() );
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
-		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
+		this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
@@ -398,11 +395,6 @@ class DomainsStep extends React.Component {
 			}
 		}
 
-		let showExampleSuggestions = this.props.showExampleSuggestions;
-		if ( 'undefined' === typeof showExampleSuggestions ) {
-			showExampleSuggestions = true;
-		}
-
 		let includeWordPressDotCom = this.props.includeWordPressDotCom;
 		if ( 'undefined' === typeof includeWordPressDotCom ) {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
@@ -428,7 +420,7 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions={ showExampleSuggestions }
+				showExampleSuggestions={ this.showExampleSuggestions }
 				showTestCopy={ this.showTestCopy }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
@@ -438,7 +430,6 @@ class DomainsStep extends React.Component {
 				showSkipButton={ this.props.showSkipButton }
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
-				hideFreePlan={ this.submitWithDomain }
 			/>
 		);
 	};
@@ -571,12 +562,8 @@ class DomainsStep extends React.Component {
 			);
 		}
 
-		const stepContentClassName = classNames( 'domains__step-content', {
-			'domains__step-content-domain-step-test': this.showTestCopy,
-		} );
-
 		return (
-			<div key={ this.props.step + this.props.stepSectionName } className={ stepContentClassName }>
+			<div key={ this.props.step + this.props.stepSectionName } className="domains__step-content">
 				{ content }
 			</div>
 		);
@@ -628,7 +615,7 @@ class DomainsStep extends React.Component {
 				allowBackFirstStep={ !! selectedSite }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
-				isTopButtons={ showSkip }
+				isLargeSkipLayout={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
