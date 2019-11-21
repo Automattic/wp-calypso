@@ -181,7 +181,7 @@ export class List extends React.Component {
 
 				{ this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
