@@ -264,17 +264,22 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 1, 'days' ),
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 1, 'days' ),
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+				moment,
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
@@ -282,17 +287,17 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain( 'Please verify ownership of domains' );
-			assert(
+			expect( textContent ).toContain( 'Please verify ownership of domains' );
+			expect(
 				links.some( link =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
-			);
-			assert(
+			).toBeTruthy();
+			expect(
 				links.some( link =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
-			);
+			).toBeTruthy();
 		} );
 
 		test( 'should show a verification nudge with strong message for any unverified domains older than 2 days', () => {
@@ -304,17 +309,22 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 3, 'days' ),
+						registrationDate: moment()
+							.subtract( 3, 'days' )
+							.toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 3, 'days' ),
+						registrationDate: moment()
+							.subtract( 3, 'days' )
+							.toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+				moment,
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
@@ -322,19 +332,19 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain(
+			expect( textContent ).toContain(
 				'Your domains may be suspended because your email address is not verified.'
 			);
-			assert(
+			expect(
 				links.some( link =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
-			);
-			assert(
+			).toBeTruthy();
+			expect(
 				links.some( link =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
-			);
+			).toBeTruthy();
 		} );
 
 		test( "should show a verification nudge with strong message for users who can't manage the domain", () => {
@@ -346,24 +356,29 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 1, 'days' ),
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationMoment: moment().subtract( 1, 'days' ),
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+				moment,
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent;
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
 
-			expect( textContent ).to.contain(
+			expect( textContent ).toContain(
 				'Some domains on this site are about to be suspended because their owner has not'
 			);
 		} );
