@@ -60,7 +60,7 @@ export default function CheckoutStep( {
 
 CheckoutStep.propTypes = {
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	finalStep: PropTypes.bool,
 	stepSummary: PropTypes.node,
@@ -88,7 +88,7 @@ function CheckoutStepHeader( {
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
-				{ stepNumber }
+				{ stepNumber || '•' }
 			</Stepper>
 			<StepTitle
 				className="checkout-step__title"
@@ -113,7 +113,7 @@ function CheckoutStepHeader( {
 
 CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
