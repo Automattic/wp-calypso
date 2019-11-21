@@ -9,5 +9,22 @@
 			"*": [ "*", "client/*", "server/*" ]
 		}
 	},
-	"include": [ "client", "server" ]
+	"include": [ "client", "server" ],
+	"exclude": [
+		"**/build-module/*",
+		"**/build-style/*",
+		"**/build/*",
+		"**/dist/*",
+		"**/node_modules/*",
+		"apps",
+		"build",
+		"cached-results.json",
+		"packages",
+		"public",
+		"server/bundler/assets*.json",
+		"server/devdocs/components-usage-stats.json",
+		"server/devdocs/proptypes-index.json",
+		"server/devdocs/search-index.js",
+		"stats.json"
+	]
 }
