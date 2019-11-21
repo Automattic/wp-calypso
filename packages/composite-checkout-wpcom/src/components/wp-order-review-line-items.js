@@ -10,7 +10,13 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+<<<<<<< HEAD:packages/composite-checkout-wpcom/src/components/wp-order-review-line-items.js
 import joinClasses from './join-classes';
+=======
+import joinClasses from '../lib/join-classes';
+import { renderDisplayValueMarkdown, useHasDomainsInCart } from '../public-api';
+import { useLocalize, sprintf } from '../lib/localize';
+>>>>>>> Add sprintf:packages/composite-checkout/src/wpcom/wp-order-review-line-items.js
 import Button from './button';
 import RadioButton from './radio-button';
 import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
@@ -152,7 +158,7 @@ function DeleteIcon( { uniqueID, product } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby={ uniqueID }
 		>
-			<title id={ uniqueID }>{ translate( 'Remove ' + product + ' from cart' ) }</title>
+			<title id={ uniqueID }>{ sprintf( translate( 'Remove %s from cart' ), product ) }</title>
 			<mask
 				id="trashIcon"
 				mask-type="alpha"
