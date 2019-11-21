@@ -431,7 +431,9 @@ export class List extends React.Component {
 		}
 
 		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.filter( domain => domain.type !== type.WPCOM )
+			? this.props.domains.filter(
+					domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+			  )
 			: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
