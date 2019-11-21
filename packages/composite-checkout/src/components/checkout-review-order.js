@@ -30,8 +30,12 @@ export default function CheckoutReviewOrder( { className } ) {
 	);
 }
 
+export function CheckoutReviewOrderTitle() {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+}
+
 CheckoutReviewOrder.propTypes = {
-	isActive: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 };
 

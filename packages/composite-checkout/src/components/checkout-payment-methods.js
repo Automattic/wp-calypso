@@ -83,6 +83,13 @@ CheckoutPaymentMethods.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
+export function CheckoutPaymentMethodsTitle() {
+	const localize = useLocalize();
+	const currentStep = useActiveStep();
+	const isActive = currentStep.id === 'payment-method';
+	return isActive ? localize( 'Pick a payment method' ) : localize( 'Payment method' );
+}
+
 function PaymentMethod( {
 	id,
 	LabelComponent,
