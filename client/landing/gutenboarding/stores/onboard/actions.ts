@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { ActionType, DomainName, SiteVertical, Vertical } from './types';
+import { ActionType, SiteVertical, Vertical } from './types';
+import { DomainName } from '../domain-suggestions/types';
 
 export const setDomain = ( domain: DomainName ) => ( {
 	type: ActionType.SET_DOMAIN as const,
