@@ -54,7 +54,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 							setIsModalVisible( true );
 						} }
 					>
-						<DeleteIcon uniqueID={ deleteButtonId } />
+						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
 					</DeleteButton>
 
 					<CheckoutModal
@@ -102,14 +102,6 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
-
-	:first-of-type {
-		padding-top: 10px;
-	}
-
-	:first-of-type button {
-		top: -4px;
-	}
 `;
 
 const ProductTitle = styled.span`
@@ -148,8 +140,8 @@ const TermOptionsItem = styled.li`
 	}
 `;
 
-function DeleteIcon( { uniqueID } ) {
-	const translate = useTranslate();
+function DeleteIcon( { uniqueID, product } ) {
+	const translate = useLocalize();
 
 	return (
 		<svg
@@ -160,7 +152,7 @@ function DeleteIcon( { uniqueID } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby={ uniqueID }
 		>
-			<title id={ uniqueID }>{ translate( 'Delete' ) }</title>
+			<title id={ uniqueID }>{ translate( 'Remove ' + product + ' from cart' ) }</title>
 			<mask
 				id="trashIcon"
 				mask-type="alpha"
@@ -200,17 +192,18 @@ export function WPOrderReviewLineItems( {
 	removeProduct,
 } ) {
 	return (
-		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( item => (
-				<LineItemUI
-					isSummaryVisible={ isSummaryVisible }
-					key={ item.id }
-					item={ item }
-					hasDeleteButtons={ hasDeleteButtons }
-					removeProduct={ removeProduct }
-				/>
+				<WPOrderReviewListItems key={ item.id }>
+					<LineItemUI
+						isSummaryVisible={ isSummaryVisible }
+						item={ item }
+						hasDeleteButtons={ hasDeleteButtons }
+						removeProduct={ removeProduct }
+					/>
+				</WPOrderReviewListItems>
 			) ) }
-		</div>
+		</WPOrderReviewList>
 	);
 }
 
@@ -228,6 +221,18 @@ WPOrderReviewLineItems.propTypes = {
 		} )
 	),
 };
+
+const WPOrderReviewList = styled.ul`
+	margin: -10px 0 0;
+	padding: 0;
+`;
+
+const WPOrderReviewListItems = styled.li`
+	margin: 0;
+	padding: 0;
+	display: block;
+	list-style: none;
+`;
 
 function PlanTermOptions() {
 	const translate = useTranslate();
