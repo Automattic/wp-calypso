@@ -1177,10 +1177,12 @@ class RegisterDomainStep extends React.Component {
 		const suggestions = this.getSuggestionsFromProps();
 
 		// the search returned no results
-		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
-			if ( this.props.showExampleSuggestions ) {
-				return this.renderExampleSuggestions();
-			}
+		if (
+			suggestions.length === 0 &&
+			! this.state.loadingResults &&
+			this.props.showExampleSuggestions
+		) {
+			return this.renderExampleSuggestions();
 		}
 
 		const showTldFilterBar =
