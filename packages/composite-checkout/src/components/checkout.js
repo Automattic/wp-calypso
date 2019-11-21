@@ -115,7 +115,10 @@ export default function Checkout( { steps, className } ) {
 							}
 							goToNextStep={ () => changeStep( nextStep.stepNumber ) }
 							onEdit={
-								step.isEditableCallback && step.isEditableCallback()
+								step.id !== activeStep.id &&
+								step.hasStepNumber &&
+								step.isEditableCallback &&
+								step.isEditableCallback( { paymentData } )
 									? () => changeStep( step.stepNumber )
 									: null
 							}
@@ -171,7 +174,7 @@ function CheckoutStepContainer( {
 				isComplete={ isComplete }
 				stepNumber={ stepNumber }
 				title={ titleContent || '' }
-				onEdit={ ! isActive && isComplete ? onEdit : null }
+				onEdit={ onEdit }
 				editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel() }
 				stepContent={
 					<React.Fragment>

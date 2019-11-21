@@ -79,7 +79,7 @@ function CheckoutStepHeader( {
 	editButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
-	const shouldShowEditButton = onEdit && isComplete && ! isActive;
+	const shouldShowEditButton = !! onEdit;
 
 	return (
 		<StepHeader
