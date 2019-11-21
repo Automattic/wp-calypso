@@ -38,9 +38,7 @@ class FreeDomainExplainer extends React.Component {
 							onClick={ this.handleClick }
 							href
 						>
-							Review our plans to get started{ ' ' }
-							<span className="free-domain-explainer__chevron-right">&rsaquo;</span>
-							<span className="free-domain-explainer__chevron-right">&rsaquo;</span>
+							Review our plans to get started &raquo;
 						</Button>
 					</p>
 				</header>
