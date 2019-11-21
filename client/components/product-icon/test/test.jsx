@@ -1,26 +1,13 @@
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
-
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import ProductIcon from '../index';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -29,6 +16,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -39,19 +28,14 @@ import {
 } from 'lib/plans/constants';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 
-/**
- * Internal dependencies
- */
-import ProductIcon from '../index';
-
 describe( 'ProductIcon basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <ProductIcon product={ PLAN_FREE } /> );
-		assert.lengthOf( comp.find( '.product-icon' ), 1 );
+		expect( comp.find( '.product-icon' ) ).toHaveLength( 1 );
 	} );
 } );
 
-describe( 'ProductIcon should have a class name corresponding to appropriate plan or product', () => {
+describe( 'ProductIcon should have a class name corresponding to appropriate plan', () => {
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
@@ -60,7 +44,7 @@ describe( 'ProductIcon should have a class name corresponding to appropriate pla
 	].forEach( product => {
 		test( 'Personal', () => {
 			const comp = shallow( <ProductIcon product={ product } /> );
-			assert.lengthOf( comp.find( '.product-icon__personal' ), 1 );
+			expect( comp.find( '.product-icon__personal' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -72,7 +56,7 @@ describe( 'ProductIcon should have a class name corresponding to appropriate pla
 	].forEach( product => {
 		test( 'Premium', () => {
 			const comp = shallow( <ProductIcon product={ product } /> );
-			assert.lengthOf( comp.find( '.product-icon__premium' ), 1 );
+			expect( comp.find( '.product-icon__premium' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -84,21 +68,30 @@ describe( 'ProductIcon should have a class name corresponding to appropriate pla
 	].forEach( product => {
 		test( 'Business', () => {
 			const comp = shallow( <ProductIcon product={ product } /> );
-			assert.lengthOf( comp.find( '.product-icon__business' ), 1 );
+			expect( comp.find( '.product-icon__business' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( product => {
+		test( 'Ecommerce', () => {
+			const comp = shallow( <ProductIcon product={ product } /> );
+			expect( comp.find( '.product-icon__ecommerce' ) ).toHaveLength( 1 );
 		} );
 	} );
 
 	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( product => {
 		test( 'Free', () => {
 			const comp = shallow( <ProductIcon product={ product } /> );
-			assert.lengthOf( comp.find( '.product-icon__free' ), 1 );
+			expect( comp.find( '.product-icon__free' ) ).toHaveLength( 1 );
 		} );
 	} );
+} );
 
+describe( 'ProductIcon should have a class name corresponding to appropriate product', () => {
 	JETPACK_BACKUP_PRODUCTS.forEach( product => {
 		test( 'Jetpack Backup', () => {
 			const comp = shallow( <ProductIcon product={ product } /> );
-			assert.lengthOf( comp.find( '.product-icon__backup' ), 1 );
+			expect( comp.find( '.product-icon__backup' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

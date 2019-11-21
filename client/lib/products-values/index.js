@@ -6,7 +6,7 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PRODUCTS_LIST, JETPACK_BACKUP_PRODUCTS, PRODUCT_SHORT_NAMES } from './constants';
+import { JETPACK_PRODUCTS_LIST, JETPACK_BACKUP_PRODUCTS } from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -176,7 +176,7 @@ export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return isJetpackPlanSlug( product );
+	return isJetpackPlanSlug( product.product_slug );
 }
 
 export function isJetpackBusiness( product ) {
@@ -216,7 +216,7 @@ export function isJetpackBackup( product ) {
 }
 
 export function isJetpackProductSlug( productSlug ) {
-	return isJetpackBackupSlug( productSlug );
+	return includes( JETPACK_PRODUCTS_LIST, productSlug );
 }
 
 export function isJetpackProduct( product ) {
@@ -370,8 +370,8 @@ export function getDomain( product ) {
 	return product.meta;
 }
 
-export function getProductsKeys() {
-	return PRODUCTS_LIST;
+export function getProductsSlugs() {
+	return JETPACK_PRODUCTS_LIST;
 }
 
 export function getProductClass( productSlug ) {
@@ -380,10 +380,6 @@ export function getProductClass( productSlug ) {
 	}
 
 	return '';
-}
-
-export function getProductShortName( productSlug ) {
-	return PRODUCT_SHORT_NAMES?.[ productSlug ] ?? '';
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {

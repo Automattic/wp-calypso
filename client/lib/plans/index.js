@@ -30,7 +30,7 @@ export function getPlans() {
 	return PLANS_LIST;
 }
 
-export function getPlansKeys() {
+export function getPlansSlugs() {
 	return Object.keys( getPlans() );
 }
 

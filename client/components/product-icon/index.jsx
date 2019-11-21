@@ -14,14 +14,12 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-	getPlan,
-	getPlansKeys,
+	getPlansSlugs,
 	getPlanClass,
 } from 'lib/plans';
 import {
 	getProductClass,
-	getProductsKeys,
-	getProductShortName,
+	getProductsSlugs,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
 } from 'lib/products-values';
@@ -35,31 +33,30 @@ export default class ProductIcon extends Component {
 	getPlanIcon( iconName ) {
 		const { product, className } = this.props;
 
-		const plan = getPlan( product );
-		const planTitle = plan.getTitle();
 		const planClass = getPlanClass( product );
-		const isJetpack = isJetpackPlanSlug( product );
+		const plansPath = isJetpackPlanSlug( product ) ? 'jetpack' : 'wpcom';
 
+		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
-				src={ `/calypso/images/plans/${ isJetpack ? 'jetpack' : 'wpcom' }/plan-${ iconName }.svg` }
+				src={ `/calypso/images/plans/${ plansPath }/plan-${ iconName }.svg` }
 				className={ classNames(
 					'product-icon',
 					`product-icon__${ iconName }`,
 					planClass,
 					className
 				) }
-				alt={ planTitle }
 			/>
 		);
+		/* eslint-enable jsx-a11y/alt-text */
 	}
 
 	getProductIcon( iconName ) {
 		const { product, className } = this.props;
 
-		const productTitle = getProductShortName( product );
 		const productClass = getProductClass( product );
 
+		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
 				src={ `/calypso/images/products/jetpack/product-${ iconName }.svg` }
@@ -69,9 +66,9 @@ export default class ProductIcon extends Component {
 					productClass,
 					className
 				) }
-				alt={ productTitle }
 			/>
 		);
+		/* eslint-enable jsx-a11y/alt-text */
 	}
 
 	render() {
@@ -107,5 +104,5 @@ export default class ProductIcon extends Component {
 
 ProductIcon.propTypes = {
 	classNames: PropTypes.string,
-	product: PropTypes.oneOf( [ ...getPlansKeys(), ...getProductsKeys() ] ).isRequired,
+	product: PropTypes.oneOf( [ ...getPlansSlugs(), ...getProductsSlugs() ] ).isRequired,
 };

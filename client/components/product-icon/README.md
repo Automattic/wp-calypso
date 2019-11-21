@@ -8,6 +8,7 @@ We have the following different plans icons:
 - Personal
 - Premium
 - Business (Professional)
+- Ecommerce
 
 Jetpack plans also use these plans icons.
 
@@ -40,14 +41,21 @@ export default function MyComponent() {
 Plan constant from `lib/plans/constants` or product constant from `lib/products-values/constants`. Can be one of:
 
 - PLAN_FREE,
-- PLAN_PERSONAL,
-- PLAN_PREMIUM,
 - PLAN_BUSINESS,
+- PLAN_BUSINESS_2_YEARS,
+- PLAN_PREMIUM,
+- PLAN_PREMIUM_2_YEARS,
+- PLAN_PERSONAL,
+- PLAN_PERSONAL_2_YEARS,
+- PLAN_ECOMMERCE,
+- PLAN_ECOMMERCE_2_YEARS,
 - PLAN_JETPACK_FREE,
-- PLAN_JETPACK_BUSINESS,
-- PLAN_JETPACK_BUSINESS_MONTHLY,
+- PLAN_JETPACK_PERSONAL,
+- PLAN_JETPACK_PERSONAL_MONTHLY,
 - PLAN_JETPACK_PREMIUM,
 - PLAN_JETPACK_PREMIUM_MONTHLY,
+- PLAN_JETPACK_BUSINESS,
+- PLAN_JETPACK_BUSINESS_MONTHLY,
 - PRODUCT_JETPACK_BACKUP_DAILY,
 - PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 - PRODUCT_JETPACK_BACKUP_REALTIME,
