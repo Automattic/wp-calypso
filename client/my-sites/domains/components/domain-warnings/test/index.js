@@ -42,7 +42,7 @@ describe( 'index', () => {
 				translate: identity,
 				domain: {
 					name: 'example.com',
-					registrationDate: new Date(),
+					registrationDate: new Date().toISOString(),
 					type: domainTypes.REGISTERED,
 					currentUserCanManage: true,
 				},
@@ -64,7 +64,7 @@ describe( 'index', () => {
 				translate: identity,
 				domain: {
 					name: 'example.com',
-					registrationDate: new Date(),
+					registrationDate: new Date().toISOString(),
 					type: domainTypes.REGISTERED,
 					currentUserCanManage: true,
 				},
@@ -85,13 +85,13 @@ describe( 'index', () => {
 				domains: [
 					{
 						name: '1.com',
-						registrationDate: new Date(),
+						registrationDate: new Date().toISOString(),
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 					},
 					{
 						name: '2.com',
-						registrationDate: new Date(),
+						registrationDate: new Date().toISOString(),
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 					},
@@ -371,12 +371,15 @@ describe( 'index', () => {
 
 	describe( 'Mutations', () => {
 		test( 'should not mutate domain objects', () => {
+			const expiry = new Date( '2000-09-09' ).toISOString();
+			const registrationDate = new Date( '1999-09-09' ).toISOString();
+
 			const props = {
 				translate: identity,
 				domain: {
 					name: '1.com',
-					registrationDate: new Date( '1999-09-09' ),
-					expirationDate: new Date( '2000-09-09' ),
+					registrationDate,
+					expiry,
 				},
 				selectedSite: { domain: '1.com' },
 				moment,
@@ -385,10 +388,8 @@ describe( 'index', () => {
 			TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 			expect( props.domain.name ).toBe( '1.com' );
-			expect( props.domain.registrationDate.valueOf() ).toEqual(
-				new Date( '1999-09-09' ).valueOf()
-			);
-			expect( props.domain.expirationDate.valueOf() ).toEqual( new Date( '2000-09-09' ).valueOf() );
+			expect( props.domain.registrationDate ).toEqual( registrationDate );
+			expect( props.domain.expiry ).toEqual( expiry );
 		} );
 	} );
 

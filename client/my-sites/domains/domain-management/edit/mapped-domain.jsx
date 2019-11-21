@@ -41,8 +41,7 @@ export class MappedDomain extends React.Component {
 			);
 		}
 
-		const expirationMessage = ( domain.expirationDate &&
-			moment( domain.expirationDate ).format( 'LL' ) ) || (
+		const expirationMessage = ( domain.expiry && moment( domain.expiry ).format( 'LL' ) ) || (
 			<em>
 				{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }
 			</em>

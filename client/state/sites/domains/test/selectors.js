@@ -58,42 +58,30 @@ describe( 'selectors', () => {
 
 	describe( '#decorateSiteDomains()', () => {
 		test( 'should return decorated site domains with autoRenewalDate', () => {
-			const state = getStateInstance(),
-				domains = getDomainsBySiteId( state, firstSiteId );
+			const state = getStateInstance();
+			const domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainAutoRenewalDate = new Date( domains[ 0 ].autoRenewalDate );
-
-			expect( decoratedDomains[ 0 ].autoRenewalDate.valueOf() ).to.equal(
-				domainAutoRenewalDate.valueOf()
-			);
+			expect( decoratedDomains[ 0 ].autoRenewalDate ).to.equal( domains[ 0 ].autoRenewalDate );
 		} );
 
 		test( 'should return decorated site domains with registrationDate', () => {
-			const state = getStateInstance(),
-				domains = getDomainsBySiteId( state, firstSiteId );
+			const state = getStateInstance();
+			const domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainRegistrationDate = new Date( domains[ 0 ].registrationDate );
-
-			expect( decoratedDomains[ 0 ].registrationDate.valueOf() ).to.equal(
-				domainRegistrationDate.valueOf()
-			);
+			expect( decoratedDomains[ 0 ].registrationDate ).to.equal( domains[ 0 ].registrationDate );
 		} );
 
 		test( 'should return decorated site domains with expirationDate', () => {
-			const state = getStateInstance(),
-				domains = getDomainsBySiteId( state, firstSiteId );
+			const state = getStateInstance();
+			const domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainExpirationDate = new Date( domains[ 0 ].expiry );
-
-			expect( decoratedDomains[ 0 ].expirationDate.valueOf() ).to.equal(
-				domainExpirationDate.valueOf()
-			);
+			expect( decoratedDomains[ 0 ].expiry ).to.equal( domains[ 0 ].expiry );
 		} );
 
 		test( 'should memoize the return value on repeated calls', () => {

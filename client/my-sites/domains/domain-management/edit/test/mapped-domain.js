@@ -28,13 +28,13 @@ describe( 'mapped-domain', () => {
 			},
 			domain: {
 				name: 'neverexpires.com',
-				expirationDate: null,
+				expiry: null,
 			},
 			translate: identity,
 		};
 	} );
 
-	test( 'should render when props.domain.expirationDate is null', () => {
+	test( 'should render when props.domain.expiry is null', () => {
 		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		const out = renderer.getRenderOutput();

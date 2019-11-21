@@ -32,7 +32,7 @@ class SiteRedirect extends React.Component {
 
 		return (
 			<Property label={ translate( 'Redirect expires on' ) }>
-				{ moment( domain.expirationDate ).format( 'LL' ) }
+				{ moment( domain.expiry ).format( 'LL' ) }
 			</Property>
 		);
 	}

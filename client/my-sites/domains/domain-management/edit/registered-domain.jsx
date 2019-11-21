@@ -54,7 +54,7 @@ class RegisteredDomain extends React.Component {
 						'the date is not included within the translated string',
 				} ) }
 			>
-				{ moment( domain.expirationDate ).format( 'LL' ) }
+				{ moment( domain.expiry ).format( 'LL' ) }
 			</Property>
 		);
 	}
@@ -96,10 +96,10 @@ class RegisteredDomain extends React.Component {
 	}
 
 	getVerticalNav() {
-		const { expirationDate, expired, pendingTransfer } = this.props.domain;
+		const { expiry, expired, pendingTransfer } = this.props.domain;
 		const { moment } = this.props;
 		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expirationDate );
+		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
 
 		return (
 			<VerticalNav>

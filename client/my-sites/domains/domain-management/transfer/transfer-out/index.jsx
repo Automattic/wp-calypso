@@ -43,7 +43,7 @@ class Transfer extends React.Component {
 		const {
 			currentUserCanManage,
 			isPendingIcannVerification,
-			transferAwayEligibleAtDate,
+			transferAwayEligibleAt,
 		} = getSelectedDomain( this.props );
 		let section = null;
 
@@ -51,7 +51,7 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
-		} else if ( transferAwayEligibleAtDate && moment( transferAwayEligibleAtDate ).isAfter() ) {
+		} else if ( transferAwayEligibleAt && moment( transferAwayEligibleAt ).isAfter() ) {
 			section = TransferLock;
 		} else if ( 'uk' === topLevelOfTld ) {
 			section = SelectIpsTag;

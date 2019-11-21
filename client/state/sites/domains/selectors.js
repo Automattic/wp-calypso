@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, has } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,29 +78,5 @@ export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
  */
 export const getDecoratedSiteDomains = treeSelect(
 	( state, siteId ) => [ getDomainsBySiteId( state, siteId ) ],
-	( [ domains ] ) => {
-		if ( ! domains ) {
-			return null;
-		}
-
-		return domains.map( domain => {
-			let transferEndDate;
-
-			if ( domain.transferStartDate ) {
-				transferEndDate = new Date( domain.transferStartDate );
-				transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
-			}
-
-			return {
-				...domain,
-				autoRenewalDate: domain.autoRenewalDate ? new Date( domain.autoRenewalDate ) : null,
-				registrationDate: domain.registrationDate ? new Date( domain.registrationDate ) : null,
-				expirationDate: domain.expiry ? new Date( domain.expiry ) : null,
-				transferAwayEligibleAtDate: domain.transferAwayEligibleAt
-					? new Date( domain.transferAwayEligibleAt )
-					: null,
-				transferEndDate: domain.transferStartDate ? transferEndDate : null,
-			};
-		} );
-	}
+	( [ domains ] ) => domains || null
 );

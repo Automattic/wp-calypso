@@ -263,7 +263,7 @@ export class DomainWarnings extends React.PureComponent {
 			text = translate( '{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.', {
 				components: { strong: <strong /> },
 				args: {
-					timeSince: moment( expiredDomains[ 0 ].expirationDate ).fromNow(),
+					timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
 					domainName: expiredDomains[ 0 ].name,
 				},
 				context: 'Expired domain notice',
@@ -308,7 +308,7 @@ export class DomainWarnings extends React.PureComponent {
 				{
 					components: { strong: <strong /> },
 					args: {
-						timeSince: moment( expiredDomains[ 0 ].expirationDate ).fromNow(),
+						timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
 						domainName: expiredDomains[ 0 ].name,
 						owner: expiredDomains[ 0 ].owner,
 					},
@@ -358,7 +358,7 @@ export class DomainWarnings extends React.PureComponent {
 			text = translate( '{{strong}}%(domainName)s{{/strong}} is expiring %(timeUntil)s.', {
 				components: { strong: <strong /> },
 				args: {
-					timeUntil: moment( expiringDomains[ 0 ].expirationDate ).fromNow(),
+					timeUntil: moment( expiringDomains[ 0 ].expiry ).fromNow(),
 					domainName: expiringDomains[ 0 ].name,
 				},
 				context: 'Expiring soon domain notice',
@@ -403,7 +403,7 @@ export class DomainWarnings extends React.PureComponent {
 				{
 					components: { strong: <strong /> },
 					args: {
-						timeUntil: moment( expiringDomains[ 0 ].expirationDate ).fromNow(),
+						timeUntil: moment( expiringDomains[ 0 ].expiry ).fromNow(),
 						domainName: expiringDomains[ 0 ].name,
 						owner: expiringDomains[ 0 ].owner,
 					},

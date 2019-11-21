@@ -16,7 +16,7 @@ import { getSelectedDomain } from 'lib/domains';
 const TransferLock = props => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const { transferAwayEligibleAtDate } = getSelectedDomain( props );
+	const { transferAwayEligibleAt } = getSelectedDomain( props );
 
 	return (
 		<div>
@@ -28,7 +28,7 @@ const TransferLock = props => {
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
-							date: moment( transferAwayEligibleAtDate ).format( 'LL' ),
+							date: moment( transferAwayEligibleAt ).format( 'LL' ),
 						},
 						components: {
 							strong: <strong />,

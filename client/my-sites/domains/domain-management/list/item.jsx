@@ -124,7 +124,7 @@ class ListItem extends React.PureComponent {
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: moment( domain.expirationDate ).fromNow(),
+							timeSinceExpiry: moment( domain.expiry ).fromNow(),
 						},
 						context:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -133,15 +133,12 @@ class ListItem extends React.PureComponent {
 			);
 		}
 
-		if (
-			domain.expirationDate &&
-			moment( domain.expirationDate ) < this.props.moment().add( 30, 'days' )
-		) {
+		if ( domain.expiry && moment( domain.expiry ) < this.props.moment().add( 30, 'days' ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expires %(timeUntilExpiry)s', {
 						args: {
-							timeUntilExpiry: moment( domain.expirationDate ).fromNow(),
+							timeUntilExpiry: moment( domain.expiry ).fromNow(),
 						},
 						context:
 							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',

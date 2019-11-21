@@ -18,6 +18,13 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 }
 
 export const createSiteDomainObject = domain => {
+	let transferEndDate;
+
+	if ( domain.transferStartDate ) {
+		transferEndDate = new Date( domain.transferStartDate );
+		transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
+	}
+
 	return {
 		autoRenewalDate: String( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
@@ -72,6 +79,7 @@ export const createSiteDomainObject = domain => {
 		type: getDomainType( domain ),
 		transferStatus: getTransferStatus( domain ),
 		transferStartDate: ! domain.transfer_start_date ? null : String( domain.transfer_start_date ),
+		transferEndDate: ! domain.transfer_start_date ? null : transferEndDate.toIsoString(),
 		whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 	};
 };
