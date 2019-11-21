@@ -15,12 +15,16 @@ import CardHeading from 'components/card-heading';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import Gridicon from 'components/gridicon';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
 import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpLib from 'lib/wp';
 
 /**
@@ -38,6 +42,12 @@ class SectionMigrate extends Component {
 	componentDidMount() {
 		this.updateFromAPI();
 	}
+
+	getImportHref = () => {
+		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
+
+		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
+	};
 
 	jetpackSiteFilter = sourceSite => {
 		const { targetSiteId } = this.props;
@@ -84,6 +94,22 @@ class SectionMigrate extends Component {
 			} );
 	};
 
+	renderCardBusinessFooter() {
+		const { isTargetSiteAtomic } = this.props;
+
+		// If the site is already Atomic, no upgrade footer is required
+		if ( isTargetSiteAtomic ) {
+			return null;
+		}
+
+		return (
+			<CompactCard className="migrate__card-footer">
+				A Business Plan is required to migrate your theme and plugins. Or you can{ ' ' }
+				<a href={ this.getImportHref() }>import just your content</a> instead.
+			</CompactCard>
+		);
+	}
+
 	renderLoading() {
 		return (
 			<CompactCard>
@@ -108,21 +134,52 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationConfirmation() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
-			<CompactCard>
-				<div className="migrate__confirmation">
-					Do you want to migrate all content from { sourceSiteDomain } to { targetSiteDomain }? All
-					existing content on { targetSiteDomain } will be lost.
-				</div>
-				<Button primary onClick={ this.startMigration }>
-					Start Migration
-				</Button>
-			</CompactCard>
+			<>
+				<HeaderCake backHref={ backHref }>Migrate { sourceSiteDomain }</HeaderCake>
+				<CompactCard>
+					<CardHeading>{ `Migrate everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
+					<div className="migrate__confirmation">
+						We can move everything from your current site to this WordPress.com site. It will keep
+						working as expected, but your WordPress.com dashboard will be locked during the
+						migration.
+					</div>
+					<div className="migrate__sites">
+						<Site site={ sourceSite } indicator={ false } />
+						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
+						<Site site={ targetSite } indicator={ false } />
+					</div>
+					<div className="migrate__confirmation">
+						This will overwrite everything on your WordPress.com site.
+						<ul className="migrate__list">
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								All posts, pages, comments, and media
+							</li>
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								All users and roles
+							</li>
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								Theme, plugins, and settings
+							</li>
+						</ul>
+					</div>
+					<Button primary onClick={ this.startMigration }>
+						Migrate site
+					</Button>
+					<Button className="migrate__cancel" href={ backHref }>
+						Cancel
+					</Button>
+				</CompactCard>
+				{ this.renderCardBusinessFooter() }
+			</>
 		);
 	}
 
@@ -151,11 +208,6 @@ class SectionMigrate extends Component {
 	}
 
 	renderSourceSiteSelector() {
-		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
-		const importHref = isTargetSiteJetpack
-			? targetSiteImportAdminUrl
-			: `/import/${ targetSiteSlug }`;
-
 		return (
 			<>
 				<FormattedHeader
@@ -175,13 +227,11 @@ class SectionMigrate extends Component {
 						filter={ this.jetpackSiteFilter }
 					/>
 					<div className="migrate__import-instead">
-						Don't see it? You can still <a href={ importHref }>import just your content</a>.
+						Don't see it? You can still{ ' ' }
+						<a href={ this.getImportHref() }>import just your content</a>.
 					</div>
 				</CompactCard>
-				<CompactCard className="migrate__card-footer">
-					A Business Plan is required to migrate your theme and plugins. Or you can{ ' ' }
-					<a href={ importHref }>import just your content</a> instead.
-				</CompactCard>
+				{ this.renderCardBusinessFooter() }
 			</>
 		);
 	}
@@ -230,6 +280,7 @@ class SectionMigrate extends Component {
 export default connect( ( state, ownProps ) => {
 	const targetSiteId = getSelectedSiteId( state );
 	return {
+		isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 		isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 		sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 		targetSite: getSelectedSite( state ),
