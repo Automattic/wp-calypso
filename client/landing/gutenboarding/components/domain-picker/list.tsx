@@ -31,8 +31,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const label = NO__( 'Search for a domain' );
 
 	const handleDomainPick = suggestion => () => {
-		// eslint-disable-next-line no-console
-		console.log( 'Picked domain: %o', suggestion );
+		if ( suggestion.is_free ) {
+			// eslint-disable-next-line no-console
+			console.log( 'Picked free domain: %o', suggestion );
+		} else {
+			// eslint-disable-next-line no-console
+			console.log( 'Picked paid domain: %o', suggestion );
+		}
 	};
 
 	const handleHasDomain = () => {
@@ -70,7 +75,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								<span className="domain-picker__suggestion-item-name">
 									{ suggestion.domain_name }
 								</span>
-								<span className="domain-picker__suggestion-action">{ NO__( 'Upgrade' ) }</span>
+								{ suggestion.is_free ? (
+									<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
+								) : (
+									<a
+										className="domain-picker__suggestion-action"
+										href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ NO__( 'Upgrade' ) }
+									</a>
+								) }
 							</Button>
 						) ) }
 					</PanelRow>
