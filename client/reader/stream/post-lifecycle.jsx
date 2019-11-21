@@ -13,7 +13,7 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
 import CrossPost from './x-post';
-import { shallowEquals } from 'reader/utils';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
@@ -36,7 +36,7 @@ class PostLifecycle extends React.Component {
 		const currentPropsToCompare = omit( this.props, 'handleClick' );
 		const nextPropsToCompare = omit( nextProps, 'handleClick' );
 
-		return ! shallowEquals( currentPropsToCompare, nextPropsToCompare );
+		return ! isShallowEqual( currentPropsToCompare, nextPropsToCompare );
 	}
 
 	render() {
