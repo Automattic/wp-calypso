@@ -39,7 +39,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
-		"true": false,
+		"hosting": true,
 		"hosting/non-atomic-support": false,
 		"hosting/sftp-phpmyadmin": false,
 		"jetpack/api-cache": true,
