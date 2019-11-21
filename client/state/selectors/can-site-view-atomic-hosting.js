@@ -27,13 +27,6 @@ export default function canSiteViewAtomicHosting( state ) {
 
 	const siteId = getSelectedSiteId( state );
 
-	// This is also enforced on the server, please remove client checks later.
-	// ID of site added 31 Oct 2019, so only sites newer currently eligible
-	const isEligibleSite = siteId > 168768859;
-	if ( ! isEligibleSite ) {
-		return false;
-	}
-
 	if ( ! isSiteOnAtomicPlan( state, siteId ) ) {
 		return false;
 	}
@@ -49,5 +42,6 @@ export default function canSiteViewAtomicHosting( state ) {
 	}
 
 	const planSlug = get( getSelectedSite( state ), [ 'plan', 'product_slug' ] );
-	return isBusinessPlan( planSlug ) && isEnabled( 'hosting/non-atomic-support' );
+
+	return isBusinessPlan( planSlug );
 }

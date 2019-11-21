@@ -35,7 +35,7 @@
 		"google-my-business": false,
 		"help": true,
 		"help/courses": true,
-		"hosting": false,
+		"hosting": true,
 		"hosting/non-atomic-support": false,
 		"hosting/sftp-phpmyadmin": false,
 		"jetpack/concierge-sessions": false,
