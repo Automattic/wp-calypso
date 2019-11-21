@@ -21,9 +21,12 @@ import {
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useActiveStep, ActiveStepProvider } from '../lib/active-step';
-import CheckoutOrderSummary, { CheckoutOrderSummaryTitle } from './checkout-order-summary';
-import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
-import CheckoutPaymentMethods, { CheckoutPaymentMethodsTitle } from './checkout-payment-methods';
+import {
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderReviewStep,
+} from './default-steps';
+import { validateSteps } from '../lib/validation';
 
 function useRegisterCheckoutStore() {
 	useRegisterPrimaryStore( {
@@ -66,7 +69,8 @@ export default function Checkout( { steps, className } ) {
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
 	const { changeStep } = usePrimaryDispatch();
-	steps = steps || makeDefaultSteps();
+	steps = steps || makeDefaultSteps( localize );
+	validateSteps( steps );
 
 	// Assign step numbers to all steps with numbers
 	const annotatedSteps = useMemo( () => {
@@ -148,7 +152,7 @@ function CheckoutStepContainer( {
 	stepNumber,
 	shouldShowNextButton,
 	goToNextStep,
-	getNextStepButtonLabel,
+	getNextStepButtonAriaLabel,
 	onEdit,
 	getEditButtonAriaLabel,
 	isComplete,
@@ -166,9 +170,9 @@ function CheckoutStepContainer( {
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ stepNumber }
-				title={ titleContent }
+				title={ titleContent || '' }
 				onEdit={ ! isActive && isComplete ? onEdit : null }
-				editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel( localize ) }
+				editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel() }
 				stepContent={
 					<React.Fragment>
 						{ activeStepContent }
@@ -176,7 +180,7 @@ function CheckoutStepContainer( {
 							<CheckoutNextStepButton
 								value={ localize( 'Continue' ) }
 								onClick={ goToNextStep }
-								ariaLabel={ getNextStepButtonLabel && getNextStepButtonLabel( localize ) }
+								ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
 								disabled={ ! isComplete }
 							/>
 						) }
@@ -212,40 +216,14 @@ const CheckoutWrapper = styled.div`
 	padding: 24px;
 `;
 
-function makeDefaultSteps() {
+function makeDefaultSteps( localize ) {
 	return [
+		getDefaultOrderSummaryStep(),
 		{
-			id: 'order-summary',
-			className: 'checkout__order-summary-step',
-			hasStepNumber: false,
-			titleContent: <CheckoutOrderSummaryTitle />,
-			activeStepContent: null,
-			incompleteStepContent: null,
-			completeStepContent: <CheckoutOrderSummary />,
-			isCompleteCallback: () => true,
+			...getDefaultPaymentMethodStep(),
+			getEditButtonAriaLabel: () => localize( 'Edit the payment method' ),
+			getNextStepButtonAriaLabel: () => localize( 'Continue with the selected payment method' ),
 		},
-		{
-			id: 'payment-method',
-			className: 'checkout__payment-methods-step',
-			hasStepNumber: true,
-			titleContent: <CheckoutPaymentMethodsTitle />,
-			activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
-			incompleteStepContent: null,
-			completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
-			isCompleteCallback: () => true,
-			isEditableCallback: () => true,
-			getEditButtonAriaLabel: localize => localize( 'Edit the payment method' ),
-			getNextStepButtonLabel: localize => localize( 'Continue with the selected payment method' ),
-		},
-		{
-			id: 'order-review',
-			className: 'checkout__review-order-step',
-			hasStepNumber: true,
-			titleContent: <CheckoutReviewOrderTitle />,
-			activeStepContent: <CheckoutReviewOrder />,
-			incompleteStepContent: null,
-			completeStepContent: null,
-			isCompleteCallback: () => true,
-		},
+		getDefaultOrderReviewStep(),
 	];
 }
