@@ -4,7 +4,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { head, partition } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -60,8 +59,6 @@ const DomainPickerButton: FunctionComponent = () => {
 		[ search, siteVertical ]
 	);
 
-	const [ freeDomainSuggestions, paidDomainSuggestions ] = partition( suggestions, 'is_free' );
-
 	return (
 		<>
 			<Button
@@ -71,7 +68,7 @@ const DomainPickerButton: FunctionComponent = () => {
 				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 			>
-				{ head( freeDomainSuggestions )?.domain_name ?? '\u00a0' }
+				Choose a domain
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
@@ -79,7 +76,7 @@ const DomainPickerButton: FunctionComponent = () => {
 					<DomainPicker
 						domainSearch={ domainSearch }
 						setDomainSearch={ setDomainSearch }
-						suggestions={ paidDomainSuggestions }
+						suggestions={ suggestions }
 					/>
 				</Popover>
 			) }
