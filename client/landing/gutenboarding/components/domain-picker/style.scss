@@ -13,6 +13,7 @@
 .domain-picker__choose-domain-header {
 	font-weight: bold;
 	text-align: center;
+	margin-bottom: 20px;
 }
 .domain-picker__recommended-header {
 	font-weight: bold;
@@ -26,15 +27,20 @@
 .domain-picker__suggestion-item {
 	display: flex;
 	justify-content: space-between;
+	margin-top: 18px;
 }
 
 .domain-picker__suggestion-action {
-	color: $blue-medium-highlight;
+	color: var( --studio-blue-40 );
 }
 
 .domain-picker__has-domain {
 	align-items: center;
 	.components-button {
-		color: $blue-medium-highlight;
+		color: var( --studio-blue-30 );
 	}
+}
+
+.domain-picker hr {
+	margin-top: 16px;
 }
