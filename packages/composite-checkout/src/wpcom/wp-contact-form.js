@@ -330,6 +330,7 @@ function TaxFields( { fieldType } ) {
 	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
+	// TODO: add field validation; at least to see if a required field is set
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
