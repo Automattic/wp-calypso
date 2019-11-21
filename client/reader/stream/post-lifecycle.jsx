@@ -22,7 +22,7 @@ import CombinedCard from 'blocks/reader-combined-card';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import QueryReaderPost from 'components/data/query-reader-post';
-import compareProps from 'lib/compareProps';
+import compareProps from 'lib/compare-props';
 
 class PostLifecycle extends React.Component {
 	static propTypes = {
