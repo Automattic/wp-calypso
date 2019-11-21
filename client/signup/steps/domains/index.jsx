@@ -206,11 +206,14 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
-	handleSkip = () => {
-		const domainItem = undefined;
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, tracksEventName ) => {
+		tracksEventName &&
+			recordTracksEvent( tracksEventName, {
+				section: this.getAnalyticsSection(),
+				flow: this.props.flowName,
+			} );
 
-		this.props.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
-		this.props.goToNextStep();
+		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
@@ -438,7 +441,7 @@ class DomainsStep extends React.Component {
 				showSkipButton={ this.props.showSkipButton }
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
-				hideFreePlan={ this.submitWithDomain }
+				hideFreePlan={ this.handleSkip }
 			/>
 		);
 	};
