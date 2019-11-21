@@ -214,7 +214,9 @@ class DomainsStep extends React.Component {
 			shouldHideFreePlan,
 		} );
 
-		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		defer( () => {
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		} );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
