@@ -10,7 +10,6 @@ import styled from '@emotion/styled';
  */
 import { useSelect, useDispatch, useHasDomainsInCart } from '../public-api';
 import Field from './field';
-import GridRow from './grid-row';
 // TODO: remove or replace all the below imports as they are not in wpcom
 import { useLocalize } from '../lib/localize';
 import {
@@ -68,6 +67,16 @@ const FormField = styled( Field )`
 	:first-of-type {
 		margin-top: 0;
 	}
+`;
+
+const GridRow = styled.div`
+	display: -ms-grid;
+	display: grid;
+	width: 100%;
+	-ms-grid-columns: 48% 4% 48%;
+	grid-template-columns: 48% 48%;
+	grid-column-gap: 4%;
+	justify-items: stretch;
 `;
 
 const FieldRow = styled( GridRow )`
@@ -171,7 +180,7 @@ function AddressFields( { fieldType } ) {
 
 	return (
 		<React.Fragment>
-			<FieldRow gap="4%" columnWidths="48% 48%">
+			<FieldRow>
 				<LeftColumn>
 					<Field
 						id={ fieldType + '-first-name' }
@@ -222,7 +231,7 @@ function AddressFields( { fieldType } ) {
 				autoComplete={ fieldType + ' street-address' }
 			/>
 
-			<FieldRow gap="4%" columnWidths="48% 48%">
+			<FieldRow>
 				<LeftColumn>
 					<Field
 						id={ fieldType + '-city' }
@@ -335,7 +344,7 @@ function TaxFields( { fieldType } ) {
 
 	return (
 		<React.Fragment>
-			<FieldRow gap="4%" columnWidths="48% 48%">
+			<FieldRow>
 				<LeftColumn>
 					{ isZipOrPostal() === 'zip' ? (
 						<Field
@@ -441,7 +450,7 @@ function ContactFormSummary() {
 	const postalCode = billing.zipCode || billing.postalCode;
 	const domainPostalCode = domains.zipCode || domains.postalCode;
 	return (
-		<GridRow gap="4%" columnWidths="48% 48%">
+		<GridRow>
 			<div>
 				<SummaryDetails>
 					<SummaryLine>
