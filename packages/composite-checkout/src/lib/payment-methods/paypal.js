@@ -11,6 +11,7 @@ import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
 	registerStore( 'paypal', {
@@ -94,7 +95,9 @@ export function PaypalLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Paypal' ) }</span>
-			<PaypalLogo className="paypal__logo payment-logos" />
+			<PaymentMethodLogos className="paypal__logo payment-logos">
+				<PaypalLogo />
+			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
