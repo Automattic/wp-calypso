@@ -1,48 +1,57 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
-import { TextControl, Panel, PanelBody, PanelRow } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import React, { FunctionComponent } from 'react';
+import {
+	Button,
+	HorizontalRule,
+	Panel,
+	PanelBody,
+	PanelRow,
+	TextControl,
+} from '@wordpress/components';
 import { __ as NO__ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { isFilledFormValue } from '../../stores/onboard/types';
+import { DomainSuggestion } from '../../stores/domain-suggestions/types';
 
-const DomainPicker: FunctionComponent = () => {
-	// User can search for a domain
-	const [ domainSearch, setDomainSearch ] = useState( '' );
+interface Props {
+	domainSearch: string;
+	setDomainSearch: ( domainSearch: string ) => void;
+	suggestions: DomainSuggestion[] | undefined;
+}
 
-	// Without user search, we can provide recommendations based on title + vertical
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
-
-	let search = domainSearch.trim();
-	if ( ! search && isFilledFormValue( siteTitle ) ) {
-		search = siteTitle;
-	}
-
-	const suggestions = useSelect(
-		select => {
-			if ( search ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions( search, {
-					include_wordpressdotcom: true,
-					...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
-				} );
-			}
-		},
-		[ search, siteVertical ]
-	);
-
+const DomainPicker: FunctionComponent< Props > = ( {
+	domainSearch,
+	setDomainSearch,
+	suggestions,
+} ) => {
 	const label = NO__( 'Search for a domain' );
+
+	const handleDomainPick = suggestion => () => {
+		if ( suggestion.is_free ) {
+			// eslint-disable-next-line no-console
+			console.log( 'Picked free domain: %o', suggestion );
+		} else {
+			// eslint-disable-next-line no-console
+			console.log( 'Picked paid domain: %o', suggestion );
+		}
+	};
+
+	const handleHasDomain = () => {
+		// eslint-disable-next-line no-console
+		console.log( 'Already has a domain.' );
+	};
 
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
-				<PanelRow>
+				<PanelRow className="domain-picker__panel-row">
+					<div className="domain-picker__choose-domain-header">
+						{ NO__( 'Choose a new domain' ) }
+					</div>
 					<TextControl
 						hideLabelFromVision
 						label={ label }
@@ -51,15 +60,40 @@ const DomainPicker: FunctionComponent = () => {
 						value={ domainSearch }
 					/>
 				</PanelRow>
+
+				<HorizontalRule className="domain-picker__divider" />
+
 				{ suggestions?.length ? (
-					<PanelRow>
-						<ul>
-							{ suggestions.map( ( { domain_name } ) => (
-								<li key={ domain_name }>{ domain_name }</li>
-							) ) }
-						</ul>
+					<PanelRow className="domain-picker__panel-row">
+						<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
+						{ suggestions.map( suggestion => (
+							<Button
+								onClick={ handleDomainPick( suggestion ) }
+								className="domain-picker__suggestion-item"
+								key={ suggestion.domain_name }
+							>
+								<span className="domain-picker__suggestion-item-name">
+									{ suggestion.domain_name }
+								</span>
+								{ suggestion.is_free ? (
+									<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
+								) : (
+									<a
+										className="domain-picker__suggestion-action"
+										href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ NO__( 'Upgrade' ) }
+									</a>
+								) }
+							</Button>
+						) ) }
 					</PanelRow>
 				) : null }
+				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
+					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
+				</PanelRow>
 			</PanelBody>
 		</Panel>
 	);

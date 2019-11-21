@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -35,6 +34,7 @@ import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -496,4 +496,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { requestSubscribers } )( localize( MembershipsSection ) );
+export default connect( mapStateToProps, { requestSubscribers } )(
+	localize( withLocalizedMoment( MembershipsSection ) )
+);

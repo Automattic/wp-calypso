@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import { moment, withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex, min, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -12,7 +12,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { withRtl } from 'components/rtl';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';

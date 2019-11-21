@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
@@ -12,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'components/localized-moment';
 import DayItem from './day';
 import DatePickerNavBar from './nav-bar';
 
@@ -270,4 +270,4 @@ class DatePicker extends PureComponent {
 	}
 }
 
-export default localize( DatePicker );
+export default localize( withLocalizedMoment( DatePicker ) );

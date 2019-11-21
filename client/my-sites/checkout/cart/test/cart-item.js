@@ -49,7 +49,6 @@ jest.mock( 'config', () => {
 jest.mock( '@automattic/format-currency', () => ( {
 	getCurrencyObject: price => ( { integer: price } ),
 } ) );
-jest.mock( 'lib/mixins/analytics', () => ( {} ) );
 jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),

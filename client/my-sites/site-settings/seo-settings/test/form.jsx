@@ -8,19 +8,6 @@ jest.mock( 'components/banner', () => 'Banner' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
-
 /**
  * External dependencies
  */

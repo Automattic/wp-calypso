@@ -96,12 +96,7 @@ function createNavigation( context ) {
 }
 
 function removeSidebar( context ) {
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
 }
 
 function renderEmptySites( context ) {
@@ -444,8 +439,8 @@ export function navigation( context, next ) {
 /**
  * Middleware that adds the site selector screen to the layout.
  *
- * @param {object} context -- Middleware context
- * @param {function} next -- Call next middleware in chain
+ * @param {object} context Middleware context
+ * @param {Function} next Call next middleware in chain
  */
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
@@ -457,12 +452,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	removeSidebar( context );
 
 	context.primary = createSitesComponent( context );
 	next();

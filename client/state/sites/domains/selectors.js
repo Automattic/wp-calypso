@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { moment } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,12 +14,11 @@ import treeSelect from '@automattic/tree-select';
 const EMPTY_SITE_DOMAINS = Object.freeze( [] );
 
 /**
- * Return site domains getting from state object and
- * the given siteId
+ * Returns the list of site domains for the specified site identifier.
  *
- * @param {Object} state - current state object
- * @param {Number} siteId - site identificator
- * @return {Array} site domains
+ * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {Array} the list of domains
  */
 export const getDomainsBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -30,12 +29,11 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 };
 
 /**
- * Return site domains getting from state object and
- * the given site object
+ * Returns the list of site domains for the specified site.
  *
- * @param {Object} state - current state object
- * @param {Object} site - site object
- * @return {Array} site domains
+ * @param {object} state - global state tree
+ * @param {object} site - site object
+ * @returns {Array} the list of domains
  */
 export const getDomainsBySite = ( state, site ) => {
 	if ( ! site ) {
@@ -46,11 +44,22 @@ export const getDomainsBySite = ( state, site ) => {
 };
 
 /**
- * Return requesting state for the given site
+ * Determines whether the list of domains for the specified site has loaded.
  *
- * @param {Object} state - current state object
- * @param {Number} siteId - site identifier
- * @return {Boolean} is site-domains requesting?
+ * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {boolean} true if the list of domains has loaded, false otherwise
+ */
+export const hasLoadedSiteDomains = ( state, siteId ) => {
+	return has( state, [ 'sites', 'domains', 'items', siteId ] );
+};
+
+/**
+ * Determines whether the list of domains is being requested via the API.
+ *
+ * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {boolean} true if the list of domains is being requested, false otherwise
  */
 export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
@@ -61,11 +70,12 @@ export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 };
 
 /**
- * Returns decorated site domains with objects we don't want to store in Redux state tree.
+ * Returns the list of domains for the specified site with additional properties. This approach is used to avoid storing
+ * those extra objects in the Redux state tree.
  *
- * @param  {Object}  state  global state
- * @param  {Number}  siteId the site id
- * @return {?Object}        decorated site domains
+ * @param  {object} state - global state tree
+ * @param  {number} siteId - identifier of the site
+ * @returns {?object} the list of site domains decorated
  */
 export const getDecoratedSiteDomains = treeSelect(
 	( state, siteId ) => [ getDomainsBySiteId( state, siteId ) ],

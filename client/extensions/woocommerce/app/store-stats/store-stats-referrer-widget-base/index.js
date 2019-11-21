@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,6 +16,7 @@ import Card from 'components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 import Pagination from 'components/pagination';
+import { withLocalizedMoment } from 'components/localized-moment';
 import getStoreReferrersByDate from 'state/selectors/get-store-referrers-by-date';
 
 class StoreStatsReferrerWidgetBase extends Component {
@@ -174,4 +174,4 @@ export default connect( ( state, ownProps ) => {
 	return {
 		data: fetchedData || getStoreReferrersByDate( state, ownProps ),
 	};
-} )( localize( StoreStatsReferrerWidgetBase ) );
+} )( localize( withLocalizedMoment( StoreStatsReferrerWidgetBase ) ) );

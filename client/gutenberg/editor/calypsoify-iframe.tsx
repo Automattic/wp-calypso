@@ -25,6 +25,7 @@ import {
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
@@ -86,6 +87,7 @@ enum EditorActions {
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenRevisions = 'openRevisions',
+	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -297,6 +299,25 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				window.onerror( ...error );
 			}
 		}
+
+		if ( EditorActions.PostStatusChange === action ) {
+			const { status } = payload;
+			this.handlePostStatusChange( status );
+		}
+	};
+
+	handlePostStatusChange = ( status: string ) => {
+		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+			this.setFrontPage();
+		}
+	};
+
+	setFrontPage = () => {
+		const { editedPostId, siteId } = this.props;
+		this.props.updateSiteFrontPage( siteId, {
+			show_on_front: 'page',
+			page_on_front: editedPostId,
+		} );
 	};
 
 	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
@@ -613,7 +634,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state,
-	{ postId, postType, duplicatePostId, fseParentPageId }: Props
+	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -631,6 +652,7 @@ const mapStateToProps = (
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
+		'new-homepage': creatingNewHomepage,
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -674,6 +696,7 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	startEditingPost,
 	trashPost,
+	updateSiteFrontPage,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

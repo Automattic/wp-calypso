@@ -49,6 +49,7 @@ import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -536,4 +537,4 @@ export default connect(
 			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
 		};
 	}
-)( localize( List ) );
+)( localize( withLocalizedMoment( List ) ) );

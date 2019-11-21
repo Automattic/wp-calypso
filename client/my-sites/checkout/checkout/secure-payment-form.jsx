@@ -242,7 +242,7 @@ export class SecurePaymentForm extends Component {
 		debug( 'transaction step: ' + step.name );
 
 		this.displayNotices( cart, step );
-		recordTransactionAnalytics( cart, step, transaction.payment.paymentMethod );
+		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
 
 		this.finishIfLastStep( cart, selectedSite, step );
 	}

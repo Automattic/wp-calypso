@@ -115,7 +115,7 @@ const Input = styled.input`
 
 	:focus {
 		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
-			auto 5px !important;
+			solid 2px !important;
 	}
 
 	::-webkit-inner-spin-button,

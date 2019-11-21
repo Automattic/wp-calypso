@@ -4,6 +4,7 @@
 import I18N from './i18n';
 import localizeFactory from './localize';
 import translateHookFactory from './use-translate';
+import rtlFactory from './rtl';
 
 const i18n = new I18N();
 export { I18N };
@@ -26,3 +27,5 @@ export const off = i18n.off.bind( i18n );
 export const emit = i18n.emit.bind( i18n );
 export const localize = localizeFactory( i18n );
 export const useTranslate = translateHookFactory( i18n );
+const { useRtl, withRtl } = rtlFactory( i18n );
+export { useRtl, withRtl };
