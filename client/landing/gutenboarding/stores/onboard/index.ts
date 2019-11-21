@@ -24,7 +24,7 @@ registerStore< State >( STORE_KEY, {
 	reducer,
 	resolvers,
 	selectors,
-	persist: [ 'siteTitle', 'siteType', 'siteVertical' ],
+	persist: [ 'domain', 'siteTitle', 'siteType', 'siteVertical' ],
 } );
 
 declare module '@wordpress/data' {

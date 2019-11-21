@@ -1,10 +1,15 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteType, SiteVertical, Vertical } from './types';
+import { ActionType, DomainName, SiteType, SiteVertical, Vertical } from './types';
 
 export const resetSiteType = () => ( {
 	type: ActionType.RESET_SITE_TYPE as const,
+} );
+
+export const setDomain = ( domain: DomainName ) => ( {
+	type: ActionType.SET_DOMAIN as const,
+	domain,
 } );
 
 export const setSiteType = ( siteType: SiteType ) => ( {
