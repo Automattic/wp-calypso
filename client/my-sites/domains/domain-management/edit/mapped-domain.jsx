@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card/compact';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
@@ -25,7 +26,7 @@ import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 export class MappedDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -35,13 +36,12 @@ export class MappedDomain extends React.Component {
 							'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
 					} ) }
 				>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
 
-		const expirationMessage = ( domain.expirationMoment &&
-			domain.expirationMoment.format( 'LL' ) ) || (
+		const expirationMessage = ( domain.expiry && moment( domain.expiry ).format( 'LL' ) ) || (
 			<em>
 				{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }
 			</em>
@@ -170,4 +170,6 @@ export class MappedDomain extends React.Component {
 	}
 }
 
-export default connect( null, { recordPaymentSettingsClick } )( localize( MappedDomain ) );
+export default connect( null, { recordPaymentSettingsClick } )(
+	localize( withLocalizedMoment( MappedDomain ) )
+);

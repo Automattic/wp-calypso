@@ -16,7 +16,7 @@ import { fetchUsers } from 'lib/users/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import NameserversStore from 'lib/domains/nameservers/store';
 import { fetchNameservers } from 'lib/domains/nameservers/actions';
@@ -173,7 +173,7 @@ export default connect( state => {
 
 	return {
 		currentUser: getCurrentUser( state ),
-		domains: getDecoratedSiteDomains( state, siteId ),
+		domains: getDomainsBySiteId( state, siteId ),
 		isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		productsList: getProductsList( state ),
 		sitePlans: getPlansBySite( state, selectedSite ),

@@ -39,6 +39,8 @@ export const itemsSchema = {
 					supportsDomainConnect: { type: 'boolean', optional: true },
 					supportsGdprConsentManagement: { type: 'boolean', optional: true },
 					type: { type: 'string' },
+					transferStartDate: { type: [ 'null', 'string' ] },
+					transferEndDate: { type: [ 'null', 'string' ] },
 				},
 			},
 		},

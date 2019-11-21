@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -48,7 +49,7 @@ class ListItem extends React.PureComponent {
 
 	content() {
 		return (
-			<div className="domain-management-list-item__link" onClick={ this.handleClick }>
+			<button className="domain-management-list-item__link" onClick={ this.handleClick }>
 				{ this.icon() }
 				<div className="domain-management-list-item__title">{ this.props.domain.name }</div>
 				<span className="domain-management-list-item__meta">
@@ -60,7 +61,7 @@ class ListItem extends React.PureComponent {
 					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
-			</div>
+			</button>
 		);
 	}
 
@@ -115,14 +116,14 @@ class ListItem extends React.PureComponent {
 	}
 
 	showDomainExpirationWarning( domain ) {
-		const { translate } = this.props;
+		const { translate, moment } = this.props;
 
 		if ( domain.expired ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: domain.expirationMoment.fromNow(),
+							timeSinceExpiry: moment( domain.expiry ).fromNow(),
 						},
 						context:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -131,15 +132,12 @@ class ListItem extends React.PureComponent {
 			);
 		}
 
-		if (
-			domain.expirationMoment &&
-			domain.expirationMoment < this.props.moment().add( 30, 'days' )
-		) {
+		if ( domain.expiry && moment( domain.expiry ) < this.props.moment().add( 30, 'days' ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expires %(timeUntilExpiry)s', {
 						args: {
-							timeUntilExpiry: domain.expirationMoment.fromNow(),
+							timeUntilExpiry: moment( domain.expiry ).fromNow(),
 						},
 						context:
 							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',

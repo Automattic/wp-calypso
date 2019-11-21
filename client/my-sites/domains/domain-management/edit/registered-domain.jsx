@@ -11,6 +11,7 @@ import { flowRight as compose } from 'lodash';
  */
 import Card from 'components/card/compact';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
@@ -23,13 +24,12 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { withLocalizedMoment } from 'components/localized-moment';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -40,7 +40,7 @@ class RegisteredDomain extends React.Component {
 							'the date is not included within the translated string',
 					} ) }
 				>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
@@ -53,7 +53,7 @@ class RegisteredDomain extends React.Component {
 						'the date is not included within the translated string',
 				} ) }
 			>
-				{ domain.expirationMoment.format( 'LL' ) }
+				{ moment( domain.expiry ).format( 'LL' ) }
 			</Property>
 		);
 	}
@@ -95,9 +95,10 @@ class RegisteredDomain extends React.Component {
 	}
 
 	getVerticalNav() {
-		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
+		const { expiry, expired, pendingTransfer } = this.props.domain;
+		const { moment } = this.props;
 		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
+		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
 
 		return (
 			<VerticalNav>
@@ -147,7 +148,7 @@ class RegisteredDomain extends React.Component {
 	}
 
 	render() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -175,7 +176,7 @@ class RegisteredDomain extends React.Component {
 									'the date is not included within the translated string',
 							} ) }
 						>
-							{ domain.registrationMoment.format( 'LL' ) }
+							{ moment( domain.registrationDate ).format( 'LL' ) }
 						</Property>
 
 						{ this.getAutoRenewalOrExpirationDate() }
