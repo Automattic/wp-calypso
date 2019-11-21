@@ -13,13 +13,6 @@ enum ActionType {
 }
 export { ActionType };
 
-export enum SiteType {
-	BLOG = 'blog',
-	BUSINESS = 'business',
-	PORTFOLIO = 'portfolio',
-	STORE = 'store',
-}
-
 export interface SiteVertical {
 	label: string;
 	id: string;
