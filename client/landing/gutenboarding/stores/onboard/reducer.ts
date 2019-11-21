@@ -7,10 +7,18 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, FormValue, SiteType, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
+import {
+	ActionType,
+	DomainName,
+	FormValue,
+	SiteType,
+	EMPTY_FORM_VALUE,
+	Vertical,
+	SiteVertical,
+} from './types';
 import * as Actions from './actions';
 
-const domain: Reducer< string | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
+const domain: Reducer< DomainName | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
 	state = null,
 	action
 ) => {
