@@ -384,30 +384,6 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( 'Mutations', () => {
-		test( 'should not mutate domain objects', () => {
-			const expiry = new Date( '2000-09-09' ).toISOString();
-			const registrationDate = new Date( '1999-09-09' ).toISOString();
-
-			const props = {
-				translate: identity,
-				domain: {
-					name: '1.com',
-					registrationDate,
-					expiry,
-				},
-				selectedSite: { domain: '1.com' },
-				moment,
-			};
-
-			TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-
-			expect( props.domain.name ).toBe( '1.com' );
-			expect( props.domain.registrationDate ).toEqual( registrationDate );
-			expect( props.domain.expiry ).toEqual( expiry );
-		} );
-	} );
-
 	describe( 'Ruleset filtering', () => {
 		test( 'should only process whitelisted renderers', () => {
 			const props = {
