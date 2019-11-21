@@ -44,10 +44,11 @@ const DomainPicker: FunctionComponent = () => {
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions(
-					search,
-					isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
-				);
+				return select( DOMAIN_STORE ).getDomainSuggestions( search, {
+					include_wordpressdotcom: true,
+					quantity: 4,
+					...( isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined ),
+				} );
 			}
 		},
 		[ search, siteVertical ]
