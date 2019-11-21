@@ -15,19 +15,7 @@ import DomainPicker from './list';
  */
 import './style.scss';
 
-interface Props {
-	/**
-	 * Term to search when no user input is provided.
-	 */
-	defaultQuery?: ComponentPropsWithoutRef< typeof DomainPicker >[ 'defaultQuery' ];
-
-	/**
-	 * Additional parameters for the domain suggestions query.
-	 *
-	 * @see DomainPicker for defaults
-	 */
-	queryParameters?: ComponentPropsWithoutRef< typeof DomainPicker >[ 'queryParameters' ];
-}
+type Props = ComponentPropsWithoutRef< typeof DomainPicker >;
 
 const DomainPickerButton: FunctionComponent< Props > = ( { children, ...domainPickerProps } ) => {
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
