@@ -13,6 +13,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { withLocalizedMoment } from 'components/localized-moment';
 import {
 	closeRefundDialog,
 	confirmRefund,
@@ -103,4 +104,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RefundDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withLocalizedMoment( RefundDialog ) ) );

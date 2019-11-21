@@ -49,6 +49,7 @@ import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -180,7 +181,7 @@ export class List extends React.Component {
 
 				{ this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
@@ -200,11 +201,11 @@ export class List extends React.Component {
 
 		return (
 			domain &&
-			domain.registrationMoment &&
+			domain.registrationDate &&
 			this.props
 				.moment()
 				.subtract( 1, 'day' )
-				.isBefore( domain.registrationMoment )
+				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
 
@@ -536,4 +537,4 @@ export default connect(
 			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
 		};
 	}
-)( localize( List ) );
+)( localize( withLocalizedMoment( List ) ) );

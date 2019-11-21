@@ -11,9 +11,9 @@ import { handleHostingPanelRedirect, layout } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/hosting-admin', siteSelection, sites, makeLayout, clientRender );
+	page( '/hosting-config', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/hosting-admin/:site_id',
+		'/hosting-config/:site_id',
 		siteSelection,
 		navigation,
 		handleHostingPanelRedirect,

@@ -37,7 +37,8 @@
 			padding-right: 30px;
 		}
 
-		.product-domain {
+		.product-domain,
+		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
 			font-size: 12px;
@@ -438,7 +439,8 @@ div.popover-cart__popover {
 		width: 55%;
 	}
 
-	.product-domain {
+	.product-domain,
+	.product-domain-renewal-date {
 		width: 40%;
 	}
 

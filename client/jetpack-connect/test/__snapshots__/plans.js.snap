@@ -13,7 +13,7 @@ exports[`Plans should render plans 1`] = `
     title="Plans"
   />
   <Connect(QueryPlans) />
-  <Connect(QuerySitePlans)
+  <QuerySitePlans
     siteId={1234567}
   />
   <Connect(Localized(JetpackPlansGrid))

@@ -8,12 +8,12 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
- * @param  {Object}    _                              Options
+ * @param  {object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {Object}    _.postCssConfig                PostCSS config
+ * @param  {object}    _.postCssConfig                PostCSS config
  *
- * @return {Object}                                   webpack loader object
+ * @returns {object}                                  webpack loader object
  */
 module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
@@ -34,8 +34,10 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				includePaths,
-				data: prelude,
+				prependData: prelude,
+				sassOptions: {
+					includePaths,
+				},
 			},
 		},
 	],
@@ -44,12 +46,12 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param  {Object}   _                Options
- * @param  {String}   _.chunkFilename  filename pattern to use for CSS files
- * @param  {String}   _.filename       filename pattern to use for CSS chunk files
- * @param  {Boolean}  _.minify         whether to minify CSS
+ * @param  {object}   _                Options
+ * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
+ * @param  {string}   _.filename       filename pattern to use for CSS chunk files
+ * @param  {boolean}  _.minify         whether to minify CSS
  *
- * @return {Object[]}                  styling relevant webpack plugin objects
+ * @returns {object[]}                 styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
 	new MiniCssExtractPluginWithRTL( {

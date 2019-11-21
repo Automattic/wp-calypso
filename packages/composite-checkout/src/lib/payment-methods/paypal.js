@@ -9,9 +9,9 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { useDispatch, useSelect } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
 	registerStore( 'paypal', {
@@ -80,7 +80,6 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 	return {
 		id: 'paypal',
 		LabelComponent: PaypalLabel,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: PaypalSubmitButton,
 		SummaryComponent: () => {
 			const localize = useLocalize();
@@ -96,7 +95,9 @@ export function PaypalLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Paypal' ) }</span>
-			<PaypalLogo />
+			<PaymentMethodLogos className="paypal__logo payment-logos">
+				<PaypalLogo />
+			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
@@ -116,7 +117,7 @@ export function PaypalSubmitButton() {
 			successUrl: successRedirectUrl,
 			cancelUrl: failureRedirectUrl,
 			postalCode: billing.zipCode || billing.postalCode,
-			domainDetails: getDomainDetailsFromPaymentData( paymentData ),
+			domainDetails: null, // TODO: get this somehow
 		} );
 	return (
 		<Button onClick={ onClick } buttonState="primary" buttonType="paypal" fullWidth>
@@ -160,6 +161,7 @@ function PaypalLogo( { className } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
+			focusable="false"
 		>
 			<g clipPath="url(#clip0)">
 				<path

@@ -15,6 +15,7 @@ import TextareaAutosize from 'components/textarea-autosize';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import { withLocalizedMoment } from 'components/localized-moment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
@@ -316,4 +317,4 @@ export default connect(
 		recordGoogleEvent,
 		requestBillingTransaction,
 	}
-)( localize( BillingReceipt ) );
+)( localize( withLocalizedMoment( BillingReceipt ) ) );

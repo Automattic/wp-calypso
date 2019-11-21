@@ -25,10 +25,11 @@ import {
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import getEditorCloseUrl from 'state/selectors/get-editor-close-url';
+import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -86,6 +87,7 @@ enum EditorActions {
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenRevisions = 'openRevisions',
+	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -284,8 +286,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
-			const { closeUrl } = this.props;
-			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+			const { closeUrl, closeLabel } = this.props;
+			ports[ 0 ].postMessage( {
+				closeUrl: `${ window.location.origin }${ closeUrl }`,
+				label: closeLabel,
+			} );
 		}
 
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
@@ -297,6 +302,25 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				window.onerror( ...error );
 			}
 		}
+
+		if ( EditorActions.PostStatusChange === action ) {
+			const { status } = payload;
+			this.handlePostStatusChange( status );
+		}
+	};
+
+	handlePostStatusChange = ( status: string ) => {
+		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+			this.setFrontPage();
+		}
+	};
+
+	setFrontPage = () => {
+		const { editedPostId, siteId } = this.props;
+		this.props.updateSiteFrontPage( siteId, {
+			show_on_front: 'page',
+			page_on_front: editedPostId,
+		} );
 	};
 
 	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
@@ -613,7 +637,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state,
-	{ postId, postType, duplicatePostId, fseParentPageId }: Props
+	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -631,6 +655,7 @@ const mapStateToProps = (
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
+		'new-homepage': creatingNewHomepage,
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -645,8 +670,16 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
+	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
+		state,
+		siteId,
+		postType,
+		fseParentPageId
+	);
+
 	return {
-		closeUrl: getEditorCloseUrl( state, siteId, postType, fseParentPageId ),
+		closeUrl,
+		closeLabel,
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
@@ -674,6 +707,7 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	startEditingPost,
 	trashPost,
+	updateSiteFrontPage,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

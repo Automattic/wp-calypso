@@ -9,8 +9,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { StripeHookProvider, useStripe } from '../../lib/stripe';
 import { useLineItems, useCheckoutHandlers } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
-import BillingFields from '../../components/billing-fields';
 import PaymentRequestButton from '../../components/payment-request-button';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createApplePayMethod( { registerStore, fetchStripeConfiguration } ) {
 	const actions = {
@@ -63,7 +63,6 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 	return {
 		id: 'apple-pay',
 		LabelComponent: ApplePayLabel,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
 		SummaryComponent: ApplePaySummary,
 		CheckoutWrapper: StripeHookProvider,
@@ -77,7 +76,9 @@ export function ApplePayLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Apple Pay' ) }</span>
-			<ApplePayIcon fill="black" />
+			<PaymentMethodLogos className="apple-pay__logo payment-logos">
+				<ApplePayIcon fill="black" />
+			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
@@ -119,6 +120,7 @@ function ApplePayIcon( { fill, className } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
+			focusable="false"
 			className={ className }
 		>
 			<path

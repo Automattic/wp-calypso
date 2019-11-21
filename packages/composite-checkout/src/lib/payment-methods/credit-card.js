@@ -9,17 +9,17 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize, sprintf } from '../../lib/localize';
+import joinClasses from '../../lib/join-classes';
 import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from './credit-card-fields';
-import BillingFields from '../../components/billing-fields';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createCreditCardMethod() {
 	return {
 		id: 'card',
 		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: CreditCardFields,
-		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		SummaryComponent: CreditCardSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
@@ -98,21 +98,17 @@ const PaymentLogoWrapper = styled( CreditCardDetail )`
 	transform: translateY( 4px );
 `;
 
-function CreditCardLogos() {
+function CreditCardLogos( className ) {
 	//TODO: Determine which logos to show
 
 	return (
-		<LogoWrapper>
+		<PaymentMethodLogos className={ joinClasses( [ className, 'payment-logos' ] ) }>
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
-		</LogoWrapper>
+		</PaymentMethodLogos>
 	);
 }
-
-const LogoWrapper = styled.div`
-	display: flex;
-`;
 
 function submitCreditCardPayment() {
 	alert( 'Thank you!' );

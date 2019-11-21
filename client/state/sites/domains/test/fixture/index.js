@@ -68,6 +68,7 @@ export const DOMAIN_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: true,
 	whoisUpdateUnmodifiableFields: [],
 	isWPCOMDomain: false,
@@ -124,6 +125,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: false,
 	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
 	isWPCOMDomain: true,
@@ -275,7 +277,8 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 
 /**
  * Return a whole state with domains data structure
- * @return {Object} an state instance
+ *
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

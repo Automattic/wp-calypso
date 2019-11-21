@@ -20,7 +20,6 @@ import Main from 'components/main';
 import { domainManagementEdit, domainManagementNameServers } from 'my-sites/domains/paths';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import DnsTemplates from '../name-servers/dns-templates';
 import VerticalNav from 'components/vertical-nav';
 import DomainConnectRecord from './domain-connect-record';
@@ -85,7 +84,6 @@ class Dns extends React.Component {
 					{ translate( 'DNS Records' ) }
 				</Header>
 
-				<SectionHeader label={ translate( 'DNS Records' ) } />
 				<Card>
 					<DnsDetails />
 

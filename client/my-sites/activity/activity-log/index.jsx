@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
+import { isJetpackBackup } from 'lib/products-values';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -33,6 +34,7 @@ import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
 import QueryRewindState from 'components/data/query-rewind-state';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -41,6 +43,7 @@ import FormattedHeader from 'components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -314,13 +317,13 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan, slug } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteHasNoLog, slug } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( logLoadingState === 'success' ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteHasNoLog } />
 			) : (
 				<Fragment>
 					<EmptyContent
@@ -359,7 +362,7 @@ class ActivityLog extends Component {
 			moment,
 			rewindState,
 			siteId,
-			siteIsOnFreePlan,
+			siteHasNoLog,
 			slug,
 			translate,
 			isAtomic,
@@ -419,7 +422,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
+				{ 'awaitingCredentials' === rewindState.state && ! siteHasNoLog && (
 					<Banner
 						icon="history"
 						href={
@@ -445,7 +448,7 @@ class ActivityLog extends Component {
 					/>
 				) }
 				<IntroBanner siteId={ siteId } />
-				{ siteIsOnFreePlan && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -466,7 +469,7 @@ class ActivityLog extends Component {
 							total={ logs.length }
 						/>
 						<section className="activity-log__wrapper">
-							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
+							{ siteHasNoLog && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log =>
 								log.isAggregate ? (
 									<Fragment key={ log.activityId }>
@@ -496,7 +499,7 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
-						{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -515,10 +518,10 @@ class ActivityLog extends Component {
 	}
 
 	renderFilterbar() {
-		const { siteId, filter, logs, siteIsOnFreePlan, logLoadingState } = this.props;
+		const { siteId, filter, logs, siteHasNoLog, logLoadingState } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
-		if ( siteIsOnFreePlan ) {
+		if ( siteHasNoLog ) {
 			return null;
 		}
 
@@ -533,11 +536,12 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { canViewActivityLog, translate } = this.props;
+		const { canViewActivityLog, siteId, translate } = this.props;
 
 		if ( false === canViewActivityLog ) {
 			return (
 				<Main>
+					<QuerySitePurchases siteId={ siteId } />
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
@@ -547,7 +551,7 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const { siteId, context, rewindState } = this.props;
+		const { context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -556,6 +560,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
@@ -571,6 +576,10 @@ class ActivityLog extends Component {
 
 const emptyList = [];
 
+const hasBackupProduct = purchases => {
+	return some( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
+};
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -585,6 +594,8 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
+		const purchases = getSitePurchases( state, siteId );
+		const siteHasNoLog = siteIsOnFreePlan && ! hasBackupProduct( purchases );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
@@ -609,7 +620,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
-			siteIsOnFreePlan,
+			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 		};
 	},

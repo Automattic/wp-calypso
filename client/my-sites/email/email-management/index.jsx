@@ -23,7 +23,8 @@ import {
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
@@ -53,7 +54,8 @@ class EmailManagement extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
-		isRequestingDomains: PropTypes.bool.isRequired,
+		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
+		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -99,9 +101,9 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, gsuiteUsers, isRequestingDomains, selectedDomainName } = this.props;
+		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
-		if ( isRequestingDomains || ! gsuiteUsers ) {
+		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
 		}
 
@@ -214,6 +216,7 @@ class EmailManagement extends React.Component {
 		return (
 			<Fragment>
 				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
+
 				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);
@@ -245,9 +248,10 @@ class EmailManagement extends React.Component {
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
+		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};

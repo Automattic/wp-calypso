@@ -316,17 +316,10 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/full-site-editing' ) ) {
 		flows[ 'test-fse' ] = {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
+			steps: [ 'user', 'site-title', 'domains', 'plans' ],
 			destination: getSignupDestination,
-			description: 'A copy of `onboarding` for testing Full Site Editing',
-			lastModified: '2019-08-08',
+			description: 'User testing Signup flow for Full Site Editing',
+			lastModified: '2019-11-19',
 		};
 	}
 
