@@ -13,9 +13,9 @@ import getBillingTransactionsByType from 'state/selectors/get-billing-transactio
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts
  *
- * @param  {Object}  state           Global state tree
- * @param  {String}  transactionType Transaction type
- * @return {Array}                   Date filter metadata
+ * @param   {object}  state           Global state tree
+ * @param   {string}  transactionType Transaction type
+ * @returns {Array}                   Date filter metadata
  */
 export default createSelector(
 	( state, transactionType ) => {

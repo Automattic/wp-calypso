@@ -13,8 +13,8 @@ import { parseTransactionDate } from 'state/billing-transactions/util';
  * Returns all billing transactions.
  * Returns null if the billing transactions have not been fetched yet.
  *
- * @param  {Object}  state   Global state tree
- * @return {?Object}         Billing transactions
+ * @param   {object}  state   Global state tree
+ * @returns {?object}         Billing transactions
  */
 const getBillingTransactions = createSelector(
 	state => {

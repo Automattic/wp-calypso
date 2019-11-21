@@ -13,9 +13,9 @@ import getPublicizeConnection from 'state/selectors/get-publicize-connection';
  * passed as a parameter.
  * Thus, it returns richest array adding and crossing information for each action.
  *
- * @param {Object} state - Global state tree
- * @param {Array} postShareActions - share actions of a post
- * @return {Array} richest post actions array
+ * @param  {object} state - Global state tree
+ * @param  {Array} postShareActions - share actions of a post
+ * @returns {Array} richest post actions array
  */
 export function enrichPublicizeActionsWithConnections( state, postShareActions ) {
 	return map(
