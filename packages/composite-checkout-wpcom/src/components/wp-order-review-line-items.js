@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { renderDisplayValueMarkdown, useHasDomainsInCart } from '@automattic/composite-checkout';
+import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { useLocalize } from '../lib/localize'; // TODO: remove this
 import Button from './button';
 import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
 import RadioButton from '../components/radio-button'; // TODO: remove this
+import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (

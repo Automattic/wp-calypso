@@ -9,7 +9,7 @@ import { usePaymentData } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, } from '../public-api'; // TODO: move this into this package
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { useLocalize } from '../lib/localize'; // TODO: remove this
 import {

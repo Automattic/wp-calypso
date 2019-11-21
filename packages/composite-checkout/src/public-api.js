@@ -16,7 +16,7 @@ import {
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
+import { useLineItems, useTotal } from './lib/line-items';
 import {
 	createRegistry,
 	useDispatch,
@@ -66,7 +66,6 @@ export {
 	useCheckoutHandlers,
 	useCheckoutRedirects,
 	useDispatch,
-	useHasDomainsInCart, // TODO: remove this
 	useIsStepActive,
 	useLineItems,
 	usePaymentData,
