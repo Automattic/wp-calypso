@@ -7,14 +7,10 @@ import React from 'react';
  * Internal Dependencies
  */
 import JetpackOnboardingMain from './main';
-import { setSection } from 'state/ui/actions';
-
-const removeSidebar = context => {
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-};
+import { hideSidebar } from 'state/ui/actions';
 
 export const onboarding = ( context, next ) => {
-	removeSidebar( context );
+	hideSidebar( context );
 
 	// We validate siteSlug inside the component
 	context.primary = (
