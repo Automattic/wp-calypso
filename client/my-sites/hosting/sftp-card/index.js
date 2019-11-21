@@ -26,6 +26,11 @@ import {
 } from 'state/hosting/actions';
 import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SftpCard = ( {
 	translate,
 	username,

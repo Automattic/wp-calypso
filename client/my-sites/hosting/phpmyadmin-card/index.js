@@ -18,6 +18,11 @@ import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/ht
 import { http } from 'state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const requestId = siteId => `pma-link-request-${ siteId }`;
 
 export const requestPmaLink = siteId =>

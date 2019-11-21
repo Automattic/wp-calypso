@@ -18,7 +18,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
-import DataLossWarning from './data-loss-warning';
+import SupportCard from './support-card';
 import { isEnabled } from 'config';
 
 /**
@@ -39,7 +39,7 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 					<PhpMyAdminCard disabled={ isDisabled } />
 				</div>
 				<div className="hosting__layout-col">
-					<DataLossWarning />
+					<SupportCard />
 				</div>
 			</div>
 		</>

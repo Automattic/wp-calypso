@@ -16,12 +16,12 @@ import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
 import { getHappinessEngineers } from 'state/happiness-engineers/selectors';
 import CardHeading from 'components/card-heading';
 
-const DataLossWarning = ( { avatars, translate } ) => {
+const SuuportCard = ( { avatars, translate } ) => {
 	return (
-		<Card className="data-loss-warning">
+		<Card className="support-card">
 			{ ! avatars && <QueryHappinessEngineers /> }
 			<CardHeading>{ translate( 'Support' ) }</CardHeading>
-			<div className="data-loss-warning__avatars">
+			<div className="support-card__avatars">
 				{ shuffle( avatars ).map( avatar => (
 					<Gravatar key={ avatar } user={ { avatar_URL: avatar } } size={ 42 } />
 				) ) }
@@ -38,4 +38,4 @@ const DataLossWarning = ( { avatars, translate } ) => {
 
 export default connect( state => ( {
 	avatars: getHappinessEngineers( state ),
-} ) )( localize( DataLossWarning ) );
+} ) )( localize( SuuportCard ) );
