@@ -24,7 +24,7 @@ import {
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
-import { getDecoratedSiteDomains, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
@@ -248,7 +248,7 @@ class EmailManagement extends React.Component {
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),

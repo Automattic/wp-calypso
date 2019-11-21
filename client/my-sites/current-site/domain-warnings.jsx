@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -68,7 +68,7 @@ export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
-		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		domains: getDomainsBySiteId( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),

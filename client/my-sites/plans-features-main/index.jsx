@@ -59,7 +59,7 @@ import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
 	getSiteOption,
 	getSitePlan,
@@ -86,7 +86,7 @@ export class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
+		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
 		const { siteId: prevSiteId } = prevProps;
@@ -547,7 +547,7 @@ export default connect(
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
 			customerType,
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),

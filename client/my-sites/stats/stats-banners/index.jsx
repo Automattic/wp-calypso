@@ -14,7 +14,7 @@ import { abtest } from 'lib/abtest';
 import { isEcommercePlan } from 'lib/plans';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/gsuite';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -137,7 +137,7 @@ class StatsBanners extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const domains = getDecoratedSiteDomains( state, ownProps.siteId );
+	const domains = getDomainsBySiteId( state, ownProps.siteId );
 
 	return {
 		domains,

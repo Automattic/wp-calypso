@@ -25,7 +25,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -175,7 +175,7 @@ class CurrentPlan extends Component {
 export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const domains = getDecoratedSiteDomains( state, selectedSiteId );
+	const domains = getDomainsBySiteId( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
