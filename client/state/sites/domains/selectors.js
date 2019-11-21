@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { has } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import treeSelect from '@automattic/tree-select';
@@ -50,7 +45,7 @@ export const getDomainsBySite = ( state, site ) => {
  * @returns {boolean} true if the list of domains has loaded, false otherwise
  */
 export const hasLoadedSiteDomains = ( state, siteId ) => {
-	return has( state, [ 'sites', 'domains', 'items', siteId ] );
+	return Boolean( state?.sites?.domains?.items?.[ siteId ] );
 };
 
 /**
