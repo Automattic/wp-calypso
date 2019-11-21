@@ -19,3 +19,18 @@ export const useActiveStep = () => {
 	}
 	return step;
 };
+
+const RenderedStepContext = createContext();
+
+export const RenderedStepProvider = ( { stepId, children } ) => (
+	<RenderedStepContext.Provider value={ stepId }>{ children }</RenderedStepContext.Provider>
+);
+
+export const useIsStepActive = () => {
+	const stepId = useContext( RenderedStepContext );
+	const activeStep = useActiveStep();
+	if ( ! stepId ) {
+		throw new Error( 'useIsStepActive can only be used inside an RenderedStepProvider' );
+	}
+	return stepId === activeStep.id;
+};

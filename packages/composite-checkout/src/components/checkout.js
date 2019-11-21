@@ -20,7 +20,7 @@ import {
 	usePaymentData,
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { useActiveStep, ActiveStepProvider } from '../lib/active-step';
+import { useActiveStep, ActiveStepProvider, RenderedStepProvider } from '../lib/active-step';
 import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -173,29 +173,31 @@ function CheckoutStepContainer( {
 		<CheckoutErrorBoundary
 			errorMessage={ sprintf( localize( 'There was a problem with the step "%s".' ), id ) }
 		>
-			<CheckoutStep
-				className={ className }
-				isActive={ isActive }
-				isComplete={ isComplete }
-				stepNumber={ stepNumber }
-				title={ titleContent || '' }
-				onEdit={ onEdit }
-				editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel() }
-				stepContent={
-					<React.Fragment>
-						{ activeStepContent }
-						{ shouldShowNextButton && (
-							<CheckoutNextStepButton
-								value={ localize( 'Continue' ) }
-								onClick={ goToNextStep }
-								ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
-								disabled={ ! isComplete }
-							/>
-						) }
-					</React.Fragment>
-				}
-				stepSummary={ isComplete ? completeStepContent : incompleteStepContent }
-			/>
+			<RenderedStepProvider stepId={ id }>
+				<CheckoutStep
+					className={ className }
+					isActive={ isActive }
+					isComplete={ isComplete }
+					stepNumber={ stepNumber }
+					title={ titleContent || '' }
+					onEdit={ onEdit }
+					editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel() }
+					stepContent={
+						<React.Fragment>
+							{ activeStepContent }
+							{ shouldShowNextButton && (
+								<CheckoutNextStepButton
+									value={ localize( 'Continue' ) }
+									onClick={ goToNextStep }
+									ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
+									disabled={ ! isComplete }
+								/>
+							) }
+						</React.Fragment>
+					}
+					stepSummary={ isComplete ? completeStepContent : incompleteStepContent }
+				/>
+			</RenderedStepProvider>
 		</CheckoutErrorBoundary>
 	);
 }
