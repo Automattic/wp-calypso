@@ -14,7 +14,10 @@ import {
 	createPayPalMethod,
 	createApplePayMethod,
 	createCreditCardMethod,
+	CheckoutPaymentMethods,
+	useActiveStep,
 	WPCheckoutOrderSummary,
+	WPCheckoutOrderSummaryTitle,
 	WPCheckoutOrderReview,
 	WPContactForm,
 } from '../src/public-api';
@@ -129,6 +132,78 @@ const getTotal = items => {
 	};
 };
 
+// TODO: replace this with the host page's translation system
+const useLocalize = () => text => text;
+
+const CheckoutPaymentMethodsTitle = () => {
+	const localize = useLocalize();
+	const currentStep = useActiveStep();
+	const isActive = currentStep.id === 'payment-method';
+	return isActive ? localize( 'Payment method' ) : localize( 'Pick a payment method' );
+};
+
+const ContactFormTitle = () => {
+	const localize = useLocalize();
+	const currentStep = useActiveStep();
+	const isActive = currentStep.id === 'payment-method';
+	return isActive ? localize( 'Billing details' ) : localize( 'Enter your billing details' );
+};
+
+const OrderReviewTitle = () => {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+};
+
+const steps = [
+	{
+		id: 'order-summary',
+		className: 'checkout__order-summary-step',
+		hasStepNumber: false,
+		titleContent: <WPCheckoutOrderSummaryTitle />,
+		activeStepContent: null,
+		incompleteStepContent: null,
+		completeStepContent: <WPCheckoutOrderSummary />,
+		isCompleteCallback: () => true,
+	},
+	{
+		// TODO: Export this whole step from the package
+		id: 'payment-method',
+		className: 'checkout__payment-methods-step',
+		hasStepNumber: true,
+		titleContent: <CheckoutPaymentMethodsTitle />,
+		activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
+		incompleteStepContent: null,
+		completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
+		isCompleteCallback: () => true, // TODO: make sure any required fields in the selected payment method are complete
+		isEditableCallback: () => true,
+		getEditButtonAriaLabel: localize => localize( 'Edit the payment method' ),
+		getNextStepButtonLabel: localize => localize( 'Continue with the selected payment method' ),
+	},
+	{
+		id: 'contact-form',
+		className: 'checkout__billing-details-step',
+		hasStepNumber: true,
+		titleContent: <ContactFormTitle />,
+		activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
+		incompleteStepContent: null,
+		completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
+		isCompleteCallback: () => true, // TODO: Make sure the form is complete
+		isEditableCallback: () => true,
+		getEditButtonAriaLabel: localize => localize( 'Edit the billing details' ), // TODO: somehow use the host's translation system because this will not work
+		getNextStepButtonLabel: localize => localize( 'Continue with the entered billing details' ), // TODO: somehow use the host's translation system because this will not work
+	},
+	{
+		id: 'order-review',
+		className: 'checkout__review-order-step',
+		hasStepNumber: true,
+		titleContent: <OrderReviewTitle />,
+		activeStepContent: <WPCheckoutOrderReview />,
+		incompleteStepContent: null,
+		completeStepContent: null,
+		isCompleteCallback: () => true,
+	},
+];
+
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const [ items, setItems ] = useState( initialItems );
@@ -151,11 +226,7 @@ function MyCheckout() {
 				Boolean
 			) }
 		>
-			<Checkout
-				OrderSummary={ WPCheckoutOrderSummary }
-				ReviewContent={ WPCheckoutOrderReview }
-				ContactSlot={ WPContactForm }
-			/>
+			<Checkout steps={ steps } />
 		</CheckoutProvider>
 	);
 }
