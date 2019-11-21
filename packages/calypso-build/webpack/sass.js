@@ -34,8 +34,10 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				includePaths,
-				data: prelude,
+				prependData: prelude,
+				sassOptions: {
+					includePaths,
+				},
 			},
 		},
 	],
