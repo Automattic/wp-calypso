@@ -11,7 +11,12 @@ import styled from '@emotion/styled';
 import joinClasses from '../lib/join-classes';
 import RadioButton from './radio-button';
 import { useLocalize } from '../lib/localize';
-import { useAllPaymentMethods } from '../public-api';
+import {
+	useAllPaymentMethods,
+	usePaymentMethod,
+	usePaymentMethodId,
+	useActiveStep,
+} from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
 export default function CheckoutPaymentMethods( {
@@ -19,11 +24,11 @@ export default function CheckoutPaymentMethods( {
 	isComplete,
 	className,
 	availablePaymentMethods,
-	paymentMethod,
-	onChange,
 } ) {
 	const localize = useLocalize();
 
+	const paymentMethod = usePaymentMethod();
+	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const paymentMethods = useAllPaymentMethods();
 	const paymentMethodsToDisplay = availablePaymentMethods
 		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
@@ -63,7 +68,7 @@ export default function CheckoutPaymentMethods( {
 						<PaymentMethod
 							{ ...method }
 							checked={ paymentMethod.id === method.id }
-							onClick={ onChange }
+							onClick={ setPaymentMethod }
 							ariaLabel={ method.getAriaLabel( localize ) }
 						/>
 					</CheckoutErrorBoundary>
@@ -76,11 +81,8 @@ export default function CheckoutPaymentMethods( {
 CheckoutPaymentMethods.propTypes = {
 	summary: PropTypes.bool,
 	isComplete: PropTypes.bool.isRequired,
-	isActive: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	paymentMethod: PropTypes.object,
-	onChange: PropTypes.func.isRequired,
 };
 
 export function CheckoutPaymentMethodsTitle() {
