@@ -13,6 +13,7 @@ import { renderDisplayValueMarkdown, useHasDomainsInCart } from '../public-api';
 import { useLocalize } from '../lib/localize';
 import Button from './button';
 import CheckoutModal from '../components/checkout-modal';
+import RadioButton from '../components/radio-button';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (
@@ -40,7 +41,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<span id={ itemSpanId }>{ item.label }</span>
+			<ProductTitle id={ itemSpanId }>{ item.label }</ProductTitle>
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
@@ -68,6 +69,8 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 					/>
 				</React.Fragment>
 			) }
+
+			{ item.type === 'plan' && <PlanTermOptions /> }
 		</div>
 	);
 }
@@ -88,6 +91,7 @@ WPLineItem.propTypes = {
 
 const LineItemUI = styled( WPLineItem )`
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
 	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' )};
@@ -107,6 +111,15 @@ const LineItemUI = styled( WPLineItem )`
 	}
 `;
 
+const ProductTitle = styled.span`
+	flex: 1;
+`;
+
+const Discount = styled.span`
+	color: ${props => props.theme.colors.discount};
+	margin-right: 8px;
+`;
+
 const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
@@ -115,6 +128,22 @@ const DeleteButton = styled( Button )`
 
 	:hover rect {
 		fill: ${props => props.theme.colors.error};
+	}
+`;
+
+const TermOptions = styled.ul`
+	flex-basis: 100%;
+	margin: 12px 0 0;
+	padding: 0;
+`;
+
+const TermOptionsItem = styled.li`
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+
+	:first-of-type {
+		margin-top: 0;
 	}
 `;
 
@@ -198,6 +227,55 @@ WPOrderReviewLineItems.propTypes = {
 		} )
 	),
 };
+
+function PlanTermOptions() {
+	const localize = useLocalize();
+	const [ termDuration, setTermDuration ] = useState( 'one-year' );
+
+	return (
+		<TermOptions>
+			<TermOptionsItem>
+				<RadioButton
+					name="term"
+					id="one-year"
+					value="$60"
+					checked={ termDuration === 'one-year' }
+					onChange={ () => {
+						setTermDuration( 'one-year' );
+					} }
+					ariaLabel={ localize( 'One year term' ) }
+					label={
+						<React.Fragment>
+							<ProductTitle>{ localize( 'One year' ) }</ProductTitle>
+							<span>$60</span>
+						</React.Fragment>
+					}
+				/>
+			</TermOptionsItem>
+			<TermOptionsItem>
+				<RadioButton
+					name="term"
+					id="two-year"
+					value="$60"
+					checked={ termDuration === 'two-year' }
+					onChange={ () => {
+						setTermDuration( 'two-year' );
+					} }
+					ariaLabel={ localize( 'Two year term' ) }
+					label={
+						<React.Fragment>
+							<ProductTitle>{ localize( 'Two years' ) }</ProductTitle>
+							<Discount>Save 10%</Discount>
+							<span>
+								<s>$120</s> $108
+							</span>
+						</React.Fragment>
+					}
+				/>
+			</TermOptionsItem>
+		</TermOptions>
+	);
+}
 
 function returnModalCopy( product, localize, hasDomainsInCart ) {
 	const modalCopy = {};
