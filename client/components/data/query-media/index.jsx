@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import shallowEqual from '@wordpress/is-shallow-equal';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { connect } from 'react-redux';
 
 /**
@@ -39,7 +39,7 @@ class QueryMedia extends Component {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.mediaId === prevProps.mediaId &&
-			shallowEqual( this.props.query, prevProps.query )
+			isShallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}

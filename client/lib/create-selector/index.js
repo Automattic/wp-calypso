@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { memoize, includes } from 'lodash';
-import shallowEqual from '@wordpress/is-shallow-equal';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
@@ -97,7 +97,7 @@ export default function createSelector(
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+			if ( lastDependants && ! isShallowEqual( currentDependants, lastDependants ) ) {
 				memoizedSelector.cache.clear();
 			}
 
