@@ -4,6 +4,7 @@
 - Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
 - Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
 - Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
+- Add basic TypeScript config, `tsconfig.json` (for projects to extend).
 
 # 5.0.1
 
