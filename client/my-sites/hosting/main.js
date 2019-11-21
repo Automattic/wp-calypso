@@ -33,8 +33,8 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 		return null;
 	}
 
-	const sftpPhpMyAdminFeaturesEnabled = true;
-	isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+	const sftpPhpMyAdminFeaturesEnabled =
+		isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
 
 	return (
 		<Main className="hosting is-wide-layout">
