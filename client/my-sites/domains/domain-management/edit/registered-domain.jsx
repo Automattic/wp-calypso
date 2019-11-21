@@ -24,7 +24,6 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { withLocalizedMoment } from 'components/localized-moment';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
