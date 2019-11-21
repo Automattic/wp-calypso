@@ -3,7 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon, IconButton } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -40,6 +40,7 @@ const Header: FunctionComponent< Props > = ( {
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
 		// eslint-disable-next-line no-nested-ternary
@@ -68,7 +69,7 @@ const Header: FunctionComponent< Props > = ( {
 
 	// Update domainText only when we have a replacement.
 	useEffect( () => {
-		setDomainText( current => domain ?? freeDomainSuggestion?.domain_name ?? current );
+		setDomainText( current => domain?.domain_name ?? freeDomainSuggestion?.domain_name ?? current );
 	}, [ domain, freeDomainSuggestion ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -90,6 +91,7 @@ const Header: FunctionComponent< Props > = ( {
 					{ domainText && (
 						<DomainPickerButton
 							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
+							onDomainSelect={ setDomain }
 							queryParameters={
 								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
 							}

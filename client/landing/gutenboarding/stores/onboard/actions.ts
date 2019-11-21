@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import { ActionType, SiteVertical, Vertical } from './types';
-import { DomainName } from '../domain-suggestions/types';
+import { DomainSuggestion } from '../domain-suggestions/types';
 
-export const setDomain = ( domain: DomainName ) => ( {
+export const setDomain = ( domain: DomainSuggestion ) => ( {
 	type: ActionType.SET_DOMAIN as const,
 	domain,
 } );

@@ -3,12 +3,14 @@
  */
 import React, { ComponentPropsWithoutRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import DomainPicker from './list';
+import { STORE_KEY } from '../../stores/onboard';
 
 /**
  * Style dependencies
