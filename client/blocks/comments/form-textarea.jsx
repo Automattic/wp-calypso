@@ -28,10 +28,8 @@ const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (
 ) );
 /* eslint-enable jsx-a11y/no-autofocus */
 
-let component = PostCommentFormTextarea;
-if ( isEnabled( 'reader/paste-to-link' ) ) {
-	component = withPasteToLink( component );
-}
+let component = withPasteToLink( PostCommentFormTextarea );
+
 if ( isEnabled( 'reader/user-mention-suggestions' ) ) {
 	component = withUserMentions( component );
 }

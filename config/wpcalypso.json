@@ -113,7 +113,6 @@
 		"publicize-preview": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
 		"resume-editing": true,

@@ -98,7 +98,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
