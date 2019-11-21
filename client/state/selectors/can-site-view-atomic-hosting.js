@@ -43,5 +43,5 @@ export default function canSiteViewAtomicHosting( state ) {
 
 	const planSlug = get( getSelectedSite( state ), [ 'plan', 'product_slug' ] );
 
-	return isBusinessPlan( planSlug );
+	return isBusinessPlan( planSlug ) && isEnabled( 'hosting/non-atomic-support' );
 }
