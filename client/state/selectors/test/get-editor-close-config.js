@@ -24,11 +24,6 @@ const blockEditorAction = { type: ROUTE_SET, path: '/block-editor/page/1' };
 const checklistAction = { type: ROUTE_SET, path: checklistUrl };
 const customerHomeAction = { type: ROUTE_SET, path: customerHomeUrl };
 
-// A small wrapper to translate the old tests into the new format.
-function getEditorCloseUrl() {
-	return getEditorCloseConfig( ...arguments ).url;
-}
-
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for post type listings as default', () => {
 		const state = {
@@ -42,7 +37,7 @@ describe( 'getEditorCloseConfig()', () => {
 
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
 
-		expect( getEditorCloseUrl( state, siteId, postType ) ).to.equal( allPostsUrl );
+		expect( getEditorCloseConfig( state, siteId, postType ).url ).to.equal( allPostsUrl );
 	} );
 
 	test( 'should return parent URL if current post is a FSE template part', () => {
@@ -75,7 +70,7 @@ describe( 'getEditorCloseConfig()', () => {
 
 		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
 
-		expect( getEditorCloseUrl( state, siteId, templatePostType, parentPostId ) ).to.equal(
+		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).to.equal(
 			parentPostEditorUrl
 		);
 	} );
@@ -98,7 +93,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseUrl( state, siteId, postType ) ).to.equal( checklistUrl );
+		expect( getEditorCloseConfig( state, siteId, postType ).url ).to.equal( checklistUrl );
 	} );
 
 	test( 'should return URL for checklist if most recent non-editor nav was from the checklist', () => {
@@ -114,7 +109,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseUrl( state, siteId, postType, '' ) ).to.equal( checklistUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( checklistUrl );
 	} );
 
 	test( 'should return URL for customer home if previous nav was from the customer home', () => {
@@ -135,7 +130,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseUrl( state, siteId, postType, '' ) ).to.equal( customerHomeUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( customerHomeUrl );
 	} );
 
 	test( 'should return URL for customer home if most recent non-editor nav was from the customer home', () => {
@@ -151,6 +146,6 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseUrl( state, siteId, postType, '' ) ).to.equal( customerHomeUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( customerHomeUrl );
 	} );
 } );
