@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLocalize } from '../lib/localize';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,

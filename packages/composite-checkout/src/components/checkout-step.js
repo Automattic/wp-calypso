@@ -23,6 +23,7 @@ export default function CheckoutStep( {
 	finalStep,
 	stepSummary,
 	stepContent,
+	editButtonAriaLabel,
 } ) {
 	const classNames = [
 		className,
@@ -43,6 +44,7 @@ export default function CheckoutStep( {
 				isActive={ isActive }
 				isComplete={ isComplete }
 				onEdit={ onEdit }
+				editButtonAriaLabel={ editButtonAriaLabel }
 			/>
 			<StepContent className="checkout-step__content" isVisible={ isActive }>
 				{ stepContent }
