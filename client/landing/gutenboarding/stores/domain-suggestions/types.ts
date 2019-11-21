@@ -10,7 +10,7 @@ export interface DomainSuggestionQuery {
 	 * @example
 	 * example.photo.blog
 	 */
-	include_dotblogsubdomain?: true;
+	include_dotblogsubdomain: boolean;
 
 	/**
 	 * True to include WordPress.com subdomain suggestions
@@ -18,7 +18,7 @@ export interface DomainSuggestionQuery {
 	 * @example
 	 * example.wordpress.com
 	 */
-	include_wordpressdotcom?: true;
+	include_wordpressdotcom: boolean;
 
 	/**
 	 * True to only provide a wordpress.com subdomain
@@ -26,12 +26,12 @@ export interface DomainSuggestionQuery {
 	 * @example
 	 * example.wordpress.com
 	 */
-	only_wordpressdotcom?: true;
+	only_wordpressdotcom: boolean;
 
 	/**
 	 * Desired number of results
 	 */
-	quantity?: number;
+	quantity: number;
 
 	/**
 	 * Domain search term
