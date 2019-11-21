@@ -25,9 +25,7 @@ const DomainPickerButton: FunctionComponent = () => {
 	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
-	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState(
-		true /* @TODO: should be `false` by default, true for dev */
-	);
+	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
 	// Without user search, we can provide recommendations based on title + vertical
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
