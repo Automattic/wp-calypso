@@ -67,10 +67,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								className="domain-picker__suggestion-item"
 								key={ suggestion.domain_name }
 							>
-								<div className="domain-picker__suggestion-item-name">
+								<span className="domain-picker__suggestion-item-name">
 									{ suggestion.domain_name }
-								</div>
-								<div className="domain-picker__suggestion-action">{ NO__( 'Upgrade' ) }</div>
+								</span>
+								<span className="domain-picker__suggestion-action">{ NO__( 'Upgrade' ) }</span>
 							</Button>
 						) ) }
 					</PanelRow>
