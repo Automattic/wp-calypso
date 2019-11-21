@@ -81,7 +81,7 @@ export default function Checkout( { steps, className } ) {
 				...step,
 				stepNumber: step.hasStepNumber ? numberedStepNumber : null,
 				stepIndex: index,
-				isComplete: !! step.isCompleteCallback( { paymentData } ),
+				isComplete: !! step.isCompleteCallback && step.isCompleteCallback( { paymentData } ),
 			};
 		} );
 	}, [ steps, paymentData ] );
