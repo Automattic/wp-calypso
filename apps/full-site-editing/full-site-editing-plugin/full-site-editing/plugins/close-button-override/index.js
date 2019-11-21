@@ -65,8 +65,7 @@ domReady( () => {
 		// These should go here so that they have any updates that happened while querying for the selector.
 		const { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
 
-		// Create custom close button and append to components toolbar.
-		// When closing Template CPT (e.g. header) to navigate back to parent page.
+		// Create custom close button for the template part editor.
 		if ( 'wp_template_part' === editorPostType ) {
 			const newCloseButton = document.createElement( 'a' );
 			newCloseButton.href = closeButtonUrl || 'edit.php?post_type=page';
@@ -85,7 +84,7 @@ domReady( () => {
 			componentsToolbar.prepend( newCloseButton );
 		}
 
-		// Create a normal back button for the page/post editor.
+		// Create a "normal" close button for the page/post editor.
 		if ( 'page' === editorPostType || 'post' === editorPostType ) {
 			const defaultUrl = `edit.php?post_type=${ editorPostType }`;
 
