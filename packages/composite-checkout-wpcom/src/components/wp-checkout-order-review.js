@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { useLineItems } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import {
 	WPOrderReviewTotal,
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
-import { useLineItems } from '../public-api';
 
 export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();

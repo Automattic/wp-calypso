@@ -8,7 +8,7 @@ import interpolateComponents from 'interpolate-components';
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart } from '../public-api';
+import { useHasDomainsInCart } from '../public-api'; // TODO: move this into this package
 import { useLocalize } from '../lib/localize'; // TODO: remove this
 
 export default function WPTermsAndConditions() {

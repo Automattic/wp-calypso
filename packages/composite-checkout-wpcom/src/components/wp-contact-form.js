@@ -4,20 +4,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { usePaymentData } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, usePaymentData } from '../public-api';
+import { useHasDomainsInCart, } from '../public-api'; // TODO: move this into this package
 import Field from './field';
-// TODO: remove or replace all the below imports as they are not in wpcom
-import { useLocalize } from '../lib/localize';
+import { useLocalize } from '../lib/localize'; // TODO: remove this
 import {
 	SummaryLine,
 	SummaryDetails,
 	SummarySpacerLine,
-} from '../lib/styled-components/summary-details';
-import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback';
+} from '../lib/styled-components/summary-details'; // TODO: remove this
+import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback'; // TODO: remove this
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();

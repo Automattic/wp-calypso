@@ -3,12 +3,12 @@
  */
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize'; // TODO: remove this
-import { useLineItems, useTotal, renderDisplayValueMarkdown } from '../public-api';
 import Button from './button';
 import Coupon from './coupon';
 

@@ -4,16 +4,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { renderDisplayValueMarkdown, useHasDomainsInCart } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown, useHasDomainsInCart } from '../public-api';
-import { useLocalize } from '../lib/localize';
+import joinClasses from './join-classes';
+import { useLocalize } from '../lib/localize'; // TODO: remove this
 import Button from './button';
-import CheckoutModal from '../components/checkout-modal';
-import RadioButton from '../components/radio-button';
+import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
+import RadioButton from '../components/radio-button'; // TODO: remove this
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (
