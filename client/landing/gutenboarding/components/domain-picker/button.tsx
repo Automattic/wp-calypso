@@ -68,7 +68,7 @@ const DomainPickerButton: FunctionComponent = () => {
 				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 			>
-				Choose a domain
+				{ NO__( 'Choose a domain' ) }
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
