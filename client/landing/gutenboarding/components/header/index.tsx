@@ -65,8 +65,9 @@ const Header: FunctionComponent< Props > = ( {
 		[ domainSearch, siteVertical ]
 	);
 
+	// Update domainText only when we have a replacement.
 	useEffect( () => {
-		setDomainText( domain ?? freeDomainSuggestion?.domain_name );
+		setDomainText( current => domain ?? freeDomainSuggestion?.domain_name ?? current );
 	}, [ domain, freeDomainSuggestion ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
