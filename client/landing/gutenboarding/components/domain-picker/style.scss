@@ -42,6 +42,12 @@
 		color: var( --studio-blue-30 );
 	}
 }
+.domain-picker__has-domain--open {
+	flex-direction: row;
+	.components-base-control {
+		flex-grow: 1;
+	}
+}
 
 .domain-picker__divider {
 	margin-top: 20px;

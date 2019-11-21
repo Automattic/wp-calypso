@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import {
 	Button,
 	HorizontalRule,
@@ -10,12 +10,17 @@ import {
 	PanelRow,
 	TextControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ as NO__ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { DomainSuggestion } from '../../stores/domain-suggestions/types';
+// @TODO: extract or replace
+import { resemblesUrl } from '../../../../lib/url';
+import { STORE_KEY } from '../../stores/onboard';
 
 interface Props {
 	domainSearch: string;
@@ -28,6 +33,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	setDomainSearch,
 	suggestions,
 } ) => {
+	const [ showOwnDomainField, setShowOwnDomainField ] = useState( false );
+	const [ ownDomain, setOwnDomain ] = useState( '' );
+
+	const { setDomain } = useDispatch( STORE_KEY );
+
 	const label = NO__( 'Search for a domain' );
 
 	const handleDomainPick = suggestion => () => {
@@ -38,11 +48,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			// eslint-disable-next-line no-console
 			console.log( 'Picked paid domain: %o', suggestion );
 		}
-	};
-
-	const handleHasDomain = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'Already has a domain.' );
 	};
 
 	return (
@@ -91,8 +96,35 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						) ) }
 					</PanelRow>
 				) : null }
-				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
-					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
+				<PanelRow
+					className={ classnames( 'domain-picker__panel-row', {
+						'domain-picker__has-domain': ! showOwnDomainField,
+						'domain-picker__has-domain--open': showOwnDomainField,
+					} ) }
+				>
+					{ showOwnDomainField ? (
+						<>
+							<TextControl onChange={ setOwnDomain } value={ ownDomain } />
+							<Button
+								disabled={ ! resemblesUrl( ownDomain ) }
+								isPrimary
+								onClick={ () => {
+									setShowOwnDomainField( false );
+									setOwnDomain( '' );
+									// @TODO: remove
+									// eslint-disable-next-line no-console
+									console.log( 'Setting own domain: %o', ownDomain );
+									setDomain( ownDomain );
+								} }
+							>
+								Ok
+							</Button>
+						</>
+					) : (
+						<Button onClick={ () => setShowOwnDomainField( true ) }>
+							{ NO__( 'I already have a domain' ) }
+						</Button>
+					) }
 				</PanelRow>
 			</PanelBody>
 		</Panel>
