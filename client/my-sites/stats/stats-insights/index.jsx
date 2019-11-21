@@ -105,7 +105,6 @@ const StatsInsights = props => {
 
 StatsInsights.propTypes = {
 	followList: PropTypes.object.isRequired,
-	moment: PropTypes.func,
 	translate: PropTypes.func,
 };
 

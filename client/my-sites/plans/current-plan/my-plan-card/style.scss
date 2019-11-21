@@ -13,12 +13,34 @@
 	flex-grow: 1;
 }
 
+.my-plan-card__header {
+	flex: 1;
+
+	.is-placeholder &::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 100%;
+		height: calc( 100% - 16px );
+		min-height: 70px;
+		margin-bottom: 16px;
+
+		@include breakpoint( '>960px' ) {
+			height: 100%;
+		}
+	}
+}
+
 .my-plan-card__title {
 	font-size: 24px;
 	font-weight: 400;
 	line-height: 29px;
 	margin: 8px 0;
 	color: var( --color-neutral-100 );
+
+	.is-placeholder & {
+		display: none;
+	}
 }
 
 .my-plan-card__tag-line {
@@ -30,16 +52,35 @@
 	@include breakpoint( '>960px' ) {
 		margin-bottom: 8px;
 	}
+
+	.is-placeholder & {
+		display: none;
+	}
 }
 
-.my-plan-card .plan-icon {
+.my-plan-card__icon {
 	flex: 0 0 auto;
 	width: 64px;
 	height: 64px;
-	margin: 8px 20px 0 0;
+	margin: 8px 20px 16px 0;
 
 	@include breakpoint( '<660px' ) {
 		display: none;
+	}
+
+	.is-placeholder & {
+		.plan-icon {
+			display: none;
+		}
+
+		&::before {
+			@include placeholder( --color-neutral-10 );
+			content: '\00a0';
+			display: inline-block;
+			width: 64px;
+			height: 64px;
+			border-radius: 99%;
+		}
 	}
 }
 
@@ -99,7 +140,7 @@
 		color: var( --color-error );
 	}
 
-	&.is-placeholder::before {
+	.is-placeholder &::before {
 		@include placeholder( --color-neutral-10 );
 		content: '\00a0';
 		display: inline-block;
@@ -116,7 +157,7 @@
 		padding-top: 0;
 	}
 
-	&.is-placeholder::before {
+	.is-placeholder &::before {
 		@include placeholder( --color-neutral-10 );
 		content: '\00a0';
 		display: inline-block;

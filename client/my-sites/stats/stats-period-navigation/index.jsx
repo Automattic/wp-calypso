@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import qs from 'qs';
@@ -14,7 +13,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { withRtl } from 'components/rtl';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
 
 /**
@@ -123,4 +122,9 @@ class StatsPeriodNavigation extends PureComponent {
 
 const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
 
-export default flowRight( connectComponent, localize, withRtl )( StatsPeriodNavigation );
+export default flowRight(
+	connectComponent,
+	localize,
+	withRtl,
+	withLocalizedMoment
+)( StatsPeriodNavigation );

@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
@@ -22,7 +21,7 @@ class QueryTerms extends Component {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.taxonomy === nextProps.taxonomy &&
-			shallowEqual( this.props.query, nextProps.query )
+			isShallowEqual( this.props.query, nextProps.query )
 		) {
 			return;
 		}

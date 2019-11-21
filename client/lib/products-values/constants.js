@@ -4,11 +4,6 @@
 import React, { Fragment } from 'react';
 import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
-
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -70,22 +65,7 @@ export const JETPACK_PRODUCT_DISPLAY_NAMES = {
 };
 
 export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
-	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
-	{
-		components: {
-			a: (
-				<ExternalLinkWithTracking
-					href="https://jetpack.com/upgrade/backup/"
-					tracksEventName="calypso_plan_link_click"
-					tracksEventProps={ {
-						link_location: 'product_jetpack_backup_description',
-						link_slug: 'which-one-do-i-need',
-					} }
-					icon
-				/>
-			),
-		},
-	}
+	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 );
 export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
 	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
@@ -122,6 +102,7 @@ export const JETPACK_PRODUCTS = [
 		title: translate( 'Jetpack Backup' ),
 		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
 		id: PRODUCT_JETPACK_BACKUP,
+		landingPageUrl: 'https://jetpack.com/upgrade/backup/',
 		options: {
 			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,

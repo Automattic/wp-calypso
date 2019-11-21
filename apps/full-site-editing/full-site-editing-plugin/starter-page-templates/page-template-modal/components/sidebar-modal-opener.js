@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* global starterPageTemplatesConfig */
+
 /**
  * External dependencies
  */
@@ -15,6 +17,8 @@ import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 
+const { theme, isFrontPage } = starterPageTemplatesConfig;
+
 class SidebarModalOpener extends Component {
 	state = {
 		isTemplateModalOpen: false,
@@ -30,12 +34,25 @@ class SidebarModalOpener extends Component {
 	};
 
 	getLastTemplateUsed = () => {
-		const { lastTemplateUsedSlug, templates } = this.props;
+		const { templates } = this.props;
+		let { lastTemplateUsedSlug } = this.props;
+		// Try to match the homepage of the theme. Note that as folks transition
+		// to using the slug-based version of the homepage (e.g. "shawburn"), the
+		// slug will work normally without going through this check.
+		if ( ! lastTemplateUsedSlug && isFrontPage ) {
+			lastTemplateUsedSlug = theme;
+		}
+
 		if ( ! lastTemplateUsedSlug || lastTemplateUsedSlug === 'blank' ) {
 			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
-			return templates[ 1 ];
+			return templates[ 0 ];
 		}
-		return templates.find( temp => temp.slug === lastTemplateUsedSlug );
+		const matchingTemplate = templates.find( temp => temp.slug === lastTemplateUsedSlug );
+		// If no matching template, return the blank template.
+		if ( ! matchingTemplate ) {
+			return templates[ 0 ];
+		}
+		return matchingTemplate;
 	};
 
 	render() {

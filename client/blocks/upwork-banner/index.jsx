@@ -92,7 +92,7 @@ class UpworkBanner extends PureComponent {
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
 					) }
 				</p>
-				<Button className="upwork-banner__cta" compact primary>
+				<Button className="upwork-banner__cta" compact primary={ this.props.primaryButton }>
 					{ translate( 'Find your expert' ) }
 				</Button>
 				<Button className="upwork-banner__close" onClick={ this.onDismissClick }>

@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { get } from 'lodash';
+import { useRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import { get } from 'lodash';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
-import { useRtl } from 'components/rtl';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
@@ -159,7 +159,7 @@ const inlineComponents = [ Emojify ];
  * It will set directionality only to the leaf components - because it does so according
  * to text content and only leaf components have those.
  *
- * @param {React.Element} child
+ * @param {React.Element} child element to transform
  * @param {boolean}       isRtl whether current language is RTL
  * @returns {React.Element} transformed child
  */

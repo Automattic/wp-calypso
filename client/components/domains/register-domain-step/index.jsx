@@ -51,6 +51,7 @@ import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import FreeDomainExplainer from 'components/domains/free-domain-explainer';
 import {
 	DropdownFilters,
 	FilterResetNotice,
@@ -143,6 +144,7 @@ class RegisterDomainStep extends React.Component {
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
+		showTestCopy: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -413,9 +415,13 @@ class RegisterDomainStep extends React.Component {
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
 			? getAvailabilityNotice( lastDomainSearched, availabilityError, availabilityErrorData )
 			: {};
+
+		const searchBoxClassName = classNames( 'register-domain-step__search', {
+			'register-domain-step__search-domain-step-test': this.props.showTestCopy,
+		} );
 		return (
 			<div className="register-domain-step">
-				<StickyPanel className="register-domain-step__search">
+				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
 						<Search
 							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
@@ -1116,6 +1122,10 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderFreeDomainExplainer() {
+		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+	}
+
 	onAddDomain = suggestion => {
 		const domain = get( suggestion, 'domain_name' );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
@@ -1184,6 +1194,10 @@ class RegisterDomainStep extends React.Component {
 
 		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
 
+		const hasResults =
+			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
+			! this.state.loadingResults;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1214,6 +1228,8 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
 			>
+				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
+
 				{ showTldFilterBar && (
 					<TldFilterBar
 						availableTlds={ this.state.availableTlds }

@@ -9,9 +9,35 @@ import page from 'page';
  */
 import Hosting from './main';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { fetchSitePlans } from 'state/sites/plans/actions';
 
-export function handleHostingPanelRedirect( context, next ) {
+function waitForState( context ) {
+	return new Promise( resolve => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
+			}
+
+			const currentPlan = getCurrentPlan( state, siteId );
+			if ( ! currentPlan ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( fetchSitePlans( getSelectedSiteId( context.store.getState() ) ) );
+	} );
+}
+
+export async function handleHostingPanelRedirect( context, next ) {
 	const { store } = context;
+	await waitForState( context );
 	const state = store.getState();
 
 	if ( canSiteViewAtomicHosting( state ) ) {

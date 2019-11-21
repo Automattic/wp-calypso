@@ -19,6 +19,7 @@ import QueryMembershipsSubscriptions from 'components/data/query-memberships-sub
 import SectionHeader from 'components/section-header';
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -96,4 +97,4 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 
 export default connect( state => ( {
 	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
-} ) )( localize( MembershipsHistory ) );
+} ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );
