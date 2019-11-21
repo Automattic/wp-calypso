@@ -86,7 +86,7 @@ const Header: FunctionComponent< Props > = ( {
 					<div className="gutenboarding__site-title">
 						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 					</div>
-					<DomainPickerButton>{ domainText ?? NO__( 'Choose a domain' ) }</DomainPickerButton>
+					{ domainText && <DomainPickerButton>{ domainText }</DomainPickerButton> }
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
