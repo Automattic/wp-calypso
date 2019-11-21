@@ -24,18 +24,21 @@
 	},
 	"include": [ "client", "server" ],
 	"exclude": [
-		"public",
-		"node_modules",
-		"**/node_modules/*",
-		"build",
-		"**/build/*",
 		"**/build-module/*",
 		"**/build-style/*",
+		"**/build/*",
 		"**/dist/*",
+		"**/node_modules/*",
+		"apps",
+		"build",
 		"cached-results.json",
-		"stats.json",
-		"server/bundlers/assets-*.json",
-		"server/devdocs/search-index.js"
+		"packages",
+		"public",
+		"server/bundler/assets*.json",
+		"server/devdocs/components-usage-stats.json",
+		"server/devdocs/proptypes-index.json",
+		"server/devdocs/search-index.js",
+		"stats.json"
 	],
 	"types": [ "webpack-env" ]
 }
