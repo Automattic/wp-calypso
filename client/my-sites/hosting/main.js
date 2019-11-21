@@ -20,6 +20,7 @@ import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosti
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
+import PhpVersionCard from './php-version-card';
 import { isEnabled } from 'config';
 
 /**
@@ -27,24 +28,28 @@ import { isEnabled } from 'config';
  */
 import './style.scss';
 
-const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
+const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 	if ( ! canViewAtomicHosting ) {
 		return null;
 	}
 
-	const sftpPhpMyAdminFeatures = isEnabled( 'hosting/sftp-phpmyadmin' ) ? (
-		<>
-			<div className="hosting__layout">
-				<div className="hosting__layout-col">
-					<SFTPCard disabled={ isDisabled } />
-					<PhpMyAdminCard disabled={ isDisabled } />
+	let sftpPhpMyAdminFeatures = null;
+
+	if ( isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859 ) {
+		sftpPhpMyAdminFeatures = (
+			<>
+				<div className="hosting__layout">
+					<div className="hosting__layout-col">
+						<SFTPCard disabled={ isDisabled } />
+						<PhpMyAdminCard disabled={ isDisabled } />
+					</div>
+					<div className="hosting__layout-col">
+						<SupportCard />
+					</div>
 				</div>
-				<div className="hosting__layout-col">
-					<SupportCard />
-				</div>
-			</div>
-		</>
-	) : null;
+			</>
+		);
+	}
 
 	return (
 		<Main className="hosting is-wide-layout">
@@ -64,6 +69,7 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 					disableHref
 				/>
 			) }
+			<div className="hosting__cards">{ <PhpVersionCard /> }</div>
 			{ sftpPhpMyAdminFeatures }
 		</Main>
 	);
@@ -75,5 +81,6 @@ export default connect( state => {
 	return {
 		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		siteId,
 	};
 } )( localize( Hosting ) );
