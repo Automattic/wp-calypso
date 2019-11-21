@@ -1,0 +1,101 @@
+.sftp-card__info-table {
+	border-top: 1px solid var( --color-border-subtle );
+	margin: 0;
+
+	@include breakpoint( '<960px' ) {
+		display: block;
+
+		tbody, tr, th, button {
+			display: block;
+		}
+
+		tr {
+			margin-bottom: 8px;
+			margin-top: 16px;
+		}
+
+		th {
+			margin-bottom: 4px;
+		}
+
+		// Ensures overflowing text is clipped with an ellipsis.
+		td {
+			display: table;
+			table-layout: fixed;
+			width: 100%;
+
+			.sftp-card__hidden-overflow {
+				display: block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+
+		button {
+			margin-top: 8px;
+		}
+	}
+
+	@include breakpoint( '>1280px' ) {
+		margin-left: -48px;
+		width: calc( 100% + 48px );
+	}
+
+	@include breakpoint( '>960px' ) {
+		th, td {
+			padding: 8px;
+		}
+
+		th {
+			text-align: right;
+			width: 1%; // Hack to take the minimum space possible.
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		td {
+			padding-right: 0;
+		}
+
+		tr:first-child {
+			th, td {
+				padding-top: 16px;
+			}
+		}
+
+		tr:last-child {
+			th, td {
+				padding-bottom: 0;
+			}
+		}
+
+		tr.has-action {
+			th, td {
+				padding-top: 4px;
+				padding-bottom: 4px;
+			}
+		}
+
+		button {
+			margin-left: 16px;
+			vertical-align: middle;
+		}
+	}
+
+	p {
+		margin-bottom: 0.5em;
+	}
+
+	.sftp-card__password-warning {
+		margin-top: 16px;
+		margin-bottom: 0;
+		color: var( --color-text-subtle );
+		font-size: 13px;
+	}
+
+	&.is-placeholder span {
+		padding: 0 35%;
+		background-color: var( --color-surface-backdrop );
+	}
+}

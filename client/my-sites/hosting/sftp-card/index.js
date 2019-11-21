@@ -26,6 +26,11 @@ import {
 } from 'state/hosting/actions';
 import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SftpCard = ( {
 	translate,
 	username,
@@ -88,9 +93,9 @@ const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<p className="sftp-card__hidden-overflow">{ password }</p>
+					<span className="sftp-card__hidden-overflow">{ password }</span>
 					<ClipboardButton text={ password } onCopy={ () => setIsCopied( 'password' ) } compact>
-						{ passwordIsCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+						{ passwordIsCopied ? translate( 'Copied!' ) : translate( 'Copy password' ) }
 					</ClipboardButton>
 					<p className="sftp-card__password-warning">
 						{ translate(
@@ -103,7 +108,7 @@ const SftpCard = ( {
 
 		return (
 			<>
-				<p>{ translate( 'You must reset your password to view it.' ) }</p>
+				<span>{ translate( 'You must reset your password to view it.' ) }</span>
 				<Button onClick={ resetPassword } disabled={ isLoading } compact>
 					{ translate( 'Reset Password' ) }
 				</Button>
@@ -113,11 +118,9 @@ const SftpCard = ( {
 
 	return (
 		<Card className="sftp-card">
-			<div className="sftp-card__icon">
-				<MaterialIcon icon="cloud" size={ 32 } />
-			</div>
+			<MaterialIcon icon="cloud" size={ 32 } />
+			<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 			<div className="sftp-card__body">
-				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 				{ disabled || username || isLoading ? (
 					<p>
 						{ translate( "Access and edit your website's files directly using an FTP client." ) }
@@ -148,28 +151,26 @@ const SftpCard = ( {
 								</td>
 							</tr>
 						) ) }
-						<tr>
+						<tr className={ classNames( { 'has-action': ! disabled } ) }>
 							<th>{ translate( 'Username' ) }:</th>
 							<td>
 								{ disabled ? (
 									<span></span>
 								) : (
 									<>
-										<p className="sftp-card__hidden-overflow">{ username }</p>
+										<span className="sftp-card__hidden-overflow">{ username }</span>
 										<ClipboardButton
 											text={ username }
 											onCopy={ () => setIsCopied( 'username' ) }
 											compact
 										>
-											{ usernameIsCopied
-												? translate( 'Copied!' )
-												: translate( 'Copy', { context: 'verb' } ) }
+											{ usernameIsCopied ? translate( 'Copied!' ) : translate( 'Copy username' ) }
 										</ClipboardButton>
 									</>
 								) }
 							</td>
 						</tr>
-						<tr>
+						<tr className={ classNames( { 'has-action': ! disabled } ) }>
 							<th>{ translate( 'Password' ) }:</th>
 							<td>{ renderPasswordCell() }</td>
 						</tr>

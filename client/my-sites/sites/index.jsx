@@ -91,8 +91,8 @@ class Sites extends Component {
 			case 'home':
 				path = translate( 'My Home' );
 				break;
-			case 'hosting-admin':
-				path = translate( 'SFTP & MySQL' );
+			case 'hosting-config':
+				path = translate( 'Hosting Configuration' );
 				break;
 		}
 
