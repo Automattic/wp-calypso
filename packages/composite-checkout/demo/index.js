@@ -193,7 +193,10 @@ const steps = [
 		hasStepNumber: true,
 		titleContent: <OrderReviewTitle />,
 		activeStepContent: <WPCheckoutOrderReview />,
-		isCompleteCallback: () => true,
+		isCompleteCallback: ( { activeStep } ) => {
+			const isActive = activeStep.id === 'order-review';
+			return isActive;
+		},
 	},
 ];
 

@@ -112,7 +112,10 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 			hasStepNumber: true,
 			titleContent: <OrderReviewTitle />,
 			activeStepContent: <ReviewContent />,
-			isCompleteCallback: () => true,
+			isCompleteCallback: ( { activeStep } ) => {
+				const isActive = activeStep.id === 'order-review';
+				return isActive;
+			},
 		},
 	];
 

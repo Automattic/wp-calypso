@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -73,19 +73,15 @@ export default function Checkout( { steps, className } ) {
 	validateSteps( steps );
 
 	// Assign step numbers to all steps with numbers
-	const annotatedSteps = useMemo( () => {
-		let numberedStepNumber = 0;
-		return steps.map( ( step, index ) => {
-			numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
-			return {
-				...step,
-				stepNumber: step.hasStepNumber ? numberedStepNumber : null,
-				stepIndex: index,
-				isComplete: !! step.isCompleteCallback && step.isCompleteCallback( { paymentData } ),
-			};
-		} );
-	}, [ steps, paymentData ] );
-
+	let numberedStepNumber = 0;
+	let annotatedSteps = steps.map( ( step, index ) => {
+		numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
+		return {
+			...step,
+			stepNumber: step.hasStepNumber ? numberedStepNumber : null,
+			stepIndex: index,
+		};
+	} );
 	if ( annotatedSteps.length < 1 ) {
 		throw new Error( 'No steps found' );
 	}
@@ -94,6 +90,15 @@ export default function Checkout( { steps, className } ) {
 	if ( ! activeStep ) {
 		throw new Error( 'There is no active step' );
 	}
+
+	// Assign isComplete separately so we can provide the activeStep
+	annotatedSteps = annotatedSteps.map( step => {
+		return {
+			...step,
+			isComplete:
+				!! step.isCompleteCallback && step.isCompleteCallback( { paymentData, activeStep } ),
+		};
+	} );
 
 	const nextStep = annotatedSteps.find( ( step, index ) => {
 		return index > activeStep.stepIndex && step.hasStepNumber;
