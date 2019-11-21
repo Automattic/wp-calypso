@@ -34,8 +34,12 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 
 	// @TODO: See if more generic back navigation would work.
 
+	const lastNonEditorRoute = getLastNonEditorRoute( state );
+
+	const doesRouteMatch = matcher => lastNonEditorRoute.match( matcher );
+
 	// Back to the checklist.
-	if ( getLastNonEditorRoute( state ).match( /^\/checklist\/?/ ) ) {
+	if ( doesRouteMatch( /^\/checklist\/?/ ) ) {
 		return {
 			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Checklist' ),
@@ -43,7 +47,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	}
 
 	// Customer Home.
-	if ( getLastNonEditorRoute( state ).match( /^\/home\/?/ ) ) {
+	if ( doesRouteMatch( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Home' ),
@@ -51,7 +55,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	}
 
 	// Back to the themes list.
-	if ( getLastNonEditorRoute( state ).match( /^\/themes\/?/ ) ) {
+	if ( doesRouteMatch( /^\/themes\/?/ ) ) {
 		return {
 			url: `/themes/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Themes' ),
