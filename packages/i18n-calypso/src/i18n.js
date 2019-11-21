@@ -170,6 +170,7 @@ function I18N() {
 		jed: undefined,
 		locale: undefined,
 		localeSlug: undefined,
+		textDirection: undefined,
 		translations: LRU( { max: 100 } ),
 	};
 	this.componentUpdateHooks = [];
@@ -290,6 +291,13 @@ I18N.prototype.setLocale = function( localeData ) {
 
 	this.state.localeSlug = this.state.locale[ '' ].localeSlug;
 
+	// extract the `textDirection` info (LTR or RTL) from either:
+	// - the translation for the special string "ltr" (standard in Core, not present in Calypso)
+	// - or the `momentjs_locale.textDirection` property present in Calypso translation files
+	this.state.textDirection =
+		this.state.locale[ 'text direction\u0004ltr' ]?.[ 0 ] ||
+		this.state.locale[ '' ]?.momentjs_locale?.textDirection;
+
 	this.state.jed = new Jed( {
 		locale_data: {
 			messages: this.state.locale,
@@ -331,6 +339,14 @@ I18N.prototype.getLocale = function() {
  **/
 I18N.prototype.getLocaleSlug = function() {
 	return this.state.localeSlug;
+};
+
+/**
+ * Get the current text direction, left-to-right (LTR) or right-to-left (RTL)
+ * @returns {boolean} `true` in case the current locale has RTL text direction
+ */
+I18N.prototype.isRtl = function() {
+	return this.state.textDirection === 'rtl';
 };
 
 /**
