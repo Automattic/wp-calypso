@@ -17,7 +17,6 @@
 		"module": "esnext",
 		"baseUrl": ".."
 	},
-	"files": [ "client/landing/gutenboarding/index.ts" ],
 	"exclude": [
 		"**/build-module/*",
 		"**/build-style/*",
