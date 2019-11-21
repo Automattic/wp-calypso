@@ -8,6 +8,7 @@ import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 /* eslint-disable import/no-extraneous-dependencies */
 
 /**
@@ -15,9 +16,27 @@ import { Button, Dashicon } from '@wordpress/components';
  */
 import './style.scss';
 
+function BackButtonOverride( { defaultLabel, defaultUrl } ) {
+	const [ label, updateLabel ] = useState( defaultLabel );
+	const [ url, updateUrl ] = useState( defaultUrl );
+	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', data => {
+		updateLabel( data.label );
+		updateUrl( data.closeUrl );
+	} );
+
+	return (
+		<a href={ url } aria-label={ label }>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Button className="components-button components-icon-button">
+				<Dashicon icon="arrow-left-alt2" />
+				<div className="close-button-override__label">{ label }</div>
+			</Button>
+		</a>
+	);
+}
+
 domReady( () => {
-	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
-	let newLabel;
+	const { editorPostType } = fullSiteEditing;
 
 	// Only alter for the page, post, and template part editors.
 	if (
@@ -43,10 +62,12 @@ domReady( () => {
 			'components-toolbar edit-post-fullscreen-mode-close__toolbar edit-post-fullscreen-mode-close__toolbar__override';
 		toolbar.prepend( componentsToolbar );
 
-		// Create custom close button and append to components toolbar.
-		const newCloseButton = document.createElement( 'a' );
-		// When closing Template CPT (e.g. header) to navigate back to parent page.
+		// These should go here so that they have any updates that happened while querying for the selector.
+		const { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
+
+		// Create custom close button for the template part editor.
 		if ( 'wp_template_part' === editorPostType ) {
+			const newCloseButton = document.createElement( 'a' );
 			newCloseButton.href = closeButtonUrl || 'edit.php?post_type=page';
 			const backupLabel = __( 'Go Back' );
 			newCloseButton.setAttribute( 'aria-label', closeButtonLabel || backupLabel );
@@ -60,27 +81,24 @@ domReady( () => {
 			thinContent.innerHTML = abbreviatedContent;
 			thinContent.className = 'close-button-override-thin';
 			newCloseButton.prepend( thinContent );
-		} else if ( 'page' === editorPostType ) {
-			newCloseButton.href = 'edit.php?post_type=page';
-			newLabel = __( 'Pages' );
-		} else if ( 'post' === editorPostType ) {
-			newCloseButton.href = 'edit.php?post_type=post';
-			newLabel = __( 'Posts' );
-			newCloseButton.setAttribute( 'aria-label', newLabel );
+			componentsToolbar.prepend( newCloseButton );
 		}
 
+		// Create a "normal" close button for the page/post editor.
 		if ( 'page' === editorPostType || 'post' === editorPostType ) {
-			newCloseButton.setAttribute( 'aria-label', newLabel );
+			const defaultUrl = `edit.php?post_type=${ editorPostType }`;
+
+			let defaultLabel = closeButtonLabel || 'Back';
+			if ( 'page' === editorPostType && ! closeButtonLabel ) {
+				defaultLabel = __( 'Pages' );
+			} else if ( 'post' === editorPostType && ! closeButtonLabel ) {
+				defaultLabel = __( 'Posts' );
+			}
 
 			ReactDOM.render(
-				<Button className="components-button components-icon-button">
-					<Dashicon icon="arrow-left-alt2" />
-					<div className="close-button-override__label">{ newLabel }</div>
-				</Button>,
-				newCloseButton
+				<BackButtonOverride defaultLabel={ defaultLabel } defaultUrl={ defaultUrl } />,
+				componentsToolbar
 			);
 		}
-
-		componentsToolbar.prepend( newCloseButton );
 	} );
 } );
