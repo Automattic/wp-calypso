@@ -165,16 +165,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
+	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
+	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
 
-	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
-		newSiteParams.blog_name =
-			get( user.get(), 'username' ) ||
-			get( getSignupDependencyStore( state ), 'username' ) ||
-			siteTitle ||
-			siteType ||
-			getSiteVertical( state );
-		newSiteParams.find_available_url = true;
-	} else if ( get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false ) ) {
+	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( getSignupDependencyStore( state ), 'username' ) ||

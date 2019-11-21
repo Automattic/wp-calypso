@@ -214,19 +214,22 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const suggestion = this.props.step.suggestion,
-			isPurchasingItem = suggestion && Boolean( suggestion.product_slug ),
-			siteUrl =
-				suggestion &&
-				( isPurchasingItem
-					? suggestion.domain_name
-					: suggestion.domain_name.replace( '.wordpress.com', '' ) ),
-			domainItem = isPurchasingItem
-				? domainRegistration( {
-						domain: suggestion.domain_name,
-						productSlug: suggestion.product_slug,
-				  } )
-				: undefined;
+		const suggestion = this.props.step.suggestion;
+
+		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+
+		const siteUrl =
+			suggestion &&
+			( isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+
+		const domainItem = isPurchasingItem
+			? domainRegistration( {
+					domain: suggestion.domain_name,
+					productSlug: suggestion.product_slug,
+			  } )
+			: undefined;
 
 		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
 
