@@ -27,7 +27,7 @@ import '@wordpress/components/build-style/style.css';
  */
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
-import Sidebar from './components/sidebar';
+import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import './stores/domain-suggestions';
 import './stores/onboard';
@@ -88,7 +88,7 @@ export function Gutenboard() {
 							</div>
 							<div>
 								<SettingsSidebar isActive={ isEditorSidebarOpened } />
-								<Sidebar.Slot />
+								<SidebarSlot />
 							</div>
 						</BlockEditorProvider>
 					</div>
