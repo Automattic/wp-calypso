@@ -40,7 +40,7 @@
 		"gdpr-banner": false,
 		"google-my-business": false,
 		"help": true,
-		"true": false,
+		"hosting": true,
 		"hosting/non-atomic-support": false,
 		"hosting/sftp-phpmyadmin": false,
 		"jetpack/concierge-sessions": false,
