@@ -3,14 +3,12 @@
  */
 import React, { ComponentPropsWithoutRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import DomainPicker from './list';
-import { STORE_KEY } from '../../stores/onboard';
 
 /**
  * Style dependencies
@@ -19,8 +17,17 @@ import './style.scss';
 
 type Props = ComponentPropsWithoutRef< typeof DomainPicker >;
 
-const DomainPickerButton: FunctionComponent< Props > = ( { children, ...domainPickerProps } ) => {
+const DomainPickerButton: FunctionComponent< Props > = ( {
+	children,
+	onDomainSelect,
+	...domainPickerProps
+} ) => {
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+
+	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
+		setDomainPopoverVisibility( false );
+		onDomainSelect( selectedDomain );
+	};
 
 	return (
 		<>
@@ -36,7 +43,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( { children, ...domainPi
 			</Button>
 			{ isDomainPopoverVisible && (
 				<Popover>
-					<DomainPicker { ...domainPickerProps } />
+					<DomainPicker { ...domainPickerProps } onDomainSelect={ handleDomainSelect } />
 				</Popover>
 			) }
 		</>
