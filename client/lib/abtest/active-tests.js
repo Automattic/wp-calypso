@@ -106,7 +106,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	userStepRecaptcha: {
-		datestamp: '20191111',
+		datestamp: '20191121',
 		variations: {
 			show: 50,
 			control: 50,
