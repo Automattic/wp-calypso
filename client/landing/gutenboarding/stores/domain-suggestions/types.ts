@@ -24,6 +24,10 @@ export interface DomainSuggestionQuery {
 	 * True to include WordPress.com subdomain suggestions
 	 */
 	include_wordpressdotcom: boolean;
+	include_dotblogsubdomain: boolean;
+
+	// @FIXME: Obviates some others?
+	only_wordpressdotcom: boolean;
 
 	recommendation_context?: string;
 

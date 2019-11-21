@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import {
 	Button,
 	HorizontalRule,
@@ -11,26 +11,49 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { __ as NO__ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+import { useDebounce } from 'use-debounce';
 
 /**
  * Internal dependencies
  */
 import { DomainSuggestion } from '../../stores/domain-suggestions/types';
+import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { isFilledFormValue } from '../../stores/onboard/types';
+import { selectorDebounce } from '../../constants';
 
-interface Props {
-	domainSearch: string;
-	setDomainSearch: ( domainSearch: string ) => void;
-	suggestions: DomainSuggestion[] | undefined;
-}
-
-const DomainPicker: FunctionComponent< Props > = ( {
-	domainSearch,
-	setDomainSearch,
-	suggestions,
-} ) => {
+const DomainPicker: FunctionComponent = () => {
 	const label = NO__( 'Search for a domain' );
 
-	const handleDomainPick = suggestion => () => {
+	// User can search for a domain
+	const [ domainSearch, setDomainSearch ] = useState( '' );
+
+	// Without user search, we can provide recommendations based on title + vertical
+	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+
+	const [ search ] = useDebounce(
+		// Use trimmed domainSearch if non-empty
+		domainSearch.trim() ||
+			// Otherwise use a filled form value
+			( isFilledFormValue( siteTitle ) && siteTitle ) ||
+			// Otherwise use empty string
+			'',
+		selectorDebounce
+	);
+	const suggestions = useSelect(
+		select => {
+			if ( search ) {
+				return select( DOMAIN_STORE ).getDomainSuggestions(
+					search,
+					isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
+				);
+			}
+		},
+		[ search, siteVertical ]
+	);
+
+	const handleDomainPick = ( suggestion: DomainSuggestion ) => () => {
 		if ( suggestion.is_free ) {
 			// eslint-disable-next-line no-console
 			console.log( 'Picked free domain: %o', suggestion );

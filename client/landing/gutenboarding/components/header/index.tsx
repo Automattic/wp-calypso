@@ -57,8 +57,7 @@ const Header: FunctionComponent< Props > = ( {
 				return;
 			}
 			return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
-				include_wordpressdotcom: true,
-				quantity: 1,
+				only_wordpressdotcom: true,
 				...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
 			} )?.[ 0 ];
 		},
