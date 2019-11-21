@@ -121,6 +121,8 @@ CheckoutStepHeader.propTypes = {
 };
 
 function Stepper( { isComplete, isActive, className, children } ) {
+	// Prevent showing complete stepper when active
+	isComplete = isActive ? false : isComplete;
 	return (
 		<StepNumberOuterWrapper className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
 			<StepNumberInnerWrapper isComplete={ isComplete }>
