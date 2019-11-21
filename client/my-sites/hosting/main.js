@@ -13,6 +13,7 @@ import Banner from 'components/banner';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
@@ -47,14 +48,17 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 
 	return (
 		<Main className="hosting is-wide-layout">
-			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
-			<DocumentHead title={ translate( 'SFTP & MySQL' ) } />
+			<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
+			<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 			<SidebarNavigation />
+			<FormattedHeader
+				headerText={ translate( 'Hosting Configuration' ) }
+				subHeaderText={ translate( 'Access your website and database directly.' ) }
+				align="left"
+			/>
 			{ isDisabled && (
 				<Banner
-					title={ translate(
-						'Please active SFTP and phpMyAdmin access to begin using these features.'
-					) }
+					title={ translate( 'Please activate the hosting access to begin using these features.' ) }
 					icon="info"
 					callToAction={ translate( 'Activate' ) }
 					disableHref

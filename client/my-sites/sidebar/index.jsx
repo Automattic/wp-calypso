@@ -507,9 +507,9 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'SFTP & MySQL' ) }
-				selected={ itemLinkMatches( '/hosting-admin', path ) }
-				link={ `/hosting-admin${ siteSuffix }` }
+				label={ translate( 'Hosting Configuration' ) }
+				selected={ itemLinkMatches( '/hosting-config', path ) }
+				link={ `/hosting-config${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
 				preloadSectionName="hosting"
 				expandSection={ this.expandManageSection }

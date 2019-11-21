@@ -61,7 +61,7 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 			<p>
 				{ translate(
-					'Manage your databases with phpMyAdmin and run a wide range of operations with MySQL.'
+					'Manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
 			</p>
 			<Button
