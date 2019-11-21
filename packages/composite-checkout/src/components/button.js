@@ -12,6 +12,7 @@ export default function Button( {
 	className,
 	fullWidth,
 	children,
+	...props
 } ) {
 	return (
 		<CallToAction
@@ -21,6 +22,7 @@ export default function Button( {
 			onClick={ onClick }
 			className={ className }
 			fullWidth={ fullWidth }
+			{ ...props }
 		>
 			{ children }
 		</CallToAction>
