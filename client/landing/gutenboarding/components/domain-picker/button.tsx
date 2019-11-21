@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState } from 'react';
+import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
