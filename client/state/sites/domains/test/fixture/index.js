@@ -277,7 +277,8 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 
 /**
  * Return a whole state with domains data structure
- * @return {Object} an state instance
+ *
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting
