@@ -10,7 +10,7 @@ import {
 	WPCheckoutOrderSummary,
 	getDefaultPaymentMethodStep,
 	WPCheckoutOrderSummaryTitle,
-	useActiveStep,
+	useIsStepActive,
 	WPContactForm,
 } from '@automattic/composite-checkout';
 
@@ -36,8 +36,7 @@ const handleCheckoutEvent = select => () => {
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
-	const currentStep = useActiveStep();
-	const isActive = currentStep.id === 'payment-method';
+	const isActive = useIsStepActive();
 	return isActive ? translate( 'Billing details' ) : translate( 'Enter your billing details' );
 };
 

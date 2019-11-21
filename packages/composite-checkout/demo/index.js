@@ -14,7 +14,7 @@ import {
 	createPayPalMethod,
 	createApplePayMethod,
 	createCreditCardMethod,
-	useActiveStep,
+	useIsStepActive,
 	getDefaultPaymentMethodStep,
 	WPCheckoutOrderSummary,
 	WPCheckoutOrderSummaryTitle,
@@ -138,9 +138,8 @@ const hostTranslate = text => text;
 
 const ContactFormTitle = () => {
 	const localize = useLocalize();
-	const currentStep = useActiveStep();
-	const isActive = currentStep.id === 'payment-method';
-	return isActive ? localize( 'Billing details' ) : localize( 'Enter your billing details' );
+	const isActive = useIsStepActive();
+	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
 };
 
 const OrderReviewTitle = () => {

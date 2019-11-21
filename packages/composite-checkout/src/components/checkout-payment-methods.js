@@ -15,7 +15,7 @@ import {
 	useAllPaymentMethods,
 	usePaymentMethod,
 	usePaymentMethodId,
-	useActiveStep,
+	useIsStepActive,
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
@@ -87,8 +87,7 @@ CheckoutPaymentMethods.propTypes = {
 
 export function CheckoutPaymentMethodsTitle() {
 	const localize = useLocalize();
-	const currentStep = useActiveStep();
-	const isActive = currentStep.id === 'payment-method';
+	const isActive = useIsStepActive();
 	return isActive ? localize( 'Pick a payment method' ) : localize( 'Payment method' );
 }
 
