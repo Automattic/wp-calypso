@@ -4,6 +4,7 @@ TBD
   * Move source into [Calypso](https://github.com/Automattic/wp-calypso).
   * Remove browser build from module.
   * Include esm and commonjs in module.
+  * Update debug to v4
 
 2.0.1 / 2017-11-08
 ==================
