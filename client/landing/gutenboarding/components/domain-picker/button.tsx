@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
-import { __ as NO__ } from '@wordpress/i18n';
+import React, { ComponentPropsWithoutRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import classnames from 'classnames';
 
@@ -16,7 +15,21 @@ import DomainPicker from './list';
  */
 import './style.scss';
 
-const DomainPickerButton: FunctionComponent = ( { children } ) => {
+interface Props {
+	/**
+	 * Term to search when no user input is provided.
+	 */
+	defaultQuery?: ComponentPropsWithoutRef< typeof DomainPicker >[ 'defaultQuery' ];
+
+	/**
+	 * Additional parameters for the domain suggestions query.
+	 *
+	 * @see DomainPicker for defaults
+	 */
+	queryParameters?: ComponentPropsWithoutRef< typeof DomainPicker >[ 'queryParameters' ];
+}
+
+const DomainPickerButton: FunctionComponent< Props > = ( { children, ...domainPickerProps } ) => {
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
 	return (
@@ -33,7 +46,7 @@ const DomainPickerButton: FunctionComponent = ( { children } ) => {
 			</Button>
 			{ isDomainPopoverVisible && (
 				<Popover>
-					<DomainPicker />
+					<DomainPicker { ...domainPickerProps } />
 				</Popover>
 			) }
 		</>

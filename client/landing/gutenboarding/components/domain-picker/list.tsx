@@ -17,41 +17,40 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DomainSuggestion } from '../../stores/domain-suggestions/types';
-import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { isFilledFormValue } from '../../stores/onboard/types';
+import { DomainSuggestion, DomainSuggestionQuery } from '../../stores/domain-suggestions/types';
+import { STORE_KEY } from '../../stores/domain-suggestions';
 import { selectorDebounce } from '../../constants';
 
-const DomainPicker: FunctionComponent = () => {
+interface Props {
+	/**
+	 * Term to search when no user input is provided.
+	 */
+	defaultQuery?: string;
+
+	/**
+	 * Additional parameters for the domain suggestions query.
+	 */
+	queryParameters?: Partial< DomainSuggestionQuery >;
+}
+
+const DomainPicker: FunctionComponent< Props > = ( { defaultQuery, queryParameters } ) => {
 	const label = NO__( 'Search for a domain' );
 
-	// User can search for a domain
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
-	// Without user search, we can provide recommendations based on title + vertical
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
-
-	const [ search ] = useDebounce(
-		// Use trimmed domainSearch if non-empty
-		domainSearch.trim() ||
-			// Otherwise use a filled form value
-			( isFilledFormValue( siteTitle ) && siteTitle ) ||
-			// Otherwise use empty string
-			'',
-		selectorDebounce
-	);
+	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return select( DOMAIN_STORE ).getDomainSuggestions( search, {
+				return select( STORE_KEY ).getDomainSuggestions( search, {
 					include_wordpressdotcom: true,
+					include_dotblogsubdomain: true,
 					quantity: 4,
-					...( isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined ),
+					...queryParameters,
 				} );
 			}
 		},
-		[ search, siteVertical ]
+		[ search, queryParameters ]
 	);
 
 	const handleDomainPick = ( suggestion: DomainSuggestion ) => () => {

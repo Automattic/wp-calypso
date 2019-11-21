@@ -41,12 +41,11 @@ const Header: FunctionComponent< Props > = ( {
 	);
 
 	const [ domainSearch ] = useDebounce(
-		domain
-			? // If we know a domain, do not search.
-			  null
-			: isFilledFormValue( siteTitle )
-			? // If we have a siteTitle, use it.
-			  siteTitle
+		// eslint-disable-next-line no-nested-ternary
+		domain // If we know a domain, do not search.
+			? null
+			: isFilledFormValue( siteTitle ) // If we have a siteTitle, use it.
+			? siteTitle
 			: // Otherwise, do not search.
 			  null,
 		selectorDebounce
@@ -57,7 +56,9 @@ const Header: FunctionComponent< Props > = ( {
 				return;
 			}
 			return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
-				only_wordpressdotcom: true,
+				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+				include_wordpressdotcom: true,
+				quantity: 1,
 				...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
 			} )?.[ 0 ];
 		},
@@ -85,7 +86,16 @@ const Header: FunctionComponent< Props > = ( {
 					<div className="gutenboarding__site-title">
 						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 					</div>
-					{ domainText && <DomainPickerButton>{ domainText }</DomainPickerButton> }
+					{ domainText && (
+						<DomainPickerButton
+							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
+							queryParameters={
+								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
+							}
+						>
+							{ domainText }
+						</DomainPickerButton>
+					) }
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
