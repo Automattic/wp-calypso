@@ -20,6 +20,10 @@ import isAccountClosed from 'state/selectors/is-account-closed';
 import './closed.scss';
 
 class AccountSettingsClosedComponent extends Component {
+	onClick = () => {
+		window.location = '/';
+	};
+
 	render() {
 		/* eslint-disable-next-line no-shadow */
 		const { isAccountClosed, previousRoute, translate } = this.props;
@@ -43,6 +47,8 @@ class AccountSettingsClosedComponent extends Component {
 			<EmptyContent
 				title={ translate( 'Your account has been closed' ) }
 				line={ translate( 'Thanks for flying with WordPress.com' ) }
+				secondaryAction={ translate( 'Return to WordPress.com' ) }
+				secondaryActionCallback={ this.onClick }
 			/>
 		);
 	}
