@@ -41,6 +41,11 @@ import { useActiveStep } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
+import {
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderReviewStep,
+} from './components/default-steps';
 
 // Re-export the public API
 export {
@@ -62,6 +67,9 @@ export {
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
 	renderDisplayValueMarkdown,
 	useActiveStep,
 	useAllPaymentMethods,
