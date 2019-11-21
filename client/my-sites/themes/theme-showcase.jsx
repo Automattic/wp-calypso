@@ -346,13 +346,15 @@ class ThemeShowcase extends React.Component {
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
 							/>
+							<ThemePreview />
+							{ this.props.children }
 						</div>
 					</div>
 				) }
-				<div className="themes__content">
+				{ /* <div className="themes__content">
 					<ThemePreview />
 					{ this.props.children }
-				</div>
+				</div> */ }
 			</div>
 		);
 	}

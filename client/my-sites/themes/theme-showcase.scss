@@ -38,11 +38,14 @@
 }
 
 .theme-showcase__open-showcase-button-holder {
-	margin-top: 20px;
+	margin: 20px 0;
 	display: flex;
 	justify-content: center;
 	width: 100%;
 	hr {
 		width: 50%;
+	}
+	button {
+		margin-bottom: 200px;
 	}
 }
