@@ -21,7 +21,7 @@ It's also possible to build an entirely custom form using the other components e
 
 ### Select payment method
 
-The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods listed in the optional `availablePaymentMethods` array. If the array is not set, no appropriate payment methods will be excluded.
+The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors.
 
 ![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
 
@@ -137,7 +137,6 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 The main component in this package. It has the following props.
 
-- availablePaymentMethods: array
 - steps: array
 
 See the [Steps](#steps) section above for more details.
@@ -148,7 +147,7 @@ Renders a button to move to the next `CheckoutStep` component. Its `value` prop 
 
 ### CheckoutPaymentMethods
 
-Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
+Renders buttons for each payment method that can be used. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
 
 ### CheckoutProvider
 
