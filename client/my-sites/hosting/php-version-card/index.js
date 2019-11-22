@@ -9,23 +9,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
+import FormSelect from 'components/forms/form-select';
+import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
-import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import Accordion from 'components/accordion';
 
 const requestId = ( siteId, method ) => `hosting-php-version-${ method }-${ siteId }`;
 
@@ -94,7 +93,7 @@ const PhpVersionCard = ( {
 
 	useEffect( () => {
 		requestPhpVersion( siteId );
-	}, [] );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		const updateNoticeId = 'hosting-php-version';
@@ -167,15 +166,6 @@ const PhpVersionCard = ( {
 
 		return (
 			<div>
-				<p>{ translate( 'Manage PHP versions.' ) }</p>
-
-				<Accordion
-					title={ translate( 'How it affects your site?' ) }
-					className="php-version-card__accordion"
-				>
-					<p>{ translate( 'In all kinds of weird ways.' ) }</p>
-				</Accordion>
-
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
@@ -211,7 +201,7 @@ const PhpVersionCard = ( {
 
 	return (
 		<Card className="php-version-card">
-			<MaterialIcon icon="dns" size={ 32 } />
+			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
 			{ getContent() }
 			{ loading && <Spinner /> }
