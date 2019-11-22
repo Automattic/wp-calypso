@@ -377,7 +377,7 @@
 		"npm-package-json-lint": "4.0.3",
 		"prettier": "npm:wp-prettier@1.19.1",
 		"react-test-renderer": "16.11.0",
-		"readline-sync": "1.4.9",
+		"readline-sync": "1.4.10",
 		"replace": "1.1.0",
 		"rimraf": "3.0.0",
 		"sinon": "7.4.2",
