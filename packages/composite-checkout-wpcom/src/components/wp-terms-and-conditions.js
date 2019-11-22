@@ -4,23 +4,23 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import interpolateComponents from 'interpolate-components';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { useHasDomainsInCart } from '../hooks/has-domains';
-import { useLocalize } from '../lib/localize'; // TODO: remove this
 
 export default function WPTermsAndConditions() {
 	const isDomainsTermsVisible = useHasDomainsInCart();
-	const localize = useLocalize();
+	const translate = useTranslate();
 
 	//TODO: replace domainname.com next to domainRegistrationAgreement with the domain being purchased.
 	return (
 		<TermsAndConditionsWrapper>
 			<TermsParagraph>
 				{ interpolateComponents( {
-					mixedString: localize(
+					mixedString: translate(
 						'{{strong}}By checking out:{{/strong}} you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{howSubscriptionWorks}}how your subscription works{{/howSubscriptionWorks}} and {{howToCancel}}how to cancel{{/howToCancel}}.'
 					),
 					components: {
@@ -49,7 +49,7 @@ export default function WPTermsAndConditions() {
 				<React.Fragment>
 					<TermsParagraph>
 						{ interpolateComponents( {
-							mixedString: localize(
+							mixedString: translate(
 								'You agree to the {{domainRegistrationAgreement}}Domain Registration Agreement{{/domainRegistrationAgreement}} for domainname.com.'
 							),
 							components: {
@@ -65,7 +65,7 @@ export default function WPTermsAndConditions() {
 					</TermsParagraph>
 					<TermsParagraph>
 						{ interpolateComponents( {
-							mixedString: localize(
+							mixedString: translate(
 								'You understand that {{domainRefunds}}domain name refunds{{/domainRefunds}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.'
 							),
 							components: {
