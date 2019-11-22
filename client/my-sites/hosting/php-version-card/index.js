@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -79,44 +79,36 @@ export const setPhpVersion = ( siteId, version ) => {
 	);
 };
 
-class PhpVersionCard extends React.Component {
-	constructor( props ) {
-		super( props );
+const PhpVersionCard = ( {
+	translate,
+	siteId,
+	loading,
+	updating,
+	updateResult,
+	version,
+	showErrorNotice,
+	showSuccessNotice,
+} ) => {
+	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( null );
 
-		this.state = {
-			selectedPhpVersion: null,
-		};
-	}
+	useEffect( () => {
+		requestPhpVersion( siteId );
+	}, [] );
 
-	componentDidMount() {
-		requestPhpVersion( this.props.siteId );
-	}
-
-	changePhpVersion = event => {
-		const version = event.target.value;
-
-		this.setState( {
-			selectedPhpVersion: version,
-		} );
-	};
-
-	componentDidUpdate( prevProps ) {
-		const prevResponse = prevProps.updateResult;
-		const { updateResult, translate } = this.props;
-
+	useEffect( () => {
 		const updateNoticeId = 'hosting-php-version';
 
-		if ( prevResponse && prevResponse !== 'failure' && updateResult === 'failure' ) {
-			this.props.errorNotice( translate( 'Failed to set PHP version.' ), {
+		if ( updateResult === 'failure' ) {
+			showErrorNotice( translate( 'Failed to set PHP version.' ), {
 				id: updateNoticeId,
 			} );
 		}
 
-		if ( prevResponse && prevResponse !== 'success' && updateResult === 'success' ) {
-			this.props.successNotice(
+		if ( updateResult === 'success' ) {
+			showSuccessNotice(
 				translate( 'PHP version successfully set to %(version)s.', {
 					args: {
-						version: this.state.selectedPhpVersion,
+						version: selectedPhpVersion,
 					},
 				} ),
 				{
@@ -126,9 +118,15 @@ class PhpVersionCard extends React.Component {
 				}
 			);
 		}
-	}
+	}, [ updateResult ] );
 
-	getPhpVersions = () => {
+	const changePhpVersion = event => {
+		const newVersion = event.target.value;
+
+		setSelectedPhpVersion( newVersion );
+	};
+
+	const getPhpVersions = () => {
 		return [
 			{
 				label: '7.2',
@@ -141,13 +139,10 @@ class PhpVersionCard extends React.Component {
 		];
 	};
 
-	getContent() {
-		if ( this.props.loading ) {
+	const getContent = () => {
+		if ( loading ) {
 			return;
 		}
-
-		const { translate, siteId, updating, version } = this.props;
-		const { selectedPhpVersion } = this.state;
 
 		const isButtonDisabled = ! selectedPhpVersion || selectedPhpVersion === version;
 		let buttonTooltip = undefined;
@@ -165,10 +160,10 @@ class PhpVersionCard extends React.Component {
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
 						className="php-version-card__version-select"
-						onChange={ this.changePhpVersion }
+						onChange={ changePhpVersion }
 						defaultValue={ version }
 					>
-						{ this.getPhpVersions().map( option => {
+						{ getPhpVersions().map( option => {
 							return (
 								<option
 									disabled={ option.value === version }
@@ -192,21 +187,17 @@ class PhpVersionCard extends React.Component {
 				</Button>
 			</div>
 		);
-	}
+	};
 
-	render() {
-		const { translate, loading } = this.props;
-
-		return (
-			<Card className="php-version-card">
-				<MaterialIcon icon="dns" size={ 32 } />
-				<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
-				{ this.getContent() }
-				{ loading && <Spinner /> }
-			</Card>
-		);
-	}
-}
+	return (
+		<Card className="php-version-card">
+			<MaterialIcon icon="dns" size={ 32 } />
+			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
+			{ getContent() }
+			{ loading && <Spinner /> }
+		</Card>
+	);
+};
 
 export default connect(
 	state => {
@@ -224,5 +215,8 @@ export default connect(
 			siteId,
 		};
 	},
-	{ errorNotice, successNotice }
+	{
+		showErrorNotice: errorNotice,
+		showSuccessNotice: successNotice,
+	}
 )( localize( PhpVersionCard ) );
