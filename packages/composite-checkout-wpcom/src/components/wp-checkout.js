@@ -15,7 +15,7 @@ import {
  * Internal dependencies
  */
 import { areDomainsInLineItems } from '../hooks/has-domains';
-import { OrderReview } from './order-review';
+import { WPCheckoutOrderReview } from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 
@@ -32,15 +32,10 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( { deleteItem, changePlanLength } ) {
 	const translate = useTranslate();
-	const [ itemsWithTax, total ] = useLineItems();
+	const [ itemsWithTax ] = useLineItems();
 
 	const ReviewContent = () => (
-		<OrderReview
-			items={ itemsWithTax }
-			total={ total }
-			onDeleteItem={ deleteItem }
-			onChangePlanLength={ changePlanLength }
-		/>
+		<WPCheckoutOrderReview removeItem={ deleteItem } onChangePlanLength={ changePlanLength } />
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};

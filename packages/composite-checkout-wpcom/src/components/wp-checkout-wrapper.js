@@ -28,7 +28,7 @@ export function WPCheckoutWrapper( {
 	onSuccess,
 	onFailure,
 } ) {
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -40,7 +40,7 @@ export function WPCheckoutWrapper( {
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
-			items={ itemsWithTax }
+			items={ [ ...items, tax ] }
 			total={ total }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }

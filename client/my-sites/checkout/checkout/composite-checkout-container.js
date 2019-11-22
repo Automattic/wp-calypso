@@ -24,52 +24,18 @@ import notices from 'notices';
 
 const debug = debugFactory( 'calypso:composite-checkout-container' );
 
-const initialCart = {
-	coupon: '',
-	currency: 'BRL',
-	is_coupon_applied: false,
-	products: [
-		{
-			extra: {
-				context: 'signup',
-				domain_registration_agreement_url:
-					'https://wordpress.com/automattic-domain-name-registration-agreement/',
-				privacy: true,
-				privacy_available: true,
-				registrar: 'KS_RAM',
-			},
-			free_trial: false,
-			meta: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
-			product_id: 106,
-			volume: 1,
-		},
-		{
-			extra: {
-				context: 'signup',
-				domain_to_bundle: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
-			},
-			free_trial: false,
-			meta: '',
-			product_id: 1009,
-			volume: 1,
-		},
-	],
-	tax: {
-		display_taxes: false,
-		location: {},
-	},
-	temporary: false,
-};
-
 const registry = createRegistry();
 const { registerStore } = registry;
 
 const wpcom = wp.undocumented();
 
-const useShoppingCart = makeShoppingCartHook(
-	( cartKey, cartParam ) => wpcom.setCart( cartKey, cartParam ),
-	initialCart
-);
+export const getServerCart = wpcom.getCart;
+
+const useShoppingCart = cartKey =>
+	makeShoppingCartHook(
+		cartParam => wpcom.setCart( cartKey, cartParam ),
+		() => wpcom.getCart( cartKey )
+	);
 
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
@@ -125,7 +91,7 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
-export default function CompositeCheckoutContainer() {
+export default function CompositeCheckoutContainer( siteSlug ) {
 	const translate = useTranslate();
 	const onSuccess = () => {
 		debug( 'success' );
@@ -140,7 +106,7 @@ export default function CompositeCheckoutContainer() {
 
 	return (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCart }
+			useShoppingCart={ useShoppingCart( siteSlug ) }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			onSuccess={ onSuccess }

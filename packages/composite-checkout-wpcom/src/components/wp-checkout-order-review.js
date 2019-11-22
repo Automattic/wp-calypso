@@ -18,7 +18,7 @@ import {
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
 
-export default function WPCheckoutOrderReview( { className } ) {
+export function WPCheckoutOrderReview( { className, removeItem } ) {
 	const [ items, total ] = useLineItems();
 
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
@@ -28,7 +28,7 @@ export default function WPCheckoutOrderReview( { className } ) {
 				<WPOrderReviewLineItems
 					items={ items }
 					hasDeleteButtons={ true }
-					removeProduct={ removeProductFromCart }
+					removeItem={ removeItem }
 				/>
 			</WPOrderReviewSection>
 
@@ -47,11 +47,6 @@ WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
-
-function removeProductFromCart( id ) {
-	// TODO: Replace with code to remove product and also show notification saying the product has bene removed.
-	alert( id );
-}
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
