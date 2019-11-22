@@ -28,9 +28,8 @@ const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
 // Called when the store is changed.
-const handleCheckoutEvent = select => () => {
+const handleCheckoutEvent = () => () => {
 	// TODO: write this
-	alert( `handleCheckoutEvent: ${ select }` );
 };
 
 const ContactFormTitle = () => {
