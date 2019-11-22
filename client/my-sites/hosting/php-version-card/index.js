@@ -19,6 +19,7 @@ import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -79,14 +80,15 @@ export const setPhpVersion = ( siteId, version ) => {
 };
 
 const PhpVersionCard = ( {
-	translate,
-	siteId,
 	loading,
-	updating,
-	updateResult,
-	version,
+	recordHostingPhpVersionUpdate,
 	showErrorNotice,
 	showSuccessNotice,
+	siteId,
+	translate,
+	updateResult,
+	updating,
+	version,
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( null );
 
@@ -116,6 +118,10 @@ const PhpVersionCard = ( {
 					duration: 5000,
 				}
 			);
+		}
+
+		if ( [ 'success', 'failure' ].includes( updateResult ) ) {
+			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
 		}
 	}, [ updateResult ] );
 
@@ -208,6 +214,20 @@ const PhpVersionCard = ( {
 	);
 };
 
+export const recordHostingPhpVersionUpdate = ( version, result ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Hosting Configuration',
+			'Clicked "Update PHP Version" Button in PHP Version box',
+			`PHP Version Update ${ result }`,
+			version
+		),
+		recordTracksEvent( 'calypso_hosting_configuration_php_version_update', {
+			result,
+			version,
+		} )
+	);
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -217,14 +237,15 @@ export default connect(
 		const version = phpVersionGet?.data ?? null;
 
 		return {
-			version,
 			loading: ! version && phpVersionGet.state === 'pending',
+			siteId,
 			updating: phpVersionUpdate.state === 'pending',
 			updateResult: phpVersionUpdate.state,
-			siteId,
+			version,
 		};
 	},
 	{
+		recordHostingPhpVersionUpdate,
 		showErrorNotice: errorNotice,
 		showSuccessNotice: successNotice,
 	}
