@@ -27,6 +27,7 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -192,10 +193,10 @@ async function redirectIfBlockEditor( context, next ) {
 	// pass along parameters, for example press-this
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const url = addQueryArgs( context.query, gutenbergUrl );
-	if ( url.startsWith( '/block-editor' ) ) {
-		return page.redirect( url );
+	if ( shouldRedirectGutenberg( state, siteId ) ) {
+		return window.location.replace( url );
 	}
-	return window.location.replace( url );
+	return page.redirect( url );
 }
 
 export default {
