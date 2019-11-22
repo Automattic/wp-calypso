@@ -45,7 +45,7 @@ const CallToAction = styled.button`
 	border-style: solid;
 	border-color: ${ getBorderColor };
 	color: ${ getTextColor };
-	box-shadow: ${ getBoxShadow };
+	border-bottom-width: ${ getBorderElevationWeight };
 	font-weight: ${ getFontWeight };
 	text-decoration: ${ getTextDecoration };
 
@@ -55,20 +55,19 @@ const CallToAction = styled.button`
 		border-width: ${ getBorderWeight };
 		border-style: solid;
 		border-color: ${ getRollOverBorderColor };
-		box-shadow: ${ getBoxShadowHover };
+		border-bottom-width: ${ getBorderElevationWeight };
 		text-decoration: none;
-		color: ${ props =>
-			props.buttonState === 'default' ? props.theme.colors.surface : getTextColor( props ) };
+		color: ${ getTextColor };
 		cursor: ${ ( { buttonState } ) =>
 			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' };
 	}
 
 	:active {
-		background: ${ getBackgroundColor };
+		background: ${ getRollOverColor };
 		border-width: ${ getBorderWeight };
 		border-style: solid;
-		border-color: ${ getBorderColor };
-		box-shadow: ${ getBoxShadow }
+		border-color: ${ getRollOverBorderColor };
+		border-top-width: ${ getBorderElevationWeight };
 		text-decoration: ${ getTextDecoration };
 		color: ${ getTextColor };
 	}
@@ -91,16 +90,12 @@ function getImageOpacity( { buttonState } ) {
 	return buttonState && buttonState.includes( 'primary' ) ? 1 : '0.5';
 }
 
-function getBoxShadow( props ) {
-	return `0 ${ getBorderWeight( props ) } 0 ${ getBorderColor( props ) }`;
-}
-
-function getBoxShadowHover( props ) {
-	return `0 ${ getBorderWeight( props ) } 0 ${ getRollOverBorderColor( props ) }`;
-}
-
 function getBorderWeight( { buttonState } ) {
 	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '1px';
+}
+
+function getBorderElevationWeight( { buttonState } ) {
+	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '2px';
 }
 
 function getRollOverColor( { buttonState, buttonType, theme } ) {
@@ -113,9 +108,9 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 			if ( buttonType === 'paypal' ) {
 				return colors.paypalGoldHover;
 			}
-			return colors.highlight;
+			return colors.primaryOver;
 		case 'secondary':
-			return colors.primary;
+			return colors.highlightOver;
 		case 'disabled':
 			return colors.disabledPaymentButtons;
 		case 'text-button':
@@ -123,7 +118,7 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 		case 'borderless':
 			return 'none';
 		default:
-			return colors.highlight;
+			return 'none';
 	}
 }
 
@@ -137,16 +132,16 @@ function getRollOverBorderColor( { buttonState, buttonType, theme } ) {
 			if ( buttonType === 'paypal' ) {
 				return colors.paypalGoldHover;
 			}
-			return colors.highlightBorder;
-		case 'secondary':
 			return colors.primaryBorder;
+		case 'secondary':
+			return colors.highlightBorder;
 		case 'disabled':
 			if ( buttonType === 'paypal' ) {
 				return colors.disabledPaymentButtons;
 			}
 			return colors.disabledButtons;
 		default:
-			return colors.highlightBorder;
+			return colors.borderColorDark;
 	}
 }
 

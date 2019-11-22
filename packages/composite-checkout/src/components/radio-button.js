@@ -120,12 +120,12 @@ const Label = styled.label`
 		cursor: pointer;
 	}
 
-	:after {
+	:before {
 		display: block;
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: ${getRadioBorderWidth} solid ${getBorderColor};
+		border: 1px solid ${props => props.theme.colors.borderColor};
 		border-radius: 100%;
 		top: 50%;
 		transform: translateY( -50% );
@@ -134,6 +134,21 @@ const Label = styled.label`
 		background: ${props => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
+	}
+
+	:after {
+		display: block;
+		width: 8px;
+		height: 8px;
+		content: '';
+		border-radius: 100%;
+		top: 50%;
+		transform: translateY( -50% );
+		left: 20px;
+		position: absolute;
+		background: ${getRadioColor};
+		box-sizing: border-box;
+		z-index: 3;
 	}
 `;
 
@@ -145,12 +160,12 @@ function getBorderColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
 
-function getBorderWidth( { checked } ) {
-	return checked ? '3px' : '1px';
+function getRadioColor( { checked, theme } ) {
+	return checked ? theme.colors.highlight : theme.colors.surface;
 }
 
-function getRadioBorderWidth( { checked } ) {
-	return checked ? '5px' : '1px';
+function getBorderWidth( { checked } ) {
+	return checked ? '3px' : '1px';
 }
 
 function getGrayscaleValue( { checked } ) {
