@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
-import { useTranslate, sprintf } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -152,7 +152,11 @@ function DeleteIcon( { uniqueID, product } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby={ uniqueID }
 		>
-			<title id={ uniqueID }>{ sprintf( translate( 'Remove %s from cart' ), product ) }</title>
+			<title id={ uniqueID }>
+				{ translate( 'Remove %s from cart', {
+					args: product,
+				} ) }
+			</title>
 			<mask
 				id="trashIcon"
 				mask-type="alpha"
