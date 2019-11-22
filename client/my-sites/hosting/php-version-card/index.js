@@ -25,6 +25,7 @@ import { errorNotice, successNotice } from 'state/notices/actions';
  * Style dependencies
  */
 import './style.scss';
+import Accordion from 'components/accordion';
 
 const requestId = ( siteId, method ) => `hosting-php-version-${ method }-${ siteId }`;
 
@@ -160,6 +161,15 @@ const PhpVersionCard = ( {
 
 		return (
 			<div>
+				<p>{ translate( 'Manage PHP versions.' ) }</p>
+
+				<Accordion
+					title={ translate( 'How it affects your site?' ) }
+					className="php-version-card__accordion"
+				>
+					<p>{ translate( 'In all kinds of weird ways.' ) }</p>
+				</Accordion>
+
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
