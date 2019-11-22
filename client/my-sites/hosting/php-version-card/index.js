@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -215,7 +214,7 @@ export default connect(
 
 		const phpVersionGet = getHttpData( requestId( siteId, 'GET' ) );
 		const phpVersionUpdate = getHttpData( requestId( siteId, 'POST' ) );
-		const version = get( phpVersionGet, 'data', null );
+		const version = phpVersionGet?.data ?? null;
 
 		return {
 			version,
