@@ -16,7 +16,7 @@ import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
 import { getHappinessEngineers } from 'state/happiness-engineers/selectors';
 import CardHeading from 'components/card-heading';
 
-const SuuportCard = ( { avatars, translate } ) => {
+const SupportCard = ( { avatars, translate } ) => {
 	return (
 		<Card className="support-card">
 			{ ! avatars && <QueryHappinessEngineers /> }
@@ -38,4 +38,4 @@ const SuuportCard = ( { avatars, translate } ) => {
 
 export default connect( state => ( {
 	avatars: getHappinessEngineers( state ),
-} ) )( localize( SuuportCard ) );
+} ) )( localize( SupportCard ) );
