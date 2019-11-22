@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
+import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
 const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
 	useEffect( () => {
@@ -17,18 +17,19 @@ const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
 			request( siteId );
 		}
 	}, [ siteId, request, isRequesting ] );
+
 	return null;
 };
 
 QueryGSuiteUsers.propTypes = {
+	isRequesting: PropTypes.bool.isRequired,
 	siteId: PropTypes.number.isRequired,
 	request: PropTypes.func.isRequired,
-	isRequesting: PropTypes.bool.isRequired,
 };
 
 export default connect(
 	( state, ownProps ) => ( {
-		isRequesting: isRequestingGSuiteUsers( state, ownProps.siteid ),
+		isRequesting: isRequestingGSuiteUsers( state, ownProps.siteId ),
 	} ),
 	{ request: getGSuiteUsers }
 )( QueryGSuiteUsers );
