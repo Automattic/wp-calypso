@@ -13,6 +13,7 @@ import { useDebounce } from 'use-debounce';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
+import { DomainName } from '../../stores/domain-suggestions/types';
 import { DomainPickerButton } from '../domain-picker';
 import { isFilledFormValue } from '../../stores/onboard/types';
 import { selectorDebounce } from '../../constants';
@@ -34,7 +35,7 @@ const Header: FunctionComponent< Props > = ( {
 	toggleGeneralSidebar,
 	toggleSidebarShortcut,
 } ) => {
-	const [ domainText, setDomainText ] = useState< string | null >( null );
+	const [ domainText, setDomainText ] = useState< DomainName >( '' );
 
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
