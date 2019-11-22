@@ -14,14 +14,23 @@ import createSelector from 'lib/create-selector';
  * Get the last non-editor route while ignoring navigation in block editor.
  *
  * @param {object} state  Global state tree
- * @returns {string} The last non block editor route -- empty string if none.
+ * @returns {string} The last non editor route -- empty string if none.
  */
 const getLastNonEditorRoute = createSelector(
 	state => {
 		const previousPath = getPreviousPath( state );
-		const blockEditorPattern = /^\/block-editor/;
+		// Include paths which start in the classic editor because it is common
+		// to redirect from the classic editor to the
 
-		if ( previousPath && ! blockEditorPattern.test( previousPath ) ) {
+		/**
+		 * Include paths which start in the classic editor because it is common
+		 * to redirect from classic to block editor. For example, to create a new
+		 * page, you go to `/page`, which then redirects to `/block-editor/page`.
+		 * Matching page or post handles that case.
+		 */
+		const editorPattern = /^\/(block-editor|page|post)/;
+
+		if ( previousPath && ! editorPattern.test( previousPath ) ) {
 			return previousPath;
 		}
 
@@ -30,7 +39,7 @@ const getLastNonEditorRoute = createSelector(
 			last(
 				dropRightWhile(
 					getRouteHistory( state ),
-					( { path } ) => path && blockEditorPattern.test( path )
+					( { path } ) => path && editorPattern.test( path )
 				)
 			),
 			'path',
