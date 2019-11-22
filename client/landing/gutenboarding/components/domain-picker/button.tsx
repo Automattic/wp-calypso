@@ -42,7 +42,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover onFocusOutside={ () => setDomainPopoverVisibility( false ) }>
+				<Popover onClose={ () => setDomainPopoverVisibility( false ) }>
 					<DomainPicker { ...domainPickerProps } onDomainSelect={ handleDomainSelect } />
 				</Popover>
 			) }
