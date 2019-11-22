@@ -5,18 +5,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, sprintf } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-<<<<<<< HEAD:packages/composite-checkout-wpcom/src/components/wp-order-review-line-items.js
 import joinClasses from './join-classes';
-=======
-import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown, useHasDomainsInCart } from '../public-api';
-import { useLocalize, sprintf } from '../lib/localize';
->>>>>>> Add sprintf:packages/composite-checkout/src/wpcom/wp-order-review-line-items.js
 import Button from './button';
 import RadioButton from './radio-button';
 import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
@@ -147,7 +141,7 @@ const TermOptionsItem = styled.li`
 `;
 
 function DeleteIcon( { uniqueID, product } ) {
-	const translate = useLocalize();
+	const translate = useTranslate();
 
 	return (
 		<svg
