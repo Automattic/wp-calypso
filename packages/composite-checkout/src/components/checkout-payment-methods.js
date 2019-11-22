@@ -19,20 +19,12 @@ import {
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
-export default function CheckoutPaymentMethods( {
-	summary,
-	isComplete,
-	className,
-	availablePaymentMethods,
-} ) {
+export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
 	const localize = useLocalize();
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const paymentMethods = useAllPaymentMethods();
-	const paymentMethodsToDisplay = availablePaymentMethods
-		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
-		: paymentMethods;
 
 	if ( summary && isComplete && paymentMethod ) {
 		return (
@@ -58,7 +50,7 @@ export default function CheckoutPaymentMethods( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			<RadioButtons>
-				{ paymentMethodsToDisplay.map( method => (
+				{ paymentMethods.map( method => (
 					<CheckoutErrorBoundary
 						key={ method.id }
 						errorMessage={
@@ -82,7 +74,6 @@ CheckoutPaymentMethods.propTypes = {
 	summary: PropTypes.bool,
 	isComplete: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 };
 
 export function CheckoutPaymentMethodsTitle() {
