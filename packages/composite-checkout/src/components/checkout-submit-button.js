@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -10,7 +9,7 @@ import PropTypes from 'prop-types';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../public-api';
 
-export default function CheckoutSubmitButton( { className, isActive } ) {
+export default function CheckoutSubmitButton( { className, disabled } ) {
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		return null;
@@ -18,12 +17,7 @@ export default function CheckoutSubmitButton( { className, isActive } ) {
 	const { SubmitButtonComponent } = paymentMethod;
 	return (
 		<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
-			<SubmitButtonComponent isActive={ isActive } />
+			<SubmitButtonComponent disabled={ disabled } />
 		</div>
 	);
 }
-
-CheckoutSubmitButton.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	className: PropTypes.string,
-};

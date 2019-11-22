@@ -19,20 +19,39 @@ import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './li
 import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
 import {
 	createRegistry,
-	useRegistry,
-	useRegisterStore,
-	useSelect,
 	useDispatch,
+	usePaymentData,
+	usePrimaryDispatch,
+	usePrimarySelect,
+	useRegisterStore,
+	useRegistry,
+	useSelect,
 } from './lib/registry';
-import { WPCheckoutOrderSummary, WPCheckoutOrderReview, WPContactForm } from './wpcom/index'; // TODO: remove this
+import {
+	WPCheckoutOrderSummary,
+	WPCheckoutOrderSummaryTitle,
+	WPCheckoutOrderReview,
+	WPContactForm,
+} from './wpcom/index'; // TODO: remove this
 import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';
+import { useActiveStep, useIsStepActive } from './lib/active-step';
+import CheckoutOrderSummary, {
+	CheckoutOrderSummaryTitle,
+} from './components/checkout-order-summary';
+import {
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderReviewStep,
+} from './components/default-steps';
 
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutOrderSummary,
+	CheckoutOrderSummaryTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
@@ -41,21 +60,30 @@ export {
 	OrderReviewTotal,
 	WPCheckoutOrderReview,
 	WPCheckoutOrderSummary,
+	WPCheckoutOrderSummaryTitle,
 	WPContactForm,
 	createApplePayMethod,
 	createCreditCardMethod,
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
 	renderDisplayValueMarkdown,
+	useActiveStep,
 	useAllPaymentMethods,
 	useCheckoutHandlers,
 	useCheckoutRedirects,
 	useDispatch,
 	useHasDomainsInCart,
+	useIsStepActive,
 	useLineItems,
+	usePaymentData,
 	usePaymentMethod,
 	usePaymentMethodId,
+	usePrimaryDispatch,
+	usePrimarySelect,
 	useRegisterStore,
 	useRegistry,
 	useSelect,

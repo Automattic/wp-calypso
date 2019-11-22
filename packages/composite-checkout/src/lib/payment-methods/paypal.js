@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { useDispatch, useSelect } from '../../lib/registry';
+import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -106,7 +106,7 @@ export function PaypalSubmitButton() {
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	const [ items ] = useLineItems();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const [ paymentData ] = usePaymentData();
 	const { billing = {} } = paymentData;
 	useTransactionStatusHandler();
 	const onClick = () =>

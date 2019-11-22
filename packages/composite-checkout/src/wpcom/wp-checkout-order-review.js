@@ -11,12 +11,12 @@ import styled from '@emotion/styled';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
-import { useLineItems } from '../public-api';
 import {
 	WPOrderReviewLineItems,
 	WPOrderReviewTotal,
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
+import { useLineItems } from '../public-api';
 
 export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();
@@ -44,7 +44,6 @@ export default function WPCheckoutOrderReview( { className } ) {
 }
 
 WPCheckoutOrderReview.propTypes = {
-	isActive: PropTypes.bool.isRequired,
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 };

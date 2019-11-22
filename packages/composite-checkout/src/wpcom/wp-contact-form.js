@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { useSelect, useDispatch, useHasDomainsInCart } from '../public-api';
+import { useHasDomainsInCart, usePaymentData } from '../public-api';
 import Field from './field';
 // TODO: remove or replace all the below imports as they are not in wpcom
 import { useLocalize } from '../lib/localize';
@@ -21,8 +21,7 @@ import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { updatePaymentData } = useDispatch( 'checkout' );
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const { isDomainContactSame = true } = paymentData;
 
 	if ( summary && isComplete ) {
@@ -172,8 +171,7 @@ const DomainRegistrationCheckbox = styled.input`
 
 function AddressFields( { fieldType } ) {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { updatePaymentData } = useDispatch( 'checkout' );
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
@@ -286,8 +284,7 @@ function isStateorProvince() {
 
 function PhoneNumberField( { fieldType } ) {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { updatePaymentData } = useDispatch( 'checkout' );
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
@@ -315,8 +312,7 @@ PhoneNumberField.propTypes = {
 function VatIdField() {
 	const localize = useLocalize();
 	const fieldType = 'billing';
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { updatePaymentData } = useDispatch( 'checkout' );
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
@@ -336,9 +332,9 @@ function VatIdField() {
 
 function TaxFields( { fieldType } ) {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { updatePaymentData } = useDispatch( 'checkout' );
+	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
+	// TODO: add field validation; at least to see if a required field is set
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
@@ -439,7 +435,7 @@ const DomainContactFieldsDescription = styled.p`
 
 function ContactFormSummary() {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const [ paymentData ] = usePaymentData();
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 
 	//Check if paymentData is empty

@@ -9,20 +9,27 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useLocalize } from '../lib/localize';
+import { useLocalize, sprintf } from '../lib/localize';
 import CheckoutStep from './checkout-step';
-import CheckoutPaymentMethods from './checkout-payment-methods';
-import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
 import CheckoutNextStepButton from './checkout-next-step-button';
-import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { useSelect, useDispatch, useRegisterStore } from '../lib/registry';
+import {
+	usePrimarySelect,
+	usePrimaryDispatch,
+	useRegisterPrimaryStore,
+	usePaymentData,
+} from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import CheckoutOrderSummary from './checkout-order-summary';
-import { useTotal, renderDisplayValueMarkdown } from '../public-api';
+import { useActiveStep, ActiveStepProvider, RenderedStepProvider } from '../lib/active-step';
+import {
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderReviewStep,
+} from './default-steps';
+import { validateSteps } from '../lib/validation';
 
 function useRegisterCheckoutStore() {
-	useRegisterStore( 'checkout', {
+	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
@@ -54,69 +61,85 @@ function useRegisterCheckoutStore() {
 	} );
 }
 
-export default function Checkout( {
-	availablePaymentMethods,
-	ReviewContent,
-	UpSell,
-	OrderSummary,
-	ContactSlot,
-	className,
-} ) {
+export default function Checkout( { steps, className } ) {
 	useRegisterCheckoutStore();
 	const localize = useLocalize();
-	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
-	const { changeStep } = useDispatch( 'checkout' );
+	const [ paymentData ] = usePaymentData();
+
+	// stepNumber is the displayed number of the active step, not its index
+	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
+	const { changeStep } = usePrimaryDispatch();
+	steps = steps || makeDefaultSteps( localize );
+	validateSteps( steps );
+
+	// Assign step numbers to all steps with numbers
+	let numberedStepNumber = 0;
+	let annotatedSteps = steps.map( ( step, index ) => {
+		numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
+		return {
+			...step,
+			stepNumber: step.hasStepNumber ? numberedStepNumber : null,
+			stepIndex: index,
+		};
+	} );
+	if ( annotatedSteps.length < 1 ) {
+		throw new Error( 'No steps found' );
+	}
+
+	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
+	if ( ! activeStep ) {
+		throw new Error( 'There is no active step' );
+	}
+
+	// Assign isComplete separately so we can provide the activeStep
+	annotatedSteps = annotatedSteps.map( step => {
+		return {
+			...step,
+			isComplete:
+				!! step.isCompleteCallback && step.isCompleteCallback( { paymentData, activeStep } ),
+		};
+	} );
+
+	const nextStep = annotatedSteps.find( ( step, index ) => {
+		return index > activeStep.stepIndex && step.hasStepNumber;
+	} );
+	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
+	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
 
 	return (
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<OrderSummaryStep OrderSummary={ OrderSummary || CheckoutOrderSummary } />
-
-				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the payment method form.' ) }
-				>
-					<PaymentMethodsStep
-						stepNumber={ 1 }
-						availablePaymentMethods={ availablePaymentMethods }
-						onComplete={ () => changeStep( 2 ) }
-						onEdit={ () => changeStep( 1 ) }
-						isActive={ stepNumber === 1 }
-						isComplete={ stepNumber > 1 }
-					/>
-				</CheckoutErrorBoundary>
-				{ ContactSlot && (
-					<CheckoutErrorBoundary
-						errorMessage={ localize( 'There was a problem with the billing contact form.' ) }
-					>
-						<BillingDetailsStep
-							stepNumber={ 2 }
-							onComplete={ () => changeStep( 3 ) }
-							onEdit={ () => changeStep( 2 ) }
-							isActive={ stepNumber === 2 }
-							isComplete={ stepNumber > 2 }
-							ContactSlot={ ContactSlot }
+				<ActiveStepProvider step={ activeStep }>
+					{ annotatedSteps.map( step => (
+						<CheckoutStepContainer
+							{ ...step }
+							key={ step.id }
+							stepNumber={ step.stepNumber || null }
+							shouldShowNextButton={
+								step.hasStepNumber && step.id === activeStep.id && isThereAnotherNumberedStep
+							}
+							goToNextStep={ () => changeStep( nextStep.stepNumber ) }
+							onEdit={
+								step.id !== activeStep.id &&
+								step.hasStepNumber &&
+								step.isEditableCallback &&
+								step.isEditableCallback( { paymentData } )
+									? () => changeStep( step.stepNumber )
+									: null
+							}
 						/>
-					</CheckoutErrorBoundary>
-				) }
-				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the review form.' ) }
-				>
-					<ReviewOrderStep
-						stepNumber={ ContactSlot ? 3 : 2 }
-						isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) }
-						isComplete={ stepNumber > ( ContactSlot ? 3 : 2 ) }
-						ReviewContent={ ReviewContent }
-					/>
-				</CheckoutErrorBoundary>
+					) ) }
+				</ActiveStepProvider>
+
 				<CheckoutWrapper>
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton isActive={ stepNumber === ( ContactSlot ? 3 : 2 ) } />
+						<CheckoutSubmitButton
+							disabled={ isThereAnIncompleteStep || isThereAnotherNumberedStep }
+						/>
 					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
-
-				{ UpSell && <UpSell /> }
 			</MainContent>
 		</Container>
 	);
@@ -124,12 +147,60 @@ export default function Checkout( {
 
 Checkout.propTypes = {
 	className: PropTypes.string,
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	ReviewContent: PropTypes.elementType,
-	UpSell: PropTypes.elementType,
-	OrderSummary: PropTypes.elementType,
-	ContactSlot: PropTypes.elementType,
+	steps: PropTypes.array,
 };
+
+function CheckoutStepContainer( {
+	id,
+	titleContent,
+	className,
+	activeStepContent,
+	incompleteStepContent,
+	completeStepContent,
+	stepNumber,
+	shouldShowNextButton,
+	goToNextStep,
+	getNextStepButtonAriaLabel,
+	onEdit,
+	getEditButtonAriaLabel,
+	isComplete,
+} ) {
+	const localize = useLocalize();
+	const currentStep = useActiveStep();
+	const isActive = currentStep.id === id;
+
+	return (
+		<CheckoutErrorBoundary
+			errorMessage={ sprintf( localize( 'There was a problem with the step "%s".' ), id ) }
+		>
+			<RenderedStepProvider stepId={ id }>
+				<CheckoutStep
+					className={ className }
+					isActive={ isActive }
+					isComplete={ isComplete }
+					stepNumber={ stepNumber }
+					title={ titleContent || '' }
+					onEdit={ onEdit }
+					editButtonAriaLabel={ getEditButtonAriaLabel && getEditButtonAriaLabel() }
+					stepContent={
+						<React.Fragment>
+							{ activeStepContent }
+							{ shouldShowNextButton && (
+								<CheckoutNextStepButton
+									value={ localize( 'Continue' ) }
+									onClick={ goToNextStep }
+									ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
+									disabled={ ! isComplete }
+								/>
+							) }
+						</React.Fragment>
+					}
+					stepSummary={ isComplete ? completeStepContent : incompleteStepContent }
+				/>
+			</RenderedStepProvider>
+		</CheckoutErrorBoundary>
+	);
+}
 
 const Container = styled.div`
 	*:focus {
@@ -155,176 +226,14 @@ const CheckoutWrapper = styled.div`
 	padding: 24px;
 `;
 
-function OrderSummaryStep( { OrderSummary } ) {
-	const localize = useLocalize();
-	const total = useTotal();
-
-	return (
-		<CheckoutStep
-			isActive={ false }
-			isComplete={ true }
-			stepNumber={ 0 }
-			title={
-				<CheckoutSummaryTitle>
-					<span>{ localize( 'You are all set to check out' ) }</span>
-					<CheckoutSummaryTotal>
-						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-					</CheckoutSummaryTotal>
-				</CheckoutSummaryTitle>
-			}
-			stepSummary={ <OrderSummary /> }
-		/>
-	);
+function makeDefaultSteps( localize ) {
+	return [
+		getDefaultOrderSummaryStep(),
+		{
+			...getDefaultPaymentMethodStep(),
+			getEditButtonAriaLabel: () => localize( 'Edit the payment method' ),
+			getNextStepButtonAriaLabel: () => localize( 'Continue with the selected payment method' ),
+		},
+		getDefaultOrderReviewStep(),
+	];
 }
-
-OrderSummaryStep.propTypes = {
-	OrderSummary: PropTypes.elementType,
-};
-
-const CheckoutSummaryTitle = styled.span`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const CheckoutSummaryTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
-`;
-
-function PaymentMethodsStep( {
-	stepNumber,
-	onEdit,
-	onComplete,
-	isActive,
-	isComplete,
-	availablePaymentMethods,
-} ) {
-	const localize = useLocalize();
-	const paymentMethod = usePaymentMethod();
-	const [ , setPaymentMethod ] = usePaymentMethodId();
-
-	return (
-		<CheckoutStep
-			className="checkout__payment-methods-step"
-			isActive={ isActive }
-			isComplete={ isComplete }
-			stepNumber={ stepNumber }
-			title={ isComplete ? localize( 'Payment method' ) : localize( 'Pick a payment method' ) }
-			onEdit={ onEdit }
-			editButtonAriaLabel={ localize( 'Edit the payment method' ) }
-			stepContent={
-				<React.Fragment>
-					<CheckoutPaymentMethods
-						isActive={ isActive }
-						isComplete={ isComplete }
-						availablePaymentMethods={ availablePaymentMethods }
-						onChange={ setPaymentMethod }
-						paymentMethod={ paymentMethod }
-					/>
-
-					<CheckoutNextStepButton
-						value={ localize( 'Continue' ) }
-						onClick={ onComplete }
-						ariaLabel={ localize( 'Continue with the selected payment method' ) }
-					/>
-				</React.Fragment>
-			}
-			stepSummary={
-				<CheckoutPaymentMethods
-					summary
-					isActive={ isActive }
-					isComplete={ isComplete }
-					availablePaymentMethods={ availablePaymentMethods }
-					onChange={ setPaymentMethod }
-					paymentMethod={ paymentMethod }
-				/>
-			}
-		/>
-	);
-}
-
-PaymentMethodsStep.propTypes = {
-	stepNumber: PropTypes.number.isRequired,
-	onComplete: PropTypes.func.isRequired,
-	onEdit: PropTypes.func.isRequired,
-	isActive: PropTypes.bool.isRequired,
-	isComplete: PropTypes.bool.isRequired,
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-};
-
-function BillingDetailsStep( {
-	stepNumber,
-	isActive,
-	isComplete,
-	onComplete,
-	onEdit,
-	ContactSlot,
-} ) {
-	const localize = useLocalize();
-	const paymentMethod = usePaymentMethod();
-	if ( ! paymentMethod ) {
-		throw new Error( 'Cannot render Billing details without a payment method' );
-	}
-
-	return (
-		<CheckoutStep
-			className="checkout__billing-details-step"
-			isActive={ isActive }
-			isComplete={ isComplete }
-			stepNumber={ stepNumber }
-			title={
-				isComplete ? localize( 'Billing details' ) : localize( 'Enter your billing details' )
-			}
-			onEdit={ onEdit }
-			editButtonAriaLabel={ localize( 'Edit the billing details' ) }
-			stepContent={
-				<React.Fragment>
-					<ContactSlot isActive={ isActive } isComplete={ isComplete } />
-					<CheckoutNextStepButton
-						value={ localize( 'Continue' ) }
-						onClick={ onComplete }
-						ariaLabel={ localize( 'Continue with the entered billing details' ) }
-					/>
-				</React.Fragment>
-			}
-			stepSummary={ <ContactSlot summary isActive={ isActive } isComplete={ isComplete } /> }
-		/>
-	);
-}
-
-BillingDetailsStep.propTypes = {
-	stepNumber: PropTypes.number.isRequired,
-	onEdit: PropTypes.func.isRequired,
-	onComplete: PropTypes.func.isRequired,
-	isActive: PropTypes.bool.isRequired,
-	isComplete: PropTypes.bool.isRequired,
-	ContactSlot: PropTypes.elementType.isRequired,
-};
-
-function ReviewOrderStep( { stepNumber, isActive, isComplete, ReviewContent } ) {
-	const localize = useLocalize();
-
-	return (
-		<CheckoutStep
-			finalStep
-			className="checkout__review-order-step"
-			isActive={ isActive }
-			isComplete={ isComplete }
-			stepNumber={ stepNumber }
-			title={ localize( 'Review your order' ) }
-			stepContent={
-				ReviewContent ? (
-					<ReviewContent isActive={ isActive } />
-				) : (
-					<CheckoutReviewOrder isActive={ isActive } />
-				)
-			}
-		/>
-	);
-}
-
-ReviewOrderStep.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	isComplete: PropTypes.bool.isRequired,
-	stepNumber: PropTypes.number.isRequired,
-	ReviewContent: PropTypes.elementType,
-};

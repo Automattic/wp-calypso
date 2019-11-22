@@ -10,14 +10,14 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
 
-The form has two steps:
+The form has two default steps:
 
 1. Payment method
 2. Review order
 
-The steps can be customized using various props, including adding additional steps.
+These steps can be customized or replaced, and additional steps can be added.
 
-For more detailed customization, it's possible to build a custom form using the other components exported by this package.
+It's also possible to build an entirely custom form using the other components exported by this package.
 
 ### Select payment method
 
@@ -31,18 +31,6 @@ The review step presents a simple list of line items and a total, followed by a 
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
 
-### Customization slots
-
-Some content can be overridden using "customization slots" passed as props to the `Checkout` component. Each of these is a React element type (a component class or function) which will be rendered by `Checkout` in a particular place. The slot components can access all the custom hooks in the package and will also be passed props appropriate to that component; see each customization slot for details about what props are provided.
-
-The `ReviewContent` slot replaces the content of the Review order step.
-
-`UpSell` is a section at the bottom of the form.
-
-`OrderSummary` is a block of content at the top of the form styled to look like a completed step.
-
-`ContactSlot` is a step displayed between the payment method and review order steps.
-
 ### Submitting the form
 
 When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
@@ -51,84 +39,51 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## Example
+### Steps
 
-Here is a very simple example of using the `Checkout` component with default options. Its review section is very basic and line items cannot be removed or added. For a more detailed example, see the file `demo/index.js`.
+The `Checkout` component accepts an optional `steps` prop which is an array of Step objects. Each Step is an object with properties that include both React elements to display at certain times as well as metadata about how the step should be displayed. Here's an example step:
 
 ```js
-import React, { useState } from 'react';
-import { Checkout } from '@automattic/composite-checkout';
-import { formatValueForCurrency } from 'composite-checkout/wpcom';
-
-const initialItems = [
-	{
-		label: 'WordPress.com Personal Plan',
-		id: 'wpcom-personal',
-		type: 'plan',
-		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
+{
+	id: 'payment-method',
+	className: 'checkout__payment-methods-step',
+	hasStepNumber: true,
+	titleContent: <CheckoutPaymentMethodsTitle />,
+	activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
+	incompleteStepContent: null,
+	completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
+	isCompleteCallback: ( { paymentData } ) => {
+		const { billing = {} } = paymentData;
+		if ( ! billing.country ) {
+			return false;
+		}
+		return true;
 	},
-	{
-		label: 'Domain registration',
-		subLabel: 'example.com',
-		id: 'wpcom-domain',
-		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
+	isEditableCallback: ( { paymentData } ) => {
+		return ( paymentData.billing ) ? true : false;
 	},
-];
-
-// These are used only for non-redirect payment methods
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
-async function makePayPalExpressRequest() {
-	return 'https://paypal.com';
+	getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
+	getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
 }
+````
 
-const paypalMethod = createPayPalMethod( { makePayPalExpressRequest } );
+All properties except for `id` are optional.
 
-// This is the parent component which would be included on a host page
-export default function MyCheckout() {
-	const { items, total } = useShoppingCart();
+- `id: string`. A unique ID for the step.
+- `className?: string`. Displayed on the step wrapper.
+- `hasStepNumber?: boolean`. If false, the step will not have a number displayed and will never be made active. Can be used for informational blocks. Defaults to false.
+- `titleContent?: React.ReactNode`. Displays as the title of the step. This can be be variable based on form status by using hooks like `useActiveStep()` to see if the step is active.
+- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `incompleteStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and incomplete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
+- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`. It is also displayed when the step is active but is hidden by CSS.
+- `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning false.
+- `isEditableCallback?: ({paymentData: object}) => boolean`. Used to determine if an inactive step should display an "Edit" button. Default is a function returning false.
+- `getEditButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
+- `getNextStepButtonAriaLabel?: () => string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 
-	return (
-		<CheckoutProvider
-			locale={ 'US' }
-			items={ items }
-			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ [ paypalMethod ] }
-		>
-			<Checkout />
-		</CheckoutProvider>
-	);
-}
+## Example
 
-// This is a very simple shopping cart manager which can calculate totals
-function useShoppingCart() {
-	const [ items ] = useState( initialItems );
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
-		label: 'Total',
-		amount: {
-			currency,
-			value: lineItemTotal,
-			displayValue: formatValueForCurrency( currency, lineItemTotal ),
-		},
-	};
-
-	return { items, total };
-}
-```
+See the file `demo/index.js`.
 
 ## Styles and Themes
 
@@ -183,10 +138,9 @@ While the `Checkout` component takes care of most everything, there are many sit
 The main component in this package. It has the following props.
 
 - availablePaymentMethods: array
-- ReviewContent: component
-- UpSell: component
-- OrderSummary: component
-- ContactSlot: component
+- steps: array
+
+See the [Steps](#steps) section above for more details.
 
 ### CheckoutNextStepButton
 
@@ -215,7 +169,7 @@ It has the following props.
 
 The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
 
-If any event in a customization slot causes the line items to change (for example, deleting something during the review step), the `items` array should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
+If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` array should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
@@ -235,7 +189,7 @@ Each of the steps in the checkout flow will be rendered by one of these. Renders
 
 Each should include in its `children` a `CheckoutNextStepButton` if there is a following step.
 
-If a step has the `onEdit` prop, it will include an "Edit" link when `isComplete` is true which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way (perhaps by setting `isActive` to true). The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+If a step has the `onEdit` prop, it will include an "Edit" link which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way. The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
 ### useAllPaymentMethods()
 

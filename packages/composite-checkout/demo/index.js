@@ -14,7 +14,10 @@ import {
 	createPayPalMethod,
 	createApplePayMethod,
 	createCreditCardMethod,
+	useIsStepActive,
+	getDefaultPaymentMethodStep,
 	WPCheckoutOrderSummary,
+	WPCheckoutOrderSummaryTitle,
 	WPCheckoutOrderReview,
 	WPContactForm,
 } from '../src/public-api';
@@ -129,6 +132,73 @@ const getTotal = items => {
 	};
 };
 
+// TODO: replace this with the host page's translation system
+const useLocalize = () => text => text;
+const hostTranslate = text => text;
+
+const ContactFormTitle = () => {
+	const localize = useLocalize();
+	const isActive = useIsStepActive();
+	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
+};
+
+const OrderReviewTitle = () => {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+};
+
+const steps = [
+	{
+		id: 'order-summary',
+		className: 'checkout__order-summary-step',
+		hasStepNumber: false,
+		titleContent: <WPCheckoutOrderSummaryTitle />,
+		completeStepContent: <WPCheckoutOrderSummary />,
+		isCompleteCallback: () => true,
+	},
+	{
+		...getDefaultPaymentMethodStep(),
+		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
+		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
+	},
+	{
+		id: 'contact-form',
+		className: 'checkout__billing-details-step',
+		hasStepNumber: true,
+		titleContent: <ContactFormTitle />,
+		activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
+		completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
+		isCompleteCallback: ( { paymentData } ) => {
+			// TODO: Make sure the form is complete
+			const { billing = {} } = paymentData;
+			if ( ! billing.country ) {
+				return false;
+			}
+			return true;
+		},
+		isEditableCallback: ( { paymentData } ) => {
+			// TODO: Return true if the form is empty
+			if ( paymentData.billing ) {
+				return true;
+			}
+			return false;
+		},
+		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
+		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
+	},
+	{
+		id: 'order-review',
+		className: 'checkout__review-order-step',
+		hasStepNumber: true,
+		titleContent: <OrderReviewTitle />,
+		activeStepContent: <WPCheckoutOrderReview />,
+		isCompleteCallback: ( { activeStep } ) => {
+			const isActive = activeStep.id === 'order-review';
+			return isActive;
+		},
+	},
+];
+
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const [ items, setItems ] = useState( initialItems );
@@ -151,11 +221,7 @@ function MyCheckout() {
 				Boolean
 			) }
 		>
-			<Checkout
-				OrderSummary={ WPCheckoutOrderSummary }
-				ReviewContent={ WPCheckoutOrderReview }
-				ContactSlot={ WPContactForm }
-			/>
+			<Checkout steps={ steps } />
 		</CheckoutProvider>
 	);
 }

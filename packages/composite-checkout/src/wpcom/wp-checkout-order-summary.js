@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize'; // TODO: remove this
-import { useLineItems } from '../public-api';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '../public-api';
 import Button from './button';
 import Coupon from './coupon';
 
@@ -50,6 +50,28 @@ export default function WPCheckoutOrderSummary() {
 		</React.Fragment>
 	);
 }
+
+export function WPCheckoutOrderSummaryTitle() {
+	const localize = useLocalize();
+	const total = useTotal();
+	return (
+		<CheckoutSummaryTitle>
+			<span>{ localize( 'You are all set to check out' ) }</span>
+			<CheckoutSummaryTotal>
+				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryTitle>
+	);
+}
+
+const CheckoutSummaryTitle = styled.span`
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CheckoutSummaryTotal = styled.span`
+	font-weight: ${props => props.theme.weights.bold};
+`;
 
 const SummaryContent = styled.div`
 	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
