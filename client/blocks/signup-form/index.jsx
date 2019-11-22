@@ -5,6 +5,7 @@ import React, { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
 	camelCase,
+	capitalize,
 	find,
 	filter,
 	forEach,
@@ -17,6 +18,7 @@ import {
 	merge,
 	pick,
 	snakeCase,
+	throttle,
 } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -58,6 +60,7 @@ import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import TextControl from 'extensions/woocommerce/components/text-control';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
 
 /**
  * Style dependencies
@@ -174,6 +177,10 @@ class SignupForm extends Component {
 		this.setState( { form: stateWithFilledUsername } );
 	}
 
+	componentWillUnmount() {
+		this.recordInputChangeRecaptchaAction.cancel();
+	}
+
 	getUserExistsError( props ) {
 		const { step } = props;
 
@@ -186,12 +193,12 @@ class SignupForm extends Component {
 		return userExistsError;
 	}
 
-	/***
+	/**
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
 	 * to his existing WPCOM account
 	 *
-	 * @param {Object} props react component props that has step info
+	 * @param {object} props react component props that has step info
 	 */
 	maybeRedirectToSocialConnect( props ) {
 		const userExistsError = this.getUserExistsError( props );
@@ -327,7 +334,29 @@ class SignupForm extends Component {
 			name: name,
 			value: value,
 		} );
+
+		this.recordInputChangeRecaptchaAction( name );
 	};
+
+	/**
+	 * @param {string} inputName name of text input which has been changed
+	 */
+	recordInputChangeRecaptchaAction = throttle(
+		inputName => {
+			if ( typeof this.props.recaptchaClientId !== 'number' ) {
+				return;
+			}
+
+			recordGoogleRecaptchaAction(
+				this.props.recaptchaClientId,
+				`calypso/signup/inputChange${ capitalize( inputName ) }`
+			).catch( e => {
+				debug( e );
+			} );
+		},
+		2000,
+		{ leading: true }
+	);
 
 	handleBlur = event => {
 		const fieldId = event.target.id;
