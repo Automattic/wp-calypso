@@ -3,17 +3,42 @@ enum ActionType {
 }
 export { ActionType };
 
-// See client/state/domains/suggestions/actions.js#requestDomainsSuggestions
 export interface DomainSuggestionQuery {
 	/**
-	 * Domain query
+	 * True to include .blog subdomain suggestions
+	 *
+	 * @example
+	 * example.photo.blog
+	 */
+	include_dotblogsubdomain: boolean;
+
+	/**
+	 * True to include WordPress.com subdomain suggestions
+	 *
+	 * @example
+	 * example.wordpress.com
+	 */
+	include_wordpressdotcom: boolean;
+
+	/**
+	 * True to only provide a wordpress.com subdomain
+	 *
+	 * @example
+	 * example.wordpress.com
+	 */
+	only_wordpressdotcom: boolean;
+
+	/**
+	 * Desired number of results
+	 */
+	quantity: number;
+
+	/**
+	 * Domain search term
 	 */
 	query: string;
 
-	/**
-	 * Number of results
-	 */
-	quantity: number;
+	recommendation_context?: string;
 
 	/**
 	 * Vendor
@@ -21,14 +46,7 @@ export interface DomainSuggestionQuery {
 	vendor: string;
 
 	/**
-	 * True to include WordPress.com subdomain suggestions
-	 */
-	include_wordpressdotcom: boolean;
-
-	recommendation_context?: string;
-
-	/**
-	 * The site vertical
+	 * The vertical id or slug
 	 */
 	vertical?: string;
 }

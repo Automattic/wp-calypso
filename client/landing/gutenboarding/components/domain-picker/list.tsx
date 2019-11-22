@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import {
 	Button,
 	HorizontalRule,
@@ -11,26 +11,49 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { __ as NO__ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+import { useDebounce } from 'use-debounce';
 
 /**
  * Internal dependencies
  */
-import { DomainSuggestion } from '../../stores/domain-suggestions/types';
+import { DomainSuggestion, DomainSuggestionQuery } from '../../stores/domain-suggestions/types';
+import { STORE_KEY } from '../../stores/domain-suggestions';
+import { selectorDebounce } from '../../constants';
 
 interface Props {
-	domainSearch: string;
-	setDomainSearch: ( domainSearch: string ) => void;
-	suggestions: DomainSuggestion[] | undefined;
+	/**
+	 * Term to search when no user input is provided.
+	 */
+	defaultQuery?: string;
+
+	/**
+	 * Additional parameters for the domain suggestions query.
+	 */
+	queryParameters?: Partial< DomainSuggestionQuery >;
 }
 
-const DomainPicker: FunctionComponent< Props > = ( {
-	domainSearch,
-	setDomainSearch,
-	suggestions,
-} ) => {
+const DomainPicker: FunctionComponent< Props > = ( { defaultQuery, queryParameters } ) => {
 	const label = NO__( 'Search for a domain' );
 
-	const handleDomainPick = suggestion => () => {
+	const [ domainSearch, setDomainSearch ] = useState( '' );
+
+	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
+	const suggestions = useSelect(
+		select => {
+			if ( search ) {
+				return select( STORE_KEY ).getDomainSuggestions( search, {
+					include_wordpressdotcom: true,
+					include_dotblogsubdomain: true,
+					quantity: 4,
+					...queryParameters,
+				} );
+			}
+		},
+		[ search, queryParameters ]
+	);
+
+	const handleDomainPick = ( suggestion: DomainSuggestion ) => () => {
 		if ( suggestion.is_free ) {
 			// eslint-disable-next-line no-console
 			console.log( 'Picked free domain: %o', suggestion );
