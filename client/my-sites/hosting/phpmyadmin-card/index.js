@@ -9,6 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Accordion from 'components/accordion';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
@@ -61,9 +62,21 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 			<p>
 				{ translate(
-					'Manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
 			</p>
+			<div className="phpmyadmin-card__questions">
+				<Accordion title={ translate( 'Do I need to Access my Database?' ) }>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
+					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
+				</Accordion>
+				<Accordion title={ translate( 'Reasons to Access my Database' ) }>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
+					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
+				</Accordion>
+			</div>
 			<Button
 				onClick={ () => requestPmaLink( siteId ) }
 				busy={ ! disabled && loading }
@@ -74,22 +87,19 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 			</Button>
 			{ ! disabled && (
 				<div className="phpmyadmin-card__restore-password">
-					{ translate(
-						'Problems accessing your database? Try {{a}}restoring the database password{{/a}}.',
-						{
-							components: {
-								a: (
-									<Button
-										compact
-										borderless
-										onClick={ () => {
-											setIsRestorePasswordDialogVisible( true );
-										} }
-									/>
-								),
-							},
-						}
-					) }
+					{ translate( 'Having problems with access? Try {{a}}resetting the password{{/a}}.', {
+						components: {
+							a: (
+								<Button
+									compact
+									borderless
+									onClick={ () => {
+										setIsRestorePasswordDialogVisible( true );
+									} }
+								/>
+							),
+						},
+					} ) }
 				</div>
 			) }
 			<RestorePasswordDialog

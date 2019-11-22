@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Accordion from 'components/accordion';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
@@ -116,28 +117,48 @@ const SftpCard = ( {
 		);
 	};
 
+	//
+
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
-			<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
+			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
-				{ disabled || username || isLoading ? (
-					<p>
-						{ translate( "Access and edit your website's files directly using an FTP client." ) }
-					</p>
-				) : (
-					<>
-						<p>
-							{ translate(
-								"Enable SFTP access to generate a username and password so you can access your website's files."
-							) }
-						</p>
-						<Button onClick={ createUser } primary>
-							{ translate( 'Enable SFTP' ) }
-						</Button>
-					</>
-				) }
+				<p>
+					{ translate(
+						"Access and edit your website's files directly by enabling SFTP access and using an FTP client."
+					) }
+				</p>
 			</div>
+			<div className="sftp-card__questions">
+				<Accordion title={ translate( 'What is SFTP?' ) }>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
+					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
+				</Accordion>
+				<Accordion title={ translate( 'Reasons to Use SFTP' ) }>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
+					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
+				</Accordion>
+				<Accordion title={ translate( 'How to use SFTP to access your site' ) }>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
+					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
+				</Accordion>
+			</div>
+			{ ! ( disabled || username || isLoading ) && (
+				<>
+					<p>
+						{ translate(
+							'Ready to access your website files? Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.'
+						) }
+					</p>
+					<Button onClick={ createUser } primary>
+						{ translate( 'Enable SFTP Credentials' ) }
+					</Button>
+				</>
+			) }
 			{ ( username || disabled ) && (
 				<table
 					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: disabled } ) }
