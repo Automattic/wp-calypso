@@ -66,7 +66,7 @@ export function makeShoppingCartHook( callWpcomShoppingCartEndpoint, initialRequ
 		// requestParam changes.
 		useEffect( () => {
 			const fetchAndUpdate = async () => {
-				await callWpcomShoppingCartEndpoint( 'key', requestParam ).then( response => {
+				await callWpcomShoppingCartEndpoint( requestParam ).then( response => {
 					setCart( translateWpcomCartToCheckoutCart( response ) );
 				} );
 			};
