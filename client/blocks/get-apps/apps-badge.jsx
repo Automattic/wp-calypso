@@ -19,7 +19,7 @@ import TranslatableString from 'components/translatable/proptype';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './apps-badge.scss';
 
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
