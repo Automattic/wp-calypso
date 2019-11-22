@@ -36,7 +36,7 @@ class Transfer extends React.PureComponent {
 		let cancelNavItem;
 		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
 			transferNotice = (
-				<Notice status={ 'is-info' } showDismiss={ false }>
+				<Notice status={ 'is-warning' } showDismiss={ false }>
 					{ translate(
 						'This transfer has been started and is waiting for authorization from your current provider. ' +
 							'If you need to cancel the transfer, please contact them for assistance.'
@@ -46,7 +46,7 @@ class Transfer extends React.PureComponent {
 
 			if ( domain.transferEndDate ) {
 				transferNotice = (
-					<Notice status={ 'is-info' } showDismiss={ false }>
+					<Notice status={ 'is-warning' } showDismiss={ false }>
 						{ translate(
 							'This transfer has been started and is waiting for authorization from your current provider. ' +
 								'It should complete by %(transferFinishDate)s. ' +
@@ -60,6 +60,30 @@ class Transfer extends React.PureComponent {
 					</Notice>
 				);
 			}
+		} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
+			transferNotice = (
+				<Notice status={ 'is-error' } showDismiss={ false }>
+					{ translate( 'The transfer has failed. {{a}}Learn more{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</Notice>
+			);
+
+			cancelNavItem = (
+				<VerticalNav>
+					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+						{ translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
+			);
 		} else {
 			cancelNavItem = (
 				<VerticalNav>
