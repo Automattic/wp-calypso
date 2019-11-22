@@ -261,7 +261,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			if ( this.props.showTestCopy ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
-					blue: isBestAlternative,
+					'info-blue': isBestAlternative,
 				} );
 				return (
 					<div className="domain-registration-suggestion__progress-bar">

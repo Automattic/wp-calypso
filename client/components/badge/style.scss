@@ -20,3 +20,8 @@
 	color: var( --color-neutral-70 );
 	background-color: var( --color-neutral-5 );
 }
+
+.badge--info-blue {
+	background-color: var( --color-primary );
+	color: var( --color-text-inverted );
+}
