@@ -131,13 +131,13 @@ const PhpVersionCard = ( {
 		return [
 			{
 				label: translate( '7.2', {
-					context: 'PHP Version',
+					comment: 'PHP Version',
 				} ),
 				value: '7.2',
 			},
 			{
 				label: translate( '7.3 (recommended)', {
-					context: 'PHP Version',
+					comment: 'PHP Version',
 				} ),
 				value: '7.3',
 			},
