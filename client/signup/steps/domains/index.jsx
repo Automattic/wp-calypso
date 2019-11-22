@@ -206,11 +206,23 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
-	handleSkip = () => {
-		const domainItem = undefined;
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+		const hideFreePlanTracksProp = this.showTestCopy
+			? { should_hide_free_plan: shouldHideFreePlan }
+			: {};
 
-		this.props.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
-		this.props.goToNextStep();
+		const tracksProperties = Object.assign(
+			{
+				section: this.getAnalyticsSection(),
+				flow: this.props.flowName,
+				step: this.props.stepName,
+			},
+			hideFreePlanTracksProp
+		);
+
+		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+
+		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
@@ -438,7 +450,7 @@ class DomainsStep extends React.Component {
 				showSkipButton={ this.props.showSkipButton }
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
-				hideFreePlan={ this.submitWithDomain }
+				hideFreePlan={ this.handleSkip }
 			/>
 		);
 	};
@@ -698,6 +710,7 @@ export default connect(
 		setDesignType,
 		saveSignupStep,
 		submitSignupStep,
+		recordTracksEvent,
 		fetchUsernameSuggestion,
 		hideSitePreview,
 		showSitePreview,
