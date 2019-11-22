@@ -117,7 +117,7 @@ const SftpCard = ( {
 		);
 	};
 
-	//
+	const displayQuestionsAndButton = ! ( disabled || username || isLoading );
 
 	return (
 		<Card className="sftp-card">
@@ -125,29 +125,32 @@ const SftpCard = ( {
 			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
 				<p>
-					{ translate(
-						"Access and edit your website's files directly by enabling SFTP access and using an FTP client."
-					) }
+					{ translate( "Access and edit your website's files directly by using an FTP client." ) }
 				</p>
 			</div>
-			<div className="sftp-card__questions">
-				<Accordion title={ translate( 'What is SFTP?' ) }>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
-					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
-					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
-				</Accordion>
-				<Accordion title={ translate( 'Reasons to Use SFTP' ) }>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
-					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
-					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
-				</Accordion>
-				<Accordion title={ translate( 'How to use SFTP to access your site' ) }>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
-					pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem
-					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
-				</Accordion>
-			</div>
-			{ ! ( disabled || username || isLoading ) && (
+			{ displayQuestionsAndButton && (
+				<div className="sftp-card__questions">
+					<Accordion title={ translate( 'What is SFTP?' ) }>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+						pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat,
+						lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae
+						velit.
+					</Accordion>
+					<Accordion title={ translate( 'Reasons to Use SFTP' ) }>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+						pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat,
+						lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae
+						velit.
+					</Accordion>
+					<Accordion title={ translate( 'How to use SFTP to access your site' ) }>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
+						pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat,
+						lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae
+						velit.
+					</Accordion>
+				</div>
+			) }
+			{ displayQuestionsAndButton && (
 				<>
 					<p>
 						{ translate(
