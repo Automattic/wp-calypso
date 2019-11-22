@@ -36,6 +36,17 @@
 	align-items: flex-start;
 }
 
+.gutenboarding__header-domain-picker-button {
+	> span {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	> .dashicon {
+		align-self: flex-end;
+	}
+}
+
 .gutenboarding__site-title {
 	font-weight: bold;
 }

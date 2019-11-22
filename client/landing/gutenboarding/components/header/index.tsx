@@ -79,19 +79,24 @@ const Header: FunctionComponent< Props > = ( {
 					<Icon icon="wordpress-alt" color="#066188" />
 				</div>
 				<div className="gutenboarding__header-group">
-					<div className="gutenboarding__site-title">
-						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-					</div>
-					{ currentDomain && (
+					{ currentDomain ? (
 						<DomainPickerButton
+							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
 							onDomainSelect={ setDomain }
 							queryParameters={
 								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
 							}
 						>
-							{ currentDomain.domain_name }
+							<span className="gutenboarding__site-title">
+								{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+							</span>
+							<span>{ currentDomain.domain_name }</span>
 						</DomainPickerButton>
+					) : (
+						<span className="gutenboarding__site-title">
+							{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+						</span>
 					) }
 				</div>
 			</div>
