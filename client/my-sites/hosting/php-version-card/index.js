@@ -129,11 +129,15 @@ const PhpVersionCard = ( {
 	const getPhpVersions = () => {
 		return [
 			{
-				label: '7.2',
+				label: translate( '7.2', {
+					context: 'PHP Version',
+				} ),
 				value: '7.2',
 			},
 			{
-				label: '7.3 (recommended)',
+				label: translate( '7.3 (recommended)', {
+					context: 'PHP Version',
+				} ),
 				value: '7.3',
 			},
 		];
