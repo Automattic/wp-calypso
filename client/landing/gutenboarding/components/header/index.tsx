@@ -90,7 +90,7 @@ const Header: FunctionComponent< Props > = ( {
 								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
 							}
 						>
-							{ currentDomain?.domain_name }
+							{ currentDomain.domain_name }
 						</DomainPickerButton>
 					) }
 				</div>
