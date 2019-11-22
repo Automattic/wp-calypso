@@ -254,7 +254,7 @@ export function generateFlows( {
 
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-		destination: getSiteDestination,
+		destination: getSignupDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-01-16',
