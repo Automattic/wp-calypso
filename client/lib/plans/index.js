@@ -30,6 +30,10 @@ export function getPlans() {
 	return PLANS_LIST;
 }
 
+export function getPlansSlugs() {
+	return Object.keys( getPlans() );
+}
+
 export function getPlan( planKey ) {
 	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
 		if ( values( PLANS_LIST ).indexOf( planKey ) !== -1 ) {
