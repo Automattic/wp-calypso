@@ -1,7 +1,3 @@
-/**
- * @format
- */
-
 let j;
 
 const getImports = source => {
