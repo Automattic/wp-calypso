@@ -58,6 +58,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
+import migrate from './migrate/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
@@ -148,6 +149,7 @@ const reducers = {
 	login,
 	media,
 	memberships,
+	migrate,
 	mySites,
 	notices,
 	notificationSettings,
