@@ -495,12 +495,14 @@ export class ProductSelector extends Component {
 						planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
 					},
 				} );
-			}
-			if ( hasProductPurchase ) {
-				billingTimeFrame = this.getBillingTimeFrameLabel();
-				fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
-				discountedPrice = this.getProductOptionDiscountedPrice( selectedProductSlug );
+			} else {
 				subtitle = this.getSubtitleByProduct( product );
+
+				if ( ! hasProductPurchase ) {
+					billingTimeFrame = this.getBillingTimeFrameLabel();
+					fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
+					discountedPrice = this.getProductOptionDiscountedPrice( selectedProductSlug );
+				}
 			}
 
 			return (
