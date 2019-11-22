@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import GeneralSettings from './section-general';
+import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
@@ -28,6 +29,7 @@ import './style.scss';
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
+			<JetpackBackupCredsBanner location={ 'settings' } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
