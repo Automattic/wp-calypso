@@ -28,7 +28,9 @@ interface Props {
 	defaultQuery?: string;
 
 	/**
-	 * Event handler to call upon free domain selection
+	 * Callback that will be invoked when a domain is selected.
+	 *
+	 * @param domainSuggestion The selected domain.
 	 */
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
