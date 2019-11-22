@@ -27,12 +27,7 @@ const Question: FunctionComponent< Props > = ( {
 	label,
 	onExpand,
 } ) => (
-	<div
-		className={ classNames( 'onboarding-block__question', className, {
-			selected: isActive,
-		} ) }
-		onClick={ () => void ( ! isActive && onExpand() ) }
-	>
+	<div className={ classNames( 'onboarding-block__question', className, { selected: isActive } ) }>
 		<span>{ label }</span>
 		<div>
 			{ isActive ? (
