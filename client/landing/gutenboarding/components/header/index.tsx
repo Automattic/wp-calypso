@@ -64,7 +64,7 @@ const Header: FunctionComponent< Props > = ( {
 		[ domainSearch, siteVertical ]
 	);
 
-	const domainText = domain?.domain_name ?? freeDomainSuggestion?.domain_name;
+	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -82,7 +82,7 @@ const Header: FunctionComponent< Props > = ( {
 					<div className="gutenboarding__site-title">
 						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 					</div>
-					{ domainText && (
+					{ currentDomain && (
 						<DomainPickerButton
 							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
 							onDomainSelect={ setDomain }
@@ -90,7 +90,7 @@ const Header: FunctionComponent< Props > = ( {
 								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
 							}
 						>
-							{ domainText }
+							{ currentDomain?.domain_name }
 						</DomainPickerButton>
 					) }
 				</div>
