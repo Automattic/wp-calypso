@@ -425,7 +425,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				<JetpackBackupCredsBanner location={ 'activitylog' } />
+				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"

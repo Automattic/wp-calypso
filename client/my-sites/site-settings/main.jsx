@@ -29,7 +29,7 @@ import './style.scss';
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
-			<JetpackBackupCredsBanner location={ 'settings' } />
+			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />

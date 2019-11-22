@@ -157,7 +157,7 @@ class StatsSite extends Component {
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
-				<JetpackBackupCredsBanner location={ 'stats' } />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="stats__section-header"

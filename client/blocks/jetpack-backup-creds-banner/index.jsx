@@ -17,8 +17,8 @@ import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 
 class JetpackBackupCredsBanner extends Component {
 	static propTypes = {
-		// Banner location, passed to tracks event, single word to follow tracks naming conventions.
-		location: PropTypes.string.isRequired,
+		// Tracks event name on click
+		event: PropTypes.string.isRequired,
 		// Connected props
 		siteId: PropTypes.number,
 		rewindState: PropTypes.object,
@@ -26,9 +26,7 @@ class JetpackBackupCredsBanner extends Component {
 	};
 
 	render() {
-		const { isJetpack, rewindState, siteId, siteSlug, translate } = this.props;
-		const location = this.props.location || 'nolocation';
-		const event = `calpyso_jetpack_backup_credential_banner_${ location }_click`;
+		const { event, isJetpack, rewindState, siteId, siteSlug, translate } = this.props;
 		return (
 			<Fragment>
 				{ siteId && isJetpack && <QueryRewindState siteId={ siteId } /> }
