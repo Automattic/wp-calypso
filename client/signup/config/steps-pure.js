@@ -263,7 +263,14 @@ export function generateSteps( {
 		'domains-theme-preselected': {
 			stepName: 'domains-theme-preselected',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
