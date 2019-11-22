@@ -131,15 +131,21 @@ const PhpVersionCard = ( {
 		return [
 			{
 				label: translate( '7.2', {
-					comment: 'PHP Version',
+					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.2',
 			},
 			{
 				label: translate( '7.3 (recommended)', {
-					comment: 'PHP Version',
+					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.3',
+			},
+			{
+				label: translate( '7.4RC6', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '7.4',
 			},
 		];
 	};
