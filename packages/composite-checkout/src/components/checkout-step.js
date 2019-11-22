@@ -196,11 +196,18 @@ const StepNumber = styled.div`
 	top: 0;
 	left: 0;
 	backface-visibility: hidden;
+	@media all and ( -ms-high-contrast: none ), ( -ms-high-contrast: active ) {
+		z-index: ${props => ( props.isComplete ? '0' : '1' )};
+	}
 `;
 
 const StepNumberCompleted = styled( StepNumber )`
 	background: ${props => props.theme.colors.success};
 	transform: rotateY( 180deg );
+	@media all and ( -ms-high-contrast: none ), ( -ms-high-contrast: active ) {
+		backface-visibility: visible;
+		z-index: ${props => ( props.isComplete ? '1' : '0' )};
+	}
 
 	svg {
 		margin-top: 4px;
