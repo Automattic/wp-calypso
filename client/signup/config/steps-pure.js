@@ -226,7 +226,14 @@ export function generateSteps( {
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
