@@ -10,47 +10,12 @@ import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
 
 describe( '#isMappedDomainSite()', () => {
 	const siteId = 77203074;
-	const sites = {
-		items: {
-			[ siteId ]: {
-				ID: siteId,
-				URL: 'https://example.wordpress.com',
-				options: {
-					is_mapped_domain: false,
-				},
-			},
-		},
-		domains: {
-			items: {
-				[ siteId ]: {
-					isWPCOMDomain: true,
-				},
-			},
-		},
-	};
 
 	test( 'should return null if the site is unknown', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
-					...sites,
 					items: {},
-				},
-			},
-			siteId
-		);
-
-		expect( result ).to.be.null;
-	} );
-
-	test( 'should return null if no domain is found', () => {
-		const result = isMappedDomainSite(
-			{
-				sites: {
-					...sites,
-					domains: {
-						items: {},
-					},
 				},
 			},
 			siteId
@@ -63,7 +28,6 @@ describe( '#isMappedDomainSite()', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
-					...sites,
 					items: {
 						[ siteId ]: {
 							ID: siteId,
@@ -85,7 +49,6 @@ describe( '#isMappedDomainSite()', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
-					...sites,
 					items: {
 						[ siteId ]: {
 							ID: siteId,
