@@ -435,7 +435,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
 					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
+					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
 					compactOnMobile
 				/>
 				<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_BACKUP_PRODUCTS } />
