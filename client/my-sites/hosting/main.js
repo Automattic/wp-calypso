@@ -56,9 +56,9 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 			) }
 			<div className="hosting__layout">
 				<div className="hosting__layout-col">
-					<PhpVersionCard />
 					{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
 					{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
+					<PhpVersionCard />
 				</div>
 				<div className="hosting__layout-col">
 					<SupportCard />

@@ -17,7 +17,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
-import FormRadiosBar from 'components/forms/form-radios-bar';
+import FormSelect from 'components/forms/form-select';
+import FormLabel from 'components/forms/form-label';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
 /**
@@ -127,22 +128,18 @@ class PhpVersionCard extends React.Component {
 		}
 	}
 
-	getPhpVersions() {
+	getPhpVersions = () => {
 		return [
 			{
 				label: '7.2',
 				value: '7.2',
 			},
 			{
-				label: '7.3',
+				label: '7.3 (recommended)',
 				value: '7.3',
 			},
-			{
-				label: '7.4',
-				value: '7.4',
-			},
 		];
-	}
+	};
 
 	getContent() {
 		if ( this.props.loading ) {
@@ -152,33 +149,44 @@ class PhpVersionCard extends React.Component {
 		const { translate, siteId, updating, version } = this.props;
 		const { selectedPhpVersion } = this.state;
 
+		const isButtonDisabled = ! selectedPhpVersion || selectedPhpVersion === version;
+		let buttonTooltip = undefined;
+		if ( isButtonDisabled ) {
+			buttonTooltip = translate( "You're already running PHP %(version)s.", {
+				args: {
+					version,
+				},
+			} );
+		}
+
 		return (
 			<div>
-				<p>
-					{ translate(
-						'Your site is currently running PHP version {{strong}}%(version)s.{{/strong}}',
-						{
-							args: {
-								version,
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-
-				<div className="php-version-card__radio">
-					<FormRadiosBar
-						checked={ selectedPhpVersion || version }
+				<div>
+					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
+					<FormSelect
+						className="php-version-card__version-select"
 						onChange={ this.changePhpVersion }
-						items={ this.getPhpVersions() }
-					/>
+						defaultValue={ version }
+					>
+						{ this.getPhpVersions().map( option => {
+							return (
+								<option
+									disabled={ option.value === version }
+									value={ option.value }
+									key={ option.label }
+								>
+									{ option.label }
+								</option>
+							);
+						} ) }
+					</FormSelect>
 				</div>
 				<Button
 					className="php-version-card__set-version"
 					onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
 					busy={ updating }
+					disabled={ isButtonDisabled }
+					title={ buttonTooltip }
 				>
 					<span>{ translate( 'Update PHP Version' ) }</span>
 				</Button>
