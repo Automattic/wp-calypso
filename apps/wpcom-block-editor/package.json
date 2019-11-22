@@ -24,7 +24,7 @@
 		"prebuild": "npm run clean"
 	},
 	"dependencies": {
-		"debug": "3.2.6"
+		"debug": "4.1.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "file:../../packages/calypso-build"
