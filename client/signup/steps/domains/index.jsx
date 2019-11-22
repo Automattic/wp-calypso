@@ -207,9 +207,10 @@ class DomainsStep extends React.Component {
 	};
 
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.props.showTestCopy
+		const hideFreePlanTracksProp = this.showTestCopy
 			? { should_hide_free_plan: shouldHideFreePlan }
 			: {};
+
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
@@ -219,11 +220,9 @@ class DomainsStep extends React.Component {
 			hideFreePlanTracksProp
 		);
 
-		recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
 
-		defer( () => {
-			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
-		} );
+		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
@@ -711,6 +710,7 @@ export default connect(
 		setDesignType,
 		saveSignupStep,
 		submitSignupStep,
+		recordTracksEvent,
 		fetchUsernameSuggestion,
 		hideSitePreview,
 		showSitePreview,
