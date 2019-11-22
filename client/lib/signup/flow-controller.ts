@@ -33,7 +33,6 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
-import { abtest } from 'lib/abtest';
 
 interface Dependencies {
 	[ other: string ]: any;
@@ -302,16 +301,12 @@ export default class SignupFlowController {
 		/*
 			AB Test: passwordlessSignup
 
-			`isPasswordlessSignupForm` in this check is for the `onboarding` flow.
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
 
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
 		*/
-		if (
-			( 'test-fse' === this._flowName && get( step, 'isPasswordlessSignupForm' ) ) ||
-			( 'onboarding' === this._flowName &&
-				get( step, 'isPasswordlessSignupForm' ) &&
-				'passwordless' === abtest( 'passwordlessSignup' ) )
-		) {
+		if ( get( step, 'isPasswordlessSignupForm' ) ) {
 			this._processingSteps.delete( step.stepName );
 			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
 				step: step.stepName,
