@@ -189,10 +189,8 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	themeId => getPremiumThemePrice( state, themeId, siteId );
 }
 
-/**
- * Exporting this for use in recommended-themes.jsx
- * We do not want pagination triggered in that use of the component.
- */
+// Exporting this for use in recommended-themes.jsx
+// We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
