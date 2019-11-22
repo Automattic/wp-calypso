@@ -8,10 +8,10 @@ import { combineReducers } from '@wordpress/data';
  * Internal dependencies
  */
 import { ActionType, FormValue, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
-import { DomainName } from '../domain-suggestions/types';
+import { DomainSuggestion } from '../domain-suggestions/types';
 import * as Actions from './actions';
 
-const domain: Reducer< DomainName | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
+const domain: Reducer< DomainSuggestion | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
 	state = null,
 	action
 ) => {

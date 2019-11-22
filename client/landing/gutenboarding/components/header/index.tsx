@@ -3,8 +3,8 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon, IconButton } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
 
 /**
@@ -13,7 +13,6 @@ import { useDebounce } from 'use-debounce';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
-import { DomainName } from '../../stores/domain-suggestions/types';
 import { DomainPickerButton } from '../domain-picker';
 import { isFilledFormValue } from '../../stores/onboard/types';
 import { selectorDebounce } from '../../constants';
@@ -35,11 +34,10 @@ const Header: FunctionComponent< Props > = ( {
 	toggleGeneralSidebar,
 	toggleSidebarShortcut,
 } ) => {
-	const [ domainText, setDomainText ] = useState< DomainName >( '' );
-
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
 		// eslint-disable-next-line no-nested-ternary
@@ -66,10 +64,7 @@ const Header: FunctionComponent< Props > = ( {
 		[ domainSearch, siteVertical ]
 	);
 
-	// Update domainText only when we have a replacement.
-	useEffect( () => {
-		setDomainText( current => domain ?? freeDomainSuggestion?.domain_name ?? current );
-	}, [ domain, freeDomainSuggestion ] );
+	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -87,14 +82,15 @@ const Header: FunctionComponent< Props > = ( {
 					<div className="gutenboarding__site-title">
 						{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 					</div>
-					{ domainText && (
+					{ currentDomain && (
 						<DomainPickerButton
 							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
+							onDomainSelect={ setDomain }
 							queryParameters={
 								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
 							}
 						>
-							{ domainText }
+							{ currentDomain.domain_name }
 						</DomainPickerButton>
 					) }
 				</div>

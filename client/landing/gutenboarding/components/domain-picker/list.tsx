@@ -28,12 +28,23 @@ interface Props {
 	defaultQuery?: string;
 
 	/**
+	 * Callback that will be invoked when a domain is selected.
+	 *
+	 * @param domainSuggestion The selected domain.
+	 */
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+
+	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestionQuery >;
 }
 
-const DomainPicker: FunctionComponent< Props > = ( { defaultQuery, queryParameters } ) => {
+const DomainPicker: FunctionComponent< Props > = ( {
+	defaultQuery,
+	onDomainSelect,
+	queryParameters,
+} ) => {
 	const label = NO__( 'Search for a domain' );
 
 	const [ domainSearch, setDomainSearch ] = useState( '' );
@@ -52,16 +63,6 @@ const DomainPicker: FunctionComponent< Props > = ( { defaultQuery, queryParamete
 		},
 		[ search, queryParameters ]
 	);
-
-	const handleDomainPick = ( suggestion: DomainSuggestion ) => () => {
-		if ( suggestion.is_free ) {
-			// eslint-disable-next-line no-console
-			console.log( 'Picked free domain: %o', suggestion );
-		} else {
-			// eslint-disable-next-line no-console
-			console.log( 'Picked paid domain: %o', suggestion );
-		}
-	};
 
 	const handleHasDomain = () => {
 		// eslint-disable-next-line no-console
@@ -91,7 +92,7 @@ const DomainPicker: FunctionComponent< Props > = ( { defaultQuery, queryParamete
 						<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
 						{ suggestions.map( suggestion => (
 							<Button
-								onClick={ handleDomainPick( suggestion ) }
+								onClick={ () => onDomainSelect( suggestion ) }
 								className="domain-picker__suggestion-item"
 								key={ suggestion.domain_name }
 							>
