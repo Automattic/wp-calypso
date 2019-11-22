@@ -77,6 +77,16 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 					semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
 				</Accordion>
 			</div>
+			<p className="phpmyadmin-card__db-warning">
+				{ translate(
+					"Managing a database can be tricky. Only access if you know what you're doing. {{strong}}Need to manage your database?{{/strong}}",
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</p>
 			<Button
 				onClick={ () => requestPmaLink( siteId ) }
 				busy={ ! disabled && loading }

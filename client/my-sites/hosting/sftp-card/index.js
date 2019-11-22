@@ -152,9 +152,14 @@ const SftpCard = ( {
 			) }
 			{ displayQuestionsAndButton && (
 				<>
-					<p>
+					<p className="sftp-card__enable-warning">
 						{ translate(
-							'Ready to access your website files? Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.'
+							'{{strong}}Ready to access your website files?{{/strong}} Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
 						) }
 					</p>
 					<Button onClick={ createUser } primary>
