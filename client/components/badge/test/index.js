@@ -32,7 +32,7 @@ describe( 'Badge', () => {
 	} );
 
 	test( 'should have proper type class (info-blue)', () => {
-		const badge = shallow( <Badge type="info" /> );
+		const badge = shallow( <Badge type="info-blue" /> );
 		assert.lengthOf( badge.find( '.badge.badge--info-blue' ), 1 );
 	} );
 
