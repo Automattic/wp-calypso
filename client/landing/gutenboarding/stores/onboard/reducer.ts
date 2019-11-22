@@ -48,6 +48,9 @@ const siteVertical: Reducer<
 	if ( action.type === ActionType.SET_SITE_VERTICAL ) {
 		return action.siteVertical;
 	}
+	if ( action.type === ActionType.RESET_SITE_VERTICAL ) {
+		return EMPTY_FORM_VALUE;
+	}
 	return state;
 };
 

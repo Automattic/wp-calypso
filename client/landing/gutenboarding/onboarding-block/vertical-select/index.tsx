@@ -38,7 +38,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	];
 
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ suggestionsVisibility, setsuggestionsVisibility ] = useState( false );
+	const [ dirty, setDirty ] = useState( false );
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -61,13 +61,12 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	);
 
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteVertical } = useDispatch( STORE_KEY );
+	const { setSiteVertical, resetSiteVertical } = useDispatch( STORE_KEY );
 
-	const showSuggestions = () => setsuggestionsVisibility( true );
-	const hideSuggestions = () => setsuggestionsVisibility( false );
-
-	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) =>
+	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		setInputValue( e.target.value );
+		e.target.value !== inputValue && ! dirty && setDirty( true );
+	};
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
 		if ( suggestionRef.current ) {
@@ -79,14 +78,11 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		}
 	};
 
-	const handleSelect = ( vertical: SiteVertical ) => {
-		setSiteVertical( vertical );
-		hideSuggestions();
+	const handleSelect = ( vertical?: SiteVertical ) => {
+		vertical ? setSiteVertical( vertical ) : dirty && resetSiteVertical();
 		onSelect();
+		setDirty( false );
 	};
-
-	const value =
-		suggestionsVisibility || ! isFilledFormValue( siteVertical ) ? inputValue : siteVertical.label;
 
 	const loadingMessage = [
 		{
@@ -128,11 +124,10 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 					className={ inputClass }
 					placeholder={ NO__( 'enter a topic' ) }
 					onChange={ handleSuggestionChangeEvent }
-					onFocus={ showSuggestions }
-					onBlur={ hideSuggestions }
+					onBlur={ () => handleSelect() }
 					onKeyDown={ handleSuggestionKeyDown }
 					autoComplete="off"
-					value={ value }
+					value={ inputValue }
 				/>
 				<Suggestions
 					ref={ suggestionRef }
