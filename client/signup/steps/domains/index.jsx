@@ -207,12 +207,19 @@ class DomainsStep extends React.Component {
 	};
 
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		recordTracksEvent( 'calypso_signup_skip_step', {
-			section: this.getAnalyticsSection(),
-			flow: this.props.flowName,
-			step: this.props.stepName,
-			shouldHideFreePlan,
-		} );
+		const hideFreePlanTracksProp = this.props.showTestCopy
+			? { should_hide_free_plan: shouldHideFreePlan }
+			: {};
+		const tracksProperties = Object.assign(
+			{
+				section: this.getAnalyticsSection(),
+				flow: this.props.flowName,
+				step: this.props.stepName,
+			},
+			hideFreePlanTracksProp
+		);
+
+		recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
 
 		defer( () => {
 			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
