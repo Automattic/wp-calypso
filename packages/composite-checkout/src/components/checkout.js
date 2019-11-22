@@ -190,6 +190,7 @@ function CheckoutStepContainer( {
 									value={ localize( 'Continue' ) }
 									onClick={ goToNextStep }
 									ariaLabel={ getNextStepButtonAriaLabel && getNextStepButtonAriaLabel() }
+									buttonState={ ! isComplete ? 'disabled' : 'primary' }
 									disabled={ ! isComplete }
 								/>
 							) }
