@@ -224,7 +224,7 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { siteIsJetpack, translate } = this.props;
+		const { minilevenModuleActive, siteIsJetpack, translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -236,8 +236,12 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderMinilevenSettings() }
-							<hr />
+							{ minilevenModuleActive && (
+								<Fragment>
+									{ this.renderMinilevenSettings() }
+									<hr />
+								</Fragment>
+							) }
 							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
