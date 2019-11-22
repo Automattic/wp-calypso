@@ -4,7 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, Icon, IconButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
 
 /**
@@ -13,7 +13,6 @@ import { useDebounce } from 'use-debounce';
 import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
-import { DomainName } from '../../stores/domain-suggestions/types';
 import { DomainPickerButton } from '../domain-picker';
 import { isFilledFormValue } from '../../stores/onboard/types';
 import { selectorDebounce } from '../../constants';
@@ -35,8 +34,6 @@ const Header: FunctionComponent< Props > = ( {
 	toggleGeneralSidebar,
 	toggleSidebarShortcut,
 } ) => {
-	const [ domainText, setDomainText ] = useState< DomainName >( '' );
-
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -67,10 +64,7 @@ const Header: FunctionComponent< Props > = ( {
 		[ domainSearch, siteVertical ]
 	);
 
-	// Update domainText only when we have a replacement.
-	useEffect( () => {
-		setDomainText( current => domain?.domain_name ?? freeDomainSuggestion?.domain_name ?? current );
-	}, [ domain, freeDomainSuggestion ] );
+	const domainText = domain?.domain_name ?? freeDomainSuggestion?.domain_name;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
