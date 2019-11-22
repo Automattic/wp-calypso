@@ -245,6 +245,7 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
 			},
 		},
 
