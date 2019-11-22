@@ -13,6 +13,7 @@ import { memoize } from 'lodash';
 /**
  * Internal dependencies
  */
+import setMigrationStatus from 'state/migrate/actions';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
@@ -759,6 +760,9 @@ export class MySitesSidebar extends Component {
 	}
 
 	render() {
+		// TODO - remove this! ///////
+		setMigrationStatus( 79011129 );
+		//////////////////////////////
 		return (
 			<Sidebar>
 				<SidebarRegion>
