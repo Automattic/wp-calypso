@@ -10,9 +10,9 @@ import classNames from 'classnames';
 import './style.scss';
 
 interface Props {
-	className: string;
+	className?: string;
 	displayValue: string;
-	isActive: boolean;
+	isActive?: boolean;
 	label: string;
 	onExpand: () => void;
 }
