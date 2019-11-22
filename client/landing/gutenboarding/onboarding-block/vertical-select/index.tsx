@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { createRef, useState, useCallback, FunctionComponent, useEffect } from 'react';
+import React, { createRef, useState, FunctionComponent, useEffect } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
@@ -45,7 +45,8 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	 *
 	 * This ref is effectively `any` and should therefore be considered _dangerous_.
 	 *
-	 * @TODO: This should be a typed ref to Suggestions, but the component is not typed.
+	 * TODO: This should be a typed ref to Suggestions, but the component is not typed.
+	 *
 	 * Using `Suggestions` here would effectively be `any`.
 	 */
 	const suggestionRef = createRef< __TodoAny__ >();
@@ -78,14 +79,11 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		}
 	};
 
-	const handleSelect = useCallback(
-		( vertical: SiteVertical ) => {
-			setSiteVertical( vertical );
-			hideSuggestions();
-			onSelect();
-		},
-		[ setSiteVertical, hideSuggestions, onSelect ]
-	);
+	const handleSelect = ( vertical: SiteVertical ) => {
+		setSiteVertical( vertical );
+		hideSuggestions();
+		onSelect();
+	};
 
 	const value =
 		suggestionsVisibility || ! isFilledFormValue( siteVertical ) ? inputValue : siteVertical.label;
@@ -115,7 +113,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		if ( isActive && document.activeElement !== inputRef.current ) {
 			inputRef.current?.focus();
 		}
-	}, [ isActive ] );
+	}, [ isActive, inputRef ] );
 
 	return (
 		<Question
