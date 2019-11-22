@@ -14,9 +14,10 @@ import {
 	createPayPalMethod,
 	createApplePayMethod,
 	createCreditCardMethod,
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderReview,
-	WPContactForm,
+	useIsStepActive,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderSummaryStep,
+	getDefaultOrderReviewStep,
 } from '../src/public-api';
 import { stripeKey } from './private';
 
@@ -129,6 +130,56 @@ const getTotal = items => {
 	};
 };
 
+// TODO: replace this with the host page's translation system
+const useLocalize = () => text => text;
+const hostTranslate = text => text;
+
+const ContactFormTitle = () => {
+	const localize = useLocalize();
+	const isActive = useIsStepActive();
+	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
+};
+
+function ContactForm() {
+	// TODO: define one for this demo
+	return <span>TODO</span>;
+}
+
+const steps = [
+	getDefaultOrderSummaryStep(),
+	{
+		...getDefaultPaymentMethodStep(),
+		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
+		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
+	},
+	{
+		id: 'contact-form',
+		className: 'checkout__billing-details-step',
+		hasStepNumber: true,
+		titleContent: <ContactFormTitle />,
+		activeStepContent: <ContactForm isComplete={ false } isActive={ true } />,
+		completeStepContent: <ContactForm summary isComplete={ true } isActive={ false } />,
+		isCompleteCallback: ( { paymentData } ) => {
+			// TODO: Make sure the form is complete
+			const { billing = {} } = paymentData;
+			if ( ! billing.country ) {
+				return false;
+			}
+			return true;
+		},
+		isEditableCallback: ( { paymentData } ) => {
+			// TODO: Return true if the form is empty
+			if ( paymentData.billing ) {
+				return true;
+			}
+			return false;
+		},
+		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
+		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
+	},
+	getDefaultOrderReviewStep(),
+];
+
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const [ items, setItems ] = useState( initialItems );
@@ -151,11 +202,7 @@ function MyCheckout() {
 				Boolean
 			) }
 		>
-			<Checkout
-				OrderSummary={ WPCheckoutOrderSummary }
-				ReviewContent={ WPCheckoutOrderReview }
-				ContactSlot={ WPContactForm }
-			/>
+			<Checkout steps={ steps } />
 		</CheckoutProvider>
 	);
 }

@@ -14,6 +14,12 @@ import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
 import defaultTheme from '../theme';
+import {
+	validateArg,
+	validateTotal,
+	validateLineItems,
+	validatePaymentMethods,
+} from '../lib/validation';
 
 export const CheckoutProvider = props => {
 	const {
@@ -117,57 +123,6 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	return wrappers.reduce( ( whole, Wrapper ) => {
 		return <Wrapper>{ whole }</Wrapper>;
 	}, children );
-}
-
-function validateArg( value, errorMessage ) {
-	if ( value === null || value === undefined ) {
-		throw new Error( errorMessage );
-	}
-}
-
-function validatePaymentMethods( paymentMethods ) {
-	paymentMethods.map( validatePaymentMethod );
-}
-
-function validatePaymentMethod( {
-	id,
-	LabelComponent,
-	SubmitButtonComponent,
-	SummaryComponent,
-	getAriaLabel,
-} ) {
-	validateArg( id, 'Invalid payment method; missing id property' );
-	validateArg( LabelComponent, `Invalid payment method '${ id }'; missing LabelComponent` );
-	validateArg(
-		SubmitButtonComponent,
-		`Invalid payment method '${ id }'; missing SubmitButtonComponent`
-	);
-	validateArg( SummaryComponent, `Invalid payment method '${ id }'; missing SummaryComponent` );
-	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
-}
-
-function validateLineItems( items ) {
-	items.map( validateLineItem );
-}
-
-function validateTotal( { label, amount } ) {
-	validateArg( label, `Invalid total; missing label property` );
-	validateArg( amount, `Invalid total; missing amount property` );
-	validateAmount( 'total', amount );
-}
-
-function validateLineItem( { id, label, amount, type } ) {
-	validateArg( id, 'Invalid line item; missing id property' );
-	validateArg( label, `Invalid line item '${ id }'; missing label property` );
-	validateArg( type, `Invalid line item '${ id }'; missing type property` );
-	validateArg( amount, `Invalid line item '${ id }'; missing amount property` );
-	validateAmount( id, amount );
-}
-
-function validateAmount( id, { currency, value, displayValue } ) {
-	validateArg( currency, `Invalid line item '${ id }'; missing amount.currency property` );
-	validateArg( value, `Invalid line item '${ id }'; missing amount.value property` );
-	validateArg( displayValue, `Invalid line item '${ id }'; missing amount.displayValue property` );
 }
 
 export const useCheckoutHandlers = () => {

@@ -1,3 +1,8 @@
+next
+-----
+
+* Update debug to v4
+
 4.1.0
 -----
 

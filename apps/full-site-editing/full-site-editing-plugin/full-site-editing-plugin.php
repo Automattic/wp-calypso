@@ -22,9 +22,6 @@ namespace A8C\FSE;
  */
 define( 'PLUGIN_VERSION', '0.15.1' );
 
-// Themes which are supported by Full Site Editing (not the same as the SPT themes).
-const SUPPORTED_THEMES = [ 'maywood' ];
-
 /**
  * Load Full Site Editing.
  */
@@ -62,46 +59,51 @@ function dangerously_load_full_site_editing_files() {
 
 /**
  * Whether or not FSE is active.
- * If false, FSE functionality can be disabled.
+ * If false, FSE functionality should be disabled.
  *
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	return is_site_eligible_for_full_site_editing() && is_theme_supported();
+	/**
+	 * There are times when this function is called from the WordPress.com public
+	 * API context. In this case, we need to switch to the correct blog so that
+	 * the functions reference the correct blog context.
+	 */
+	$multisite_id  = apply_filters( 'a8c_fse_get_multisite_id', false );
+	$should_switch = is_multisite() && $multisite_id;
+	if ( $should_switch ) {
+		switch_to_blog( $multisite_id );
+	}
+
+	$is_active = is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
+
+	if ( $should_switch ) {
+		restore_current_blog();
+	}
+	return $is_active;
 }
 
 /**
- * Returns normalized theme slug for the current theme.
+ * Returns the slug for the current theme.
  *
- * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
- * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
- * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
+ * This even works for the WordPress.com API context where the current theme is
+ * not correct. The filter correctly switches to the correct blog context if
+ * that is the case.
  *
- * @return string Normalized theme slug.
+ * @return string Theme slug.
  */
 function get_theme_slug() {
 	/**
 	 * Used to get the correct theme in certain contexts.
 	 *
-	 * For example, in the wpcom API context, the theme slug is a8c/public-api, so we need
-	 * to grab the correct one with the filter.
+	 * For example, in the wpcom API context, the theme slug is a8c/public-api,
+	 * so we need to grab the correct one with the filter.
 	 *
 	 * @since 0.7
 	 *
 	 * @param string current theme slug is the default if nothing overrides it.
 	 */
-	$theme_slug = apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
-
-	// Normalize the theme slug.
-	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-		$theme_slug = substr( $theme_slug, 4 );
-	}
-
-	if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
-		$theme_slug = substr( $theme_slug, 0, -6 );
-	}
-
-	return $theme_slug;
+	return apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
 }
 
 /**
@@ -127,9 +129,8 @@ function normalize_theme_slug( $theme_slug ) {
 }
 
 /**
- * Whether or not the site is eligible for FSE.
- * This is essentially a feature gate to disable FSE
- * on some sites which could theoretically otherwise use it.
+ * Whether or not the site is eligible for FSE. This is essentially a feature
+ * gate to disable FSE on some sites which could theoretically otherwise use it.
  *
  * @return bool True if current site is eligible for FSE, false otherwise.
  */
@@ -150,7 +151,31 @@ function is_site_eligible_for_full_site_editing() {
  * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
-	return in_array( get_theme_slug(), SUPPORTED_THEMES, true );
+	// Use un-normalized theme slug because get_theme requires the full string.
+	$theme = wp_get_theme( get_theme_slug() );
+	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
+}
+
+/**
+ * Determines if the template parts have been inserted for the current theme.
+ *
+ * We want to gate on this check in is_full_site_editing_active so that we don't
+ * load FSE for sites which did not get template parts for some reason or another.
+ *
+ * For example, if a user activates theme A on their site and gets FSE, but then
+ * activates theme B which does not have FSE, they will not get FSE flows. If we
+ * retroactively add FSE support to theme B, the user should not get FSE flows
+ * because their site would be modified. Instead, FSE flows would become active
+ * when they specifically take action to re-activate the theme.
+ *
+ * @return bool True if the template parts have been inserted. False otherwise.
+ */
+function did_insert_template_parts() {
+	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
+
+	$theme_slug = normalize_theme_slug( get_theme_slug() );
+	$inserter   = new WP_Template_Inserter( $theme_slug );
+	return $inserter->is_template_data_inserted();
 }
 
 /**
@@ -184,7 +209,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  */
 function load_starter_page_templates() {
 	// We don't want the user to choose a template when copying a post.
-	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}
@@ -217,12 +242,15 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
- * Inserts default full site editing data for current theme during plugin activation.
+ * Inserts default full site editing data for current theme on plugin/theme activation.
  *
- * We usually perform this on theme activation hook, but this is needed to handle
- * the cases in which FSE supported theme was activated prior to the plugin. This will
- * populate the default header and footer for current theme, and create About and Contact
- * pages provided that they don't already exist.
+ * We put this here outside of the normal FSE class because FSE is not active
+ * until the template parts are inserted. This makes sure we insert the template
+ * parts when switching to a theme which supports FSE.
+ *
+ * This will populate the default header and footer for current theme, and create
+ * About and Contact pages. Nothing will populate if the data already exists, or
+ * if the theme is unsupported.
  */
 function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
@@ -233,6 +261,7 @@ function populate_wp_template_data() {
 	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
+add_action( 'after_switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.

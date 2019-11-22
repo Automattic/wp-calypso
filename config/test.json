@@ -31,7 +31,6 @@
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
-		"checkout-upgrade-intent": true,
 		"code-splitting": true,
 		"desktop-promo": true,
 		"devdocs": true,

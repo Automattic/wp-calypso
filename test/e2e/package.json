@@ -49,7 +49,7 @@
 		"mocha-steps": "^1.1.0",
 		"node-slack-upload": "1.2.1",
 		"png-itxt": "1.3.0",
-		"prettier": "github:automattic/calypso-prettier#503d7779",
+		"prettier": "npm:wp-prettier@1.19.1",
 		"push-receiver": "^2.0.0",
 		"request-promise": "^4.2.2",
 		"sanitize-filename": "1.6.0",

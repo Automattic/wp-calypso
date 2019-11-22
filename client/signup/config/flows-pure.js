@@ -206,16 +206,16 @@ export function generateFlows( {
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-01-24',
+			lastModified: '2019-11-22',
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
 			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
-			destination: getSiteDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-11-21',
+			lastModified: '2019-11-22',
 		};
 	}
 
@@ -254,10 +254,10 @@ export function generateFlows( {
 
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-		destination: getSiteDestination,
+		destination: getSignupDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
-		lastModified: '2019-01-16',
+		lastModified: '2019-11-22',
 		pageTitle: translate( 'Launch your site' ),
 	};
 

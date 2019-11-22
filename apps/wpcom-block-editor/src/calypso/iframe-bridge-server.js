@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg */
-/* global fullSiteEditing */
 
 /**
  * External dependencies
@@ -725,7 +724,8 @@ function getCloseButtonUrl( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { closeUrl, label } = data;
 		calypsoifyGutenberg.closeUrl = closeUrl;
-		fullSiteEditing.closeButtonLabel = label;
+		calypsoifyGutenberg.closeButtonLabel = label;
+
 		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
 	};
 }

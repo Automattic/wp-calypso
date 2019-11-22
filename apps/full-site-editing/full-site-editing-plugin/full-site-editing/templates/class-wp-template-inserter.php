@@ -131,6 +131,18 @@ class WP_Template_Inserter {
 		}
 
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! empty( $api_response['code'] ) && 'not_found' === $api_response['code'] ) {
+			do_action(
+				'a8c_fse_log',
+				'template_population_failure',
+				[
+					'context'    => 'WP_Template_Inserter->fetch_template_parts',
+					'error'      => 'Did not find remote template data for the given theme.',
+					'theme_slug' => $this->theme_slug,
+				]
+			);
+			return;
+		}
 
 		// Default to first returned header for now. Support for multiple headers will be added in future iterations.
 		if ( ! empty( $api_response['headers'] ) ) {

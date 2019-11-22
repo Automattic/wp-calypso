@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ComponentPropsWithoutRef, FunctionComponent, useState } from 'react';
+import React, { ComponentPropsWithoutRef, createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import classnames from 'classnames';
 
@@ -22,7 +22,17 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	...domainPickerProps
 } ) => {
+	const buttonRef = createRef();
+
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+
+	const handleClose = ( e?: FocusEvent ) => {
+		// Don't collide with button toggling
+		if ( e?.relatedTarget === buttonRef.current ) {
+			return;
+		}
+		setDomainPopoverVisibility( false );
+	};
 
 	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
 		setDomainPopoverVisibility( false );
@@ -37,12 +47,13 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				aria-pressed={ isDomainPopoverVisible }
 				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
+				ref={ buttonRef }
 			>
 				{ children }
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover>
+				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
 					<DomainPicker { ...domainPickerProps } onDomainSelect={ handleDomainSelect } />
 				</Popover>
 			) }

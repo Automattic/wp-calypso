@@ -4,16 +4,17 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown, useHasDomainsInCart } from '../public-api';
-import { useLocalize } from '../lib/localize';
+import joinClasses from './join-classes';
 import Button from './button';
-import CheckoutModal from '../components/checkout-modal';
-import RadioButton from '../components/radio-button';
+import RadioButton from './radio-button';
+import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
+import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return (
@@ -32,12 +33,12 @@ const OrderReviewSectionArea = styled.div`
 `;
 
 function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const modalCopy = returnModalCopy( item.type, localize, hasDomainsInCart );
+	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -148,7 +149,7 @@ const TermOptionsItem = styled.li`
 `;
 
 function DeleteIcon( { uniqueID } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 
 	return (
 		<svg
@@ -159,7 +160,7 @@ function DeleteIcon( { uniqueID } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby={ uniqueID }
 		>
-			<title id={ uniqueID }>{ localize( 'Delete' ) }</title>
+			<title id={ uniqueID }>{ translate( 'Delete' ) }</title>
 			<mask
 				id="trashIcon"
 				mask-type="alpha"
@@ -229,7 +230,7 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 function PlanTermOptions() {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ termDuration, setTermDuration ] = useState( 'one-year' );
 	//TODO: Make these options dynamic and update the cart when a choice is selected.
 	return (
@@ -243,10 +244,10 @@ function PlanTermOptions() {
 					onChange={ () => {
 						setTermDuration( 'one-year' );
 					} }
-					ariaLabel={ localize( 'One year term' ) }
+					ariaLabel={ translate( 'One year term' ) }
 					label={
 						<React.Fragment>
-							<ProductTitle>{ localize( 'One year' ) }</ProductTitle>
+							<ProductTitle>{ translate( 'One year' ) }</ProductTitle>
 							<span>$60</span>
 						</React.Fragment>
 					}
@@ -261,10 +262,10 @@ function PlanTermOptions() {
 					onChange={ () => {
 						setTermDuration( 'two-year' );
 					} }
-					ariaLabel={ localize( 'Two year term' ) }
+					ariaLabel={ translate( 'Two year term' ) }
 					label={
 						<React.Fragment>
-							<ProductTitle>{ localize( 'Two years' ) }</ProductTitle>
+							<ProductTitle>{ translate( 'Two years' ) }</ProductTitle>
 							<Discount>Save 10%</Discount>
 							<span>
 								<s>$120</s> $108
@@ -277,32 +278,32 @@ function PlanTermOptions() {
 	);
 }
 
-function returnModalCopy( product, localize, hasDomainsInCart ) {
+function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};
 	const productType = product === 'plan' && hasDomainsInCart ? 'plan with dependencies' : product;
 
 	switch ( productType ) {
 		case 'plan with dependencies':
-			modalCopy.title = localize( 'You are about to remove your plan from the cart' );
-			modalCopy.description = localize(
+			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
+			modalCopy.description = translate(
 				'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
 			);
 			break;
 		case 'plan':
-			modalCopy.title = localize( 'You are about to remove your plan from the cart' );
-			modalCopy.description = localize(
+			modalCopy.title = translate( 'You are about to remove your plan from the cart' );
+			modalCopy.description = translate(
 				'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
 			);
 			break;
 		case 'domain':
-			modalCopy.title = localize( 'You are about to remove your domain from the cart' );
-			modalCopy.description = localize(
+			modalCopy.title = translate( 'You are about to remove your domain from the cart' );
+			modalCopy.description = translate(
 				'When you press Continue, we will remove your domain from the cart and you will have no claim for the domain name you picked.'
 			);
 			break;
 		default:
-			modalCopy.title = localize( 'You are about to remove your product from the cart' );
-			modalCopy.description = localize(
+			modalCopy.title = translate( 'You are about to remove your product from the cart' );
+			modalCopy.description = translate(
 				'When you press Continue, we will remove your product from the cart and your site will continue to run without it.'
 			);
 	}

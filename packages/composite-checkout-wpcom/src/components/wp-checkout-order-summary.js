@@ -3,17 +3,17 @@
  */
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize'; // TODO: remove this
-import { useLineItems } from '../public-api';
 import Button from './button';
 import Coupon from './coupon';
 
 export default function WPCheckoutOrderSummary() {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ items ] = useLineItems();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
@@ -35,7 +35,7 @@ export default function WPCheckoutOrderSummary() {
 							setIsCouponFieldVisible( true );
 						} }
 					>
-						{ localize( 'Add a coupon' ) }
+						{ translate( 'Add a coupon' ) }
 					</AddCouponButton>
 				) }
 			</SummaryContent>
@@ -50,6 +50,28 @@ export default function WPCheckoutOrderSummary() {
 		</React.Fragment>
 	);
 }
+
+export function WPCheckoutOrderSummaryTitle() {
+	const translate = useTranslate();
+	const total = useTotal();
+	return (
+		<CheckoutSummaryTitle>
+			<span>{ translate( 'You are all set to check out' ) }</span>
+			<CheckoutSummaryTotal>
+				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryTitle>
+	);
+}
+
+const CheckoutSummaryTitle = styled.span`
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CheckoutSummaryTotal = styled.span`
+	font-weight: ${props => props.theme.weights.bold};
+`;
 
 const SummaryContent = styled.div`
 	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {

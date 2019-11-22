@@ -23,6 +23,7 @@ export default function CheckoutStep( {
 	finalStep,
 	stepSummary,
 	stepContent,
+	editButtonAriaLabel,
 } ) {
 	const classNames = [
 		className,
@@ -43,6 +44,7 @@ export default function CheckoutStep( {
 				isActive={ isActive }
 				isComplete={ isComplete }
 				onEdit={ onEdit }
+				editButtonAriaLabel={ editButtonAriaLabel }
 			/>
 			<StepContent className="checkout-step__content" isVisible={ isActive }>
 				{ stepContent }
@@ -58,7 +60,7 @@ export default function CheckoutStep( {
 
 CheckoutStep.propTypes = {
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	finalStep: PropTypes.bool,
 	stepSummary: PropTypes.node,
@@ -77,7 +79,7 @@ function CheckoutStepHeader( {
 	editButtonAriaLabel,
 } ) {
 	const localize = useLocalize();
-	const shouldShowEditButton = onEdit && isComplete && ! isActive;
+	const shouldShowEditButton = !! onEdit;
 
 	return (
 		<StepHeader
@@ -86,7 +88,7 @@ function CheckoutStepHeader( {
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
-				{ stepNumber }
+				{ stepNumber || '•' }
 			</Stepper>
 			<StepTitle
 				className="checkout-step__title"
@@ -111,7 +113,7 @@ function CheckoutStepHeader( {
 
 CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
-	stepNumber: PropTypes.number.isRequired,
+	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
@@ -119,10 +121,12 @@ CheckoutStepHeader.propTypes = {
 };
 
 function Stepper( { isComplete, isActive, className, children } ) {
+	// Prevent showing complete stepper when active
+	const isCompleteAndInactive = isActive ? false : isComplete;
 	return (
 		<StepNumberOuterWrapper className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
-			<StepNumberInnerWrapper isComplete={ isComplete }>
-				<StepNumber isComplete={ isComplete } isActive={ isActive }>
+			<StepNumberInnerWrapper isComplete={ isCompleteAndInactive }>
+				<StepNumber isComplete={ isCompleteAndInactive } isActive={ isActive }>
 					{ children }
 				</StepNumber>
 				<StepNumberCompleted>
@@ -183,7 +187,7 @@ const StepNumberInnerWrapper = styled.div`
 `;
 
 const StepNumber = styled.div`
-	background: ${getStepNumberBackgroundColor};
+	background: ${ getStepNumberBackgroundColor };
 	font-weight: normal;
 	width: 27px;
 	height: 27px;
@@ -191,16 +195,27 @@ const StepNumber = styled.div`
 	box-sizing: border-box;
 	text-align: center;
 	border-radius: 50%;
-	color: ${getStepNumberForegroundColor};
+	color: ${ getStepNumberForegroundColor };
 	position: absolute;
 	top: 0;
 	left: 0;
 	backface-visibility: hidden;
+	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
+		z-index: ${ props => ( props.isComplete ? '0' : '1' ) };
+	}
 `;
 
 const StepNumberCompleted = styled( StepNumber )`
-	background: ${props => props.theme.colors.success};
+	background: ${ props => props.theme.colors.success };
 	transform: rotateY( 180deg );
+	// Reason: media query needs to not have spaces within brackets otherwise ie11 doesn't read them
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
+		backface-visibility: visible;
+		z-index: ${ props => ( props.isComplete ? '1' : '0' ) };
+	}
 
 	svg {
 		margin-top: 4px;

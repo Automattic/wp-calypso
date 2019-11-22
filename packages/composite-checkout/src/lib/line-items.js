@@ -25,13 +25,3 @@ export function useTotal() {
 	const [ , total ] = useLineItems();
 	return total;
 }
-
-export function useHasDomainsInCart() {
-	const [ items ] = useLineItems();
-
-	if ( items.find( item => item.type === 'domain' ) ) {
-		return true;
-	}
-
-	return false;
-}

@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { useLineItems } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import styled from '@emotion/styled';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import WPTermsAndConditions from './wp-terms-and-conditions';
-import { useLineItems } from '../public-api';
 import {
 	WPOrderReviewLineItems,
 	WPOrderReviewTotal,
@@ -44,7 +44,6 @@ export default function WPCheckoutOrderReview( { className } ) {
 }
 
 WPCheckoutOrderReview.propTypes = {
-	isActive: PropTypes.bool.isRequired,
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 };

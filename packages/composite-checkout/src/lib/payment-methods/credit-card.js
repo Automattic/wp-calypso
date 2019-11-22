@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import Button from '../../components/button';
 import { useLocalize, sprintf } from '../../lib/localize';
 import joinClasses from '../../lib/join-classes';
-import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
+import { usePaymentData, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from './credit-card-fields';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -52,7 +52,7 @@ export function CreditCardSubmitButton() {
 
 export function CreditCardSummary( { id } ) {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const [ paymentData ] = usePaymentData();
 
 	let PaymentLogo = null;
 

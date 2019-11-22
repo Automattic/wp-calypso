@@ -10,8 +10,9 @@ import classNames from 'classnames';
 import './style.scss';
 
 interface Props {
+	className?: string;
 	displayValue: string;
-	isActive: boolean;
+	isActive?: boolean;
 	label: string;
 	onExpand: () => void;
 }
@@ -19,17 +20,14 @@ interface Props {
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const Question: FunctionComponent< Props > = ( {
-	isActive,
-	onExpand,
-	displayValue,
-	label,
 	children,
+	className,
+	displayValue,
+	isActive,
+	label,
+	onExpand,
 } ) => (
-	<div
-		className={ classNames( 'onboarding-block__question', {
-			selected: isActive,
-		} ) }
-	>
+	<div className={ classNames( 'onboarding-block__question', className, { selected: isActive } ) }>
 		<span>{ label }</span>
 		<div>
 			{ isActive ? (

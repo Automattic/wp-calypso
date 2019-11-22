@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLocalize } from '../lib/localize';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -30,8 +31,12 @@ export default function CheckoutReviewOrder( { className } ) {
 	);
 }
 
+export function CheckoutReviewOrderTitle() {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+}
+
 CheckoutReviewOrder.propTypes = {
-	isActive: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 };
 

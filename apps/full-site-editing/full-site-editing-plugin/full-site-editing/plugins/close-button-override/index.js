@@ -1,4 +1,5 @@
 /* global fullSiteEditing */
+/* global calypsoifyGutenberg */
 
 /**
  * External dependencies
@@ -63,7 +64,16 @@ domReady( () => {
 		toolbar.prepend( componentsToolbar );
 
 		// These should go here so that they have any updates that happened while querying for the selector.
-		const { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
+		let { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
+
+		// Use wpcom close button/url if they exist.
+		if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+			closeButtonUrl = calypsoifyGutenberg.closeUrl;
+		}
+
+		if ( calypsoifyGutenberg && calypsoifyGutenberg.closeButtonLabel ) {
+			closeButtonLabel = calypsoifyGutenberg.closeButtonLabel;
+		}
 
 		// Create custom close button for the template part editor.
 		if ( 'wp_template_part' === editorPostType ) {
@@ -86,7 +96,7 @@ domReady( () => {
 
 		// Create a "normal" close button for the page/post editor.
 		if ( 'page' === editorPostType || 'post' === editorPostType ) {
-			const defaultUrl = `edit.php?post_type=${ editorPostType }`;
+			const defaultUrl = closeButtonUrl || `edit.php?post_type=${ editorPostType }`;
 
 			let defaultLabel = closeButtonLabel || 'Back';
 			if ( 'page' === editorPostType && ! closeButtonLabel ) {

@@ -3,12 +3,20 @@
  */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Checkout, CheckoutProvider, WPCheckoutOrderSummary } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
+import {
+	Checkout,
+	CheckoutProvider,
+	getDefaultPaymentMethodStep,
+	useIsStepActive,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { OrderReview } from './order-review';
+import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
+import WPContactForm from './wp-contact-form';
 
 // These are used only for non-redirect payment methods
 // TODO: write this
@@ -20,13 +28,24 @@ const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
 // Called when the store is changed.
-const handleCheckoutEvent = select => () => {
+const handleCheckoutEvent = () => () => {
 	// TODO: write this
-	alert( `handleCheckoutEvent: ${ select }` );
+};
+
+const ContactFormTitle = () => {
+	const translate = useTranslate();
+	const isActive = useIsStepActive();
+	return isActive ? translate( 'Billing details' ) : translate( 'Enter your billing details' );
+};
+
+const OrderReviewTitle = () => {
+	const translate = useTranslate();
+	return translate( 'Review your order' );
 };
 
 // This is the parent component which would be included on a host page
 export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, registry } ) {
+	const translate = useTranslate();
 	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe } = registry;
@@ -44,6 +63,59 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 		/>
 	);
 
+	// TODO: should we memoize this?
+	const steps = [
+		{
+			id: 'order-summary',
+			className: 'checkout__order-summary-step',
+			hasStepNumber: false,
+			titleContent: <WPCheckoutOrderSummaryTitle />,
+			completeStepContent: <WPCheckoutOrderSummary />,
+			isCompleteCallback: () => true,
+		},
+		{
+			...getDefaultPaymentMethodStep(),
+			getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
+			getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
+		},
+		{
+			id: 'contact-form',
+			className: 'checkout__billing-details-step',
+			hasStepNumber: true,
+			titleContent: <ContactFormTitle />,
+			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
+			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
+			isCompleteCallback: ( { paymentData } ) => {
+				// TODO: Make sure the form is complete
+				const { billing = {} } = paymentData;
+				if ( ! billing.country ) {
+					return false;
+				}
+				return true;
+			},
+			isEditableCallback: ( { paymentData } ) => {
+				// TODO: Return true if the form is empty
+				if ( paymentData.billing ) {
+					return true;
+				}
+				return false;
+			},
+			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
+			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
+		},
+		{
+			id: 'order-review',
+			className: 'checkout__review-order-step',
+			hasStepNumber: true,
+			titleContent: <OrderReviewTitle />,
+			activeStepContent: <ReviewContent />,
+			isCompleteCallback: ( { activeStep } ) => {
+				const isActive = activeStep.id === 'order-review';
+				return isActive;
+			},
+		},
+	];
+
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
@@ -56,7 +128,7 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<Checkout OrderSummary={ WPCheckoutOrderSummary } ReviewContent={ ReviewContent } />
+			<Checkout steps={ steps } />
 		</CheckoutProvider>
 	);
 }

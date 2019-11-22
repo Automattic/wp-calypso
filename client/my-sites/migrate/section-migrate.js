@@ -11,15 +11,20 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import CardHeading from 'components/card-heading';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import Gridicon from 'components/gridicon';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
 import { Interval, EVERY_MINUTE } from 'lib/interval';
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpLib from 'lib/wp';
 
 /**
@@ -32,12 +37,17 @@ const wpcom = wpLib.undocumented();
 class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
-		sourceSiteId: null,
 	};
 
 	componentDidMount() {
 		this.updateFromAPI();
 	}
+
+	getImportHref = () => {
+		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
+
+		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
+	};
 
 	jetpackSiteFilter = sourceSite => {
 		const { targetSiteId } = this.props;
@@ -54,18 +64,8 @@ class SectionMigrate extends Component {
 		} );
 	};
 
-	selectSourceSite = () => {
-		if ( ! this.state.sourceSiteId ) {
-			return;
-		}
-
-		page( `/migrate/${ this.state.sourceSiteId }/${ this.props.targetSiteSlug }` );
-	};
-
 	setSourceSiteId = sourceSiteId => {
-		this.setState( {
-			sourceSiteId,
-		} );
+		page( `/migrate/${ sourceSiteId }/${ this.props.targetSiteSlug }` );
 	};
 
 	startMigration = () => {
@@ -75,7 +75,7 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setState( { migrationStatus: 'restoring' } );
+		this.setState( { migrationStatus: 'backing-up' } );
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
 
@@ -93,6 +93,22 @@ class SectionMigrate extends Component {
 				// @TODO: handle status error
 			} );
 	};
+
+	renderCardBusinessFooter() {
+		const { isTargetSiteAtomic } = this.props;
+
+		// If the site is already Atomic, no upgrade footer is required
+		if ( isTargetSiteAtomic ) {
+			return null;
+		}
+
+		return (
+			<CompactCard className="migrate__card-footer">
+				A Business Plan is required to migrate your theme and plugins. Or you can{ ' ' }
+				<a href={ this.getImportHref() }>import just your content</a> instead.
+			</CompactCard>
+		);
+	}
 
 	renderLoading() {
 		return (
@@ -118,21 +134,52 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationConfirmation() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
-			<CompactCard>
-				<div className="migrate__confirmation">
-					Do you want to migrate all content from { sourceSiteDomain } to { targetSiteDomain }? All
-					existing content on { targetSiteDomain } will be lost.
-				</div>
-				<Button primary onClick={ this.startMigration }>
-					Start Migration
-				</Button>
-			</CompactCard>
+			<>
+				<HeaderCake backHref={ backHref }>Migrate { sourceSiteDomain }</HeaderCake>
+				<CompactCard>
+					<CardHeading>{ `Migrate everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
+					<div className="migrate__confirmation">
+						We can move everything from your current site to this WordPress.com site. It will keep
+						working as expected, but your WordPress.com dashboard will be locked during the
+						migration.
+					</div>
+					<div className="migrate__sites">
+						<Site site={ sourceSite } indicator={ false } />
+						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
+						<Site site={ targetSite } indicator={ false } />
+					</div>
+					<div className="migrate__confirmation">
+						This will overwrite everything on your WordPress.com site.
+						<ul className="migrate__list">
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								All posts, pages, comments, and media
+							</li>
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								All users and roles
+							</li>
+							<li>
+								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
+								Theme, plugins, and settings
+							</li>
+						</ul>
+					</div>
+					<Button primary onClick={ this.startMigration }>
+						Migrate site
+					</Button>
+					<Button className="migrate__cancel" href={ backHref }>
+						Cancel
+					</Button>
+				</CompactCard>
+				{ this.renderCardBusinessFooter() }
+			</>
 		);
 	}
 
@@ -147,37 +194,50 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationRestoring() {
+	renderMigrationProgress() {
 		const { targetSite } = this.props;
 		const targetSiteDomain = get( targetSite, 'domain' );
 
 		return (
 			<CompactCard>
-				<div className="migrate__status">Restoring backup to { targetSiteDomain }.</div>
+				<div className="migrate__status">
+					{ this.state.migrationStatus } backup to { targetSiteDomain }.
+				</div>
 			</CompactCard>
 		);
 	}
 
 	renderSourceSiteSelector() {
 		return (
-			<CompactCard className="migrate__card">
-				<SiteSelector
-					className="migrate__source-site"
-					selected={ this.state.sourceSiteId }
-					onSiteSelect={ this.setSourceSiteId }
-					filter={ this.jetpackSiteFilter }
+			<>
+				<FormattedHeader
+					className="migrate__section-header"
+					headerText="Migrate your WordPress site to WordPress.com"
+					align="left"
 				/>
-				<Button primary onClick={ this.selectSourceSite } disabled={ ! this.state.sourceSiteId }>
-					Continue
-				</Button>
-			</CompactCard>
+				<CompactCard className="migrate__card">
+					<CardHeading>Select the Jetpack enabled site you want to migrate.</CardHeading>
+					<div className="migrate__explain">
+						If your site is connected to your WordPress.com account through Jetpack, we can migrate
+						all your content, users, themes, plugins, and settings.
+					</div>
+					<SiteSelector
+						className="migrate__source-site"
+						onSiteSelect={ this.setSourceSiteId }
+						filter={ this.jetpackSiteFilter }
+					/>
+					<div className="migrate__import-instead">
+						Don't see it? You can still{ ' ' }
+						<a href={ this.getImportHref() }>import just your content</a>.
+					</div>
+				</CompactCard>
+				{ this.renderCardBusinessFooter() }
+			</>
 		);
 	}
 
 	render() {
 		const { sourceSiteId } = this.props;
-		const headerText = 'Migrate';
-		const subHeaderText = 'Migrate your WordPress site to WordPress.com';
 
 		let migrationElement;
 
@@ -188,8 +248,9 @@ class SectionMigrate extends Component {
 					: this.renderSourceSiteSelector();
 				break;
 
+			case 'backing-up':
 			case 'restoring':
-				migrationElement = this.renderMigrationRestoring();
+				migrationElement = this.renderMigrationProgress();
 				break;
 
 			case 'done':
@@ -210,21 +271,21 @@ class SectionMigrate extends Component {
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_MINUTE } />
 				<DocumentHead title="Migrate" />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="migrate__section-header"
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align="left"
-				/>
 				{ migrationElement }
 			</Main>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
-	sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
-	targetSite: getSelectedSite( state ),
-	targetSiteId: getSelectedSiteId( state ),
-	targetSiteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( SectionMigrate ) );
+export default connect( ( state, ownProps ) => {
+	const targetSiteId = getSelectedSiteId( state );
+	return {
+		isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
+		isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
+		sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
+		targetSite: getSelectedSite( state ),
+		targetSiteId,
+		targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
+		targetSiteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( SectionMigrate ) );
