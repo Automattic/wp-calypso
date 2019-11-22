@@ -25,6 +25,13 @@ import {
 	resetAtomicSftpPassword,
 	updateAtomicSftpUser,
 } from 'state/hosting/actions';
+import {
+	withAnalytics,
+	composeAnalytics,
+	recordTracksEvent,
+	recordGoogleEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
 /**
@@ -222,6 +229,16 @@ const SftpCard = ( {
 	);
 };
 
+const resetSftpPassword = ( siteId, currentUserId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Reset Password" Button in SFTP Card' ),
+			recordTracksEvent( 'calypso_hosting_configuration_reset_sftp_password' ),
+			bumpStat( 'hosting-config', 'reset-sftp-password' )
+		),
+		resetAtomicSftpPassword( siteId, currentUserId )
+	);
+
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -248,7 +265,7 @@ export default connect(
 	{
 		requestSftpUser: requestAtomicSftpUser,
 		createSftpUser: createAtomicSftpUser,
-		resetSftpPassword: resetAtomicSftpPassword,
+		resetSftpPassword,
 		removePasswordFromState: ( siteId, userId, username ) =>
 			updateAtomicSftpUser( siteId, userId, { username } ),
 	}
