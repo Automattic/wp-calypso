@@ -222,8 +222,8 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-		// FIXME: Logged-in title should only be 'Themes'
 
+		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
 				<DocumentHead title={ title } meta={ metas } link={ links } />
