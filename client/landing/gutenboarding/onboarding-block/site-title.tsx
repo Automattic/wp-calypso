@@ -22,7 +22,7 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
 	const handleChange = ( e: React.ChangeEvent< HTMLInputElement > ) =>
-		setSiteTitle( e.target.value );
+		setSiteTitle( e.target.value.trim().length ? e.target.value : '' );
 
 	const label = NO__( "It's called" );
 	const value = siteTitle.length ? siteTitle : NO__( 'enter a title' );
