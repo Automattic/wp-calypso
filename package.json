@@ -78,7 +78,7 @@
 		"@wordpress/shortcode": "2.5.0",
 		"@wordpress/url": "2.8.2",
 		"@wordpress/viewport": "2.9.0",
-		"acorn": "6.1.1",
+		"acorn": "6.3.0",
 		"autosize": "4.0.2",
 		"babel-plugin-add-module-exports": "1.0.2",
 		"body-parser": "1.19.0",
