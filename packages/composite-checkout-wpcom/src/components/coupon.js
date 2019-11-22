@@ -5,17 +5,17 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize'; // TODO: remove this
 import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
 export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 	const [ hasCouponError, setHasCouponError ] = useState( false );
@@ -40,11 +40,11 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 		>
 			<Field
 				id={ id }
-				placeholder={ localize( 'Enter your coupon code' ) }
+				placeholder={ translate( 'Enter your coupon code' ) }
 				isError={ hasCouponError }
 				errorMessage={
 					hasCouponError
-						? localize( "We couldn't find your coupon. Please check your code and try again." )
+						? translate( "We couldn't find your coupon. Please check your code and try again." )
 						: null
 				}
 				onChange={ input => {
@@ -53,7 +53,7 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton buttonState="secondary">{ localize( 'Apply' ) }</ApplyButton>
+				<ApplyButton buttonState="secondary">{ translate( 'Apply' ) }</ApplyButton>
 			) }
 		</CouponWrapper>
 	);

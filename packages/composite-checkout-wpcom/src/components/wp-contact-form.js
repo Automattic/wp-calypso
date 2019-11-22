@@ -4,20 +4,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import { usePaymentData } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, usePaymentData } from '../public-api';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
-// TODO: remove or replace all the below imports as they are not in wpcom
-import { useLocalize } from '../lib/localize';
-import {
-	SummaryLine,
-	SummaryDetails,
-	SummarySpacerLine,
-} from '../lib/styled-components/summary-details';
-import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback';
+import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
+import { LeftColumn, RightColumn } from './ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
@@ -92,7 +88,7 @@ function isElligibleForVat() {
 }
 
 function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	return (
 		<DomainRegistrationCheckBoxWrapper>
 			<DomainRegistrationCheckbox
@@ -103,7 +99,9 @@ function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
 				onChange={ toggleVisibility }
 			/>
 			<DomainRegistrationLabel htmlFor="domain-registration">
-				{ localize( 'Use your billing details for your domain registration contact information.' ) }
+				{ translate(
+					'Use your billing details for your domain registration contact information.'
+				) }
 			</DomainRegistrationLabel>
 		</DomainRegistrationCheckBoxWrapper>
 	);
@@ -170,7 +168,7 @@ const DomainRegistrationCheckbox = styled.input`
 `;
 
 function AddressFields( { fieldType } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updateLocationData = ( key, value ) =>
@@ -183,7 +181,7 @@ function AddressFields( { fieldType } ) {
 					<Field
 						id={ fieldType + '-first-name' }
 						type="text"
-						label={ localize( 'First name' ) }
+						label={ translate( 'First name' ) }
 						value={ currentLocationData.firstName || '' }
 						onChange={ value => {
 							updateLocationData( 'firstName', value );
@@ -196,7 +194,7 @@ function AddressFields( { fieldType } ) {
 					<Field
 						id={ fieldType + '-last-name' }
 						type="text"
-						label={ localize( 'Last name' ) }
+						label={ translate( 'Last name' ) }
 						value={ currentLocationData.lastName || '' }
 						onChange={ value => {
 							updateLocationData( 'lastName', value );
@@ -209,8 +207,8 @@ function AddressFields( { fieldType } ) {
 			<FormField
 				id={ fieldType + '-email-address' }
 				type="email"
-				label={ localize( 'Email address' ) }
-				placeholder={ localize( 'name@example.com' ) }
+				label={ translate( 'Email address' ) }
+				placeholder={ translate( 'name@example.com' ) }
 				value={ currentLocationData.email || '' }
 				onChange={ value => {
 					updateLocationData( 'email', value );
@@ -221,7 +219,7 @@ function AddressFields( { fieldType } ) {
 			<FormField
 				id={ fieldType + '-address' }
 				type="text"
-				label={ localize( 'Address' ) }
+				label={ translate( 'Address' ) }
 				value={ currentLocationData.address || '' }
 				onChange={ value => {
 					updateLocationData( 'address', value );
@@ -234,7 +232,7 @@ function AddressFields( { fieldType } ) {
 					<Field
 						id={ fieldType + '-city' }
 						type="text"
-						label={ localize( 'City' ) }
+						label={ translate( 'City' ) }
 						value={ currentLocationData.city || '' }
 						onChange={ value => {
 							updateLocationData( 'city', value );
@@ -248,7 +246,7 @@ function AddressFields( { fieldType } ) {
 						<Field
 							id={ fieldType + '-state' }
 							type="text"
-							label={ localize( 'State' ) }
+							label={ translate( 'State' ) }
 							value={ currentLocationData.state || '' }
 							onChange={ value => {
 								updateLocationData( 'state', value );
@@ -259,7 +257,7 @@ function AddressFields( { fieldType } ) {
 						<Field
 							id={ fieldType + '-province' }
 							type="text"
-							label={ localize( 'Province' ) }
+							label={ translate( 'Province' ) }
 							value={ currentLocationData.province || '' }
 							onChange={ value => {
 								updateLocationData( 'province', value );
@@ -283,7 +281,7 @@ function isStateorProvince() {
 }
 
 function PhoneNumberField( { fieldType } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updateLocationData = ( key, value ) =>
@@ -294,7 +292,9 @@ function PhoneNumberField( { fieldType } ) {
 			id={ fieldType + '-phone-number' }
 			type="Number"
 			label={
-				fieldType === 'billing' ? localize( 'Phone number (Optional)' ) : localize( 'Phone number' )
+				fieldType === 'billing'
+					? translate( 'Phone number (Optional)' )
+					: translate( 'Phone number' )
 			}
 			value={ currentLocationData.phoneNumber || '' }
 			onChange={ value => {
@@ -310,7 +310,7 @@ PhoneNumberField.propTypes = {
 };
 
 function VatIdField() {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const fieldType = 'billing';
 	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
@@ -321,7 +321,7 @@ function VatIdField() {
 		<FormField
 			id={ 'billing-vat-id' }
 			type="Number"
-			label={ localize( 'VAT identification number' ) }
+			label={ translate( 'VAT identification number' ) }
 			value={ currentLocationData.vatId || '' }
 			onChange={ value => {
 				updateLocationData( 'vatId', value );
@@ -331,7 +331,7 @@ function VatIdField() {
 }
 
 function TaxFields( { fieldType } ) {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ paymentData, updatePaymentData ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	// TODO: add field validation; at least to see if a required field is set
@@ -346,7 +346,7 @@ function TaxFields( { fieldType } ) {
 						<Field
 							id={ fieldType + '-zip-code' }
 							type="text"
-							label={ localize( 'Zip code' ) }
+							label={ translate( 'Zip code' ) }
 							value={ currentLocationData.zipCode || '' }
 							onChange={ value => {
 								updateLocationData( 'zipCode', value );
@@ -357,7 +357,7 @@ function TaxFields( { fieldType } ) {
 						<Field
 							id={ fieldType + '-postal-code' }
 							type="text"
-							label={ localize( 'Postal code' ) }
+							label={ translate( 'Postal code' ) }
 							value={ currentLocationData.postalCode || '' }
 							onChange={ value => {
 								updateLocationData( 'postalCode', value );
@@ -371,7 +371,7 @@ function TaxFields( { fieldType } ) {
 					<Field
 						id={ fieldType + '-country' }
 						type="text"
-						label={ localize( 'Country' ) }
+						label={ translate( 'Country' ) }
 						value={ currentLocationData.country || '' }
 						onChange={ value => {
 							updateLocationData( 'country', value );
@@ -394,17 +394,17 @@ function isZipOrPostal() {
 }
 
 function DomainFields() {
-	const localize = useLocalize();
+	const translate = useTranslate();
 
 	return (
 		<DomainContactFields>
 			<DomainContactFieldsTitle>
-				{ localize( 'Enter your domain registration contact information' ) }
+				{ translate( 'Enter your domain registration contact information' ) }
 			</DomainContactFieldsTitle>
 			<DomainContactFieldsDescription>
-				{ localize( `Domain owners have to share contact information in a public database of all domains. With
-				our Privacy Protection, we publish our own information and privately forward any
-				communication to you.` ) }
+				{ translate(
+					'Domain owners have to share contact information in a public database of all domains. With our Privacy Protection, we publish our own information and privately forward any communication to you.'
+				) }
 			</DomainContactFieldsDescription>
 
 			<AddressFields fieldType={ 'domains' } />
@@ -434,7 +434,7 @@ const DomainContactFieldsDescription = styled.p`
 `;
 
 function ContactFormSummary() {
-	const localize = useLocalize();
+	const translate = useTranslate();
 	const [ paymentData ] = usePaymentData();
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 
@@ -467,7 +467,7 @@ function ContactFormSummary() {
 						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
 						{ isElligibleForVat() && (
 							<SummaryLine>
-								{ localize( 'VAT indentification number:' ) }
+								{ translate( 'VAT indentification number:' ) }
 								{ billing.vatId }
 							</SummaryLine>
 						) }

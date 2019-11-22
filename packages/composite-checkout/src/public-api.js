@@ -16,7 +16,7 @@ import {
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal, useHasDomainsInCart } from './lib/line-items';
+import { useLineItems, useTotal } from './lib/line-items';
 import {
 	createRegistry,
 	useDispatch,
@@ -27,12 +27,6 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
-import {
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderSummaryTitle,
-	WPCheckoutOrderReview,
-	WPContactForm,
-} from './wpcom/index'; // TODO: remove this
 import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
@@ -58,10 +52,6 @@ export {
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
-	WPCheckoutOrderReview,
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderSummaryTitle,
-	WPContactForm,
 	createApplePayMethod,
 	createCreditCardMethod,
 	createPayPalMethod,
@@ -76,7 +66,6 @@ export {
 	useCheckoutHandlers,
 	useCheckoutRedirects,
 	useDispatch,
-	useHasDomainsInCart,
 	useIsStepActive,
 	useLineItems,
 	usePaymentData,

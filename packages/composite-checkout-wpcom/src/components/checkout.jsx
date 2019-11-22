@@ -7,17 +7,16 @@ import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
 	CheckoutProvider,
-	WPCheckoutOrderSummary,
 	getDefaultPaymentMethodStep,
-	WPCheckoutOrderSummaryTitle,
 	useIsStepActive,
-	WPContactForm,
 } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { OrderReview } from './order-review';
+import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
+import WPContactForm from './wp-contact-form';
 
 // These are used only for non-redirect payment methods
 // TODO: write this

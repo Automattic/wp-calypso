@@ -16,10 +16,8 @@ import {
 	createCreditCardMethod,
 	useIsStepActive,
 	getDefaultPaymentMethodStep,
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderSummaryTitle,
-	WPCheckoutOrderReview,
-	WPContactForm,
+	getDefaultOrderSummaryStep,
+	getDefaultOrderReviewStep,
 } from '../src/public-api';
 import { stripeKey } from './private';
 
@@ -142,20 +140,13 @@ const ContactFormTitle = () => {
 	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
 };
 
-const OrderReviewTitle = () => {
-	const localize = useLocalize();
-	return localize( 'Review your order' );
-};
+function ContactForm() {
+	// TODO: define one for this demo
+	return <span>TODO</span>;
+}
 
 const steps = [
-	{
-		id: 'order-summary',
-		className: 'checkout__order-summary-step',
-		hasStepNumber: false,
-		titleContent: <WPCheckoutOrderSummaryTitle />,
-		completeStepContent: <WPCheckoutOrderSummary />,
-		isCompleteCallback: () => true,
-	},
+	getDefaultOrderSummaryStep(),
 	{
 		...getDefaultPaymentMethodStep(),
 		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
@@ -166,8 +157,8 @@ const steps = [
 		className: 'checkout__billing-details-step',
 		hasStepNumber: true,
 		titleContent: <ContactFormTitle />,
-		activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
-		completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
+		activeStepContent: <ContactForm isComplete={ false } isActive={ true } />,
+		completeStepContent: <ContactForm summary isComplete={ true } isActive={ false } />,
 		isCompleteCallback: ( { paymentData } ) => {
 			// TODO: Make sure the form is complete
 			const { billing = {} } = paymentData;
@@ -186,17 +177,7 @@ const steps = [
 		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
 		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
 	},
-	{
-		id: 'order-review',
-		className: 'checkout__review-order-step',
-		hasStepNumber: true,
-		titleContent: <OrderReviewTitle />,
-		activeStepContent: <WPCheckoutOrderReview />,
-		isCompleteCallback: ( { activeStep } ) => {
-			const isActive = activeStep.id === 'order-review';
-			return isActive;
-		},
-	},
+	getDefaultOrderReviewStep(),
 ];
 
 // This is the parent component which would be included on a host page

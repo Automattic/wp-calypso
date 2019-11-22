@@ -4,6 +4,9 @@
 import React from 'react';
 import { OrderReviewLineItems, OrderReviewTotal } from '@automattic/composite-checkout';
 
+/**
+ * Internal dependencies
+ */
 import { PlanItem, DomainItem, TaxItem } from './items';
 
 export function OrderReview( { items, total, onDeleteItem, onChangePlanLength } ) {
