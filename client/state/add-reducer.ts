@@ -7,9 +7,9 @@ import { Reducer, Store } from 'redux';
  * Internal Dependencies
  */
 import { APPLY_STORED_STATE } from 'state/action-types';
-import { getStateFromLocalStorage } from 'state/initial-state';
+import { getStateFromCache } from 'state/initial-state';
 
-const initializations = new Map< string, Promise< void > >();
+const initializations = new Map< string, boolean >();
 const reducers = new Map< string, Reducer >();
 
 function normalizeKey( key: string[] ): string {
@@ -24,12 +24,12 @@ interface WithAddReducer {
 	addReducer: ( keys: string[], subReducer: Reducer & OptionalStorageKey ) => void;
 }
 
-async function initializeState(
+function initializeState(
 	store: Store & WithAddReducer,
 	storageKey: string,
 	reducer: Reducer & OptionalStorageKey
 ) {
-	const storedState = await getStateFromLocalStorage( reducer, storageKey );
+	const storedState = getStateFromCache( reducer, storageKey );
 
 	if ( storedState ) {
 		store.dispatch( { type: APPLY_STORED_STATE, storageKey, storedState } );
@@ -40,12 +40,12 @@ async function initializeState(
 // and loads (asynchronously) and applies the persisted state for it.
 export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
 	store: Store & WithAddReducer
-) => ( key: string[], reducer: T ): Promise< void > => {
+) => ( key: string[], reducer: T ): void => {
 	const storageKey: string | undefined = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );
 
 	const previousReducer = reducers.get( normalizedKey );
-	let init = initializations.get( normalizedKey );
+	const init = initializations.get( normalizedKey );
 
 	if ( previousReducer && reducer !== previousReducer ) {
 		throw new Error(
@@ -57,14 +57,10 @@ export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
 		store.addReducer( key, reducer );
 
 		if ( storageKey ) {
-			init = initializeState( store, storageKey, reducer );
-		} else {
-			init = Promise.resolve();
+			initializeState( store, storageKey, reducer );
 		}
 
-		initializations.set( normalizedKey, init );
+		initializations.set( normalizedKey, true );
 		reducers.set( normalizedKey, reducer );
 	}
-
-	return init;
 };

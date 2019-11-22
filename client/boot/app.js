@@ -14,7 +14,7 @@ import { configureReduxStore, setupMiddlewares, utils } from './common';
 import { setupLocale } from './locale';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
-import { getInitialState, persistOnChange } from 'state/initial-state';
+import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
@@ -29,7 +29,8 @@ const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
 	utils();
-	getInitialState( initialReducer ).then( initialState => {
+	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
 		setupLocale( currentUser.get(), reduxStore );
