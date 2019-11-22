@@ -224,6 +224,31 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
+
+		if ( shouldHideFreePlan ) {
+			let domainItem, isPurchasingItem, siteUrl;
+
+			this.props.submitSignupStep(
+				Object.assign(
+					{
+						stepName: this.props.stepName,
+						domainItem,
+						googleAppsCartItem,
+						isPurchasingItem,
+						siteUrl,
+						stepSectionName: this.props.stepSectionName,
+					},
+					this.getThemeArgs()
+				),
+				Object.assign( { domainItem }, shouldHideFreePlanItem )
+			);
+
+			this.props.goToNextStep();
+
+			return;
+		}
+
 		const suggestion = this.props.step.suggestion;
 
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
@@ -240,8 +265,6 @@ class DomainsStep extends React.Component {
 					productSlug: suggestion.product_slug,
 			  } )
 			: undefined;
-
-		const shouldHideFreePlanItem = this.showTestCopy ? { shouldHideFreePlan } : {};
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
