@@ -134,7 +134,7 @@ class PasswordlessSignupForm extends Component {
 		analytics.identifyUser( { ID: userId, username, email: this.state.email } );
 
 		this.submitStep( {
-			username: response.username,
+			username,
 			bearer_token: response.bearer_token,
 		} );
 	};

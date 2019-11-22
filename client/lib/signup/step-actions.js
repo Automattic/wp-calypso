@@ -664,24 +664,6 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 /**
- * Creates a user account using an email only and logs them in immediately.
- * It differs from `createPasswordlessUser` in that we don't require a verification step before the user can continue with onboarding.
- * Returns the dependencies for the step.
- *
- * @param {Function} callback API callback function
- * @param {object}   data     An object sent via POST to WPCOM API with the following values: `email`
- */
-export function createUserAccountFromEmailAddress( callback, { email } ) {
-	wpcom
-		.undocumented()
-		.createUserAccountFromEmailAddress( { email }, null )
-		.then( response =>
-			callback( null, { username: response.username, bearer_token: response.token.access_token } )
-		)
-		.catch( err => callback( err ) );
-}
-
-/**
  * Creates a user account and sends the user a verification code via email to confirm the account.
  * Returns the dependencies for the step.
  *
