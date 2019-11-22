@@ -19,10 +19,14 @@ class JetpackBackupCredsBanner extends Component {
 	static propTypes = {
 		// Banner location, passed to tracks event, single word to follow tracks naming conventions.
 		location: PropTypes.string.isRequired,
+		// Connected props
+		siteId: PropTypes.number,
+		rewindState: PropTypes.object,
+		siteSlug: PropTypes.string,
 	};
 
 	render() {
-		const { isJetpack, rewindState, siteId, slug, translate } = this.props;
+		const { isJetpack, rewindState, siteId, siteSlug, translate } = this.props;
 		const location = this.props.location || 'nolocation';
 		const event = `calpyso_jetpack_backup_credential_banner_${ location }_click`;
 		return (
@@ -34,8 +38,8 @@ class JetpackBackupCredsBanner extends Component {
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-								: `/settings/security/${ slug }`
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+								: `/settings/security/${ siteSlug }`
 						}
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(
@@ -55,6 +59,6 @@ export default connect( state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 		rewindState: getRewindState( state, siteId ),
-		slug: getSiteSlug( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( localize( JetpackBackupCredsBanner ) );
