@@ -183,7 +183,7 @@ const StepNumberInnerWrapper = styled.div`
 `;
 
 const StepNumber = styled.div`
-	background: ${getStepNumberBackgroundColor};
+	background: ${ getStepNumberBackgroundColor };
 	font-weight: normal;
 	width: 27px;
 	height: 27px;
@@ -191,22 +191,26 @@ const StepNumber = styled.div`
 	box-sizing: border-box;
 	text-align: center;
 	border-radius: 50%;
-	color: ${getStepNumberForegroundColor};
+	color: ${ getStepNumberForegroundColor };
 	position: absolute;
 	top: 0;
 	left: 0;
 	backface-visibility: hidden;
-	@media all and ( -ms-high-contrast: none ), ( -ms-high-contrast: active ) {
-		z-index: ${props => ( props.isComplete ? '0' : '1' )};
+	// Reason: needs to not have spaces
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
+		z-index: ${ props => ( props.isComplete ? '0' : '1' ) };
 	}
 `;
 
 const StepNumberCompleted = styled( StepNumber )`
-	background: ${props => props.theme.colors.success};
+	background: ${ props => props.theme.colors.success };
 	transform: rotateY( 180deg );
-	@media all and ( -ms-high-contrast: none ), ( -ms-high-contrast: active ) {
+	// Reason: needs to not have spaces
+	// prettier-ignore
+	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
-		z-index: ${props => ( props.isComplete ? '1' : '0' )};
+		z-index: ${ props => ( props.isComplete ? '1' : '0' ) };
 	}
 
 	svg {
