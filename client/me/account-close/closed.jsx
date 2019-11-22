@@ -25,14 +25,13 @@ class AccountSettingsClosedComponent extends Component {
 	};
 
 	render() {
-		/* eslint-disable-next-line no-shadow */
-		const { isAccountClosed, previousRoute, translate } = this.props;
+		const { isUserAccountClosed, previousRoute, translate } = this.props;
 
 		if ( previousRoute !== '/me/account/close' ) {
 			page( '/me/account/close' );
 		}
 
-		if ( ! isAccountClosed ) {
+		if ( ! isUserAccountClosed ) {
 			return (
 				<div className="account-close__spinner">
 					<Spinner size={ 32 } />
@@ -57,6 +56,6 @@ class AccountSettingsClosedComponent extends Component {
 export default connect( state => {
 	return {
 		previousRoute: getPreviousRoute( state ),
-		isAccountClosed: isAccountClosed( state ),
+		isUserAccountClosed: isAccountClosed( state ),
 	};
 } )( localize( AccountSettingsClosedComponent ) );
