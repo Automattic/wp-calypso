@@ -12,12 +12,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
-import {
-	SummaryLine,
-	SummaryDetails,
-	SummarySpacerLine,
-} from '../lib/styled-components/summary-details'; // TODO: remove this
-import { LeftColumn, RightColumn } from '../lib/styled-components/ie-fallback'; // TODO: remove this
+import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
+import { LeftColumn, RightColumn } from './ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();

@@ -12,8 +12,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
+import RadioButton from './radio-button';
 import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
-import RadioButton from '../components/radio-button'; // TODO: remove this
 import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
