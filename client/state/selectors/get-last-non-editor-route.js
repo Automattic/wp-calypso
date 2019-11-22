@@ -19,8 +19,6 @@ import createSelector from 'lib/create-selector';
 const getLastNonEditorRoute = createSelector(
 	state => {
 		const previousPath = getPreviousPath( state );
-		// Include paths which start in the classic editor because it is common
-		// to redirect from the classic editor to the
 
 		/**
 		 * Include paths which start in the classic editor because it is common
