@@ -23,7 +23,7 @@ import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import config from 'config';
-import CompositeCheckoutContainer from './checkout/composite-checkout-container';
+import { CompositeCheckoutContainer } from './checkout/composite-checkout-container';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -53,7 +53,7 @@ export function checkout( context, next ) {
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		context.primary = <CompositeCheckoutContainer />;
+		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } />;
 		next();
 		return;
 	}

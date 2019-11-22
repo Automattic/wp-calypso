@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
+import { CheckoutPaymentMethodSlug } from '../checkout-payment-method-slug';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
