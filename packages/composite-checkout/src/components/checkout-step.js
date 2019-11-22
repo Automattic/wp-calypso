@@ -196,7 +196,7 @@ const StepNumber = styled.div`
 	top: 0;
 	left: 0;
 	backface-visibility: hidden;
-	// Reason: needs to not have spaces
+	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		z-index: ${ props => ( props.isComplete ? '0' : '1' ) };
@@ -206,7 +206,7 @@ const StepNumber = styled.div`
 const StepNumberCompleted = styled( StepNumber )`
 	background: ${ props => props.theme.colors.success };
 	transform: rotateY( 180deg );
-	// Reason: needs to not have spaces
+	// Reason: media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
