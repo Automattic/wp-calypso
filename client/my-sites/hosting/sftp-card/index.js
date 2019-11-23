@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, map } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -40,6 +39,8 @@ import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sft
 import './style.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
+const SFTP_URL = 'sftp.wp.com';
+const SFTP_PORT = 22;
 
 const SftpCard = ( {
 	translate,
@@ -59,6 +60,8 @@ const SftpCard = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
+	const urlIsCopied = isCopied === 'url';
+	const portIsCopied = isCopied === 'port';
 
 	const onDestroy = () => {
 		if ( password ) {
@@ -89,11 +92,6 @@ const SftpCard = ( {
 			setIsLoading( false );
 		}
 	}, [ username, password ] );
-
-	const sftpData = {
-		[ translate( 'URL' ) ]: 'sftp.wp.com',
-		[ translate( 'Port' ) ]: 22,
-	};
 
 	const renderPasswordCell = () => {
 		if ( disabled ) {
@@ -190,14 +188,32 @@ const SftpCard = ( {
 					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: disabled } ) }
 				>
 					<tbody>
-						{ map( sftpData, ( data, title ) => (
-							<tr key={ title }>
-								<th>{ title }:</th>
-								<td>
-									<span>{ ! disabled && data }</span>
-								</td>
-							</tr>
-						) ) }
+						<tr key={ translate( 'URL' ) }>
+							<th>{ translate( 'URL' ) }:</th>
+							<td>
+								<>
+									<span>{ ! disabled && SFTP_URL }</span>
+									<ClipboardButton text={ SFTP_URL } onCopy={ () => setIsCopied( 'url' ) } compact>
+										{ urlIsCopied ? translate( 'Copied!' ) : translate( 'Copy URL' ) }
+									</ClipboardButton>
+								</>
+							</td>
+						</tr>
+						<tr key={ translate( 'Port' ) }>
+							<th>{ translate( 'Port' ) }:</th>
+							<td>
+								<>
+									<span>{ ! disabled && SFTP_PORT }</span>
+									<ClipboardButton
+										text={ SFTP_PORT }
+										onCopy={ () => setIsCopied( 'port' ) }
+										compact
+									>
+										{ portIsCopied ? translate( 'Copied!' ) : translate( 'Copy Port' ) }
+									</ClipboardButton>
+								</>
+							</td>
+						</tr>
 						<tr className={ classNames( { 'has-action': ! disabled } ) }>
 							<th>{ translate( 'Username' ) }:</th>
 							<td>
@@ -262,8 +278,8 @@ export default connect(
 
 		if ( ! disabled ) {
 			const sftpDetails = getAtomicHostingSftpUser( state, siteId, currentUserId );
-			username = get( sftpDetails, 'username' );
-			password = get( sftpDetails, 'password' );
+			username = sftpDetails?.username;
+			password = sftpDetails?.password;
 			sftpUserRequested = sftpDetails !== null;
 		}
 
