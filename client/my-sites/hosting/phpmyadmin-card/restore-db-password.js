@@ -11,6 +11,13 @@ import { Dialog } from '@automattic/components';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { restoreDatabasePassword } from 'state/hosting/actions';
+import {
+	withAnalytics,
+	composeAnalytics,
+	recordTracksEvent,
+	recordGoogleEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 const RestorePasswordDialog = ( {
 	isVisible,
@@ -57,11 +64,24 @@ const RestorePasswordDialog = ( {
 	);
 };
 
+const restore = siteId =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Hosting Configuration',
+				'Clicked "Restore" Button in Database Access card'
+			),
+			recordTracksEvent( 'calypso_hosting_configuration_restore_db_password' ),
+			bumpStat( 'hosting-config', 'restore-db-password' )
+		),
+		restoreDatabasePassword( siteId )
+	);
+
 export default connect(
 	state => ( {
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{
-		restore: restoreDatabasePassword,
+		restore,
 	}
 )( localize( RestorePasswordDialog ) );
