@@ -46,8 +46,9 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		};
 	}
 
-	// Customer Home.
-	if ( doesRouteMatch( /^\/home\/?/ ) ) {
+	// If a user comes from Home or from a fresh page load (i.e. Signup),
+	// redirect to Customer Home.
+	if ( ! lastNonEditorRoute || doesRouteMatch( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Home' ),
