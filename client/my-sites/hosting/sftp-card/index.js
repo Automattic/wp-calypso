@@ -239,6 +239,19 @@ const resetSftpPassword = ( siteId, currentUserId ) =>
 		resetAtomicSftpPassword( siteId, currentUserId )
 	);
 
+const createSftpUser = ( siteId, currentUserId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Hosting Configuration',
+				'Clicked "Enable SFTP Credentials" Button in SFTP Card'
+			),
+			recordTracksEvent( 'calypso_hosting_configuration_enable_sftp' ),
+			bumpStat( 'hosting-config', 'enable-sftp' )
+		),
+		createAtomicSftpUser( siteId, currentUserId )
+	);
+
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -264,7 +277,7 @@ export default connect(
 	},
 	{
 		requestSftpUser: requestAtomicSftpUser,
-		createSftpUser: createAtomicSftpUser,
+		createSftpUser,
 		resetSftpPassword,
 		removePasswordFromState: ( siteId, userId, username ) =>
 			updateAtomicSftpUser( siteId, userId, { username } ),
