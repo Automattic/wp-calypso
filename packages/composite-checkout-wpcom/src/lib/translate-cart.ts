@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import {
-	ServerCart,
-	ServerCartItem,
+	ResponseCart,
+	ResponseCartProduct,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
-	CheckoutCartItemAmount,
+	CheckoutCartTotal,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
@@ -19,7 +19,7 @@ import {
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart( serverCart: ServerCart ): WPCOMCart {
+export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
 		total_tax_integer,
@@ -41,10 +41,13 @@ export function translateWpcomCartToCheckoutCart( serverCart: ServerCart ): WPCO
 		},
 	};
 
-	const totalItem: CheckoutCartItemAmount = {
-		currency: currency,
-		value: total_cost_integer,
-		displayValue: total_cost_display,
+	const totalItem: CheckoutCartTotal = {
+		label: 'Total',
+		amount: {
+			currency: currency,
+			value: total_cost_integer,
+			displayValue: total_cost_display,
+		},
 	};
 
 	return {
@@ -52,6 +55,9 @@ export function translateWpcomCartToCheckoutCart( serverCart: ServerCart ): WPCO
 		tax: taxLineItem,
 		total: totalItem,
 		allowedPaymentMethods: allowed_payment_methods
+			.filter( slug => {
+				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
+			} ) // TODO: stop returning this from the server
 			.map( readWPCOMPaymentMethodClass )
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
@@ -67,7 +73,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ServerCart ): WPCO
  *     with extra WPCOM specific data attached
  */
 function translateWpcomCartItemToCheckoutCartItem(
-	serverCartItem: ServerCartItem,
+	serverCartItem: ResponseCartProduct,
 	index: number
 ): WPCOMCartItem {
 	const {

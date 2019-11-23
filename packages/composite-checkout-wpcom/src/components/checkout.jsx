@@ -47,8 +47,8 @@ const OrderReviewTitle = () => {
 // This is the parent component which would be included on a host page
 export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, registry } ) {
 	const translate = useTranslate();
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
-
+	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
+	console.log( 'ITEMS: ', items );
 	const { select, subscribe } = registry;
 
 	useEffect( () => {
@@ -57,7 +57,8 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 
 	const ReviewContent = () => (
 		<OrderReview
-			items={ itemsWithTax }
+			items={ items }
+			tax={ tax }
 			total={ total }
 			onDeleteItem={ deleteItem }
 			onChangePlanLength={ changePlanLength }
@@ -120,7 +121,7 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
-			items={ itemsWithTax }
+			items={ [ ...items, tax ] }
 			total={ total }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }

@@ -19,13 +19,15 @@ const { registerStore } = registry;
 
 const wpcom = wp.undocumented();
 
+export const getServerCart = wpcom.getCart;
+
 const useShoppingCart = cartKey =>
 	makeShoppingCartHook(
 		cartParam => wpcom.setCart( cartKey, cartParam ),
-		wpcom.getCart( cartKey )
+		() => wpcom.getCart( cartKey )
 	);
 
-export default function CompositeCheckoutContainer( { siteSlug } ) {
+export function CompositeCheckoutContainer( { siteSlug } ) {
 	return (
 		<WPCOMCheckout
 			useShoppingCart={ useShoppingCart( siteSlug ) }
@@ -39,3 +41,5 @@ export default function CompositeCheckoutContainer( { siteSlug } ) {
 		/>
 	);
 }
+
+export const getCompositeCheckoutContainer = cartKey => {};

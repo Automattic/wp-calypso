@@ -23,7 +23,7 @@ import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import config from 'config';
-import CompositeCheckoutContainer from './checkout/composite-checkout-container';
+import { CompositeCheckoutContainer, getServerCart } from './checkout/composite-checkout-container';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;

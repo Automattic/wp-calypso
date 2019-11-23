@@ -25,6 +25,11 @@ export interface CheckoutCartItem {
 	amount: CheckoutCartItemAmount;
 }
 
+export interface CheckoutCartTotal {
+	label: string;
+	amount: CheckoutCartItemAmount;
+}
+
 /**
  * Cart item with WPCOM specific info added.
  */
@@ -35,6 +40,6 @@ export type WPCOMCartItem = CheckoutCartItem & {
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
-	total: CheckoutCartItemAmount;
+	total: CheckoutCartTotal;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
