@@ -63,36 +63,33 @@ export function makeShoppingCartHook(
 		// the cart with an async call to the endpoint via
 		// translateWpcomCartToCheckoutCart().
 		const [ cart, setCart ] = useState< WPCOMCart >( {
-			items: <WPCOMCartItem[]>[],
-			tax: <CheckoutCartItem>{
+			items: [] as WPCOMCartItem[],
+			tax: {
 				id: 'tax-line-item',
 				label: 'Tax',
 				type: 'tax',
-				amount: <CheckoutCartItemAmount>{
+				amount: {
 					value: 0,
 					currency: '',
 					displayValue: '',
-				},
-			},
-			total: <CheckoutCartTotal>{
+				} as CheckoutCartItemAmount,
+			} as CheckoutCartItem,
+			total: {
 				label: 'Total',
-				amount: <CheckoutCartItemAmount>{
+				amount: {
 					value: 0,
 					currency: '',
 					displayValue: '',
-				},
-			},
+				} as CheckoutCartItemAmount,
+			} as CheckoutCartTotal,
 			allowedPaymentMethods: [],
 		} );
-
-		console.log( 'CART: ', cart );
 
 		// Asynchronously initialize and translate the cart. This
 		// only needs to happen once.
 		useEffect( () => {
 			const fetchAndUpdate = async () => {
 				await getServerCart().then( response => {
-					console.log( 'INITIAL_CART: ', response );
 					setCart( translateWpcomCartToCheckoutCart( response ) );
 				} );
 			};
@@ -141,7 +138,7 @@ export function makeShoppingCartHook(
 			setResponseCart( responseCart );
 		};
 
-		return <ShoppingCartManager>{
+		return {
 			items: cart.items,
 			tax: cart.tax,
 			total: cart.total,
@@ -149,7 +146,7 @@ export function makeShoppingCartHook(
 			deleteItem,
 			changePlanLength,
 			updatePricesForAddress,
-		};
+		} as ShoppingCartManager;
 	};
 }
 

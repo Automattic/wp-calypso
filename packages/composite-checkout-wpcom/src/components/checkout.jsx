@@ -14,7 +14,7 @@ import {
 /**
  * Internal dependencies
  */
-import { OrderReview } from './order-review';
+import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 
@@ -30,7 +30,7 @@ const failureRedirectUrl = window.location.href;
 // Called when the store is changed.
 const handleCheckoutEvent = select => () => {
 	// TODO: write this
-	alert( `handleCheckoutEvent: ${ select }` );
+	console.log( `handleCheckoutEvent: ${ select }` );
 };
 
 const ContactFormTitle = () => {
@@ -48,7 +48,6 @@ const OrderReviewTitle = () => {
 export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, registry } ) {
 	const translate = useTranslate();
 	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
-	console.log( 'ITEMS: ', items );
 	const { select, subscribe } = registry;
 
 	useEffect( () => {
@@ -56,13 +55,14 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 	}, [ select, subscribe ] );
 
 	const ReviewContent = () => (
-		<OrderReview
+		/* <OrderReview
 			items={ items }
 			tax={ tax }
 			total={ total }
 			onDeleteItem={ deleteItem }
 			onChangePlanLength={ changePlanLength }
-		/>
+		/> */
+		<WPCheckoutOrderReview className={ 'checkout__order-review-step' } />
 	);
 
 	// TODO: should we memoize this?

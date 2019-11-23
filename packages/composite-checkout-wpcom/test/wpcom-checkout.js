@@ -121,10 +121,10 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 	// Tax line items show the expected amount
 	renderResult
 		.getAllByLabelText( 'Tax' )
-		.map( element => expect( element ).toHaveTextContent( 'R$5' ) );
+		.map( element => expect( element ).toHaveTextContent( 'R$7' ) );
 
 	// All elements labeled 'Total' show the expected price
 	renderResult
 		.getAllByLabelText( 'Total' )
-		.map( element => expect( element ).toHaveTextContent( 'R$149' ) );
+		.map( element => expect( element ).toHaveTextContent( 'R$156' ) );
 } );

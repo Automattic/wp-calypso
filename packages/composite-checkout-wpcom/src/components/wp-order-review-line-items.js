@@ -13,7 +13,6 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import Button from './button';
 import RadioButton from './radio-button';
-import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
 import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -56,18 +55,6 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 					>
 						<DeleteIcon uniqueID={ deleteButtonId } />
 					</DeleteButton>
-
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							removeProduct( item.id );
-						} }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
 				</React.Fragment>
 			) }
 
