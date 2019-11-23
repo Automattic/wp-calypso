@@ -119,20 +119,6 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getEditorDestination,
-			description: 'Testing flow for Gutenboarding.',
-			lastModified: '2019-09-26',
-		},
-
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,
@@ -332,9 +318,9 @@ export function generateFlows( {
 	if ( isEnabled( 'signup/full-site-editing' ) ) {
 		flows[ 'test-fse' ] = {
 			steps: [ 'user', 'domains', 'plans' ],
-			destination: getSignupDestination,
+			destination: getEditorDestination,
 			description: 'User testing Signup flow for Full Site Editing',
-			lastModified: '2019-11-19',
+			lastModified: '2019-11-22',
 		};
 	}
 
