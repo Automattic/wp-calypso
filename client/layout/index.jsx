@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import GlobalNotices from 'components/global-notices';
+import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
 import config from 'config';
 import OfflineStatus from 'layout/offline-status';
@@ -129,6 +130,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
+				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
