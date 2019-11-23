@@ -104,8 +104,8 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * @param {String} flowName The name of the flow to return
-	 * @returns {Object} A flow object
+	 * @param {string} flowName The name of the flow to return
+	 * @returns {object} A flow object
 	 */
 	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -141,7 +141,7 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {String} step Name of the step to be excluded.
+	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.push( step );
