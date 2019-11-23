@@ -1,5 +1,4 @@
 /* global fullSiteEditing */
-/* global calypsoifyGutenberg */
 
 /**
  * External dependencies
@@ -65,6 +64,13 @@ domReady( () => {
 
 		// These should go here so that they have any updates that happened while querying for the selector.
 		let { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
+
+		/**
+		 * We have to reference calypsoifyGutenberg off of the window object
+		 * directly to handle the case where it is undefined. Otherwise, the
+		 * variable declariation itself won't exist, causing a runtime error.
+		 */
+		const { calypsoifyGutenberg } = window;
 
 		// Use wpcom close button/url if they exist.
 		if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
