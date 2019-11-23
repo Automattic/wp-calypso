@@ -9,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { withDispatch, withSelect } from '@wordpress/data';
+import { withDispatch, withSelect, select, dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -404,6 +404,7 @@ registerPlugin( 'page-templates-sidebar', {
 				title={ __( 'Page Layout' ) }
 				className="page-template-modal__sidebar"
 				icon="admin-page"
+				initialOpen={ true }
 			>
 				<SidebarTemplatesPlugin
 					templates={ templates }
@@ -415,3 +416,11 @@ registerPlugin( 'page-templates-sidebar', {
 		);
 	},
 } );
+
+// console.log( select( 'core/edit-post' ).isPluginSidebarOpened( "page-template-sidebar") );
+// console.log( select( 'core/edit-post' ).isEditorPanelOpened( "Consumer/page-templates-sidebar" ) )
+// console.log( select( 'core/edit-post' ).isEditorPanelEnabled( "Consumer/Template Modal Opener" ) )
+// if( ! select( 'core/edit-post' ).isEditorPanelOpened( "Consumer/Template Modal Opener") ){
+// 	console.log("is it open???");
+// 	// dispatch( 'core/edit-post' ).toggleEditorPanelOpened( "Consumer/Template Modal Opener" );
+// }
