@@ -23,11 +23,11 @@ import { isSubdomain } from 'lib/domains';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
-	DOMAIN_HELPER_PREFIX,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN_UPDATE_DNS,
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
+	MAP_DOMAIN_CHANGE_NAME_SERVERS
 } from 'lib/url/support';
 import {
 	domainManagementEdit,
@@ -185,14 +185,14 @@ export class DomainWarnings extends React.PureComponent {
 				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
 				text = translate(
-					"{{strong}}%(domainName)s's{{/strong}} name server records need to be configured.",
+					"ACTION REQUIRED: Please contact your domain registrar to point {{strong}}%(domainName)s's{{/strong}} name server records to WordPress.com.",
 					{
 						components: { strong: <strong /> },
 						args: { domainName: domain.name },
 						context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 					}
 				);
-				learnMoreUrl = DOMAIN_HELPER_PREFIX + domain.name;
+				learnMoreUrl = MAP_DOMAIN_CHANGE_NAME_SERVERS;
 			}
 		} else {
 			offendingList = (
