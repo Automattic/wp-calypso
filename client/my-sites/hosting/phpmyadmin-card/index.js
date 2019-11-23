@@ -18,6 +18,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
+import {
+	composeAnalytics,
+	recordTracksEvent,
+	recordGoogleEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -46,9 +52,27 @@ export const requestPmaLink = siteId =>
 		}
 	);
 
-const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
+const trackOpenPhpmyadmin = () =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Hosting Configuration',
+			'Clicked "Open phpMyAdmin" Button in phpMyAdmin Card'
+		),
+		recordTracksEvent( 'calypso_hosting_configuration_open_phpmyadmin' ),
+		bumpStat( 'hosting-config', 'open-phpmyadmin' )
+	);
+
+const PhpMyAdminCard = ( {
+	translate,
+	siteId,
+	token,
+	loading,
+	disabled,
+	trackOpenPhpmyadmin: trackOpenDB,
+} ) => {
 	useEffect( () => {
 		if ( token ) {
+			trackOpenDB();
 			window.open( `https://wordpress.com/pma-login?token=${ token }` );
 		}
 		return () => resetHttpData( requestId( siteId ) );
@@ -140,14 +164,17 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 	);
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	const pmaTokenRequest = getHttpData( requestId( siteId ) );
+		const pmaTokenRequest = getHttpData( requestId( siteId ) );
 
-	return {
-		token: get( pmaTokenRequest.data, 'token', null ),
-		loading: pmaTokenRequest.state === 'pending',
-		siteId,
-	};
-} )( localize( PhpMyAdminCard ) );
+		return {
+			token: get( pmaTokenRequest.data, 'token', null ),
+			loading: pmaTokenRequest.state === 'pending',
+			siteId,
+		};
+	},
+	{ trackOpenPhpmyadmin }
+)( localize( PhpMyAdminCard ) );
