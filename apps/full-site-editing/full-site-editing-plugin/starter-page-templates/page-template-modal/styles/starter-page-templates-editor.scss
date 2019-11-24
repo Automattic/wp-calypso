@@ -74,7 +74,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     max-width: none;
     max-height: none;
     background-color: #eeeeee;
-    transform: translateZ(0);
+    transform: translateZ( 0 );
 }
 
 .page-template-modal .components-modal__header-heading-container {
@@ -342,7 +342,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	left: calc( 20% + 30px );
 	width: calc( 80% - 50px );
 	background: $template-selector-empty-background;
-	border-radius: 4px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	border: solid 2px $template-selector-border-color;
