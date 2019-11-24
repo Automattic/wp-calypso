@@ -9,6 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Accordion from 'components/accordion';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
@@ -17,6 +18,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
+import {
+	composeAnalytics,
+	recordTracksEvent,
+	recordGoogleEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -45,9 +52,27 @@ export const requestPmaLink = siteId =>
 		}
 	);
 
-const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
+const trackOpenPhpmyadmin = () =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Hosting Configuration',
+			'Clicked "Open phpMyAdmin" Button in phpMyAdmin Card'
+		),
+		recordTracksEvent( 'calypso_hosting_configuration_open_phpmyadmin' ),
+		bumpStat( 'hosting-config', 'open-phpmyadmin' )
+	);
+
+const PhpMyAdminCard = ( {
+	translate,
+	siteId,
+	token,
+	loading,
+	disabled,
+	trackOpenPhpmyadmin: trackOpenDB,
+} ) => {
 	useEffect( () => {
 		if ( token ) {
+			trackOpenDB();
 			window.open( `https://wordpress.com/pma-login?token=${ token }` );
 		}
 		return () => resetHttpData( requestId( siteId ) );
@@ -61,7 +86,44 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 			<p>
 				{ translate(
-					'Manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+				) }
+			</p>
+			<div className="phpmyadmin-card__questions">
+				<Accordion title={ translate( 'Do I need to Access my Database?' ) }>
+					{ translate(
+						'{{p}}Accessing your database is not required for your site to function. Do not touch your site’s database unless you have a very specific reason. If you’re unsure, contact a Happiness Engineer for help before accessing your database.{{/p}}' +
+							'{{p}}{{strong}}You should not ever run a command unless you know exactly what it will do.{{/strong}}{{/p}}' +
+							'{{p}}If you don’t understand what a command does, don’t run it. Running unknown commands without understanding them may lead to your site breaking, and can also cause you to lose data.{{/p}}' +
+							'{{p}}You may have come across articles that suggest manipulating the database to improve various aspects of your site. Here at WordPress.com we’ve already taken steps to ensure your site is optimized, and you should not need to do anything with your database directly.{{/p}}' +
+							'{{p}}We are happy to help with your site, however WordPress.com Happiness Engineers are not here to assist you with creating, modifying, or running database commands.{{/p}}',
+						{
+							components: {
+								p: <p />,
+								strong: <strong />,
+							},
+						}
+					) }
+				</Accordion>
+				<Accordion title={ translate( 'Reasons to Access my Database' ) }>
+					{ translate(
+						"{{p}}We allow full database access for any custom data needs you may have . Please only access this if you know what you're doing.{{/p}}",
+						{
+							components: {
+								p: <p />,
+							},
+						}
+					) }
+				</Accordion>
+			</div>
+			<p className="phpmyadmin-card__db-warning">
+				{ translate(
+					"Managing a database can be tricky. Only access if you know what you're doing. {{strong}}Need to manage your database?{{/strong}}",
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
 				) }
 			</p>
 			<Button
@@ -74,22 +136,19 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 			</Button>
 			{ ! disabled && (
 				<div className="phpmyadmin-card__restore-password">
-					{ translate(
-						'Problems accessing your database? Try {{a}}restoring the database password{{/a}}.',
-						{
-							components: {
-								a: (
-									<Button
-										compact
-										borderless
-										onClick={ () => {
-											setIsRestorePasswordDialogVisible( true );
-										} }
-									/>
-								),
-							},
-						}
-					) }
+					{ translate( 'Having problems with access? Try {{a}}resetting the password{{/a}}.', {
+						components: {
+							a: (
+								<Button
+									compact
+									borderless
+									onClick={ () => {
+										setIsRestorePasswordDialogVisible( true );
+									} }
+								/>
+							),
+						},
+					} ) }
 				</div>
 			) }
 			<RestorePasswordDialog
@@ -105,14 +164,17 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 	);
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	const pmaTokenRequest = getHttpData( requestId( siteId ) );
+		const pmaTokenRequest = getHttpData( requestId( siteId ) );
 
-	return {
-		token: get( pmaTokenRequest.data, 'token', null ),
-		loading: pmaTokenRequest.state === 'pending',
-		siteId,
-	};
-} )( localize( PhpMyAdminCard ) );
+		return {
+			token: get( pmaTokenRequest.data, 'token', null ),
+			loading: pmaTokenRequest.state === 'pending',
+			siteId,
+		};
+	},
+	{ trackOpenPhpmyadmin }
+)( localize( PhpMyAdminCard ) );

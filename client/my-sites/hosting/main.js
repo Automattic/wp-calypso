@@ -53,7 +53,7 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting } ) => {
 			<SidebarNavigation />
 			<FormattedHeader
 				headerText={ translate( 'Hosting Configuration' ) }
-				subHeaderText={ translate( 'Access your website and database directly.' ) }
+				subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
 				align="left"
 			/>
 			{ isDisabled && (
