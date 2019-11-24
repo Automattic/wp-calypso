@@ -205,7 +205,7 @@ const SftpCard = ( {
 								<>
 									<span>{ ! disabled && SFTP_PORT }</span>
 									<ClipboardButton
-										text={ SFTP_PORT }
+										text={ SFTP_PORT.toString() }
 										onCopy={ () => setIsCopied( 'port' ) }
 										compact
 									>
