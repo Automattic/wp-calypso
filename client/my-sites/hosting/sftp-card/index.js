@@ -58,7 +58,7 @@ const SftpCard = ( {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isPasswordReset, setPasswordReset ] = useState( false );
+	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
 	const urlIsCopied = isCopied === 'url';
@@ -71,7 +71,7 @@ const SftpCard = ( {
 	};
 
 	const resetPassword = () => {
-		setPasswordReset( true );
+		setPasswordLoading( true );
 		resetSftpPassword( siteId, currentUserId );
 	};
 
@@ -91,7 +91,7 @@ const SftpCard = ( {
 	useEffect( () => {
 		if ( username === null || username || password ) {
 			setIsLoading( false );
-			setPasswordReset( false );
+			setPasswordLoading( false );
 		}
 	}, [ username, password ] );
 
@@ -121,8 +121,8 @@ const SftpCard = ( {
 				<span>{ translate( 'You must reset your password to view it.' ) }</span>
 				<Button
 					onClick={ resetPassword }
-					disabled={ isPasswordReset }
-					busy={ isPasswordReset }
+					disabled={ isPasswordLoading }
+					busy={ isPasswordLoading }
 					compact
 				>
 					{ translate( 'Reset Password' ) }
