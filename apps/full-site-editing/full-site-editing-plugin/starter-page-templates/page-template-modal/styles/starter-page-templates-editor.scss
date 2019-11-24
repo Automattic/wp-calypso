@@ -71,10 +71,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     left: 0;
     right: 0;
     bottom: 0;
-    transform: none;
     max-width: none;
     max-height: none;
     background-color: #eeeeee;
+    transform: translateZ(0);
 }
 
 .page-template-modal .components-modal__header-heading-container {
@@ -293,11 +293,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 .page-template-modal__form {
 	@media screen and ( min-width: 660px ) {
-		max-width: 20%;
+		width: 20%;
 	}
 
 	@media screen and ( min-width: 783px ) {
-		max-width: 30%;
+		width: 30%;
 	}
 }
 
@@ -335,6 +335,19 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Template Selector Preview
 .template-selector-preview {
+	display: flex;
+  	position: fixed;
+  	top: 111px;
+	bottom: 25px;
+	left: calc( 20% + 30px );
+	width: calc( 80% - 50px );
+	background: $template-selector-empty-background;
+	border-radius: 4px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	border: solid 2px $template-selector-border-color;
+	border-radius: 6px;
+
 	@media screen and ( max-width: 659px ) {
 		display: none;
 	}
@@ -347,16 +360,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
-	position: fixed;
-	top: 111px;
-	bottom: 24px;
-	width: calc( 70% - 75px );
-	margin-left: calc( 30% + 25px );
-	background: $template-selector-empty-background;
-	border-radius: 4px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+	@media screen and ( min-width: 783px ) {
+		width: calc( 70% - 50px );
+		left: calc( 30% + 30px );
+	}
 
 	.edit-post-visual-editor {
 		margin: 0;
@@ -398,21 +405,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 body:not( .is-fullscreen-mode ) {
 	.template-selector-preview {
-		@media screen and ( min-width: 783px ) {
-			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-		}
-
-		@media screen and ( min-width: 961px ) {
-			width: calc( 70% - #{$wp-org-sidebar-full } );
-		}
-	}
-	@media screen and ( min-width: 783px ) {
-		&.folded .template-selector-preview {
-			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-		}
-		&:not( .folded ):not( .auto-fold ) .template-selector-preview {
-			width: calc( 70% - #{$wp-org-sidebar-full } );
-		}
+		bottom: 50px;
 	}
 }
 
