@@ -172,6 +172,7 @@ export const post = ( context, next ) => {
 
 	context.primary = (
 		<CalypsoifyIframe
+			key={ postId }
 			postId={ postId }
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }

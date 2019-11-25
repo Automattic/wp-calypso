@@ -94,6 +94,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
+	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 }
@@ -113,7 +114,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templatePorts: [ T.PostId, MessagePort ][] = [];
 	successfulIframeLoad = false;
 
 	componentDidMount() {
@@ -231,11 +231,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 			}
-
-			// Update the edit template part links with the ID of the FSE parent page.
-			this.templatePorts.forEach( ( [ templateId ] ) => {
-				this.sendTemplateEditorUrl( templateId );
-			} );
 		}
 
 		if ( EditorActions.TrashPost === action ) {
@@ -246,7 +241,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
+			this.navigate( this.props.closeUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -270,19 +265,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
 
-		if ( EditorActions.GetTemplateEditorUrl === action ) {
-			const { templateId } = payload;
-			if ( ! templateId ) {
-				return;
-			}
-			// Update the port if it already exists, otherwise add it:
-			const existingPort = this.templatePorts.findIndex( template => template[ 0 ] === templateId );
-			if ( existingPort >= 0 ) {
-				this.templatePorts[ existingPort ] = [ templateId, ports[ 0 ] ];
-			} else {
-				this.templatePorts.push( [ templateId, ports[ 0 ] ] );
-			}
-			this.sendTemplateEditorUrl( templateId );
+		if ( EditorActions.OpenTemplatePart === action ) {
+			const { templatePartId, unsavedChanges } = payload;
+			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
+			this.navigate( templatePartUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
@@ -321,29 +307,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			show_on_front: 'page',
 			page_on_front: editedPostId,
 		} );
-	};
-
-	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
-		const { closeUrl } = this.props;
-
-		if ( hasUnsavedChanges ) {
-			this.props.markChanged();
-		} else {
-			this.props.markSaved();
-		}
-
-		if ( this.shouldDoServerBackNav() ) {
-			messagePort.postMessage( `${ window.location.origin }${ closeUrl }` );
-		} else {
-			this.props.navigate( closeUrl );
-		}
-	};
-
-	// If we are on a template part and have a parent page
-	// ID, we want to do a server nav back to that page.
-	shouldDoServerBackNav = () => {
-		const { fseParentPageId, postType } = this.props;
-		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
@@ -482,12 +445,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				customizerUrl
 			);
 		}
-		if ( unsavedChanges ) {
-			this.props.markChanged();
-		} else {
-			this.props.markSaved();
-		}
-		this.props.navigate( customizerUrl );
+		this.navigate( customizerUrl, unsavedChanges );
 	};
 
 	getTemplateEditorUrl = ( templateId: T.PostId ) => {
@@ -501,12 +459,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		return templateEditorUrl;
 	};
 
-	sendTemplateEditorUrl = ( templateId: T.PostId ) => {
-		const templateEditorUrl = this.getTemplateEditorUrl( templateId );
-		const port = this.templatePorts.find(
-			( [ portTemplateId ] ) => portTemplateId === templateId
-		)[ 1 ];
-		port.postMessage( `${ window.location.origin }${ templateEditorUrl }` );
+	navigate = ( navUrl: string, unsavedChanges: boolean ) => {
+		const { markChanged, markSaved } = this.props;
+		unsavedChanges ? markChanged() : markSaved();
+		this.props.navigate( navUrl );
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
