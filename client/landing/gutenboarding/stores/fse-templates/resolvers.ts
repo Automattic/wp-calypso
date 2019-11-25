@@ -13,7 +13,8 @@ export function* getTemplates(
 	verticalId: Parameters< typeof import('./selectors')[ 'getTemplates' ] >[ 1 ]
 ) {
 	const templates = yield apiFetch( {
-		url: `https://public-api.wordpress.com/wpcom/v2/verticals/${ verticalId }/templates`,
+		// FIXME: Remove fixed `_locale=en` when endpoint supports _local=user
+		url: `https://public-api.wordpress.com/wpcom/v2/verticals/${ verticalId }/templates?_locale=en`,
 	} );
 
 	return receiveTemplates( verticalId, templates );
