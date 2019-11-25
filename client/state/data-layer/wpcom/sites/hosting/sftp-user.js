@@ -53,17 +53,13 @@ const resetAtomicSftpPassword = action => {
 	);
 };
 
-const receiveAtomicSftpUsersSuccess = ( action, { users } ) => {
-	const parsedUsers = users.map( user => ( {
-		username: user,
-	} ) );
-	return setAtomicSftpUsers( action.siteId, parsedUsers );
+const setSftpUsers = ( { siteId }, userList ) => {
+	return setAtomicSftpUsers( siteId, userList );
 };
 
-const receiveAtomicSftpUserSuccess = ( action, { username, password } ) =>
-	updateAtomicSftpUser( action.siteId, [ { username, password } ] );
+const updateSftpUser = ( action, userList ) => updateAtomicSftpUser( action.siteId, userList );
 
-const sftpUserError = ( { siteId } ) => [
+const displaySftpUserError = ( { siteId } ) => [
 	updateAtomicSftpUser( siteId, null ),
 	errorNotice(
 		translate(
@@ -75,26 +71,39 @@ const sftpUserError = ( { siteId } ) => [
 	),
 ];
 
+const userToUserList = ( { username, password } ) => {
+	return [ { username, password } ];
+};
+
+const usernameListToUsers = ( { users } ) => {
+	return users.map( user => ( {
+		username: user,
+	} ) );
+};
+
 registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 	[ HOSTING_SFTP_USERS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestAtomicSftpUsers,
-			onSuccess: receiveAtomicSftpUsersSuccess,
-			onError: sftpUserError,
+			onSuccess: setSftpUsers,
+			onError: displaySftpUserError,
+			fromApi: usernameListToUsers,
 		} ),
 	],
 	[ HOSTING_SFTP_USER_CREATE ]: [
 		dispatchRequest( {
 			fetch: createAtomicSftpUser,
-			onSuccess: receiveAtomicSftpUserSuccess,
-			onError: sftpUserError,
+			onSuccess: setSftpUsers,
+			onError: displaySftpUserError,
+			fromApi: userToUserList,
 		} ),
 	],
 	[ HOSTING_SFTP_PASSWORD_RESET ]: [
 		dispatchRequest( {
 			fetch: resetAtomicSftpPassword,
-			onSuccess: receiveAtomicSftpUserSuccess,
-			onError: sftpUserError,
+			onSuccess: updateSftpUser,
+			onError: displaySftpUserError,
+			fromApi: userToUserList,
 		} ),
 	],
 } );
