@@ -24,6 +24,7 @@ import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
 import { isPartnerPurchase, shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
@@ -46,8 +47,10 @@ class PurchasesListing extends Component {
 		selectedSiteSlug: PropTypes.string,
 		purchases: PropTypes.array,
 
-		// From localize() HoC
+		// From withLocalizedMoment() HoC
 		moment: PropTypes.func.isRequired,
+
+		// From localize() HoC
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -262,4 +265,4 @@ export default connect( state => {
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
-} )( localize( PurchasesListing ) );
+} )( localize( withLocalizedMoment( PurchasesListing ) ) );
