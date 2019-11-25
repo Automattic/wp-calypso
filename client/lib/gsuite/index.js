@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { endsWith, get, includes, some, sortBy } from 'lodash';
+import { endsWith, get, includes, isNumber, isString, some, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,13 +63,18 @@ function formatPrice( cost, currencyCode, options = {} ) {
 }
 
 /**
- * Gets the formatted annual cost
+ * Formats the specified yearly price.
  *
- * @param {Number} cost - cost
- * @param {String} currencyCode - currency code to format with
- * @returns {String} - Formatted Annual price
+ * @param {number} cost - yearly cost (e.g. '99.99')
+ * @param {string} currencyCode - code of the currency (e.g. 'USD')
+ * @param {string} defaultValue - value to return when the price can't be determined
+ * @returns {string} - the yearly price formatted (e.g. '$99.99'), otherwise the default value
  */
-function getAnnualPrice( cost, currencyCode ) {
+function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
+	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
+		return defaultValue;
+	}
+
 	return formatPrice( cost, currencyCode );
 }
 
@@ -140,13 +145,18 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 }
 
 /**
- * Gets the formatted monthly cost
+ * Computes and formats the monthly price from the specified yearly price.
  *
- * @param {Number} cost - cost
- * @param {String} currencyCode - currency code to format with
- * @returns {String} - Formatted Monthly price, rounded to the nearest tenth
+ * @param {number} cost - yearly cost (e.g. '99.99')
+ * @param {string} currencyCode - code of the currency (e.g. 'USD')
+ * @param {string} defaultValue - value to return when the price can't be determined
+ * @returns {string} - the monthly price rounded to the nearest tenth (e.g. '$8.40'), otherwise the default value
  */
-function getMonthlyPrice( cost, currencyCode ) {
+function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
+	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
+		return defaultValue;
+	}
+
 	return formatPrice( cost / 12, currencyCode, { precision: 1 } );
 }
 
@@ -216,7 +226,6 @@ function isGSuiteRestricted() {
 
 export {
 	canDomainAddGSuite,
-	formatPrice,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
 	getGSuiteSettingsUrl,

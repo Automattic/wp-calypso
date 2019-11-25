@@ -40,7 +40,7 @@ exports[`GSuitePurchaseCta renders correctly 1`] = `
           className="gsuite-price"
         >
           <h4
-            className="gsuite-price__price-per-user"
+            className="gsuite-price__price-per-user-per-month"
           >
             <span>
               <strong>
@@ -50,7 +50,7 @@ exports[`GSuitePurchaseCta renders correctly 1`] = `
             </span>
           </h4>
           <h5
-            className="gsuite-price__annual-price"
+            className="gsuite-price__price-per-user-per-year"
           >
             €76 billed yearly
           </h5>

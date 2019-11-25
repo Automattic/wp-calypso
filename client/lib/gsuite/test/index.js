@@ -3,7 +3,9 @@
  */
 import {
 	canDomainAddGSuite,
+	getAnnualPrice,
 	getEligibleGSuiteDomain,
+	getMonthlyPrice,
 	getGSuiteSupportedDomains,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
@@ -33,6 +35,42 @@ describe( 'index', () => {
 
 		test( 'returns false when domain has banned phrase', () => {
 			expect( canDomainAddGSuite( 'foobargoogle.blog' ) ).toEqual( false );
+		} );
+	} );
+
+	describe( '#getAnnualPrice', () => {
+		test( 'returns default value when no parameter provided', () => {
+			expect( getAnnualPrice() ).toEqual( '-' );
+		} );
+
+		test( 'returns default value when only default value provided', () => {
+			expect( getAnnualPrice( null, null, '' ) ).toEqual( '' );
+		} );
+
+		test( 'returns valid monthly price when cost is integer', () => {
+			expect( getAnnualPrice( 120, 'EUR' ) ).toEqual( '€120' );
+		} );
+
+		test( 'returns valid monthly price when cost is float', () => {
+			expect( getAnnualPrice( 99.99, 'USD' ) ).toEqual( '$99.99' );
+		} );
+	} );
+
+	describe( '#getMonthlyPrice', () => {
+		test( 'returns default value when no parameter provided', () => {
+			expect( getMonthlyPrice() ).toEqual( '-' );
+		} );
+
+		test( 'returns default value when only default value provided', () => {
+			expect( getMonthlyPrice( null, null, '/' ) ).toEqual( '/' );
+		} );
+
+		test( 'returns valid monthly price when cost is integer', () => {
+			expect( getMonthlyPrice( 120, 'EUR' ) ).toEqual( '€10' );
+		} );
+
+		test( 'returns valid monthly price when cost is float', () => {
+			expect( getMonthlyPrice( 99.99, 'USD' ) ).toEqual( '$8.40' );
 		} );
 	} );
 
