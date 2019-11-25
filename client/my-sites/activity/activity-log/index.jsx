@@ -415,6 +415,8 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
+				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
+
 				<FormattedHeader
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
@@ -425,7 +427,6 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
