@@ -558,8 +558,8 @@ export async function retarget( urlPath ) {
 /**
  * Fire custom facebook conversion tracking event.
  *
- * @param {String} name - The name of the custom event.
- * @param {Object} properties - The custom event attributes.
+ * @param {string} name - The name of the custom event.
+ * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomFacebookConversionEvent( name, properties ) {
@@ -569,7 +569,7 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
 /**
  * Fire custom adwords conversation tracking event.
  *
- * @param {Object} properties - The custom event attributes.
+ * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomAdWordsRemarketingEvent( properties ) {
@@ -722,7 +722,7 @@ export async function recordRegistration() {
  * Tracks a signup conversion by generating a
  * synthetic cart and then treating it like an order.
  *
- * @param {String} slug - Signup slug.
+ * @param {string} slug - Signup slug.
  * @returns {void}
  */
 export async function recordSignup( slug ) {
@@ -885,7 +885,7 @@ export function retargetViewPlans() {
 /**
  * Records that an item was added to the cart
  *
- * @param {Object} cartItem - The item added to the cart
+ * @param {object} cartItem - The item added to the cart
  * @returns {void}
  */
 export async function recordAddToCart( cartItem ) {
@@ -1007,7 +1007,7 @@ export async function recordAddToCart( cartItem ) {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  */
 export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {
@@ -1018,8 +1018,8 @@ export function recordViewCheckout( cart ) {
 /**
  * Tracks a purchase conversion
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 export async function recordOrder( cart, orderId ) {
@@ -1145,9 +1145,9 @@ export async function recordOrder( cart, orderId ) {
 /**
  * Records an order in Quantcast
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1201,9 +1201,9 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in DCM Floodlight
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1253,9 +1253,8 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInFacebook( cart, orderId ) {
@@ -1332,9 +1331,9 @@ export function recordAliasInFloodlight() {
 /**
  * Records a signup|purchase in Bing.
  *
- * @param {Object} cart - cart as `CartValue` object.
- * @param {Number} orderId - the order ID.
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {object} cart - cart as `CartValue` object.
+ * @param {number} orderId - the order ID.
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
@@ -1394,7 +1393,7 @@ export function recordSignupCompletionInFloodlight() {
 /**
  * Track a page view in DCM Floodlight
  *
- * @param {String} urlPath - The URL path
+ * @param {string} urlPath - The URL path
  * @returns {void}
  */
 export function recordPageViewInFloodlight( urlPath ) {
@@ -1428,7 +1427,7 @@ export function recordPageViewInFloodlight( urlPath ) {
 /**
  * Returns the DCM Floodlight session id, generating a new one if there's not already one
  *
- * @returns {String} The session id
+ * @returns {string} The session id
  */
 function floodlightSessionId() {
 	const cookies = cookie.parse( document.cookie );
@@ -1448,7 +1447,7 @@ function floodlightSessionId() {
 /**
  * Returns an object with DCM Floodlight user params
  *
- * @returns {Object} With the WordPress.com user id and/or the logged out Tracks id
+ * @returns {object} With the WordPress.com user id and/or the logged out Tracks id
  */
 function floodlightUserParams() {
 	const params = {};
@@ -1469,7 +1468,7 @@ function floodlightUserParams() {
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
  *
- * @returns {String} - The Tracks anonymous user id
+ * @returns {string} - The Tracks anonymous user id
  */
 function tracksAnonymousUserId() {
 	const cookies = cookie.parse( document.cookie );
@@ -1479,7 +1478,7 @@ function tracksAnonymousUserId() {
 /**
  * Records Floodlight events using Gtag and automatically adds `u4`, `u5`, and `allow_custom_scripts: true`.
  *
- * @param {Object} params An object of Floodlight params.
+ * @param {object} params An object of Floodlight params.
  */
 function recordParamsInFloodlightGtag( params ) {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
@@ -1502,8 +1501,8 @@ function recordParamsInFloodlightGtag( params ) {
 /**
  * Records an order in Criteo
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
@@ -1526,7 +1525,7 @@ function recordOrderInCriteo( cart, orderId ) {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {void}
  */
 function recordViewCheckoutInCriteo( cart ) {
@@ -1553,7 +1552,7 @@ function recordViewCheckoutInCriteo( cart ) {
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
- * @param {Object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 function cartToCriteoItems( cart ) {
@@ -1587,8 +1586,8 @@ function recordPlansViewInCriteo() {
 /**
  * Records an event in Criteo
  *
- * @param {String} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
- * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
+ * @param {object} eventProps - Additional details about the event such as `{ item: '1' }`
  *
  * @returns {void}
  */
@@ -1622,10 +1621,9 @@ async function recordInCriteo( eventName, eventProps ) {
 
 /**
  * Returns the site type value that Criteo expects
+ * Note: this logic was provided by Criteo and should not be modified
  *
- * @note This logic was provided by Criteo and should not be modified
- *
- * @returns {String} 't', 'm', or 'd' for tablet, mobile, or desktop
+ * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {
 	if ( /iPad/.test( navigator.userAgent ) ) {
@@ -1642,8 +1640,8 @@ function criteoSiteType() {
 /**
  * Records an order/sign_up in Google Ads Gtag
  *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
+ * @param {object} cart - cart as `CartValue` object
+ * @param {number} orderId - the order id
  * @returns {void}
  */
 function recordOrderInGoogleAds( cart, orderId ) {
@@ -1673,7 +1671,7 @@ function recordOrderInGoogleAds( cart, orderId ) {
  *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
  *
- * @returns {String} The URL
+ * @returns {string} The URL
  */
 function quantcastAsynchronousTagURL() {
 	const protocolAndSubdomain =
@@ -1721,7 +1719,7 @@ function setupWpcomFloodlightGtag() {
  *
  * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
  *
- * @returns {Boolean} true if GA is allowed.
+ * @returns {boolean} true if GA is allowed.
  */
 export function isGoogleAnalyticsAllowed() {
 	return (
@@ -1736,7 +1734,7 @@ export function isGoogleAnalyticsAllowed() {
 /**
  * Returns the default configuration for Google Analytics
  *
- * @return {Object} GA's default config
+ * @returns {object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
 	const currentUser = getCurrentUser();
@@ -1755,8 +1753,8 @@ export function getGoogleAnalyticsDefaultConfig() {
 /**
  * Fires Google Analytics page view event
  *
- * @param {String} urlPath The path of the current page
- * @param {String} pageTitle The title of the current page
+ * @param {string} urlPath The path of the current page
+ * @param {string} pageTitle The title of the current page
  */
 export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
@@ -1769,10 +1767,10 @@ export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
 /**
  * Fires a generic Google Analytics event
  *
- * @param {String} category Is the string that will appear as the event category.
- * @param {String} action Is the string that will appear as the event action in Google Analytics Event reports.
- * @param {String} label Is the string that will appear as the event label.
- * @param {Integer} value Is a non-negative integer that will appear as the event value.
+ * @param {string} category Is the string that will appear as the event category.
+ * @param {string} action Is the string that will appear as the event action in Google Analytics Event reports.
+ * @param {string} label Is the string that will appear as the event label.
+ * @param {number} value Is a non-negative integer that will appear as the event value.
  */
 export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 	window.gtag( 'event', action, {
@@ -1785,10 +1783,10 @@ export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 /**
  * Fires a generic Google Analytics timing
  *
- * @param {String} name A string to identify the variable being recorded (e.g. 'load').
- * @param {Integer} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
- * @param {String} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
- * @param {String} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
+ * @param {string} name A string to identify the variable being recorded (e.g. 'load').
+ * @param {number} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
+ * @param {string} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
+ * @param {string} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
  */
 export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
 	window.gtag( 'event', 'timing_complete', {
@@ -1829,7 +1827,7 @@ function initFacebook() {
 /**
  * Loads Google reCAPTCHA
  *
- * @returns {Boolean} false if the script failed to load
+ * @returns {boolean} false if the script failed to load
  */
 async function loadGoogleRecaptchaScript() {
 	if ( window.grecaptcha ) {
@@ -1895,8 +1893,8 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
 
 /**
  * @typedef RecaptchaActionResult
- * @prop {string} token
- * @prop {number} clientId
+ * @property {string} token
+ * @property {number} clientId
  */
 
 /**

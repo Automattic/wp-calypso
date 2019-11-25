@@ -577,7 +577,7 @@ const analytics = {
 		/**
 		 * Returns the anoymous id stored in the `tk_ai` cookie
 		 *
-		 * @returns {String} - The Tracks anonymous user id
+		 * @returns {string} - The Tracks anonymous user id
 		 */
 		anonymousUserId: function() {
 			const cookies = cookie.parse( document.cookie );
@@ -759,7 +759,7 @@ const analytics = {
  * @see isGoogleAnalyticsAllowed
  *
  * @param  {Function} func Google Analytics tracking function
- * @return {Function}      Wrapped function
+ * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function( ...args ) {
