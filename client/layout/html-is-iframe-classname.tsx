@@ -20,10 +20,14 @@ const HtmlIsIframeClassname = () => {
 		}
 
 		if ( isIframe ) {
+			// App state dictates the html node should have class `is-iframe`. Add it.
 			htmlNode.classList.add( 'is-iframe' );
+
+			// Remove the CSS class from the html node in the effect cleanup function
 			return () => htmlNode.classList.remove( 'is-iframe' );
 		}
 
+		// App state dictates the html node should not have class `is-iframe`. Remove it.
 		htmlNode.classList.remove( 'is-iframe' );
 	}, [ isIframe ] );
 
