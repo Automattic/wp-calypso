@@ -905,6 +905,24 @@ const contextLinksForSection = {
 			),
 		},
 	],
+	hosting: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/sftp/' ),
+			post_id: 159771,
+			title: translate( 'SFTP Credentials' ),
+			description: translate(
+				"Access and edit your website's files directly by using an SFTP client."
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/database-access/' ),
+			post_id: 159822,
+			title: translate( 'Database Access' ),
+			description: translate(
+				'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+			),
+		},
+	],
 };
 
 /*
