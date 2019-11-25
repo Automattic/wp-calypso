@@ -1,16 +1,18 @@
 /**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
  *
- *     1. The request format required by the cart endpoint (SET)
- *     2. The response format of the cart endpoint (SET)
- *     3. The response format of the cart endpoint (GET)
+ *     1. The response format of the cart endpoint (GET)
+ *     2. The response format of the cart endpoint (POST)
+ *     3. The request format required by the cart endpoint (POST)
  *
- * In this file we try to nail these down as types. For simplicity's sake we will
- * combine the response format for GET and SET into one type.
+ * In practice the response formats of GET and POST request are not exactly the same,
+ * but we define here an object type with properties common to both which is sufficient
+ * for checkout.
  *
+ * The POST endpoint has its own ad-hot request format for the cart. We make this explicit
+ * and define a function for converting the response cart into a request cart.
  *
- *
- * @see https://opengrok.a8c.com/source/xref/trunk/public.api/rest/wpcom-json-endpoints/class.wpcom-json-api-me-shopping-cart-endpoints.php
+ * @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
  */
 
 /**
@@ -64,13 +66,23 @@ export interface ResponseCartProduct {
 	meta: string;
 }
 
+export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
+	product_slug,
+	meta,
+}: ResponseCartProduct ) => {
+	return {
+		product_slug: product_slug,
+		meta: meta,
+	} as RequestCartProduct;
+};
+
 export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 	products,
 	currency,
 	locale,
 	coupon,
 }: ResponseCart ) => {
-	return <RequestCart>{
+	return {
 		products: products.map( prepareRequestCartProduct ),
 		currency: currency,
 		locale: locale,
@@ -79,15 +91,5 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		// tax: any[]; // TODO: fix this
 		// is_coupon_applied: boolean;
 		// extra: any[]; // TODO: fix this
-	};
-};
-
-export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
-	product_slug,
-	meta,
-}: ResponseCartProduct ) => {
-	return <RequestCartProduct>{
-		product_slug: product_slug,
-		meta: meta,
-	};
+	} as RequestCart;
 };

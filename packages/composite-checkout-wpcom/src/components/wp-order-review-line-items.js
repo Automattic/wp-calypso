@@ -31,13 +31,12 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
+function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
+	const [ , setIsModalVisible ] = useState( false );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -50,6 +49,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 					<DeleteButton
 						buttonState="borderless"
 						onClick={ () => {
+							removeItem( item );
 							setIsModalVisible( true );
 						} }
 					>
@@ -68,7 +68,7 @@ WPLineItem.propTypes = {
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,
-	removeProduct: PropTypes.func,
+	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
 		amount: PropTypes.shape( {
@@ -184,7 +184,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	hasDeleteButtons,
-	removeProduct,
+	removeItem,
 } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -194,7 +194,7 @@ export function WPOrderReviewLineItems( {
 					key={ item.id }
 					item={ item }
 					hasDeleteButtons={ hasDeleteButtons }
-					removeProduct={ removeProduct }
+					removeItem={ removeItem }
 				/>
 			) ) }
 		</div>

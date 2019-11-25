@@ -28,9 +28,8 @@ const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
 // Called when the store is changed.
-const handleCheckoutEvent = select => () => {
+const handleCheckoutEvent = _ => () => {
 	// TODO: write this
-	console.log( `handleCheckoutEvent: ${ select }` );
 };
 
 const ContactFormTitle = () => {
@@ -47,7 +46,7 @@ const OrderReviewTitle = () => {
 // This is the parent component which would be included on a host page
 export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, registry } ) {
 	const translate = useTranslate();
-	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, removeItem } = useShoppingCart();
 	const { select, subscribe } = registry;
 
 	useEffect( () => {
@@ -55,14 +54,7 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 	}, [ select, subscribe ] );
 
 	const ReviewContent = () => (
-		/* <OrderReview
-			items={ items }
-			tax={ tax }
-			total={ total }
-			onDeleteItem={ deleteItem }
-			onChangePlanLength={ changePlanLength }
-		/> */
-		<WPCheckoutOrderReview className={ 'checkout__order-review-step' } />
+		<WPCheckoutOrderReview className={ 'checkout__order-review-step' } removeItem={ removeItem } />
 	);
 
 	// TODO: should we memoize this?

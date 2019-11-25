@@ -11,11 +11,40 @@ import {
 	ResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
+	emptyWPCOMCart,
 	CheckoutCartItem,
-	CheckoutCartItemAmount,
 	CheckoutCartTotal,
 } from '../types';
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
+
+/**
+ * This module provides a hook for manipulating the shopping cart state,
+ * bundled into a ShoppingCartManager object. All of the details of
+ * validation and pricing are handled by the backend, and the details of
+ * communicating with the backend are handled inside the hook. The interface
+ * exposed by the hook consists of the following:
+ *
+ *     * items: the array of items currently in the cart
+ *     * tax: the tax line item
+ *     * total: the total price line item
+ *     * addItem: callback for adding an item to the cart
+ *     * deleteItem: callback for removing an item from the cart
+ */
+export interface ShoppingCartManager {
+	items: WPCOMCartItem[];
+	tax: CheckoutCartItem;
+	total: CheckoutCartTotal;
+	addItem: ( WPCOMCartItem ) => void;
+	removeItem: ( WPCOMCartItem ) => void;
+}
+
+/**
+ * The custom hook keeps a cached version of the server cart, as well as a
+ * "boolean" representing whether the cache has been invalidated. We set this
+ * to 'invalid' when the cache is edited and back to 'valid' after reloading
+ * the cart from the server.
+ */
+type CacheStatus = 'valid' | 'invalid';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -39,89 +68,83 @@ import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
  *       not changed.
  *
  * @param setServerCart
- *     An asynchronous wrapper around the wpcom shopping cart
+ *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
- * @param getServerCart
- *     Initial request parameter as expected by the cart endpoint
- *     on the backend, passed in from the host page.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
- * @returns {function()} Custom React hook
- *     To be passed as a prop to the WPCOMCheckout component.
+ * @param getServerCart
+ *     An asynchronous wrapper around the wpcom shopping cart GET
+ *     endpoint. We pass this in to make testing easier.
+ *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
+ * @returns
+ *     A hook () => ShoppingCartManager to be passed as a prop to
+ *     WPCOMCheckout, where it should be called exactly once per render.
  */
 export function makeShoppingCartHook(
 	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
 	getServerCart: () => Promise< ResponseCart >
 ): () => ShoppingCartManager {
 	return () => {
-		// Stored shopping cart endpoint response.
-		// We manipulate this directly and pass it back to
-		// the endpoint on update events.
+		// Stored shopping cart endpoint response. We manipulate this
+		// directly and pass it back to the endpoint on update events.
+		// Note that on the first render this state is undefined
+		// since we have to get the initial cart response asynchronously.
 		const [ responseCart, setResponseCart ] = useState< ResponseCart | undefined >( undefined );
 
-		// Stored representation of the cart for checkout.
-		// The default value is needed because we populate
-		// the cart with an async call to the endpoint via
-		// translateWpcomCartToCheckoutCart().
-		const [ cart, setCart ] = useState< WPCOMCart >( {
-			items: [] as WPCOMCartItem[],
-			tax: {
-				id: 'tax-line-item',
-				label: 'Tax',
-				type: 'tax',
-				amount: {
-					value: 0,
-					currency: '',
-					displayValue: '',
-				} as CheckoutCartItemAmount,
-			} as CheckoutCartItem,
-			total: {
-				label: 'Total',
-				amount: {
-					value: 0,
-					currency: '',
-					displayValue: '',
-				} as CheckoutCartItemAmount,
-			} as CheckoutCartTotal,
-			allowedPaymentMethods: [],
-		} );
+		// Used to determine whether we need to re-validate the cart on
+		// the backend. We can't use responseCart directly to decide this
+		// in e.g. useEffect because this causes an infinite loop.
+		const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'invalid' );
 
-		// Asynchronously initialize and translate the cart. This
-		// only needs to happen once.
+		// Asynchronously initialize the cart. This should happen exactly once.
 		useEffect( () => {
-			const fetchAndUpdate = async () => {
-				await getServerCart().then( response => {
-					setCart( translateWpcomCartToCheckoutCart( response ) );
-				} );
+			const initializeResponseCart = async () => {
+				if ( typeof responseCart === undefined ) {
+					await getServerCart().then( response => {
+						setResponseCart( response );
+						setCacheStatus( 'valid' );
+					} );
+				}
 			};
-			fetchAndUpdate().catch( error => {
-				console.log( error );
+			initializeResponseCart().catch( error => {
+				// TODO: figure out what to do here
+				alert( error );
 			} );
 		}, [] );
 
-		// Asynchronously get and translate the cart when responseCart changes.
+		// Asynchronously re-validate when the cache is dirty.
 		useEffect( () => {
 			const fetchAndUpdate = async () => {
-				if ( typeof responseCart !== 'undefined' ) {
+				if ( typeof responseCart !== 'undefined' && cacheStatus === 'invalid' ) {
 					await setServerCart( prepareRequestCart( responseCart ) ).then( response => {
-						setCart( translateWpcomCartToCheckoutCart( response ) );
+						setResponseCart( response );
+						setCacheStatus( 'valid' );
 					} );
 				}
 			};
 			fetchAndUpdate().catch( error => {
-				console.log( error );
+				// TODO: figure out what to do here
+				alert( error );
 			} );
-		}, [ responseCart ] );
+		}, [ cacheStatus ] );
 
-		const addItem = item => {
-			alert( 'addItem: ' + item );
+		// Translate the responseCart into the format needed in checkout.
+		const cart: WPCOMCart =
+			typeof responseCart === 'undefined'
+				? emptyWPCOMCart
+				: translateWpcomCartToCheckoutCart( responseCart );
+
+		const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
+			alert( 'addItem: ' + itemToAdd );
+			setCacheStatus( 'invalid' );
 			setResponseCart( responseCart );
 		};
 
-		const deleteItem = itemToDelete => {
+		const removeItem: ( WPCOMCartItem ) => void = itemToRemove => {
 			if ( typeof responseCart !== 'undefined' ) {
 				const filteredProducts = responseCart.products.filter( ( _, index ) => {
-					return index !== itemToDelete.wpcom_meta.uuid;
+					return index !== itemToRemove.wpcom_meta.uuid;
 				} );
+				setCacheStatus( 'invalid' );
 				setResponseCart( { ...responseCart, products: filteredProducts } );
 			}
 		};
@@ -143,17 +166,9 @@ export function makeShoppingCartHook(
 			tax: cart.tax,
 			total: cart.total,
 			addItem,
-			deleteItem,
+			removeItem,
 			changePlanLength,
 			updatePricesForAddress,
 		} as ShoppingCartManager;
 	};
-}
-
-export interface ShoppingCartManager {
-	items: WPCOMCartItem[];
-	tax: CheckoutCartItem;
-	total: CheckoutCartTotal;
-	addItem: ( WPCOMCartItem ) => void;
-	deleteItem: ( WPCOMCartItem ) => void;
 }
