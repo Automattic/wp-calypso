@@ -64,10 +64,10 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const { setSiteVertical, resetSiteVertical } = useDispatch( STORE_KEY );
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-		setInputValue( e.target.value );
 		if ( e.target.value !== inputValue && ! dirty ) {
 			setDirty( true );
 		}
+		setInputValue( e.target.value );
 	};
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
