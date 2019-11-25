@@ -15,6 +15,7 @@ import {
 	createApplePayMethod,
 	createCreditCardMethod,
 	useIsStepActive,
+	usePaymentData,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderSummaryStep,
 	getDefaultOrderReviewStep,
@@ -140,9 +141,26 @@ const ContactFormTitle = () => {
 	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
 };
 
-function ContactForm() {
-	// TODO: define one for this demo
-	return <span>TODO</span>;
+function ContactForm( { summary } ) {
+	const [ paymentData, changePaymentData ] = usePaymentData();
+	const { billing = {} } = paymentData;
+	const { country = '' } = billing;
+	const onChangeCountry = event =>
+		changePaymentData( 'billing', { ...billing, country: event.target.value } );
+	if ( summary ) {
+		return (
+			<div>
+				<div>Country</div>
+				<span>{ country }</span>
+			</div>
+		);
+	}
+	return (
+		<div>
+			<label htmlFor="country">Country</label>
+			<input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+		</div>
+	);
 }
 
 const steps = [
@@ -157,10 +175,9 @@ const steps = [
 		className: 'checkout__billing-details-step',
 		hasStepNumber: true,
 		titleContent: <ContactFormTitle />,
-		activeStepContent: <ContactForm isComplete={ false } isActive={ true } />,
-		completeStepContent: <ContactForm summary isComplete={ true } isActive={ false } />,
+		activeStepContent: <ContactForm />,
+		completeStepContent: <ContactForm summary />,
 		isCompleteCallback: ( { paymentData } ) => {
-			// TODO: Make sure the form is complete
 			const { billing = {} } = paymentData;
 			if ( ! billing.country ) {
 				return false;
@@ -168,7 +185,6 @@ const steps = [
 			return true;
 		},
 		isEditableCallback: ( { paymentData } ) => {
-			// TODO: Return true if the form is empty
 			if ( paymentData.billing ) {
 				return true;
 			}
