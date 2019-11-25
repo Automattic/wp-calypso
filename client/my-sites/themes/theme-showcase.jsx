@@ -294,7 +294,7 @@ class ThemeShowcase extends React.Component {
 						) }
 					</div>
 
-					<div className={ ! this.state.isShowcaseOpen && 'themes__hidden-content' }>
+					<div className={ ! this.state.isShowcaseOpen ? 'themes__hidden-content' : null }>
 						<h2>
 							<strong>{ translate( 'Advanced Themes' ) }</strong>
 						</h2>

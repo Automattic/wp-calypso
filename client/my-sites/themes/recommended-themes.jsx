@@ -21,7 +21,9 @@ class RecommendedThemes extends React.Component {
 	render() {
 		return (
 			<>
-				<h1>{ translate( 'Recommended Themes:' ) }</h1>
+				<h2>
+					<strong>{ translate( 'Recommended Themes:' ) }</strong>
+				</h2>
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
 				) : (

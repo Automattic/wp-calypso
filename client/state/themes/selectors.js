@@ -242,9 +242,22 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
 		if ( ! themesForQueryIgnoringPage ) {
 			return null;
+		}
+
+		// if query is default, filter out feature:auto-loading-homepage
+		if ( ! query.search && ! query.filter ) {
+			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
+				if ( theme.taxonomies ) {
+					return ! find(
+						theme.taxonomies.theme_feature,
+						feature => feature.slug === 'auto-loading-homepage'
+					);
+				}
+				return true;
+			} );
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
