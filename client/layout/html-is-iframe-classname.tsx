@@ -26,10 +26,10 @@ const HtmlIsIframeClassname = () => {
 		if ( isIframe ) {
 			debug( 'adding is-iframe' );
 			htmlNode.classList.add( 'is-iframe' );
-		} else {
-			debug( 'removing is-iframe' );
-			htmlNode.classList.remove( 'is-iframe' );
+			return () => htmlNode.classList.remove( 'is-iframe' );
 		}
+		debug( 'removing is-iframe' );
+		htmlNode.classList.remove( 'is-iframe' );
 	}, [ isIframe ] );
 
 	return null;
