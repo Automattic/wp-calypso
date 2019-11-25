@@ -195,7 +195,7 @@ class PurchasesListing extends Component {
 						action={ this.getActionButton( currentPlan ) }
 						details={ this.getExpirationInfo( currentPlan ) }
 						isError={ isPlanExpiring }
-						plan={ currentPlanSlug }
+						product={ currentPlanSlug }
 						tagline={ this.getTagline( currentPlan ) }
 						title={ this.getTitle( currentPlan ) }
 					/>
@@ -227,7 +227,7 @@ class PurchasesListing extends Component {
 						details={ this.getExpirationInfo( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
-						plan={ purchase?.productSlug }
+						product={ purchase?.productSlug }
 						tagline={ this.getTagline( purchase ) }
 						title={ this.getTitle( purchase ) }
 					/>

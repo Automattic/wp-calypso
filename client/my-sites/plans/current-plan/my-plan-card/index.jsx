@@ -9,14 +9,14 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import PlanIcon from 'components/plans/plan-icon';
+import ProductIcon from 'components/product-icon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagline, title } ) => {
+const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline, title } ) => {
 	const cardClassNames = classNames( 'my-plan-card', {
 		'is-placeholder': isPlaceholder,
 		'has-action-only': action && ! details && ! isPlaceholder,
@@ -26,7 +26,7 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, plan, tagline, t
 	return (
 		<Card className={ cardClassNames } compact>
 			<div className="my-plan-card__primary">
-				<div className="my-plan-card__icon">{ plan && <PlanIcon plan={ plan } /> }</div>
+				<div className="my-plan-card__icon">{ product && <ProductIcon product={ product } /> }</div>
 				<div className="my-plan-card__header">
 					{ title && <h2 className="my-plan-card__title">{ title }</h2> }
 					{ tagline && <p className="my-plan-card__tagline">{ tagline }</p> }
@@ -47,7 +47,7 @@ MyPlanCard.propTypes = {
 	isError: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	details: PropTypes.string,
-	plan: PropTypes.string,
+	product: PropTypes.string,
 	tagline: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 };
