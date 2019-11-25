@@ -35,7 +35,8 @@
 		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
-		"predev": "npm run clean"
+		"predev": "npm run clean",
+		"sync:homepage-articles": "./bin/sync-homepage-articles.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
