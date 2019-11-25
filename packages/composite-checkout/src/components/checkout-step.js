@@ -88,7 +88,7 @@ function CheckoutStepHeader( {
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
-				{ stepNumber || '•' }
+				{ stepNumber || null }
 			</Stepper>
 			<StepTitle
 				className="checkout-step__title"
