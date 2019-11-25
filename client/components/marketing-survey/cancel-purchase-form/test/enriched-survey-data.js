@@ -15,28 +15,23 @@ describe( 'enrichedSurveyData', () => {
 	} );
 
 	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
-		const site = null;
 		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect( enrichedSurveyData( { key: 'value' }, site, purchase ).purchase ).toEqual(
-			'product slug'
-		);
+		expect( enrichedSurveyData( { key: 'value' }, purchase ).purchase ).toEqual( 'product slug' );
 	} );
 
 	test( 'should add daysSincePurchase to survey data when purchase.subscribedDate is provided', () => {
-		const site = null;
 		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
 		expect(
-			enrichedSurveyData( {}, site, purchase, '2017-01-19T03:00:00+00:00' ).daysSincePurchase
+			enrichedSurveyData( {}, purchase, '2017-01-19T03:00:00+00:00' ).daysSincePurchase
 		).toEqual( 10 );
 	} );
 
 	test( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', () => {
-		const site = {
-			options: { created_at: '2017-01-09T03:00:00+00:00' },
+		const purchase = {
+			blog_created_at: '2017-01-09T03:00:00+00:00',
 		};
-		const purchase = null;
 		expect(
-			enrichedSurveyData( {}, site, purchase, '2017-01-19T03:00:00+00:00' ).daysSinceSiteCreation
+			enrichedSurveyData( {}, purchase, '2017-01-19T03:00:00+00:00' ).daysSinceSiteCreation
 		).toEqual( 10 );
 	} );
 } );

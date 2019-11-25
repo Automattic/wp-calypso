@@ -94,7 +94,7 @@ class CancelAutoRenewalForm extends Component {
 		submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSite.ID,
-			enrichedSurveyData( surveyData, selectedSite, purchase )
+			enrichedSurveyData( surveyData, purchase )
 		);
 
 		this.props.onClose();
