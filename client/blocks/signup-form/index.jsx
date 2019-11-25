@@ -186,12 +186,12 @@ class SignupForm extends Component {
 		return userExistsError;
 	}
 
-	/***
+	/**
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
 	 * to his existing WPCOM account
 	 *
-	 * @param {Object} props react component props that has step info
+	 * @param {object} props react component props that has step info
 	 */
 	maybeRedirectToSocialConnect( props ) {
 		const userExistsError = this.getUserExistsError( props );
@@ -956,8 +956,8 @@ class SignupForm extends Component {
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
 		if (
-			this.props.flowName === 'onboarding' &&
-			'passwordless' === abtest( 'passwordlessSignup' )
+			this.props.flowName === 'test-fse' ||
+			( this.props.flowName === 'onboarding' && 'passwordless' === abtest( 'passwordlessSignup' ) )
 		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
