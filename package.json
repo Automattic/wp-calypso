@@ -50,7 +50,7 @@
 		"@emotion/styled": "10.0.23",
 		"@github/webauthn-json": "0.3.6",
 		"@ungap/url-search-params": "0.1.2",
-		"@webcomponents/url": "0.7.3",
+		"@webcomponents/url": "0.7.4",
 		"@wordpress/api-fetch": "3.7.0",
 		"@wordpress/base-styles": "1.0.0",
 		"@wordpress/block-editor": "3.3.0",
