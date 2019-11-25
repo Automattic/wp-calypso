@@ -142,7 +142,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: 'New',
+			badge: translate( 'New' ),
 			image: {
 				path: '/calypso/images/earn/recurring.svg',
 			},
