@@ -1,26 +1,31 @@
 /**
  * External dependencies
  */
-import React, { ComponentPropsWithoutRef, createRef, FunctionComponent, useState } from 'react';
+import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import DomainPicker from './list';
+import DomainPicker, { Props as DomainPickerProps } from './list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type Props = ComponentPropsWithoutRef< typeof DomainPicker >;
+interface Props extends DomainPickerProps, Button.BaseProps {
+	className?: string;
+}
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
+	className,
 	onDomainSelect,
-	...domainPickerProps
+	defaultQuery,
+	queryParameters,
+	...buttonProps
 } ) => {
 	const buttonRef = createRef();
 
@@ -42,19 +47,26 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<Button
+				{ ...buttonProps }
 				aria-expanded={ isDomainPopoverVisible }
 				aria-haspopup="menu"
 				aria-pressed={ isDomainPopoverVisible }
-				className={ classnames( 'domain-picker__button', { 'is-open': isDomainPopoverVisible } ) }
+				className={ classnames( 'domain-picker__button', className, {
+					'is-open': isDomainPopoverVisible,
+				} ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 				ref={ buttonRef }
 			>
-				{ children }
+				<span>{ children }</span>
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
 				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
-					<DomainPicker { ...domainPickerProps } onDomainSelect={ handleDomainSelect } />
+					<DomainPicker
+						defaultQuery={ defaultQuery }
+						onDomainSelect={ handleDomainSelect }
+						queryParameters={ queryParameters }
+					/>
 				</Popover>
 			) }
 		</>

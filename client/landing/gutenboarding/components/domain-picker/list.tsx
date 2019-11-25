@@ -21,7 +21,7 @@ import { DomainSuggestion, DomainSuggestionQuery } from '../../stores/domain-sug
 import { STORE_KEY } from '../../stores/domain-suggestions';
 import { selectorDebounce } from '../../constants';
 
-interface Props {
+export interface Props {
 	/**
 	 * Term to search when no user input is provided.
 	 */
