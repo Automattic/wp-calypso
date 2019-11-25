@@ -26,6 +26,7 @@ import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
+import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
@@ -156,6 +157,7 @@ class StatsSite extends Component {
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="stats__section-header"
