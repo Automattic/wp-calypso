@@ -98,12 +98,10 @@ export function makeShoppingCartHook(
 		// Asynchronously initialize the cart. This should happen exactly once.
 		useEffect( () => {
 			const initializeResponseCart = async () => {
-				if ( typeof responseCart === undefined ) {
-					await getServerCart().then( response => {
-						setResponseCart( response );
-						setCacheStatus( 'valid' );
-					} );
-				}
+				await getServerCart().then( response => {
+					setResponseCart( response );
+					setCacheStatus( 'valid' );
+				} );
 			};
 			initializeResponseCart().catch( error => {
 				// TODO: figure out what to do here
