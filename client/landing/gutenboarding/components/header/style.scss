@@ -36,7 +36,21 @@
 	align-items: flex-start;
 }
 
+$padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 .gutenboarding__header-domain-picker-button {
+	padding: $padding--gutenboarding__header-domain-picker-button;
+	border-radius: $radius-round-rectangle;
+
+	&:focus,
+	&:hover {
+		box-shadow: 0 0 0 2px $blue-medium-focus;
+		outline: 0;
+	}
+
+	.gutenboarding__site-title {
+		padding: 0;
+	}
+
 	> span {
 		display: flex;
 		flex-direction: column;
@@ -48,6 +62,7 @@
 }
 
 .gutenboarding__site-title {
+	padding: $padding--gutenboarding__header-domain-picker-button;
 	font-weight: bold;
 }
 
