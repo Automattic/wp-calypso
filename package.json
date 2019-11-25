@@ -120,7 +120,7 @@
 		"escape-string-regexp": "1.0.5",
 		"events": "3.0.0",
 		"exports-loader": "0.7.0",
-		"express": "4.16.4",
+		"express": "4.17.1",
 		"express-useragent": "1.0.13",
 		"fast-json-stable-stringify": "2.0.0",
 		"filesize": "5.0.3",
