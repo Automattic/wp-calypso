@@ -121,7 +121,7 @@
 		"events": "3.0.0",
 		"exports-loader": "0.7.0",
 		"express": "4.16.4",
-		"express-useragent": "1.0.12",
+		"express-useragent": "1.0.13",
 		"fast-json-stable-stringify": "2.0.0",
 		"filesize": "5.0.3",
 		"flag-icon-css": "3.4.5",
