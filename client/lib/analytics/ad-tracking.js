@@ -57,64 +57,63 @@ let lastRetargetTime = 0;
 /**
  * Constants
  */
-const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
-	GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=',
-	GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?render=',
-	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
-	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
-	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
-		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
-	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
-		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
-	PANDORA_CONVERSION_PIXEL_URL =
-		'https://data.adxcel-ec2.com/pixel/' +
-		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
-	EXPERIAN_CONVERSION_PIXEL_URL =
-		'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ',
-	ICON_MEDIA_RETARGETING_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing',
-	ICON_MEDIA_SIGNUP_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
-	ICON_MEDIA_ORDER_PIXEL_URL =
-		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
-	ADROLL_PAGEVIEW_PIXEL_URL_1 =
-		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
-	ADROLL_PAGEVIEW_PIXEL_URL_2 =
-		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
-	ADROLL_PURCHASE_PIXEL_URL_1 =
-		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
-	ADROLL_PURCHASE_PIXEL_URL_2 =
-		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
-	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
-	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
-	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
-	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
-	PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js',
-	TRACKING_IDS = {
-		bingInit: '4074038',
-		facebookInit: '823166884443641',
-		facebookJetpackInit: '919484458159593',
-		criteo: '31321',
-		quantcast: 'p-3Ma3jHaQMB_bS',
-		twitterPixelId: 'nvzbs',
-		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '195308',
-		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
-		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
-		wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
-		wpcomFloodlightGtag: 'DC-6355556',
-		wpcomGoogleAdsGtag: 'AW-946162814',
-		wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
-		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
-		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
-		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
-		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-		wpcomGoogleRecaptchaSiteKey: config( 'google_recaptcha_site_key' ),
-		pinterestInit: '2613194105266',
-	},
-	// This name is something we created to store a session id for DCM Floodlight session tracking
-	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
+const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
+const GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?render=';
+const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';
+const CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js';
+const YAHOO_GEMINI_CONVERSION_PIXEL_URL =
+	'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase';
+const YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
+	'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088';
+const PANDORA_CONVERSION_PIXEL_URL =
+	'https://data.adxcel-ec2.com/pixel/?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26';
+const EXPERIAN_CONVERSION_PIXEL_URL =
+	'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ';
+const ICON_MEDIA_RETARGETING_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing';
+const ICON_MEDIA_SIGNUP_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing';
+const ICON_MEDIA_ORDER_PIXEL_URL =
+	'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout';
+const ADROLL_PAGEVIEW_PIXEL_URL_1 =
+	'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8';
+const ADROLL_PAGEVIEW_PIXEL_URL_2 =
+	'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8';
+const ADROLL_PURCHASE_PIXEL_URL_1 =
+	'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5';
+const ADROLL_PURCHASE_PIXEL_URL_2 =
+	'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5';
+const TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js';
+const LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
+const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
+const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
+const TRACKING_IDS = {
+	bingInit: '4074038',
+	facebookInit: '823166884443641',
+	facebookJetpackInit: '919484458159593',
+	criteo: '31321',
+	quantcast: 'p-3Ma3jHaQMB_bS',
+	twitterPixelId: 'nvzbs',
+	dcmFloodlightAdvertiserId: '6355556',
+	linkedInPartnerId: '195308',
+	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomFloodlightGtag: 'DC-6355556',
+	wpcomGoogleAdsGtag: 'AW-946162814',
+	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
+	wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
+	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
+	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
+	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+	wpcomGoogleRecaptchaSiteKey: config( 'google_recaptcha_site_key' ),
+	pinterestInit: '2613194105266',
+};
+// This name is something we created to store a session id for DCM Floodlight session tracking
+const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
+const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
