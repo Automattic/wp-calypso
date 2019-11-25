@@ -159,8 +159,6 @@ export default {
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				context={ pageContext }
-				needsDns
-				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

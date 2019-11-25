@@ -10,8 +10,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CartStore from 'lib/cart/store';
-import DnsStore from 'lib/domains/dns/store';
-import { fetchDns } from 'lib/domains/dns/actions';
 import { fetchUsers } from 'lib/users/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
@@ -36,7 +34,6 @@ function getStateFromStores( props ) {
 		cart: CartStore.get(),
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
-		dns: DnsStore.getByDomainName( props.selectedDomainName ),
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		location: SiteRedirectStore.getBySite( props.selectedSite.domain ),
 		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
@@ -73,9 +70,7 @@ class DomainManagementData extends React.Component {
 		sitePlans: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
-
+	componentDidMount() {
 		this.loadData( {} );
 	}
 
@@ -83,12 +78,8 @@ class DomainManagementData extends React.Component {
 		this.loadData( prevProps );
 	}
 
-	loadData = prevProps => {
+	loadData( prevProps ) {
 		const { needsUsers, selectedDomainName, selectedSite } = this.props;
-
-		if ( this.props.needsDns ) {
-			fetchDns( selectedDomainName );
-		}
 
 		if ( this.props.needsDomainInfo ) {
 			fetchWapiDomainInfo( selectedDomainName );
@@ -104,13 +95,12 @@ class DomainManagementData extends React.Component {
 		) {
 			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
 		}
-	};
+	}
 
 	render() {
 		const {
 			needsCart,
 			needsContactDetails,
-			needsDns,
 			needsDomains,
 			needsDomainInfo,
 			needsNameservers,
@@ -124,9 +114,6 @@ class DomainManagementData extends React.Component {
 		const stores = [];
 		if ( needsCart ) {
 			stores.push( CartStore );
-		}
-		if ( needsDns ) {
-			stores.push( DnsStore );
 		}
 		if ( needsDomainInfo ) {
 			stores.push( WapiDomainInfoStore );

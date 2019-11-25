@@ -1,31 +1,100 @@
 /**
  * External dependencies
  */
-
-import { findIndex, pick, reject } from 'lodash';
+import {
+	filter,
+	findIndex,
+	matches,
+	negate,
+	pick,
+	reject,
+	some,
+	startsWith,
+	without,
+} from 'lodash';
 import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
 import {
-	DNS_ADD,
-	DNS_ADD_COMPLETED,
-	DNS_ADD_FAILED,
-	DNS_APPLY_TEMPLATE_COMPLETED,
-	DNS_DELETE,
-	DNS_DELETE_COMPLETED,
-	DNS_DELETE_FAILED,
-	DNS_FETCH,
-	DNS_FETCH_COMPLETED,
-	DNS_FETCH_FAILED,
-} from './action-types';
-import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
+	DOMAINS_DNS_ADD,
+	DOMAINS_DNS_ADD_COMPLETED,
+	DOMAINS_DNS_ADD_FAILED,
+	DOMAINS_DNS_APPLY_TEMPLATE_COMPLETED,
+	DOMAINS_DNS_DELETE,
+	DOMAINS_DNS_DELETE_COMPLETED,
+	DOMAINS_DNS_DELETE_FAILED,
+	DOMAINS_DNS_FETCH,
+	DOMAINS_DNS_FETCH_COMPLETED,
+	DOMAINS_DNS_FETCH_FAILED,
+} from 'state/action-types';
+
+function isWpcomRecord( record ) {
+	return startsWith( record.id, 'wpcom:' );
+}
+
+function isRootARecord( domain ) {
+	return matches( { type: 'A', name: `${ domain }.` } );
+}
+
+function isNsRecord( domain ) {
+	return matches( { type: 'NS', name: `${ domain }.` } );
+}
+
+function removeDuplicateWpcomRecords( domain, records ) {
+	const rootARecords = filter( records, isRootARecord( domain ) ),
+		wpcomARecord = find( rootARecords, isWpcomRecord ),
+		customARecord = find( rootARecords, negate( isWpcomRecord ) );
+
+	if ( wpcomARecord && customARecord ) {
+		return without( records, wpcomARecord );
+	}
+
+	return records;
+}
+
+function addMissingWpcomRecords( domain, records ) {
+	let newRecords = records;
+
+	if ( ! some( records, isRootARecord( domain ) ) ) {
+		const defaultRootARecord = {
+			domain,
+			id: `wpcom:A:${ domain }.:${ domain }`,
+			name: `${ domain }.`,
+			protected_field: true,
+			type: 'A',
+		};
+
+		newRecords = newRecords.concat( [ defaultRootARecord ] );
+	}
+
+	if ( ! some( records, isNsRecord( domain ) ) ) {
+		const defaultNsRecord = {
+			domain,
+			id: `wpcom:NS:${ domain }.:${ domain }`,
+			name: `${ domain }.`,
+			protected_field: true,
+			type: 'NS',
+		};
+
+		newRecords = newRecords.concat( [ defaultNsRecord ] );
+	}
+
+	return newRecords;
+}
+
+export const initialState = {
+	isFetching: false,
+	hasLoadedFromServer: false,
+	isSubmittingForm: false,
+	records: null,
+};
 
 function updateDomainState( state, domainName, dns ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || getInitialStateForDomain(), dns ),
+			$set: Object.assign( {}, state[ domainName ] || initialState, dns ),
 		},
 	};
 
@@ -75,8 +144,8 @@ function deleteDns( state, domainName, record ) {
 }
 
 function updateDnsState( state, domainName, record, updatedFields ) {
-	const index = findDnsIndex( state[ domainName ].records, record ),
-		updatedRecord = Object.assign( {}, record, updatedFields );
+	const index = findDnsIndex( state[ domainName ].records, record );
+	const updatedRecord = Object.assign( {}, record, updatedFields );
 
 	if ( index === -1 ) {
 		return state;
@@ -100,40 +169,29 @@ function findDnsIndex( records, record ) {
 	return findIndex( records, matchingFields );
 }
 
-function getInitialStateForDomain() {
-	return {
-		isFetching: false,
-		hasLoadedFromServer: false,
-		isSubmittingForm: false,
-		records: null,
-	};
-}
-
-function reducer( state, payload ) {
-	const { action } = payload;
-
+export default function reducer( state = initialState, action ) {
 	switch ( action.type ) {
-		case DNS_FETCH:
+		case DOMAINS_DNS_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
 			} );
 			break;
-		case DNS_FETCH_COMPLETED:
+		case DOMAINS_DNS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
 				hasLoadedFromServer: true,
 			} );
 			break;
-		case DNS_FETCH_FAILED:
+		case DOMAINS_DNS_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
 			} );
 			break;
-		case DNS_ADD:
+		case DOMAINS_DNS_ADD:
 			state = addDns( state, action.domainName, action.record );
 			break;
-		case DNS_ADD_COMPLETED:
+		case DOMAINS_DNS_ADD_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				isSubmittingForm: false,
 			} );
@@ -141,28 +199,28 @@ function reducer( state, payload ) {
 				isBeingAdded: false,
 			} );
 			break;
-		case DNS_APPLY_TEMPLATE_COMPLETED:
+		case DOMAINS_DNS_APPLY_TEMPLATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
 				hasLoadedFromServer: true,
 			} );
 			break;
-		case DNS_ADD_FAILED:
+		case DOMAINS_DNS_ADD_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isSubmittingForm: false,
 			} );
 			state = deleteDns( state, action.domainName, action.record );
 			break;
-		case DNS_DELETE:
+		case DOMAINS_DNS_DELETE:
 			state = updateDnsState( state, action.domainName, action.record, {
 				isBeingDeleted: true,
 			} );
 			break;
-		case DNS_DELETE_COMPLETED:
+		case DOMAINS_DNS_DELETE_COMPLETED:
 			state = deleteDns( state, action.domainName, action.record );
 			break;
-		case DNS_DELETE_FAILED:
+		case DOMAINS_DNS_DELETE_FAILED:
 			state = updateDnsState( state, action.domainName, action.record, {
 				isBeingDeleted: false,
 			} );
@@ -171,5 +229,3 @@ function reducer( state, payload ) {
 
 	return state;
 }
-
-export { getInitialStateForDomain, reducer };
