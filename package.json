@@ -170,7 +170,7 @@
 		"postcss-cli": "6.1.3",
 		"prismjs": "1.17.1",
 		"prop-types": "15.7.2",
-		"qrcode.react": "0.9.3",
+		"qrcode.react": "1.0.0",
 		"qs": "6.9.1",
 		"react": "16.11.0",
 		"react-click-outside": "3.0.1",
