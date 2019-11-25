@@ -152,7 +152,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 }
 
 export function getRedirectAfterAccept( invite ) {
-	const readerPath = '/';
+	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
 
 	if ( get( invite, 'site.is_vip' ) ) {

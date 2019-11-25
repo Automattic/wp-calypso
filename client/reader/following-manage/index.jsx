@@ -204,7 +204,7 @@ class FollowingManage extends Component {
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref={ '/' }>
+					<HeaderCake backHref={ '/read' }>
 						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
