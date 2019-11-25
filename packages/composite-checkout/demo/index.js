@@ -5,6 +5,7 @@ require( '@babel/polyfill' );
  * External dependencies
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
@@ -141,6 +142,37 @@ const ContactFormTitle = () => {
 	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
 };
 
+const Label = styled.label`
+	display: block;
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+	}
+`;
+
+const Input = styled.input`
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 16px;
+	border: 1px solid
+		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+	padding: 13px 10px 12px 10px;
+
+	:focus {
+		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+			solid 2px !important;
+	}
+`;
+
+const Form = styled.div`
+	margin-bottom: 0.5em;
+`;
+
 function ContactForm( { summary } ) {
 	const [ paymentData, changePaymentData ] = usePaymentData();
 	const { billing = {} } = paymentData;
@@ -156,10 +188,10 @@ function ContactForm( { summary } ) {
 		);
 	}
 	return (
-		<div>
-			<label htmlFor="country">Country</label>
-			<input id="country" type="text" value={ country } onChange={ onChangeCountry } />
-		</div>
+		<Form>
+			<Label htmlFor="country">Country</Label>
+			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+		</Form>
 	);
 }
 
