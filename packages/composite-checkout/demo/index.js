@@ -132,7 +132,7 @@ const getTotal = items => {
 	};
 };
 
-// TODO: replace this with the host page's translation system
+// Replace this with the host page's translation system
 const useLocalize = () => text => text;
 const hostTranslate = text => text;
 
