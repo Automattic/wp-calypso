@@ -449,12 +449,11 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ billing.firstName ||
-						( billing.lastName && (
-							<SummaryLine>
-								{ billing.firstName } { billing.lastName }
-							</SummaryLine>
-						) ) }
+					{ ( billing.firstName || billing.lastName ) && (
+						<SummaryLine>
+							{ billing.firstName } { billing.lastName }
+						</SummaryLine>
+					) }
 
 					{ billing.email && <SummarySpacerLine>{ billing.email }</SummarySpacerLine> }
 
