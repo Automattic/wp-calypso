@@ -11,18 +11,18 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import {
-	HOSTING_SFTP_USER_REQUEST,
+	HOSTING_SFTP_USERS_REQUEST,
 	HOSTING_SFTP_USER_CREATE,
 	HOSTING_SFTP_PASSWORD_RESET,
 } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
-import { updateAtomicSftpUser } from 'state/hosting/actions';
+import { updateAtomicSftpUser, setAtomicSftpUsers } from 'state/hosting/actions';
 
-const requestAtomicSftpUser = action => {
+const requestAtomicSftpUsers = action => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/hosting/ssh-user`,
+			path: `/sites/${ action.siteId }/hosting/ssh-users`,
 			apiNamespace: 'wpcom/v2',
 		},
 		action
@@ -45,7 +45,7 @@ const resetAtomicSftpPassword = action => {
 	return http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/hosting/ssh-user/reset-password`,
+			path: `/sites/${ action.siteId }/hosting/ssh-user/${ action.sshUsername }/reset-password`,
 			apiNamespace: 'wpcom/v2',
 			body: {},
 		},
@@ -53,11 +53,18 @@ const resetAtomicSftpPassword = action => {
 	);
 };
 
-const receiveAtomicSftpUserSuccess = ( action, { username, password } ) =>
-	updateAtomicSftpUser( action.siteId, action.userId, { username, password } );
+const receiveAtomicSftpUsersSuccess = ( action, { users } ) => {
+	const parsedUsers = users.map( user => ( {
+		username: user,
+	} ) );
+	return setAtomicSftpUsers( action.siteId, parsedUsers );
+};
 
-const sftpUserError = ( { siteId, userId } ) => [
-	updateAtomicSftpUser( siteId, userId, null ),
+const receiveAtomicSftpUserSuccess = ( action, { username, password } ) =>
+	updateAtomicSftpUser( action.siteId, [ { username, password } ] );
+
+const sftpUserError = ( { siteId } ) => [
+	updateAtomicSftpUser( siteId, null ),
 	errorNotice(
 		translate(
 			'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
@@ -69,10 +76,10 @@ const sftpUserError = ( { siteId, userId } ) => [
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
-	[ HOSTING_SFTP_USER_REQUEST ]: [
+	[ HOSTING_SFTP_USERS_REQUEST ]: [
 		dispatchRequest( {
-			fetch: requestAtomicSftpUser,
-			onSuccess: receiveAtomicSftpUserSuccess,
+			fetch: requestAtomicSftpUsers,
+			onSuccess: receiveAtomicSftpUsersSuccess,
 			onError: sftpUserError,
 		} ),
 	],

@@ -19,7 +19,7 @@ import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
-	requestAtomicSftpUser,
+	requestAtomicSftpUsers,
 	createAtomicSftpUser,
 	resetAtomicSftpPassword,
 	updateAtomicSftpUser,
@@ -31,7 +31,7 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'state/analytics/actions';
-import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
+import { getAtomicHostingSftpUsers } from 'state/selectors/get-atomic-hosting-sftp-users';
 
 /**
  * Style dependencies
@@ -49,11 +49,10 @@ const SftpCard = ( {
 	siteId,
 	disabled,
 	currentUserId,
-	requestSftpUser,
+	requestSftpUsers,
 	createSftpUser,
 	resetSftpPassword,
 	removePasswordFromState,
-	sftpUserRequested,
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
@@ -72,7 +71,7 @@ const SftpCard = ( {
 
 	const resetPassword = () => {
 		setPasswordLoading( true );
-		resetSftpPassword( siteId, currentUserId );
+		resetSftpPassword( siteId, username );
 	};
 
 	const createUser = () => {
@@ -81,12 +80,10 @@ const SftpCard = ( {
 	};
 
 	useEffect( () => {
-		if ( ! sftpUserRequested && ! disabled ) {
-			setIsLoading( true );
-			requestSftpUser( siteId, currentUserId );
-		}
+		setIsLoading( true );
+		requestSftpUsers( siteId );
 		return onDestroy();
-	}, [ sftpUserRequested ] );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -252,14 +249,14 @@ const SftpCard = ( {
 	);
 };
 
-const resetSftpPassword = ( siteId, currentUserId ) =>
+const resetSftpPassword = ( siteId, sshUsername ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Reset Password" Button in SFTP Card' ),
 			recordTracksEvent( 'calypso_hosting_configuration_reset_sftp_password' ),
 			bumpStat( 'hosting-config', 'reset-sftp-password' )
 		),
-		resetAtomicSftpPassword( siteId, currentUserId )
+		resetAtomicSftpPassword( siteId, sshUsername )
 	);
 
 const createSftpUser = ( siteId, currentUserId ) =>
@@ -279,15 +276,22 @@ export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
 		const currentUserId = getCurrentUserId( state );
-		let username = null;
-		let password = null;
-		let sftpUserRequested = null;
+		let username;
+		let password;
 
 		if ( ! disabled ) {
-			const sftpDetails = getAtomicHostingSftpUser( state, siteId, currentUserId );
-			username = sftpDetails?.username;
-			password = sftpDetails?.password;
-			sftpUserRequested = sftpDetails !== null;
+			const users = getAtomicHostingSftpUsers( state, siteId );
+			if ( users !== null ) {
+				if ( users.length ) {
+					// Pick first user. Rest of users will be handled in next phases.
+					username = users[ 0 ].username;
+					password = users[ 0 ].password;
+				} else {
+					// No SFTP user created yet.
+					username = null;
+					password = null;
+				}
+			}
 		}
 
 		return {
@@ -295,14 +299,13 @@ export default connect(
 			currentUserId,
 			username,
 			password,
-			sftpUserRequested,
 		};
 	},
 	{
-		requestSftpUser: requestAtomicSftpUser,
+		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
-		removePasswordFromState: ( siteId, userId, username ) =>
-			updateAtomicSftpUser( siteId, userId, { username } ),
+		removePasswordFromState: ( siteId, username ) =>
+			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
 	}
 )( localize( SftpCard ) );
