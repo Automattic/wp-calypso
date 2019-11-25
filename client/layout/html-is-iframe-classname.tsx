@@ -35,4 +35,4 @@ const HtmlIsIframeClassname = () => {
 	return null;
 };
 
-export default typeof document === 'object' ? HtmlIsIframeClassname : () => null;
+export default HtmlIsIframeClassname;
