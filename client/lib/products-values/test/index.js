@@ -16,8 +16,15 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPlan,
+	getJetpackProductDisplayName,
+	getJetpackProductTagline,
 } from '..';
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_PRODUCTS_LIST } from '../constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+	JETPACK_BACKUP_PRODUCT_TAGLINES,
+} from '../constants';
 import {
 	JETPACK_PLANS,
 	PLAN_FREE,
@@ -181,6 +188,26 @@ describe( 'isJetpackBackup', () => {
 		nonJetpackProducts
 			.map( makeProductFromSlug )
 			.forEach( product => expect( isJetpackBackup( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'getJetpackProductDisplayName', () => {
+	test( 'should return Jetpack Backup product display name', () => {
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( product =>
+			expect( getJetpackProductDisplayName( product ) ).toBe(
+				JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES[ product.productSlug ]
+			)
+		);
+	} );
+} );
+
+describe( 'getJetpackProductTagline', () => {
+	test( 'should return Jetpack Backup product tagline', () => {
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( product =>
+			expect( getJetpackProductTagline( product ) ).toBe(
+				JETPACK_BACKUP_PRODUCT_TAGLINES[ product.productSlug ]
+			)
+		);
 	} );
 } );
 

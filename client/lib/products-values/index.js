@@ -387,6 +387,12 @@ export function getProductClass( productSlug ) {
 	return '';
 }
 
+/**
+ * Get Jetpack product display name based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|HTMLElement} Product display name
+ */
 export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -394,6 +400,12 @@ export function getJetpackProductDisplayName( product ) {
 	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product.productSlug ];
 }
 
+/**
+ * Get Jetpack product tagline based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|HTMLElement} Product tagline
+ */
 export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
