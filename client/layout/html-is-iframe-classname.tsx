@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, memo } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -12,7 +12,7 @@ import isIframeForHtmlElement from 'state/selectors/is-iframe-for-html-element';
 
 const debug = debugFactory( 'calypso:layout:html-is-iframe-classname' );
 
-const HtmlIsIframeClassname = memo( () => {
+const HtmlIsIframeClassname = () => {
 	const isIframe = useSelector( isIframeForHtmlElement );
 
 	useEffect( () => {
@@ -30,9 +30,9 @@ const HtmlIsIframeClassname = memo( () => {
 			debug( 'removing is-iframe' );
 			htmlNode.classList.remove( 'is-iframe' );
 		}
-	} );
+	}, [ isIframe ] );
 
 	return null;
-} );
+};
 
 export default typeof document === 'object' ? HtmlIsIframeClassname : () => null;
