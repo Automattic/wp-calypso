@@ -229,10 +229,11 @@ class SignupForm extends Component {
 		const sanitizedUsername = this.sanitizeUsername( fields.username );
 
 		if ( fields.email !== sanitizedEmail || fields.username !== sanitizedUsername ) {
-			onComplete( {
+			const sanitizedFormValues = Object.assign( fields, {
 				email: sanitizedEmail,
 				username: sanitizedUsername,
 			} );
+			onComplete( sanitizedFormValues );
 		}
 	};
 
