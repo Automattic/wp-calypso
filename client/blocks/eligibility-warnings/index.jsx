@@ -1,19 +1,17 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, noop, partition } from 'lodash';
+import { filter, get, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
@@ -52,9 +50,9 @@ export const EligibilityWarnings = ( {
 } ) => {
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
-	const [ bannerHolds, listHolds ] = partition(
+	const listHolds = filter(
 		get( eligibilityData, 'eligibilityHolds', [] ),
-		hold => includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
+		hold => ! includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
 	);
 
 	const classes = classNames( 'eligibility-warnings', {
@@ -102,20 +100,6 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context } }
 			/>
 			{ businessUpsellBanner }
-			{ hasBusinessPlan && ! isJetpack && includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
-				// TODO: confirm the user has domain credit
-				<Banner
-					className="eligibility-warnings__banner"
-					description={
-						'plugins' === context
-							? translate( 'To install this plugin, add a free custom domain.' )
-							: translate( 'To upload themes, add a free custom domain.' )
-					}
-					href={ `/domains/manage/${ siteSlug }` }
-					icon="domains"
-					title={ translate( 'Custom domain required' ) }
-				/>
-			) }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
