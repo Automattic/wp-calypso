@@ -14,7 +14,6 @@ import emailValidator from 'email-validator';
  */
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
-import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import FormButton from 'components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
@@ -47,6 +46,7 @@ import {
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -189,17 +189,6 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	renderPrivacySection() {
-		return (
-			<PrivacyProtection
-				checkPrivacyRadio={ this.allDomainItemsHavePrivacy() }
-				cart={ this.props.cart }
-				onRadioSelect={ this.handleRadioChange }
-				productsList={ this.props.productsList }
-			/>
-		);
-	}
-
 	handleContactDetailsChange = newContactDetailsValues => {
 		this.props.updateContactDetailsCache( newContactDetailsValues );
 	};
@@ -286,6 +275,10 @@ export class DomainDetailsForm extends PureComponent {
 			selected: true,
 		} );
 
+		const domainProductSupportsPrivacy =
+			( hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart ) ) &&
+			this.allDomainProductsSupportPrivacy();
+
 		let title;
 		let message;
 		// TODO: gather up tld specific stuff
@@ -295,20 +288,26 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
-			message = this.props.translate(
-				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
-					"review this to be sure it's the correct information you want to use for this domain."
-			);
+			if ( domainProductSupportsPrivacy ) {
+				message = this.props.translate(
+					'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+						'Protection is included to protect your identity. {{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				);
+			} else {
+				message = this.props.translate(
+					'We have pre-filled the required contact information from your WordPress.com account.'
+				);
+			}
 		}
-
-		const renderPrivacy =
-			( hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart ) ) &&
-			this.allDomainProductsSupportPrivacy();
 
 		return (
 			<div>
 				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
-				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ message && <p>{ message }</p> }
 					{ this.renderCurrentForm() }
