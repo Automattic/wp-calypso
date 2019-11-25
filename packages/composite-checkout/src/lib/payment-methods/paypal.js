@@ -102,7 +102,7 @@ export function PaypalLabel() {
 	);
 }
 
-export function PaypalSubmitButton() {
+export function PaypalSubmitButton( { disabled } ) {
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	const [ items ] = useLineItems();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
@@ -120,7 +120,13 @@ export function PaypalSubmitButton() {
 			domainDetails: null, // TODO: get this somehow
 		} );
 	return (
-		<Button onClick={ onClick } buttonState="primary" buttonType="paypal" fullWidth>
+		<Button
+			disabled={ disabled }
+			onClick={ onClick }
+			buttonState="primary"
+			buttonType="paypal"
+			fullWidth
+		>
 			{ <ButtonPayPalIcon /> }
 		</Button>
 	);
