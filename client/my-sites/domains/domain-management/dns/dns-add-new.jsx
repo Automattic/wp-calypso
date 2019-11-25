@@ -22,8 +22,8 @@ import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'lib/domains/dns/actions';
-import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
+import { addDns } from 'state/domains/dns/actions';
+import { validateAllFields, getNormalizedData } from 'state/domains/dns/utils';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {
@@ -124,17 +124,16 @@ class DnsAddNew extends React.Component {
 			);
 			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
-			addDns( this.props.selectedDomainName, normalizedData, error => {
-				if ( error ) {
-					this.props.errorNotice(
-						error.message || translate( 'The DNS record has not been added.' )
-					);
-				} else {
+			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
+				() =>
 					this.props.successNotice( translate( 'The DNS record has been added.' ), {
 						duration: 5000,
-					} );
-				}
-			} );
+					} ),
+				error =>
+					this.props.errorNotice(
+						error.message || translate( 'The DNS record has not been added.' )
+					)
+			);
 		} );
 	};
 
@@ -214,6 +213,7 @@ class DnsAddNew extends React.Component {
 }
 
 export default connect( null, {
+	addDns,
 	errorNotice,
 	successNotice,
 } )( localize( DnsAddNew ) );

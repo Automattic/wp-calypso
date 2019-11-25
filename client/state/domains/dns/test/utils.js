@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { every, isEmpty, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { validateAllFields } from '../';
+import { validateAllFields } from '../utils';
 
-describe( 'index', () => {
+describe( 'utils', () => {
 	describe( '#validateAllFields', () => {
 		test( 'should return no errors for a valid A record', () => {
 			const initialData = {
@@ -20,7 +19,7 @@ describe( 'index', () => {
 
 			const errors = validateAllFields( initialData );
 
-			expect( every( values( errors ), isEmpty ) ).to.be.true;
+			expect( every( values( errors ), isEmpty ) ).toBe( true );
 		} );
 	} );
 } );

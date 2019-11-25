@@ -1,20 +1,7 @@
 /**
  * External dependencies
  */
-
-import {
-	endsWith,
-	filter,
-	find,
-	includes,
-	mapValues,
-	startsWith,
-	trimStart,
-	without,
-	matches,
-	negate,
-	some,
-} from 'lodash';
+import { endsWith, filter, includes, mapValues, trimStart } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -139,76 +126,10 @@ function getFieldWithDot( field ) {
 		: field;
 }
 
-function isWpcomRecord( record ) {
-	return startsWith( record.id, 'wpcom:' );
-}
-
-function isRootARecord( domain ) {
-	return matches( {
-		type: 'A',
-		name: `${ domain }.`,
-	} );
-}
-
-function isNsRecord( domain ) {
-	return matches( {
-		type: 'NS',
-		name: `${ domain }.`,
-	} );
-}
-
-function removeDuplicateWpcomRecords( domain, records ) {
-	const rootARecords = filter( records, isRootARecord( domain ) ),
-		wpcomARecord = find( rootARecords, isWpcomRecord ),
-		customARecord = find( rootARecords, negate( isWpcomRecord ) );
-
-	if ( wpcomARecord && customARecord ) {
-		return without( records, wpcomARecord );
-	}
-
-	return records;
-}
-
-function addMissingWpcomRecords( domain, records ) {
-	let newRecords = records;
-
-	if ( ! some( records, isRootARecord( domain ) ) ) {
-		const defaultRootARecord = {
-			domain,
-			id: `wpcom:A:${ domain }.:${ domain }`,
-			name: `${ domain }.`,
-			protected_field: true,
-			type: 'A',
-		};
-
-		newRecords = newRecords.concat( [ defaultRootARecord ] );
-	}
-
-	if ( ! some( records, isNsRecord( domain ) ) ) {
-		const defaultNsRecord = {
-			domain,
-			id: `wpcom:NS:${ domain }.:${ domain }`,
-			name: `${ domain }.`,
-			protected_field: true,
-			type: 'NS',
-		};
-
-		newRecords = newRecords.concat( [ defaultNsRecord ] );
-	}
-
-	return newRecords;
-}
-
 function isDeletingLastMXRecord( recordToDelete, records ) {
 	const currentMXRecords = filter( records, { type: 'MX' } );
 
 	return recordToDelete.type === 'MX' && currentMXRecords.length === 1;
 }
 
-export {
-	addMissingWpcomRecords,
-	getNormalizedData,
-	removeDuplicateWpcomRecords,
-	validateAllFields,
-	isDeletingLastMXRecord,
-};
+export { getNormalizedData, validateAllFields, isDeletingLastMXRecord };

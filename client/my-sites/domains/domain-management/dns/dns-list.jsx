@@ -14,8 +14,8 @@ import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/domains/dns/actions';
-import { isDeletingLastMXRecord } from 'lib/domains/dns';
+import { addDns, deleteDns } from 'state/domains/dns/actions';
+import { isDeletingLastMXRecord } from 'state/domains/dns/utils';
 import { domainConnect } from 'lib/domains/constants';
 
 class DnsList extends React.Component {
@@ -64,7 +64,7 @@ class DnsList extends React.Component {
 			return;
 		}
 
-		deleteDnsAction( selectedDomainName, record ).then(
+		this.props.deleteDns( selectedDomainName, record ).then(
 			() => {
 				const successNoticeId = 'dns-list-success-notice';
 				this.props.successNotice( translate( 'The DNS record has been deleted.' ), {
@@ -89,7 +89,7 @@ class DnsList extends React.Component {
 	addDns( record ) {
 		const { translate } = this.props;
 
-		addDnsAction( this.props.selectedDomainName, record ).then(
+		this.props.addDns( this.props.selectedDomainName, record ).then(
 			() => {
 				this.props.successNotice( translate( 'The DNS record has been restored.' ), {
 					duration: 5000,
@@ -145,6 +145,8 @@ class DnsList extends React.Component {
 }
 
 export default connect( null, {
+	addDns,
+	deleteDns,
 	errorNotice,
 	removeNotice,
 	successNotice,

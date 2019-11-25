@@ -16,7 +16,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { applyDnsTemplate } from 'lib/domains/dns/actions';
+import { applyDnsTemplate } from 'state/domains/dns/actions';
 
 class EmailProvider extends Component {
 	state = {
@@ -44,7 +44,13 @@ class EmailProvider extends Component {
 			variables = template.modifyVariables( variables );
 		}
 
-		applyDnsTemplate( domain, template.dnsTemplateProvider, template.dnsTemplateService, variables )
+		this.props
+			.applyDnsTemplate(
+				domain,
+				template.dnsTemplateProvider,
+				template.dnsTemplateService,
+				variables
+			)
 			.then(
 				() => {
 					this.props.successNotice(
@@ -102,6 +108,7 @@ class EmailProvider extends Component {
 }
 
 export default connect( null, {
+	applyDnsTemplate,
 	errorNotice,
 	successNotice,
 } )( localize( EmailProvider ) );
