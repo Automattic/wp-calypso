@@ -18,9 +18,9 @@ const GSUITE_LINK_PREFIX = 'https://mail.google.com/a/';
 /**
  * Applies a precision to the cost
  *
- * @param {Number} cost - cost
- * @param {Number} precision - precision to apply to cost
- * @returns {String} - Returns price with applied precision
+ * @param {number} cost - cost
+ * @param {number} precision - precision to apply to cost
+ * @returns {string} - Returns price with applied precision
  */
 function applyPrecision( cost, precision ) {
 	const exponent = Math.pow( 10, precision );
@@ -30,8 +30,8 @@ function applyPrecision( cost, precision ) {
 /**
  * Can a domain add G Suite
  *
- * @param {String} domainName - domainname
- * @returns {Boolean} -Can a domain add G Suite
+ * @param {string} domainName - domainname
+ * @returns {boolean} -Can a domain add G Suite
  */
 function canDomainAddGSuite( domainName ) {
 	const GOOGLE_APPS_INVALID_SUFFIXES = [ '.in', '.wpcomstaging.com' ];
@@ -49,10 +49,10 @@ function canDomainAddGSuite( domainName ) {
 /**
  * Formats price given cost and currency
  *
- * @param {Number} cost - cost
- * @param {String} currencyCode - currency code to format with
- * @param {Object} options - options containing precision
- * @returns {String} - Returns a formatted price
+ * @param {number} cost - cost
+ * @param {string} currencyCode - currency code to format with
+ * @param {object} options - options containing precision
+ * @returns {string} - Returns a formatted price
  */
 function formatPrice( cost, currencyCode, options = {} ) {
 	if ( undefined !== options.precision ) {
@@ -85,9 +85,9 @@ function getAnnualPrice( cost, currencyCode, defaultValue = '-' ) {
  *   - The primary domain of the site, if eligible
  *   - The first non-primary domain eligible found
  *
- * @param {String} selectedDomainName - domain name for the site currently selected by the user
+ * @param {string} selectedDomainName - domain name for the site currently selected by the user
  * @param {Array} domains - list of domain objects
- * @returns {String} - the name of the first eligible domain found
+ * @returns {string} - the name of the first eligible domain found
  */
 function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	if ( selectedDomainName && canDomainAddGSuite( selectedDomainName ) ) {
@@ -129,9 +129,9 @@ function getGSuiteSupportedDomains( domains ) {
 /**
  * Creates the Google ToS redirect url given email and domain
  *
- * @param {String} email - email
- * @param {String} domain - domain name
- * @returns {String} - ToS url redirect
+ * @param {string} email - email
+ * @param {string} domain - domain name
+ * @returns {string} - ToS url redirect
  */
 function getLoginUrlWithTOSRedirect( email, domain ) {
 	return (
@@ -163,8 +163,8 @@ function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
 /**
  * Returns G Suite management url
  *
- * @param {String} domainName - domain name
- * @returns {String} - Returns G Suite settings url
+ * @param {string} domainName - domain name
+ * @returns {string} - Returns G Suite settings url
  */
 function getGSuiteSettingsUrl( domainName ) {
 	return GSUITE_LINK_PREFIX + domainName;
@@ -173,8 +173,8 @@ function getGSuiteSettingsUrl( domainName ) {
 /**
  * Given a domain object, does that domain have G Suite with us.
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - true if the domain is under our management, false otherwise
+ * @param {object} domain - domain object
+ * @returns {boolean} - true if the domain is under our management, false otherwise
  */
 function hasGSuiteWithUs( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
@@ -185,8 +185,8 @@ function hasGSuiteWithUs( domain ) {
 /**
  * Given a domain object, does that domain have G Suite with another provider.
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - true if the domain is with another provider, false otherwise
+ * @param {object} domain - domain object
+ * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
 function hasGSuiteWithAnotherProvider( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
@@ -198,7 +198,7 @@ function hasGSuiteWithAnotherProvider( domain ) {
  * Given a list of domains does one of them support G Suite
  *
  * @param {Array} domains - list of domain objects
- * @returns {Boolean} - Does list of domains contain a G Suited supported domain
+ * @returns {boolean} - Does list of domains contain a G Suited supported domain
  */
 function hasGSuiteSupportedDomain( domains ) {
 	return getGSuiteSupportedDomains( domains ).length > 0;
@@ -207,8 +207,8 @@ function hasGSuiteSupportedDomain( domains ) {
 /**
  * Does a domain have pending G Suite Users
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - Does domain have pending G Suite users
+ * @param {object} domain - domain object
+ * @returns {boolean} - Does domain have pending G Suite users
  */
 function hasPendingGSuiteUsers( domain ) {
 	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
@@ -217,7 +217,7 @@ function hasPendingGSuiteUsers( domain ) {
 /**
  * Is the user G Suite restricted
  *
- * @returns {Boolean} - Is the user G Suite restricted
+ * @returns {boolean} - Is the user G Suite restricted
  */
 function isGSuiteRestricted() {
 	const user = userFactory();
