@@ -50,4 +50,9 @@
 			margin: 0 1em 4px 0;
 		}
 	}
+	.promo-card__title-badge {
+		margin-left: 48px;
+		background-color: var( --color-accent-60 );
+		color: var( --color-text-inverted );
+	}
 }

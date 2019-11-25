@@ -63,7 +63,7 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-
+import Badge from 'components/badge';
 /**
  * Style dependencies
  */
@@ -229,7 +229,9 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackEarnClick }
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
-			/>
+			>
+				<Badge type="info">{ translate( 'New' ) }</Badge>
+			</SidebarItem>
 		);
 	}
 
