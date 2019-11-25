@@ -295,6 +295,14 @@ class ThemeShowcase extends React.Component {
 					</div>
 
 					<div className={ ! this.state.isShowcaseOpen && 'themes__hidden-content' }>
+						<h2>
+							<strong>{ translate( 'Advanced Themes' ) }</strong>
+						</h2>
+						<p>
+							{ translate(
+								'These themes offer more power and flexibility, but can be harder to setup and customize.'
+							) }
+						</p>
 						<QueryThemeFilters />
 						{ showBanners &&
 							abtest &&
