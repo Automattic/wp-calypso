@@ -66,6 +66,24 @@ export const JETPACK_PRODUCT_DISPLAY_NAMES = {
 	...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
 };
 
+export const JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE = translate(
+	'Your data is being securely backed up every day with a 30-day archive.'
+);
+export const JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE = translate(
+	'Your data is being securely backed up as you edit.'
+);
+
+export const JETPACK_BACKUP_PRODUCT_TAGLINES = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE,
+};
+
+export const JETPACK_PRODUCT_TAGLINES = {
+	...JETPACK_BACKUP_PRODUCT_TAGLINES,
+};
+
 export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 );
