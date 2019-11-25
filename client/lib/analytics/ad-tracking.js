@@ -652,11 +652,11 @@ export async function adTrackSignupStart( flow ) {
 	}
 }
 
-export async function recordRegistration() {
+export async function adTrackRegistration() {
 	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
+		debug( 'adTrackRegistration: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
@@ -672,7 +672,7 @@ export async function recordRegistration() {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagRegistration,
 			},
 		];
-		debug( 'recordRegistration: [Google Ads Gtag]', params );
+		debug( 'adTrackRegistration: [Google Ads Gtag]', params );
 		window.gtag( ...params );
 	}
 
@@ -680,7 +680,7 @@ export async function recordRegistration() {
 
 	if ( isFacebookEnabled ) {
 		const params = [ 'trackSingle', TRACKING_IDS.facebookInit, 'Lead' ];
-		debug( 'recordRegistration: [Facebook]', params );
+		debug( 'adTrackRegistration: [Facebook]', params );
 		window.fbq( ...params );
 	}
 
@@ -690,14 +690,14 @@ export async function recordRegistration() {
 		const params = {
 			ec: 'registration',
 		};
-		debug( 'recordRegistration: [Bing]', params );
+		debug( 'adTrackRegistration: [Bing]', params );
 		window.uetq.push( params );
 	}
 
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		debug( 'recordRegistration: [Floodlight]' );
+		debug( 'adTrackRegistration: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/regis0+unique',
 		} );
@@ -707,11 +707,11 @@ export async function recordRegistration() {
 
 	if ( isPinterestEnabled ) {
 		const params = [ 'track', 'lead' ];
-		debug( 'recordRegistration: [Pinterest]', params );
+		debug( 'adTrackRegistration: [Pinterest]', params );
 		window.pintrk( ...params );
 	}
 
-	debug( 'recordRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
 }
 
 /**

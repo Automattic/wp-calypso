@@ -25,7 +25,6 @@ import {
 	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
-	recordRegistration,
 	recordAddToCart,
 	recordOrder,
 	setupGoogleAnalyticsGtag,
@@ -341,33 +340,6 @@ const analytics = {
 				}
 			} );
 		},
-	},
-
-	recordRegistration: function( { flow } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordPasswordlessRegistration: function( { flow } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordSocialRegistration: function() {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
-		// Marketing
-		recordRegistration();
 	},
 
 	recordAddToCart: function( { cartItem } ) {
