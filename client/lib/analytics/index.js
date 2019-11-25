@@ -25,10 +25,7 @@ import {
 	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
-	recordSignupCompletionInFloodlight,
-	recordSignupStart,
 	recordRegistration,
-	recordSignup,
 	recordAddToCart,
 	recordOrder,
 	setupGoogleAnalyticsGtag,
@@ -346,15 +343,6 @@ const analytics = {
 		},
 	},
 
-	recordSignupStart: function( { flow, ref } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
-		// Marketing
-		recordSignupStart( { flow } );
-	},
-
 	recordRegistration: function( { flow } ) {
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
@@ -380,55 +368,6 @@ const analytics = {
 		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
 		// Marketing
 		recordRegistration();
-	},
-
-	recordSignupComplete: function(
-		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
-		now
-	) {
-		if ( ! now ) {
-			// Delay using the analytics localStorage queue.
-			return analytics.queue.add(
-				'recordSignupComplete',
-				{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
-				true
-			);
-		}
-
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_signup_complete', {
-			flow: flow,
-			is_new_user: isNewUser,
-			is_new_site: isNewSite,
-			has_cart_items: hasCartItems,
-		} );
-
-		// Google Analytics
-		const flags = [
-			isNewUser && 'is_new_user',
-			isNewSite && 'is_new_site',
-			hasCartItems && 'has_cart_items',
-		].filter( flag => false !== flag );
-
-		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
-
-		if ( isNew7DUserSite ) {
-			// Tracks
-			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
-				flow: flow,
-			} );
-
-			// Google Analytics
-			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
-		}
-
-		// Ad Tracking: Deprecated Floodlight pixels.
-		recordSignupCompletionInFloodlight(); // Every signup.
-
-		// Ad Tracking: New user, site creations.
-		if ( isNewUser && isNewSite ) {
-			recordSignup( 'new-user-site' );
-		}
 	},
 
 	recordAddToCart: function( { cartItem } ) {

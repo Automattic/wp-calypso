@@ -611,11 +611,11 @@ function splitWpcomJetpackCartInfo( cart ) {
 	};
 }
 
-export async function recordSignupStart( { flow } ) {
+export async function adTrackSignupStart( flow ) {
 	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordSignupStart: [Skipping] ad tracking is not allowed' );
+		debug( 'adTrackSignupStart: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
@@ -625,13 +625,13 @@ export async function recordSignupStart( { flow } ) {
 	// Floodlight.
 
 	if ( isFloodlightEnabled ) {
-		debug( 'recordSignupStart: [Floodlight]' );
+		debug( 'adTrackSignupStart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/pre-p0+unique',
 		} );
 	}
 	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
-		debug( 'recordSignupStart: [Floodlight]' );
+		debug( 'adTrackSignupStart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/landi00+unique',
 		} );
@@ -647,7 +647,7 @@ export async function recordSignupStart( { flow } ) {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
 			},
 		];
-		debug( 'recordSignupStart: [Google Ads Gtag]', params );
+		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
 		window.gtag( ...params );
 	}
 }
@@ -715,23 +715,33 @@ export async function recordRegistration() {
 }
 
 /**
- * Tracks a signup conversion by generating a
- * synthetic cart and then treating it like an order.
+ * Tracks a signup conversion
  *
- * @param {string} slug - Signup slug.
+ * @param {boolean} isNewUserSite Whether the signup is new user with a new site created
  * @returns {void}
  */
-export async function recordSignup( slug ) {
+export async function adTrackSignupComplete( { isNewUserSite } ) {
 	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
+		debug( 'adTrackSignupComplete: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
 	await loadTrackingScripts();
 
-	// Synthesize a cart object for signup tracking.
+	// Record all signups up in DCM Floodlight (deprecated Floodlight pixels)
+	if ( isFloodlightEnabled ) {
+		debug( 'adTrackSignupComplete: Floodlight:' );
+		recordParamsInFloodlightGtag( { send_to: 'DC-6355556/wordp0/signu0+unique' } );
+	}
+
+	// Track new user conversions by generating a synthetic cart and treating it like an order.
+
+	if ( ! isNewUserSite ) {
+		// only for new users with a new site created
+		return;
+	}
 
 	const syntheticCart = {
 		is_signup: true,
@@ -740,9 +750,9 @@ export async function recordSignup( slug ) {
 		products: [
 			{
 				is_signup: true,
-				product_id: slug,
-				product_slug: slug,
-				product_name: slug,
+				product_id: 'new-user-site',
+				product_slug: 'new-user-site',
+				product_name: 'new-user-site',
 				currency: 'USD',
 				volume: 1,
 				cost: 0,
@@ -1368,22 +1378,6 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 			);
 		}
 	}
-}
-
-/**
- * Record that a user signed up in DCM Floodlight
- *
- * @returns {void}
- */
-export function recordSignupCompletionInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	debug( 'recordSignupCompletionInFloodlight:' );
-	recordParamsInFloodlightGtag( {
-		send_to: 'DC-6355556/wordp0/signu0+unique',
-	} );
 }
 
 /**
