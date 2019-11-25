@@ -65,7 +65,9 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		setInputValue( e.target.value );
-		e.target.value !== inputValue && ! dirty && setDirty( true );
+		if ( e.target.value !== inputValue && ! dirty ) {
+			setDirty( true );
+		}
 	};
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
@@ -78,10 +80,18 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		}
 	};
 
-	const handleSelect = ( vertical?: SiteVertical ) => {
-		vertical ? setSiteVertical( vertical ) : dirty && resetSiteVertical();
-		onSelect();
+	const handleSelect = ( vertical: SiteVertical ) => {
+		setSiteVertical( vertical );
 		setDirty( false );
+		onSelect();
+	};
+
+	const handleBlur = () => {
+		if ( dirty ) {
+			resetSiteVertical();
+		}
+		setDirty( false );
+		onSelect();
 	};
 
 	const loadingMessage = [
@@ -124,7 +134,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 					className={ inputClass }
 					placeholder={ NO__( 'enter a topic' ) }
 					onChange={ handleSuggestionChangeEvent }
-					onBlur={ () => handleSelect() }
+					onBlur={ handleBlur }
 					onKeyDown={ handleSuggestionKeyDown }
 					autoComplete="off"
 					value={ inputValue }
