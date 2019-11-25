@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, isEqual } from 'lodash';
+import { get, defer, find, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -47,8 +47,7 @@ import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
 import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
 
 /**
@@ -215,14 +214,13 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
-			return (
-				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
-				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
-			);
-		} );
+		const productsInCart = get( cart, 'products', [] );
 
-		if ( ! forcedAtomicProducts.length ) {
+		if (
+			! find( productsInCart, ( { product_slug = '' } ) => {
+				return isWpComEcommercePlan( product_slug );
+			} )
+		) {
 			return;
 		}
 
