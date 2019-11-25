@@ -27,9 +27,13 @@ class JetpackBackupCredsBanner extends Component {
 
 	render() {
 		const { event, isJetpack, rewindState, siteId, siteSlug, translate } = this.props;
+
+		if ( ! isJetpack ) {
+			return null;
+		}
 		return (
 			<Fragment>
-				{ siteId && isJetpack && <QueryRewindState siteId={ siteId } /> }
+				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						event={ event }
