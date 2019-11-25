@@ -4,7 +4,6 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { createRef, FunctionComponent, useEffect } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -23,7 +22,7 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
 	const handleChange = ( e: React.ChangeEvent< HTMLInputElement > ) =>
-		setSiteTitle( e.target.value );
+		setSiteTitle( e.target.value.trim().length ? e.target.value : '' );
 
 	const label = NO__( "It's called" );
 	const value = siteTitle.length ? siteTitle : NO__( 'enter a title' );
@@ -34,7 +33,7 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 		if ( isActive && document.activeElement !== inputRef.current ) {
 			inputRef.current?.focus();
 		}
-	}, [ isActive ] );
+	}, [ isActive, inputRef ] );
 
 	return (
 		<>
@@ -48,11 +47,6 @@ const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
 					value={ siteTitle }
 				/>
 			</Question>
-			<div className="onboarding-block__footer">
-				<Button className="onboarding-block__question-skip" isLink>
-					{ NO__( "Don't know yet" ) } →
-				</Button>
-			</div>
 		</>
 	);
 };

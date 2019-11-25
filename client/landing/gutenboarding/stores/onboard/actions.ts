@@ -14,6 +14,10 @@ export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	siteVertical,
 } );
 
+export const resetSiteVertical = () => ( {
+	type: ActionType.RESET_SITE_VERTICAL as const,
+} );
+
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
