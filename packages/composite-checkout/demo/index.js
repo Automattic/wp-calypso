@@ -5,6 +5,7 @@ require( '@babel/polyfill' );
  * External dependencies
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
@@ -15,6 +16,7 @@ import {
 	createApplePayMethod,
 	createCreditCardMethod,
 	useIsStepActive,
+	usePaymentData,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderSummaryStep,
 	getDefaultOrderReviewStep,
@@ -130,7 +132,7 @@ const getTotal = items => {
 	};
 };
 
-// TODO: replace this with the host page's translation system
+// Replace this with the host page's translation system
 const useLocalize = () => text => text;
 const hostTranslate = text => text;
 
@@ -140,9 +142,57 @@ const ContactFormTitle = () => {
 	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
 };
 
-function ContactForm() {
-	// TODO: define one for this demo
-	return <span>TODO</span>;
+const Label = styled.label`
+	display: block;
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+	}
+`;
+
+const Input = styled.input`
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 16px;
+	border: 1px solid
+		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+	padding: 13px 10px 12px 10px;
+
+	:focus {
+		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+			solid 2px !important;
+	}
+`;
+
+const Form = styled.div`
+	margin-bottom: 0.5em;
+`;
+
+function ContactForm( { summary } ) {
+	const [ paymentData, changePaymentData ] = usePaymentData();
+	const { billing = {} } = paymentData;
+	const { country = '' } = billing;
+	const onChangeCountry = event =>
+		changePaymentData( 'billing', { ...billing, country: event.target.value } );
+	if ( summary ) {
+		return (
+			<div>
+				<div>Country</div>
+				<span>{ country }</span>
+			</div>
+		);
+	}
+	return (
+		<Form>
+			<Label htmlFor="country">Country</Label>
+			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+		</Form>
+	);
 }
 
 const steps = [
@@ -157,10 +207,9 @@ const steps = [
 		className: 'checkout__billing-details-step',
 		hasStepNumber: true,
 		titleContent: <ContactFormTitle />,
-		activeStepContent: <ContactForm isComplete={ false } isActive={ true } />,
-		completeStepContent: <ContactForm summary isComplete={ true } isActive={ false } />,
+		activeStepContent: <ContactForm />,
+		completeStepContent: <ContactForm summary />,
 		isCompleteCallback: ( { paymentData } ) => {
-			// TODO: Make sure the form is complete
 			const { billing = {} } = paymentData;
 			if ( ! billing.country ) {
 				return false;
@@ -168,7 +217,6 @@ const steps = [
 			return true;
 		},
 		isEditableCallback: ( { paymentData } ) => {
-			// TODO: Return true if the form is empty
 			if ( paymentData.billing ) {
 				return true;
 			}
