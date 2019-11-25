@@ -20,9 +20,12 @@ class JetpackBackupCredsBanner extends Component {
 		// Tracks event name on click
 		event: PropTypes.string.isRequired,
 		// Connected props
-		siteId: PropTypes.number,
+		isJetpack: PropTypes.bool,
 		rewindState: PropTypes.object,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		// From localize()
+		translate: PropTypes.function,
 	};
 
 	render() {
