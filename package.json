@@ -167,7 +167,7 @@
 		"percentage-regex": "3.0.0",
 		"phone": "2.4.2",
 		"photon": "file:./packages/photon",
-		"postcss-cli": "6.1.2",
+		"postcss-cli": "6.1.3",
 		"prismjs": "1.17.1",
 		"prop-types": "15.7.2",
 		"qrcode.react": "0.9.3",
