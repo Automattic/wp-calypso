@@ -228,7 +228,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.siteSlug ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -350,7 +350,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && (
+					{ ! isPartnerPurchase( purchase ) && site && (
 						<ProductLink purchase={ purchase } selectedSite={ site } />
 					) }
 				</span>
