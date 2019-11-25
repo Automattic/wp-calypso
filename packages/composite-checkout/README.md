@@ -29,7 +29,7 @@ The payment method options displayed on the form are chosen automatically by the
 
 The review step presents a simple list of line items and a total, followed by a purchase button.
 
-![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
+![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/review-step.png 'Review Order Step')
 
 ### Submitting the form
 
