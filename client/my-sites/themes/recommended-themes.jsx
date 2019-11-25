@@ -13,7 +13,9 @@ import { getRecommendedThemes } from 'state/themes/actions';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
-		this.props.getRecommendedThemes();
+		if ( ! this.props.recommendedThemes.length ) {
+			this.props.getRecommendedThemes();
+		}
 	}
 
 	render() {
