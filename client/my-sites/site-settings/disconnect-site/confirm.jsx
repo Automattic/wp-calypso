@@ -43,7 +43,7 @@ class ConfirmDisconnection extends PureComponent {
 	];
 
 	submitSurvey = () => {
-		const { purchase, reason, site, siteId, text } = this.props;
+		const { purchase, reason, siteId, text } = this.props;
 
 		const surveyData = {
 			'why-cancel': {
