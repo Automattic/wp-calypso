@@ -168,7 +168,7 @@
 		"phone": "2.4.2",
 		"photon": "file:./packages/photon",
 		"postcss-cli": "6.1.2",
-		"prismjs": "1.16.0",
+		"prismjs": "1.17.1",
 		"prop-types": "15.7.2",
 		"qrcode.react": "0.9.3",
 		"qs": "6.9.1",
