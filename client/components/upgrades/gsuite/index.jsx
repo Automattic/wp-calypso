@@ -46,7 +46,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 
 			<GSuiteUpsellCard
 				domain={ domain }
-				gSuiteProductSlug={ 'gapps' }
+				productSlug={ 'gapps' }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>
