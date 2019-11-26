@@ -21,7 +21,7 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 		return `/hosting-config/${ siteSlug }`;
 	};
 
-	const pluginTransferInitiate = () => {
+	const transferInitiate = () => {
 		initiateTransfer( siteId, null, null );
 		page( getBackUrl() );
 	};
@@ -35,7 +35,7 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 			<HeaderCake isCompact={ true } backHref={ getBackUrl() }>
 				{ translate( 'Activate Hosting Features' ) }
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ pluginTransferInitiate } backUrl={ getBackUrl() } />
+			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ getBackUrl() } />
 		</MainComponent>
 	);
 };

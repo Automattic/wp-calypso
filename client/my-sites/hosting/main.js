@@ -29,7 +29,6 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import { transferStates } from 'state/automated-transfer/constants';
 import QuerySites from 'components/data/query-sites';
-import { isRequestingSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -53,14 +52,20 @@ const Hosting = ( {
 	const getContent = () => {
 		const { COMPLETE, FAILURE } = transferStates;
 
-		if ( isTransferring && COMPLETE !== transferState ) {
+		if (
+			( isTransferring && COMPLETE !== transferState ) ||
+			( isDisabled && COMPLETE === transferState )
+		) {
 			return (
-				<Notice
-					status="is-info"
-					showDismiss={ false }
-					text={ translate( 'Please wait while we activate the hosting features.' ) }
-					icon="sync"
-				/>
+				<Fragment>
+					<QuerySites siteId={ siteId } />
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate( 'Please wait while we activate the hosting features.' ) }
+						icon="sync"
+					/>
+				</Fragment>
 			);
 		}
 
@@ -69,7 +74,6 @@ const Hosting = ( {
 
 		return (
 			<Fragment>
-				<QuerySites siteId={ siteId } />
 				{ FAILURE === transferState && (
 					<Notice
 						status="is-info"
@@ -133,7 +137,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequestingSite: isRequestingSite( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
