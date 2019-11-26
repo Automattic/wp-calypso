@@ -24,6 +24,7 @@ import {
 	isBundled,
 	isDomainProduct,
 } from 'lib/products-values';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
@@ -62,6 +63,28 @@ export class CartItem extends React.Component {
 
 		if ( 0 === cost ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+		}
+
+		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+			const { cost_before_coupon: costBeforeCoupon } = cartItem;
+
+			if ( costBeforeCoupon ) {
+				return (
+					<div className="cart__gsuite-discount">
+						<span className="cart__gsuite-discount-regular-price">
+							{ costBeforeCoupon }
+						</span>
+
+						<span className="cart__gsuite-discount-discounted-price">
+							{ cost } { cartItem.currency }
+						</span>
+
+						<span className="cart__gsuite-discount-text">
+							{ translate( 'Discount for first year' ) }
+						</span>
+					</div>
+				);
+			}
 		}
 
 		return translate( '%(cost)s %(currency)s', {
