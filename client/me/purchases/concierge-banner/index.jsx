@@ -61,15 +61,15 @@ class ConciergeBanner extends Component {
 				break;
 
 			case 'canPurchaseConcierge':
-				headerText = this.props.translate( 'Looking for Expert Help?' );
+				headerText = this.props.translate( 'Need an expert by your side?' );
 				mainText = this.props.translate(
-					'Get 45 minutes dedicated to the success of your site. Purchase a 1-1 Quick Start Session with a Happiness Engineer!',
+					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
 					{
 						comment:
 							"Please extend the translation so that it's clear that these sessions are only available in English.",
 					}
 				);
-				buttonText = this.props.translate( 'Purchase Now' );
+				buttonText = this.props.translate( 'Learn More' );
 				buttonHref = '/checkout/offer-quickstart-session';
 				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
 				break;
