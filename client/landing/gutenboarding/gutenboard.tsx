@@ -23,6 +23,11 @@ import React, { useState } from 'react';
 import '@wordpress/components/build-style/style.css';
 
 /**
+ * FSE dependencies ???
+ */
+import( '../../../apps/full-site-editing/full-site-editing-plugin/full-site-editing' );
+
+/**
  * Internal dependencies
  */
 import Header from './components/header';

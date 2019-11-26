@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { main, redirectIfNotEnabled } from './controller';
+import { initFSEWindowConfigThing, main, redirectIfNotEnabled } from './controller';
 import { render as clientRender } from 'controller';
 import { wpDataDebugMiddleware } from './devtools';
 
@@ -20,6 +20,7 @@ window.AppBoot = () => {
 	page(
 		'/gutenboarding',
 		redirectIfNotEnabled,
+		initFSEWindowConfigThing,
 		wpDataDebugMiddleware,
 		main,
 		// No `makeLayout` here, to avoid rendering the `Layout` component (which includes the masterbar)
