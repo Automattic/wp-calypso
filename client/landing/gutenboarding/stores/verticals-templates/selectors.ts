@@ -3,9 +3,8 @@
  */
 import { State } from './reducer';
 
-export const getState = ( state: State ) => state;
-
 /**
+ * Get template suggestions
  *
  * @param state Store state
  * @param verticalId Vertical ID, e.g. `"p13v1"`
