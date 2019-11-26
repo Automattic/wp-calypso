@@ -19,7 +19,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 function getHoldMessages( siteSlug, translate ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			title: translate( 'Site is blocked' ),
+			title: translate( 'Blocked' ),
 			description: translate(
 				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
 			),
