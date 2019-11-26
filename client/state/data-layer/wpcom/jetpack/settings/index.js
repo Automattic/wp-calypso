@@ -13,7 +13,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
 import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 import getSiteUrl from 'state/selectors/get-site-url';
-import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
@@ -41,8 +40,8 @@ const receiveJetpackOnboardingSettings = ( { siteId }, settings ) =>
 /**
  * Dispatches a request to fetch settings for a given site
  *
- * @param   {Object}   action         Redux action
- * @returns {Object}   Dispatched http action
+ * @param   {object}   action         Redux action
+ * @returns {object}   Dispatched http action
  */
 export const requestJetpackSettings = action => {
 	const { siteId, query } = action;
@@ -64,7 +63,7 @@ export const requestJetpackSettings = action => {
 
 export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
 	const state = getState();
-	const url = getSiteUrl( state, siteId ) || getUnconnectedSiteUrl( state, siteId );
+	const url = getSiteUrl( state, siteId );
 	const noticeOptions = {
 		id: `jpo-communication-error-${ siteId }`,
 	};
@@ -80,8 +79,8 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
 /**
  * Dispatches a request to save particular settings on a site
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const saveJetpackSettings = action => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
