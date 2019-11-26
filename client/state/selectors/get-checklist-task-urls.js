@@ -11,7 +11,7 @@ import { getPostsForQuery } from 'state/posts/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
 import createSelector from 'lib/create-selector';
-import { isEnabled } from 'config';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
@@ -44,7 +44,7 @@ export default createSelector(
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
 		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
 
-		const updateHomepageUrl = isEnabled( 'checklist-homepage-template-select' )
+		const updateHomepageUrl = isSiteUsingFullSiteEditing( state, siteId )
 			? addQueryArgs( frontPageUrl || getEditorUrl( state, siteId, null, 'page' ), {
 					'new-homepage': 1,
 			  } )
