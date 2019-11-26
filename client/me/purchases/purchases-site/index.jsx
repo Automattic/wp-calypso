@@ -57,6 +57,7 @@ const PurchasesSite = ( {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
+
 			<PurchaseSiteHeader
 				siteId={ siteId }
 				name={ name }
