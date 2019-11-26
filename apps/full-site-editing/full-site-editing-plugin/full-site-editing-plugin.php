@@ -209,11 +209,12 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 /**
  * Load A8C_Newspack_Blocks.
  */
-function load_a8c_newspack_blocks() {
+function load_homepages_posts_block() {
 	require_once __DIR__ . '/homepage-posts-block/class-homepage-posts-block.php';
+	require_once __DIR__ . '/homepage-posts-block/class-homepage-posts-block-api.php';
 	Homepage_Posts::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_a8c_newspack_blocks' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_homepages_posts_block' );
 
 /**
  * Load Global Styles plugin.
