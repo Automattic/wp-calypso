@@ -74,7 +74,7 @@ const CallToAction = styled.button`
 		color: ${ getTextColor };
 	}
 
-	img {
+	svg {
 		margin-bottom: -1px;
 		transform: translateY(2px);
 		filter: ${ getImageFilter }
@@ -138,9 +138,6 @@ function getRollOverBorderColor( { buttonState, buttonType, theme } ) {
 		case 'secondary':
 			return colors.highlightBorder;
 		case 'disabled':
-			if ( buttonType === 'paypal' ) {
-				return colors.disabledPaymentButtons;
-			}
 			return colors.disabledButtons;
 		default:
 			return colors.borderColorDark;
@@ -197,9 +194,6 @@ function getBorderColor( { buttonType, buttonState, theme } ) {
 		case 'secondary':
 			return colors.highlightBorder;
 		case 'disabled':
-			if ( buttonType === 'paypal' || buttonType === 'apple-pay' ) {
-				return colors.disabledPaymentButtons;
-			}
 			return colors.disabledButtons;
 		default:
 			return colors.borderColor;

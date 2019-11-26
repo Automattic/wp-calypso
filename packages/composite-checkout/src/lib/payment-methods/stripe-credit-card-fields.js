@@ -574,7 +574,7 @@ function StripePayButton( { disabled } ) {
 					beginStripeTransaction,
 				} )
 			}
-			buttonState="primary"
+			buttonState={ disabled ? 'disabled' : 'primary' }
 			fullWidth
 		>
 			{ buttonString }

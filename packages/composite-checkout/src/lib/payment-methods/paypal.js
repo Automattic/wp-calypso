@@ -123,7 +123,7 @@ export function PaypalSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ onClick }
-			buttonState="primary"
+			buttonState={ disabled ? 'disabled' : 'primary' }
 			buttonType="paypal"
 			fullWidth
 		>

@@ -47,7 +47,7 @@ export function CreditCardSubmitButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ submitCreditCardPayment }
-			buttonState="primary"
+			buttonState={ disabled ? 'disabled' : 'primary' }
 			fullWidth
 		>
 			{ buttonString }
