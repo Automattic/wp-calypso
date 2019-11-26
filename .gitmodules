@@ -1,0 +1,3 @@
+[submodule "apps/full-site-editing/full-site-editing-plugin/homepage-posts-block/newspack-blocks"]
+	path = apps/full-site-editing/full-site-editing-plugin/homepage-posts-block/newspack-blocks
+	url = git@github.com:Automattic/newspack-blocks.git
