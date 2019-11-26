@@ -14,8 +14,7 @@
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"skipLibCheck": false,
-		"module": "esnext",
-		"baseUrl": ".."
+		"module": "esnext"
 	},
 	"types": [ "webpack-env" ]
 }

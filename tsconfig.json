@@ -7,7 +7,8 @@
 
 		"paths": {
 			"*": [ "*", "client/*", "server/*" ]
-		}
+		},
+		"baseUrl": "."
 	},
 	"include": [ "client", "server" ],
 	"exclude": [
