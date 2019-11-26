@@ -26,6 +26,7 @@ import {
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
@@ -274,8 +275,8 @@ export class CartItem extends React.Component {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate( '%(productName)s (1 User)', {
 						args: {
 							productName: cartItem.product_name,
@@ -287,8 +288,8 @@ export class CartItem extends React.Component {
 			}
 		} else {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',

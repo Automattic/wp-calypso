@@ -14,6 +14,7 @@ import CompactCard from 'components/card/compact';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
+import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
 import QueryProducts from 'components/data/query-products-list';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -133,7 +134,7 @@ const GSuiteUpsellCard = ( {
 
 GSuiteUpsellCard.propTypes = {
 	domain: PropTypes.string.isRequired,
-	productSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
+	productSlug: GSUITE_SLUG_PROP_TYPES,
 	onAddEmailClick: PropTypes.func.isRequired,
 	onSkipClick: PropTypes.func.isRequired,
 };

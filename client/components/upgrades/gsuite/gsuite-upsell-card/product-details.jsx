@@ -13,6 +13,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductBySlug } from 'state/products-list/selectors';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
+import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
 
 function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
 	const translate = useTranslate();
@@ -44,7 +45,7 @@ GSuiteUpsellProductDetails.propTypes = {
 	currencyCode: PropTypes.string,
 	domain: PropTypes.string.isRequired,
 	product: PropTypes.object,
-	productSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
+	productSlug: GSUITE_SLUG_PROP_TYPES,
 };
 
 export default connect(

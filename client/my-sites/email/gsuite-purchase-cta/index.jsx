@@ -18,6 +18,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductBySlug } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
 import GSuiteFeatures from 'components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import GSuitePrice from 'components/gsuite/gsuite-price';
@@ -112,7 +113,8 @@ export const GSuitePurchaseCta = ( {
 			</CompactCard>
 
 			<CompactCard className="gsuite-purchase-cta__info">
-				<GSuiteFeatures domainName={ domainName } productSlug={ 'gapps' } />
+				<GSuiteFeatures domainName={ domainName } productSlug={ GSUITE_BASIC_SLUG } />
+
 				<GSuiteLearnMore onLearnMoreClick={ handleLearnMoreClick } />
 			</CompactCard>
 		</EmailVerificationGate>
@@ -130,7 +132,7 @@ GSuitePurchaseCta.propTypes = {
 export default connect(
 	state => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, 'gapps' ),
+		product: getProductBySlug( state, GSUITE_BASIC_SLUG ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

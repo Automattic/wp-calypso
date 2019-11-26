@@ -6,6 +6,7 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
@@ -447,11 +448,7 @@ export function isGoogleApps( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return (
-		'gapps' === product.product_slug ||
-		'gapps_unlimited' === product.product_slug ||
-		'gapps_extra_license' === product.product_slug
-	);
+	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGuidedTransfer( product ) {
