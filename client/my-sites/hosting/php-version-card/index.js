@@ -150,7 +150,7 @@ const PhpVersionCard = ( {
 				value: '7.3',
 			},
 			{
-				label: translate( '7.4RC6', {
+				label: translate( '7.4', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.4',
