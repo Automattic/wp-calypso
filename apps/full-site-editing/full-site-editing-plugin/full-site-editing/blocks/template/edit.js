@@ -169,7 +169,7 @@ const TemplateEdit = compose(
 								/>
 							</div>
 						</Disabled>
-						<Placeholder className="template-block__overlay">
+						<Placeholder className="template-block__overlay" onClick={ save }>
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
 									<Spinner /> { sprintf( __( 'Loading editor for: %s' ), templateTitle ) }
