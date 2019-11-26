@@ -39,6 +39,11 @@ class WpcomDomain extends React.Component {
 
 	getEditSiteAddressBlock() {
 		const { domain } = this.props;
+
+		if ( domain.isWpcomStagingDomain ) {
+			return;
+		}
+
 		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
 			const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
 			const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
@@ -83,7 +88,7 @@ class WpcomDomain extends React.Component {
 				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
