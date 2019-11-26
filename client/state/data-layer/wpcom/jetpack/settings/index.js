@@ -86,7 +86,7 @@ export const saveJetpackSettings = action => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getJetpackSettings( getState(), siteId );
 
-	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
+	// We don't want any legacy Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
 	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 	dispatch(

@@ -90,7 +90,7 @@ QuerySites.propTypes = {
 	primaryAndRecent: PropTypes.bool,
 	siteId: PropTypes.oneOfType( [
 		PropTypes.number,
-		// The actions and selectors we use also work with site slugs. Needed by jetpack-onboarding/main.
+		// The actions and selectors we use also work with site slugs.
 		PropTypes.string,
 	] ),
 };
