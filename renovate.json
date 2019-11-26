@@ -39,6 +39,10 @@
 		{
 			"packagePatterns": [ "^webpack" ],
 			"prPriority": 1
+		},
+		{
+			"packageName": "tinymce",
+			"allowedVersions": "^4"
 		}
 	],
 	"statusCheckVerify": true,
