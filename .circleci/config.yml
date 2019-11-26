@@ -357,7 +357,8 @@ jobs:
             # Run jest on the CircleCI split for parallelization across containers
             # Avoid using `--split-by=timings` here so that per-node Jest caches
             # receive a stable sub-set of tests for optimal cache usage.
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/client" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
@@ -380,7 +381,8 @@ jobs:
       - run:
           name: Run Integration Tests
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/integration" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                     \
                 --cacheDirectory="$HOME/jest-cache"        \
                 --ci                                       \
@@ -402,7 +404,8 @@ jobs:
           name: Run Package Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/packages" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                    \
                 --cacheDirectory="$HOME/jest-cache"                       \
                 --ci                                                      \
@@ -424,7 +427,8 @@ jobs:
           name: Run Server Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/server" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
