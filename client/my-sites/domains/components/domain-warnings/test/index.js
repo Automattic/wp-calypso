@@ -255,6 +255,52 @@ describe( 'index', () => {
 	} );
 
 	describe( 'verification nudge', () => {
+		test( 'should not show any verification nudge for any unverified domains younger than 2 days if site has FSE enabled', () => {
+			const props = {
+				translate: identity,
+				domains: [
+					{
+						name: 'blog.example.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
+					},
+					{
+						name: 'mygroovysite.com',
+						type: domainTypes.REGISTERED,
+						currentUserCanManage: true,
+						isPendingIcannVerification: true,
+						registrationDate: moment()
+							.subtract( 1, 'days' )
+							.toISOString(),
+					},
+				],
+				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
+				isSiteUsingFSE: true,
+				siteIsUnlaunched: true,
+				moment,
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
+			expect(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
+				)
+			).toBeFalsy();
+			expect(
+				links.some( link =>
+					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
+				)
+			).toBeFalsy();
+		} );
 		test( 'should show a verification nudge with weak message for any unverified domains younger than 2 days', () => {
 			const props = {
 				translate: identity,

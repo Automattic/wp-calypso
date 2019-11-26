@@ -30,9 +30,10 @@ export function receiveSiteChecklist( siteId, checklist ) {
  * @param {String} siteId for the checklist
  * @return {Object} action object
  */
-export const requestSiteChecklist = siteId => ( {
+export const requestSiteChecklist = ( siteId, isSiteUsingFSE = false ) => ( {
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
+	isSiteUsingFSE,
 	meta: {
 		dataLayer: {
 			trackRequest: true,

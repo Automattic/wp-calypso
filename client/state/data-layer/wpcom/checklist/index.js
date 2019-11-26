@@ -6,7 +6,6 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -27,9 +26,7 @@ export const fetchChecklist = action =>
 			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
-				with_domain_verification: config.isEnabled( 'experience/domain-verification-in-checklist' )
-					? 1
-					: 0,
+				with_domain_verification: action.isSiteUsingFSE ? 1 : 0,
 			},
 		},
 		action

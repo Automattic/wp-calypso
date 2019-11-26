@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -636,11 +635,7 @@ export class DomainWarnings extends React.PureComponent {
 					.add( 2, 'days' )
 					.isAfter()
 		);
-		if (
-			config.isEnabled( 'experience/domain-verification-in-checklist' ) &&
-			this.props.siteIsUnlaunched &&
-			isWithinTwoDays
-		) {
+		if ( this.props.isSiteUsingFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
 			// Customer Home nudges this on unlaunched sites.
 			// After two days let's re-display the nudge
 			return;
