@@ -14,6 +14,7 @@ import {
 	OrderReviewSection,
 } from './components/order-review-line-items';
 import Checkout from './components/checkout';
+import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal } from './lib/line-items';
@@ -44,6 +45,7 @@ import {
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutModal,
 	CheckoutOrderSummary,
 	CheckoutOrderSummaryTitle,
 	CheckoutPaymentMethods,
