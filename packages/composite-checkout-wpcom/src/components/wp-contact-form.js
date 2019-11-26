@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { usePaymentData } from '@automattic/composite-checkout';
+import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -17,8 +17,9 @@ import { LeftColumn, RightColumn } from './ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const { isDomainContactSame = true } = paymentData;
+	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
+	const setters = useDispatch( 'wpcom' );
 
 	if ( summary && isComplete ) {
 		return <ContactFormSummary />;
@@ -27,17 +28,22 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 		return null;
 	}
 
-	const toggleDomainFieldsVisibility = () => {
-		updatePaymentData( 'isDomainContactSame', ! isDomainContactSame );
-	};
+	const toggleDomainFieldsVisibility = () =>
+		setters.setIsDomainContactSame( ! isDomainContactSame );
 
 	return (
 		<BillingFormFields>
-			{ isDomainFieldsVisible && <AddressFields fieldType={ 'billing' } /> }
+			{ isDomainFieldsVisible && (
+				<AddressFields section="contact" contactInfo={ contactInfo } setters={ setters } />
+			) }
 
-			<TaxFields fieldType={ 'billing' } />
+			<TaxFields section="contact" taxInfo={ contactInfo } setters={ setters } />
 
-			<PhoneNumberField fieldType={ 'billing' } />
+			<PhoneNumberField
+				id="contact-phone-number"
+				phoneNumber={ contactInfo.phoneNumber || '' }
+				onChange={ setters.setPhoneNumber }
+			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
 
@@ -167,102 +173,94 @@ const DomainRegistrationCheckbox = styled.input`
 	}
 `;
 
-function AddressFields( { fieldType } ) {
+function AddressFields( { section, contactInfo, setters } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { firstName, lastName, email, address, city, state, province } = contactInfo;
+	const {
+		setFirstName,
+		setLastName,
+		setEmail,
+		setAddress,
+		setCity,
+		setState,
+		setProvince,
+	} = setters;
 
 	return (
 		<React.Fragment>
 			<FieldRow>
 				<LeftColumn>
 					<Field
-						id={ fieldType + '-first-name' }
+						id={ section + '-first-name' }
 						type="text"
 						label={ translate( 'First name' ) }
-						value={ currentLocationData.firstName || '' }
-						onChange={ value => {
-							updateLocationData( 'firstName', value );
-						} }
+						value={ firstName || '' }
+						onChange={ setFirstName }
 						autoComplete="given-name"
 					/>
 				</LeftColumn>
 
 				<RightColumn>
 					<Field
-						id={ fieldType + '-last-name' }
+						id={ section + '-last-name' }
 						type="text"
 						label={ translate( 'Last name' ) }
-						value={ currentLocationData.lastName || '' }
-						onChange={ value => {
-							updateLocationData( 'lastName', value );
-						} }
+						value={ lastName || '' }
+						onChange={ setLastName }
 						autoComplete="family-name"
 					/>
 				</RightColumn>
 			</FieldRow>
 
 			<FormField
-				id={ fieldType + '-email-address' }
+				id={ section + '-email-address' }
 				type="email"
 				label={ translate( 'Email address' ) }
 				placeholder={ translate( 'name@example.com' ) }
-				value={ currentLocationData.email || '' }
-				onChange={ value => {
-					updateLocationData( 'email', value );
-				} }
+				value={ email || '' }
+				onChange={ setEmail }
 				autoComplete="email"
 			/>
 
 			<FormField
-				id={ fieldType + '-address' }
+				id={ section + '-address' }
 				type="text"
 				label={ translate( 'Address' ) }
-				value={ currentLocationData.address || '' }
-				onChange={ value => {
-					updateLocationData( 'address', value );
-				} }
-				autoComplete={ fieldType + ' street-address' }
+				value={ address || '' }
+				onChange={ setAddress }
+				autoComplete={ section + ' street-address' }
 			/>
 
 			<FieldRow>
 				<LeftColumn>
 					<Field
-						id={ fieldType + '-city' }
+						id={ section + '-city' }
 						type="text"
 						label={ translate( 'City' ) }
-						value={ currentLocationData.city || '' }
-						onChange={ value => {
-							updateLocationData( 'city', value );
-						} }
-						autoComplete={ fieldType + ' address-level2' }
+						value={ city || '' }
+						onChange={ setCity }
+						autoComplete={ section + ' address-level2' }
 					/>
 				</LeftColumn>
 
 				<RightColumn>
 					{ isStateorProvince() === 'state' ? (
 						<Field
-							id={ fieldType + '-state' }
+							id={ section + '-state' }
 							type="text"
 							label={ translate( 'State' ) }
-							value={ currentLocationData.state || '' }
-							onChange={ value => {
-								updateLocationData( 'state', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
+							value={ state || '' }
+							onChange={ setState }
+							autoComplete={ section + ' address-level1' }
 						/>
 					) : (
 						<Field
-							id={ fieldType + '-province' }
+							id={ section + '-province' }
 							type="text"
 							label={ translate( 'Province' ) }
-							value={ currentLocationData.province || '' }
-							onChange={ value => {
-								updateLocationData( 'province', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
+							value={ province || '' }
+							onChange={ setProvince }
+							autoComplete={ section + ' address-level1' }
 						/>
 					) }
 				</RightColumn>
@@ -272,7 +270,9 @@ function AddressFields( { fieldType } ) {
 }
 
 AddressFields.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
+	contactInfo: PropTypes.object.isRequired,
+	setters: PropTypes.object.isRequired,
 };
 
 function isStateorProvince() {
@@ -280,112 +280,91 @@ function isStateorProvince() {
 	return 'province';
 }
 
-function PhoneNumberField( { fieldType } ) {
+function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
 	return (
 		<FormField
-			id={ fieldType + '-phone-number' }
+			id={ id }
 			type="Number"
-			label={
-				fieldType === 'billing'
-					? translate( 'Phone number (Optional)' )
-					: translate( 'Phone number' )
-			}
-			value={ currentLocationData.phoneNumber || '' }
-			onChange={ value => {
-				updateLocationData( 'phoneNumber', value );
-			} }
+			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
+			value={ phoneNumber || '' }
+			onChange={ onChange }
 			autoComplete="tel"
 		/>
 	);
 }
 
 PhoneNumberField.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	isRequired: PropTypes.bool,
+	id: PropTypes.string.isRequired,
+	phoneNumber: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired,
 };
 
 function VatIdField() {
 	const translate = useTranslate();
-	const fieldType = 'billing';
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { vatId } = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const { setVatId } = useDispatch( 'wpcom' );
 
 	return (
 		<FormField
-			id={ 'billing-vat-id' }
+			id="contact-vat-id"
 			type="Number"
 			label={ translate( 'VAT identification number' ) }
-			value={ currentLocationData.vatId || '' }
-			onChange={ value => {
-				updateLocationData( 'vatId', value );
-			} }
+			value={ vatId || '' }
+			onChange={ setVatId }
 		/>
 	);
 }
 
-function TaxFields( { fieldType } ) {
+function TaxFields( { section, taxInfo, setters } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	// TODO: add field validation; at least to see if a required field is set
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { postalCode, country } = taxInfo;
+	const { setPostalCode, setCountry } = setters;
 
 	return (
-		<React.Fragment>
-			<FieldRow>
-				<LeftColumn>
-					{ isZipOrPostal() === 'zip' ? (
-						<Field
-							id={ fieldType + '-zip-code' }
-							type="text"
-							label={ translate( 'Zip code' ) }
-							value={ currentLocationData.zipCode || '' }
-							onChange={ value => {
-								updateLocationData( 'zipCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) : (
-						<Field
-							id={ fieldType + '-postal-code' }
-							type="text"
-							label={ translate( 'Postal code' ) }
-							value={ currentLocationData.postalCode || '' }
-							onChange={ value => {
-								updateLocationData( 'postalCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) }
-				</LeftColumn>
-
-				<RightColumn>
+		<FieldRow>
+			<LeftColumn>
+				{ isZipOrPostal() === 'zip' ? (
 					<Field
-						id={ fieldType + '-country' }
+						id={ section + '-zip-code' }
 						type="text"
-						label={ translate( 'Country' ) }
-						value={ currentLocationData.country || '' }
-						onChange={ value => {
-							updateLocationData( 'country', value );
-						} }
-						autoComplete={ fieldType + ' country' }
+						label={ translate( 'Zip code' ) }
+						value={ postalCode || '' }
+						onChange={ setPostalCode }
+						autoComplete={ section + ' postal-code' }
 					/>
-				</RightColumn>
-			</FieldRow>
-		</React.Fragment>
+				) : (
+					<Field
+						id={ section + '-postal-code' }
+						type="text"
+						label={ translate( 'Postal code' ) }
+						value={ postalCode || '' }
+						onChange={ setPostalCode }
+						autoComplete={ section + ' postal-code' }
+					/>
+				) }
+			</LeftColumn>
+
+			<RightColumn>
+				<Field
+					id={ section + '-country' }
+					type="text"
+					label={ translate( 'Country' ) }
+					value={ country || '' }
+					onChange={ setCountry }
+					autoComplete={ section + ' country' }
+				/>
+			</RightColumn>
+		</FieldRow>
 	);
 }
 
 TaxFields.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
+	taxInfo: PropTypes.object.isRequired,
+	setters: PropTypes.object.isRequired,
 };
 
 function isZipOrPostal() {
@@ -395,6 +374,25 @@ function isZipOrPostal() {
 
 function DomainFields() {
 	const translate = useTranslate();
+	const contactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
+	const {
+		setDomainFirstName: setFirstName,
+		setDomainLastName: setLastName,
+		setDomainEmail: setEmail,
+		setDomainAddress: setAddress,
+		setDomainCity: setCity,
+		setDomainState: setState,
+		setDomainProvince: setProvince,
+	} = useDispatch( 'wpcom' );
+	const setters = {
+		setFirstName,
+		setLastName,
+		setEmail,
+		setAddress,
+		setCity,
+		setState,
+		setProvince,
+	};
 
 	return (
 		<DomainContactFields>
@@ -407,9 +405,14 @@ function DomainFields() {
 				) }
 			</DomainContactFieldsDescription>
 
-			<AddressFields fieldType={ 'domains' } />
-			<TaxFields fieldType={ 'domains' } />
-			<PhoneNumberField fieldType={ 'domains' } />
+			<AddressFields section="domains" contactInfo={ contactInfo } setters={ setters } />
+			<TaxFields section="domains" taxInfo={ contactInfo } setters={ setters } />
+			<PhoneNumberField
+				id="domains-phone-number"
+				isRequired
+				phoneNumber={ contactInfo.phoneNumber }
+				onChange={ setters.setPhoneNumber }
+			/>
 		</DomainContactFields>
 	);
 }
@@ -435,16 +438,18 @@ const DomainContactFieldsDescription = styled.p`
 
 function ContactFormSummary() {
 	const translate = useTranslate();
-	const [ paymentData ] = usePaymentData();
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const domainContactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
+	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
 
 	//Check if paymentData is empty
-	if ( Object.entries( paymentData ).length === 0 ) {
+	if (
+		Object.entries( contactInfo ).length === 0 &&
+		Object.entries( domainContactInfo ).length === 0
+	) {
 		return null;
 	}
 
-	const postalCode = billing.zipCode || billing.postalCode;
-	const domainPostalCode = domains.zipCode || domains.postalCode;
 	return (
 		<GridRow>
 			<div>
@@ -475,11 +480,11 @@ function ContactFormSummary() {
 
 				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
 					<SummaryDetails>
-						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
+						<SummaryLine>{ contactInfo.phoneNumber }</SummaryLine>
 						{ isElligibleForVat() && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
-								{ billing.vatId }
+								{ contactInfo.vatId }
 							</SummaryLine>
 						) }
 					</SummaryDetails>
@@ -532,8 +537,8 @@ export function getDomainDetailsFromPaymentData( paymentData ) {
 			? billing.state || billing.province
 			: domains.state || domains.province || billing.state || billing.province || '',
 		postal_code: isDomainContactSame
-			? billing.postalCode || billing.zipCode
-			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
+			? billing.postalCode
+			: domains.postalCode || billing.postalCode || '',
 		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
 		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
 		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
