@@ -218,7 +218,7 @@ class PurchasesListing extends Component {
 		return (
 			<Fragment>
 				<Card compact>
-					<strong>{ translate( 'My Products' ) }</strong>
+					<strong>{ translate( 'My Solutions' ) }</strong>
 				</Card>
 				{ productPurchases.map( purchase => (
 					<MyPlanCard
