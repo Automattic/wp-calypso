@@ -170,7 +170,7 @@ function findDnsIndex( records, record ) {
 	return findIndex( records, matchingFields );
 }
 
-export default function reducer( state = initialState, action ) {
+export default function reducer( state = {}, action ) {
 	switch ( action.type ) {
 		case DOMAINS_DNS_FETCH:
 			state = updateDomainState( state, action.domainName, {
