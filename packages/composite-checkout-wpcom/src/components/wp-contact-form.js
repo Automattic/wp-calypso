@@ -323,28 +323,18 @@ function TaxFields( { section, taxInfo, setters } ) {
 	const { postalCode, country } = taxInfo;
 	const { setPostalCode, setCountry } = setters;
 
+	const isZip = isZipOrPostal() === 'zip';
 	return (
 		<FieldRow>
 			<LeftColumn>
-				{ isZipOrPostal() === 'zip' ? (
-					<Field
-						id={ section + '-zip-code' }
-						type="text"
-						label={ translate( 'Zip code' ) }
-						value={ postalCode || '' }
-						onChange={ setPostalCode }
-						autoComplete={ section + ' postal-code' }
-					/>
-				) : (
-					<Field
-						id={ section + '-postal-code' }
-						type="text"
-						label={ translate( 'Postal code' ) }
-						value={ postalCode || '' }
-						onChange={ setPostalCode }
-						autoComplete={ section + ' postal-code' }
-					/>
-				) }
+				<Field
+					id={ section + '-postal-code' }
+					type="text"
+					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
+					value={ postalCode || '' }
+					onChange={ setPostalCode }
+					autoComplete={ section + ' postal-code' }
+				/>
 			</LeftColumn>
 
 			<RightColumn>
