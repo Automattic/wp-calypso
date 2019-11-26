@@ -69,9 +69,6 @@ export const setPhpVersion = ( siteId, version ) => {
 		),
 		{
 			fromApi: () => success => {
-				if ( true === success ) {
-					requestPhpVersion( siteId );
-				}
 				return [ [ requestId( siteId, method ), success ] ];
 			},
 			freshness: 0,
@@ -91,6 +88,7 @@ const PhpVersionCard = ( {
 	version,
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( null );
+	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( null );
 
 	useEffect( () => {
 		requestPhpVersion( siteId );
@@ -106,6 +104,8 @@ const PhpVersionCard = ( {
 		}
 
 		if ( updateResult === 'success' ) {
+			setCurrentPhpVersion( selectedPhpVersion );
+
 			showSuccessNotice(
 				translate( 'PHP version successfully set to %(version)s.', {
 					args: {
@@ -124,6 +124,10 @@ const PhpVersionCard = ( {
 			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
 		}
 	}, [ updateResult ] );
+
+	useEffect( () => {
+		setCurrentPhpVersion( version );
+	}, [ version ] );
 
 	const changePhpVersion = event => {
 		const newVersion = event.target.value;
@@ -159,15 +163,7 @@ const PhpVersionCard = ( {
 			return;
 		}
 
-		const isButtonDisabled = ! selectedPhpVersion || selectedPhpVersion === version;
-		let buttonTooltip = undefined;
-		if ( isButtonDisabled ) {
-			buttonTooltip = translate( "You're already running PHP %(version)s.", {
-				args: {
-					version,
-				},
-			} );
-		}
+		const isButtonDisabled = ! selectedPhpVersion || selectedPhpVersion === currentPhpVersion;
 
 		return (
 			<div>
@@ -176,12 +172,12 @@ const PhpVersionCard = ( {
 					<FormSelect
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
-						defaultValue={ version }
+						value={ selectedPhpVersion || currentPhpVersion }
 					>
 						{ getPhpVersions().map( option => {
 							return (
 								<option
-									disabled={ option.value === version }
+									disabled={ option.value === currentPhpVersion }
 									value={ option.value }
 									key={ option.label }
 								>
@@ -191,15 +187,15 @@ const PhpVersionCard = ( {
 						} ) }
 					</FormSelect>
 				</div>
-				<Button
-					className="php-version-card__set-version"
-					onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
-					busy={ updating }
-					disabled={ isButtonDisabled }
-					title={ buttonTooltip }
-				>
-					<span>{ translate( 'Update PHP Version' ) }</span>
-				</Button>
+				{ ! isButtonDisabled && (
+					<Button
+						className="php-version-card__set-version"
+						onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
+						busy={ updating }
+					>
+						<span>{ translate( 'Update PHP Version' ) }</span>
+					</Button>
+				) }
 			</div>
 		);
 	};
