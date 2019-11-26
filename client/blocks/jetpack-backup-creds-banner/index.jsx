@@ -25,7 +25,7 @@ class JetpackBackupCredsBanner extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		// From localize()
-		translate: PropTypes.function,
+		translate: PropTypes.func,
 	};
 
 	render() {
