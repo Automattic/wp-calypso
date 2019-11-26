@@ -52,37 +52,20 @@ const Hosting = ( {
 	const getContent = () => {
 		const { COMPLETE, FAILURE } = transferStates;
 
-		if (
-			( isTransferring && COMPLETE !== transferState ) ||
-			( isDisabled && COMPLETE === transferState )
-		) {
+		const failureNotice = FAILURE === transferState && (
+			<Notice
+				status="is-info"
+				showDismiss={ false }
+				text={ translate( 'There was an error activating hosting features.' ) }
+				icon="bug"
+			/>
+		);
+
+		if ( isDisabled && ! isTransferring ) {
 			return (
 				<Fragment>
 					<QuerySites siteId={ siteId } />
-					<Notice
-						status="is-info"
-						showDismiss={ false }
-						text={ translate( 'Please wait while we activate the hosting features.' ) }
-						icon="sync"
-					/>
-				</Fragment>
-			);
-		}
-
-		const sftpPhpMyAdminFeaturesEnabled =
-			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
-
-		return (
-			<Fragment>
-				{ FAILURE === transferState && (
-					<Notice
-						status="is-info"
-						showDismiss={ false }
-						text={ translate( 'There was an error activating hosting features.' ) }
-						icon="bug"
-					/>
-				) }
-				{ isDisabled && (
+					{ failureNotice }
 					<Notice
 						status="is-info"
 						showDismiss={ false }
@@ -99,7 +82,29 @@ const Hosting = ( {
 							{ translate( 'Activate' ) }
 						</NoticeAction>
 					</Notice>
-				) }
+				</Fragment>
+			);
+		}
+
+		// Transfer in progress
+		if ( isTransferring && COMPLETE !== transferState ) {
+			return (
+				<Fragment>
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate( 'Please wait while we activate the hosting features.' ) }
+						icon="sync"
+					/>
+				</Fragment>
+			);
+		}
+
+		const sftpPhpMyAdminFeaturesEnabled =
+			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+
+		return (
+			<Fragment>
 				<div className="hosting__layout">
 					<div className="hosting__layout-col">
 						{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
