@@ -4,6 +4,7 @@
 
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 
+/* eslint-disable */
 /**
  * Returns true if the site is the target of an active migration
  *
@@ -16,3 +17,4 @@ export default function isSiteMigrationInProgress( state, siteId ) {
 
 	return migrationStatus !== 'inactive';
 }
+/* eslint-enable */
