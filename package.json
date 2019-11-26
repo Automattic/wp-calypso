@@ -110,7 +110,7 @@
 		"deep-freeze": "0.0.1",
 		"diff": "4.0.1",
 		"doctrine": "3.0.0",
-		"dom-helpers": "3.4.0",
+		"dom-helpers": "5.1.3",
 		"dompurify": "2.0.7",
 		"draft-js": "0.10.5",
 		"email-validator": "2.0.4",
