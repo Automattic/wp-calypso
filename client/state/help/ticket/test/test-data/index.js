@@ -3,6 +3,6 @@ export const dummyConfiguration = {
 };
 
 export const dummyError = {
-	status: '400',
+	status: 400,
 	message: 'Just a dummy error',
 };
