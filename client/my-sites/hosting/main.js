@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -9,12 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import Banner from 'components/banner';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
@@ -22,19 +21,94 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import { isEnabled } from 'config';
+import NoticeAction from 'components/notice/notice-action';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import Notice from 'components/notice';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import { transferStates } from 'state/automated-transfer/constants';
+import QuerySites from 'components/data/query-sites';
+import { isRequestingSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
+const Hosting = ( {
+	canViewAtomicHosting,
+	clickActivate,
+	isDisabled,
+	isTransferring,
+	siteId,
+	siteSlug,
+	translate,
+	transferState,
+} ) => {
 	if ( ! canViewAtomicHosting ) {
 		return null;
 	}
 
-	const sftpPhpMyAdminFeaturesEnabled =
-		isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+	const getContent = () => {
+		const { COMPLETE, FAILURE } = transferStates;
+
+		if ( isTransferring && COMPLETE !== transferState ) {
+			return (
+				<Notice
+					status="is-info"
+					showDismiss={ false }
+					text={ translate( 'Please wait while we activate the hosting features.' ) }
+					icon="sync"
+				/>
+			);
+		}
+
+		const sftpPhpMyAdminFeaturesEnabled =
+			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+
+		return (
+			<Fragment>
+				<QuerySites siteId={ siteId } />
+				{ FAILURE === transferState && (
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate( 'There was an error activating hosting features.' ) }
+						icon="bug"
+					/>
+				) }
+				{ isDisabled && (
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate(
+							'Please activate the hosting access to begin using these features.'
+						) }
+						icon="globe"
+					>
+						<TrackComponentView eventName={ 'calypso_hosting_configuration_activate_impression' } />
+						<NoticeAction
+							onClick={ clickActivate }
+							href={ `/hosting-config/activate/${ siteSlug }` }
+						>
+							{ translate( 'Activate' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				<div className="hosting__layout">
+					<div className="hosting__layout-col">
+						{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
+						{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
+						{ ! isDisabled && <PhpVersionCard /> }
+					</div>
+					<div className="hosting__layout-col">
+						<SupportCard />
+					</div>
+				</div>
+			</Fragment>
+		);
+	};
 
 	return (
 		<Main className="hosting is-wide-layout">
@@ -46,34 +120,27 @@ const Hosting = ( { translate, isDisabled, canViewAtomicHosting, siteId } ) => {
 				subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
 				align="left"
 			/>
-			{ isDisabled && (
-				<Banner
-					title={ translate( 'Please activate the hosting access to begin using these features.' ) }
-					icon="info"
-					callToAction={ translate( 'Activate' ) }
-					disableHref
-				/>
-			) }
-			<div className="hosting__layout">
-				<div className="hosting__layout-col">
-					{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
-					{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
-					{ ! isDisabled && <PhpVersionCard /> }
-				</div>
-				<div className="hosting__layout-col">
-					<SupportCard />
-				</div>
-			</div>
+			{ getContent() }
 		</Main>
 	);
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export const clickActivate = () =>
+	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
 
-	return {
-		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
-		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
-		siteId,
-	};
-} )( localize( Hosting ) );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isRequestingSite: isRequestingSite( state, siteId ),
+			transferState: getAutomatedTransferStatus( state, siteId ),
+			isTransferring: isAutomatedTransferActive( state, siteId ),
+			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			siteId,
+		};
+	},
+	{ clickActivate }
+)( localize( Hosting ) );

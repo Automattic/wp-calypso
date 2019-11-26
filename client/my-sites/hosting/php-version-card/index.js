@@ -15,7 +15,7 @@ import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -87,8 +87,8 @@ const PhpVersionCard = ( {
 	updating,
 	version,
 } ) => {
-	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( null );
-	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( null );
+	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
+	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( '' );
 
 	useEffect( () => {
 		requestPhpVersion( siteId );
@@ -121,6 +121,8 @@ const PhpVersionCard = ( {
 		}
 
 		if ( [ 'success', 'failure' ].includes( updateResult ) ) {
+			resetHttpData( requestId( siteId, 'POST' ) );
+
 			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
 		}
 	}, [ updateResult ] );
@@ -230,7 +232,7 @@ export default connect(
 
 		const phpVersionGet = getHttpData( requestId( siteId, 'GET' ) );
 		const phpVersionUpdate = getHttpData( requestId( siteId, 'POST' ) );
-		const version = phpVersionGet?.data ?? null;
+		const version = phpVersionGet?.data ?? '';
 
 		return {
 			loading: ! version && phpVersionGet.state === 'pending',
