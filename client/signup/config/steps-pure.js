@@ -47,7 +47,8 @@ export function generateSteps( {
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
 		'portfolio-themes': {
@@ -75,7 +76,7 @@ export function generateSteps( {
 		'themes-site-selected': {
 			stepName: 'themes-site-selected',
 			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
