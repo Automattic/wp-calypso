@@ -641,10 +641,24 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: () =>
-			i18n.translate(
-				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-			),
+		getTagline: feature => {
+			switch ( feature ) {
+				case constants.FEATURE_JETPACK_BACKUP_DAILY:
+				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, real-time backups, and priority support.'
+					);
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, and priority support.'
+					);
+				default:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+					);
+			}
+		},
 		getDescription: () =>
 			i18n.translate(
 				'The features most needed by WordPress sites' +
