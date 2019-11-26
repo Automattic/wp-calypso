@@ -431,16 +431,13 @@ class Signup extends React.Component {
 
 			const ANIMATION_LENGTH_MS = 200;
 			const startTime = performance.now();
-			const remainingHeight = window.pageYOffset;
+			const scrollHeight = window.pageYOffset;
 
 			const scrollToTop = timestamp => {
 				const progress = timestamp - startTime;
 
 				if ( progress < ANIMATION_LENGTH_MS ) {
-					window.scrollTo(
-						0,
-						remainingHeight - ( remainingHeight * progress ) / ANIMATION_LENGTH_MS
-					);
+					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
 					requestAnimationFrame( scrollToTop );
 				} else {
 					this.setState( { scrolling: false } );
