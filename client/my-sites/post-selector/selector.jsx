@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
 import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import {
@@ -328,7 +328,7 @@ class PostSelectorPosts extends React.Component {
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+									paddingRight: this.isCompact() ? 0 : scrollbarSize(),
 								} }
 							>
 								{ decodeEntities(
