@@ -75,6 +75,7 @@ const nodeModulesToTranspile = [
 	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',
+	'striptags',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
 ];
