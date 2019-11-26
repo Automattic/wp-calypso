@@ -93,21 +93,12 @@ class AccountSettingsClose extends Component {
 			hasCancelablePurchases,
 			isLoading,
 			purchasedPremiumThemes,
-			siteToBeDeleted,
 		} = this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
-
-		/* eslint-disable-next-line no-shadow */
-		const listSites = siteToBeDeleted.map( siteToBeDeleted => (
-			<li key={ siteToBeDeleted.slug }>
-				{ [ siteToBeDeleted.name ] }
-				<span>{ [ siteToBeDeleted.slug ] }</span>
-			</li>
-		) );
 
 		return (
 			<div className={ containerClasses } role="main">
@@ -130,7 +121,7 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									{ siteToBeDeleted.length > 0 && (
+									{ this.props.siteToBeDeleted.length > 0 && (
 										<Fragment>
 											<ActionPanelFigureListItem className="account-close__sites-item">
 												{ translate( 'Sites' ) }
@@ -140,7 +131,14 @@ class AccountSettingsClose extends Component {
 													icon="chevron-down"
 												/>
 												{ this.state.showSiteDropdown && (
-													<ul className="account-close__sites-list">{ listSites }</ul>
+													<ul className="account-close__sites-list">
+														{ this.props.siteToBeDeleted.map( siteToBeDeleted => (
+															<li key={ siteToBeDeleted.slug }>
+																{ [ siteToBeDeleted.name ] }
+																<span>{ [ siteToBeDeleted.slug ] }</span>
+															</li>
+														) ) }
+													</ul>
 												) }
 											</ActionPanelFigureListItem>
 											<ActionPanelFigureListItem>

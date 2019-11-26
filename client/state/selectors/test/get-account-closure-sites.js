@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
@@ -18,7 +13,7 @@ describe( 'getAccountClosureSites()', () => {
 			},
 		};
 		const sites = getAccountClosureSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should not return any Jetpack sites', () => {
@@ -42,7 +37,7 @@ describe( 'getAccountClosureSites()', () => {
 			},
 		};
 		const sites = getAccountClosureSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should not return any sites the user is not an admin on', () => {
@@ -67,7 +62,7 @@ describe( 'getAccountClosureSites()', () => {
 			},
 		};
 		const sites = getAccountClosureSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return sites that are not Jetpack and user is an admin on', () => {
@@ -91,6 +86,6 @@ describe( 'getAccountClosureSites()', () => {
 			},
 		};
 		const sites = getAccountClosureSites( state );
-		expect( sites ).to.not.eql( [] );
+		expect( sites ).not.toEqual( [] );
 	} );
 } );
