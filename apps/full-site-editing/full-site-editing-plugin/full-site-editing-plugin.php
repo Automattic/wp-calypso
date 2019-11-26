@@ -235,9 +235,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
  * Load Global Styles plugin.
  */
 function load_global_styles() {
-	if ( is_site_eligible_for_full_site_editing() ) {
-		require_once __DIR__ . '/global-styles/class-global-styles.php';
-	}
+	require_once __DIR__ . '/global-styles/class-global-styles.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
