@@ -207,7 +207,6 @@ export default {
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsSiteRedirect
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);

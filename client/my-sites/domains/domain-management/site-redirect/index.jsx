@@ -26,10 +26,12 @@ import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
 	updateSiteRedirect,
-} from 'lib/domains/site-redirect/actions';
+} from 'state/domains/site-redirect/actions';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteRedirectLocation } from 'state/domains/site-redirect/selectors';
 import { withoutHttp } from 'lib/url';
 
 /**
@@ -41,15 +43,15 @@ class SiteRedirect extends React.Component {
 	static propTypes = {
 		location: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.object.isRequired,
 	};
 
 	state = {
-		redirectUrl: this.props.location.value || '',
+		redirectUrl: this.props.location.value,
 	};
 
-	UNSAFE_componentWillMount() {
-		fetchSiteRedirect( this.props.selectedSite.domain );
+	componentDidMount() {
+		this.props.fetchSiteRedirect( this.props.selectedSite.domain );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -65,7 +67,7 @@ class SiteRedirect extends React.Component {
 	}
 
 	closeRedirectNotice = () => {
-		closeSiteRedirectNotice( this.props.selectedSite.domain );
+		this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
 	};
 
 	handleChange = event => {
@@ -74,29 +76,29 @@ class SiteRedirect extends React.Component {
 		this.setState( { redirectUrl } );
 	};
 
-	handleClick = event => {
-		event.preventDefault();
-
-		updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl, success => {
-			this.props.updateSiteRedirectClick(
-				this.props.selectedDomainName,
-				this.state.redirectUrl,
-				success
-			);
-
-			if ( success ) {
-				page(
-					domainManagementRedirectSettings(
-						this.props.selectedSite.slug,
-						trim( trimEnd( this.state.redirectUrl, '/' ) )
-					)
+	handleClick = () => {
+		this.props
+			.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
+			.then( success => {
+				this.props.recordUpdateSiteRedirectClick(
+					this.props.selectedDomainName,
+					this.state.redirectUrl,
+					success
 				);
-			}
-		} );
+
+				if ( success ) {
+					page(
+						domainManagementRedirectSettings(
+							this.props.selectedSite.slug,
+							trim( trimEnd( this.state.redirectUrl, '/' ) )
+						)
+					);
+				}
+			} );
 	};
 
 	handleFocus = () => {
-		this.props.locationFocus( this.props.selectedDomainName );
+		this.props.recordLocationFocus( this.props.selectedDomainName );
 	};
 
 	render() {
@@ -169,12 +171,12 @@ class SiteRedirect extends React.Component {
 	goToEdit = () => {
 		const { selectedDomainName, selectedSite } = this.props;
 
-		this.props.cancelClick( selectedDomainName );
+		this.props.recordCancelClick( selectedDomainName );
 		page( domainManagementEdit( selectedSite.slug, selectedDomainName ) );
 	};
 }
 
-const cancelClick = domainName =>
+const recordCancelClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -187,7 +189,7 @@ const cancelClick = domainName =>
 		} )
 	);
 
-const locationFocus = domainName =>
+const recordLocationFocus = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -200,7 +202,7 @@ const locationFocus = domainName =>
 		} )
 	);
 
-const updateSiteRedirectClick = ( domainName, location, success ) =>
+const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -215,8 +217,18 @@ const updateSiteRedirectClick = ( domainName, location, success ) =>
 		} )
 	);
 
-export default connect( null, {
-	cancelClick,
-	locationFocus,
-	updateSiteRedirectClick,
-} )( localize( SiteRedirect ) );
+export default connect(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		const location = getSiteRedirectLocation( state, selectedSite.domain );
+		return { selectedSite, location };
+	},
+	{
+		fetchSiteRedirect,
+		updateSiteRedirect,
+		closeSiteRedirectNotice,
+		recordCancelClick,
+		recordLocationFocus,
+		recordUpdateSiteRedirectClick,
+	}
+)( localize( SiteRedirect ) );
