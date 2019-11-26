@@ -182,7 +182,7 @@ class SharingConnection extends Component {
 	}
 
 	getConnectionSitewideElement() {
-		if ( 'publicize' !== this.props.service.type ) {
+		if ( ! this.props.service.shareable ) {
 			return;
 		}
 

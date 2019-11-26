@@ -943,6 +943,25 @@ Undocumented.prototype.deletekeyringConnection = function( keyringConnectionId, 
 };
 
 /**
+ * Deletes a single keyring connection for the current user
+ *
+ * @param {number} keyringConnectionId The keyring connection ID to remove
+ * @param {object} data The meta data to updated.
+ * @param {Function} fn Method to invoke when request is complete
+ */
+Undocumented.prototype.updateKeyringConnection = function( keyringConnectionId, data, fn ) {
+	debug( '/me/keyring-connections/:keyring_connection_id: query' );
+	return this.wpcom.req.post(
+		{
+			path: '/me/keyring-connections/' + keyringConnectionId,
+			body: data,
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
+
+/**
  * Return a list of user's connected publicize services for the given site
  *
  * @param {number|string} siteId The site ID or domain

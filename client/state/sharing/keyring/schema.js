@@ -22,6 +22,7 @@ export const itemSchema = {
 				status: { type: 'string' },
 				type: { type: 'string' },
 				user_ID: { type: 'integer' },
+				shared: { type: 'boolean' },
 			},
 		},
 	},

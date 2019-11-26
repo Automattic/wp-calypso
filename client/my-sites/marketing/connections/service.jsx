@@ -36,7 +36,10 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import {
+	requestKeyringConnections,
+	updateStoredKeyringConnectionMeta,
+} from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -251,8 +254,13 @@ export class SharingService extends Component {
 	 * @param  {Boolean}  shared     Whether the connection can be used by other users.
 	 * @return {Function}            Action thunk
 	 */
-	toggleSitewideConnection = ( connection, shared ) =>
-		this.props.updateSiteConnection( connection, { shared } );
+	toggleSitewideConnection = ( connection, shared ) => {
+		if ( 'publicize' === connection.type ) {
+			return this.props.updateSiteConnection( connection, { shared } );
+		}
+
+		return this.props.updateStoredKeyringConnectionMeta( connection, { shared } );
+	};
 
 	/**
 	 * Lets users re-authenticate their Keyring connections if lost.
@@ -632,6 +640,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			recordGoogleEvent,
 			recordTracksEvent,
 			requestKeyringConnections,
+			updateStoredKeyringConnectionMeta,
 			updateSiteConnection,
 			warningNotice,
 			...mapDispatchToProps,

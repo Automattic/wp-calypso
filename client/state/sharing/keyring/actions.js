@@ -6,6 +6,8 @@ import wpcom from 'lib/wp';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
+	KEYRING_CONNECTION_UPDATE,
+	KEYRING_CONNECTION_UPDATE_FAILURE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -83,4 +85,32 @@ export function deleteStoredKeyringConnection( connection ) {
 					error: { ...error, label: connection.label },
 				} );
 			} );
+}
+
+/**
+ * Triggers a network request to update metadata for a Keyring connection.
+ *
+ * @param  {Object} connection         Connection to be updated.
+ * @param  {Number} connection.ID      ID of the connection to be updated.
+ * @param  {String} connection.label   Name of the service.
+ * @param  {Object} meta               Meta data to be updated.
+ * @return {Function}                  Action thunk
+ */
+export function updateStoredKeyringConnectionMeta( connection, meta ) {
+	return dispatch =>
+		wpcom
+			.undocumented()
+			.updateKeyringConnection( connection.ID, meta )
+			.then( response =>
+				dispatch( {
+					type: KEYRING_CONNECTION_UPDATE,
+					connection: response,
+				} )
+			)
+			.catch( error =>
+				dispatch( {
+					type: KEYRING_CONNECTION_UPDATE_FAILURE,
+					error: { ...error, label: connection.label },
+				} )
+			);
 }
