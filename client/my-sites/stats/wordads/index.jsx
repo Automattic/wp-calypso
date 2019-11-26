@@ -151,7 +151,7 @@ class WordAds extends Component {
 				<FormattedHeader
 					className="wordads__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
-					leftAlign
+					align="left"
 				/>
 				{ ! canAccessAds && (
 					<EmptyContent
