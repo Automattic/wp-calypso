@@ -366,7 +366,7 @@
 		"jest": "24.9.0",
 		"jest-docblock": "24.9.0",
 		"jest-fetch-mock": "2.1.2",
-		"jest-junit": "7.0.0",
+		"jest-junit": "9.0.0",
 		"md5-file": "4.0.0",
 		"mixedindentlint": "1.2.0",
 		"mockdate": "2.0.5",
