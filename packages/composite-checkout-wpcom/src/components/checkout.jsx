@@ -50,9 +50,6 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
-	if ( ! select( 'wpcom' ) ) {
-		throw new Error( 'wtf, the store should exist by now' );
-	}
 
 	useEffect( () => {
 		return subscribe( handleCheckoutEvent( select ) );
