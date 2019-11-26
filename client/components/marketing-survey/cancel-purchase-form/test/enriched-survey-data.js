@@ -26,9 +26,9 @@ describe( 'enrichedSurveyData', () => {
 		).toEqual( 10 );
 	} );
 
-	test( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', () => {
+	test( 'should add daysSinceSiteCreation to survey data when purchase.blog_created_date is provided', () => {
 		const purchase = {
-			blog_created_at: '2017-01-09T03:00:00+00:00',
+			blog_created_date: '2017-01-09T03:00:00+00:00',
 		};
 		expect(
 			enrichedSurveyData( {}, purchase, '2017-01-19T03:00:00+00:00' ).daysSinceSiteCreation
