@@ -25,7 +25,6 @@ import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
@@ -103,7 +102,6 @@ class AccountSettingsClose extends Component {
 		return (
 			<div className={ containerClasses } role="main">
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				<QuerySites allSites />
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
