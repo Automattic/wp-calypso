@@ -449,19 +449,30 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					<SummaryLine>
-						{ billing.firstName || '' } { billing.lastName || '' }
-					</SummaryLine>
-					<SummarySpacerLine>{ billing.email || '' }</SummarySpacerLine>
-					<SummaryLine>{ billing.address || '' } </SummaryLine>
-					<SummaryLine>
-						{ billing.city && billing.city + ', ' } { billing.state || billing.province || '' }
-					</SummaryLine>
-					<SummaryLine>
-						{ postalCode && postalCode + ', ' }
-						{ billing.country }
-					</SummaryLine>
+					{ ( billing.firstName || billing.lastName ) && (
+						<SummaryLine>
+							{ billing.firstName } { billing.lastName }
+						</SummaryLine>
+					) }
+
+					{ billing.email && <SummarySpacerLine>{ billing.email }</SummarySpacerLine> }
+
+					{ billing.address && <SummaryLine>{ billing.address } </SummaryLine> }
+
+					{ ( billing.city || billing.state || billing.province ) && (
+						<SummaryLine>
+							{ billing.city && billing.city + ', ' } { billing.state || billing.province }
+						</SummaryLine>
+					) }
+
+					{ ( postalCode || billing.country ) && (
+						<SummaryLine>
+							{ postalCode && postalCode + ', ' }
+							{ billing.country }
+						</SummaryLine>
+					) }
 				</SummaryDetails>
+
 				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
 					<SummaryDetails>
 						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
@@ -474,23 +485,36 @@ function ContactFormSummary() {
 					</SummaryDetails>
 				) }
 			</div>
+
 			{ domains && ! isDomainContactSame && (
 				<div>
 					<SummaryDetails>
-						<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
-						<SummarySpacerLine>{ domains.email }</SummarySpacerLine>
-						<SummaryLine>{ domains.address }</SummaryLine>
-						<SummaryLine>
-							{ domains.city && domains.city + ', ' } { domains.state || domains.province }
-						</SummaryLine>
-						<SummaryLine>
-							{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
-						</SummaryLine>
+						{ ( domains.firstName || domains.lastName ) && (
+							<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
+						) }
+
+						{ domains.email && <SummarySpacerLine>{ domains.email }</SummarySpacerLine> }
+
+						{ domains.address && <SummaryLine>{ domains.address }</SummaryLine> }
+
+						{ ( domains.city || domains.city || domains.state || domains.province ) && (
+							<SummaryLine>
+								{ domains.city && domains.city + ', ' } { domains.state || domains.province }
+							</SummaryLine>
+						) }
+
+						{ ( domainPostalCode || domains.country ) && (
+							<SummaryLine>
+								{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
+							</SummaryLine>
+						) }
 					</SummaryDetails>
 
-					<SummaryDetails>
-						<SummaryLine>{ domains.phoneNumber }</SummaryLine>
-					</SummaryDetails>
+					{ domains.phoneNumber && (
+						<SummaryDetails>
+							<SummaryLine>{ domains.phoneNumber }</SummaryLine>
+						</SummaryDetails>
+					) }
 				</div>
 			) }
 		</GridRow>
