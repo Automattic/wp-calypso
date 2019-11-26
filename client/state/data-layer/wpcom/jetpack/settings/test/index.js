@@ -105,7 +105,7 @@ describe( 'announceRequestFailure()', () => {
 				notice: expect.objectContaining( {
 					button: 'Visit site admin',
 					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
-					noticeId: `jpo-communication-error-${ siteId }`,
+					noticeId: `jps-communication-error-${ siteId }`,
 					status: 'is-error',
 					text: 'Something went wrong.',
 				} ),
@@ -137,7 +137,7 @@ describe( 'announceRequestFailure()', () => {
 				notice: expect.objectContaining( {
 					button: 'Visit site admin',
 					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
-					noticeId: `jpo-communication-error-${ siteId }`,
+					noticeId: `jps-communication-error-${ siteId }`,
 					status: 'is-error',
 					text: 'Something went wrong.',
 				} ),
@@ -167,7 +167,7 @@ describe( 'announceRequestFailure()', () => {
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
-					noticeId: `jpo-communication-error-${ siteId }`,
+					noticeId: `jps-communication-error-${ siteId }`,
 					status: 'is-error',
 					text: 'Something went wrong.',
 				} ),
@@ -274,7 +274,7 @@ describe( 'handleSaveFailure()', () => {
 			notice: {
 				status: 'is-error',
 				text: 'An unexpected error occurred. Please try again later.',
-				noticeId: `jpo-notice-error-${ siteId }`,
+				noticeId: `jps-notice-error-${ siteId }`,
 				duration: 5000,
 			},
 		} );
@@ -339,7 +339,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			notice: {
 				status: 'is-error',
 				text: 'An unexpected error occurred. Please try again later.',
-				noticeId: `jpo-notice-error-${ siteId }`,
+				noticeId: `jps-notice-error-${ siteId }`,
 				duration: 5000,
 			},
 		} );
