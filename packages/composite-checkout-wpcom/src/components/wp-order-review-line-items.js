@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import { renderDisplayValueMarkdown, CheckoutModal } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -34,7 +34,8 @@ const OrderReviewSectionArea = styled.div`
 function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
-	const [ , setIsModalVisible ] = useState( false );
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -42,17 +43,28 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
-			{ hasDeleteButtons && (
+			{ hasDeleteButtons && item.type !== 'tax' && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
 						onClick={ () => {
-							removeItem( item );
 							setIsModalVisible( true );
 						} }
 					>
 						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
 					</DeleteButton>
+
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ () => {
+							removeItem( item );
+						} }
+						title={ modalCopy.title }
+						copy={ modalCopy.description }
+					/>
 				</React.Fragment>
 			) }
 
@@ -87,6 +99,13 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
+	:first-of-type {
+		padding-top: 10px;
+	}
+
+	:first-of-type button {
+		top: -3px;
+	}
 `;
 
 const ProductTitle = styled.span`
