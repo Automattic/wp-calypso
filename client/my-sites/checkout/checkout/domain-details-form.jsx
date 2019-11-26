@@ -24,11 +24,7 @@ import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import { setDomainDetails } from 'lib/transaction/actions';
-import {
-	addPrivacyToAllDomains,
-	removePrivacyFromAllDomains,
-	addGoogleAppsRegistrationData,
-} from 'lib/cart/actions';
+import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
@@ -39,9 +35,8 @@ import {
 	hasTransferProduct,
 	getTlds,
 	hasTld,
-	hasOnlyDomainProductsWithPrivacySupport,
-	getDomainRegistrationsWithoutPrivacy,
-	getDomainTransfersWithoutPrivacy,
+	hasSomeDomainProductsWithPrivacySupport,
+	hasAllDomainProductsWithPrivacySupport,
 } from 'lib/cart-values/cart-items';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
@@ -167,17 +162,6 @@ export class DomainDetailsForm extends PureComponent {
 		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
 	}
 
-	allDomainProductsSupportPrivacy() {
-		return hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
-	}
-
-	allDomainItemsHavePrivacy() {
-		return (
-			getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
-			getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
-		);
-	}
-
 	renderSubmitButton() {
 		return (
 			<FormButton
@@ -233,10 +217,6 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleRadioChange = enable => {
-		this.setPrivacyProtectionSubscriptions( enable );
-	};
-
 	handleSubmitButtonClick = event => {
 		if ( event && event.preventDefault ) {
 			event.preventDefault();
@@ -254,14 +234,6 @@ export class DomainDetailsForm extends PureComponent {
 		addGoogleAppsRegistrationData( allFieldValues );
 	}
 
-	setPrivacyProtectionSubscriptions( enable ) {
-		if ( enable ) {
-			addPrivacyToAllDomains();
-		} else {
-			removePrivacyFromAllDomains();
-		}
-	}
-
 	renderCurrentForm() {
 		const { currentStep } = this.state;
 		return includes( tldsWithAdditionalDetailsForms, currentStep )
@@ -275,9 +247,12 @@ export class DomainDetailsForm extends PureComponent {
 			selected: true,
 		} );
 
-		const domainProductSupportsPrivacy =
-			( hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart ) ) &&
-			this.allDomainProductsSupportPrivacy();
+		const hasDomainProduct =
+			hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart );
+		const hasSomeDomainsWithPrivacy =
+			hasDomainProduct && hasSomeDomainProductsWithPrivacySupport( this.props.cart );
+		const hasAllDomainsWithPrivacy =
+			hasDomainProduct && hasAllDomainProductsWithPrivacySupport( this.props.cart );
 
 		let title;
 		let message;
@@ -288,20 +263,35 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
-			if ( domainProductSupportsPrivacy ) {
-				message = this.props.translate(
-					'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-						'Protection is included to protect your identity. {{a}}Learn more{{/a}}',
-					{
-						components: {
-							a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
-						},
+			if ( hasDomainProduct ) {
+				if ( hasSomeDomainsWithPrivacy ) {
+					if ( hasAllDomainsWithPrivacy ) {
+						message = this.props.translate(
+							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+								'Protection is included to protect your identity. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						);
+					} else {
+						message = this.props.translate(
+							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+								'Protection is included for all eligible domains to protect your identity. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						);
 					}
-				);
-			} else {
-				message = this.props.translate(
-					'We have pre-filled the required contact information from your WordPress.com account.'
-				);
+				} else {
+					message = this.props.translate(
+						'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
+							'Protection is unavailable for this domain.'
+					);
+				}
 			}
 		}
 
