@@ -14,7 +14,7 @@ import { fetchSitePurchases } from 'state/purchases/actions';
 
 class QuerySitePurchases extends Component {
 	requestSitePurchases( props = this.props ) {
-		if ( props.siteId ) {
+		if ( props.siteId && ! props.requesting ) {
 			this.props.fetchSitePurchases( props.siteId );
 		}
 	}
@@ -24,9 +24,10 @@ class QuerySitePurchases extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requesting || ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
+		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}
+
 		this.requestSitePurchases( nextProps );
 	}
 
