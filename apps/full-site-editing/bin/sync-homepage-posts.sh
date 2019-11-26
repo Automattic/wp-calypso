@@ -19,7 +19,7 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: npm run sync:homepage-articles [arguments]"
+    echo "Usage: npm run sync:homepage-posts [arguments]"
     echo
     echo Possible arguments:
     echo --branch=master
@@ -33,7 +33,7 @@ fi
 # make a temp directory
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
-TARGET=./full-site-editing-plugin/homepage-articles
+TARGET=./full-site-editing-plugin/homepage-posts
 
 # download zip file
 echo Downloading $MODE $NAME
@@ -82,4 +82,6 @@ cp $CODE/class-newspack-blocks-api.php $TARGET/
 cp $CODE/class-newspack-blocks.php $TARGET/
 cp -R $CODE/src/blocks/homepage-articles $TARGET/src/blocks/
 cp -R $CODE/src/shared $TARGET/src/
-cp -R $CODE/src/components $TARGET/src/components/
+cp -R $CODE/src/components $TARGET/src/
+
+echo Done.

@@ -36,7 +36,7 @@
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
-		"sync:homepage-articles": "./bin/sync-homepage-articles.sh"
+		"sync:homepage-posts": "./bin/sync-homepage-posts.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
