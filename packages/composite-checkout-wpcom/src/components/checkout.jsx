@@ -9,11 +9,13 @@ import {
 	CheckoutProvider,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
+	useSelect,
 } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
+import { areDomainsInLineItems } from '../hooks/has-domains';
 import { OrderReview } from './order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -64,6 +66,10 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 		/>
 	);
 
+	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
+	const domainContactInfo = useSelect( sel => sel( 'wpcom' ).getDomainContactInfo() ) || {};
+	const isDomainContactSame = useSelect( sel => sel( 'wpcom' ).isDomainContactSame() ) || false;
+
 	const steps = [
 		{
 			id: 'order-summary',
@@ -85,7 +91,8 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 			titleContent: <ContactFormTitle />,
 			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () => isFormComplete( select ),
+			isCompleteCallback: () =>
+				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ),
 			isEditableCallback: () => isFormEditable( select ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
@@ -325,19 +332,37 @@ function useWpcomStore( registerStore ) {
 	registerComplete.current = true;
 }
 
-function isFormComplete( select ) {
-	const store = select( 'wpcom' );
-	if ( ! store ) {
-		return false;
+function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
+	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
+	const contactFields = [
+		contactInfo.firstName,
+		contactInfo.lastName,
+		contactInfo.email,
+		contactInfo.address,
+		contactInfo.city,
+		contactInfo.state || contactInfo.province,
+		contactInfo.vatId,
+	];
+	const domainFields = [
+		domainContactInfo.firstName,
+		domainContactInfo.lastName,
+		domainContactInfo.email,
+		domainContactInfo.address,
+		domainContactInfo.city,
+		domainContactInfo.state || domainContactInfo.province,
+		domainContactInfo.phoneNumber,
+	];
+	let allFields = taxFields;
+	if ( areDomainsInLineItems ) {
+		allFields = allFields.concat( contactFields );
+		if ( ! isDomainContactSame ) {
+			allFields = allFields.concat( domainFields );
+		}
 	}
-	// FIXME: this needs to check only fields that are being displayed; not all fields
-	const contactInfo = store.getContactInfo();
-	if ( Object.keys( contactInfo ).find( x => ! x ) ) {
-		return false;
-	}
-	const isDomainContactSame = store.isDomainContactSame();
-	const domainContactInfo = store.getDomainContactInfo();
-	if ( isDomainContactSame || Object.keys( domainContactInfo ).find( x => ! x ) ) {
+
+	// Make sure all required fields are filled
+	const emptyFields = allFields.filter( value => ! value );
+	if ( emptyFields.length > 0 ) {
 		return false;
 	}
 	return true;
