@@ -36,7 +36,7 @@ export function CreditCardLabel() {
 	);
 }
 
-export function CreditCardSubmitButton() {
+export function CreditCardSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ , total ] = useLineItems();
 	const buttonString = sprintf(
@@ -44,7 +44,12 @@ export function CreditCardSubmitButton() {
 		renderDisplayValueMarkdown( total.amount.displayValue )
 	);
 	return (
-		<Button onClick={ submitCreditCardPayment } buttonState="primary" fullWidth>
+		<Button
+			disabled={ disabled }
+			onClick={ submitCreditCardPayment }
+			buttonState={ disabled ? 'disabled' : 'primary' }
+			fullWidth
+		>
 			{ buttonString }
 		</Button>
 	);

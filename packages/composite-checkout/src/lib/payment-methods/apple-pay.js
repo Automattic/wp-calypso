@@ -83,7 +83,7 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton() {
+export function ApplePaySubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { onSuccess } = useCheckoutHandlers();
 	const paymentRequestOptions = usePaymentRequestOptions();
@@ -103,7 +103,14 @@ export function ApplePaySubmitButton() {
 		);
 	}
 
-	return <PaymentRequestButton paymentRequest={ paymentRequest } paymentType="apple-pay" />;
+	return (
+		<PaymentRequestButton
+			disabled={ disabled }
+			disabledReason={ disabled && localize( 'The form is not complete' ) }
+			paymentRequest={ paymentRequest }
+			paymentType="apple-pay"
+		/>
+	);
 }
 
 export function ApplePaySummary() {

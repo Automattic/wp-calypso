@@ -512,7 +512,7 @@ function LockIcon( { className } ) {
 	);
 }
 
-function StripePayButton() {
+function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { onSuccess, onFailure } = useCheckoutHandlers();
@@ -559,6 +559,7 @@ function StripePayButton() {
 	);
 	return (
 		<Button
+			disabled={ disabled }
 			onClick={ () =>
 				submitStripePayment( {
 					billing,
@@ -573,7 +574,7 @@ function StripePayButton() {
 					beginStripeTransaction,
 				} )
 			}
-			buttonState="primary"
+			buttonState={ disabled ? 'disabled' : 'primary' }
 			fullWidth
 		>
 			{ buttonString }
