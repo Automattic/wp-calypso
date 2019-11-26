@@ -21,6 +21,7 @@ import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
+import SiteBackupCard from './site-backup-card';
 import { isEnabled } from 'config';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -151,6 +152,7 @@ class Hosting extends Component {
 							{ <PhpVersionCard disabled={ isDisabled } /> }
 						</div>
 						<div className="hosting__layout-col">
+							{ sftpPhpMyAdminFeaturesEnabled && <SiteBackupCard disabled={ isDisabled } /> }
 							<SupportCard />
 						</div>
 					</div>
