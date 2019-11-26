@@ -66,9 +66,9 @@ describe( 'Domain Details Form', () => {
 	} );
 
 	const textWhenPrivacyIsSupported =
-		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is included to protect your identity. {{a}}Learn more{{/a}}';
+		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is included to help protect your personal information. {{a}}Learn more{{/a}}';
 	const textWhenPrivacyIsSomewhatSupported =
-		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is included for all eligible domains to protect your identity. {{a}}Learn more{{/a}}';
+		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}';
 	const textWhenPrivacyIsNotSupported =
 		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is unavailable for this domain.';
 

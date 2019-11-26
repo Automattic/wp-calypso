@@ -268,7 +268,7 @@ export class DomainDetailsForm extends PureComponent {
 					if ( hasAllDomainsWithPrivacy ) {
 						message = this.props.translate(
 							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-								'Protection is included to protect your identity. {{a}}Learn more{{/a}}',
+								'Protection is included to help protect your personal information. {{a}}Learn more{{/a}}',
 							{
 								components: {
 									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
@@ -278,7 +278,7 @@ export class DomainDetailsForm extends PureComponent {
 					} else {
 						message = this.props.translate(
 							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-								'Protection is included for all eligible domains to protect your identity. {{a}}Learn more{{/a}}',
+								'Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}',
 							{
 								components: {
 									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
