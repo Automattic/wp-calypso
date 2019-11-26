@@ -35,7 +35,7 @@ export const fromApi = response => {
 
 const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
-const receiveJetpackOnboardingSettings = ( { siteId }, settings ) =>
+const receiveJetpackSettings = ( { siteId }, settings ) =>
 	updateJetpackSettings( siteId, settings );
 /**
  * Dispatches a request to fetch settings for a given site
@@ -164,7 +164,7 @@ registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestJetpackSettings,
-			onSuccess: receiveJetpackOnboardingSettings,
+			onSuccess: receiveJetpackSettings,
 			onError: announceRequestFailure,
 			fromApi,
 		} ),
