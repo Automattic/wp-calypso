@@ -7,20 +7,22 @@
 
 namespace A8C\FSE;
 
+const BUILD_JS_FILE = 'dist/homepage-posts-block.js';
+
 /**
- * Class Newspack_Blocks
+ * Class Homepage_Posts
  */
-class Newspack_Blocks {
+class Homepage_Posts {
 
 	/**
 	 * Class instance.
 	 *
-	 * @var Newspack_Blocks
+	 * @var Homepage_Posts
 	 */
 	private static $instance = null;
 
 	/**
-	 * Newspack_Blocks constructor.
+	 * Homepage_Posts constructor.
 	 */
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_scripts' ] );
@@ -29,7 +31,7 @@ class Newspack_Blocks {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C\FSE\Newspack_Blocks
+	 * @return \A8C\FSE\Homepage_Posts
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -44,10 +46,10 @@ class Newspack_Blocks {
 	 */
 	public function register_scripts() {
 		wp_enqueue_script(
-			'a8c-newspack-blocks',
-			plugins_url( 'dist/a8c-newspack-blocks.js', __FILE__ ),
-			[ 'wp-plugins', 'wp-edit-post', 'wp-element' ],
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/a8c-newspack-blocks.js' ),
+			'homepage-posts-block',
+			plugins_url( BUILD_JS_FILE, __FILE__ ),
+			[],
+			filemtime( plugin_dir_path( __FILE__ ) . BUILD_JS_FILE ),
 			true
 		);
 	}

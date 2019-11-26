@@ -210,8 +210,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
  * Load A8C_Newspack_Blocks.
  */
 function load_a8c_newspack_blocks() {
-	require_once __DIR__ . '/a8c-newspack-blocks/class-a8c-newspack-blocks.php';
-	Newspack_Blocks::get_instance();
+	require_once __DIR__ . '/homepage-posts-block/class-homepage-posts-block.php';
+	Homepage_Posts::get_instance();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_a8c_newspack_blocks' );
 
