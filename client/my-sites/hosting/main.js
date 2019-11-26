@@ -28,7 +28,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import { transferStates } from 'state/automated-transfer/constants';
-import QuerySites from 'components/data/query-sites';
+import { requestSite } from 'state/sites/actions';
+import { isRequestingSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -40,6 +41,8 @@ const Hosting = ( {
 	clickActivate,
 	isDisabled,
 	isTransferring,
+	isRequestingCurrentSite,
+	requestSiteById,
 	siteId,
 	siteSlug,
 	translate,
@@ -51,6 +54,27 @@ const Hosting = ( {
 
 	const getContent = () => {
 		const { COMPLETE, FAILURE } = transferStates;
+
+		if ( isDisabled && COMPLETE === transferState && ! isRequestingCurrentSite ) {
+			requestSiteById( siteId );
+		}
+
+		// Transfer in progress
+		if (
+			( isTransferring && COMPLETE !== transferState ) ||
+			( isDisabled && COMPLETE === transferState && isRequestingCurrentSite )
+		) {
+			return (
+				<Fragment>
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate( 'Please wait while we activate the hosting features.' ) }
+						icon="sync"
+					/>
+				</Fragment>
+			);
+		}
 
 		const failureNotice = FAILURE === transferState && (
 			<Notice
@@ -64,7 +88,6 @@ const Hosting = ( {
 		if ( isDisabled && ! isTransferring ) {
 			return (
 				<Fragment>
-					<QuerySites siteId={ siteId } />
 					{ failureNotice }
 					<Notice
 						status="is-info"
@@ -82,20 +105,6 @@ const Hosting = ( {
 							{ translate( 'Activate' ) }
 						</NoticeAction>
 					</Notice>
-				</Fragment>
-			);
-		}
-
-		// Transfer in progress
-		if ( isTransferring && COMPLETE !== transferState ) {
-			return (
-				<Fragment>
-					<Notice
-						status="is-info"
-						showDismiss={ false }
-						text={ translate( 'Please wait while we activate the hosting features.' ) }
-						icon="sync"
-					/>
 				</Fragment>
 			);
 		}
@@ -142,6 +151,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			isRequestingCurrentSite: isRequestingSite( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
@@ -150,5 +160,8 @@ export default connect(
 			siteId,
 		};
 	},
-	{ clickActivate }
+	{
+		clickActivate,
+		requestSiteById: requestSite,
+	}
 )( localize( Hosting ) );
