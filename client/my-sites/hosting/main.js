@@ -52,7 +52,7 @@ const Hosting = ( {
 		return null;
 	}
 
-	const getContent = () => {
+	const getAtomicActivationNotice = () => {
 		const { COMPLETE, FAILURE } = transferStates;
 
 		if ( isDisabled && COMPLETE === transferState && ! isRequestingCurrentSite ) {
@@ -108,7 +108,9 @@ const Hosting = ( {
 				</Fragment>
 			);
 		}
+	};
 
+	const getContent = () => {
 		const sftpPhpMyAdminFeaturesEnabled =
 			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
 
@@ -118,7 +120,7 @@ const Hosting = ( {
 					<div className="hosting__layout-col">
 						{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
 						{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
-						{ ! isDisabled && <PhpVersionCard /> }
+						{ <PhpVersionCard disabled={ isDisabled } /> }
 					</div>
 					<div className="hosting__layout-col">
 						<SupportCard />
@@ -138,6 +140,7 @@ const Hosting = ( {
 				subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
 				align="left"
 			/>
+			{ getAtomicActivationNotice() }
 			{ getContent() }
 		</Main>
 	);
