@@ -3,6 +3,7 @@
  */
 import {
 	filter,
+	find,
 	findIndex,
 	matches,
 	negate,
@@ -43,9 +44,9 @@ function isNsRecord( domain ) {
 }
 
 function removeDuplicateWpcomRecords( domain, records ) {
-	const rootARecords = filter( records, isRootARecord( domain ) ),
-		wpcomARecord = find( rootARecords, isWpcomRecord ),
-		customARecord = find( rootARecords, negate( isWpcomRecord ) );
+	const rootARecords = filter( records, isRootARecord( domain ) );
+	const wpcomARecord = find( rootARecords, isWpcomRecord );
+	const customARecord = find( rootARecords, negate( isWpcomRecord ) );
 
 	if ( wpcomARecord && customARecord ) {
 		return without( records, wpcomARecord );
