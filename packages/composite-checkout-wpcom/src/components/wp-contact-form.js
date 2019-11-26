@@ -454,31 +454,32 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( billing.firstName || billing.lastName ) && (
+					{ ( contactInfo.firstName || contactInfo.lastName ) && (
 						<SummaryLine>
-							{ billing.firstName } { billing.lastName }
+							{ contactInfo.firstName } { contactInfo.lastName }
 						</SummaryLine>
 					) }
 
-					{ billing.email && <SummarySpacerLine>{ billing.email }</SummarySpacerLine> }
+					{ contactInfo.email && <SummarySpacerLine>{ contactInfo.email }</SummarySpacerLine> }
 
-					{ billing.address && <SummaryLine>{ billing.address } </SummaryLine> }
+					{ contactInfo.address && <SummaryLine>{ contactInfo.address } </SummaryLine> }
 
-					{ ( billing.city || billing.state || billing.province ) && (
+					{ ( contactInfo.city || contactInfo.state || contactInfo.province ) && (
 						<SummaryLine>
-							{ billing.city && billing.city + ', ' } { billing.state || billing.province }
+							{ contactInfo.city && contactInfo.city + ', ' }{ ' ' }
+							{ contactInfo.state || contactInfo.province }
 						</SummaryLine>
 					) }
 
-					{ ( postalCode || billing.country ) && (
+					{ ( contactInfo.postalCode || contactInfo.country ) && (
 						<SummaryLine>
-							{ postalCode && postalCode + ', ' }
-							{ billing.country }
+							{ contactInfo.postalCode && contactInfo.postalCode + ', ' }
+							{ contactInfo.country }
 						</SummaryLine>
 					) }
 				</SummaryDetails>
 
-				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
+				{ ( contactInfo.phoneNumber || ( isElligibleForVat() && contactInfo.vatId ) ) && (
 					<SummaryDetails>
 						<SummaryLine>{ contactInfo.phoneNumber }</SummaryLine>
 						{ isElligibleForVat() && (
@@ -491,33 +492,44 @@ function ContactFormSummary() {
 				) }
 			</div>
 
-			{ domains && ! isDomainContactSame && (
+			{ domainContactInfo.domains && ! isDomainContactSame && (
 				<div>
 					<SummaryDetails>
-						{ ( domains.firstName || domains.lastName ) && (
-							<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
-						) }
-
-						{ domains.email && <SummarySpacerLine>{ domains.email }</SummarySpacerLine> }
-
-						{ domains.address && <SummaryLine>{ domains.address }</SummaryLine> }
-
-						{ ( domains.city || domains.city || domains.state || domains.province ) && (
+						{ ( domainContactInfo.firstName || domainContactInfo.lastName ) && (
 							<SummaryLine>
-								{ domains.city && domains.city + ', ' } { domains.state || domains.province }
+								{ domainContactInfo.firstName + ' ' + domainContactInfo.lastName }
 							</SummaryLine>
 						) }
 
-						{ ( domainPostalCode || domains.country ) && (
+						{ domainContactInfo.email && (
+							<SummarySpacerLine>{ domainContactInfo.email }</SummarySpacerLine>
+						) }
+
+						{ domainContactInfo.address && (
+							<SummaryLine>{ domainContactInfo.address }</SummaryLine>
+						) }
+
+						{ ( domainContactInfo.city ||
+							domainContactInfo.city ||
+							domainContactInfo.state ||
+							domainContactInfo.province ) && (
 							<SummaryLine>
-								{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
+								{ domainContactInfo.city && domainContactInfo.city + ', ' }{ ' ' }
+								{ domainContactInfo.state || domainContactInfo.province }
+							</SummaryLine>
+						) }
+
+						{ ( domainContactInfo.postalCode || domainContactInfo.country ) && (
+							<SummaryLine>
+								{ domainContactInfo.domainPostalCode && domainContactInfo.domainPostalCode + ', ' }{ ' ' }
+								{ domainContactInfo.country }
 							</SummaryLine>
 						) }
 					</SummaryDetails>
 
-					{ domains.phoneNumber && (
+					{ domainContactInfo.phoneNumber && (
 						<SummaryDetails>
-							<SummaryLine>{ domains.phoneNumber }</SummaryLine>
+							<SummaryLine>{ domainContactInfo.phoneNumber }</SummaryLine>
 						</SummaryDetails>
 					) }
 				</div>
@@ -527,20 +539,34 @@ function ContactFormSummary() {
 }
 
 export function getDomainDetailsFromPaymentData( paymentData ) {
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	const { contactInfo = {}, domainContactInfo = {}, isDomainContactSame = true } = paymentData;
 	return {
-		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
-		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
-		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
-		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
+		first_name: isDomainContactSame
+			? contactInfo.name
+			: domainContactInfo.name || contactInfo.name || '',
+		last_name: isDomainContactSame
+			? contactInfo.name
+			: domainContactInfo.name || contactInfo.name || '', // TODO: how do we split up first/last name?
+		address_1: isDomainContactSame
+			? contactInfo.address
+			: domainContactInfo.address || contactInfo.address || '',
+		city: isDomainContactSame ? contactInfo.city : domainContactInfo.city || contactInfo.city || '',
 		state: isDomainContactSame
-			? billing.state || billing.province
-			: domains.state || domains.province || billing.state || billing.province || '',
+			? contactInfo.state || contactInfo.province
+			: domainContactInfo.state ||
+			  domainContactInfo.province ||
+			  contactInfo.state ||
+			  contactInfo.province ||
+			  '',
 		postal_code: isDomainContactSame
-			? billing.postalCode
-			: domains.postalCode || billing.postalCode || '',
-		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
-		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
+			? contactInfo.postalCode
+			: domainContactInfo.postalCode || contactInfo.postalCode || '',
+		country_code: isDomainContactSame
+			? contactInfo.country
+			: domainContactInfo.country || contactInfo.country || '',
+		email: isDomainContactSame
+			? contactInfo.email
+			: domainContactInfo.email || contactInfo.email || '', // TODO: we need to get email address
+		phone: isDomainContactSame ? '' : domainContactInfo.phoneNumber || '',
 	};
 }
