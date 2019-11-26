@@ -65,7 +65,7 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
 	const state = getState();
 	const url = getSiteUrl( state, siteId );
 	const noticeOptions = {
-		id: `jpo-communication-error-${ siteId }`,
+		id: `jps-communication-error-${ siteId }`,
 	};
 
 	if ( url ) {
@@ -119,7 +119,7 @@ export const handleSaveSuccess = ( { siteId }, { data: { code, message, ...updat
 export const handleSaveFailure = ( { siteId }, { meta: { settings: previousSettings } } ) => [
 	updateJetpackSettings( siteId, previousSettings ),
 	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `jpo-notice-error-${ siteId }`,
+		id: `jps-notice-error-${ siteId }`,
 		duration: 5000,
 	} ),
 ];

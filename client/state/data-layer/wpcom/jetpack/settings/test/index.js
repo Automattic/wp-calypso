@@ -210,7 +210,7 @@ describe( 'saveJetpackSettings()', () => {
 		settings,
 	};
 
-	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
+	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting legacy Jetpack Onboarding credentials', () => {
 		saveJetpackSettings( action )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
