@@ -363,7 +363,15 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { path, site, translate, canUserManageOptions } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -407,7 +415,9 @@ export class MySitesSidebar extends Component {
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
-					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					{ ! ( isJetpack && ! isAtomicSite && ! isVip ) && (
+						<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					) }
 				</a>
 			</li>
 		);
