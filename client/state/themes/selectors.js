@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { find, includes, intersection, isEqual, omit, some, get, uniq } from 'lodash';
+import { find, includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
@@ -247,16 +247,14 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		// if query is default, filter out feature:auto-loading-homepage
+		// if query is default, filter out recommended themes
 		if ( ! query.search && ! query.filter ) {
+			const recommendedThemes = state.themes.recommendedThemes.themes;
+			const themeIds = flatMap( recommendedThemes, theme => {
+				return theme.id;
+			} );
 			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
-				if ( theme.taxonomies ) {
-					return ! find(
-						theme.taxonomies.theme_feature,
-						feature => feature.slug === 'auto-loading-homepage'
-					);
-				}
-				return true;
+				return ! themeIds.includes( theme.id );
 			} );
 		}
 
