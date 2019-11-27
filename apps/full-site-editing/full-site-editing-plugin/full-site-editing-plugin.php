@@ -251,12 +251,18 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
  * if the theme is unsupported.
  */
 function populate_wp_template_data() {
-	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	if ( ! is_theme_supported() ) {
+		return;
+	}
+
 	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 
-	$fse = Full_Site_Editing::get_instance();
-	$fse->insert_default_data();
+	$theme_slug = normalize_theme_slug( get_theme_slug() );
+
+	$template_inserter = new WP_Template_Inserter( $theme_slug );
+	$template_inserter->insert_default_template_data();
+	$template_inserter->insert_default_pages();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'after_switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
