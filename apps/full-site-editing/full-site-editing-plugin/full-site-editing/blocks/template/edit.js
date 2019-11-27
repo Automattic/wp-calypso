@@ -124,11 +124,12 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
+			event.preventDefault();
+			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
-			event.preventDefault();
 			savePost();
 		};
 
