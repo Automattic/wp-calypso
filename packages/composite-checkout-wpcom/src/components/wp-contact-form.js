@@ -403,7 +403,7 @@ function DomainFields() {
 			</DomainContactFieldsTitle>
 			<DomainContactFieldsDescription>
 				{ translate(
-					'Domain owners have to share contact information in a public database of all domains. With our Privacy Protection, we publish our own information and privately forward any communication to you.'
+					'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 				) }
 			</DomainContactFieldsDescription>
 
