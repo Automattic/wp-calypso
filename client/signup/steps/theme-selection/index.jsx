@@ -106,6 +106,17 @@ class ThemeSelectionStep extends Component {
 		return translate( 'Choose a theme.' );
 	}
 
+	headerTextIfFirstStep() {
+		const { flowName, translate } = this.props;
+
+		if ( flowName === 'test-fse' ) {
+			return translate( "Let's get started by picking your site design" );
+		}
+
+		// Use the default header text
+		return undefined;
+	}
+
 	subHeaderText() {
 		const { flowName, translate } = this.props;
 
@@ -132,11 +143,13 @@ class ThemeSelectionStep extends Component {
 				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
 
 		const headerText = this.headerText();
+		const headerTextIfFirstStep = this.headerTextIfFirstStep();
 		const subHeaderText = this.subHeaderText();
 
 		return (
 			<StepWrapper
 				fallbackHeaderText={ headerText }
+				headerText={ headerTextIfFirstStep }
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderThemesList() }
