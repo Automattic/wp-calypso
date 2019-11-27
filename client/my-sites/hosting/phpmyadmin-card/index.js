@@ -94,7 +94,7 @@ const PhpMyAdminCard = ( {
 			<div className="phpmyadmin-card__questions">
 				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
 					{ translate(
-						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
+						"It is a free and open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
 							components: {
 								a: (
