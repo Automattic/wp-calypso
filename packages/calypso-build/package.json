@@ -34,6 +34,7 @@
 		"extends @wordpress/browserslist-config"
 	],
 	"dependencies": {
+		"@automattic/mini-css-extract-plugin-with-rtl": "0.8.0",
 		"@babel/cli": "7.7.5",
 		"@babel/core": "7.7.5",
 		"@babel/plugin-proposal-class-properties": "7.7.4",
@@ -62,7 +63,6 @@
 		"jest-config": "24.9.0",
 		"jest-emotion": "^10.0.27",
 		"jest-enzyme": "7.1.2",
-		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 		"node-sass": "4.13.0",
 		"postcss-custom-properties": "9.0.2",
 		"postcss-loader": "3.0.0",
@@ -73,7 +73,6 @@
 		"typescript": "3.7.3",
 		"webpack": "4.41.3",
 		"webpack-cli": "3.3.10",
-		"webpack-filter-warnings-plugin": "1.2.1",
 		"webpack-rtl-plugin": "2.0.0"
 	},
 	"peerDependencies": {
