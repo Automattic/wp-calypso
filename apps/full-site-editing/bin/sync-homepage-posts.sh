@@ -34,6 +34,7 @@ fi
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
 TARGET=./full-site-editing-plugin/homepage-posts/newspack-homepage-articles
+ENTRY=./full-site-editing-plugin/homepage-posts/index.php
 
 # download zip file
 echo Downloading $MODE $NAME
@@ -84,4 +85,14 @@ cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
-echo Done.
+echo Sync done.
+
+if [ "$MODE" = "release" ]
+then
+    if ! grep -q "$NAME" "$ENTRY"; then
+        echo
+        echo Warning: $NAME could not be found in $ENTRY
+        echo Make sure to update the NEWSPACK_BLOCKS__VERSION constant to the current version.
+        echo
+    fi
+fi
