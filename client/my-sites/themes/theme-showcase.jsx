@@ -87,6 +87,7 @@ class ThemeShowcase extends React.Component {
 		upsellBanner: PropTypes.any,
 		trackUploadClick: PropTypes.func,
 		trackATUploadClick: PropTypes.func,
+		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 	};
 
@@ -100,6 +101,7 @@ class ThemeShowcase extends React.Component {
 
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
+		this.props.trackMoreThemesClick();
 	};
 
 	doSearch = searchBoxContent => {
@@ -390,5 +392,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
+	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 };
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );
