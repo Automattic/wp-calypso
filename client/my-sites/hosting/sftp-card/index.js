@@ -146,7 +146,7 @@ const SftpCard = ( {
 					<Accordion title={ translate( 'What is SFTP?' ) }>
 						{ translate(
 							"It's a way for you to access the files and folders on a website via a client program such as {{a}}Filezilla{{/a}} on your local computer. " +
-								'For more information see {{supportLink}}SFTP and WordPress.com{{/supportLink}} ',
+								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}} ',
 							{
 								components: {
 									a: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
