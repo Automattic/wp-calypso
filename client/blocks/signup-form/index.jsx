@@ -957,8 +957,8 @@ class SignupForm extends Component {
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
 		if (
-			this.props.flowName === 'test-fse' ||
-			( this.props.flowName === 'onboarding' && 'passwordless' === abtest( 'passwordlessSignup' ) )
+			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
+			'passwordless' === abtest( 'passwordlessSignup' )
 		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
