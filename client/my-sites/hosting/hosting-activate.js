@@ -17,13 +17,11 @@ import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) => {
-	const getBackUrl = () => {
-		return `/hosting-config/${ siteSlug }`;
-	};
+	const backUrl = `/hosting-config/${ siteSlug }`;
 
 	const transferInitiate = () => {
 		initiateTransfer( siteId, null, null );
-		page( getBackUrl() );
+		page( backUrl );
 	};
 
 	return (
@@ -32,10 +30,10 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 				path="/hosting-config/activate/:site"
 				title="Hosting Configuration > Activate"
 			/>
-			<HeaderCake isCompact={ true } backHref={ getBackUrl() }>
+			<HeaderCake isCompact={ true } backHref={ backUrl }>
 				{ translate( 'Activate Hosting Features' ) }
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ getBackUrl() } />
+			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ backUrl } />
 		</MainComponent>
 	);
 };

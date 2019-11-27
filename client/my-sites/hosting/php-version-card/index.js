@@ -91,8 +91,12 @@ const PhpVersionCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( '' );
 
+	const recommendedValue = '7.3';
+
 	useEffect( () => {
-		requestPhpVersion( siteId );
+		if ( ! disabled ) {
+			requestPhpVersion( siteId );
+		}
 	}, [ siteId, disabled ] );
 
 	useEffect( () => {
@@ -150,7 +154,7 @@ const PhpVersionCard = ( {
 				label: translate( '7.3 (recommended)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
-				value: '7.3',
+				value: recommendedValue,
 			},
 			{
 				label: translate( '7.4', {
@@ -169,6 +173,9 @@ const PhpVersionCard = ( {
 		const isButtonDisabled =
 			disabled || ! selectedPhpVersion || selectedPhpVersion === currentPhpVersion;
 
+		const selectedValue =
+			selectedPhpVersion || currentPhpVersion || ( disabled && recommendedValue );
+
 		return (
 			<div>
 				<div>
@@ -177,7 +184,7 @@ const PhpVersionCard = ( {
 						disabled={ disabled }
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
-						value={ selectedPhpVersion || currentPhpVersion }
+						value={ selectedValue }
 					>
 						{ getPhpVersions().map( option => {
 							return (

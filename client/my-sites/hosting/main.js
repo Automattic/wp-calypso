@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -61,7 +61,7 @@ const Hosting = ( {
 			requestSiteById( siteId );
 
 			return (
-				<Fragment>
+				<>
 					<Notice
 						className="hosting__activating-notice"
 						status="is-info"
@@ -69,13 +69,13 @@ const Hosting = ( {
 						text={ translate( 'Please wait while we activate the hosting features.' ) }
 						icon="sync"
 					/>
-				</Fragment>
+				</>
 			);
 		}
 
 		const failureNotice = FAILURE === transferState && (
 			<Notice
-				status="is-info"
+				status="is-error"
 				showDismiss={ false }
 				text={ translate( 'There was an error activating hosting features.' ) }
 				icon="bug"
@@ -84,7 +84,7 @@ const Hosting = ( {
 
 		if ( isDisabled && ! isTransferring ) {
 			return (
-				<Fragment>
+				<>
 					{ failureNotice }
 					<Notice
 						status="is-info"
@@ -102,7 +102,7 @@ const Hosting = ( {
 							{ translate( 'Activate' ) }
 						</NoticeAction>
 					</Notice>
-				</Fragment>
+				</>
 			);
 		}
 	};
@@ -112,7 +112,7 @@ const Hosting = ( {
 			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
 
 		return (
-			<Fragment>
+			<>
 				<div className="hosting__layout">
 					<div className="hosting__layout-col">
 						{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
@@ -123,7 +123,7 @@ const Hosting = ( {
 						<SupportCard />
 					</div>
 				</div>
-			</Fragment>
+			</>
 		);
 	};
 
