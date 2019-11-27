@@ -45,7 +45,7 @@ class Hosting extends Component {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, transferState } = this.props;
 
-		if ( isTransferring && ! COMPLETE === transferState ) {
+		if ( isTransferring && COMPLETE !== transferState ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
@@ -75,9 +75,11 @@ class Hosting extends Component {
 			// Transfer in progress
 			if (
 				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState && isTransferring )
+				( isDisabled && COMPLETE === transferState )
 			) {
-				requestSiteById( siteId );
+				if ( COMPLETE === transferState ) {
+					requestSiteById( siteId );
+				}
 
 				let activationText = translate( 'Please wait while we activate the hosting features.' );
 				if ( this.state.clickOutside ) {
