@@ -112,8 +112,8 @@ class KeyedSuggestions extends React.Component {
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
 	 *
-	 * @param  {Object} event  Keybord event
-	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
+	 * @param  {object} event  Keybord event
+	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
 	handleKeyEvent = event => {
 		switch ( event.key ) {
@@ -161,9 +161,9 @@ class KeyedSuggestions extends React.Component {
 	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
 	 * and passes all filters for that key. For showAll also soome reordering happens - explained in code
 	 *
-	 * @param  {String}  input   text that will be matched against the taxonomies
-	 * @param  {String}  showAll taxonomy for which we want all filters
-	 * @return {Object}          filtered taxonomy:[ terms ] object
+	 * @param  {string}  input   text that will be matched against the taxonomies
+	 * @param  {string}  showAll taxonomy for which we want all filters
+	 * @returns {object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
 		const termsTable = this.props.terms;
@@ -237,8 +237,8 @@ class KeyedSuggestions extends React.Component {
 				const regex = new RegExp( multiRegex, 'iu' );
 				filtered[ key ] = take(
 					filter(
-						map( terms[ key ], ( term, key ) =>
-							term.name.match( regex ) || term.description.match( regex ) ? key : null
+						map( terms[ key ], ( term, k ) =>
+							term.name.match( regex ) || term.description.match( regex ) ? k : null
 						)
 					),
 					limit
