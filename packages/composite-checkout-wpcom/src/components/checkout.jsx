@@ -134,11 +134,12 @@ WPCOMCheckout.propTypes = {
 };
 
 function useWpcomStore( registerStore ) {
-	const registerComplete = useRef();
 	// Only register once
+	const registerComplete = useRef();
 	if ( registerComplete.current ) {
 		return;
 	}
+	registerComplete.current = true;
 
 	function contactReducer( state = {}, action ) {
 		switch ( action.type ) {
@@ -329,7 +330,6 @@ function useWpcomStore( registerStore ) {
 			},
 		},
 	} );
-	registerComplete.current = true;
 }
 
 function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
