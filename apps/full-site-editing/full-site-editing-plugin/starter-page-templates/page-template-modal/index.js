@@ -432,7 +432,6 @@ const unsubscribe = subscribe( () => {
 		wpDispatch( 'core/edit-post' ).toggleEditorPanelOpened(
 			'page-templates-sidebar/Template Modal Opener'
 		);
-
-		unsubscribe();
 	}
+	unsubscribe();
 } );
