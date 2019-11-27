@@ -94,7 +94,7 @@ const PhpMyAdminCard = ( {
 			<div className="phpmyadmin-card__questions">
 				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
 					{ translate(
-						"It is a free and open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
+						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
 							components: {
 								a: (
@@ -111,12 +111,7 @@ const PhpMyAdminCard = ( {
 			</div>
 			<p className="phpmyadmin-card__db-warning">
 				{ translate(
-					"Managing a database can be tricky. Only access if you know what you're doing. {{strong}}Need to manage your database?{{/strong}}",
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
+					'Managing a database can be tricky and it’s not necessary for your site to function.'
 				) }
 			</p>
 			<Button

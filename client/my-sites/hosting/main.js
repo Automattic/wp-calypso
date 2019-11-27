@@ -167,9 +167,7 @@ class Hosting extends Component {
 					headerText={ translate( 'Hosting Configuration' ) }
 					subHeaderText={
 						sftpPhpMyAdminFeaturesEnabled
-							? translate(
-								'Access your website, database, and more advanced settings of your website.'
-							)
+							? translate( 'Access your website’s database and more advanced settings.' )
 							: translate( 'Access and manage more advanced settings of your website.' )
 					}
 					align="left"

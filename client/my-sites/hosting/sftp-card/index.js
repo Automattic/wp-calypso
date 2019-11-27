@@ -145,7 +145,7 @@ const SftpCard = ( {
 				<div className="sftp-card__questions">
 					<Accordion title={ translate( 'What is SFTP?' ) }>
 						{ translate(
-							"It's a way for you to access the files and folders on a website via a client program such as {{a}}Filezilla{{/a}} on your local computer. " +
+							'It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}} ' +
 								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}} ',
 							{
 								components: {
