@@ -176,7 +176,7 @@ const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary>
-						{ translate( 'Enable SFTP Credentials' ) }
+						{ translate( 'Create SFTP Credentials' ) }
 					</Button>
 				</>
 			) }
@@ -257,10 +257,10 @@ const createSftpUser = ( siteId, currentUserId ) =>
 		composeAnalytics(
 			recordGoogleEvent(
 				'Hosting Configuration',
-				'Clicked "Enable SFTP Credentials" Button in SFTP Card'
+				'Clicked "Create SFTP Credentials" Button in SFTP Card'
 			),
-			recordTracksEvent( 'calypso_hosting_configuration_enable_sftp' ),
-			bumpStat( 'hosting-config', 'enable-sftp' )
+			recordTracksEvent( 'calypso_hosting_configuration_create_sftp_user' ),
+			bumpStat( 'hosting-config', 'create-sftp-user' )
 		),
 		createAtomicSftpUser( siteId, currentUserId )
 	);
