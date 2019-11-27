@@ -29,7 +29,6 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
-import { isRequestingSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -41,7 +40,6 @@ const Hosting = ( {
 	clickActivate,
 	isDisabled,
 	isTransferring,
-	isRequestingCurrentSite,
 	requestSiteById,
 	siteId,
 	siteSlug,
@@ -55,18 +53,17 @@ const Hosting = ( {
 	const getAtomicActivationNotice = () => {
 		const { COMPLETE, FAILURE } = transferStates;
 
-		if ( isDisabled && COMPLETE === transferState && ! isRequestingCurrentSite ) {
-			requestSiteById( siteId );
-		}
-
 		// Transfer in progress
 		if (
 			( isTransferring && COMPLETE !== transferState ) ||
-			( isDisabled && COMPLETE === transferState && isRequestingCurrentSite )
+			( isDisabled && COMPLETE === transferState )
 		) {
+			requestSiteById( siteId );
+
 			return (
 				<Fragment>
 					<Notice
+						className="hosting__activating-notice"
 						status="is-info"
 						showDismiss={ false }
 						text={ translate( 'Please wait while we activate the hosting features.' ) }
@@ -154,7 +151,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequestingCurrentSite: isRequestingSite( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),

@@ -93,7 +93,7 @@ const PhpVersionCard = ( {
 
 	useEffect( () => {
 		requestPhpVersion( siteId );
-	}, [ siteId ] );
+	}, [ siteId, disabled ] );
 
 	useEffect( () => {
 		const updateNoticeId = 'hosting-php-version';
