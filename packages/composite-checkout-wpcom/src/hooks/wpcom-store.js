@@ -89,36 +89,6 @@ export function useWpcomStore( registerStore ) {
 			setDomainContactField( key, field ) {
 				return { type: 'CONTACT_SET_DOMAIN_FIELD', payload: { key, field } };
 			},
-			setDomainFirstName( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_FIRST_NAME', payload };
-			},
-			setDomainLastName( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_LAST_NAME', payload };
-			},
-			setDomainEmail( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_EMAIL', payload };
-			},
-			setDomainPhoneNumber( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_PHONE_NUMBER', payload };
-			},
-			setDomainAddress( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_ADDRESS', payload };
-			},
-			setDomainCity( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_CITY', payload };
-			},
-			setDomainState( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_STATE', payload };
-			},
-			setDomainProvince( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_PROVINCE', payload };
-			},
-			setDomainCountry( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_COUNTRY', payload };
-			},
-			setDomainPostalCode( payload ) {
-				return { type: 'CONTACT_SET_DOMAIN_POSTAL_CODE', payload };
-			},
 		},
 
 		selectors: {
