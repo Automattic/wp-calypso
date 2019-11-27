@@ -1,109 +1,93 @@
-.sftp-card__info-table {
-	border-top: 1px solid var( --color-border-subtle );
-	margin: 0;
-
-	@include breakpoint( '<960px' ) {
-		display: block;
-
-		tbody, tr, th, button {
-			display: block;
-		}
-
-		tr {
-			margin-bottom: 8px;
-			margin-top: 16px;
-		}
-
-		th {
-			margin-bottom: 4px;
-		}
-
-		// Ensures overflowing text is clipped with an ellipsis.
-		td {
-			display: table;
-			table-layout: fixed;
-			width: 100%;
-
-			.sftp-card__hidden-overflow {
-				display: block;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-		}
-
-		button {
-			margin-top: 8px;
-		}
-	}
-
-	@include breakpoint( '>1280px' ) {
-		margin-left: -48px;
-		width: calc( 100% + 48px );
-	}
-
-	@include breakpoint( '>960px' ) {
-		th, td {
-			padding: 8px;
-		}
-
-		th {
-			text-align: right;
-			width: 1%; // Hack to take the minimum space possible.
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		td {
-			padding-right: 0;
-		}
-
-		tr:first-child {
-			th, td {
-				padding-top: 16px;
-			}
-		}
-
-		tr:last-child {
-			th, td {
-				padding-bottom: 0;
-			}
-		}
-
-		tr.has-action {
-			th, td {
-				padding-top: 4px;
-				padding-bottom: 4px;
-			}
-		}
-
-		button {
-			margin-left: 16px;
-			vertical-align: middle;
-		}
-	}
-
-	p {
-		margin-bottom: 0.5em;
-	}
-
-	.sftp-card__password-warning {
-		margin-top: 16px;
-		margin-bottom: 0;
-		color: var( --color-text-subtle );
-		font-size: 13px;
-	}
-
-	&.is-placeholder span {
-		padding: 0 35%;
-		background-color: var( --color-surface-backdrop );
-	}
-}
-
 .sftp-card__questions {
 	margin-bottom: 1.5em;
 }
 
 .sftp-card__enable-warning {
 	color: var( --color-text-subtle );
+}
+
+.sftp-card__copy-field {
+	@extend %form-field;
+	display: flex;
+	padding: 0;
+	margin-bottom: 16px;
+
+	&.is-focused {
+		border-color: var( --color-primary );
+		outline: none;
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
+		}
+
+		&.is-valid {
+			box-shadow: 0 0 0 2px var( --color-success-5 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px var( --color-success-5 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var( --color-error-5 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var( --color-error-10 );
+		}
+	}
+
+	&.is-disabled {
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-20 );
+		opacity: 1;
+		-webkit-text-fill-color: var( --color-neutral-20 );
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var( --color-neutral-20 );
+		}
+	}
+
+	&.is-valid {
+		border-color: var( --color-success );
+	}
+
+	&.is-valid:hover {
+		border-color: var( --color-success-40 );
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
+
+	&.is-error:hover {
+		border-color: var( --color-error-50 );
+	}
+}
+
+.sftp-card__copy-button.is-compact {
+	flex: 0 0 auto;
+	margin: 4px;
+	text-transform: none;
+}
+
+input[type='text'].sftp-card__copy-input {
+	flex: 1 1 0;
+	border: none;
+	min-width: 0;
+}
+
+input[type='text'].sftp-card__copy-input:focus {
+	border: none;
+	box-shadow: none;
+}
+
+.sftp-card__password-explainer {
+	margin-bottom: 8px;
 }
