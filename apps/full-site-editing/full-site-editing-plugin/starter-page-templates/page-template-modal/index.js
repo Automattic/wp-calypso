@@ -14,6 +14,7 @@ import {
 	withSelect,
 	select as wpSelect,
 	dispatch as wpDispatch,
+	subscribe,
 } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
@@ -422,12 +423,16 @@ registerPlugin( 'page-templates-sidebar', {
 } );
 
 // Make sidebar plugin open by default.
-if (
-	! wpSelect( 'core/edit-post' ).isEditorPanelOpened(
-		'page-templates-sidebar/Template Modal Opener'
-	)
-) {
-	wpDispatch( 'core/edit-post' ).toggleEditorPanelOpened(
-		'page-templates-sidebar/Template Modal Opener'
-	);
-}
+const unsubscribe = subscribe( () => {
+	if (
+		! wpSelect( 'core/edit-post' ).isEditorPanelOpened(
+			'page-templates-sidebar/Template Modal Opener'
+		)
+	) {
+		wpDispatch( 'core/edit-post' ).toggleEditorPanelOpened(
+			'page-templates-sidebar/Template Modal Opener'
+		);
+
+		unsubscribe();
+	}
+} );
