@@ -437,42 +437,57 @@ function ContactFormSummary() {
 		return null;
 	}
 
+	const fullName = joinNonEmptyValues(
+		' ',
+		contactInfo.firstName.value,
+		contactInfo.lastName.value
+	);
+	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
+	const postalAndCountry = joinNonEmptyValues(
+		', ',
+		contactInfo.postalCode.value,
+		contactInfo.country.value
+	);
+
+	const domainFullName = joinNonEmptyValues(
+		' ',
+		domainContactInfo.firstName.value,
+		domainContactInfo.lastName.value
+	);
+	const domainCityAndState = joinNonEmptyValues(
+		', ',
+		domainContactInfo.city.value,
+		domainContactInfo.state.value
+	);
+	const domainPostalAndCountry = joinNonEmptyValues(
+		', ',
+		domainContactInfo.postalCode.value,
+		domainContactInfo.country.value
+	);
+
 	return (
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( contactInfo.firstName.value || contactInfo.lastName.value ) && (
-						<SummaryLine>
-							{ contactInfo.firstName.value } { contactInfo.lastName.value }
-						</SummaryLine>
-					) }
+					{ fullName && <SummaryLine>{ fullName }</SummaryLine> }
 
-					{ contactInfo.email.value && (
+					{ contactInfo.email.value.length > 0 && (
 						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
 					) }
 
-					{ contactInfo.address.value && <SummaryLine>{ contactInfo.address.value } </SummaryLine> }
-
-					{ ( contactInfo.city.value || contactInfo.state.value ) && (
-						<SummaryLine>
-							{ contactInfo.city.value && contactInfo.city.value + ', ' }{ ' ' }
-							{ contactInfo.state.value }
-						</SummaryLine>
+					{ contactInfo.address.value.length > 0 && (
+						<SummaryLine>{ contactInfo.address.value } </SummaryLine>
 					) }
 
-					{ ( contactInfo.postalCode.value || contactInfo.country.value ) && (
-						<SummaryLine>
-							{ contactInfo.postalCode.value && contactInfo.postalCode.value + ', ' }
-							{ contactInfo.country.value }
-						</SummaryLine>
-					) }
+					{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+
+					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ ( contactInfo.phoneNumber.value ||
-					( isElligibleForVat() && contactInfo.vatId.value ) ) && (
+				{ ( contactInfo.phoneNumber.value.length > 0 || contactInfo.vatId.value.length > 0 ) && (
 					<SummaryDetails>
 						<SummaryLine>{ contactInfo.phoneNumber.value }</SummaryLine>
-						{ isElligibleForVat() && (
+						{ contactInfo.vatId.value.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
 								{ contactInfo.vatId.value }
@@ -482,42 +497,25 @@ function ContactFormSummary() {
 				) }
 			</div>
 
-			{ domainContactInfo.domains && ! isDomainContactSame && (
+			{ ! isDomainContactSame && (
 				<div>
 					<SummaryDetails>
-						{ ( domainContactInfo.firstName.value || domainContactInfo.lastName.value ) && (
-							<SummaryLine>
-								{ domainContactInfo.firstName.value + ' ' + domainContactInfo.lastName.value }
-							</SummaryLine>
-						) }
+						{ domainFullName && <SummaryLine>{ domainFullName }</SummaryLine> }
 
-						{ domainContactInfo.email.value && (
+						{ domainContactInfo.email.value.length > 0 && (
 							<SummarySpacerLine>{ domainContactInfo.email.value }</SummarySpacerLine>
 						) }
 
-						{ domainContactInfo.address.value && (
+						{ domainContactInfo.address.value.length > 0 && (
 							<SummaryLine>{ domainContactInfo.address.value }</SummaryLine>
 						) }
 
-						{ ( domainContactInfo.city.value ||
-							domainContactInfo.city.value ||
-							domainContactInfo.state.value ) && (
-							<SummaryLine>
-								{ domainContactInfo.city.value && domainContactInfo.city.value + ', ' }{ ' ' }
-								{ domainContactInfo.state.value }
-							</SummaryLine>
-						) }
+						{ domainCityAndState && <SummaryLine>{ domainCityAndState }</SummaryLine> }
 
-						{ ( domainContactInfo.postalCode.value || domainContactInfo.country.value ) && (
-							<SummaryLine>
-								{ domainContactInfo.domainPostalCode.value &&
-									domainContactInfo.domainPostalCode.value + ', ' }{ ' ' }
-								{ domainContactInfo.country.value }
-							</SummaryLine>
-						) }
+						{ domainPostalAndCountry && <SummaryLine>{ domainPostalAndCountry }</SummaryLine> }
 					</SummaryDetails>
 
-					{ domainContactInfo.phoneNumber.value && (
+					{ domainContactInfo.phoneNumber.value.length > 0 && (
 						<SummaryDetails>
 							<SummaryLine>{ domainContactInfo.phoneNumber.value }</SummaryLine>
 						</SummaryDetails>
@@ -526,4 +524,8 @@ function ContactFormSummary() {
 			) }
 		</GridRow>
 	);
+}
+
+function joinNonEmptyValues( joinString, ...values ) {
+	return values.filter( value => value.length > 0 ).join( joinString );
 }
