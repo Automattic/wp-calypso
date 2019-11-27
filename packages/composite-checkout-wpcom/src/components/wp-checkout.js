@@ -69,7 +69,7 @@ export default function WPCheckout( { deleteItem, changePlanLength } ) {
 			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
 			isCompleteCallback: () =>
-				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ),
+				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
 			isEditableCallback: () => true,
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
@@ -90,7 +90,7 @@ export default function WPCheckout( { deleteItem, changePlanLength } ) {
 	return <Checkout steps={ steps } />;
 }
 
-function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
+function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, items ) {
 	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
 	const contactFields = [
 		contactInfo.firstName,
@@ -111,7 +111,7 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
 		domainContactInfo.phoneNumber,
 	];
 	let allFields = taxFields;
-	if ( areDomainsInLineItems ) {
+	if ( areDomainsInLineItems( items ) ) {
 		allFields = allFields.concat( contactFields );
 		if ( ! isDomainContactSame ) {
 			allFields = allFields.concat( domainFields );

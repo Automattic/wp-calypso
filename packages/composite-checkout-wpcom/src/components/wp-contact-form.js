@@ -323,7 +323,7 @@ function VatIdField() {
 			type="Number"
 			label={ translate( 'VAT identification number' ) }
 			value={ vatId.value }
-			onChange={ value => setVatId({value, isTouched: true, isValid: !! value}) }
+			onChange={ value => setVatId( { value, isTouched: true, isValid: !! value } ) }
 			isError={ vatId.isTouched && ! vatId.isValid }
 		/>
 	);
@@ -343,9 +343,9 @@ function TaxFields( { section, taxInfo, setters } ) {
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
-					onChange={ value => setPostalCode({value, isTouched: true, isValid: !! value}) }
+					onChange={ value => setPostalCode( { value, isTouched: true, isValid: !! value } ) }
 					autoComplete={ section + ' postal-code' }
-					isError={postalCode.isTouched && !postalCode.isValid}
+					isError={ postalCode.isTouched && ! postalCode.isValid }
 				/>
 			</LeftColumn>
 
@@ -355,9 +355,9 @@ function TaxFields( { section, taxInfo, setters } ) {
 					type="text"
 					label={ translate( 'Country' ) }
 					value={ country.value }
-					onChange={ value => setCountry({value, isTouched: true, isValid: !! value}) }
+					onChange={ value => setCountry( { value, isTouched: true, isValid: !! value } ) }
 					autoComplete={ section + ' country' }
-					isError={country.isTouched && ! country.isValid}
+					isError={ country.isTouched && ! country.isValid }
 				/>
 			</RightColumn>
 		</FieldRow>
@@ -457,38 +457,41 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( contactInfo.firstName || contactInfo.lastName ) && (
+					{ ( contactInfo.firstName.value || contactInfo.lastName.value ) && (
 						<SummaryLine>
-							{ contactInfo.firstName } { contactInfo.lastName }
+							{ contactInfo.firstName.value } { contactInfo.lastName.value }
 						</SummaryLine>
 					) }
 
-					{ contactInfo.email && <SummarySpacerLine>{ contactInfo.email }</SummarySpacerLine> }
+					{ contactInfo.email.value && (
+						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
+					) }
 
-					{ contactInfo.address && <SummaryLine>{ contactInfo.address } </SummaryLine> }
+					{ contactInfo.address.value && <SummaryLine>{ contactInfo.address.value } </SummaryLine> }
 
-					{ ( contactInfo.city || contactInfo.state || contactInfo.province ) && (
+					{ ( contactInfo.city.value || contactInfo.state.value || contactInfo.province.value ) && (
 						<SummaryLine>
-							{ contactInfo.city && contactInfo.city + ', ' }{ ' ' }
-							{ contactInfo.state || contactInfo.province }
+							{ contactInfo.city.value && contactInfo.city.value + ', ' }{ ' ' }
+							{ contactInfo.state.value || contactInfo.province.value }
 						</SummaryLine>
 					) }
 
-					{ ( contactInfo.postalCode || contactInfo.country ) && (
+					{ ( contactInfo.postalCode.value || contactInfo.country.value ) && (
 						<SummaryLine>
-							{ contactInfo.postalCode && contactInfo.postalCode + ', ' }
-							{ contactInfo.country }
+							{ contactInfo.postalCode.value && contactInfo.postalCode.value + ', ' }
+							{ contactInfo.country.value }
 						</SummaryLine>
 					) }
 				</SummaryDetails>
 
-				{ ( contactInfo.phoneNumber || ( isElligibleForVat() && contactInfo.vatId ) ) && (
+				{ ( contactInfo.phoneNumber.value ||
+					( isElligibleForVat() && contactInfo.vatId.value ) ) && (
 					<SummaryDetails>
-						<SummaryLine>{ contactInfo.phoneNumber }</SummaryLine>
+						<SummaryLine>{ contactInfo.phoneNumber.value }</SummaryLine>
 						{ isElligibleForVat() && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
-								{ contactInfo.vatId }
+								{ contactInfo.vatId.value }
 							</SummaryLine>
 						) }
 					</SummaryDetails>
@@ -498,41 +501,42 @@ function ContactFormSummary() {
 			{ domainContactInfo.domains && ! isDomainContactSame && (
 				<div>
 					<SummaryDetails>
-						{ ( domainContactInfo.firstName || domainContactInfo.lastName ) && (
+						{ ( domainContactInfo.firstName.value || domainContactInfo.lastName.value ) && (
 							<SummaryLine>
-								{ domainContactInfo.firstName + ' ' + domainContactInfo.lastName }
+								{ domainContactInfo.firstName.value + ' ' + domainContactInfo.lastName.value }
 							</SummaryLine>
 						) }
 
-						{ domainContactInfo.email && (
-							<SummarySpacerLine>{ domainContactInfo.email }</SummarySpacerLine>
+						{ domainContactInfo.email.value && (
+							<SummarySpacerLine>{ domainContactInfo.email.value }</SummarySpacerLine>
 						) }
 
-						{ domainContactInfo.address && (
-							<SummaryLine>{ domainContactInfo.address }</SummaryLine>
+						{ domainContactInfo.address.value && (
+							<SummaryLine>{ domainContactInfo.address.value }</SummaryLine>
 						) }
 
-						{ ( domainContactInfo.city ||
-							domainContactInfo.city ||
-							domainContactInfo.state ||
-							domainContactInfo.province ) && (
+						{ ( domainContactInfo.city.value ||
+							domainContactInfo.city.value ||
+							domainContactInfo.state.value ||
+							domainContactInfo.province.value ) && (
 							<SummaryLine>
-								{ domainContactInfo.city && domainContactInfo.city + ', ' }{ ' ' }
-								{ domainContactInfo.state || domainContactInfo.province }
+								{ domainContactInfo.city.value && domainContactInfo.city.value + ', ' }{ ' ' }
+								{ domainContactInfo.state.value || domainContactInfo.province.value }
 							</SummaryLine>
 						) }
 
-						{ ( domainContactInfo.postalCode || domainContactInfo.country ) && (
+						{ ( domainContactInfo.postalCode.value || domainContactInfo.country.value ) && (
 							<SummaryLine>
-								{ domainContactInfo.domainPostalCode && domainContactInfo.domainPostalCode + ', ' }{ ' ' }
-								{ domainContactInfo.country }
+								{ domainContactInfo.domainPostalCode.value &&
+									domainContactInfo.domainPostalCode.value + ', ' }{ ' ' }
+								{ domainContactInfo.country.value }
 							</SummaryLine>
 						) }
 					</SummaryDetails>
 
-					{ domainContactInfo.phoneNumber && (
+					{ domainContactInfo.phoneNumber.value && (
 						<SummaryDetails>
-							<SummaryLine>{ domainContactInfo.phoneNumber }</SummaryLine>
+							<SummaryLine>{ domainContactInfo.phoneNumber.value }</SummaryLine>
 						</SummaryDetails>
 					) }
 				</div>
@@ -545,31 +549,33 @@ export function getDomainDetailsFromPaymentData( paymentData ) {
 	const { contactInfo = {}, domainContactInfo = {}, isDomainContactSame = true } = paymentData;
 	return {
 		first_name: isDomainContactSame
-			? contactInfo.name
-			: domainContactInfo.name || contactInfo.name || '',
+			? contactInfo.name.value
+			: domainContactInfo.name.value || contactInfo.name.value || '',
 		last_name: isDomainContactSame
-			? contactInfo.name
-			: domainContactInfo.name || contactInfo.name || '', // TODO: how do we split up first/last name?
+			? contactInfo.name.value
+			: domainContactInfo.name.value || contactInfo.name.value || '', // TODO: how do we split up first/last name?
 		address_1: isDomainContactSame
-			? contactInfo.address
-			: domainContactInfo.address || contactInfo.address || '',
-		city: isDomainContactSame ? contactInfo.city : domainContactInfo.city || contactInfo.city || '',
+			? contactInfo.address.value
+			: domainContactInfo.address.value || contactInfo.address.value || '',
+		city: isDomainContactSame
+			? contactInfo.city.value
+			: domainContactInfo.city.value || contactInfo.city.value || '',
 		state: isDomainContactSame
-			? contactInfo.state || contactInfo.province
-			: domainContactInfo.state ||
-			  domainContactInfo.province ||
-			  contactInfo.state ||
-			  contactInfo.province ||
+			? contactInfo.state.value || contactInfo.province.value
+			: domainContactInfo.state.value ||
+			  domainContactInfo.province.value ||
+			  contactInfo.state.value ||
+			  contactInfo.province.value ||
 			  '',
 		postal_code: isDomainContactSame
-			? contactInfo.postalCode
-			: domainContactInfo.postalCode || contactInfo.postalCode || '',
+			? contactInfo.postalCode.value
+			: domainContactInfo.postalCode.value || contactInfo.postalCode.value || '',
 		country_code: isDomainContactSame
-			? contactInfo.country
-			: domainContactInfo.country || contactInfo.country || '',
+			? contactInfo.country.value
+			: domainContactInfo.country.value || contactInfo.country.value || '',
 		email: isDomainContactSame
-			? contactInfo.email
-			: domainContactInfo.email || contactInfo.email || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domainContactInfo.phoneNumber || '',
+			? contactInfo.email.value
+			: domainContactInfo.email.value || contactInfo.email.value || '', // TODO: we need to get email address
+		phone: isDomainContactSame ? '' : domainContactInfo.phoneNumber.value || '',
 	};
 }
