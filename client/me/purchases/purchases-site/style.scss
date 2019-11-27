@@ -32,7 +32,13 @@
 
 	& .action-card__illustration {
 		@include breakpoint( '>960px' ) {
-			margin: -10px 20px 0 -20px;
+			margin: -10px 0 0 -20px;
+		}
+	}
+
+	& .purchase-concierge .action-card__illustration {
+		@include breakpoint( '>960px' ) {
+			margin-right: 20px;
 		}
 	}
 

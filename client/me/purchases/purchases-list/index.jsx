@@ -49,6 +49,10 @@ class PurchasesList extends Component {
 	renderConciergeBanner() {
 		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
 
+		if ( null === hasAvailableConciergeSessions ) {
+			return null;
+		}
+
 		let bannerType;
 
 		if ( nextAppointment ) {

@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -81,6 +82,10 @@ class ConciergeBanner extends Component {
 	render() {
 		const { headerText, mainText, buttonText, buttonHref, illustrationUrl } = this.getText();
 
+		const className = classnames( {
+			'purchase-concierge': 'canPurchaseConcierge' === this.props.bannerType,
+		} );
+
 		return (
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
@@ -99,6 +104,7 @@ class ConciergeBanner extends Component {
 					} }
 					compact={ false }
 					illustration={ illustrationUrl }
+					classNames={ className }
 				/>
 			</>
 		);
