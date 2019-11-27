@@ -43,8 +43,9 @@ class Hosting extends Component {
 
 	handleClickOutside( event ) {
 		const { COMPLETE } = transferStates;
+		const { isTransferring, transferState } = this.props;
 
-		if ( this.props.isTransferring && ! COMPLETE === this.props.transferState ) {
+		if ( isTransferring && ! COMPLETE === transferState ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
@@ -74,7 +75,7 @@ class Hosting extends Component {
 			// Transfer in progress
 			if (
 				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState )
+				( isDisabled && COMPLETE === transferState && isTransferring )
 			) {
 				requestSiteById( siteId );
 
