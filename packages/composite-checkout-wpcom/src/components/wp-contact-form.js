@@ -175,7 +175,7 @@ const DomainRegistrationCheckbox = styled.input`
 
 function AddressFields( { section, contactInfo, setters } ) {
 	const translate = useTranslate();
-	const { firstName, lastName, email, address, city, state, province } = contactInfo;
+	const { firstName, lastName, email, address, city, state } = contactInfo;
 	const { setContactField } = setters;
 
 	return (
@@ -251,31 +251,19 @@ function AddressFields( { section, contactInfo, setters } ) {
 				</LeftColumn>
 
 				<RightColumn>
-					{ isStateorProvince() === 'state' ? (
-						<Field
-							id={ section + '-state' }
-							type="text"
-							label={ translate( 'State' ) }
-							value={ state.value }
-							onChange={ value =>
-								setContactField( 'state', { value, isTouched: true, isValid: !! value } )
-							}
-							autoComplete={ section + ' address-level1' }
-							isError={ state.isTouched && ! state.isValid }
-						/>
-					) : (
-						<Field
-							id={ section + '-province' }
-							type="text"
-							label={ translate( 'Province' ) }
-							value={ province.value }
-							onChange={ value =>
-								setContactField( 'province', { value, isTouched: true, isValid: !! value } )
-							}
-							autoComplete={ section + ' address-level1' }
-							isError={ province.isTouched && ! province.isValid }
-						/>
-					) }
+					<Field
+						id={ section + '-state' }
+						type="text"
+						label={
+							isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
+						}
+						value={ state.value }
+						onChange={ value =>
+							setContactField( 'state', { value, isTouched: true, isValid: !! value } )
+						}
+						autoComplete={ section + ' address-level1' }
+						isError={ state.isTouched && ! state.isValid }
+					/>
 				</RightColumn>
 			</FieldRow>
 		</React.Fragment>
@@ -465,10 +453,10 @@ function ContactFormSummary() {
 
 					{ contactInfo.address.value && <SummaryLine>{ contactInfo.address.value } </SummaryLine> }
 
-					{ ( contactInfo.city.value || contactInfo.state.value || contactInfo.province.value ) && (
+					{ ( contactInfo.city.value || contactInfo.state.value ) && (
 						<SummaryLine>
 							{ contactInfo.city.value && contactInfo.city.value + ', ' }{ ' ' }
-							{ contactInfo.state.value || contactInfo.province.value }
+							{ contactInfo.state.value }
 						</SummaryLine>
 					) }
 
@@ -513,11 +501,10 @@ function ContactFormSummary() {
 
 						{ ( domainContactInfo.city.value ||
 							domainContactInfo.city.value ||
-							domainContactInfo.state.value ||
-							domainContactInfo.province.value ) && (
+							domainContactInfo.state.value ) && (
 							<SummaryLine>
 								{ domainContactInfo.city.value && domainContactInfo.city.value + ', ' }{ ' ' }
-								{ domainContactInfo.state.value || domainContactInfo.province.value }
+								{ domainContactInfo.state.value }
 							</SummaryLine>
 						) }
 
@@ -539,39 +526,4 @@ function ContactFormSummary() {
 			) }
 		</GridRow>
 	);
-}
-
-export function getDomainDetailsFromPaymentData( paymentData ) {
-	const { contactInfo = {}, domainContactInfo = {}, isDomainContactSame = true } = paymentData;
-	return {
-		first_name: isDomainContactSame
-			? contactInfo.name.value
-			: domainContactInfo.name.value || contactInfo.name.value || '',
-		last_name: isDomainContactSame
-			? contactInfo.name.value
-			: domainContactInfo.name.value || contactInfo.name.value || '', // TODO: how do we split up first/last name?
-		address_1: isDomainContactSame
-			? contactInfo.address.value
-			: domainContactInfo.address.value || contactInfo.address.value || '',
-		city: isDomainContactSame
-			? contactInfo.city.value
-			: domainContactInfo.city.value || contactInfo.city.value || '',
-		state: isDomainContactSame
-			? contactInfo.state.value || contactInfo.province.value
-			: domainContactInfo.state.value ||
-			  domainContactInfo.province.value ||
-			  contactInfo.state.value ||
-			  contactInfo.province.value ||
-			  '',
-		postal_code: isDomainContactSame
-			? contactInfo.postalCode.value
-			: domainContactInfo.postalCode.value || contactInfo.postalCode.value || '',
-		country_code: isDomainContactSame
-			? contactInfo.country.value
-			: domainContactInfo.country.value || contactInfo.country.value || '',
-		email: isDomainContactSame
-			? contactInfo.email.value
-			: domainContactInfo.email.value || contactInfo.email.value || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domainContactInfo.phoneNumber.value || '',
-	};
 }

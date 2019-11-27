@@ -90,6 +90,11 @@ export default function WPCheckout( { deleteItem, changePlanLength } ) {
 	return <Checkout steps={ steps } />;
 }
 
+function isElligibleForVat() {
+	//TODO: Detect whether people are in EU or AU and return true if they are
+	return false;
+}
+
 function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, items ) {
 	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
 	const contactFields = [
@@ -98,8 +103,8 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, it
 		contactInfo.email,
 		contactInfo.address,
 		contactInfo.city,
-		contactInfo.state || contactInfo.province,
-		contactInfo.vatId,
+		contactInfo.state,
+		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
 	];
 	const domainFields = [
 		domainContactInfo.firstName,
@@ -107,7 +112,7 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, it
 		domainContactInfo.email,
 		domainContactInfo.address,
 		domainContactInfo.city,
-		domainContactInfo.state || domainContactInfo.province,
+		domainContactInfo.state,
 		domainContactInfo.phoneNumber,
 	];
 	let allFields = taxFields;
