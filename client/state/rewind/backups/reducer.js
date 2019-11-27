@@ -3,10 +3,10 @@
  */
 import { combineReducers, withoutPersistence } from 'state/utils';
 import {
-	REWIND_BACKUPS_RECEIVE,
 	REWIND_BACKUPS_REQUEST,
 	REWIND_BACKUPS_REQUEST_FAILURE,
 	REWIND_BACKUPS_REQUEST_SUCCESS,
+	REWIND_BACKUPS_SET,
 } from 'state/action-types';
 
 /**
@@ -40,7 +40,7 @@ export const requesting = withoutPersistence( ( state = {}, { type } ) => {
  * @returns {object}        Updated state
  */
 export const items = ( state = {}, { type, backups } ) =>
-	type === REWIND_BACKUPS_RECEIVE ? backups : state;
+	type === REWIND_BACKUPS_SET ? backups : state;
 
 export default combineReducers( {
 	items,

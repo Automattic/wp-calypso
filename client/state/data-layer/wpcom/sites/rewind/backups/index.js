@@ -13,11 +13,11 @@ import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 import {
 	failRewindBackupsRequest,
-	receiveRewindBackups,
+	setRewindBackups,
 	successRewindBackupsRequest,
 } from 'state/rewind/backups/actions';
 
-const fetchRewindBackups = action => {
+const fetchBackups = action => {
 	return http(
 		{
 			method: 'GET',
@@ -28,14 +28,14 @@ const fetchRewindBackups = action => {
 	);
 };
 
-const setRewindBackups = ( { siteId }, backups ) => [
+const setBackups = ( { siteId }, backups ) => [
 	successRewindBackupsRequest( siteId ),
-	receiveRewindBackups( siteId, backups ),
+	setRewindBackups( siteId, backups ),
 ];
 
 const displayError = ( { siteId } ) => [
 	failRewindBackupsRequest( siteId ),
-	receiveRewindBackups( siteId, [] ),
+	setRewindBackups( siteId, [] ),
 	errorNotice(
 		translate(
 			'Sorry, we had a problem retrieving the site backups. Please refresh the page and try again.'
@@ -49,8 +49,8 @@ const displayError = ( { siteId } ) => [
 registerHandlers( 'state/data-layer/wpcom/sites/rewind/backups/index.js', {
 	[ REWIND_BACKUPS_REQUEST ]: [
 		dispatchRequest( {
-			fetch: fetchRewindBackups,
-			onSuccess: setRewindBackups,
+			fetch: fetchBackups,
+			onSuccess: setBackups,
 			onError: displayError,
 		} ),
 	],
