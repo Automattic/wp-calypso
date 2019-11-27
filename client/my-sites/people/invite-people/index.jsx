@@ -342,7 +342,7 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'If the user has an existing WordPress.com account, add their username. Otherwise, add their Email ID to send them an invite. You can add up to 10 people at a time.'
+									'If the user has an existing WordPress.com account, add their username. Otherwise, add their email address to send them an invite. You can add up to 10 people at a time.'
 								) }
 							</FormSettingExplanation>
 						</div>
