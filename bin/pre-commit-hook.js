@@ -18,7 +18,7 @@ require( '../server/config/validate-config-keys' );
 /**
  * Parses the output of a git diff command into file paths.
  *
- * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
+ * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
  */
 function parseGitDiffToPathArray( command ) {
@@ -76,7 +76,7 @@ const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFor
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
-		case file.endsWith( '.php' ) && phpcs:
+		case file.endsWith( '.php' ):
 			return 'toPHPCBF';
 		default:
 			return 'toPrettify';
@@ -104,7 +104,7 @@ if ( toStylelintfix.length ) {
 
 // Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
 toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
-if ( toPHPCBF.length ) {
+if ( phpcs && toPHPCBF.length ) {
 	try {
 		execSync( `phpcbf --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
 	} catch ( error ) {
@@ -124,7 +124,7 @@ const { toEslint = [], toStylelint = [], toPHPCS = [] } = _.groupBy(
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
 				return 'toStylelint';
-			case file.endsWith( '.php' ) && phpcs:
+			case file.endsWith( '.php' ):
 				return 'toPHPCS';
 			default:
 				return 'toEslint';
@@ -157,7 +157,7 @@ if ( toEslint.length ) {
 }
 
 // and finally PHPCS
-if ( toPHPCS.length ) {
+if ( phpcs && toPHPCS.length ) {
 	const lintResult = spawnSync( 'phpcs', [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
 		shell: true,
 		stdio: 'inherit',
