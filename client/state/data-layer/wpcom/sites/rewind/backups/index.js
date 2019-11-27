@@ -8,7 +8,7 @@ import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
 import { setRewindBackups } from 'state/rewind/backups/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-const fetchBackups = action => {
+export const fetchBackups = action => {
 	return http(
 		{
 			method: 'GET',
@@ -20,9 +20,9 @@ const fetchBackups = action => {
 	);
 };
 
-const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
+export const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
 
-const resetBackups = ( { siteId } ) => setRewindBackups( siteId, [] );
+export const resetBackups = ( { siteId } ) => setRewindBackups( siteId, [] );
 
 registerHandlers( 'state/data-layer/wpcom/sites/rewind/backups/index.js', {
 	[ REWIND_BACKUPS_REQUEST ]: [
