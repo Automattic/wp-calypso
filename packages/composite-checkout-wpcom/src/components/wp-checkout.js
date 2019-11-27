@@ -30,7 +30,7 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export function WPCheckout( { deleteItem, changePlanLength } ) {
+export default function WPCheckout( { deleteItem, changePlanLength } ) {
 	const translate = useTranslate();
 	const [ itemsWithTax, total ] = useLineItems();
 
