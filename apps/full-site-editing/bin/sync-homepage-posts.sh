@@ -33,7 +33,7 @@ fi
 # make a temp directory
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
-TARGET=./full-site-editing-plugin/homepage-posts
+TARGET=./full-site-editing-plugin/homepage-posts/newspack-homepage-articles
 
 # download zip file
 echo Downloading $MODE $NAME
@@ -73,15 +73,15 @@ fi
 echo Syncing files to FSE…
 
 # ensure target dirs exist
-mkdir -p $TARGET/src/blocks
-mkdir -p $TARGET/src/components
-mkdir -p $TARGET/src/shared
+mkdir -p $TARGET/blocks
+mkdir -p $TARGET/components
+mkdir -p $TARGET/shared
 
 # copy files and directories
 cp $CODE/class-newspack-blocks-api.php $TARGET/
 cp $CODE/class-newspack-blocks.php $TARGET/
-cp -R $CODE/src/blocks/homepage-articles $TARGET/src/blocks/
-cp -R $CODE/src/shared $TARGET/src/
-cp -R $CODE/src/components $TARGET/src/
+cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
+cp -R $CODE/src/shared $TARGET/
+cp -R $CODE/src/components $TARGET/
 
 echo Done.

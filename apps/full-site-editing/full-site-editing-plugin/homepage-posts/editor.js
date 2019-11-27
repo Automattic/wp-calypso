@@ -1,1 +1,1 @@
-import './src/blocks/homepage-articles/editor';
+import './newspack-homepage-articles/blocks/homepage-articles/editor';
