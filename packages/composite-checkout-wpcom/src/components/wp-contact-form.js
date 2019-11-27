@@ -308,7 +308,7 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 PhoneNumberField.propTypes = {
 	isRequired: PropTypes.bool,
 	id: PropTypes.string.isRequired,
-	phoneNumber: PropTypes.string.isRequired,
+	phoneNumber: PropTypes.object.isRequired,
 	onChange: PropTypes.func.isRequired,
 };
 
