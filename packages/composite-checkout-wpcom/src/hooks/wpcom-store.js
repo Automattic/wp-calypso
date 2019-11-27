@@ -83,7 +83,7 @@ export function useWpcomStore( registerStore ) {
 				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
 			},
 			setVatId( payload ) {
-				return { type: 'CONTACT_SET_VAT', payload };
+				return { type: 'CONTACT_SET_FIELD', payload: { key: 'vatId', payload } };
 			},
 
 			setDomainContactField( key, field ) {
