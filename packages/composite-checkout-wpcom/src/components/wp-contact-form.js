@@ -42,7 +42,7 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 			<PhoneNumberField
 				id="contact-phone-number"
 				phoneNumber={ contactInfo.phoneNumber }
-				onChange={ setters.setPhoneNumber }
+				onChange={ setters.setContactField }
 			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
@@ -176,15 +176,7 @@ const DomainRegistrationCheckbox = styled.input`
 function AddressFields( { section, contactInfo, setters } ) {
 	const translate = useTranslate();
 	const { firstName, lastName, email, address, city, state, province } = contactInfo;
-	const {
-		setFirstName,
-		setLastName,
-		setEmail,
-		setAddress,
-		setCity,
-		setState,
-		setProvince,
-	} = setters;
+	const { setContactField } = setters;
 
 	return (
 		<React.Fragment>
@@ -195,7 +187,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 						type="text"
 						label={ translate( 'First name' ) }
 						value={ firstName.value }
-						onChange={ value => setFirstName( { value, isTouched: true, isValid: !! value } ) }
+						onChange={ value =>
+							setContactField( 'firstName', { value, isTouched: true, isValid: !! value } )
+						}
 						autoComplete="given-name"
 						isError={ firstName.isTouched && ! firstName.isValid }
 					/>
@@ -207,7 +201,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 						type="text"
 						label={ translate( 'Last name' ) }
 						value={ lastName.value }
-						onChange={ value => setLastName( { value, isTouched: true, isValid: !! value } ) }
+						onChange={ value =>
+							setContactField( 'lastName', { value, isTouched: true, isValid: !! value } )
+						}
 						autoComplete="family-name"
 						isError={ lastName.isTouched && ! lastName.isValid }
 					/>
@@ -220,7 +216,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 				label={ translate( 'Email address' ) }
 				placeholder={ translate( 'name@example.com' ) }
 				value={ email.value }
-				onChange={ value => setEmail( { value, isTouched: true, isValid: !! value } ) }
+				onChange={ value =>
+					setContactField( 'email', { value, isTouched: true, isValid: !! value } )
+				}
 				autoComplete="email"
 				isError={ email.isTouched && ! email.isValid }
 			/>
@@ -230,7 +228,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 				type="text"
 				label={ translate( 'Address' ) }
 				value={ address.value }
-				onChange={ value => setAddress( { value, isTouched: true, isValid: !! value } ) }
+				onChange={ value =>
+					setContactField( 'address', { value, isTouched: true, isValid: !! value } )
+				}
 				autoComplete={ section + ' street-address' }
 				isError={ address.isTouched && ! address.isValid }
 			/>
@@ -242,7 +242,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 						type="text"
 						label={ translate( 'City' ) }
 						value={ city.value }
-						onChange={ value => setCity( { value, isTouched: true, isValid: !! value } ) }
+						onChange={ value =>
+							setContactField( 'city', { value, isTouched: true, isValid: !! value } )
+						}
 						autoComplete={ section + ' address-level2' }
 						isError={ city.isTouched && ! city.isValid }
 					/>
@@ -255,7 +257,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 							type="text"
 							label={ translate( 'State' ) }
 							value={ state.value }
-							onChange={ value => setState( { value, isTouched: true, isValid: !! value } ) }
+							onChange={ value =>
+								setContactField( 'state', { value, isTouched: true, isValid: !! value } )
+							}
 							autoComplete={ section + ' address-level1' }
 							isError={ state.isTouched && ! state.isValid }
 						/>
@@ -265,7 +269,9 @@ function AddressFields( { section, contactInfo, setters } ) {
 							type="text"
 							label={ translate( 'Province' ) }
 							value={ province.value }
-							onChange={ value => setProvince( { value, isTouched: true, isValid: !! value } ) }
+							onChange={ value =>
+								setContactField( 'province', { value, isTouched: true, isValid: !! value } )
+							}
 							autoComplete={ section + ' address-level1' }
 							isError={ province.isTouched && ! province.isValid }
 						/>
@@ -297,7 +303,7 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
 			value={ phoneNumber.value }
 			onChange={ value =>
-				onChange( { value, isTouched: true, isValid: isRequired ? !! value : true } )
+				onChange( 'phoneNumber', { value, isTouched: true, isValid: isRequired ? !! value : true } )
 			}
 			autoComplete="tel"
 			isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
@@ -332,7 +338,7 @@ function VatIdField() {
 function TaxFields( { section, taxInfo, setters } ) {
 	const translate = useTranslate();
 	const { postalCode, country } = taxInfo;
-	const { setPostalCode, setCountry } = setters;
+	const { setContactField } = setters;
 
 	const isZip = isZipOrPostal() === 'zip';
 	return (
@@ -343,7 +349,9 @@ function TaxFields( { section, taxInfo, setters } ) {
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
 					value={ postalCode.value }
-					onChange={ value => setPostalCode( { value, isTouched: true, isValid: !! value } ) }
+					onChange={ value =>
+						setContactField( 'postalCode', { value, isTouched: true, isValid: !! value } )
+					}
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! postalCode.isValid }
 				/>
@@ -355,7 +363,9 @@ function TaxFields( { section, taxInfo, setters } ) {
 					type="text"
 					label={ translate( 'Country' ) }
 					value={ country.value }
-					onChange={ value => setCountry( { value, isTouched: true, isValid: !! value } ) }
+					onChange={ value =>
+						setContactField( 'country', { value, isTouched: true, isValid: !! value } )
+					}
 					autoComplete={ section + ' country' }
 					isError={ country.isTouched && ! country.isValid }
 				/>
@@ -378,23 +388,9 @@ function isZipOrPostal() {
 function DomainFields() {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
-	const {
-		setDomainFirstName: setFirstName,
-		setDomainLastName: setLastName,
-		setDomainEmail: setEmail,
-		setDomainAddress: setAddress,
-		setDomainCity: setCity,
-		setDomainState: setState,
-		setDomainProvince: setProvince,
-	} = useDispatch( 'wpcom' );
+	const { setDomainContactField } = useDispatch( 'wpcom' );
 	const setters = {
-		setFirstName,
-		setLastName,
-		setEmail,
-		setAddress,
-		setCity,
-		setState,
-		setProvince,
+		setContactField: setDomainContactField,
 	};
 
 	return (
@@ -414,7 +410,7 @@ function DomainFields() {
 				id="domains-phone-number"
 				isRequired
 				phoneNumber={ contactInfo.phoneNumber }
-				onChange={ setters.setPhoneNumber }
+				onChange={ setDomainContactField }
 			/>
 		</DomainContactFields>
 	);

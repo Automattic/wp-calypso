@@ -27,28 +27,8 @@ export function useWpcomStore( registerStore ) {
 
 	function contactReducer( state = contactDefaults, action ) {
 		switch ( action.type ) {
-			case 'CONTACT_SET_FIRST_NAME':
-				return { ...state, firstName: action.payload };
-			case 'CONTACT_SET_LAST_NAME':
-				return { ...state, lastName: action.payload };
-			case 'CONTACT_SET_EMAIL':
-				return { ...state, email: action.payload };
-			case 'CONTACT_SET_PHONE_NUMBER':
-				return { ...state, phoneNumber: action.payload };
-			case 'CONTACT_SET_ADDRESS':
-				return { ...state, address: action.payload };
-			case 'CONTACT_SET_CITY':
-				return { ...state, city: action.payload };
-			case 'CONTACT_SET_STATE':
-				return { ...state, state: action.payload };
-			case 'CONTACT_SET_PROVINCE':
-				return { ...state, province: action.payload };
-			case 'CONTACT_SET_COUNTRY':
-				return { ...state, country: action.payload };
-			case 'CONTACT_SET_POSTAL_CODE':
-				return { ...state, postalCode: action.payload };
-			case 'CONTACT_SET_VAT':
-				return { ...state, vatId: action.payload };
+			case 'CONTACT_SET_FIELD':
+				return { ...state, [ action.payload.key ]: action.payload.field };
 			default:
 				return state;
 		}
@@ -69,32 +49,8 @@ export function useWpcomStore( registerStore ) {
 
 	function domainContactReducer( state = domainContactDefaults, action ) {
 		switch ( action.type ) {
-			case 'CONTACT_SET_DOMAIN_FIRST_NAME':
-				return { ...state, firstName: action.payload };
-			case 'CONTACT_SET_DOMAIN_LAST_NAME':
-				return { ...state, lastName: action.payload };
-			case 'CONTACT_SET_DOMAIN_EMAIL':
-				return { ...state, email: action.payload };
-			case 'CONTACT_SET_DOMAIN_PHONE_NUMBER':
-				return {
-					...state,
-					phoneNumber: action.payload,
-				};
-			case 'CONTACT_SET_DOMAIN_ADDRESS':
-				return { ...state, address: action.payload };
-			case 'CONTACT_SET_DOMAIN_CITY':
-				return { ...state, city: action.payload };
-			case 'CONTACT_SET_DOMAIN_STATE':
-				return { ...state, state: action.payload };
-			case 'CONTACT_SET_DOMAIN_PROVINCE':
-				return { ...state, province: action.payload };
-			case 'CONTACT_SET_DOMAIN_COUNTRY':
-				return { ...state, country: action.payload };
-			case 'CONTACT_SET_DOMAIN_POSTAL_CODE':
-				return {
-					...state,
-					postalCode: action.payload,
-				};
+			case 'CONTACT_SET_DOMAIN_FIELD':
+				return { ...state, [ action.payload.key ]: action.payload.field };
 			default:
 				return state;
 		}
@@ -123,40 +79,16 @@ export function useWpcomStore( registerStore ) {
 				return { type: 'CONTACT_SET_DOMAIN_SAME', payload };
 			},
 
-			setFirstName( payload ) {
-				return { type: 'CONTACT_SET_FIRST_NAME', payload };
-			},
-			setLastName( payload ) {
-				return { type: 'CONTACT_SET_LAST_NAME', payload };
-			},
-			setEmail( payload ) {
-				return { type: 'CONTACT_SET_EMAIL', payload };
-			},
-			setPhoneNumber( payload ) {
-				return { type: 'CONTACT_SET_PHONE_NUMBER', payload };
-			},
-			setAddress( payload ) {
-				return { type: 'CONTACT_SET_ADDRESS', payload };
-			},
-			setCity( payload ) {
-				return { type: 'CONTACT_SET_CITY', payload };
-			},
-			setState( payload ) {
-				return { type: 'CONTACT_SET_STATE', payload };
-			},
-			setProvince( payload ) {
-				return { type: 'CONTACT_SET_PROVINCE', payload };
-			},
-			setCountry( payload ) {
-				return { type: 'CONTACT_SET_COUNTRY', payload };
-			},
-			setPostalCode( payload ) {
-				return { type: 'CONTACT_SET_POSTAL_CODE', payload };
+			setContactField( key, field ) {
+				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
 			},
 			setVatId( payload ) {
 				return { type: 'CONTACT_SET_VAT', payload };
 			},
 
+			setDomainContactField( key, field ) {
+				return { type: 'CONTACT_SET_DOMAIN_FIELD', payload: { key, field } };
+			},
 			setDomainFirstName( payload ) {
 				return { type: 'CONTACT_SET_DOMAIN_FIRST_NAME', payload };
 			},
