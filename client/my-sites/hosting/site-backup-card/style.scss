@@ -30,6 +30,7 @@
 	&.is-disabled {
 		.site-backup-card__placeholder {
 			animation: none;
+			background-color: var( --color-surface-backdrop );
 		}
 	}
 }

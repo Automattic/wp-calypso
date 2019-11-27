@@ -11,11 +11,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
-import {
-	failRewindBackupsRequest,
-	setRewindBackups,
-	successRewindBackupsRequest,
-} from 'state/rewind/backups/actions';
+import { setRewindBackups } from 'state/rewind/backups/actions';
 
 const fetchBackups = action => {
 	return http(
@@ -28,13 +24,9 @@ const fetchBackups = action => {
 	);
 };
 
-const setBackups = ( { siteId }, backups ) => [
-	successRewindBackupsRequest( siteId ),
-	setRewindBackups( siteId, backups ),
-];
+const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
 
 const displayError = ( { siteId } ) => [
-	failRewindBackupsRequest( siteId ),
 	setRewindBackups( siteId, [] ),
 	errorNotice(
 		translate(
