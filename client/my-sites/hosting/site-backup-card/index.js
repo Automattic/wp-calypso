@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { connect } from 'react-redux';
-import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,10 +13,6 @@ import CardHeading from 'components/card-heading';
 import getLastGoodRewindBackup from 'state/selectors/get-last-good-rewind-backup';
 import { requestRewindBackups } from 'state/rewind/backups/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { applySiteOffset } from 'lib/site/timezone';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -27,12 +22,10 @@ import classNames from 'classnames';
 
 const SiteBackupCard = ( {
 	disabled,
-	gmtOffset,
 	lastGoodBackup,
 	moment,
 	requestBackups,
 	siteId,
-	timezone,
 	translate,
 } ) => {
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
@@ -53,10 +46,10 @@ const SiteBackupCard = ( {
 	}, [ hasRetrievedLastBackup ] );
 
 	const lastGoodBackupTime = lastGoodBackup
-		? applySiteOffset( moment.utc( lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma' ), {
-				timezone,
-				gmtOffset,
-		  } )
+		? moment
+				.utc( lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma' )
+				.local()
+				.format( 'LLL' )
 		: null;
 
 	return (
@@ -66,7 +59,7 @@ const SiteBackupCard = ( {
 				<>
 					<p className="site-backup-card__date">
 						{ translate( 'Last backup was on:' ) }
-						<strong>{ lastGoodBackupTime.format( 'LLL' ) }</strong>
+						<strong>{ lastGoodBackupTime }</strong>
 					</p>
 					<p className="site-backup-card__warning">
 						{ translate(
@@ -89,22 +82,15 @@ const SiteBackupCard = ( {
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		gmtOffset: getSiteGmtOffset( state, siteId ),
-		lastGoodBackup: getLastGoodRewindBackup( state, siteId ),
-		siteId,
-		timezone: getSiteTimezoneValue( state, siteId ),
-	};
-};
-
-const mapDispatchToPros = {
-	requestBackups: requestRewindBackups,
-};
-
-export default compose(
-	connect( mapStateToProps, mapDispatchToPros ),
-	withLocalizedMoment,
-	localize
-)( SiteBackupCard );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),
+			siteId,
+		};
+	},
+	{
+		requestBackups: requestRewindBackups,
+	}
+)( localize( SiteBackupCard ) );
