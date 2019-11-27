@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import wrapWithClickOutside from 'react-click-outside';
 
 /**
  * Internal dependencies
@@ -35,113 +36,138 @@ import { requestSite } from 'state/sites/actions';
  */
 import './style.scss';
 
-const Hosting = ( {
-	canViewAtomicHosting,
-	clickActivate,
-	isDisabled,
-	isTransferring,
-	requestSiteById,
-	siteId,
-	siteSlug,
-	translate,
-	transferState,
-} ) => {
-	if ( ! canViewAtomicHosting ) {
-		return null;
+class Hosting extends Component {
+	state = {
+		clickOutside: false,
+	};
+
+	handleClickOutside( event ) {
+		const { COMPLETE } = transferStates;
+
+		if ( this.props.isTransferring && ! COMPLETE === this.props.transferState ) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.setState( { clickOutside: true } );
+		}
 	}
 
-	const getAtomicActivationNotice = () => {
-		const { COMPLETE, FAILURE } = transferStates;
+	render() {
+		const {
+			canViewAtomicHosting,
+			clickActivate,
+			isDisabled,
+			isTransferring,
+			requestSiteById,
+			siteId,
+			siteSlug,
+			translate,
+			transferState,
+		} = this.props;
 
-		// Transfer in progress
-		if (
-			( isTransferring && COMPLETE !== transferState ) ||
-			( isDisabled && COMPLETE === transferState )
-		) {
-			requestSiteById( siteId );
-
-			return (
-				<>
-					<Notice
-						className="hosting__activating-notice"
-						status="is-info"
-						showDismiss={ false }
-						text={ translate( 'Please wait while we activate the hosting features.' ) }
-						icon="sync"
-					/>
-				</>
-			);
+		if ( ! canViewAtomicHosting ) {
+			return null;
 		}
 
-		const failureNotice = FAILURE === transferState && (
-			<Notice
-				status="is-error"
-				showDismiss={ false }
-				text={ translate( 'There was an error activating hosting features.' ) }
-				icon="bug"
-			/>
-		);
+		const getAtomicActivationNotice = () => {
+			const { COMPLETE, FAILURE } = transferStates;
 
-		if ( isDisabled && ! isTransferring ) {
-			return (
-				<>
-					{ failureNotice }
-					<Notice
-						status="is-info"
-						showDismiss={ false }
-						text={ translate(
-							'Please activate the hosting access to begin using these features.'
-						) }
-						icon="globe"
-					>
-						<TrackComponentView eventName={ 'calypso_hosting_configuration_activate_impression' } />
-						<NoticeAction
-							onClick={ clickActivate }
-							href={ `/hosting-config/activate/${ siteSlug }` }
+			// Transfer in progress
+			if (
+				( isTransferring && COMPLETE !== transferState ) ||
+				( isDisabled && COMPLETE === transferState )
+			) {
+				requestSiteById( siteId );
+
+				let activationText = translate( 'Please wait while we activate the hosting features.' );
+				if ( this.state.clickOutside ) {
+					activationText = translate( "Don't leave quite yet! Just a bit longer." );
+				}
+
+				return (
+					<>
+						<Notice
+							className="hosting__activating-notice"
+							status="is-info"
+							showDismiss={ false }
+							text={ activationText }
+							icon="sync"
+						/>
+					</>
+				);
+			}
+
+			const failureNotice = FAILURE === transferState && (
+				<Notice
+					status="is-error"
+					showDismiss={ false }
+					text={ translate( 'There was an error activating hosting features.' ) }
+					icon="bug"
+				/>
+			);
+
+			if ( isDisabled && ! isTransferring ) {
+				return (
+					<>
+						{ failureNotice }
+						<Notice
+							status="is-info"
+							showDismiss={ false }
+							text={ translate(
+								'Please activate the hosting access to begin using these features.'
+							) }
+							icon="globe"
 						>
-							{ translate( 'Activate' ) }
-						</NoticeAction>
-					</Notice>
+							<TrackComponentView
+								eventName={ 'calypso_hosting_configuration_activate_impression' }
+							/>
+							<NoticeAction
+								onClick={ clickActivate }
+								href={ `/hosting-config/activate/${ siteSlug }` }
+							>
+								{ translate( 'Activate' ) }
+							</NoticeAction>
+						</Notice>
+					</>
+				);
+			}
+		};
+
+		const getContent = () => {
+			const sftpPhpMyAdminFeaturesEnabled =
+				isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+
+			return (
+				<>
+					<div className="hosting__layout">
+						<div className="hosting__layout-col">
+							{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
+							{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
+							{ <PhpVersionCard disabled={ isDisabled } /> }
+						</div>
+						<div className="hosting__layout-col">
+							<SupportCard />
+						</div>
+					</div>
 				</>
 			);
-		}
-	};
-
-	const getContent = () => {
-		const sftpPhpMyAdminFeaturesEnabled =
-			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+		};
 
 		return (
-			<>
-				<div className="hosting__layout">
-					<div className="hosting__layout-col">
-						{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
-						{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
-						{ <PhpVersionCard disabled={ isDisabled } /> }
-					</div>
-					<div className="hosting__layout-col">
-						<SupportCard />
-					</div>
-				</div>
-			</>
+			<Main className="hosting is-wide-layout">
+				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
+				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
+				<SidebarNavigation />
+				<FormattedHeader
+					headerText={ translate( 'Hosting Configuration' ) }
+					subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
+					align="left"
+				/>
+				{ getAtomicActivationNotice() }
+				{ getContent() }
+			</Main>
 		);
-	};
-
-	return (
-		<Main className="hosting is-wide-layout">
-			<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-			<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-			<SidebarNavigation />
-			<FormattedHeader
-				headerText={ translate( 'Hosting Configuration' ) }
-				subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
-				align="left"
-			/>
-			{ getAtomicActivationNotice() }
-			{ getContent() }
-		</Main>
-	);
-};
+	}
+}
 
 export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
@@ -163,4 +189,4 @@ export default connect(
 		clickActivate,
 		requestSiteById: requestSite,
 	}
-)( localize( Hosting ) );
+)( localize( wrapWithClickOutside( Hosting ) ) );
