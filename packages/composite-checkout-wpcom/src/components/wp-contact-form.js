@@ -41,7 +41,7 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 
 			<PhoneNumberField
 				id="contact-phone-number"
-				phoneNumber={ contactInfo.phoneNumber || '' }
+				phoneNumber={ contactInfo.phoneNumber }
 				onChange={ setters.setPhoneNumber }
 			/>
 
@@ -194,9 +194,10 @@ function AddressFields( { section, contactInfo, setters } ) {
 						id={ section + '-first-name' }
 						type="text"
 						label={ translate( 'First name' ) }
-						value={ firstName || '' }
-						onChange={ setFirstName }
+						value={ firstName.value }
+						onChange={ value => setFirstName( { value, isTouched: true, isValid: !! value } ) }
 						autoComplete="given-name"
+						isError={ firstName.isTouched && ! firstName.isValid }
 					/>
 				</LeftColumn>
 
@@ -205,9 +206,10 @@ function AddressFields( { section, contactInfo, setters } ) {
 						id={ section + '-last-name' }
 						type="text"
 						label={ translate( 'Last name' ) }
-						value={ lastName || '' }
-						onChange={ setLastName }
+						value={ lastName.value }
+						onChange={ value => setLastName( { value, isTouched: true, isValid: !! value } ) }
 						autoComplete="family-name"
+						isError={ lastName.isTouched && ! lastName.isValid }
 					/>
 				</RightColumn>
 			</FieldRow>
@@ -217,18 +219,20 @@ function AddressFields( { section, contactInfo, setters } ) {
 				type="email"
 				label={ translate( 'Email address' ) }
 				placeholder={ translate( 'name@example.com' ) }
-				value={ email || '' }
-				onChange={ setEmail }
+				value={ email.value }
+				onChange={ value => setEmail( { value, isTouched: true, isValid: !! value } ) }
 				autoComplete="email"
+				isError={ email.isTouched && ! email.isValid }
 			/>
 
 			<FormField
 				id={ section + '-address' }
 				type="text"
 				label={ translate( 'Address' ) }
-				value={ address || '' }
-				onChange={ setAddress }
+				value={ address.value }
+				onChange={ value => setAddress( { value, isTouched: true, isValid: !! value } ) }
 				autoComplete={ section + ' street-address' }
+				isError={ address.isTouched && ! address.isValid }
 			/>
 
 			<FieldRow>
@@ -237,9 +241,10 @@ function AddressFields( { section, contactInfo, setters } ) {
 						id={ section + '-city' }
 						type="text"
 						label={ translate( 'City' ) }
-						value={ city || '' }
-						onChange={ setCity }
+						value={ city.value }
+						onChange={ value => setCity( { value, isTouched: true, isValid: !! value } ) }
 						autoComplete={ section + ' address-level2' }
+						isError={ city.isTouched && ! city.isValid }
 					/>
 				</LeftColumn>
 
@@ -249,18 +254,20 @@ function AddressFields( { section, contactInfo, setters } ) {
 							id={ section + '-state' }
 							type="text"
 							label={ translate( 'State' ) }
-							value={ state || '' }
-							onChange={ setState }
+							value={ state.value }
+							onChange={ value => setState( { value, isTouched: true, isValid: !! value } ) }
 							autoComplete={ section + ' address-level1' }
+							isError={ state.isTouched && ! state.isValid }
 						/>
 					) : (
 						<Field
 							id={ section + '-province' }
 							type="text"
 							label={ translate( 'Province' ) }
-							value={ province || '' }
-							onChange={ setProvince }
+							value={ province.value }
+							onChange={ value => setProvince( { value, isTouched: true, isValid: !! value } ) }
 							autoComplete={ section + ' address-level1' }
+							isError={ province.isTouched && ! province.isValid }
 						/>
 					) }
 				</RightColumn>
@@ -288,9 +295,12 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 			id={ id }
 			type="Number"
 			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
-			value={ phoneNumber || '' }
-			onChange={ onChange }
+			value={ phoneNumber.value }
+			onChange={ value =>
+				onChange( { value, isTouched: true, isValid: isRequired ? !! value : true } )
+			}
 			autoComplete="tel"
+			isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
 		/>
 	);
 }
@@ -312,8 +322,9 @@ function VatIdField() {
 			id="contact-vat-id"
 			type="Number"
 			label={ translate( 'VAT identification number' ) }
-			value={ vatId || '' }
-			onChange={ setVatId }
+			value={ vatId.value }
+			onChange={ value => setVatId({value, isTouched: true, isValid: !! value}) }
+			isError={ vatId.isTouched && ! vatId.isValid }
 		/>
 	);
 }
@@ -331,9 +342,10 @@ function TaxFields( { section, taxInfo, setters } ) {
 					id={ section + '-postal-code' }
 					type="text"
 					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
-					value={ postalCode || '' }
-					onChange={ setPostalCode }
+					value={ postalCode.value }
+					onChange={ value => setPostalCode({value, isTouched: true, isValid: !! value}) }
 					autoComplete={ section + ' postal-code' }
+					isError={postalCode.isTouched && !postalCode.isValid}
 				/>
 			</LeftColumn>
 
@@ -342,9 +354,10 @@ function TaxFields( { section, taxInfo, setters } ) {
 					id={ section + '-country' }
 					type="text"
 					label={ translate( 'Country' ) }
-					value={ country || '' }
-					onChange={ setCountry }
+					value={ country.value }
+					onChange={ value => setCountry({value, isTouched: true, isValid: !! value}) }
 					autoComplete={ section + ' country' }
+					isError={country.isTouched && ! country.isValid}
 				/>
 			</RightColumn>
 		</FieldRow>

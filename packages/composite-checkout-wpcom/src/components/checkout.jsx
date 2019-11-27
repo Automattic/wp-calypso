@@ -141,7 +141,21 @@ function useWpcomStore( registerStore ) {
 	}
 	registerComplete.current = true;
 
-	function contactReducer( state = {}, action ) {
+	const contactDefaults = {
+		firstName: { value: '', isTouched: false, isValid: false },
+		lastName: { value: '', isTouched: false, isValid: false },
+		email: { value: '', isTouched: false, isValid: false },
+		phoneNumber: { value: '', isTouched: false, isValid: true },
+		address: { value: '', isTouched: false, isValid: false },
+		city: { value: '', isTouched: false, isValid: false },
+		state: { value: '', isTouched: false, isValid: false },
+		province: { value: '', isTouched: false, isValid: false },
+		country: { value: '', isTouched: false, isValid: false },
+		postalCode: { value: '', isTouched: false, isValid: false },
+		vatId: { value: '', isTouched: false, isValid: false },
+	};
+
+	function contactReducer( state = contactDefaults, action ) {
 		switch ( action.type ) {
 			case 'CONTACT_SET_FIRST_NAME':
 				return { ...state, firstName: action.payload };
@@ -170,7 +184,20 @@ function useWpcomStore( registerStore ) {
 		}
 	}
 
-	function domainContactReducer( state = {}, action ) {
+	const domainContactDefaults = {
+		firstName: { value: '', isTouched: false, isValid: false },
+		lastName: { value: '', isTouched: false, isValid: false },
+		email: { value: '', isTouched: false, isValid: false },
+		phoneNumber: { value: '', isTouched: false, isValid: false },
+		address: { value: '', isTouched: false, isValid: false },
+		city: { value: '', isTouched: false, isValid: false },
+		state: { value: '', isTouched: false, isValid: false },
+		province: { value: '', isTouched: false, isValid: false },
+		country: { value: '', isTouched: false, isValid: false },
+		postalCode: { value: '', isTouched: false, isValid: false },
+	};
+
+	function domainContactReducer( state = domainContactDefaults, action ) {
 		switch ( action.type ) {
 			case 'CONTACT_SET_DOMAIN_FIRST_NAME':
 				return { ...state, firstName: action.payload };
@@ -361,11 +388,7 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
 	}
 
 	// Make sure all required fields are filled
-	const emptyFields = allFields.filter( value => ! value );
-	if ( emptyFields.length > 0 ) {
-		return false;
-	}
-	return true;
+	return allFields.every( ( { isValid } ) => isValid );
 }
 
 function isFormEditable( select ) {
