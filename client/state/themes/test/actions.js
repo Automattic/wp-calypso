@@ -28,12 +28,16 @@ import {
 	tryAndCustomize,
 	deleteTheme,
 	requestThemeFilters,
+	getRecommendedThemes,
+	receiveRecommendedThemes,
 } from '../actions';
 import ThemeQueryManager from 'lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	RECOMMENDED_THEMES_FETCH,
+	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -1137,6 +1141,24 @@ describe( 'actions', () => {
 		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
 			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
+		} );
+	} );
+
+	describe( '#getRecommendedThemes()', () => {
+		test( 'should dispatch fetch action', () => {
+			getRecommendedThemes()( spy );
+			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH } );
+		} );
+	} );
+
+	describe( '#receiveRecommendedThemes()', () => {
+		const themes = [];
+		test( 'should dispatch success action with themes as payload', () => {
+			receiveRecommendedThemes( themes )( spy );
+			expect( spy ).to.have.been.calledWith( {
+				type: RECOMMENDED_THEMES_SUCCESS,
+				payload: themes,
+			} );
 		} );
 	} );
 } );

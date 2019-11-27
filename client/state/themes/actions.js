@@ -918,7 +918,20 @@ function suffixThemeIdForInstall( state, siteId, themeId ) {
 }
 
 /**
- * Retrieves template first themes for initial recommendation.
+ * Receives themes and dispatches them with recommended themes success signal.
+ *
+ * @param {Array} themes array of received theme objects
+ * @returns {Function} Action thunk
+ */
+export function receiveRecommendedThemes( themes ) {
+	return dispatch => {
+		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes } );
+	};
+}
+
+/**
+ * Initiates network request for recommended themes.
+ * Recommended themes are template first themes and are denoted by the 'auto-loading-homepage' tag.
  *
  * @returns {Function} Action thunk
  */
@@ -934,7 +947,7 @@ export function getRecommendedThemes() {
 		};
 		try {
 			const res = await wpcom.undocumented().themes( null, query );
-			dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: res } );
+			dispatch( receiveRecommendedThemes( res ) );
 		} catch ( error ) {
 			dispatch( { type: RECOMMENDED_THEMES_FAIL } );
 		}
