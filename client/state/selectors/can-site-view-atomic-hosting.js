@@ -1,15 +1,8 @@
 /**
- * External Dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal Dependencies
  */
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
-import { isBusinessPlan } from 'lib/plans';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
@@ -31,17 +24,5 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	if ( ! canManageOptions ) {
-		return false;
-	}
-
-	const isAtomicSite = !! isSiteAutomatedTransfer( state, siteId );
-	if ( isAtomicSite ) {
-		return true;
-	}
-
-	const planSlug = get( getSelectedSite( state ), [ 'plan', 'product_slug' ] );
-
-	return isBusinessPlan( planSlug ) && isEnabled( 'hosting/non-atomic-support' );
+	return canCurrentUser( state, siteId, 'manage_options' );
 }
