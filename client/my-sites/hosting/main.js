@@ -70,6 +70,9 @@ class Hosting extends Component {
 			return null;
 		}
 
+		const sftpPhpMyAdminFeaturesEnabled =
+			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+
 		const getAtomicActivationNotice = () => {
 			const { COMPLETE, FAILURE } = transferStates;
 
@@ -137,9 +140,6 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
-			const sftpPhpMyAdminFeaturesEnabled =
-				isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
-
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 			return (
@@ -165,7 +165,13 @@ class Hosting extends Component {
 				<SidebarNavigation />
 				<FormattedHeader
 					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate( 'Access and manage more advanced settings of your website.' ) }
+					subHeaderText={
+						sftpPhpMyAdminFeaturesEnabled
+							? translate(
+								'Access your website, database, and more advanced settings of your website.'
+							)
+							: translate( 'Access and manage more advanced settings of your website.' )
+					}
 					align="left"
 				/>
 				{ getAtomicActivationNotice() }
