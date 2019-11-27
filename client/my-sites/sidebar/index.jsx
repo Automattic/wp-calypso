@@ -407,6 +407,9 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
@@ -415,7 +418,7 @@ export class MySitesSidebar extends Component {
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
-					{ ! ( isJetpack && ! isAtomicSite && ! isVip ) && (
+					{ displayPlanName && (
 						<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 					) }
 				</a>
