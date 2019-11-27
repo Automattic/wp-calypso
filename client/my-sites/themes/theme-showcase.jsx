@@ -297,7 +297,7 @@ class ThemeShowcase extends React.Component {
 								{ isShowcaseOpen ? (
 									<hr ref={ this.scrollRef } />
 								) : (
-									<Button onClick={ this.toggleShowcase }>
+									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
 										{ translate( 'Show All Themes' ) }
 									</Button>
 								) }

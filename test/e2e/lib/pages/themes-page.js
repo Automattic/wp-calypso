@@ -28,6 +28,10 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( `button[data-e2e-value="open-themes-button"]` )
+		);
 		await driverHelper.clickWhenClickable( this.driver, by.css( `a[data-e2e-value="${ type }"]` ) );
 		return await this.waitUntilThemesLoaded();
 	}
