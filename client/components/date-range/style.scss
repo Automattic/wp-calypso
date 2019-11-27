@@ -82,11 +82,11 @@
 	// ensures `em` element retains whitespace
 	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
 	white-space: pre-wrap;
-	
+
 	@include breakpoint( '<480px' ) {
 		margin-bottom: 0.5em;
 	}
-	
+
 	// Match "naked" button and text styles
 	// to avoid small jumps in UI on date select
 	&,
@@ -223,6 +223,7 @@
 	.DayPicker-Day--end {
 		.date-picker__day {
 			color: var( --color-text-inverted );
+			background-color: var( --color-primary );
 		}
 	}
 
