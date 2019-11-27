@@ -33,6 +33,7 @@ class ProductCard extends Component {
 		] ),
 		fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		isCurrent: PropTypes.bool,
+		isIncludedInCurrentPlan: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		purchase: PropTypes.object,
 		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
@@ -47,6 +48,28 @@ class ProductCard extends Component {
 		};
 	}
 
+	renderActionButton() {
+		const { isCurrent, isIncludedInCurrentPlan, purchase, translate } = this.props;
+
+		// Show an action button if the user owns a product or it is part of a plan.
+		const displayActionButton = purchase && ( isCurrent || isIncludedInCurrentPlan );
+
+		if ( ! displayActionButton ) {
+			return null;
+		}
+
+		return (
+			<ProductCardAction
+				onClick={ this.handleManagePurchase( purchase.productSlug ) }
+				href={ managePurchase( purchase.domain, purchase.id ) }
+				label={
+					isIncludedInCurrentPlan ? translate( 'Manage Plan' ) : translate( 'Manage Product' )
+				}
+				primary={ false }
+			/>
+		);
+	}
+
 	render() {
 		const {
 			billingTimeFrame,
@@ -55,12 +78,10 @@ class ProductCard extends Component {
 			description,
 			discountedPrice,
 			fullPrice,
-			isCurrent,
 			isPlaceholder,
 			purchase,
 			subtitle,
 			title,
-			translate,
 		} = this.props;
 		const cardClassNames = classNames( 'product-card', {
 			'is-placeholder': isPlaceholder,
@@ -90,14 +111,7 @@ class ProductCard extends Component {
 				</div>
 				<div className="product-card__description">
 					{ description && <p>{ description }</p> }
-					{ purchase && isCurrent && (
-						<ProductCardAction
-							onClick={ this.handleManagePurchase( purchase.productSlug ) }
-							href={ managePurchase( purchase.domain, purchase.id ) }
-							label={ translate( 'Manage Product' ) }
-							primary={ false }
-						/>
-					) }
+					{ this.renderActionButton() }
 				</div>
 				{ children }
 			</Card>

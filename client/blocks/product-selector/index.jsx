@@ -474,12 +474,13 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			let purchase = this.getPurchaseByProduct( product );
-			let isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
+			const isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
 			const hasProductPurchase = !! purchase;
+			let isIncludedInCurrentPlan = false;
 
 			if ( currentPlanIncludesProduct && ! hasProductPurchase ) {
 				purchase = this.getPurchaseByCurrentPlan();
-				isCurrent = currentPlanInSelectedTimeframe;
+				isIncludedInCurrentPlan = currentPlanInSelectedTimeframe;
 			}
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
@@ -517,6 +518,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ subtitle }
 					isCurrent={ isCurrent }
+					isIncludedInCurrentPlan={ isIncludedInCurrentPlan }
 				>
 					{ ! purchase && ! currentPlanIncludesProduct && (
 						<Fragment>
