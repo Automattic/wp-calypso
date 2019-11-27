@@ -10,7 +10,7 @@ describe( 'fromApi()', () => {
 			appointment_timespan: 999,
 			next_appointment: { begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 },
 			schedule_id: 123,
-			hasAvailableConciergeSessions: true,
+			has_available_concierge_sessions: true,
 		};
 
 		const expectedResult = {
