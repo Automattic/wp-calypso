@@ -73,15 +73,9 @@ class AccountSettingsClose extends Component {
 	};
 
 	handleSiteDropdown = () => {
-		this.setState( {
-			showSiteDropdown: true,
-		} );
-
-		if ( this.state.showSiteDropdown ) {
-			this.setState( {
-				showSiteDropdown: false,
-			} );
-		}
+		this.setState( state => ( {
+			showSiteDropdown: ! state.showSiteDropdown,
+		} ) );
 	};
 
 	render() {
