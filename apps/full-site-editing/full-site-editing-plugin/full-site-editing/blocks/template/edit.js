@@ -124,12 +124,16 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
-			event.preventDefault();
 			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
+			/**
+			 * This must be after setNavigateToTemplate so that local navigation
+			 * (without wpcom overrides) still works correctly.
+			 */
+			event.preventDefault();
 			savePost();
 		};
 
