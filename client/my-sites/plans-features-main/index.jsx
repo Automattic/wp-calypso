@@ -160,6 +160,7 @@ export class PlansFeaturesMain extends Component {
 							'Get everything your site needs, in one package — so you can focus on your business.'
 						) }
 						compactOnMobile
+						isSecondary
 					/>
 				) }
 				<PlanFeatures
@@ -437,6 +438,7 @@ export class PlansFeaturesMain extends Component {
 					headerText={ translate( 'Solutions' ) }
 					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
 					compactOnMobile
+					isSecondary
 				/>
 				<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_BACKUP_PRODUCTS } />
 				<ProductSelector
