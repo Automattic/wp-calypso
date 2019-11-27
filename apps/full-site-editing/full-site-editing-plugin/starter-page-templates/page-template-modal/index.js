@@ -8,42 +8,22 @@ import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
-import { registerPlugin } from '@wordpress/plugins';
-import {
-	withDispatch,
-	withSelect,
-	select as wpSelect,
-	dispatch as wpDispatch,
-	subscribe,
-} from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
+
 /**
  * Internal dependencies
  */
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
-import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
+import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
-import SidebarTemplatesPlugin from './components/sidebar-modal-opener';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
-
-// Load config passed from backend.
-const {
-	templates = [],
-	vertical,
-	segment,
-	tracksUserData,
-	siteInformation = {},
-	screenAction,
-	theme,
-	isFrontPage,
-} = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
 	state = {
@@ -380,62 +360,3 @@ export const PageTemplatesPlugin = compose(
 		};
 	} )
 )( PageTemplateModal );
-
-if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
-}
-
-// Open plugin only if we are creating new page.
-if ( screenAction === 'add' ) {
-	registerPlugin( 'page-templates', {
-		render: () => {
-			return (
-				<PageTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
-					shouldPrefetchAssets={ false }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
-				/>
-			);
-		},
-	} );
-}
-
-// Always register ability to open from document sidebar.
-registerPlugin( 'page-templates-sidebar', {
-	render: () => {
-		return (
-			<PluginDocumentSettingPanel
-				name="Template Modal Opener"
-				title={ __( 'Page Layout' ) }
-				className="page-template-modal__sidebar"
-				icon="admin-page"
-			>
-				<SidebarTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
-					siteInformation={ siteInformation }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
-				/>
-			</PluginDocumentSettingPanel>
-		);
-	},
-} );
-
-// Make sidebar plugin open by default.
-const unsubscribe = subscribe( () => {
-	if (
-		! wpSelect( 'core/edit-post' ).isEditorPanelOpened(
-			'page-templates-sidebar/Template Modal Opener'
-		)
-	) {
-		wpDispatch( 'core/edit-post' ).toggleEditorPanelOpened(
-			'page-templates-sidebar/Template Modal Opener'
-		);
-	}
-	unsubscribe();
-} );
