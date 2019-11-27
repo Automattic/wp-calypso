@@ -3,9 +3,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {
-	CheckoutProvider,
-} from '@automattic/composite-checkout';
+import { CheckoutProvider } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -28,7 +26,7 @@ const handleCheckoutEvent = () => () => {
 
 // This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, registry } ) {
-	const { itemsWithTax, total} = useShoppingCart();
+	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -49,7 +47,7 @@ export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, r
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<WPCheckout />
+			<WPCheckout deleteItem={ deleteItem } changePlanLength={ changePlanLength } />
 		</CheckoutProvider>
 	);
 }

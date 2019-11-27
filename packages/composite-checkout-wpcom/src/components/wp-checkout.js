@@ -8,6 +8,7 @@ import {
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	useSelect,
+	useLineItems,
 } from '@automattic/composite-checkout';
 
 /**
@@ -29,9 +30,9 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export function WPCheckout( { useShoppingCart } ) {
+export function WPCheckout( { deleteItem, changePlanLength } ) {
 	const translate = useTranslate();
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const [ itemsWithTax, total ] = useLineItems();
 
 	const ReviewContent = () => (
 		<OrderReview
