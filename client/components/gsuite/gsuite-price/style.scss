@@ -11,24 +11,11 @@
 .gsuite-price__annual-price {
 	color: var( --color-text-subtle );
 	display: inline-block;
-	font-size: 12px;
 
 	&.discounted {
 		margin-right: 7px;
 		text-decoration: line-through;
 	}
-}
-
-.gsuite-price__discounted-price {
-	background: var( --color-success );
-	border-radius: 10px;
-	color: var( --color-text-inverted );
-	display: inline-block;
-	font-size: 13px;
-	height: 21px;
-	padding-left: 8px;
-	padding-right: 8px;
-	vertical-align: middle;
 }
 
 .gsuite-price__price-per-user-per-month {

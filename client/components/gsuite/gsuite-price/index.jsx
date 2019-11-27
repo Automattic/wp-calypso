@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import Badge from 'components/badge';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 
 /**
@@ -79,14 +80,14 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 				</h5>
 
 				{ isDiscounted && (
-					<h6 className="gsuite-price__discounted-price">
+					<Badge type="success">
 						{ translate( '%(price)s for your first year', {
 							args: {
 								price: getAnnualPrice( product.sale_cost, currencyCode ),
 							},
 							comment: "Discounted annual price formatted with the currency (e.g. '$80')"
 						} ) }
-					</h6>
+					</Badge>
 				) }
 			</div>
 		);
