@@ -19,8 +19,11 @@ export default function WPCheckoutOrderSummary() {
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
 
+	//TODO: Replace yourdomain.tld with actual domian: show .wordpress subdomain if no custom domain available or in the cart
 	return (
 		<React.Fragment>
+			<DomainURL>yourdomain.tld</DomainURL>
+
 			<SummaryContent>
 				<ProductList>
 					{ items.map( product => {
@@ -73,7 +76,13 @@ const CheckoutSummaryTotal = styled.span`
 	font-weight: ${props => props.theme.weights.bold};
 `;
 
+const DomainURL = styled.div`
+	margin-top: -12px;
+`;
+
 const SummaryContent = styled.div`
+	margin-top: 12px;
+
 	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
 		display: flex;
 		justify-content: space-between;
