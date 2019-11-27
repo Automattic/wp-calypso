@@ -11,7 +11,7 @@ import { createRegistry, createPayPalMethod } from '@automattic/composite-checko
  * Internal dependencies
  */
 import {
-	WPCOMCheckout,
+	WPCheckoutWrapper,
 	makeShoppingCartHook,
 	mockCartEndpoint,
 	mockPayPalExpressRequest,
@@ -61,7 +61,7 @@ const useShoppingCart = makeShoppingCartHook( mockCartEndpoint, initialCart );
 
 function App() {
 	return (
-		<WPCOMCheckout
+		<WPCheckoutWrapper
 			useShoppingCart={ useShoppingCart }
 			availablePaymentMethods={ [
 				createPayPalMethod( {
