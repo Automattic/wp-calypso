@@ -94,7 +94,7 @@ class ProductCard extends Component {
 						<ProductCardAction
 							onClick={ this.handleManagePurchase( purchase.productSlug ) }
 							href={ managePurchase( purchase.domain, purchase.id ) }
-							label={ translate( 'Manage Subscription' ) }
+							label={ translate( 'Manage Product' ) }
 							primary={ false }
 						/>
 					) }
