@@ -21,6 +21,7 @@ import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import '@wordpress/components/build-style/style.css';
+import { registerCoreBlocks } from '@wordpress/block-library';
 
 /**
  * Internal dependencies
@@ -46,10 +47,16 @@ registerBlockType( name, settings );
 
 const onboardingBlock = createBlock( name, {} );
 
+registerCoreBlocks();
+const templateBlock = createBlock( 'core/paragraph', { content: 'Template Selection' } );
+
 export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
-
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
+
+	// FIXME: Quick'n'dirty step state, replace with router
+	const [ currentStep, setStep ] = useState( 0 );
+	const goToNextStep = () => setStep( step => step + 1 );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -69,10 +76,14 @@ export function Gutenboard() {
 						/>
 						<Header
 							isEditorSidebarOpened={ isEditorSidebarOpened }
+							next={ goToNextStep }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 							toggleSidebarShortcut={ toggleSidebarShortcut }
 						/>
-						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
+						<BlockEditorProvider
+							value={ [ currentStep === 0 ? onboardingBlock : templateBlock ] }
+							settings={ { templateLock: 'all' } }
+						>
 							<div className="edit-post-layout__content">
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"
@@ -98,5 +109,6 @@ export function Gutenboard() {
 			<Popover.Slot />
 		</div>
 	);
+
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
