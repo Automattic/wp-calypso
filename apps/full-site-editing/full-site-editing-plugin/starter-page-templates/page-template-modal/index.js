@@ -68,10 +68,10 @@ class PageTemplateModal extends Component {
 
 		// Parse templates blocks and store them into the state.
 		const blocksByTemplateSlug = reduce(
-			templates,
+			this.props.templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, siteInformation ) )
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
 					: [];
 				return prev;
 			},
@@ -223,7 +223,7 @@ class PageTemplateModal extends Component {
 				blocksByTemplates={ this.state.blocksByTemplateSlug }
 				onTemplateSelect={ this.previewTemplate }
 				useDynamicPreview={ false }
-				siteInformation={ siteInformation }
+				siteInformation={ this.props.siteInformation }
 				selectedTemplate={ this.state.previewedTemplate }
 				handleTemplateConfirmation={ this.handleConfirmation }
 			/>
