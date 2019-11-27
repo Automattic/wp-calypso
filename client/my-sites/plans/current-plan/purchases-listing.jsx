@@ -80,7 +80,7 @@ class PurchasesListing extends Component {
 		return product.expiryMoment < moment().add( 30, 'days' );
 	}
 
-	getJetpackBackup() {
+	getJetpackBackupPurchase() {
 		return (
 			find( this.props.purchases, purchase => purchase.active && isJetpackBackup( purchase ) ) ??
 			null
@@ -109,12 +109,12 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const jetpackBackup = this.getJetpackBackup();
+		const jetpackBackupPurchase = this.getJetpackBackupPurchase();
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
-				planObject.getTagline?.( jetpackBackup?.productSlug ) ??
+				planObject.getTagline?.( jetpackBackupPurchase?.productSlug ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -217,7 +217,7 @@ class PurchasesListing extends Component {
 		const { translate } = this.props;
 
 		// Get all products and filter out falsy items.
-		const productPurchases = [ this.getJetpackBackup() ].filter( Boolean );
+		const productPurchases = [ this.getJetpackBackupPurchase() ].filter( Boolean );
 
 		if ( isEmpty( productPurchases ) ) {
 			return null;
