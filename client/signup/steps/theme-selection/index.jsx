@@ -95,9 +95,35 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
+	headerText() {
+		const { flowName, translate } = this.props;
+
+		if ( this.isStoreSignup() ) {
+			return translate( 'Choose a store theme.' );
+		} else if ( flowName === 'test-fse' ) {
+			return translate( 'Pick your site design' );
+		}
+		return translate( 'Choose a theme.' );
+	}
+
+	subHeaderText() {
+		const { flowName, translate } = this.props;
+
+		if ( this.isStoreSignup() ) {
+			return translate( 'Pick one of our store themes to start with. You can change this later.', {
+				context: 'Themes step subheader in Signup',
+			} );
+		} else if ( flowName === 'test-fse' ) {
+			return translate( "You'll be able to customize your new site in hundreds of ways." );
+		}
+		return translate(
+			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
+			{ context: 'Themes step subheader in Signup' }
+		);
+	}
+
 	render() {
-		const { translate, useHeadstart, flowName } = this.props;
-		const storeSignup = this.isStoreSignup();
+		const { useHeadstart, flowName } = this.props;
 
 		// If a user skips the step in `design-first` let segment and vertical determine content.
 		const defaultDependencies =
@@ -105,17 +131,8 @@ class ThemeSelectionStep extends Component {
 				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
 				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
 
-		const headerText = storeSignup
-			? translate( 'Choose a store theme.' )
-			: translate( 'Choose a theme.' );
-		const subHeaderText = storeSignup
-			? translate( 'Pick one of our store themes to start with. You can change this later.', {
-					context: 'Themes step subheader in Signup',
-			  } )
-			: translate(
-					'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
-					{ context: 'Themes step subheader in Signup' }
-			  );
+		const headerText = this.headerText();
+		const subHeaderText = this.subHeaderText();
 
 		return (
 			<StepWrapper
