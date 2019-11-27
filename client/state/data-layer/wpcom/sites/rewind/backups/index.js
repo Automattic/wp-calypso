@@ -1,16 +1,10 @@
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
 import { setRewindBackups } from 'state/rewind/backups/actions';
 
 const fetchBackups = action => {
@@ -26,24 +20,14 @@ const fetchBackups = action => {
 
 const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
 
-const displayError = ( { siteId } ) => [
-	setRewindBackups( siteId, [] ),
-	errorNotice(
-		translate(
-			'Sorry, we had a problem retrieving the site backups. Please refresh the page and try again.'
-		),
-		{
-			duration: 5000,
-		}
-	),
-];
+const resetBackups = ( { siteId } ) => setRewindBackups( siteId, [] );
 
 registerHandlers( 'state/data-layer/wpcom/sites/rewind/backups/index.js', {
 	[ REWIND_BACKUPS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: fetchBackups,
 			onSuccess: setBackups,
-			onError: displayError,
+			onError: resetBackups,
 		} ),
 	],
 } );
