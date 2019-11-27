@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
@@ -25,7 +20,7 @@ const checklistAction = { type: ROUTE_SET, path: checklistUrl };
 const customerHomeAction = { type: ROUTE_SET, path: customerHomeUrl };
 
 describe( 'getEditorCloseConfig()', () => {
-	test( 'should return URL for post type listings as default', () => {
+	test( 'should return URL for customer home as default when no previous route is given', () => {
 		const state = {
 			sites: {
 				items: {
@@ -35,9 +30,30 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: { selectedSiteId: siteId, actionLog: [] },
 		};
 
+		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( customerHomeUrl );
+	} );
+
+	test( 'should return URL for post type listings as default when previous route has no match', () => {
+		const state = {
+			sites: {
+				items: {
+					[ siteId ]: { URL: siteUrl },
+				},
+			},
+			ui: {
+				route: {
+					path: {
+						previous: '/route-with-no-match',
+					},
+				},
+				selectedSiteId: siteId,
+				actionLog: [],
+			},
+		};
+
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
 
-		expect( getEditorCloseConfig( state, siteId, postType ).url ).to.equal( allPostsUrl );
+		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( allPostsUrl );
 	} );
 
 	test( 'should return parent URL if current post is a FSE template part', () => {
@@ -70,7 +86,7 @@ describe( 'getEditorCloseConfig()', () => {
 
 		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
 
-		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).to.equal(
+		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).toEqual(
 			parentPostEditorUrl
 		);
 	} );
@@ -93,7 +109,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseConfig( state, siteId, postType ).url ).to.equal( checklistUrl );
+		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( checklistUrl );
 	} );
 
 	test( 'should return URL for checklist if most recent non-editor nav was from the checklist', () => {
@@ -109,7 +125,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( checklistUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( checklistUrl );
 	} );
 
 	test( 'should return URL for customer home if previous nav was from the customer home', () => {
@@ -130,7 +146,7 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( customerHomeUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
 	} );
 
 	test( 'should return URL for customer home if most recent non-editor nav was from the customer home', () => {
@@ -146,6 +162,6 @@ describe( 'getEditorCloseConfig()', () => {
 			},
 		};
 
-		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).to.equal( customerHomeUrl );
+		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
 	} );
 } );
