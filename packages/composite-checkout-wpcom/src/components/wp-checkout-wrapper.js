@@ -3,22 +3,14 @@
  */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
 import {
-	Checkout,
 	CheckoutProvider,
-	getDefaultPaymentMethodStep,
-	useIsStepActive,
-	useSelect,
 } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { areDomainsInLineItems } from '../hooks/has-domains';
-import { OrderReview } from './order-review';
-import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
-import WPContactForm from './wp-contact-form';
+import WPCheckout from './wp-checkout';
 
 // These are used only for non-redirect payment methods
 // TODO: write this
@@ -34,21 +26,9 @@ const handleCheckoutEvent = () => () => {
 	// TODO: write this
 };
 
-const ContactFormTitle = () => {
-	const translate = useTranslate();
-	const isActive = useIsStepActive();
-	return isActive ? translate( 'Billing details' ) : translate( 'Enter your billing details' );
-};
-
-const OrderReviewTitle = () => {
-	const translate = useTranslate();
-	return translate( 'Review your order' );
-};
-
 // This is the parent component which would be included on a host page
-export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, registry } ) {
-	const translate = useTranslate();
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
+export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, registry } ) {
+	const { itemsWithTax, total} = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -56,59 +36,6 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 	useEffect( () => {
 		return subscribe( handleCheckoutEvent( select ) );
 	}, [ select, subscribe ] );
-
-	const ReviewContent = () => (
-		<OrderReview
-			items={ itemsWithTax }
-			total={ total }
-			onDeleteItem={ deleteItem }
-			onChangePlanLength={ changePlanLength }
-		/>
-	);
-
-	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const domainContactInfo = useSelect( sel => sel( 'wpcom' ).getDomainContactInfo() ) || {};
-	const isDomainContactSame = useSelect( sel => sel( 'wpcom' ).isDomainContactSame() ) || false;
-
-	const steps = [
-		{
-			id: 'order-summary',
-			className: 'checkout__order-summary-step',
-			hasStepNumber: false,
-			titleContent: <WPCheckoutOrderSummaryTitle />,
-			completeStepContent: <WPCheckoutOrderSummary />,
-			isCompleteCallback: () => true,
-		},
-		{
-			...getDefaultPaymentMethodStep(),
-			getEditButtonAriaLabel: () => translate( 'Edit the payment method' ),
-			getNextStepButtonAriaLabel: () => translate( 'Continue with the selected payment method' ),
-		},
-		{
-			id: 'contact-form',
-			className: 'checkout__billing-details-step',
-			hasStepNumber: true,
-			titleContent: <ContactFormTitle />,
-			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
-			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () =>
-				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ),
-			isEditableCallback: () => isFormEditable( select ),
-			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
-			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
-		},
-		{
-			id: 'order-review',
-			className: 'checkout__review-order-step',
-			hasStepNumber: true,
-			titleContent: <OrderReviewTitle />,
-			activeStepContent: <ReviewContent />,
-			isCompleteCallback: ( { activeStep } ) => {
-				const isActive = activeStep.id === 'order-review';
-				return isActive;
-			},
-		},
-	];
 
 	return (
 		<CheckoutProvider
@@ -122,12 +49,12 @@ export function WPCOMCheckout( { useShoppingCart, availablePaymentMethods, regis
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<Checkout steps={ steps } />
+			<WPCheckout />
 		</CheckoutProvider>
 	);
 }
 
-WPCOMCheckout.propTypes = {
+WPCheckoutWrapper.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	useShoppingCart: PropTypes.func.isRequired,
 	registry: PropTypes.object.isRequired,
@@ -357,58 +284,4 @@ function useWpcomStore( registerStore ) {
 			},
 		},
 	} );
-}
-
-function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
-	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
-	const contactFields = [
-		contactInfo.firstName,
-		contactInfo.lastName,
-		contactInfo.email,
-		contactInfo.address,
-		contactInfo.city,
-		contactInfo.state || contactInfo.province,
-		contactInfo.vatId,
-	];
-	const domainFields = [
-		domainContactInfo.firstName,
-		domainContactInfo.lastName,
-		domainContactInfo.email,
-		domainContactInfo.address,
-		domainContactInfo.city,
-		domainContactInfo.state || domainContactInfo.province,
-		domainContactInfo.phoneNumber,
-	];
-	let allFields = taxFields;
-	if ( areDomainsInLineItems ) {
-		allFields = allFields.concat( contactFields );
-		if ( ! isDomainContactSame ) {
-			allFields = allFields.concat( domainFields );
-		}
-	}
-
-	if ( ! allFields.every( field => field ) ) {
-		return false;
-	}
-
-	// Make sure all required fields are filled
-	return allFields.every( ( { isValid } ) => isValid );
-}
-
-function isFormEditable( select ) {
-	const store = select( 'wpcom' );
-	if ( ! store ) {
-		return false;
-	}
-	// FIXME: this needs to return false if the fields have not been touched
-	// FIXME: this needs to check only fields that are being displayed; not all fields
-	const contactInfo = store.getContactInfo();
-	if ( Object.keys( contactInfo ).find( x => x ) ) {
-		return true;
-	}
-	const domainContactInfo = store.getDomainContactInfo();
-	if ( Object.keys( domainContactInfo ).find( x => x ) ) {
-		return true;
-	}
-	return false;
 }
