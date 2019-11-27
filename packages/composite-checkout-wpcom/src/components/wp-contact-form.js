@@ -192,6 +192,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 						}
 						autoComplete="given-name"
 						isError={ firstName.isTouched && ! firstName.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</LeftColumn>
 
@@ -206,6 +207,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 						}
 						autoComplete="family-name"
 						isError={ lastName.isTouched && ! lastName.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</RightColumn>
 			</FieldRow>
@@ -221,6 +223,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 				}
 				autoComplete="email"
 				isError={ email.isTouched && ! email.isValid }
+				errorMessage={ translate( 'This field is required.' ) }
 			/>
 
 			<FormField
@@ -233,6 +236,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 				}
 				autoComplete={ section + ' street-address' }
 				isError={ address.isTouched && ! address.isValid }
+				errorMessage={ translate( 'This field is required.' ) }
 			/>
 
 			<FieldRow>
@@ -247,6 +251,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 						}
 						autoComplete={ section + ' address-level2' }
 						isError={ city.isTouched && ! city.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</LeftColumn>
 
@@ -263,6 +268,7 @@ function AddressFields( { section, contactInfo, setters } ) {
 						}
 						autoComplete={ section + ' address-level1' }
 						isError={ state.isTouched && ! state.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</RightColumn>
 			</FieldRow>
@@ -295,6 +301,7 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 			}
 			autoComplete="tel"
 			isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
+			errorMessage={ translate( 'This field is required.' ) }
 		/>
 	);
 }
@@ -319,6 +326,7 @@ function VatIdField() {
 			value={ vatId.value }
 			onChange={ value => setVatId( { value, isTouched: true, isValid: !! value } ) }
 			isError={ vatId.isTouched && ! vatId.isValid }
+			errorMessage={ translate( 'This field is required.' ) }
 		/>
 	);
 }
@@ -342,6 +350,7 @@ function TaxFields( { section, taxInfo, setters } ) {
 					}
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! postalCode.isValid }
+					errorMessage={ translate( 'This field is required.' ) }
 				/>
 			</LeftColumn>
 
@@ -356,6 +365,7 @@ function TaxFields( { section, taxInfo, setters } ) {
 					}
 					autoComplete={ section + ' country' }
 					isError={ country.isTouched && ! country.isValid }
+					errorMessage={ translate( 'This field is required.' ) }
 				/>
 			</RightColumn>
 		</FieldRow>
