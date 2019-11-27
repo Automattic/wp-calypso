@@ -387,6 +387,10 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame ) {
 		}
 	}
 
+	if ( ! allFields.every( field => field ) ) {
+		return false;
+	}
+
 	// Make sure all required fields are filled
 	return allFields.every( ( { isValid } ) => isValid );
 }
