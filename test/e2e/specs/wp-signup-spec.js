@@ -424,7 +424,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			return await siteTypePage.selectBusinessType();
+			return await siteTypePage.selectProfessionalType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
