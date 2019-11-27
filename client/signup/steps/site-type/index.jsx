@@ -37,7 +37,9 @@ class SiteType extends Component {
 	};
 
 	submitStep = siteTypeValue => {
-		this.props.submitSiteType( siteTypeValue );
+		const { stepName } = this.props;
+
+		this.props.submitSiteType( siteTypeValue, stepName );
 
 		// Modify the flowname if the site type matches an override.
 		let flowName;

@@ -47,7 +47,8 @@ export function generateSteps( {
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
 		'portfolio-themes': {
@@ -59,13 +60,23 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
+		'template-first-themes': {
+			stepName: 'template-first-themes',
+			props: {
+				designType: 'template-first',
+				quantity: 18,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
 		'themes-site-selected': {
 			stepName: 'themes-site-selected',
 			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
@@ -461,10 +472,22 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
+		'site-type-with-theme': {
+			stepName: 'site-type',
+			providesDependencies: [ 'siteType' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
+		},
+
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
+		},
+
+		'site-topic-with-theme': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 

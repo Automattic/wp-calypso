@@ -131,6 +131,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} = stepData;
 
 	const state = reduxStore.getState();
+	const signupDependencies = getSignupDependencyStore( state );
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
@@ -142,6 +143,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 
+	// The theme can be provided in this step's dependencies,
+	// the step object itself depending on if the theme is provided in a
+	// query (see `getThemeSlug` in `DomainsStep`),
+	// or the Signup dependency store. Defaults to site type theme.
+	const theme =
+		dependencies.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false ) ||
+		siteTypeTheme;
+
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
@@ -149,10 +160,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		blog_title: siteTitle,
 		options: {
 			designType: designType || undefined,
-			// The theme can be provided in this step's dependencies or the
-			// step object itself depending on if the theme is provided in a
-			// query. See `getThemeSlug` in `DomainsStep`.
-			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo || siteTypeTheme,
+			theme,
+			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
@@ -168,12 +177,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	};
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
-	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
+	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
 
 	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
-			get( getSignupDependencyStore( state ), 'username' ) ||
+			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||
 			getSiteVertical( state );
