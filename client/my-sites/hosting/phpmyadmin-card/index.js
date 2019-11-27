@@ -24,6 +24,8 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'state/analytics/actions';
+import ExternalLink from 'components/external-link';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -90,27 +92,18 @@ const PhpMyAdminCard = ( {
 				) }
 			</p>
 			<div className="phpmyadmin-card__questions">
-				<Accordion title={ translate( 'Do I need to Access my Database?' ) }>
+				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
 					{ translate(
-						'{{p}}Accessing your database is not required for your site to function. Do not touch your site’s database unless you have a very specific reason. If you’re unsure, contact a Happiness Engineer for help before accessing your database.{{/p}}' +
-							'{{p}}{{strong}}You should not ever run a command unless you know exactly what it will do.{{/strong}}{{/p}}' +
-							'{{p}}If you don’t understand what a command does, don’t run it. Running unknown commands without understanding them may lead to your site breaking, and can also cause you to lose data.{{/p}}' +
-							'{{p}}You may have come across articles that suggest manipulating the database to improve various aspects of your site. Here at WordPress.com we’ve already taken steps to ensure your site is optimized, and you should not need to do anything with your database directly.{{/p}}' +
-							'{{p}}We are happy to help with your site, however WordPress.com Happiness Engineers are not here to assist you with creating, modifying, or running database commands.{{/p}}',
+						"It is a free and open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
 							components: {
-								p: <p />,
-								strong: <strong />,
-							},
-						}
-					) }
-				</Accordion>
-				<Accordion title={ translate( 'Reasons to Access my Database' ) }>
-					{ translate(
-						"{{p}}We allow full database access for any custom data needs you may have . Please only access this if you know what you're doing.{{/p}}",
-						{
-							components: {
-								p: <p />,
+								a: (
+									<ExternalLink
+										icon
+										target="_blank"
+										href={ localizeUrl( 'https://en.support.wordpress.com/phpmyadmin-and-mysql/' ) }
+									/>
+								),
 							},
 						}
 					) }
