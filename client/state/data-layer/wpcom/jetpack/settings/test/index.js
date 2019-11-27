@@ -80,39 +80,6 @@ describe( 'announceRequestFailure()', () => {
 	const siteId = 12345678;
 	const siteUrl = 'http://yourgroovydomain.com';
 
-	test( 'should trigger an error notice with an action button when request fails for an unconnected site', () => {
-		const getState = () => ( {
-			jetpack: {
-				onboarding: {
-					credentials: {
-						[ siteId ]: {
-							siteUrl,
-							token: 'abcd1234',
-							userEmail: 'example@yourgroovydomain.com',
-						},
-					},
-				},
-			},
-			sites: {
-				items: {},
-			},
-		} );
-
-		announceRequestFailure( { siteId } )( dispatch, getState );
-
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					button: 'Visit site admin',
-					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
-					noticeId: `jps-communication-error-${ siteId }`,
-					status: 'is-error',
-					text: 'Something went wrong.',
-				} ),
-			} )
-		);
-	} );
-
 	test( 'should trigger an error notice with an action button when request fails for a connected site', () => {
 		const getState = () => ( {
 			jetpack: {
