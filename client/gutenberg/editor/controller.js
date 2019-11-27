@@ -44,7 +44,7 @@ function getPostID( context ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 
-		return parseInt( getSiteOption( state, siteId, 'page_on_front' ) );
+		return parseInt( getSiteOption( state, siteId, 'page_on_front' ), 10 );
 	}
 
 	// both post and site are in the path
