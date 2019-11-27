@@ -70,7 +70,8 @@ export default function WPCheckout( { deleteItem, changePlanLength } ) {
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
 			isCompleteCallback: () =>
 				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
-			isEditableCallback: () => true,
+			isEditableCallback: () =>
+				isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
 		},
@@ -129,4 +130,40 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, it
 
 	// Make sure all required fields are filled
 	return allFields.every( ( { isValid } ) => isValid );
+}
+
+function isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, items ) {
+	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
+	const contactFields = [
+		contactInfo.firstName,
+		contactInfo.lastName,
+		contactInfo.email,
+		contactInfo.address,
+		contactInfo.city,
+		contactInfo.state,
+		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
+	];
+	const domainFields = [
+		domainContactInfo.firstName,
+		domainContactInfo.lastName,
+		domainContactInfo.email,
+		domainContactInfo.address,
+		domainContactInfo.city,
+		domainContactInfo.state,
+		domainContactInfo.phoneNumber,
+	];
+	let allFields = taxFields;
+	if ( areDomainsInLineItems( items ) ) {
+		allFields = allFields.concat( contactFields );
+		if ( ! isDomainContactSame ) {
+			allFields = allFields.concat( domainFields );
+		}
+	}
+
+	if ( ! allFields.every( field => field ) ) {
+		return false;
+	}
+
+	// If any field has been touched, it is editable
+	return allFields.some( ( { isTouched } ) => isTouched );
 }
