@@ -9,7 +9,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { withDispatch, withSelect } from '@wordpress/data';
+import {
+	withDispatch,
+	withSelect,
+	select as wpSelect,
+	dispatch as wpDispatch,
+	subscribe,
+} from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -414,4 +420,18 @@ registerPlugin( 'page-templates-sidebar', {
 			</PluginDocumentSettingPanel>
 		);
 	},
+} );
+
+// Make sidebar plugin open by default.
+const unsubscribe = subscribe( () => {
+	if (
+		! wpSelect( 'core/edit-post' ).isEditorPanelOpened(
+			'page-templates-sidebar/Template Modal Opener'
+		)
+	) {
+		wpDispatch( 'core/edit-post' ).toggleEditorPanelOpened(
+			'page-templates-sidebar/Template Modal Opener'
+		);
+	}
+	unsubscribe();
 } );
