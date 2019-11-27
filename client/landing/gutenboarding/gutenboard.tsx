@@ -17,11 +17,11 @@ import {
 } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
+import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import '@wordpress/components/build-style/style.css';
-import { registerCoreBlocks } from '@wordpress/block-library';
 
 /**
  * Internal dependencies
@@ -35,6 +35,8 @@ import './stores/onboard';
 import './stores/verticals-templates';
 import './style.scss';
 
+import { PageTemplateModal } from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal';
+
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
 // to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
 const toggleSidebarShortcut = {
@@ -47,8 +49,25 @@ registerBlockType( name, settings );
 
 const onboardingBlock = createBlock( name, {} );
 
-registerCoreBlocks();
-const templateBlock = createBlock( 'core/paragraph', { content: 'Template Selection' } );
+const DesignSelector = () => {
+	const templates = useSelect( select =>
+		select( 'automattic/verticals/templates' ).getTemplates( 'p13v1' )
+	);
+	return <PageTemplateModal templates={ templates } />;
+};
+
+// Makeshift block so we can drop the modal into the block editor. Might want to change that later.
+registerBlockType( 'automattic/page-templates', {
+	title: 'Page Templates',
+	icon: 'universal-access-alt',
+	category: 'layout',
+	attributes: {},
+	edit() {
+		return <DesignSelector />;
+	},
+} );
+
+const templateBlock = createBlock( 'automattic/page-templates', {} );
 
 export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
