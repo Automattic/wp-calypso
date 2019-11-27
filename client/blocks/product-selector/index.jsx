@@ -171,7 +171,7 @@ export class ProductSelector extends Component {
 	}
 
 	getDescriptionByProduct( product ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { basePlansPath, selectedSiteSlug, translate } = this.props;
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
@@ -188,7 +188,7 @@ export class ProductSelector extends Component {
 
 		// Default product description, without a landing page link.
 		let linkUrl = product.landingPageUrl;
-		if ( ! linkUrl ) {
+		if ( ! linkUrl || !! basePlansPath ) {
 			return description;
 		}
 
