@@ -124,10 +124,15 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
+			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
+			/**
+			 * This must be after setNavigateToTemplate so that local navigation
+			 * (without wpcom overrides) still works correctly.
+			 */
 			event.preventDefault();
 			savePost();
 		};
@@ -169,7 +174,7 @@ const TemplateEdit = compose(
 								/>
 							</div>
 						</Disabled>
-						<Placeholder className="template-block__overlay">
+						<Placeholder className="template-block__overlay" onClick={ save }>
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
 									<Spinner /> { sprintf( __( 'Loading editor for: %s' ), templateTitle ) }
