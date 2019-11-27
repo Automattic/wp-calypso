@@ -12,10 +12,11 @@ import {
 	negate,
 	isEmpty,
 	take,
+	filter,
+	map,
 	sortBy,
 	partition,
 	includes,
-	mapValues,
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -154,7 +155,7 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	/**
-	 * Returns an object containing lists of fliters keyed by taxnomies.
+	 * Returns an object containing lists of filters keyed by taxnomies.
 	 * This function takes all available taxonomies and removes the ones that
 	 * do not match provided input param. At the end keys that have empty lists are removed.
 	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
@@ -165,8 +166,8 @@ class KeyedSuggestions extends React.Component {
 	 * @return {Object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
-		const termsTable = mapValues( this.props.terms, Object.keys );
-		const [ taxonomy, filter ] = input.toLowerCase().split( ':' );
+		const termsTable = this.props.terms;
+		const [ taxonomy, filterText ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
 			// TODO: just show welcome screen
@@ -177,7 +178,7 @@ class KeyedSuggestions extends React.Component {
 		let terms; //terms that we will use to create suggestions
 		let filterTerm; // part of input that will be used for filtering
 
-		if ( filter !== undefined ) {
+		if ( filterText !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
 			if ( has( termsTable, taxonomy ) ) {
@@ -190,7 +191,7 @@ class KeyedSuggestions extends React.Component {
 				// TODO tell something to the user
 				return {};
 			}
-			filterTerm = filter;
+			filterTerm = filterText;
 		} else {
 			// we just have one word so treat is as a search terms
 			filterTerm = taxonomy;
@@ -200,11 +201,11 @@ class KeyedSuggestions extends React.Component {
 		const filtered = {};
 
 		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
-		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
+		if ( filterText !== undefined && includes( terms[ taxonomy ], filter ) ) {
 			// remove what is already in input - so we can add it to the beggining of the list
 			const otherSuggestions = without( terms[ taxonomy ], filter );
 			// add back at the beggining of the list so it will showup first.
-			otherSuggestions.unshift( filter );
+			otherSuggestions.unshift( filterText );
 			// limit or show all
 			filtered[ taxonomy ] =
 				showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
@@ -228,8 +229,18 @@ class KeyedSuggestions extends React.Component {
 				// concatenate mathing and non matchin - this is full set of filters just reordered.
 				filtered[ key ] = [ ...matchingSorted, ...parts[ 1 ] ];
 			} else {
+				// Try a full match first and try substring matches
+				let multiRegex = filterTerm;
+				for ( let i = filterTerm.length; i > 1; i-- ) {
+					multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+				}
+				const regex = new RegExp( multiRegex, 'iu' );
 				filtered[ key ] = take(
-					terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
+					filter(
+						map( terms[ key ], ( term, key ) =>
+							term.name.match( regex ) || term.description.match( regex ) ? key : null
+						)
+					),
 					limit
 				);
 			}
