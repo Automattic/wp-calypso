@@ -19,14 +19,14 @@
 	&.is-hovered, &.is-selected, .is-navigating-to-template {
 		.components-disabled {
 			filter: blur( 2px );
-			transition: filter 0.2s linear 0.7s;
+			transition: filter 0.2s linear;
 		}
 		.template-block__overlay {
 			opacity: 1;
 			transition: opacity 0.2s linear;
 			.components-button {
 				opacity: 1;
-				transition: opacity 0.2s linear 0.7s;
+				transition: opacity 0.2s linear;
 			}
 		}
 	}
