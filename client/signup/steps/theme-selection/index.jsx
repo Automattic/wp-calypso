@@ -22,20 +22,14 @@ import { isEnabled } from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class ThemeSelectionStep extends Component {
 	static propTypes = {
 		designType: PropTypes.string,
-		quantity: PropTypes.number,
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
-		useHeadstart: PropTypes.bool,
 		translate: PropTypes.func,
+		useHeadstart: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -44,13 +38,12 @@ class ThemeSelectionStep extends Component {
 	};
 
 	pickTheme = themeId => {
-		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
-			headstart: useHeadstart,
+			headstart: true,
 		} );
 
 		this.props.submitSignupStep(
@@ -60,7 +53,6 @@ class ThemeSelectionStep extends Component {
 			},
 			{
 				themeSlugWithRepo: repoSlug,
-				useThemeHeadstart: useHeadstart,
 			}
 		);
 
@@ -73,7 +65,6 @@ class ThemeSelectionStep extends Component {
 				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.pickTheme }
-				quantity={ this.props.quantity }
 			/>
 		);
 	}
@@ -96,15 +87,11 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render() {
-		const { translate, useHeadstart, flowName } = this.props;
 		const storeSignup = this.isStoreSignup();
-
-		// If a user skips the step in `design-first` let segment and vertical determine content.
-		const defaultDependencies =
-			'design-first' === flowName
-				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
-				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
-
+		const defaultDependencies = this.props.useHeadstart
+			? { themeSlugWithRepo: 'pub/twentysixteen' }
+			: undefined;
+		const { translate } = this.props;
 		const headerText = storeSignup
 			? translate( 'Choose a store theme.' )
 			: translate( 'Choose a theme.' );

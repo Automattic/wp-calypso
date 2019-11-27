@@ -429,23 +429,14 @@ class Signup extends React.Component {
 		const scrollPromise = new Promise( resolve => {
 			this.setState( { scrolling: true } );
 
-			const ANIMATION_LENGTH_MS = 200;
-			const startTime = performance.now();
-			const scrollHeight = window.pageYOffset;
-
-			const scrollToTop = timestamp => {
-				const progress = timestamp - startTime;
-
-				if ( progress < ANIMATION_LENGTH_MS ) {
-					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
-					requestAnimationFrame( scrollToTop );
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
 				} else {
 					this.setState( { scrolling: false } );
-					resolve();
+					resolve( clearInterval( scrollIntervalId ) );
 				}
-			};
-
-			requestAnimationFrame( scrollToTop );
+			}, 1 );
 		} );
 
 		// redirect the user to the next step
