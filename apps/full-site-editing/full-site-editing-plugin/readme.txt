@@ -46,6 +46,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 * Delegate FSE support detection to themes by leveraging the theme tags.
 * Enable Global Styles for all template-first themes.
+* Fix back button navigation issues.
+* Keep the sidebar layout selector open by default.
+* Fix editor styles with new Gutenberg version.
+* Clyck anywhere on header/footer block to Navigate to editor.
 
 = 0.15.1 =
 
