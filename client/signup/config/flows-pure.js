@@ -233,6 +233,20 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2019-11-22',
 		};
+
+		flows[ 'ecommerce-design-first' ] = {
+			steps: [
+				'template-first-themes',
+				'user',
+				'site-type-with-theme',
+				'domains',
+				'plans-ecommerce',
+			],
+			destination: getSignupDestination,
+			description:
+				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
+			lastModified: '2019-11-27',
+		};
 	}
 
 	if ( isEnabled( 'signup/wpcc' ) ) {

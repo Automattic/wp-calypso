@@ -45,6 +45,12 @@ class SiteType extends Component {
 		let flowName;
 		if ( 'import-onboarding' === this.props.flowName ) {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else if (
+			( 'design-first' === this.props.flowName ||
+				'ecommerce-design-first' === this.props.flowName ) &&
+			'site-type-with-theme' === stepName
+		) {
+			flowName = 'online-store' === siteTypeValue ? 'ecommerce-design-first' : this.props.flowName;
 		} else {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
 		}
