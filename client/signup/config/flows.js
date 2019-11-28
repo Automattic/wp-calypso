@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -60,7 +61,13 @@ function getChecklistThemeDestination( dependencies ) {
 }
 
 function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	const url = `/block-editor/page/${ dependencies.siteSlug }/home`;
+
+	if ( ! dependencies.useThemeHeadstart ) {
+		return addQueryArgs( url, { 'new-homepage': true } );
+	}
+
+	return url;
 }
 
 const flows = generateFlows( {
