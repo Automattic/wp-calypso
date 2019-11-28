@@ -35,7 +35,7 @@ const debug = debugFactory( 'calypso:popover' );
 // In case of a React component instance, we'll find the DOM element with `findDOMNode`.
 const PropTypeElement = PropTypes.oneOfType( [
 	PropTypes.instanceOf( Component ),
-	PropTypes.instanceOf( Element ),
+	PropTypes.instanceOf( window.Element ),
 ] );
 
 class PopoverInner extends Component {
