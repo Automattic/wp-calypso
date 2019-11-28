@@ -105,10 +105,14 @@ export default function Checkout( { steps, className } ) {
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
+	const isCheckoutInProgress = isThereAnIncompleteStep || isThereAnotherNumberedStep;
 
 	return (
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
-			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
+			<MainContent
+				className={ joinClasses( [ className, 'checkout__content' ] ) }
+				isCheckoutInProgress={ isCheckoutInProgress }
+			>
 				<ActiveStepProvider step={ activeStep }>
 					{ annotatedSteps.map( step => (
 						<CheckoutStepContainer
@@ -131,13 +135,11 @@ export default function Checkout( { steps, className } ) {
 					) ) }
 				</ActiveStepProvider>
 
-				<CheckoutWrapper>
+				<CheckoutWrapper isCheckoutInProgress={ isCheckoutInProgress }>
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton
-							disabled={ isThereAnIncompleteStep || isThereAnotherNumberedStep }
-						/>
+						<CheckoutSubmitButton disabled={ isCheckoutInProgress } />
 					</CheckoutErrorBoundary>
 				</CheckoutWrapper>
 			</MainContent>
@@ -213,6 +215,7 @@ const MainContent = styled.div`
 	background: ${props => props.theme.colors.surface};
 	width: 100%;
 	box-sizing: border-box;
+	margin-bottom: ${props => ( props.isCheckoutInProgress ? 0 : '89px' )};
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
@@ -225,6 +228,20 @@ const MainContent = styled.div`
 const CheckoutWrapper = styled.div`
 	background: ${props => props.theme.colors.background};
 	padding: 24px;
+	position: ${props => ( props.isCheckoutInProgress ? 'relative' : 'fixed' )};
+	bottom: 0;
+	left: 0;
+	box-sizing: border-box;
+	width: 100%;
+	z-index: 10;
+	border-top-width: ${props => ( props.isCheckoutInProgress ? '0' : '1px' )};
+	border-top-style: solid;
+	border-top-color: ${props => props.theme.colors.borderColorLight};
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		position: relative;
+		border: 0;
+	}
 `;
 
 function makeDefaultSteps( localize ) {
