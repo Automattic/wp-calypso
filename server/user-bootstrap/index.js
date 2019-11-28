@@ -22,9 +22,13 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 	 */
 	SUPPORT_SESSION_API_KEY = config( 'wpcom_calypso_support_session_rest_api_key' ),
 	API_PATH = 'https://public-api.wordpress.com/rest/v1/me',
-	apiQuery = {
+	flags = {
 		meta: 'flags',
 		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+		active_tests: config.isEnabled( 'ive/me' ),
+	},
+	apiQuery = {
+		flags,
 	},
 	url = `${ API_PATH }?${ stringify( apiQuery ) }`;
 
