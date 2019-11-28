@@ -280,12 +280,12 @@ function setupAdRollGlobal() {
 	if ( ! window.adRoll ) {
 		window.adRoll = {
 			trackPageview: function() {
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
 			},
 			trackPurchase: function() {
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
 			},
 		};
 	}
@@ -525,7 +525,7 @@ export async function retarget( urlPath ) {
 		if ( isIconMediaEnabled ) {
 			const params = ICON_MEDIA_RETARGETING_PIXEL_URL;
 			debug( 'retarget: [Icon Media] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Twitter
@@ -539,7 +539,7 @@ export async function retarget( urlPath ) {
 		if ( isGeminiEnabled ) {
 			const params = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 			debug( 'retarget: [Yahoo Gemini] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Quora
@@ -839,7 +839,7 @@ export async function recordSignup( slug ) {
 
 	if ( isIconMediaEnabled ) {
 		debug( 'recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL );
-		new Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
+		new window.Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
 	}
 
 	// Pinterest
@@ -1061,7 +1061,7 @@ export async function recordOrder( cart, orderId ) {
 	// Experian / One 2 One Media
 	if ( isExperianEnabled ) {
 		debug( 'recordOrder: [Experian]', EXPERIAN_CONVERSION_PIXEL_URL );
-		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
+		new window.Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
@@ -1069,12 +1069,12 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 		debug( 'recordOrder: [Yahoo Gemini]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	if ( isPandoraEnabled ) {
 		debug( 'recordOrder: [Pandora]', PANDORA_CONVERSION_PIXEL_URL );
-		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+		new window.Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isQuoraEnabled ) {
@@ -1088,7 +1088,7 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
 		debug( 'recordOrder: [Icon Media]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	// Twitter
@@ -1625,11 +1625,11 @@ async function recordInCriteo( eventName, eventProps ) {
  * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {
-	if ( /iPad/.test( navigator.userAgent ) ) {
+	if ( /iPad/.test( window.navigator.userAgent ) ) {
 		return 't';
 	}
 
-	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent ) ) {
+	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( window.navigator.userAgent ) ) {
 		return 'm';
 	}
 
@@ -1741,7 +1741,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 	return {
 		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
 		anonymize_ip: true,
-		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
+		transport_type: 'function' === typeof window.navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
 		custom_map: {
 			dimension3: 'client_id',
