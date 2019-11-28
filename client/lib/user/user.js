@@ -125,20 +125,15 @@ User.prototype.fetch = function() {
 		return this.fetching;
 	}
 
-	const flags = {
-		meta: 'flags',
-		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-	};
-
-	if ( config.isEnabled( 'ive/me' ) ) {
-		flags.active_tests = true;
-	}
-
 	// Request current user info
 	debug( 'Getting user from api' );
 	this.fetching = wpcom
 		.me()
-		.get( flags )
+		.get( {
+			meta: 'flags',
+			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+			active_tets: config.isEnabled( 'ive/me' ),
+		} )
 		.then( data => {
 			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
