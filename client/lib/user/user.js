@@ -24,7 +24,11 @@ import { isE2ETest } from 'lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { getLanguage } from 'lib/i18n-utils/utils';
 import { clearStorage } from 'lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import {
+	getActiveTestNames,
+	ABTEST_LOCALSTORAGE_KEY,
+	ABTEST_ACTIVE_TESTS,
+} from 'lib/abtest/utility';
 
 /**
  * User component
@@ -123,12 +127,10 @@ User.prototype.fetch = function() {
 
 	const flags = {
 		meta: 'flags',
-		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+		abtests: config( 'ive/me' )
+			? true
+			: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 	};
-
-	if ( config( 'ive/me' ) ) {
-		flags.active_tests = true;
-	}
 
 	// Request current user info
 	debug( 'Getting user from api' );
@@ -196,6 +198,11 @@ User.prototype.handleFetchSuccess = function( userData ) {
 			store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
 		}
 	}
+
+	if ( userData.active_tests ) {
+		store.set( store.set( ABTEST_ACTIVE_TESTS, userData.active_tests ) );
+	}
+
 	this.data = userData;
 	this.emit( 'change' );
 };

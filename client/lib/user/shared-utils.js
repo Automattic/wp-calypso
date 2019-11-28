@@ -33,6 +33,7 @@ const allowedKeys = [
 	'is_new_reader',
 	'social_login_connections',
 	'abtests',
+	'active_tests',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];
