@@ -23,7 +23,7 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
-import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
@@ -77,9 +77,11 @@ export class UserStep extends Component {
 
 	componentDidMount() {
 		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
-			initGoogleRecaptcha( 'g-recaptcha', 'calypso/signup/pageLoad' ).then(
-				this.saveRecaptchaToken
-			);
+			initGoogleRecaptcha(
+				'g-recaptcha',
+				'calypso/signup/pageLoad',
+				config( 'google_recaptcha_site_key' )
+			).then( this.saveRecaptchaToken );
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );

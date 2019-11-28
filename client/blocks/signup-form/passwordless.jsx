@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
