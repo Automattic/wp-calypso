@@ -50,7 +50,7 @@ class PurchasesList extends Component {
 		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
 
 		if ( null === hasAvailableConciergeSessions ) {
-			return null;
+			return <ConciergeBanner bannerType="placeholder" />;
 		}
 
 		let bannerType;
@@ -73,6 +73,7 @@ class PurchasesList extends Component {
 				recordTracksEvent={ this.props.recordTracksEvent }
 			/>
 		);
+		// return <ConciergeBanner bannerType="placeholder" />
 	}
 
 	render() {

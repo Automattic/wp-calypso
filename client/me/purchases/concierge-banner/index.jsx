@@ -8,11 +8,34 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
+import Card from 'components/card';
 import ActionCard from 'components/action-card';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ConciergeBanner extends Component {
+	placeholder() {
+		return (
+			<Card compact={ false }>
+				<div className="concierge-banner__placeholders is-placeholder">
+					<div className="concierge-banner__placeholder-row-container is-placeholder">
+						<div className="concierge-banner__placeholder-row is-placeholder" />
+						<div className="concierge-banner__placeholder-row is-placeholder" />
+						<div className="concierge-banner__placeholder-row is-placeholder" />
+					</div>
+					<div className="concierge-banner__placeholder-button-container">
+						<div className="concierge-banner__placeholder-button is-placeholder" />
+					</div>
+				</div>
+			</Card>
+		);
+	}
+
 	getText() {
 		const { bannerType } = this.props;
 
@@ -80,10 +103,16 @@ class ConciergeBanner extends Component {
 	}
 
 	render() {
+		const { bannerType } = this.props;
+
+		if ( 'placeholder' === bannerType ) {
+			return this.placeholder();
+		}
+
 		const { headerText, mainText, buttonText, buttonHref, illustrationUrl } = this.getText();
 
 		const className = classnames( {
-			'purchase-concierge': 'canPurchaseConcierge' === this.props.bannerType,
+			'purchase-concierge': 'canPurchaseConcierge' === bannerType,
 		} );
 
 		return (

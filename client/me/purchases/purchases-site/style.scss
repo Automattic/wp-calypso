@@ -28,11 +28,15 @@
 
 	& .action-card__button-container {
 		text-align: left;
+
+		@include breakpoint( '>960px' ) {
+			text-align: center;
+		}
 	}
 
 	& .action-card__illustration {
 		@include breakpoint( '>960px' ) {
-			margin: -10px 0 0 -20px;
+			margin: -10px -20px 0;
 		}
 	}
 
