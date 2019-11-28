@@ -21,6 +21,7 @@ import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
+import '../../../../../client/landing/gutenboarding/stores/verticals-templates'; // Should be @automattic/stores/vertical-templates
 /* eslint-enable import/no-extraneous-dependencies */
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
@@ -316,10 +317,11 @@ class PageTemplateModal extends Component {
 }
 
 export const PageTemplatesPlugin = compose(
-	withSelect( select => {
+	withSelect( ( select, ownProps ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
 		return {
+			templates: select( 'automattic/verticals/templates' ).getTemplates( ownProps.vertical.id ),
 			getMeta,
 			_starter_page_template,
 			postContentBlock: select( 'core/editor' )

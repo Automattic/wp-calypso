@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { PageTemplatesPlugin } from '../index';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
+import '../../../../../client/landing/gutenboarding/stores/verticals-templates'; // Should be @automattic/stores/vertical-templates
 /* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {
 	state = {
@@ -53,7 +54,7 @@ class SidebarModalOpener extends Component {
 
 	render() {
 		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
-		const { isFrontPage, templates, theme, vertical, segment, siteInformation } = this.props;
+		const { isFrontPage, theme, vertical, segment, siteInformation } = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
@@ -77,7 +78,6 @@ class SidebarModalOpener extends Component {
 				{ this.state.isTemplateModalOpen && (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
-						templates={ templates }
 						theme={ theme }
 						vertical={ vertical }
 						segment={ segment }
@@ -115,9 +115,10 @@ class SidebarModalOpener extends Component {
 }
 
 const SidebarTemplatesPlugin = compose(
-	withSelect( select => ( {
+	withSelect( ( select, ownProps ) => ( {
 		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
+		templates: select( 'automattic/verticals/templates' ).getTemplates( ownProps.vertical.id ),
 	} ) )
 )( SidebarModalOpener );
 

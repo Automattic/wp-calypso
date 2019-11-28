@@ -17,7 +17,6 @@ import { initializeWithIdentity } from './page-template-modal/utils/tracking';
 
 // Load config passed from backend.
 const {
-	templates = [],
 	vertical,
 	segment,
 	tracksUserData,
@@ -40,7 +39,6 @@ if ( screenAction === 'add' ) {
 					isFrontPage={ isFrontPage }
 					segment={ segment }
 					shouldPrefetchAssets={ false }
-					templates={ templates }
 					theme={ theme }
 					vertical={ vertical }
 				/>
@@ -63,7 +61,6 @@ registerPlugin( 'page-templates-sidebar', {
 					isFrontPage={ isFrontPage }
 					segment={ segment }
 					siteInformation={ siteInformation }
-					templates={ templates }
 					theme={ theme }
 					vertical={ vertical }
 				/>
