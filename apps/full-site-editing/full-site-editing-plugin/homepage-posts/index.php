@@ -9,10 +9,10 @@ function homepage_posts_view_assets( $style_path, $type, $is_rtl ) {
 	}
 
 	if ( $is_rtl ) {
-		return './dist/editor.rtl.css';
+		return plugins_url( 'dist/view.rtl.css', __FILE__ );
 	}
 
-	return './dist/editor.css';
+	return plugins_url( 'dist/view.css', __FILE__ );
 }
 add_filter( 'newspack_blocks_enqueue_view_assets', 'homepage_posts_view_assets', 10, 3 );
 
