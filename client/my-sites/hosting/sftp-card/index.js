@@ -103,7 +103,7 @@ const SftpCard = ( {
 					<div className="sftp-card__copy-field">
 						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
 						<ClipboardButton className="sftp-card__copy-button" text={ password } compact>
-							{ translate( 'Copy' ) }
+							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<p className="sftp-card__password-warning">
@@ -200,7 +200,7 @@ const SftpCard = ( {
 					<div className="sftp-card__copy-field">
 						<FormTextInput className="sftp-card__copy-input" value={ SFTP_URL } onChange={ noop } />
 						<ClipboardButton className="sftp-card__copy-button" text={ SFTP_URL } compact>
-							{ translate( 'Copy' ) }
+							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Port' ) }</FormLabel>
@@ -215,14 +215,14 @@ const SftpCard = ( {
 							text={ SFTP_PORT.toString() }
 							compact
 						>
-							{ translate( 'Copy' ) }
+							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Username' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
 						<FormTextInput className="sftp-card__copy-input" value={ username } onChange={ noop } />
 						<ClipboardButton className="sftp-card__copy-button" text={ username } compact>
-							{ translate( 'Copy' ) }
+							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Password' ) }</FormLabel>
