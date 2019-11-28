@@ -18,7 +18,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Style dependencies
  */
 import './style.scss';
-import classNames from 'classnames';
 
 const SiteBackupCard = ( {
 	disabled,
@@ -53,7 +52,7 @@ const SiteBackupCard = ( {
 		: null;
 
 	return (
-		<Card className={ classNames( 'site-backup-card', { [ 'is-disabled' ]: disabled } ) }>
+		<Card className="site-backup-card">
 			<CardHeading>{ translate( 'Site backup' ) }</CardHeading>
 			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
 				<>
@@ -68,10 +67,10 @@ const SiteBackupCard = ( {
 					</p>
 				</>
 			) }
-			{ hasRetrievedLastBackup && ! lastGoodBackup && ! isLoading && ! disabled && (
+			{ ( ( hasRetrievedLastBackup && ! lastGoodBackup && ! isLoading ) || disabled ) && (
 				<div>{ translate( 'There are no recent backups for your site.' ) }</div>
 			) }
-			{ ( ( isLoading && ! hasRetrievedLastBackup ) || disabled ) && (
+			{ isLoading && ! hasRetrievedLastBackup && (
 				<>
 					<div className="site-backup-card__placeholder"></div>
 					<div className="site-backup-card__placeholder"></div>
