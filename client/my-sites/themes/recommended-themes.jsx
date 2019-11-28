@@ -27,7 +27,7 @@ class RecommendedThemes extends React.Component {
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
 				) : (
-					<ConnectedThemesSelection { ...this.props } />
+					<ConnectedThemesSelection { ...this.props } className="recommended-themes__selection" />
 				) }
 			</>
 		);
