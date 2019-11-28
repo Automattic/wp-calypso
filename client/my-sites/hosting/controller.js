@@ -8,6 +8,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import Hosting from './main';
+import HostingActivate from './hosting-activate';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -50,5 +51,10 @@ export async function handleHostingPanelRedirect( context, next ) {
 
 export function layout( context, next ) {
 	context.primary = React.createElement( Hosting );
+	next();
+}
+
+export function activationLayout( context, next ) {
+	context.primary = React.createElement( HostingActivate );
 	next();
 }

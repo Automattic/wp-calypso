@@ -198,7 +198,15 @@ const mapDispatchToProps = {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const context = includes( ownProps.backUrl, 'plugins' ) ? 'plugins' : 'themes';
+	let context;
+	if ( includes( ownProps.backUrl, 'plugins' ) ) {
+		context = 'plugins';
+	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+		context = 'themes';
+	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
+		context = 'hosting';
+	}
+
 	const onCancel = () => dispatchProps.trackCancel( { context } );
 	const onProceed = () => {
 		ownProps.onProceed();

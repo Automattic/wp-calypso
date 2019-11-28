@@ -40,7 +40,6 @@
 		"help": true,
 		"help/courses": true,
 		"hosting": true,
-		"hosting/non-atomic-support": false,
 		"hosting/sftp-phpmyadmin": false,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,

@@ -15,7 +15,7 @@ import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -86,13 +86,18 @@ const PhpVersionCard = ( {
 	updateResult,
 	updating,
 	version,
+	disabled,
 } ) => {
-	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( null );
-	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( null );
+	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
+	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( '' );
+
+	const recommendedValue = '7.3';
 
 	useEffect( () => {
-		requestPhpVersion( siteId );
-	}, [ siteId ] );
+		if ( ! disabled ) {
+			requestPhpVersion( siteId );
+		}
+	}, [ siteId, disabled ] );
 
 	useEffect( () => {
 		const updateNoticeId = 'hosting-php-version';
@@ -121,6 +126,8 @@ const PhpVersionCard = ( {
 		}
 
 		if ( [ 'success', 'failure' ].includes( updateResult ) ) {
+			resetHttpData( requestId( siteId, 'POST' ) );
+
 			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
 		}
 	}, [ updateResult ] );
@@ -147,10 +154,10 @@ const PhpVersionCard = ( {
 				label: translate( '7.3 (recommended)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
-				value: '7.3',
+				value: recommendedValue,
 			},
 			{
-				label: translate( '7.4RC6', {
+				label: translate( '7.4', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.4',
@@ -163,16 +170,21 @@ const PhpVersionCard = ( {
 			return;
 		}
 
-		const isButtonDisabled = ! selectedPhpVersion || selectedPhpVersion === currentPhpVersion;
+		const isButtonDisabled =
+			disabled || ! selectedPhpVersion || selectedPhpVersion === currentPhpVersion;
+
+		const selectedValue =
+			selectedPhpVersion || currentPhpVersion || ( disabled && recommendedValue );
 
 		return (
 			<div>
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
+						disabled={ disabled }
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
-						value={ selectedPhpVersion || currentPhpVersion }
+						value={ selectedValue }
 					>
 						{ getPhpVersions().map( option => {
 							return (
@@ -225,15 +237,15 @@ export const recordHostingPhpVersionUpdate = ( version, result ) =>
 	);
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 
 		const phpVersionGet = getHttpData( requestId( siteId, 'GET' ) );
 		const phpVersionUpdate = getHttpData( requestId( siteId, 'POST' ) );
-		const version = phpVersionGet?.data ?? null;
+		const version = phpVersionGet?.data ?? '';
 
 		return {
-			loading: ! version && phpVersionGet.state === 'pending',
+			loading: ! props.disabled && ! version && phpVersionGet.state === 'pending',
 			siteId,
 			updating: phpVersionUpdate.state === 'pending',
 			updateResult: phpVersionUpdate.state,
