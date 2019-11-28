@@ -77,11 +77,7 @@ export class UserStep extends Component {
 
 	componentDidMount() {
 		if ( 'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' ) ) {
-			initGoogleRecaptcha(
-				'g-recaptcha',
-				'calypso/signup/pageLoad',
-				config( 'google_recaptcha_site_key' )
-			).then( this.saveRecaptchaToken );
+			this.initGoogleRecaptcha();
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
@@ -154,14 +150,24 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
-	saveRecaptchaToken = ( { token, clientId } ) => {
-		this.setState( { recaptchaClientId: clientId } );
+	initGoogleRecaptcha() {
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( result => {
+			if ( ! result ) {
+				return;
+			}
 
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			recaptchaToken: typeof token === 'string' ? token : undefined,
+			this.setState( { recaptchaClientId: result.clientId } );
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				recaptchaToken: typeof result.token === 'string' ? result.token : undefined,
+			} );
 		} );
-	};
+	}
 
 	save = form => {
 		this.props.saveSignupStep( {

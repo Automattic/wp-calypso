@@ -27,12 +27,11 @@ async function loadGoogleRecaptchaScript() {
 		const src = GOOGLE_RECAPTCHA_SCRIPT_URL;
 		await loadScript( src );
 		debug( 'loadGoogleRecaptchaScript: [Loaded]', src );
+		return true;
 	} catch ( error ) {
 		debug( 'loadGoogleRecaptchaScript: [Load Error] the script failed to load: ', error );
 		return false;
 	}
-
-	return true;
 }
 
 /**
@@ -64,8 +63,12 @@ async function renderRecaptchaClient( elementId, siteKey ) {
  */
 export async function recordGoogleRecaptchaAction( clientId, action ) {
 	if ( ! window.grecaptcha ) {
+		debug(
+			'recordGoogleRecaptchaAction: [Error] window.grecaptcha not defined. Did you forget to init?'
+		);
 		return null;
 	}
+
 	try {
 		const token = await window.grecaptcha.execute( clientId, { action } );
 		debug( 'recordGoogleRecaptchaAction: [Success]', action, token, clientId );
@@ -104,7 +107,15 @@ export async function initGoogleRecaptcha( elementId, action, siteKey ) {
 
 	try {
 		const clientId = await renderRecaptchaClient( elementId, siteKey );
+		if ( clientId == null ) {
+			return null;
+		}
+
 		const token = await recordGoogleRecaptchaAction( clientId, action );
+		if ( token == null ) {
+			return null;
+		}
+
 		debug( 'initGoogleRecaptcha: [Success]', action, token, clientId );
 		return { token, clientId };
 	} catch ( error ) {
