@@ -26,7 +26,7 @@ const getLastNonEditorRoute = createSelector(
 		 * page, you go to `/page`, which then redirects to `/block-editor/page`.
 		 * Matching page or post handles that case.
 		 */
-		const editorPattern = /^\/(block-editor|page|post)/;
+		const editorPattern = /^\/(block-editor|page[^s]|post[^s])/;
 
 		if ( previousPath && ! editorPattern.test( previousPath ) ) {
 			return previousPath;
