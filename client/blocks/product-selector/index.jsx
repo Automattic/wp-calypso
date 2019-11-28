@@ -31,6 +31,7 @@ import { getPlan, planHasFeature } from 'lib/plans';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { managePurchase } from 'me/purchases/paths';
 
 export class ProductSelector extends Component {
 	static propTypes = {
@@ -281,6 +282,14 @@ export class ProductSelector extends Component {
 		};
 	};
 
+	handleManagePurchase = productSlug => {
+		return () => {
+			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
+				slug: productSlug,
+			} );
+		};
+	};
+
 	handleProductOptionSelect( stateKey, selectedProductSlug, productId ) {
 		const { intervalType } = this.props;
 		const relatedStateChange = {};
@@ -316,6 +325,22 @@ export class ProductSelector extends Component {
 						productName: this.getProductName( product, productObject.product_slug ),
 					},
 				} ) }
+			/>
+		);
+	}
+
+	renderManageButton( purchase ) {
+		const { translate } = this.props;
+		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
+
+		return (
+			<ProductCardAction
+				onClick={ this.handleManagePurchase( purchase.productSlug ) }
+				href={ managePurchase( purchase.domain, purchase.id ) }
+				label={
+					! currentPlanIncludesProduct ? translate( 'Manage Product' ) : translate( 'Manage Plan' )
+				}
+				primary={ false }
 			/>
 		);
 	}
@@ -473,15 +498,17 @@ export class ProductSelector extends Component {
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
-			let purchase = this.getPurchaseByProduct( product );
-			const isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
-			const hasProductPurchase = !! purchase;
-			let isIncludedInCurrentPlan = false;
 
-			if ( currentPlanIncludesProduct && ! hasProductPurchase ) {
+			let purchase, isCurrent;
+			if ( currentPlanIncludesProduct ) {
 				purchase = this.getPurchaseByCurrentPlan();
-				isIncludedInCurrentPlan = currentPlanInSelectedTimeframe;
+				isCurrent = currentPlanInSelectedTimeframe;
+			} else {
+				purchase = this.getPurchaseByProduct( product );
+				isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
 			}
+
+			const hasProductPurchase = !! purchase;
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
@@ -517,10 +544,9 @@ export class ProductSelector extends Component {
 					currencyCode={ currencyCode }
 					purchase={ purchase }
 					subtitle={ subtitle }
-					isCurrent={ isCurrent }
-					isIncludedInCurrentPlan={ isIncludedInCurrentPlan }
 				>
-					{ ! purchase && ! currentPlanIncludesProduct && (
+					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
+					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
 							<ProductCardOptions
 								optionsLabel={ product.optionsLabel }
