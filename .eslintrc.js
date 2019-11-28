@@ -64,13 +64,17 @@ module.exports = {
 		),
 	],
 	env: {
-		browser: true,
 		jest: true,
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
 	},
 	globals: {
+		// allow the browser globals. ESLint's `browser` env is too permissive and allows referencing
+		// directly hundreds of properties that are available on `window` and `document`. That
+		// frequently caused bugs where we used an undefined variable and ESLint didn't warn us.
+		window: true,
+		document: true,
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
 		asyncRequire: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
