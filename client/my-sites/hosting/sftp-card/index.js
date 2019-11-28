@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,11 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import { getAtomicHostingSftpUsers } from 'state/selectors/get-atomic-hosting-sftp-users';
+import ExternalLink from 'components/external-link';
+import { localizeUrl } from 'lib/i18n-utils';
+import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 
 /**
  * Style dependencies
@@ -55,13 +60,8 @@ const SftpCard = ( {
 	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
-	const [ isCopied, setIsCopied ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
-	const usernameIsCopied = isCopied === 'username';
-	const passwordIsCopied = isCopied === 'password';
-	const urlIsCopied = isCopied === 'url';
-	const portIsCopied = isCopied === 'port';
 
 	const onDestroy = () => {
 		if ( password ) {
@@ -92,7 +92,7 @@ const SftpCard = ( {
 		}
 	}, [ username, password ] );
 
-	const renderPasswordCell = () => {
+	const renderPasswordField = () => {
 		if ( disabled ) {
 			return <span></span>;
 		}
@@ -100,13 +100,15 @@ const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<span className="sftp-card__hidden-overflow">{ password }</span>
-					<ClipboardButton text={ password } onCopy={ () => setIsCopied( 'password' ) } compact>
-						{ passwordIsCopied ? translate( 'Copied!' ) : translate( 'Copy password' ) }
-					</ClipboardButton>
+					<div className="sftp-card__copy-field">
+						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
+						<ClipboardButton className="sftp-card__copy-button" text={ password } compact>
+							{ translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
 					<p className="sftp-card__password-warning">
 						{ translate(
-							"Be sure to save your password somewhere safe. You won't be able to view it again without resetting."
+							'Save your password someplace safe. A reset will be needed to view again.'
 						) }
 					</p>
 				</>
@@ -115,13 +117,10 @@ const SftpCard = ( {
 
 		return (
 			<>
-				<span>{ translate( 'You must reset your password to view it.' ) }</span>
-				<Button
-					onClick={ resetPassword }
-					disabled={ isPasswordLoading }
-					busy={ isPasswordLoading }
-					compact
-				>
+				<p className="sftp-card__password-explainer">
+					{ translate( 'For security reasons, your password needs a reset to view' ) }
+				</p>
+				<Button onClick={ resetPassword } disabled={ isPasswordLoading } busy={ isPasswordLoading }>
 					{ translate( 'Reset Password' ) }
 				</Button>
 			</>
@@ -136,34 +135,42 @@ const SftpCard = ( {
 			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
 				<p>
-					{ translate( "Access and edit your website's files directly by using an SFTP client." ) }
+					{ username
+						? translate(
+								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								{
+									components: {
+										a: (
+											<ExternalLink
+												icon
+												target="_blank"
+												href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+						  ) }
 				</p>
 			</div>
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions">
 					<Accordion title={ translate( 'What is SFTP?' ) }>
 						{ translate(
-							"{{p}}It's a way for you to access the files and folders on a website via a client program such as {{a}}Filezilla{{/a}} on your local computer.{{/p}}" +
-								'{{p}}SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It was designed as an extension of the SSH (Secure SHell) protocol. The “secure” part is because it is run over a secure channel, in this case SSH.{{/p}}' +
-								'{{p}}SFTP is not to be confused with File Transfer Protocol (FTP) which is similar but not secure. Thanks to the security provided by SFTP you can rest easy knowing that your files and your site are safe and sound.{{/p}}' +
-								'{{p}}A variety of custom plugins and themes may ask you to create specific folders or add files via SFTP however, generally speaking, SFTP is not required for your site to function.{{/p}}',
+							'It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}} ' +
+								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}} ',
 							{
 								components: {
-									p: <p />,
-									a: <a href={ FILEZILLA_URL } />,
-								},
-							}
-						) }
-					</Accordion>
-					<Accordion title={ translate( 'How to use SFTP to access your site' ) }>
-						{ translate(
-							'{{p}}Click on "Enable SFTP Credentials". Once you’ve enabled SFTP, you’ll see your SFTP URL, Port Number, Username and Password. Keep these credentials safe!{{/p}}' +
-								'{{p}}The username and password are generated by the system automatically. These are unique to your site, so if you have multiple sites, you’ll need to use multiple usernames and passwords, one for each site, in your SFTP Client.{{/p}}' +
-								'{{p}}After you’ve created a user and password, you can enter them in an SFTP Client of your choice! If you don’t have a preference, {{a}}Filezilla{{/a}} is a popular and free SFTP client. Clicking the copy button will copy them to your clipboard for ease of use.{{/p}}',
-							{
-								components: {
-									p: <p />,
-									a: <a href={ FILEZILLA_URL } />,
+									a: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
+									supportLink: (
+										<ExternalLink
+											icon
+											target="_blank"
+											href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+										/>
+									),
 								},
 							}
 						) }
@@ -183,66 +190,44 @@ const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary>
-						{ translate( 'Enable SFTP Credentials' ) }
+						{ translate( 'Create SFTP Credentials' ) }
 					</Button>
 				</>
 			) }
 			{ ( username || disabled ) && (
-				<table
-					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: disabled } ) }
-				>
-					<tbody>
-						<tr key={ translate( 'URL' ) }>
-							<th>{ translate( 'URL' ) }:</th>
-							<td>
-								<>
-									<span>{ ! disabled && SFTP_URL }</span>
-									<ClipboardButton text={ SFTP_URL } onCopy={ () => setIsCopied( 'url' ) } compact>
-										{ urlIsCopied ? translate( 'Copied!' ) : translate( 'Copy URL' ) }
-									</ClipboardButton>
-								</>
-							</td>
-						</tr>
-						<tr key={ translate( 'Port' ) }>
-							<th>{ translate( 'Port' ) }:</th>
-							<td>
-								<>
-									<span>{ ! disabled && SFTP_PORT }</span>
-									<ClipboardButton
-										text={ SFTP_PORT.toString() }
-										onCopy={ () => setIsCopied( 'port' ) }
-										compact
-									>
-										{ portIsCopied ? translate( 'Copied!' ) : translate( 'Copy Port' ) }
-									</ClipboardButton>
-								</>
-							</td>
-						</tr>
-						<tr className={ classNames( { 'has-action': ! disabled } ) }>
-							<th>{ translate( 'Username' ) }:</th>
-							<td>
-								{ disabled ? (
-									<span></span>
-								) : (
-									<>
-										<span className="sftp-card__hidden-overflow">{ username }</span>
-										<ClipboardButton
-											text={ username }
-											onCopy={ () => setIsCopied( 'username' ) }
-											compact
-										>
-											{ usernameIsCopied ? translate( 'Copied!' ) : translate( 'Copy username' ) }
-										</ClipboardButton>
-									</>
-								) }
-							</td>
-						</tr>
-						<tr className={ classNames( { 'has-action': ! disabled } ) }>
-							<th>{ translate( 'Password' ) }:</th>
-							<td>{ renderPasswordCell() }</td>
-						</tr>
-					</tbody>
-				</table>
+				<FormFieldset className="sftp-card__info-field">
+					<FormLabel>{ translate( 'URL' ) }</FormLabel>
+					<div className="sftp-card__copy-field">
+						<FormTextInput className="sftp-card__copy-input" value={ SFTP_URL } onChange={ noop } />
+						<ClipboardButton className="sftp-card__copy-button" text={ SFTP_URL } compact>
+							{ translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
+					<FormLabel>{ translate( 'Port' ) }</FormLabel>
+					<div className="sftp-card__copy-field">
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ SFTP_PORT }
+							onChange={ noop }
+						/>
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ SFTP_PORT.toString() }
+							compact
+						>
+							{ translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
+					<FormLabel>{ translate( 'Username' ) }</FormLabel>
+					<div className="sftp-card__copy-field">
+						<FormTextInput className="sftp-card__copy-input" value={ username } onChange={ noop } />
+						<ClipboardButton className="sftp-card__copy-button" text={ username } compact>
+							{ translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
+					<FormLabel>{ translate( 'Password' ) }</FormLabel>
+					{ renderPasswordField() }
+				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
 		</Card>
@@ -264,10 +249,10 @@ const createSftpUser = ( siteId, currentUserId ) =>
 		composeAnalytics(
 			recordGoogleEvent(
 				'Hosting Configuration',
-				'Clicked "Enable SFTP Credentials" Button in SFTP Card'
+				'Clicked "Create SFTP Credentials" Button in SFTP Card'
 			),
-			recordTracksEvent( 'calypso_hosting_configuration_enable_sftp' ),
-			bumpStat( 'hosting-config', 'enable-sftp' )
+			recordTracksEvent( 'calypso_hosting_configuration_create_sftp_user' ),
+			bumpStat( 'hosting-config', 'create-sftp-user' )
 		),
 		createAtomicSftpUser( siteId, currentUserId )
 	);
