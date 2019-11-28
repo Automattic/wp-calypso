@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global starterPageTemplatesConfig */
 
 /**
  * External dependencies
@@ -16,9 +15,6 @@ import { PageTemplatesPlugin } from '../index';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
-
-const { theme, isFrontPage } = starterPageTemplatesConfig;
-
 class SidebarModalOpener extends Component {
 	state = {
 		isTemplateModalOpen: false,
@@ -34,7 +30,7 @@ class SidebarModalOpener extends Component {
 	};
 
 	getLastTemplateUsed = () => {
-		const { templates } = this.props;
+		const { isFrontPage, templates, theme } = this.props;
 		let { lastTemplateUsedSlug } = this.props;
 		// Try to match the homepage of the theme. Note that as folks transition
 		// to using the slug-based version of the homepage (e.g. "shawburn"), the
@@ -57,7 +53,7 @@ class SidebarModalOpener extends Component {
 
 	render() {
 		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
-		const { templates, vertical, segment, siteInformation } = this.props;
+		const { isFrontPage, templates, theme, vertical, segment, siteInformation } = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
@@ -82,9 +78,11 @@ class SidebarModalOpener extends Component {
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
+						theme={ theme }
 						vertical={ vertical }
 						segment={ segment }
 						toggleTemplateModal={ this.toggleTemplateModal }
+						isFrontPage={ isFrontPage }
 						isPromptedFromSidebar
 					/>
 				) }

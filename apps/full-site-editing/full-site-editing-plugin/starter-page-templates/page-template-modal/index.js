@@ -74,10 +74,10 @@ class PageTemplateModal extends Component {
 
 		// Parse templates blocks and store them into the state.
 		const blocksByTemplateSlug = reduce(
-			templates,
+			this.props.templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, siteInformation ) )
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
 					: [];
 				return prev;
 			},
@@ -93,16 +93,16 @@ class PageTemplateModal extends Component {
 		let previouslyChosenTemplate = props._starter_page_template;
 
 		// Usally the "new page" case.
-		if ( ! isFrontPage && ! previouslyChosenTemplate ) {
+		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
 			return blankTemplate;
 		}
 
 		// Normalize "home" slug into the current theme.
 		if ( previouslyChosenTemplate === 'home' ) {
-			previouslyChosenTemplate = theme;
+			previouslyChosenTemplate = props.theme;
 		}
 
-		const slug = previouslyChosenTemplate || theme;
+		const slug = previouslyChosenTemplate || props.theme;
 
 		if ( find( props.templates, { slug } ) ) {
 			return slug;
@@ -203,10 +203,10 @@ class PageTemplateModal extends Component {
 		} );
 
 		const currentThemeTemplate =
-			find( this.props.templates, { slug: theme } ) ||
+			find( this.props.templates, { slug: this.props.theme } ) ||
 			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
 
-		if ( ! isFrontPage || ! currentThemeTemplate ) {
+		if ( ! this.props.isFrontPage || ! currentThemeTemplate ) {
 			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
 		}
 
@@ -229,7 +229,7 @@ class PageTemplateModal extends Component {
 				blocksByTemplates={ this.state.blocksByTemplateSlug }
 				onTemplateSelect={ this.previewTemplate }
 				useDynamicPreview={ false }
-				siteInformation={ siteInformation }
+				siteInformation={ this.props.siteInformation }
 				selectedTemplate={ this.state.previewedTemplate }
 				handleTemplateConfirmation={ this.handleConfirmation }
 			/>
@@ -281,7 +281,7 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								{ isFrontPage ? (
+								{ this.props.isFrontPage ? (
 									<>
 										{ this.renderTemplatesList(
 											homepageTemplates,
@@ -391,10 +391,12 @@ if ( screenAction === 'add' ) {
 		render: () => {
 			return (
 				<PageTemplatesPlugin
+					isFrontPage={ isFrontPage }
+					segment={ segment }
 					shouldPrefetchAssets={ false }
 					templates={ templates }
+					theme={ theme }
 					vertical={ vertical }
-					segment={ segment }
 				/>
 			);
 		},
@@ -412,10 +414,12 @@ registerPlugin( 'page-templates-sidebar', {
 				icon="admin-page"
 			>
 				<SidebarTemplatesPlugin
-					templates={ templates }
-					vertical={ vertical }
+					isFrontPage={ isFrontPage }
 					segment={ segment }
 					siteInformation={ siteInformation }
+					templates={ templates }
+					theme={ theme }
+					vertical={ vertical }
 				/>
 			</PluginDocumentSettingPanel>
 		);
