@@ -19,11 +19,6 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import { clickUpgradeNudge } from 'state/marketing/actions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
 	return (
 		<SidebarBanner
