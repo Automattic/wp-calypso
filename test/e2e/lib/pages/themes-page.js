@@ -28,10 +28,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			by.css( `button[data-e2e-value="open-themes-button"]` )
-		);
+		await this.openShowcase();
 		await driverHelper.clickWhenClickable( this.driver, by.css( `a[data-e2e-value="${ type }"]` ) );
 		return await this.waitUntilThemesLoaded();
 	}
@@ -88,6 +85,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clickPopoverItem( name ) {
+		await this.openShowcase();
 		const actionItemSelector = by.css( '.popover__menu-item' );
 		return await driverHelper.selectElementByText( this.driver, actionItemSelector, name );
 	}
@@ -103,13 +101,17 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clearSearch() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			by.css( `button[data-e2e-value="open-themes-button"]` )
-		);
+		await this.openShowcase();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.themes-magic-search-card__icon-close' )
+		);
+	}
+
+	async openShowcase() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( `button[data-e2e-value="open-themes-button"]` )
 		);
 	}
 }
