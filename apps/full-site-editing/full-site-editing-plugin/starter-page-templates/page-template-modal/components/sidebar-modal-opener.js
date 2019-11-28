@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { PageTemplatesPlugin } from '../index';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
-import '../../../../../client/landing/gutenboarding/stores/verticals-templates'; // Should be @automattic/stores/vertical-templates
+import '../../../../../../client/landing/gutenboarding/stores/verticals-templates'; // Should be @automattic/stores/vertical-templates
 /* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {
 	state = {
