@@ -103,6 +103,10 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clearSearch() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( `button[data-e2e-value="open-themes-button"]` )
+		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.themes-magic-search-card__icon-close' )
