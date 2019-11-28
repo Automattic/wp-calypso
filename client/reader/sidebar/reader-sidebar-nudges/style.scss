@@ -1,6 +1,4 @@
-.reader-sidebar-nudges {
-	.sidebar-banner__link {
-		background-color: var( --color-plan-premium );
-		color: var( --color-text );
-	}
+.reader-sidebar-nudges .sidebar-banner__link {
+	background-color: var( --color-success );
+	color: var( --color-text-inverted );
 }
