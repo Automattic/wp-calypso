@@ -104,7 +104,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<h2 class="article-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</h2>
-				<?php
+			<?php
 			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
@@ -164,7 +164,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 							// Use Yoast primary category if set.
 							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
 								$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
-								$category_id  = $primary_term->get_primary_term();
+								$category_id = $primary_term->get_primary_term();
 								if ( $category_id ) {
 									$category = get_term( $category_id );
 								}
@@ -257,7 +257,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
  */
 function newspack_blocks_register_homepage_articles() {
 	register_block_type(
-		'a8c/homepage-posts',
+		'newspack-blocks/homepage-articles',
 		array(
 			'attributes'      => array(
 				'className'       => array(
@@ -287,7 +287,7 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showCategory'    => array(
+				'showCategory'  => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
@@ -350,7 +350,7 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'boolean',
 					'default' => false,
 				),
-				'imageShape'      => array(
+				'imageShape'    => array(
 					'type'    => 'string',
 					'default' => 'landscape',
 				),
