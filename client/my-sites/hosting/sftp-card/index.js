@@ -135,7 +135,24 @@ const SftpCard = ( {
 			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
 				<p>
-					{ translate( "Access and edit your website's files directly by using an SFTP client." ) }
+					{ username
+						? translate(
+								'Use the credentials below to access and edit your website using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								{
+									components: {
+										a: (
+											<ExternalLink
+												icon
+												target="_blank"
+												href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								"Access and edit your website's files directly by using an SFTP client."
+						  ) }
 				</p>
 			</div>
 			{ displayQuestionsAndButton && (
