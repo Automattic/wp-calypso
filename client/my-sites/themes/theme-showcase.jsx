@@ -305,7 +305,13 @@ class ThemeShowcase extends React.Component {
 						</>
 					) }
 
-					<div className={ ! this.state.isShowcaseOpen ? 'themes__hidden-content' : null }>
+					<div
+						className={
+							! this.state.isShowcaseOpen
+								? 'themes__hidden-content theme-showcase__all-themes'
+								: 'theme-showcase__all-themes'
+						}
+					>
 						{ ! this.props.loggedOutComponent && (
 							<>
 								<h2>

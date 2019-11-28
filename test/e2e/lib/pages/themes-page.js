@@ -56,9 +56,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clickNewThemeMoreButton() {
-		const selector = by.css(
-			':not(.recommended-themes__selection) .is-actionable:not(.is-active) button'
-		);
+		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) button' );
 
 		await driverHelper.scrollIntoView( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
