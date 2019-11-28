@@ -40,7 +40,6 @@ class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
-		blocksByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
@@ -48,6 +47,20 @@ class PageTemplateModal extends Component {
 	// Extract titles for faster lookup.
 	getTitlesByTemplateSlug = memoize( templates =>
 		mapValues( keyBy( templates, 'slug' ), 'title' )
+	);
+
+	// Parse templates blocks and store them into the state.
+	getBlocksByTemplateSlug = memoize( templates =>
+		reduce(
+			templates,
+			( prev, { slug, content } ) => {
+				prev[ slug ] = content
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
+					: [];
+				return prev;
+			},
+			{}
+		)
 	);
 
 	constructor( props ) {
@@ -64,21 +77,6 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
-
-		// Parse templates blocks and store them into the state.
-		const blocksByTemplateSlug = reduce(
-			this.props.templates,
-			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
-					: [];
-				return prev;
-			},
-			{}
-		);
-
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocksByTemplateSlug } );
 	}
 
 	getDefaultSelectedTemplate = props => {
@@ -183,7 +181,7 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( slug ) {
-		return get( this.state.blocksByTemplateSlug, [ slug ], [] );
+		return get( this.getBlocksByTemplateSlug( this.props.templates ), [ slug ], [] );
 	}
 
 	getTitleByTemplateSlug( slug ) {
@@ -219,7 +217,7 @@ class PageTemplateModal extends Component {
 			<TemplateSelectorControl
 				label={ __( 'Layout', 'full-site-editing' ) }
 				templates={ templatesList }
-				blocksByTemplates={ this.state.blocksByTemplateSlug }
+				blocksByTemplates={ this.getBlocksByTemplateSlug( this.props.templates ) }
 				onTemplateSelect={ this.previewTemplate }
 				useDynamicPreview={ false }
 				siteInformation={ this.props.siteInformation }
