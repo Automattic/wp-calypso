@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import wrapWithClickOutside from 'react-click-outside';
@@ -30,6 +30,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
+import FeatureExample from 'components/feature-example';
 
 /**
  * Style dependencies
@@ -139,8 +140,10 @@ class Hosting extends Component {
 			const sftpPhpMyAdminFeaturesEnabled =
 				isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
 
+			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
+
 			return (
-				<>
+				<WrapperComponent>
 					<div className="hosting__layout">
 						<div className="hosting__layout-col">
 							{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
@@ -151,7 +154,7 @@ class Hosting extends Component {
 							<SupportCard />
 						</div>
 					</div>
-				</>
+				</WrapperComponent>
 			);
 		};
 
