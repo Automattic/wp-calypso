@@ -2,7 +2,18 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, partition, reject, sortBy } from 'lodash';
+import {
+	find,
+	isEmpty,
+	reduce,
+	get,
+	keyBy,
+	mapValues,
+	memoize,
+	partition,
+	reject,
+	sortBy,
+} from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -30,10 +41,14 @@ class PageTemplateModal extends Component {
 		isLoading: false,
 		previewedTemplate: null,
 		blocksByTemplateSlug: {},
-		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
+
+	// Extract titles for faster lookup.
+	getTitlesByTemplateSlug = memoize( templates =>
+		mapValues( keyBy( templates, 'slug' ), 'title' )
+	);
 
 	constructor( props ) {
 		super();
@@ -42,8 +57,6 @@ class PageTemplateModal extends Component {
 		if ( hasTemplates ) {
 			// Select the first template automatically.
 			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
-			// Extract titles for faster lookup.
-			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
 		}
 	}
 
@@ -174,7 +187,7 @@ class PageTemplateModal extends Component {
 	}
 
 	getTitleByTemplateSlug( slug ) {
-		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
+		return get( this.getTitlesByTemplateSlug( this.props.templates ), [ slug ], '' );
 	}
 
 	getTemplateGroups = () => {
