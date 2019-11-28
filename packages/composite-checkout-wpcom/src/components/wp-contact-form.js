@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { usePaymentData } from '@automattic/composite-checkout';
+import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -17,8 +17,9 @@ import { LeftColumn, RightColumn } from './ie-fallback';
 
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const { isDomainContactSame = true } = paymentData;
+	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
+	const setters = useDispatch( 'wpcom' );
 
 	if ( summary && isComplete ) {
 		return <ContactFormSummary />;
@@ -27,17 +28,22 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 		return null;
 	}
 
-	const toggleDomainFieldsVisibility = () => {
-		updatePaymentData( 'isDomainContactSame', ! isDomainContactSame );
-	};
+	const toggleDomainFieldsVisibility = () =>
+		setters.setIsDomainContactSame( ! isDomainContactSame );
 
 	return (
 		<BillingFormFields>
-			{ isDomainFieldsVisible && <AddressFields fieldType={ 'billing' } /> }
+			{ isDomainFieldsVisible && (
+				<AddressFields section="contact" contactInfo={ contactInfo } setters={ setters } />
+			) }
 
-			<TaxFields fieldType={ 'billing' } />
+			<TaxFields section="contact" taxInfo={ contactInfo } setters={ setters } />
 
-			<PhoneNumberField fieldType={ 'billing' } />
+			<PhoneNumberField
+				id="contact-phone-number"
+				phoneNumber={ contactInfo.phoneNumber }
+				onChange={ setters.setContactField }
+			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
 
@@ -167,104 +173,103 @@ const DomainRegistrationCheckbox = styled.input`
 	}
 `;
 
-function AddressFields( { fieldType } ) {
+function AddressFields( { section, contactInfo, setters } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { firstName, lastName, email, address, city, state } = contactInfo;
+	const { setContactField } = setters;
 
 	return (
 		<React.Fragment>
 			<FieldRow>
 				<LeftColumn>
 					<Field
-						id={ fieldType + '-first-name' }
+						id={ section + '-first-name' }
 						type="text"
 						label={ translate( 'First name' ) }
-						value={ currentLocationData.firstName || '' }
-						onChange={ value => {
-							updateLocationData( 'firstName', value );
-						} }
+						value={ firstName.value }
+						onChange={ value =>
+							setContactField( 'firstName', { value, isTouched: true, isValid: !! value } )
+						}
 						autoComplete="given-name"
+						isError={ firstName.isTouched && ! firstName.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</LeftColumn>
 
 				<RightColumn>
 					<Field
-						id={ fieldType + '-last-name' }
+						id={ section + '-last-name' }
 						type="text"
 						label={ translate( 'Last name' ) }
-						value={ currentLocationData.lastName || '' }
-						onChange={ value => {
-							updateLocationData( 'lastName', value );
-						} }
+						value={ lastName.value }
+						onChange={ value =>
+							setContactField( 'lastName', { value, isTouched: true, isValid: !! value } )
+						}
 						autoComplete="family-name"
+						isError={ lastName.isTouched && ! lastName.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</RightColumn>
 			</FieldRow>
 
 			<FormField
-				id={ fieldType + '-email-address' }
+				id={ section + '-email-address' }
 				type="email"
 				label={ translate( 'Email address' ) }
 				placeholder={ translate( 'name@example.com' ) }
-				value={ currentLocationData.email || '' }
-				onChange={ value => {
-					updateLocationData( 'email', value );
-				} }
+				value={ email.value }
+				onChange={ value =>
+					setContactField( 'email', { value, isTouched: true, isValid: !! value } )
+				}
 				autoComplete="email"
+				isError={ email.isTouched && ! email.isValid }
+				errorMessage={ translate( 'This field is required.' ) }
 			/>
 
 			<FormField
-				id={ fieldType + '-address' }
+				id={ section + '-address' }
 				type="text"
 				label={ translate( 'Address' ) }
-				value={ currentLocationData.address || '' }
-				onChange={ value => {
-					updateLocationData( 'address', value );
-				} }
-				autoComplete={ fieldType + ' street-address' }
+				value={ address.value }
+				onChange={ value =>
+					setContactField( 'address', { value, isTouched: true, isValid: !! value } )
+				}
+				autoComplete={ section + ' street-address' }
+				isError={ address.isTouched && ! address.isValid }
+				errorMessage={ translate( 'This field is required.' ) }
 			/>
 
 			<FieldRow>
 				<LeftColumn>
 					<Field
-						id={ fieldType + '-city' }
+						id={ section + '-city' }
 						type="text"
 						label={ translate( 'City' ) }
-						value={ currentLocationData.city || '' }
-						onChange={ value => {
-							updateLocationData( 'city', value );
-						} }
-						autoComplete={ fieldType + ' address-level2' }
+						value={ city.value }
+						onChange={ value =>
+							setContactField( 'city', { value, isTouched: true, isValid: !! value } )
+						}
+						autoComplete={ section + ' address-level2' }
+						isError={ city.isTouched && ! city.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
 					/>
 				</LeftColumn>
 
 				<RightColumn>
-					{ isStateorProvince() === 'state' ? (
-						<Field
-							id={ fieldType + '-state' }
-							type="text"
-							label={ translate( 'State' ) }
-							value={ currentLocationData.state || '' }
-							onChange={ value => {
-								updateLocationData( 'state', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
-						/>
-					) : (
-						<Field
-							id={ fieldType + '-province' }
-							type="text"
-							label={ translate( 'Province' ) }
-							value={ currentLocationData.province || '' }
-							onChange={ value => {
-								updateLocationData( 'province', value );
-							} }
-							autoComplete={ fieldType + ' address-level1' }
-						/>
-					) }
+					<Field
+						id={ section + '-state' }
+						type="text"
+						label={
+							isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
+						}
+						value={ state.value }
+						onChange={ value =>
+							setContactField( 'state', { value, isTouched: true, isValid: !! value } )
+						}
+						autoComplete={ section + ' address-level1' }
+						isError={ state.isTouched && ! state.isValid }
+						errorMessage={ translate( 'This field is required.' ) }
+					/>
 				</RightColumn>
 			</FieldRow>
 		</React.Fragment>
@@ -272,7 +277,9 @@ function AddressFields( { fieldType } ) {
 }
 
 AddressFields.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
+	contactInfo: PropTypes.object.isRequired,
+	setters: PropTypes.object.isRequired,
 };
 
 function isStateorProvince() {
@@ -280,112 +287,95 @@ function isStateorProvince() {
 	return 'province';
 }
 
-function PhoneNumberField( { fieldType } ) {
+function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
 	return (
 		<FormField
-			id={ fieldType + '-phone-number' }
+			id={ id }
 			type="Number"
-			label={
-				fieldType === 'billing'
-					? translate( 'Phone number (Optional)' )
-					: translate( 'Phone number' )
+			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
+			value={ phoneNumber.value }
+			onChange={ value =>
+				onChange( 'phoneNumber', { value, isTouched: true, isValid: isRequired ? !! value : true } )
 			}
-			value={ currentLocationData.phoneNumber || '' }
-			onChange={ value => {
-				updateLocationData( 'phoneNumber', value );
-			} }
 			autoComplete="tel"
+			isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
+			errorMessage={ translate( 'This field is required.' ) }
 		/>
 	);
 }
 
 PhoneNumberField.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	isRequired: PropTypes.bool,
+	id: PropTypes.string.isRequired,
+	phoneNumber: PropTypes.object.isRequired,
+	onChange: PropTypes.func.isRequired,
 };
 
 function VatIdField() {
 	const translate = useTranslate();
-	const fieldType = 'billing';
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { vatId } = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const { setVatId } = useDispatch( 'wpcom' );
 
 	return (
 		<FormField
-			id={ 'billing-vat-id' }
+			id="contact-vat-id"
 			type="Number"
 			label={ translate( 'VAT identification number' ) }
-			value={ currentLocationData.vatId || '' }
-			onChange={ value => {
-				updateLocationData( 'vatId', value );
-			} }
+			value={ vatId.value }
+			onChange={ value => setVatId( { value, isTouched: true, isValid: !! value } ) }
+			isError={ vatId.isTouched && ! vatId.isValid }
+			errorMessage={ translate( 'This field is required.' ) }
 		/>
 	);
 }
 
-function TaxFields( { fieldType } ) {
+function TaxFields( { section, taxInfo, setters } ) {
 	const translate = useTranslate();
-	const [ paymentData, updatePaymentData ] = usePaymentData();
-	const currentLocationData = paymentData[ fieldType ] || {};
-	// TODO: add field validation; at least to see if a required field is set
-	const updateLocationData = ( key, value ) =>
-		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
+	const { postalCode, country } = taxInfo;
+	const { setContactField } = setters;
 
+	const isZip = isZipOrPostal() === 'zip';
 	return (
-		<React.Fragment>
-			<FieldRow>
-				<LeftColumn>
-					{ isZipOrPostal() === 'zip' ? (
-						<Field
-							id={ fieldType + '-zip-code' }
-							type="text"
-							label={ translate( 'Zip code' ) }
-							value={ currentLocationData.zipCode || '' }
-							onChange={ value => {
-								updateLocationData( 'zipCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) : (
-						<Field
-							id={ fieldType + '-postal-code' }
-							type="text"
-							label={ translate( 'Postal code' ) }
-							value={ currentLocationData.postalCode || '' }
-							onChange={ value => {
-								updateLocationData( 'postalCode', value );
-							} }
-							autoComplete={ fieldType + ' postal-code' }
-						/>
-					) }
-				</LeftColumn>
+		<FieldRow>
+			<LeftColumn>
+				<Field
+					id={ section + '-postal-code' }
+					type="text"
+					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
+					value={ postalCode.value }
+					onChange={ value =>
+						setContactField( 'postalCode', { value, isTouched: true, isValid: !! value } )
+					}
+					autoComplete={ section + ' postal-code' }
+					isError={ postalCode.isTouched && ! postalCode.isValid }
+					errorMessage={ translate( 'This field is required.' ) }
+				/>
+			</LeftColumn>
 
-				<RightColumn>
-					<Field
-						id={ fieldType + '-country' }
-						type="text"
-						label={ translate( 'Country' ) }
-						value={ currentLocationData.country || '' }
-						onChange={ value => {
-							updateLocationData( 'country', value );
-						} }
-						autoComplete={ fieldType + ' country' }
-					/>
-				</RightColumn>
-			</FieldRow>
-		</React.Fragment>
+			<RightColumn>
+				<Field
+					id={ section + '-country' }
+					type="text"
+					label={ translate( 'Country' ) }
+					value={ country.value }
+					onChange={ value =>
+						setContactField( 'country', { value, isTouched: true, isValid: !! value } )
+					}
+					autoComplete={ section + ' country' }
+					isError={ country.isTouched && ! country.isValid }
+					errorMessage={ translate( 'This field is required.' ) }
+				/>
+			</RightColumn>
+		</FieldRow>
 	);
 }
 
 TaxFields.propTypes = {
-	fieldType: PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
+	taxInfo: PropTypes.object.isRequired,
+	setters: PropTypes.object.isRequired,
 };
 
 function isZipOrPostal() {
@@ -395,6 +385,11 @@ function isZipOrPostal() {
 
 function DomainFields() {
 	const translate = useTranslate();
+	const contactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
+	const { setDomainContactField } = useDispatch( 'wpcom' );
+	const setters = {
+		setContactField: setDomainContactField,
+	};
 
 	return (
 		<DomainContactFields>
@@ -407,9 +402,14 @@ function DomainFields() {
 				) }
 			</DomainContactFieldsDescription>
 
-			<AddressFields fieldType={ 'domains' } />
-			<TaxFields fieldType={ 'domains' } />
-			<PhoneNumberField fieldType={ 'domains' } />
+			<AddressFields section="domains" contactInfo={ contactInfo } setters={ setters } />
+			<TaxFields section="domains" taxInfo={ contactInfo } setters={ setters } />
+			<PhoneNumberField
+				id="domains-phone-number"
+				isRequired
+				phoneNumber={ contactInfo.phoneNumber }
+				onChange={ setDomainContactField }
+			/>
 		</DomainContactFields>
 	);
 }
@@ -435,84 +435,99 @@ const DomainContactFieldsDescription = styled.p`
 
 function ContactFormSummary() {
 	const translate = useTranslate();
-	const [ paymentData ] = usePaymentData();
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const domainContactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
+	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
 
 	//Check if paymentData is empty
-	if ( Object.entries( paymentData ).length === 0 ) {
+	if (
+		Object.entries( contactInfo ).length === 0 &&
+		Object.entries( domainContactInfo ).length === 0
+	) {
 		return null;
 	}
 
-	const postalCode = billing.zipCode || billing.postalCode;
-	const domainPostalCode = domains.zipCode || domains.postalCode;
+	const fullName = joinNonEmptyValues(
+		' ',
+		contactInfo.firstName.value,
+		contactInfo.lastName.value
+	);
+	const cityAndState = joinNonEmptyValues( ', ', contactInfo.city.value, contactInfo.state.value );
+	const postalAndCountry = joinNonEmptyValues(
+		', ',
+		contactInfo.postalCode.value,
+		contactInfo.country.value
+	);
+
+	const domainFullName = joinNonEmptyValues(
+		' ',
+		domainContactInfo.firstName.value,
+		domainContactInfo.lastName.value
+	);
+	const domainCityAndState = joinNonEmptyValues(
+		', ',
+		domainContactInfo.city.value,
+		domainContactInfo.state.value
+	);
+	const domainPostalAndCountry = joinNonEmptyValues(
+		', ',
+		domainContactInfo.postalCode.value,
+		domainContactInfo.country.value
+	);
+
 	return (
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ ( billing.firstName || billing.lastName ) && (
-						<SummaryLine>
-							{ billing.firstName } { billing.lastName }
-						</SummaryLine>
+					{ fullName && <SummaryLine>{ fullName }</SummaryLine> }
+
+					{ contactInfo.email.value.length > 0 && (
+						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
 					) }
 
-					{ billing.email && <SummarySpacerLine>{ billing.email }</SummarySpacerLine> }
-
-					{ billing.address && <SummaryLine>{ billing.address } </SummaryLine> }
-
-					{ ( billing.city || billing.state || billing.province ) && (
-						<SummaryLine>
-							{ billing.city && billing.city + ', ' } { billing.state || billing.province }
-						</SummaryLine>
+					{ contactInfo.address.value.length > 0 && (
+						<SummaryLine>{ contactInfo.address.value } </SummaryLine>
 					) }
 
-					{ ( postalCode || billing.country ) && (
-						<SummaryLine>
-							{ postalCode && postalCode + ', ' }
-							{ billing.country }
-						</SummaryLine>
-					) }
+					{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+
+					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
+				{ ( contactInfo.phoneNumber.value.length > 0 || contactInfo.vatId.value.length > 0 ) && (
 					<SummaryDetails>
-						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
-						{ isElligibleForVat() && (
+						<SummaryLine>{ contactInfo.phoneNumber.value }</SummaryLine>
+						{ contactInfo.vatId.value.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
-								{ billing.vatId }
+								{ contactInfo.vatId.value }
 							</SummaryLine>
 						) }
 					</SummaryDetails>
 				) }
 			</div>
 
-			{ domains && ! isDomainContactSame && (
+			{ ! isDomainContactSame && (
 				<div>
 					<SummaryDetails>
-						{ ( domains.firstName || domains.lastName ) && (
-							<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
+						{ domainFullName && <SummaryLine>{ domainFullName }</SummaryLine> }
+
+						{ domainContactInfo.email.value.length > 0 && (
+							<SummarySpacerLine>{ domainContactInfo.email.value }</SummarySpacerLine>
 						) }
 
-						{ domains.email && <SummarySpacerLine>{ domains.email }</SummarySpacerLine> }
-
-						{ domains.address && <SummaryLine>{ domains.address }</SummaryLine> }
-
-						{ ( domains.city || domains.city || domains.state || domains.province ) && (
-							<SummaryLine>
-								{ domains.city && domains.city + ', ' } { domains.state || domains.province }
-							</SummaryLine>
+						{ domainContactInfo.address.value.length > 0 && (
+							<SummaryLine>{ domainContactInfo.address.value }</SummaryLine>
 						) }
 
-						{ ( domainPostalCode || domains.country ) && (
-							<SummaryLine>
-								{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
-							</SummaryLine>
-						) }
+						{ domainCityAndState && <SummaryLine>{ domainCityAndState }</SummaryLine> }
+
+						{ domainPostalAndCountry && <SummaryLine>{ domainPostalAndCountry }</SummaryLine> }
 					</SummaryDetails>
 
-					{ domains.phoneNumber && (
+					{ domainContactInfo.phoneNumber.value.length > 0 && (
 						<SummaryDetails>
-							<SummaryLine>{ domains.phoneNumber }</SummaryLine>
+							<SummaryLine>{ domainContactInfo.phoneNumber.value }</SummaryLine>
 						</SummaryDetails>
 					) }
 				</div>
@@ -521,21 +536,6 @@ function ContactFormSummary() {
 	);
 }
 
-export function getDomainDetailsFromPaymentData( paymentData ) {
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
-	return {
-		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
-		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
-		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
-		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
-		state: isDomainContactSame
-			? billing.state || billing.province
-			: domains.state || domains.province || billing.state || billing.province || '',
-		postal_code: isDomainContactSame
-			? billing.postalCode || billing.zipCode
-			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
-		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
-		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
-	};
+function joinNonEmptyValues( joinString, ...values ) {
+	return values.filter( value => value.length > 0 ).join( joinString );
 }

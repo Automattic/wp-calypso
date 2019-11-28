@@ -41,7 +41,10 @@ const initialItems = [
 
 // These are used only for non-redirect payment methods
 const onSuccess = () => window.alert( 'Payment succeeded!' );
-const onFailure = error => window.alert( 'There was a problem with your payment: ' + error );
+const onFailure = error => {
+	console.log( 'Error:', error ); /* eslint-disable-line no-console */
+	window.alert( 'There was a problem with your payment: ' + error );
+};
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
@@ -179,6 +182,10 @@ function ContactForm( { summary } ) {
 	const { country = '' } = billing;
 	const onChangeCountry = event =>
 		changePaymentData( 'billing', { ...billing, country: event.target.value } );
+	const showAdditionalFields = shouldShowAdditionalFields( paymentData );
+	const toggleAdditionalFields = () =>
+		changePaymentData( 'billing', { ...billing, showAdditionalFields: ! showAdditionalFields } );
+
 	if ( summary ) {
 		return (
 			<div>
@@ -187,10 +194,41 @@ function ContactForm( { summary } ) {
 			</div>
 		);
 	}
+
 	return (
 		<Form>
 			<Label htmlFor="country">Country</Label>
 			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
+			<input
+				id="show-additional-fields"
+				type="checkbox"
+				defaultChecked={ showAdditionalFields }
+				onChange={ toggleAdditionalFields }
+			/>
+			<label htmlFor="show-additional-fields">Show additional fields?</label>
+			{ showAdditionalFields && <AdditionalFields /> }
+		</Form>
+	);
+}
+
+function shouldShowAdditionalFields( paymentData ) {
+	return paymentData.billing && paymentData.billing.showAdditionalFields;
+}
+
+function AdditionalFields() {
+	const [ paymentData, changePaymentData ] = usePaymentData();
+	const { domain = {} } = paymentData;
+	const { name = '', address = '' } = domain;
+	const onChangeName = event =>
+		changePaymentData( 'domain', { ...domain, name: event.target.value } );
+	const onChangeAddress = event =>
+		changePaymentData( 'domain', { ...domain, address: event.target.value } );
+	return (
+		<Form>
+			<Label htmlFor="name">Name</Label>
+			<Input id="name" type="text" value={ name } onChange={ onChangeName } />
+			<Label htmlFor="address">Address</Label>
+			<Input id="address" type="text" value={ address } onChange={ onChangeAddress } />
 		</Form>
 	);
 }
@@ -209,13 +247,7 @@ const steps = [
 		titleContent: <ContactFormTitle />,
 		activeStepContent: <ContactForm />,
 		completeStepContent: <ContactForm summary />,
-		isCompleteCallback: ( { paymentData } ) => {
-			const { billing = {} } = paymentData;
-			if ( ! billing.country ) {
-				return false;
-			}
-			return true;
-		},
+		isCompleteCallback: isContactFormComplete,
 		isEditableCallback: ( { paymentData } ) => {
 			if ( paymentData.billing ) {
 				return true;
@@ -227,6 +259,18 @@ const steps = [
 	},
 	getDefaultOrderReviewStep(),
 ];
+
+function isContactFormComplete( { paymentData } ) {
+	const { billing = {}, domain = {} } = paymentData;
+	const allFields = [ billing.country ].concat(
+		shouldShowAdditionalFields( paymentData ) ? [ domain.name, domain.address ] : []
+	);
+	const emptyFields = allFields.filter( value => ! value );
+	if ( emptyFields.length > 0 ) {
+		return false;
+	}
+	return true;
+}
 
 // This is the parent component which would be included on a host page
 function MyCheckout() {

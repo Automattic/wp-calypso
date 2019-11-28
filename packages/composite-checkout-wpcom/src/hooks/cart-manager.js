@@ -37,7 +37,7 @@ import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
  *     on the backend, passed in from the host page.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
  * @returns {function()} Custom React hook
- *     To be passed as a prop to the WPCOMCheckout component.
+ *     To be passed as a prop to the WPCheckoutWrapper component.
  */
 export function makeShoppingCartHook( callWpcomShoppingCartEndpoint, initialRequest ) {
 	return () => {

@@ -9,7 +9,7 @@ import {
 	createApplePayMethod,
 } from '@automattic/composite-checkout';
 import {
-	WPCOMCheckout,
+	WPCheckoutWrapper,
 	makeShoppingCartHook,
 	mockPayPalExpressRequest,
 } from '@automattic/composite-checkout-wpcom';
@@ -122,7 +122,7 @@ const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].f
 
 export default function CompositeCheckoutContainer() {
 	return (
-		<WPCOMCheckout
+		<WPCheckoutWrapper
 			useShoppingCart={ useShoppingCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
