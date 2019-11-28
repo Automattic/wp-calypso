@@ -85,7 +85,6 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clickPopoverItem( name ) {
-		await this.openShowcase();
 		const actionItemSelector = by.css( '.popover__menu-item' );
 		return await driverHelper.selectElementByText( this.driver, actionItemSelector, name );
 	}

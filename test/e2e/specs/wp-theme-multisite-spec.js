@@ -69,6 +69,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 
 			describe( 'when "Try & Customize" is clicked', function() {
 				step( 'click try and customize popover', async function() {
+					await this.themesPage.openShowcase();
 					await this.themesPage.clickPopoverItem( 'Try & Customize' );
 					this.siteSelector = await SiteSelectorComponent.Expect( driver );
 				} );
