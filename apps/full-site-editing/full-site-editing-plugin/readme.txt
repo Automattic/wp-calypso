@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.15.1
+Stable tag: 0.16
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,6 +41,15 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 0.16
+
+* Delegate FSE support detection to themes by leveraging the theme tags.
+* Enable Global Styles for all template-first themes.
+* Fix back button navigation issues.
+* Keep the sidebar layout selector open by default.
+* Fix editor styles with new Gutenberg version.
+* Clyck anywhere on header/footer block to Navigate to editor.
 
 = 0.15.1 =
 
