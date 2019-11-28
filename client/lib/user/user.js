@@ -127,10 +127,12 @@ User.prototype.fetch = function() {
 
 	const flags = {
 		meta: 'flags',
-		abtests: config( 'ive/me' )
-			? true
-			: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 	};
+
+	if ( config.isEnabled( 'ive/me' ) ) {
+		flags.active_tests = true;
+	}
 
 	// Request current user info
 	debug( 'Getting user from api' );
