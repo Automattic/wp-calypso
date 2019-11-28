@@ -137,7 +137,7 @@ const SftpCard = ( {
 				<p>
 					{ username
 						? translate(
-								'Use the credentials below to access and edit your website using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
 								{
 									components: {
 										a: (
@@ -151,7 +151,7 @@ const SftpCard = ( {
 								}
 						  )
 						: translate(
-								"Access and edit your website's files directly by using an SFTP client."
+								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
 						  ) }
 				</p>
 			</div>
