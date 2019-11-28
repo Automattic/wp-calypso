@@ -88,12 +88,7 @@ export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 );
 export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
-	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
-	{
-		components: {
-			strong: <strong />,
-		},
-	}
+	'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
 );
 export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
