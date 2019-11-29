@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
+import config from '../../config';
 import page from 'page';
 
 /**
