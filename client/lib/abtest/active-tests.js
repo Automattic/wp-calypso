@@ -97,10 +97,10 @@ export default {
 		defaultVariation: 'default',
 	},
 	showPlanUpsellConcierge: {
-		datestamp: '20191106',
+		datestamp: '20291106',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
