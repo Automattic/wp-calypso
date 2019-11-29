@@ -54,6 +54,11 @@ export default {
 		next();
 	},
 
+	domainManagementListAllSites( pageContext, next ) {
+		pageContext.primary = <div>figure out how to call &lt;DomainManagementData for every site</div>;
+		next();
+	},
+
 	domainManagementEdit( pageContext, next ) {
 		const isTransfer = includes( pageContext.path, '/transfer/in/' );
 		const component = isTransfer ? DomainManagement.TransferIn : DomainManagement.Edit;
