@@ -65,8 +65,7 @@ class PageTemplateModal extends Component {
 
 	constructor( props ) {
 		super();
-		const hasTemplates = ! isEmpty( props.templates );
-		this.state.isOpen = hasTemplates;
+		this.state.isOpen = ! isEmpty( props.templates );
 	}
 
 	static getDerivedStateFromProps( props, state ) {
