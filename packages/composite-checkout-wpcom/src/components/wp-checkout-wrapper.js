@@ -11,11 +11,6 @@ import { CheckoutProvider } from '@automattic/composite-checkout';
 import WPCheckout from './wp-checkout';
 import { useWpcomStore } from '../hooks/wpcom-store';
 
-// These are used only for non-redirect payment methods
-// TODO: write this
-const onSuccess = () => alert( 'Payment succeeded!' );
-const onFailure = error => alert( 'There was a problem with your payment' + error );
-
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
@@ -26,7 +21,13 @@ const handleCheckoutEvent = () => () => {
 };
 
 // This is the parent component which would be included on a host page
-export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, registry } ) {
+export function WPCheckoutWrapper( {
+	useShoppingCart,
+	availablePaymentMethods,
+	registry,
+	onSuccess,
+	onFailure,
+} ) {
 	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
