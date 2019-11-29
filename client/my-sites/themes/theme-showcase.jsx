@@ -65,7 +65,6 @@ class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.scrollRef = React.createRef();
-
 		this.state = {
 			page: 1,
 			showPreview: false,
