@@ -45,7 +45,7 @@ class PageTemplateModal extends Component {
 	};
 
 	// Extract titles for faster lookup.
-	getTitlesByTemplateSlug = memoize( templates =>
+	getTitlesByTemplateSlugs = memoize( templates =>
 		mapValues( keyBy( templates, 'slug' ), 'title' )
 	);
 
@@ -191,7 +191,7 @@ class PageTemplateModal extends Component {
 	}
 
 	getTitleByTemplateSlug( slug ) {
-		return get( this.getTitlesByTemplateSlug( this.props.templates ), [ slug ], '' );
+		return get( this.getTitlesByTemplateSlugs( this.props.templates ), [ slug ], '' );
 	}
 
 	getTemplateGroups = () => {
