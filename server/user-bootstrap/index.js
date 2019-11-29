@@ -25,7 +25,7 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 	apiQuery = {
 		meta: 'flags',
 		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-		active_tests: config.isEnabled( 'ive/me' ),
+		active_tests: config.isEnabled( 'ive/me' ) ? 'calypso' : false,
 	},
 	url = `${ API_PATH }?${ stringify( apiQuery ) }`;
 
