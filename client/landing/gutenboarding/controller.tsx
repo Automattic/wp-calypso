@@ -4,6 +4,7 @@
 import React from 'react';
 import config from '../../config';
 import page from 'page';
+import { HashRouter as Router } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -19,6 +20,10 @@ export const redirectIfNotEnabled: PageJS.Callback = ( context, next ) => {
 };
 
 export const main: PageJS.Callback = ( context, next ) => {
-	context.layout = <Gutenboard />;
+	context.layout = (
+		<Router>
+			<Gutenboard />
+		</Router>
+	);
 	next();
 };
