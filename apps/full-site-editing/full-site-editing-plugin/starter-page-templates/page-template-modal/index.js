@@ -69,6 +69,11 @@ class PageTemplateModal extends Component {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
+		// The only time `state.previewedTemplate` isn't set is before `templates`
+		// are loaded. As soon as we have our `templates`, we set it using
+		// `this.getDefaultSelectedTemplate`. Afterwards, the user can select a
+		// different template, but can never un-select it.
+		// This makes it a reliable indicator for whether the modal has just been launched.
 		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
 			// Select the first template automatically.
 			return { previewedTemplate: this.getDefaultSelectedTemplate( props ) };
