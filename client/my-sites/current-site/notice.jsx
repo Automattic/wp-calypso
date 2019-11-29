@@ -37,12 +37,13 @@ import PendingPaymentNotice from './pending-payment-notice';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import QueryProductsList from 'components/data/query-products-list';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { CTA_FREE_TO_PAID } from './constants';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -205,12 +206,15 @@ export class SiteNotice extends React.Component {
 		}
 
 		const { site, translate } = this.props;
+		const href = this.props.domainsWithPlansOnly
+			? `/domains/add/${ site.slug }`
+			: `/plans/${ site.slug }`;
 
 		return (
 			<SidebarBanner
 				ctaName={ CTA_FREE_TO_PAID }
 				ctaText={ translate( 'Upgrade' ) }
-				href={ `/domains/add/${ site.slug }` }
+				href={ href }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 				onClick={ () => this.props.clickFreeToPaidPlanNotice( site.ID ) }
@@ -334,6 +338,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
+			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		};
 	},
 	dispatch => {
