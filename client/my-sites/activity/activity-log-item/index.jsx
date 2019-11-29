@@ -240,12 +240,11 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableRestore,
 			disableBackup,
-			hideRestore,
 			activity,
 			translate,
 		} = this.props;
 
-		if ( hideRestore || ! activity.activityIsRewindable ) {
+		if ( ! activity.activityIsRewindable ) {
 			return null;
 		}
 
@@ -273,7 +272,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button for users to get help. Tracks button click.
 	 *
-	 * @returns {Object} Get help button.
+	 * @returns {object} Get help button.
 	 */
 	renderHelpAction = () => (
 		<HappychatButton
@@ -291,7 +290,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button to take users to enter credentials.
 	 *
-	 * @returns {Object} Get button to fix credentials.
+	 * @returns {object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
 		if ( this.props.rewindIsActive ) {
