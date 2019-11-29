@@ -53,6 +53,7 @@
 
 .product-card__header-secondary {
 	position: relative;
+	padding-top: 4px;
 	padding-bottom: 16px;
 
 	@include breakpoint( '>480px' ) {
