@@ -132,7 +132,7 @@ User.prototype.fetch = function() {
 		.get( {
 			meta: 'flags',
 			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-			active_tets: config.isEnabled( 'ive/me' ),
+			active_tests: config.isEnabled( 'ive/me' ),
 		} )
 		.then( data => {
 			debug( 'User successfully retrieved from api:', data );
