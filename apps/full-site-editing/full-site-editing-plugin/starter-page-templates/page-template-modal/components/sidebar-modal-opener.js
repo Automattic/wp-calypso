@@ -9,7 +9,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin, LastTemplateUsed } from '../index';
+import { PageTemplatesPlugin } from '../index';
+import LastTemplateUsed from './last-template-used';
 import '../../../../../../client/landing/gutenboarding/stores/verticals-templates'; // Should be @automattic/stores/vertical-templates
 /* eslint-enable import/no-extraneous-dependencies */
 
