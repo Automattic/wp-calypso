@@ -66,6 +66,7 @@ import {
 	getSiteSlug,
 	isJetpackMinimumVersion,
 	isJetpackSite,
+	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
@@ -96,10 +97,15 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	isJetpackBackupAvailable() {
-		const { displayJetpackPlans, jetpackSupportsBackupProducts, siteId } = this.props;
+		const { displayJetpackPlans, isMultisite, jetpackSupportsBackupProducts, siteId } = this.props;
 
 		// Jetpack Backup products are currently under a feature flag
 		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+			return false;
+		}
+
+		// Jetpack Backup does not support Multisite yet.
+		if ( isMultisite ) {
 			return false;
 		}
 
@@ -552,6 +558,7 @@ export default connect(
 			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
