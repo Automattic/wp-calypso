@@ -50,10 +50,19 @@ registerBlockType( name, settings );
 const onboardingBlock = createBlock( name, {} );
 
 const DesignSelector = () => {
-	const templates = useSelect( select =>
-		select( 'automattic/verticals/templates' ).getTemplates( 'p13v1' )
+	const siteVertical = useSelect(
+		select => select( 'automattic/onboard' ).getState().siteVertical
 	);
-	return <PageTemplateModal templates={ templates } />;
+	const templates = useSelect( select =>
+		select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
+	);
+	return (
+		<PageTemplateModal
+			segment="m1" // FIXME: Replace with actual segment!
+			templates={ templates }
+			vertical={ siteVertical }
+		/>
+	);
 };
 
 // Makeshift block so we can drop the modal into the block editor. Might want to change that later.
