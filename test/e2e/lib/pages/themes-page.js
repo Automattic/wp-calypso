@@ -28,6 +28,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
+		await this.openShowcase();
 		await driverHelper.clickWhenClickable( this.driver, by.css( `a[data-e2e-value="${ type }"]` ) );
 		return await this.waitUntilThemesLoaded();
 	}
@@ -55,14 +56,14 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clickNewThemeMoreButton() {
-		const selector = by.css( '.is-actionable:not(.is-active) button' );
+		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) button' );
 
 		await driverHelper.scrollIntoView( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
 	async getFirstThemeName() {
-		const selector = by.css( '.is-actionable:not(.is-active) h2' );
+		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
@@ -99,9 +100,17 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clearSearch() {
+		await this.openShowcase();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.themes-magic-search-card__icon-close' )
+		);
+	}
+
+	async openShowcase() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( `button[data-e2e-value="open-themes-button"]` )
 		);
 	}
 }
