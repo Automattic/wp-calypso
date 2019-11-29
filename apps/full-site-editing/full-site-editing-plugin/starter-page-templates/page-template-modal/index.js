@@ -73,6 +73,7 @@ class PageTemplateModal extends Component {
 			// Show the modal, and select the first template automatically.
 			return { isOpen: true, previewedTemplate: this.getDefaultSelectedTemplate( props ) };
 		}
+		return null;
 	}
 
 	componentDidMount() {
