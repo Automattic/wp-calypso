@@ -125,6 +125,7 @@ export function render( element, key = JSON.stringify( element ), req ) {
 }
 
 export function attachI18n( context ) {
+	context.lang = 'es';
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 

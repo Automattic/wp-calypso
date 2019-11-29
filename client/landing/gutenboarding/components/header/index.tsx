@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
+import { __ as NO__, __ } from '@wordpress/i18n';
 import { Button, Icon } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect } from 'react';
-import { useDebounce } from 'use-debounce';
-import classnames from 'classnames';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { translate, useTranslate } from 'i18n-calypso';
+import { useDebounce } from 'use-debounce';
+import { useDispatch, useSelect } from '@wordpress/data';
+import classnames from 'classnames';
+import React, { FunctionComponent, useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -83,6 +84,8 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		...( selectedDesign?.slug && { theme: selectedDesign?.slug } ),
 	};
 
+	const ut = useTranslate();
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -126,6 +129,20 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 							{ NO__( 'Create my site' ) }
 						</Button>
 					) }
+					<p>
+						<code>__( 'Manage' ): { __( 'Manage' ) }</code>
+						<br />
+						<code>translate( 'Manage' ): { translate( 'Manage' ) }</code>
+						<br />
+						<code>ut( 'Manage' ): { ut( 'Manage' ) }</code>
+						<br />
+						<code>__( 'Next' ): { __( 'Next' ) }</code>
+						<br />
+						<code>translate( 'Next' ): { translate( 'Next' ) }</code>
+						<br />
+						<code>ut( 'Next' ): { ut( 'Next' ) }</code>
+						<br />
+					</p>
 				</div>
 			</div>
 		</div>
