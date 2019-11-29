@@ -68,7 +68,7 @@ class ThemeShowcase extends React.Component {
 		this.state = {
 			page: 1,
 			showPreview: false,
-			isShowcaseOpen: !! this.props.loggedOutComponent,
+			isShowcaseOpen: false,
 		};
 	}
 
@@ -98,6 +98,17 @@ class ThemeShowcase extends React.Component {
 		upsellBanner: false,
 		showUploadButton: true,
 	};
+
+	componentDidMount() {
+		if ( ! this.props.loggedOutComponent ) {
+			if ( this.props.query || this.props.filter ) {
+				// scroll to the results section
+				this.scrollRef.current.scrollIntoView();
+				// open showcase so it doesn't close when search field is deleted
+				this.toggleShowcase();
+			}
+		}
+	}
 
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
@@ -228,7 +239,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-
+		const isQueried = this.props.query || this.props.filter;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -294,7 +305,7 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
-								{ isShowcaseOpen ? (
+								{ isShowcaseOpen || isQueried ? (
 									<hr ref={ this.scrollRef } />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
@@ -307,7 +318,7 @@ class ThemeShowcase extends React.Component {
 
 					<div
 						className={
-							! this.state.isShowcaseOpen
+							! ( this.state.isShowcaseOpen || isQueried || this.props.loggedOutComponent )
 								? 'themes__hidden-content theme-showcase__all-themes'
 								: 'theme-showcase__all-themes'
 						}
