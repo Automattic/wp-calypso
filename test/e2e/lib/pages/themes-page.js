@@ -63,7 +63,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async getFirstThemeName() {
-		const selector = by.css( '.is-actionable:not(.is-active) h2' );
+		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
