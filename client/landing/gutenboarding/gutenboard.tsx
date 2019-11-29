@@ -58,7 +58,8 @@ const DesignSelector = () => {
 	);
 	return (
 		<PageTemplateModal
-			segment="m1" // FIXME: Replace with actual segment!
+			saveTemplateChoice={ ( slug: string ) => console.log( `Template ${ slug } selected!` ) } // @FIXME
+			segment="m1" // @FIXME: Replace with actual segment!
 			templates={ templates }
 			vertical={ siteVertical }
 		/>
