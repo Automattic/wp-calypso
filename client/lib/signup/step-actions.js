@@ -415,17 +415,24 @@ export function createAccount(
 					);
 				}
 
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
 				const userId =
 					( response && response.signup_sandbox_user_id ) ||
 					( response && response.user_id ) ||
 					userData.ID;
 
-				analytics.recordRegistration( { username, userId, flow: flowName, type: 'social' } );
+				const username =
+					( response && response.signup_sandbox_username ) ||
+					( response && response.username ) ||
+					userData.username;
+
+				const registrationUserData = {
+					ID: userId,
+					username: username,
+					email: userData.email
+				};
+
+				// Fire after a new user registers.
+				analytics.recordRegistration( { registrationUserData, flow: flowName, type: 'social' } );
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -478,18 +485,24 @@ export function createAccount(
 					);
 				}
 
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
 				const userId =
 					( response && response.signup_sandbox_user_id ) ||
 					( response && response.user_id ) ||
 					userData.ID;
 
+				const username =
+					( response && response.signup_sandbox_username ) ||
+					( response && response.username ) ||
+					userData.username;
+
+				const registrationUserData = {
+					ID: userId,
+					username: username,
+					email: userData.email
+				};
+
 				// Fire after a new user registers.
-				analytics.recordRegistration( { username, userId, flow: flowName, type: 'default' } );
+				analytics.recordRegistration( { registrationUserData, flow: flowName, type: 'default' } );
 
 				const providedDependencies = assign( { username }, bearerToken );
 

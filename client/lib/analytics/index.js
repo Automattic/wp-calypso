@@ -45,6 +45,7 @@ import { getFeatureSlugFromPageUrl } from './feature-slug';
 /**
  * Module variables
  */
+const analyticsDebug = debug( 'calypso:analytics' );
 const initializeDebug = debug( 'calypso:analytics:initialize' );
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
 const blockedTracksDebug = debug( 'calypso:analytics:blockedTracks' );
@@ -347,6 +348,8 @@ const analytics = {
 	},
 
 	recordSignupStart: function( { flow, ref } ) {
+		analyticsDebug( 'recordSignupStart', { flow, ref } );
+
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
 		// Google Analytics
@@ -355,8 +358,11 @@ const analytics = {
 		recordSignupStart( { flow } );
 	},
 
-	recordRegistration: function( { username, userId, flow, type } ) {
-		analytics.identifyUser( username, userId );
+	recordRegistration: function( { userData, flow, type } ) {
+		analyticsDebug( 'recordRegistration', { userData, flow, type } );
+
+		// Tracks user identification
+		analytics.identifyUser( userData );
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
 		// Google Analytics
@@ -369,6 +375,8 @@ const analytics = {
 		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
 		now
 	) {
+		analyticsDebug( 'recordSignupComplete', { isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite }, `now=${now}` );
+
 		if ( ! now ) {
 			// Delay using the analytics localStorage queue.
 			return analytics.queue.add(
@@ -415,6 +423,8 @@ const analytics = {
 	},
 
 	recordAddToCart: function( { cartItem } ) {
+		analyticsDebug( 'recordAddToCart', { cartItem } );
+
 		// TODO: move Tracks event here?
 		// Google Analytics
 		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
@@ -429,6 +439,8 @@ const analytics = {
 	},
 
 	recordPurchase: function( { cart, orderId } ) {
+		analyticsDebug( 'recordPurchase', { cart, orderId } );
+
 		if ( cart.total_cost >= 0.01 ) {
 			// Google Analytics
 			const usdValue = costToUSD( cart.total_cost, cart.currency );

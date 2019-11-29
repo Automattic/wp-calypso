@@ -124,15 +124,18 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: false,
 		} );
 
-		const username =
-			( response && response.signup_sandbox_username ) || ( response && response.username );
+		const userId = ( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		const userId =
-			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
+		const username = ( response && response.signup_sandbox_username ) || ( response && response.username );
+
+		const userData = {
+			ID: userId, 
+			username: username, 
+			email: this.state.email
+		};
 
 		analytics.recordRegistration( {
-			username,
-			userId,
+			userData,
 			flow: this.props.flowName,
 			type: 'passwordless',
 		} );
