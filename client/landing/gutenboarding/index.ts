@@ -7,7 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { main, redirectIfNotEnabled } from './controller';
-import { render as clientRender } from 'controller';
+import { render as clientRender } from '../../controller/index.web';
 import { wpDataDebugMiddleware } from './devtools';
 
 /**
