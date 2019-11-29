@@ -18,6 +18,13 @@ class RecommendedThemes extends React.Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		const { isLoading, isQueried, scrollToSearchInput } = this.props;
+		if ( prevProps.isLoading !== isLoading && isLoading === false && isQueried ) {
+			scrollToSearchInput();
+		}
+	}
+
 	render() {
 		return (
 			<>

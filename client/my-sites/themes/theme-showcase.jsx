@@ -101,14 +101,18 @@ class ThemeShowcase extends React.Component {
 
 	componentDidMount() {
 		if ( ! this.props.loggedOutComponent ) {
-			if ( this.props.query || this.props.filter ) {
-				// scroll to the results section
-				this.scrollRef.current.scrollIntoView();
+			if ( this.props.search || this.props.filter ) {
 				// open showcase so it doesn't close when search field is deleted
 				this.toggleShowcase();
 			}
 		}
 	}
+
+	scrollToSearchInput = () => {
+		if ( ! this.props.loggedOutComponent ) {
+			this.scrollRef.current.scrollIntoView();
+		}
+	};
 
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
@@ -131,9 +135,7 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
+		this.scrollToSearchInput();
 	};
 
 	/**
@@ -166,9 +168,7 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
+		this.scrollToSearchInput();
 	};
 
 	onUploadClick = () => {
@@ -303,6 +303,8 @@ class ThemeShowcase extends React.Component {
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
+								scrollToSearchInput={ this.scrollToSearchInput }
+								isQueried={ isQueried }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen || isQueried ? (
