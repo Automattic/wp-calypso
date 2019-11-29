@@ -117,7 +117,6 @@ class ClonePointStep extends Component {
 									cloneOnClick={ this.selectedPoint }
 									disableRestore
 									disableBackup
-									hideRestore
 									enableClone
 								/>
 							</Fragment>

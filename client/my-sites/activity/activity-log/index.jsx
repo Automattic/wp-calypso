@@ -470,7 +470,6 @@ class ActivityLog extends Component {
 											activity={ log }
 											disableRestore={ disableRestore }
 											disableBackup={ disableBackup }
-											hideRestore={ 'active' !== rewindState.state }
 											siteId={ siteId }
 											rewindState={ rewindState.state }
 										/>
@@ -483,7 +482,6 @@ class ActivityLog extends Component {
 											activity={ log }
 											disableRestore={ disableRestore }
 											disableBackup={ disableBackup }
-											hideRestore={ 'active' !== rewindState.state }
 											siteId={ siteId }
 										/>
 									</Fragment>
