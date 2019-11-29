@@ -210,7 +210,7 @@ export class SiteNotice extends React.Component {
 			<SidebarBanner
 				ctaName={ CTA_FREE_TO_PAID }
 				ctaText={ translate( 'Upgrade' ) }
-				href={ '/plans/' + site.slug }
+				href={ `/domains/add/${ site.slug }` }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 				onClick={ () => this.props.clickFreeToPaidPlanNotice( site.ID ) }
