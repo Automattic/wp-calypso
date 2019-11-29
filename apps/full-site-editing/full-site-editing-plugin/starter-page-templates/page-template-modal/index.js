@@ -50,7 +50,7 @@ class PageTemplateModal extends Component {
 	);
 
 	// Parse templates blocks and store them into the state.
-	getBlocksByTemplateSlug = memoize( templates =>
+	getBlocksByTemplateSlugs = memoize( templates =>
 		reduce(
 			templates,
 			( prev, { slug, content } ) => {
@@ -187,7 +187,7 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( slug ) {
-		return get( this.getBlocksByTemplateSlug( this.props.templates ), [ slug ], [] );
+		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
 	}
 
 	getTitleByTemplateSlug( slug ) {
@@ -223,7 +223,7 @@ class PageTemplateModal extends Component {
 			<TemplateSelectorControl
 				label={ __( 'Layout', 'full-site-editing' ) }
 				templates={ templatesList }
-				blocksByTemplates={ this.getBlocksByTemplateSlug( this.props.templates ) }
+				blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
 				onTemplateSelect={ this.previewTemplate }
 				useDynamicPreview={ false }
 				siteInformation={ this.props.siteInformation }
