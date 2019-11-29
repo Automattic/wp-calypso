@@ -71,7 +71,10 @@ class PageTemplateModal extends Component {
 		// This makes it a reliable indicator for whether the modal has just been launched.
 		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
 			// Show the modal, and select the first template automatically.
-			return { isOpen: true, previewedTemplate: this.getDefaultSelectedTemplate( props ) };
+			return {
+				isOpen: true,
+				previewedTemplate: PageTemplateModal.getDefaultSelectedTemplate( props ),
+			};
 		}
 		return null;
 	}
