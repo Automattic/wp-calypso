@@ -63,11 +63,6 @@ class PageTemplateModal extends Component {
 		)
 	);
 
-	constructor( props ) {
-		super();
-		this.state.isOpen = ! isEmpty( props.templates );
-	}
-
 	static getDerivedStateFromProps( props, state ) {
 		// The only time `state.previewedTemplate` isn't set is before `templates`
 		// are loaded. As soon as we have our `templates`, we set it using
@@ -75,8 +70,8 @@ class PageTemplateModal extends Component {
 		// different template, but can never un-select it.
 		// This makes it a reliable indicator for whether the modal has just been launched.
 		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
-			// Select the first template automatically.
-			return { previewedTemplate: this.getDefaultSelectedTemplate( props ) };
+			// Show the modal, and select the first template automatically.
+			return { isOpen: true, previewedTemplate: this.getDefaultSelectedTemplate( props ) };
 		}
 	}
 
