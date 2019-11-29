@@ -79,8 +79,9 @@ class PageTemplateModal extends Component {
 		return null;
 	}
 
-	componentDidMount() {
-		if ( this.state.isOpen ) {
+	componentDidUpdate( prevProps, prevState ) {
+		// Only track when the modal is first displayed.
+		if ( ! prevState.isOpen && this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 	}
