@@ -16,7 +16,7 @@ export function QuerySiteChecklist( { siteId, isSiteUsingFSE } ) {
 
 	useEffect( () => {
 		dispatch( requestSiteChecklist( siteId, isSiteUsingFSE ) );
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, siteId, isSiteUsingFSE ] );
 
 	return null;
 }
