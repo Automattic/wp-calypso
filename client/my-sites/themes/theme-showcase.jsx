@@ -239,7 +239,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-		const isQueried = this.props.query || this.props.filter;
+		const isQueried = this.props.search || this.props.filter;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
