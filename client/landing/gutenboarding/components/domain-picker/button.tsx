@@ -27,11 +27,11 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	queryParameters,
 	...buttonProps
 } ) => {
-	const buttonRef = createRef();
+	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
-	const handleClose = ( e?: FocusEvent ) => {
+	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
 			return;
