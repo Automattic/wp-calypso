@@ -23,7 +23,7 @@ import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'state/rewind/state/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 

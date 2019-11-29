@@ -77,7 +77,7 @@ import purchases from './purchases/reducer';
 import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
-import { rewindReducer as rewind } from './rewind';
+import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
