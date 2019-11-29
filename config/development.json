@@ -70,7 +70,7 @@
 		"hosting/sftp-phpmyadmin": true,
 		"i18n/community-translator": false,
 		"i18n/translation-scanner": true,
-		"ive/me": false,
+		"ive/me": true,
 		"ive/use-external-defs": false,
 		"ive/use-external-assignment": false,
 		"jetpack/api-cache": true,
