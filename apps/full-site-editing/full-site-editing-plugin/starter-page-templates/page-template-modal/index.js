@@ -67,9 +67,12 @@ class PageTemplateModal extends Component {
 		super();
 		const hasTemplates = ! isEmpty( props.templates );
 		this.state.isOpen = hasTemplates;
-		if ( hasTemplates ) {
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
 			// Select the first template automatically.
-			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
+			return { previewedTemplate: this.getDefaultSelectedTemplate( props ) };
 		}
 	}
 
@@ -79,7 +82,7 @@ class PageTemplateModal extends Component {
 		}
 	}
 
-	getDefaultSelectedTemplate = props => {
+	static getDefaultSelectedTemplate = props => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
 
