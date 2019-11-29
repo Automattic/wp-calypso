@@ -30,7 +30,6 @@ const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
 const isGoogleAnalyticsEnabled = true;
-const isGoogleRecaptchaEnabled = true;
 const isFloodlightEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
@@ -59,7 +58,6 @@ let lastRetargetTime = 0;
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
-const GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?render=';
 const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';
 const CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js';
 const YAHOO_GEMINI_CONVERSION_PIXEL_URL =
@@ -108,7 +106,6 @@ const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-	wpcomGoogleRecaptchaSiteKey: config( 'google_recaptcha_site_key' ),
 	pinterestInit: '2613194105266',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
@@ -280,12 +277,12 @@ function setupAdRollGlobal() {
 	if ( ! window.adRoll ) {
 		window.adRoll = {
 			trackPageview: function() {
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
-				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
 			},
 			trackPurchase: function() {
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
-				new Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
+				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
 			},
 		};
 	}
@@ -525,7 +522,7 @@ export async function retarget( urlPath ) {
 		if ( isIconMediaEnabled ) {
 			const params = ICON_MEDIA_RETARGETING_PIXEL_URL;
 			debug( 'retarget: [Icon Media] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Twitter
@@ -539,7 +536,7 @@ export async function retarget( urlPath ) {
 		if ( isGeminiEnabled ) {
 			const params = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 			debug( 'retarget: [Yahoo Gemini] [rate limited]', params );
-			new Image().src = params;
+			new window.Image().src = params;
 		}
 
 		// Quora
@@ -839,7 +836,7 @@ export async function recordSignup( slug ) {
 
 	if ( isIconMediaEnabled ) {
 		debug( 'recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL );
-		new Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
+		new window.Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
 	}
 
 	// Pinterest
@@ -1061,7 +1058,7 @@ export async function recordOrder( cart, orderId ) {
 	// Experian / One 2 One Media
 	if ( isExperianEnabled ) {
 		debug( 'recordOrder: [Experian]', EXPERIAN_CONVERSION_PIXEL_URL );
-		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
+		new window.Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
@@ -1069,12 +1066,12 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 		debug( 'recordOrder: [Yahoo Gemini]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	if ( isPandoraEnabled ) {
 		debug( 'recordOrder: [Pandora]', PANDORA_CONVERSION_PIXEL_URL );
-		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+		new window.Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isQuoraEnabled ) {
@@ -1088,7 +1085,7 @@ export async function recordOrder( cart, orderId ) {
 		const params =
 			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
 		debug( 'recordOrder: [Icon Media]', params );
-		new Image().src = params;
+		new window.Image().src = params;
 	}
 
 	// Twitter
@@ -1625,11 +1622,11 @@ async function recordInCriteo( eventName, eventProps ) {
  * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {
-	if ( /iPad/.test( navigator.userAgent ) ) {
+	if ( /iPad/.test( window.navigator.userAgent ) ) {
 		return 't';
 	}
 
-	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent ) ) {
+	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( window.navigator.userAgent ) ) {
 		return 'm';
 	}
 
@@ -1741,7 +1738,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 	return {
 		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
 		anonymize_ip: true,
-		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
+		transport_type: 'function' === typeof window.navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
 		custom_map: {
 			dimension3: 'client_id',
@@ -1821,109 +1818,4 @@ function initFacebook() {
 	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
 	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
 	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
-}
-
-/**
- * Loads Google reCAPTCHA
- *
- * @returns {boolean} false if the script failed to load
- */
-async function loadGoogleRecaptchaScript() {
-	if ( window.grecaptcha ) {
-		// reCAPTCHA already loaded
-		return true;
-	}
-
-	// Use loadScript directly instead of the loadTrackingScripts function, to ensure that the
-	// reCAPTCHA script is only loaded when needed.
-	try {
-		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + 'explicit';
-		await loadScript( src );
-		debug( 'loadGoogleRecaptchaScript: [Loaded]', src );
-	} catch ( error ) {
-		debug( 'loadGoogleRecaptchaScript: [Load Error] the script failed to load: ', error );
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Renders reCAPTCHA badge to an explicit DOM id that should already be on the page
- *
- * @param {string} elementId - render client to this existing DOM node
- * @returns {number} reCAPTCHA clientId
- */
-async function renderRecaptchaClient( elementId ) {
-	try {
-		const clientId = await window.grecaptcha.render( elementId, {
-			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
-			size: 'invisible',
-		} );
-		debug( 'renderRecaptchaClient: [Success]', elementId );
-		return clientId;
-	} catch ( error ) {
-		debug( 'renderRecaptchaClient: [Error]', error );
-		return null;
-	}
-}
-
-/**
- * Records an arbitrary action to Google reCAPTCHA
- *
- * @param {number} clientId - a clientId of the reCAPTCHA instance
- * @param {string} action  - name of action to record in reCAPTCHA
- */
-export async function recordGoogleRecaptchaAction( clientId, action ) {
-	if ( ! window.grecaptcha ) {
-		return null;
-	}
-	try {
-		const token = await window.grecaptcha.execute( clientId, {
-			action,
-		} );
-		debug( 'recordGoogleRecaptchaAction: [Success]', action, token, clientId );
-		return token;
-	} catch ( error ) {
-		debug( 'recordGoogleRecaptchaAction: [Error]', action, error );
-		return null;
-	}
-}
-
-/**
- * @typedef RecaptchaActionResult
- * @property {string} token
- * @property {number} clientId
- */
-
-/**
- * Records reCAPTCHA action, loading Google script if necessary.
- *
- * @param {string} elementId - a DOM id in which to render the reCAPTCHA client
- * @param {string} action - name of action to record in reCAPTCHA
- *
- * @returns {RecaptchaActionResult|null} either the reCAPTCHA token and clientId, or null if the function fails
- */
-export async function initGoogleRecaptcha( elementId, action ) {
-	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
-		return null;
-	}
-
-	if ( ! ( await loadGoogleRecaptchaScript() ) ) {
-		return null;
-	}
-
-	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
-
-	try {
-		const clientId = await renderRecaptchaClient( elementId );
-		const token = await recordGoogleRecaptchaAction( clientId, action );
-		debug( 'initGoogleRecaptcha: [Success]', action, token, clientId );
-		return { token, clientId };
-	} catch ( error ) {
-		// We don't want errors interrupting our flow, so convert any exceptions
-		// into return values.
-		debug( 'initGoogleRecaptcha: [Error]', action, error );
-		return null;
-	}
 }
