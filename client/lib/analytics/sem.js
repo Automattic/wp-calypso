@@ -75,7 +75,7 @@ function setUtmCookie( name, value ) {
 		// would require additional custom logic to work out the root domain name.
 		domain:
 			'.' +
-			document.location.hostname
+			window.location.hostname
 				.split( '.' )
 				.slice( -2 )
 				.join( '.' ),
@@ -86,12 +86,12 @@ function setUtmCookie( name, value ) {
  * Updates tracking based on URL query parameters.
  */
 export function updateQueryParamsTracking() {
-	if ( ! document.location.search ) {
+	if ( ! window.location.search ) {
 		debug( 'No query data in URL.' );
 		return;
 	}
 
-	const query = urlParseAmpCompatible( document.location.href ).query;
+	const query = urlParseAmpCompatible( window.location.href ).query;
 
 	// Sanitize query params
 	const sanitized_query = {};

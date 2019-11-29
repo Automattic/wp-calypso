@@ -16,9 +16,9 @@ import mayWeTrackCurrentUserGdpr from './may-we-track-current-user-gdpr';
  * 1. 'ad-tracking' is disabled
  * 2. `Do Not Track` is enabled
  * 3. the current user could be in the GDPR zone and hasn't consented to tracking
- * 4. `document.location.href` may contain personally identifiable information
+ * 4. `window.location.href` may contain personally identifiable information
  *
- * @returns {Boolean} Is ad tracking is allowed?
+ * @returns {boolean} Is ad tracking is allowed?
  */
 export default function isAdTrackingAllowed() {
 	const result =

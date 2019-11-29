@@ -1671,7 +1671,7 @@ function recordOrderInGoogleAds( cart, orderId ) {
  */
 function quantcastAsynchronousTagURL() {
 	const protocolAndSubdomain =
-		document.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
+		window.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
 
 	return protocolAndSubdomain + '.quantserve.com/quant.js';
 }
@@ -1711,7 +1711,7 @@ function setupWpcomFloodlightGtag() {
  * 2. `ad-tracking` feature is disabled
  * 3. `Do Not Track` is enabled
  * 4. the current user could be in the GDPR zone and hasn't consented to tracking
- * 5. `document.location.href` may contain personally identifiable information
+ * 5. `window.location.href` may contain personally identifiable information
  *
  * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
  *

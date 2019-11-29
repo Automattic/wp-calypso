@@ -9,10 +9,10 @@ const blacklistedRoutes = [ '/log-in' ];
 /**
  * Are tracking pixels forbidden from the given URL for better performance (except for Google Analytics)?
  *
- * @returns {Boolean} true if the current URL is blacklisted.
+ * @returns {boolean} true if the current URL is blacklisted.
  */
 export default function isUrlBlacklistedForPerformance() {
-	const { href } = document.location;
+	const { href } = window.location;
 	const match = pattern => href.indexOf( pattern ) !== -1;
 	const result = blacklistedRoutes.some( match );
 

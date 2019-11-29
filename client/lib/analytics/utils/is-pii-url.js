@@ -30,10 +30,10 @@ const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
 /**
  * Whether the current URL can potentially contain personally identifiable info.
  *
- * @returns {Boolean} true if the current URL can potentially contain personally identifiable info.
+ * @returns {boolean} true if the current URL can potentially contain personally identifiable info.
  */
 export default function isPiiUrl() {
-	const href = document.location.href;
+	const href = window.location.href;
 	const match = pattern => href.indexOf( pattern ) !== -1;
 	const result = forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
 
