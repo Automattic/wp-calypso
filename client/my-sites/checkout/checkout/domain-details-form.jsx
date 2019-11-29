@@ -289,7 +289,7 @@ export class DomainDetailsForm extends PureComponent {
 				} else {
 					message = this.props.translate(
 						'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-							'Protection is unavailable for this domain.'
+							'Protection is unavailable for domains in your cart.'
 					);
 				}
 			}

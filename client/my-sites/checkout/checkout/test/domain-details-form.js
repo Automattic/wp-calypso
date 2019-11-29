@@ -70,7 +70,7 @@ describe( 'Domain Details Form', () => {
 	const textWhenPrivacyIsSomewhatSupported =
 		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}';
 	const textWhenPrivacyIsNotSupported =
-		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is unavailable for this domain.';
+		'We have pre-filled the required contact information from your WordPress.com account. Privacy Protection is unavailable for domains in your cart.';
 
 	test( 'does not blow up with default props', () => {
 		const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
