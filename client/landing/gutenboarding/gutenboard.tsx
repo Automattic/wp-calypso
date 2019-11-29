@@ -30,6 +30,7 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
+import { SiteVertical } from './stores/onboard/types';
 import './stores/domain-suggestions';
 import './stores/onboard';
 import './stores/verticals-templates';
@@ -51,7 +52,7 @@ const onboardingBlock = createBlock( name, {} );
 
 const DesignSelector = () => {
 	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical
+		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
 	);
 	const templates = useSelect( select =>
 		select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
