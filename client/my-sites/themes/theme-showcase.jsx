@@ -65,10 +65,12 @@ class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.scrollRef = React.createRef();
+
 		this.state = {
 			page: 1,
 			showPreview: false,
-			isShowcaseOpen: false,
+			// Start with showcase open if there are queried params.
+			isShowcaseOpen: !! ( this.props.search || this.props.filter ),
 		};
 	}
 
@@ -98,15 +100,6 @@ class ThemeShowcase extends React.Component {
 		upsellBanner: false,
 		showUploadButton: true,
 	};
-
-	componentDidMount() {
-		if ( ! this.props.loggedOutComponent ) {
-			if ( this.props.search || this.props.filter ) {
-				// open showcase so it doesn't close when search field is deleted
-				this.toggleShowcase();
-			}
-		}
-	}
 
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent ) {
