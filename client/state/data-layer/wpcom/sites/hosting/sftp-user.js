@@ -18,7 +18,7 @@ import {
 import { errorNotice } from 'state/notices/actions';
 import { updateAtomicSftpUser, setAtomicSftpUsers } from 'state/hosting/actions';
 
-const requestAtomicSftpUsers = action => {
+export const requestAtomicSftpUsers = action => {
 	return http(
 		{
 			method: 'GET',
@@ -29,7 +29,7 @@ const requestAtomicSftpUsers = action => {
 	);
 };
 
-const createAtomicSftpUser = action => {
+export const createAtomicSftpUser = action => {
 	return http(
 		{
 			method: 'POST',
@@ -41,7 +41,7 @@ const createAtomicSftpUser = action => {
 	);
 };
 
-const resetAtomicSftpPassword = action => {
+export const resetAtomicSftpPassword = action => {
 	return http(
 		{
 			method: 'POST',
@@ -53,13 +53,14 @@ const resetAtomicSftpPassword = action => {
 	);
 };
 
-const setSftpUsers = ( { siteId }, userList ) => {
+export const setSftpUsers = ( { siteId }, userList ) => {
 	return setAtomicSftpUsers( siteId, userList );
 };
 
-const updateSftpUser = ( action, userList ) => updateAtomicSftpUser( action.siteId, userList );
+export const updateSftpUser = ( action, userList ) =>
+	updateAtomicSftpUser( action.siteId, userList );
 
-const displaySftpUserError = ( { siteId } ) => [
+export const displaySftpUserError = ( { siteId } ) => [
 	updateAtomicSftpUser( siteId, null ),
 	errorNotice(
 		translate(
@@ -67,15 +68,16 @@ const displaySftpUserError = ( { siteId } ) => [
 		),
 		{
 			duration: 5000,
+			id: `get-ssh-users-error-${ siteId }`,
 		}
 	),
 ];
 
-const userToUserList = ( { username, password } ) => {
+export const userToUserList = ( { username, password } ) => {
 	return [ { username, password } ];
 };
 
-const usernameListToUsers = ( { users } ) => {
+export const usernameListToUsers = ( { users } ) => {
 	return users.map( user => ( {
 		username: user,
 	} ) );
