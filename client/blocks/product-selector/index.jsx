@@ -164,9 +164,9 @@ export class ProductSelector extends Component {
 			return;
 		}
 
-		return translate( 'Purchased %(purchaseDate)s', {
+		return translate( 'Purchased on %(purchaseDate)s', {
 			args: {
-				purchaseDate: moment( purchase.subscribedDate ).format( 'YYYY-MM-DD' ),
+				purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
 			},
 		} );
 	}
