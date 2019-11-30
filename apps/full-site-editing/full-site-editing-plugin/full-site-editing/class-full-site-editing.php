@@ -258,7 +258,13 @@ class Full_Site_Editing {
 			return null;
 		}
 
-		$parent_post_type        = get_post_type( $parent_post_id );
+		$parent_post_type = get_post_type( $parent_post_id );
+
+		// See https://github.com/Automattic/wp-calypso/issues/38075#issuecomment-559900054.
+		if ( 'page' === $parent_post_type ) {
+			return __( 'Page Layout' );
+		}
+
 		$parent_post_type_object = get_post_type_object( $parent_post_type );
 
 		/* translators: %s: "Back to Post", "Back to Page", "Back to Template", etc. */
