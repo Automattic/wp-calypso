@@ -49,43 +49,24 @@ export function createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } ) {
-	const actions = {
-		changeBrand( payload ) {
-			return { type: 'BRAND_SET', payload };
+	const selectors = {
+		getStripeConfiguration( state ) {
+			return state.stripeConfiguration;
 		},
-		changeCardholderName( payload ) {
-			return { type: 'CARDHOLDER_NAME_SET', payload };
+		getBrand( state ) {
+			return state.brand || '';
 		},
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
+		getCardholderName( state ) {
+			return state.cardholderName || '';
 		},
-		*getConfiguration( payload ) {
-			let configuration;
-			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
+		getTransactionError( state ) {
+			return state.transactionError;
 		},
-		*beginStripeTransaction( payload ) {
-			let stripeResponse;
-			try {
-				stripeResponse = yield { type: 'STRIPE_TRANSACTION_BEGIN', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			if (
-				stripeResponse &&
-				stripeResponse.message &&
-				stripeResponse.message.payment_intent_client_secret
-			) {
-				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
-			}
-			if ( stripeResponse && stripeResponse.redirect_url ) {
-				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
-			}
-			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
+		getTransactionStatus( state ) {
+			return state.transactionStatus;
+		},
+		getTransactionAuthData( state ) {
+			return state.transactionAuthData;
 		},
 	};
 
@@ -123,27 +104,65 @@ export function createStripeMethod( {
 			}
 			return state;
 		},
-		actions,
-		selectors: {
-			getStripeConfiguration( state ) {
-				return state.stripeConfiguration;
+		actions: {
+			changeBrand( payload ) {
+				return { type: 'BRAND_SET', payload };
 			},
-			getBrand( state ) {
-				return state.brand || '';
+			changeCardholderName( payload ) {
+				return { type: 'CARDHOLDER_NAME_SET', payload };
 			},
-			getCardholderName( state ) {
-				return state.cardholderName || '';
+			setStripeError( payload ) {
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload };
 			},
-			getTransactionError( state ) {
-				return state.transactionError;
+			*getConfiguration( payload ) {
+				let configuration;
+				try {
+					configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
+				} catch ( error ) {
+					return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+				}
+				return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
 			},
-			getTransactionStatus( state ) {
-				return state.transactionStatus;
-			},
-			getTransactionAuthData( state ) {
-				return state.transactionAuthData;
+			*beginStripeTransaction( payload ) {
+				let stripeResponse;
+				try {
+					const paymentMethodToken = yield {
+						type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+						payload: {
+							...payload,
+							country: getCountry(),
+							postalCode: getPostalCode(),
+							phoneNumber: getPhoneNumber(),
+						},
+					};
+					stripeResponse = yield {
+						type: 'STRIPE_TRANSACTION_BEGIN',
+						payload: {
+							...payload,
+							siteId: getSiteId(),
+							country: getCountry(),
+							postalCode: getPostalCode(),
+							subdivisionCode: getSubdivisionCode(),
+							paymentMethodToken,
+						},
+					};
+				} catch ( error ) {
+					return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+				}
+				if (
+					stripeResponse &&
+					stripeResponse.message &&
+					stripeResponse.message.payment_intent_client_secret
+				) {
+					return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
+				}
+				if ( stripeResponse && stripeResponse.redirect_url ) {
+					return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
+				}
+				return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 			},
 		},
+		selectors,
 		controls: {
 			STRIPE_CONFIGURATION_FETCH( action ) {
 				return fetchStripeConfiguration( action.payload );
@@ -162,6 +181,11 @@ export function createStripeMethod( {
 		CheckoutWrapper: StripeHookProvider,
 		SummaryComponent: StripeSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
+		isCompleteCallback: () => {
+			const cardholderName = selectors.getCardholderName( store.getState() );
+			// TODO: make sure stripe fields are valid somehow
+			return !! cardholderName?.length;
+		},
 	};
 }
 
