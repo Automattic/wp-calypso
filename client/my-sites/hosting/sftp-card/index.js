@@ -80,10 +80,12 @@ const SftpCard = ( {
 	};
 
 	useEffect( () => {
-		setIsLoading( true );
-		requestSftpUsers( siteId );
+		if ( ! disabled ) {
+			setIsLoading( true );
+			requestSftpUsers( siteId );
+		}
 		return onDestroy();
-	}, [ siteId ] );
+	}, [ disabled, siteId ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -127,7 +129,7 @@ const SftpCard = ( {
 		);
 	};
 
-	const displayQuestionsAndButton = ! ( disabled || username || isLoading );
+	const displayQuestionsAndButton = ! ( username || isLoading );
 
 	return (
 		<Card className="sftp-card">
@@ -159,8 +161,8 @@ const SftpCard = ( {
 				<div className="sftp-card__questions">
 					<Accordion title={ translate( 'What is SFTP?' ) }>
 						{ translate(
-							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}} ' +
-								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}} ',
+							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}}. ' +
+								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
 							{
 								components: {
 									a: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
@@ -194,7 +196,7 @@ const SftpCard = ( {
 					</Button>
 				</>
 			) }
-			{ ( username || disabled ) && (
+			{ username && (
 				<FormFieldset className="sftp-card__info-field">
 					<FormLabel>{ translate( 'URL' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
