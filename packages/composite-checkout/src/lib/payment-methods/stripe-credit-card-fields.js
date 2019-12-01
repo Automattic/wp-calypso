@@ -49,6 +49,71 @@ export function createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } ) {
+	const actions = {
+		changeBrand( payload ) {
+			return { type: 'BRAND_SET', payload };
+		},
+		setCardDataError( type, message ) {
+			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
+		},
+		setCardDataComplete( type, complete ) {
+			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
+		},
+		changeCardholderName( payload ) {
+			return { type: 'CARDHOLDER_NAME_SET', payload };
+		},
+		setStripeError( payload ) {
+			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
+		},
+		*getConfiguration( payload ) {
+			let configuration;
+			try {
+				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
+			} catch ( error ) {
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+			}
+			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
+		},
+		*beginStripeTransaction( payload ) {
+			let stripeResponse;
+			try {
+				const paymentMethodToken = yield {
+					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						phoneNumber: getPhoneNumber(),
+					},
+				};
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						siteId: getSiteId(),
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						subdivisionCode: getSubdivisionCode(),
+						paymentMethodToken,
+					},
+				};
+			} catch ( error ) {
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+			}
+			if (
+				stripeResponse &&
+				stripeResponse.message &&
+				stripeResponse.message.payment_intent_client_secret
+			) {
+				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
+			}
+			if ( stripeResponse && stripeResponse.redirect_url ) {
+				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
+			}
+			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
+		},
+	};
+
 	const selectors = {
 		getStripeConfiguration( state ) {
 			return state.stripeConfiguration;
@@ -151,70 +216,7 @@ export function createStripeMethod( {
 			}
 			return state;
 		},
-		actions: {
-			changeBrand( payload ) {
-				return { type: 'BRAND_SET', payload };
-			},
-			setCardDataError( type, message ) {
-				return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
-			},
-			setCardDataComplete( type, complete ) {
-				return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
-			},
-			changeCardholderName( payload ) {
-				return { type: 'CARDHOLDER_NAME_SET', payload };
-			},
-			setStripeError( payload ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload };
-			},
-			*getConfiguration( payload ) {
-				let configuration;
-				try {
-					configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-				} catch ( error ) {
-					return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-				}
-				return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
-			},
-			*beginStripeTransaction( payload ) {
-				let stripeResponse;
-				try {
-					const paymentMethodToken = yield {
-						type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
-						payload: {
-							...payload,
-							country: getCountry(),
-							postalCode: getPostalCode(),
-							phoneNumber: getPhoneNumber(),
-						},
-					};
-					stripeResponse = yield {
-						type: 'STRIPE_TRANSACTION_BEGIN',
-						payload: {
-							...payload,
-							siteId: getSiteId(),
-							country: getCountry(),
-							postalCode: getPostalCode(),
-							subdivisionCode: getSubdivisionCode(),
-							paymentMethodToken,
-						},
-					};
-				} catch ( error ) {
-					return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-				}
-				if (
-					stripeResponse &&
-					stripeResponse.message &&
-					stripeResponse.message.payment_intent_client_secret
-				) {
-					return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
-				}
-				if ( stripeResponse && stripeResponse.redirect_url ) {
-					return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
-				}
-				return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
-			},
-		},
+		actions,
 		selectors,
 		controls: {
 			STRIPE_CONFIGURATION_FETCH( action ) {
