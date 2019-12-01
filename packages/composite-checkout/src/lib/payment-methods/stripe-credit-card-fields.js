@@ -77,26 +77,7 @@ export function createStripeMethod( {
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
-				const paymentMethodToken = yield {
-					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
-					payload: {
-						...payload,
-						country: getCountry(),
-						postalCode: getPostalCode(),
-						phoneNumber: getPhoneNumber(),
-					},
-				};
-				stripeResponse = yield {
-					type: 'STRIPE_TRANSACTION_BEGIN',
-					payload: {
-						...payload,
-						siteId: getSiteId(),
-						country: getCountry(),
-						postalCode: getPostalCode(),
-						subdivisionCode: getSubdivisionCode(),
-						paymentMethodToken,
-					},
-				};
+				stripeResponse = yield { type: 'STRIPE_TRANSACTION_BEGIN', payload };
 			} catch ( error ) {
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
@@ -166,7 +147,7 @@ export function createStripeMethod( {
 		}
 	}
 
-	registerStore( 'stripe', {
+	const store = registerStore( 'stripe', {
 		reducer(
 			state = {
 				cardDataErrors: cardDataErrorsReducer(),
