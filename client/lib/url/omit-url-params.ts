@@ -15,12 +15,15 @@ const BASE_URL = 'http://__domain__.invalid';
 /**
  * Removes given params from a url.
  *
- * @param  url URL to be cleaned
- * @param  paramsToOmit The collection of params or single param to reject
- * @return Url less the omitted params.
+ * @param   url URL to be cleaned
+ * @param   paramsToOmit The collection of params or single param to reject
+ * @returns Url less the omitted params.
  */
 export default function omitUrlParams( url: Falsy, paramsToOmit: string | string[] ): null;
-export default function omitUrlParams( url: URLString, paramsToOmit: string | string[] ): URLString | null;
+export default function omitUrlParams(
+	url: URLString,
+	paramsToOmit: string | string[]
+): URLString | null;
 export default function omitUrlParams(
 	url: URLString | Falsy,
 	paramsToOmit: string | string[]
@@ -37,13 +40,7 @@ export default function omitUrlParams(
 		return null;
 	}
 
-	let toOmit: string[];
-
-	if ( typeof paramsToOmit === 'string' ) {
-		toOmit = [ paramsToOmit ];
-	} else {
-		toOmit = paramsToOmit;
-	}
+	const toOmit: string[] = typeof paramsToOmit === 'string' ? [ paramsToOmit ] : paramsToOmit;
 
 	const parsed = new URL( url, BASE_URL );
 	const filtered = Array.from( parsed.searchParams.entries() ).filter(
