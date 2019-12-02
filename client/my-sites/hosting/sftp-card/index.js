@@ -47,7 +47,7 @@ const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
 
-const SftpCard = ( {
+export const SftpCard = ( {
 	translate,
 	username,
 	password,
