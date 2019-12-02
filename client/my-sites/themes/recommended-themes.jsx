@@ -18,6 +18,14 @@ class RecommendedThemes extends React.Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		// Wait until rec themes to be loaded to scroll to search input if its in use.
+		const { isLoading, isShowcaseOpen, scrollToSearchInput } = this.props;
+		if ( prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen ) {
+			scrollToSearchInput();
+		}
+	}
+
 	render() {
 		return (
 			<>

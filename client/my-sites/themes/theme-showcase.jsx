@@ -103,6 +103,12 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
+			this.scrollToSearchInput();
+		}
+	}
+
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			this.scrollRef.current.scrollIntoView();
@@ -298,10 +304,12 @@ class ThemeShowcase extends React.Component {
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
+								isShowcaseOpen={ this.state.isShowcaseOpen }
+								scrollToSearchInput={ this.scrollToSearchInput }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
-									<hr ref={ this.scrollRef } />
+									<hr />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
 										{ translate( 'Show All Themes' ) }
@@ -312,6 +320,7 @@ class ThemeShowcase extends React.Component {
 					) }
 
 					<div
+						ref={ this.scrollRef }
 						className={
 							! this.state.isShowcaseOpen
 								? 'themes__hidden-content theme-showcase__all-themes'
