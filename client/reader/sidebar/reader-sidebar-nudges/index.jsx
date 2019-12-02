@@ -4,6 +4,7 @@
 import React, { Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,6 +19,8 @@ import getSites from 'state/selectors/get-sites';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import { clickUpgradeNudge } from 'state/marketing/actions';
+
+const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
 	return (
@@ -50,6 +53,14 @@ function mapStateToProps( state ) {
 	const siteSlug = getPrimarySiteSlug( state );
 	const devCountryCode = isDevelopment && global.window && global.window.userCountryCode;
 	const countryCode = devCountryCode || getCurrentUserCountryCode( state );
+
+	isDevelopment &&
+		debug(
+			'country: %s, siteCount: %d, eligible: %s',
+			countryCode,
+			siteCount,
+			isEligibleForFreeToPaidUpsell( state, siteId )
+		);
 
 	return {
 		siteId,
