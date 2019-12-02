@@ -40,11 +40,16 @@ export default function omitUrlParams(
 		return null;
 	}
 
+	// An empty string or array of paramsToOmit is a no-op (with a valid URL).
+	if ( ! paramsToOmit || ! paramsToOmit.length ) {
+		return url;
+	}
+
 	const toOmit: string[] = typeof paramsToOmit === 'string' ? [ paramsToOmit ] : paramsToOmit;
 
 	const parsed = new URL( url, BASE_URL );
 	const filtered = Array.from( parsed.searchParams.entries() ).filter(
-		( [ key ] ) => ! toOmit || ! toOmit.includes( key )
+		( [ key ] ) => ! toOmit.includes( key )
 	);
 
 	const newUrl = new URL( url, BASE_URL );
