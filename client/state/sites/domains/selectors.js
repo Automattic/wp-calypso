@@ -58,6 +58,10 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
 };
 
+export const getAllRequestingSiteDomains = state => {
+	return state.sites.domains.requesting;
+};
+
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 	return state?.sites?.domains?.updatingPrivacy?.[ siteId ]?.[ domain ];
 };

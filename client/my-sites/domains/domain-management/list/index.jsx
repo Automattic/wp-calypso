@@ -8,6 +8,7 @@ import { find, findIndex, get, identity, noop, times } from 'lodash';
 import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -57,6 +58,15 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import './style.scss';
 
 export class List extends React.Component {
+	static propTypes = {
+		selectedSite: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		isRequestingDomains: PropTypes.bool.isRequired,
+		cart: PropTypes.object,
+		context: PropTypes.object,
+		renderAllSites: PropTypes.bool,
+	};
+
 	static defaultProps = {
 		translate: identity,
 		enablePrimaryDomainMode: noop,
@@ -136,6 +146,9 @@ export class List extends React.Component {
 
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
+			if ( this.props.renderAllSites ) {
+				return null;
+			}
 			return (
 				<Main>
 					<SidebarNavigation />
@@ -151,7 +164,7 @@ export class List extends React.Component {
 			return null;
 		}
 
-		if ( this.props.isDomainOnly ) {
+		if ( this.props.isDomainOnly && ! this.props.renderAllSites ) {
 			return (
 				<Main>
 					<DocumentHead title={ this.props.translate( 'Settings' ) } />
@@ -165,23 +178,33 @@ export class List extends React.Component {
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
+		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
+		const sectionHref = this.props.renderAllSites
+			? domainManagementList( this.props.selectedSite.slug )
+			: null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="domain-management__page-heading"
-					headerText={ this.props.translate( 'Domains' ) }
-					align="left"
-				/>
-				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				{ this.domainWarnings() }
+				{ ! this.props.renderAllSites && (
+					<FormattedHeader
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Domains' ) }
+						align="left"
+					/>
+				) }
+				{ ! this.props.renderAllSites && (
+					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+				) }
+				{ ! this.props.renderAllSites && this.domainWarnings() }
 
-				{ this.domainCreditsInfoNotice() }
+				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
 
-				<SectionHeader>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader label={ sectionLabel } href={ sectionHref }>
+					{ this.headerButtons() }
+				</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
