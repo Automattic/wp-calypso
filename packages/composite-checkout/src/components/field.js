@@ -110,8 +110,9 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-	padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px;
+		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )} !important;
+	padding: 12px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px !important;
+	line-height: 1.2 !important;
 
 	:focus {
 		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
