@@ -27,7 +27,7 @@ const handleCheckoutEvent = () => () => {
 
 // This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, registry } ) {
-	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -48,7 +48,7 @@ export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, r
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<WPCheckout deleteItem={ deleteItem } changePlanLength={ changePlanLength } />
+			<WPCheckout removeItem={ removeItem } changePlanLength={ changePlanLength } />
 		</CheckoutProvider>
 	);
 }

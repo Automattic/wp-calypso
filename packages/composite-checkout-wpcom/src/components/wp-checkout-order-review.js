@@ -46,6 +46,7 @@ export function WPCheckoutOrderReview( { className, removeItem } ) {
 WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
+	removeItem: PropTypes.func.isRequired,
 };
 
 const CouponField = styled( Coupon )`

@@ -26,11 +26,12 @@ const wpcom = wp.undocumented();
 
 export const getServerCart = wpcom.getCart;
 
-const useShoppingCart = cartKey =>
-	makeShoppingCartHook(
+const useShoppingCart = cartKey => {
+	return makeShoppingCartHook(
 		cartParam => wpcom.setCart( cartKey, cartParam ),
 		() => wpcom.getCart( cartKey )
 	);
+};
 
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
@@ -86,7 +87,7 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
-export function CompositeCheckoutContainer( siteSlug ) {
+export function CompositeCheckoutContainer( { siteSlug } ) {
 	return (
 		<WPCheckoutWrapper
 			useShoppingCart={ useShoppingCart( siteSlug ) }

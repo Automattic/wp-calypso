@@ -209,7 +209,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButtons={ hasDeleteButtons }
-						removeProduct={ removeItem }
+						removeItem={ removeItem }
 					/>
 				</WPOrderReviewListItems>
 			) ) }
@@ -221,7 +221,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,
-	removeProduct: PropTypes.func,
+	removeItem: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,

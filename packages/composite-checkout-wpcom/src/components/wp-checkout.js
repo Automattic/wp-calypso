@@ -30,12 +30,12 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export default function WPCheckout( { deleteItem, changePlanLength } ) {
+export default function WPCheckout( { removeItem, changePlanLength } ) {
 	const translate = useTranslate();
 	const [ itemsWithTax ] = useLineItems();
 
 	const ReviewContent = () => (
-		<WPCheckoutOrderReview removeItem={ deleteItem } onChangePlanLength={ changePlanLength } />
+		<WPCheckoutOrderReview removeItem={ removeItem } onChangePlanLength={ changePlanLength } />
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};

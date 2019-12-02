@@ -28,7 +28,7 @@ import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
  *     * tax: the tax line item
  *     * total: the total price line item
  *     * addItem: callback for adding an item to the cart
- *     * deleteItem: callback for removing an item from the cart
+ *     * removeItem: callback for removing an item from the cart
  */
 export interface ShoppingCartManager {
 	items: WPCOMCartItem[];
