@@ -109,11 +109,15 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
+
 	//override leaky styles with important
-	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )} !important;
-	padding: 12px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px !important;
-	line-height: 1.2 !important;
+	&[type='text'],
+	&[type='number'] {
+		border: 1px solid
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 11px 10px;
+		line-height: 1.2;
+	}
 
 	:focus {
 		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
@@ -125,8 +129,8 @@ const Input = styled.input`
 		-webkit-appearance: none;
 	}
 
-	[type='number'],
-	[type='number'] {
+	&[type='number'],
+	&[type='number'] {
 		-moz-appearance: none;
 		appearance: none;
 	}
@@ -135,7 +139,10 @@ const Input = styled.input`
 		color: ${props => props.theme.colors.placeHolderTextColor};
 	}
 
-	:disabled {
+	&[type='text']:disabled,
+	&[type='number']:disabled {
+		border: 1px solid
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
 		background: ${props => props.theme.colors.disabledField};
 	}
 `;
