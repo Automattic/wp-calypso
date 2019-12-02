@@ -12,7 +12,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOSTING_RESTORE_DATABASE_PASSWORD } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
-export const requestRestoreDatabasePassword = action =>
+const requestRestoreDatabasePassword = action =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/hosting/restore-database-password`,
@@ -23,18 +23,16 @@ export const requestRestoreDatabasePassword = action =>
 		action
 	);
 
-export const showSuccessNotification = () =>
+const showSuccessNotification = () =>
 	successNotice( translate( 'Your database password has been restored.' ), {
 		duration: 5000,
-		id: 'restore-database-password-success',
 	} );
 
-export const showErrorNotification = () =>
+const showErrorNotification = () =>
 	errorNotice(
 		translate( 'Sorry, we had a problem restoring your database password. Please try again.' ),
 		{
 			duration: 5000,
-			id: 'restore-database-password-error',
 		}
 	);
 
