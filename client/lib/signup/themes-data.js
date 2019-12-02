@@ -291,7 +291,7 @@ export const themes = [
 		fallback: true,
 		description: '',
 		design: 'template-first',
-		demo_uri: 'https:/shawburndemo.wordpress.com',
+		demo_uri: 'https://shawburndemo.wordpress.com',
 		verticals: [],
 	},
 	{
