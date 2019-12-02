@@ -349,7 +349,7 @@ export function generateFlows( {
 			steps: [ 'user', 'fse-themes', 'domains', 'plans' ],
 			destination: getEditorDestination,
 			description: 'User testing Signup flow for Full Site Editing',
-			lastModified: '2019-11-22',
+			lastModified: '2019-12-02',
 		};
 	}
 
