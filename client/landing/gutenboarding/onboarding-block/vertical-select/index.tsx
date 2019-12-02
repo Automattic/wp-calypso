@@ -11,7 +11,7 @@ import { ENTER } from '@wordpress/keycodes';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { SiteVertical, isFilledFormValue } from '../../stores/onboard/types';
+import { SiteVertical } from '../../stores/onboard/types';
 import { InjectedStepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from 'client/types';
@@ -111,9 +111,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
 	const label = NO__( 'My site is about' );
-	const displayValue = isFilledFormValue( siteVertical )
-		? siteVertical.label
-		: NO__( 'enter a topic' );
+	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
 
 	// Focus the input when we change to active
 	const inputRef = createRef< HTMLInputElement >();

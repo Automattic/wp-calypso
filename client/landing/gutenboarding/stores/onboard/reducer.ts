@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, FormValue, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
+import { ActionType, Vertical, SiteVertical } from './types';
 import { DomainSuggestion } from '../domain-suggestions/types';
 import * as Actions from './actions';
 
@@ -42,14 +42,14 @@ const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVertic
 };
 
 const siteVertical: Reducer<
-	FormValue< SiteVertical >,
+	SiteVertical | undefined,
 	ReturnType< typeof Actions[ 'setSiteVertical' ] >
-> = ( state = EMPTY_FORM_VALUE, action ) => {
+> = ( state = undefined, action ) => {
 	if ( action.type === ActionType.SET_SITE_VERTICAL ) {
 		return action.siteVertical;
 	}
 	if ( action.type === ActionType.RESET_SITE_VERTICAL ) {
-		return EMPTY_FORM_VALUE;
+		return undefined;
 	}
 	return state;
 };
