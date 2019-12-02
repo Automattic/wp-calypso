@@ -291,7 +291,7 @@ export const themes = [
 		fallback: true,
 		description: '',
 		design: 'template-first',
-		demo_uri: 'https:/shawburndemo.wordpress.com',
+		demo_uri: 'https://shawburndemo.wordpress.com',
 		verticals: [],
 	},
 	{
@@ -422,6 +422,38 @@ export const themes = [
 		description: '',
 		design: 'template-first',
 		demo_uri: 'https://twentyfifteendemo.wordpress.com',
+		verticals: [],
+	},
+
+	// Start full-site-editing compatible themes
+	{
+		name: 'Exford',
+		slug: 'exford',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://exforddemo.wordpress.com',
+		verticals: [],
+	},
+	{
+		name: 'Maywood',
+		slug: 'maywood',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://maywooddemo.wordpress.com',
+		verticals: [],
+	},
+	{
+		name: 'Shawburn',
+		slug: 'shawburn',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://shawburndemo.wordpress.com',
 		verticals: [],
 	},
 ];
