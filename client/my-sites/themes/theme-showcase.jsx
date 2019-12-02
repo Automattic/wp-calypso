@@ -64,6 +64,7 @@ const optionShape = PropTypes.shape( {
 class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
+		this.scrollRef = React.createRef();
 		this.state = {
 			page: 1,
 			showPreview: false,
@@ -102,6 +103,12 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
+	scrollToSearchInput = () => {
+		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
+			this.scrollRef.current.scrollIntoView();
+		}
+	};
+
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
 		this.props.trackMoreThemesClick();
@@ -123,6 +130,7 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
+		this.scrollToSearchInput();
 	};
 
 	/**
@@ -155,6 +163,7 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
+		this.scrollToSearchInput();
 	};
 
 	onUploadClick = () => {
@@ -292,7 +301,7 @@ class ThemeShowcase extends React.Component {
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
-									<hr />
+									<hr ref={ this.scrollRef } />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
 										{ translate( 'Show All Themes' ) }
