@@ -30,6 +30,7 @@ import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-desc
 import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { openThemesShowcase } from 'state/themes/themes-ui/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -71,7 +72,8 @@ class ThemeShowcase extends React.Component {
 			isShowcaseOpen: !! (
 				this.props.loggedOutComponent ||
 				this.props.search ||
-				this.props.filter
+				this.props.filter ||
+				this.props.isShowcaseOpen
 			),
 		};
 	}
@@ -103,6 +105,13 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
+	componentDidMount() {
+		// Open showcase on state if we open here with query override.
+		if ( this.props.search || ( this.props.filter && ! this.props.isShowcaseOpen ) ) {
+			this.props.openThemesShowcase();
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
 			this.scrollToSearchInput();
@@ -117,6 +126,7 @@ class ThemeShowcase extends React.Component {
 
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
+		this.props.openThemesShowcase();
 		this.props.trackMoreThemesClick();
 	};
 
@@ -408,11 +418,13 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
+	isShowcaseOpen: state.themes.themesUI.themesShowcaseOpen,
 } );
 
 const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
+	openThemesShowcase: () => openThemesShowcase(),
 };
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );
