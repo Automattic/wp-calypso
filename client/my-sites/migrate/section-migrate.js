@@ -65,7 +65,7 @@ class SectionMigrate extends Component {
 	};
 
 	setSourceSiteId = sourceSiteId => {
-		page( `/migrate/${ sourceSiteId }/${ this.props.targetSiteSlug }` );
+		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
 	startMigration = () => {
@@ -277,15 +277,27 @@ class SectionMigrate extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const targetSiteId = getSelectedSiteId( state );
-	return {
-		isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
-		isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
-		sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
-		targetSite: getSelectedSite( state ),
-		targetSiteId,
-		targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
-		targetSiteSlug: getSelectedSiteSlug( state ),
-	};
-} )( localize( SectionMigrate ) );
+const navigateToSelectedSourceSite = sourceSiteId => ( dispatch, getState ) => {
+	const state = getState();
+	const sourceSite = getSite( state, sourceSiteId );
+	const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+	const targetSiteSlug = getSelectedSiteSlug( state );
+
+	page( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
+};
+
+export default connect(
+	( state, ownProps ) => {
+		const targetSiteId = getSelectedSiteId( state );
+		return {
+			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
+			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
+			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
+			targetSite: getSelectedSite( state ),
+			targetSiteId,
+			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
+			targetSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	{ navigateToSelectedSourceSite }
+)( localize( SectionMigrate ) );

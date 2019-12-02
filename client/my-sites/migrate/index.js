@@ -24,7 +24,7 @@ export default function() {
 	);
 
 	page(
-		'/migrate/:sourceSiteId/:site_id',
+		'/migrate/from/:sourceSiteId/to/:site_id',
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/migrate' ),
