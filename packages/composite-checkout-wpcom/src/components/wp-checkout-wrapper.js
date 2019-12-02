@@ -28,7 +28,7 @@ export function WPCheckoutWrapper( {
 	onSuccess,
 	onFailure,
 } ) {
-	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -49,7 +49,7 @@ export function WPCheckoutWrapper( {
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<WPCheckout deleteItem={ deleteItem } changePlanLength={ changePlanLength } />
+			<WPCheckout removeItem={ removeItem } changePlanLength={ changePlanLength } />
 		</CheckoutProvider>
 	);
 }

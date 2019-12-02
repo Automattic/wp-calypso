@@ -18,7 +18,7 @@ import {
 	WPOrderReviewSection,
 } from './wp-order-review-line-items';
 
-export function WPCheckoutOrderReview( { className, removeItem } ) {
+export default function WPCheckoutOrderReview( { className, removeItem } ) {
 	const [ items, total ] = useLineItems();
 
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
@@ -46,6 +46,7 @@ export function WPCheckoutOrderReview( { className, removeItem } ) {
 WPCheckoutOrderReview.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
+	removeItem: PropTypes.func.isRequired,
 };
 
 const CouponField = styled( Coupon )`

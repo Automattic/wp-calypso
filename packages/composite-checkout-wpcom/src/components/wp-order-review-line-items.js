@@ -32,6 +32,8 @@ const OrderReviewSectionArea = styled.div`
 `;
 
 function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
+	const translate = useTranslate();
+	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
@@ -207,7 +209,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButtons={ hasDeleteButtons }
-						removeProduct={ removeItem }
+						removeItem={ removeItem }
 					/>
 				</WPOrderReviewListItems>
 			) ) }
@@ -219,7 +221,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,
-	removeProduct: PropTypes.func,
+	removeItem: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,

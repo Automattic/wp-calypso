@@ -12,7 +12,7 @@ import {
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
-    emptyResponseCart,
+	emptyResponseCart,
 	prepareRequestCart,
 } from './types/backend/shopping-cart-endpoint';
 import {
@@ -33,7 +33,7 @@ export {
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
-    emptyResponseCart,
+	emptyResponseCart,
 	prepareRequestCart,
 	WPCOMCart,
 	WPCOMCartItem,
