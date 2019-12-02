@@ -174,13 +174,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'jetpack-onboarding',
-		paths: [ '/jetpack/start' ],
-		module: 'jetpack-onboarding',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-	{
 		name: 'signup',
 		paths: [ '/start' ],
 		module: 'signup',

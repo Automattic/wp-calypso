@@ -4,7 +4,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, isEmpty, some, dropRight } from 'lodash';
+import { get, some, dropRight } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -24,8 +24,7 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import versionCompare from 'lib/version-compare';
-import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
+import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
@@ -34,9 +33,7 @@ import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
-import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
-import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -82,28 +79,6 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
-	}
-
-	next();
-}
-
-export function maybeOnboard( { query, store }, next ) {
-	if ( ! isEmpty( query ) && query.onboarding ) {
-		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.9', '<' ) ) {
-			return externalRedirect( query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard' );
-		}
-
-		const siteId = parseInt( query.client_id, 10 );
-		const siteSlug = urlToSlug( query.site_url );
-		const credentials = {
-			token: query.onboarding,
-			siteUrl: query.site_url,
-			userEmail: query.user_email,
-		};
-
-		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
-
-		return page.redirect( '/jetpack/start/' + siteSlug );
 	}
 
 	next();
