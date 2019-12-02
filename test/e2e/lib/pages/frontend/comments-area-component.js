@@ -24,14 +24,6 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		const commentContent = By.xpath( `//div[@class='comment-content']/p[.='${ comment }']` );
 
 		await this.switchToFrameIfJetpack();
-
-		// Accept cookies if banner present
-		try {
-			await driverHelper.clickWhenClickable( this.driver, By.css( '.accept' ) );
-		} catch ( e ) {
-			console.log( "Cookie banner wasn't displayed" );
-		}
-
 		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
 		await driverHelper.clickWhenClickable( this.driver, commentForm );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, commentFormWordPress );
