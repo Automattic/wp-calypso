@@ -52,9 +52,10 @@ function simpleArguments( args ) {
 }
 
 /**
- * Coerce the possible arguments and normalize to a single object
- * @param  {arguments} args - arguments passed in from `translate()`
- * @return {object}         - a single object describing translation needs
+ * Coerce the possible arguments and normalize to a single object.
+ *
+ * @param   {any} args - arguments passed in from `translate()`
+ * @returns {object}         - a single object describing translation needs
  */
 function normalizeTranslateArguments( args ) {
 	const original = args[ 0 ];
@@ -108,10 +109,11 @@ function normalizeTranslateArguments( args ) {
 }
 
 /**
- * Takes translate options object and coerces to a Tannin request to retrieve translation
- * @param  {object} tannin  - tannin data object
- * @param  {object} options - object describing translation
- * @return {string}         - the returned translation from Tannin
+ * Takes translate options object and coerces to a Tannin request to retrieve translation.
+ *
+ * @param   {object} tannin  - tannin data object
+ * @param   {object} options - object describing translation
+ * @returns {string}         - the returned translation from Tannin
  */
 function getTranslationFromTannin( tannin, options ) {
 	return tannin.dcnpgettext(
@@ -177,10 +179,11 @@ I18N.prototype.emit = function( ...args ) {
 };
 
 /**
- * Formats numbers using locale settings and/or passed options
- * @param  {String|Number|Int}  number to format (required)
- * @param  {Int|object} options  Number of decimal places or options object (optional)
- * @return {string}         Formatted number as string
+ * Formats numbers using locale settings and/or passed options.
+ *
+ * @param   {string|number}  number to format (required)
+ * @param   {number|object}  options  Number of decimal places or options object (optional)
+ * @returns {string}         Formatted number as string
  */
 I18N.prototype.numberFormat = function( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
@@ -309,6 +312,7 @@ I18N.prototype.getLocale = function() {
 
 /**
  * Get the current locale slug.
+ *
  * @returns {string} The string representing the currently loaded locale
  **/
 I18N.prototype.getLocaleSlug = function() {
@@ -316,7 +320,8 @@ I18N.prototype.getLocaleSlug = function() {
 };
 
 /**
- * Get the current text direction, left-to-right (LTR) or right-to-left (RTL)
+ * Get the current text direction, left-to-right (LTR) or right-to-left (RTL).
+ *
  * @returns {boolean} `true` in case the current locale has RTL text direction
  */
 I18N.prototype.isRtl = function() {
@@ -324,8 +329,9 @@ I18N.prototype.isRtl = function() {
 };
 
 /**
- * Adds new translations to the locale data, overwriting any existing translations with a matching key
- * @param {Object} localeData Locale data
+ * Adds new translations to the locale data, overwriting any existing translations with a matching key.
+ *
+ * @param {object} localeData Locale data
  */
 I18N.prototype.addTranslations = function( localeData ) {
 	for ( const prop in localeData ) {
@@ -338,12 +344,9 @@ I18N.prototype.addTranslations = function( localeData ) {
 };
 
 /**
- * Checks whether the given original has a translation. Parameters are the same as for translate().
+ * Checks whether the given original has a translation.
  *
- * @param  {string} original  the string to translate
- * @param  {string} plural    the plural string to translate (if applicable), original used as singular
- * @param  {object} options   properties describing translation requirements for given text
- * @return {boolean} whether a translation exists
+ * @returns {boolean} whether a translation exists
  */
 I18N.prototype.hasTranslation = function() {
 	return !! getTranslation( this, normalizeTranslateArguments( arguments ) );
@@ -352,10 +355,8 @@ I18N.prototype.hasTranslation = function() {
 /**
  * Exposes single translation method.
  * See sibling README
- * @param  {string} original  the string to translate
- * @param  {string} plural    the plural string to translate (if applicable), original used as singular
- * @param  {object} options   properties describing translation requirements for given text
- * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
+ *
+ * @returns {string|object} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function() {
 	const options = normalizeTranslateArguments( arguments );
