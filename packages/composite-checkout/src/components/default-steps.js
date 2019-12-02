@@ -32,7 +32,9 @@ export function getDefaultPaymentMethodStep() {
 		activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
 		incompleteStepContent: null,
 		completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
-		isCompleteCallback: () => true, // TODO: make sure any required fields in the selected payment method are complete
+		isCompleteCallback: ( { activePaymentMethod, activeStep, paymentData } ) => {
+			return activePaymentMethod?.isCompleteCallback?.( { activeStep, paymentData } ) ?? true;
+		},
 		isEditableCallback: () => true,
 		// These cannot be translated because they are not inside a component and
 		// we don't know if they are being created by the package or the host page.
