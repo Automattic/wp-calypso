@@ -109,6 +109,7 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
+	//override leaky styles with important
 	border: 1px solid
 		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )} !important;
 	padding: 12px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px !important;
