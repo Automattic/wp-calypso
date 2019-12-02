@@ -1,5 +1,16 @@
 
 .customer-home {
+
+	&__main {
+		display: grid;
+		grid-gap: 0;
+		grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+	}
+
+	&__page-heading.formatted-header.is-left-align {
+		grid-column: 2 / span 10;
+		margin: 0;
+	}
 	&__confetti {
 		display: block;
 		width: 320px;
@@ -159,10 +170,12 @@
 	}
 	&__layout {
 
+		grid-column: 2 / span 10;
+
 		@include breakpoint( '>960px' ) {
 			display: grid;
 			grid-gap: 24px;
-			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+			grid-template-columns: repeat( 10, [col-start] minmax( 0, 1fr ) );
 		}
 
 		.checklist__tasks {
@@ -188,7 +201,7 @@
 	}
 	&__layout-col-left {
 		@include breakpoint( '>960px' ) {
-			grid-column: 1 / span 9;
+			grid-column: 1 / span 7;
 		}
 	}
 	&__layout-col-right {
@@ -207,7 +220,7 @@
 		}
 
 		@include breakpoint( '>960px' ) {
-			grid-column: 10 / span 3;
+			grid-column: 8 / span 3;
 		}
 	}
 
