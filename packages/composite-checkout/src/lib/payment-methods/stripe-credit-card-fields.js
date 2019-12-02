@@ -53,6 +53,12 @@ export function createStripeMethod( {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
 		},
+		setCardDataError( type, message ) {
+			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
+		},
+		setCardDataComplete( type, complete ) {
+			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
+		},
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
@@ -89,8 +95,66 @@ export function createStripeMethod( {
 		},
 	};
 
-	registerStore( 'stripe', {
-		reducer( state = {}, action ) {
+	const selectors = {
+		getStripeConfiguration( state ) {
+			return state.stripeConfiguration;
+		},
+		getBrand( state ) {
+			return state.brand || '';
+		},
+		getCardholderName( state ) {
+			return state.cardholderName || '';
+		},
+		getTransactionError( state ) {
+			return state.transactionError;
+		},
+		getTransactionStatus( state ) {
+			return state.transactionStatus;
+		},
+		getTransactionAuthData( state ) {
+			return state.transactionAuthData;
+		},
+		getCardDataErrors( state ) {
+			return state.cardDataErrors;
+		},
+		areAllFieldsComplete( state ) {
+			return Object.keys( state.cardDataComplete ).every( key => state.cardDataComplete[ key ] );
+		},
+	};
+
+	function cardDataCompleteReducer(
+		state = {
+			cardNumber: false,
+			cardCvc: false,
+			cardExpiry: false,
+		},
+		action
+	) {
+		switch ( action?.type ) {
+			case 'CARD_DATA_COMPLETE_SET':
+				return { ...state, [ action.payload.type ]: action.payload.complete };
+			default:
+				return state;
+		}
+	}
+
+	function cardDataErrorsReducer( state = {}, action ) {
+		switch ( action?.type ) {
+			case 'CARD_DATA_ERROR_SET':
+				return { ...state, [ action.payload.type ]: action.payload.message };
+			default:
+				return state;
+		}
+	}
+
+	const store = registerStore( 'stripe', {
+		reducer(
+			state = {
+				cardDataErrors: cardDataErrorsReducer(),
+				cardDataComplete: cardDataCompleteReducer(),
+			},
+			action
+		) {
 			switch ( action.type ) {
 				case 'STRIPE_TRANSACTION_END':
 					return {
@@ -120,30 +184,21 @@ export function createStripeMethod( {
 					return { ...state, cardholderName: action.payload };
 				case 'BRAND_SET':
 					return { ...state, brand: action.payload };
+				case 'CARD_DATA_COMPLETE_SET':
+					return {
+						...state,
+						cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
+					};
+				case 'CARD_DATA_ERROR_SET':
+					return {
+						...state,
+						cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
+					};
 			}
 			return state;
 		},
 		actions,
-		selectors: {
-			getStripeConfiguration( state ) {
-				return state.stripeConfiguration;
-			},
-			getBrand( state ) {
-				return state.brand || '';
-			},
-			getCardholderName( state ) {
-				return state.cardholderName || '';
-			},
-			getTransactionError( state ) {
-				return state.transactionError;
-			},
-			getTransactionStatus( state ) {
-				return state.transactionStatus;
-			},
-			getTransactionAuthData( state ) {
-				return state.transactionAuthData;
-			},
-		},
+		selectors,
 		controls: {
 			STRIPE_CONFIGURATION_FETCH( action ) {
 				return fetchStripeConfiguration( action.payload );
@@ -162,6 +217,16 @@ export function createStripeMethod( {
 		CheckoutWrapper: StripeHookProvider,
 		SummaryComponent: StripeSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
+		isCompleteCallback: () => {
+			const cardholderName = selectors.getCardholderName( store.getState() );
+			const errors = selectors.getCardDataErrors( store.getState() );
+			const isCardDataComplete = selectors.areAllFieldsComplete( store.getState() );
+			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
+			if ( ! cardholderName?.length || areThereErrors || ! isCardDataComplete ) {
+				return false;
+			}
+			return true;
+		},
 	};
 }
 
@@ -170,14 +235,17 @@ function StripeCreditCardFields() {
 	const theme = useTheme();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
-	const [ cardNumberElementData, setCardNumberElementData ] = useState();
-	const [ cardExpiryElementData, setCardExpiryElementData ] = useState();
-	const [ cardCvcElementData, setCardCvcElementData ] = useState();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const brand = useSelect( select => select( 'stripe' ).getBrand() );
-	const { changeCardholderName } = useDispatch( 'stripe' );
-	const { changeBrand } = useDispatch( 'stripe' );
+	const {
+		cardNumber: cardNumberError,
+		cardCvc: cardCvcError,
+		cardExpiry: cardExpiryError,
+	} = useSelect( select => select( 'stripe' ).getCardDataErrors() );
+	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
+		'stripe'
+	);
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -185,17 +253,17 @@ function StripeCreditCardFields() {
 		}
 	}, [ onFailure, stripeLoadingError ] );
 
-	const handleStripeFieldChange = ( input, setCardElementData ) => {
+	const handleStripeFieldChange = input => {
+		setCardDataComplete( input.elementType, input.complete );
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );
 		}
 
 		if ( input.error && input.error.message ) {
-			setCardElementData( input.error.message );
+			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
-
-		setCardElementData( null );
+		setCardDataError( input.elementType, null );
 	};
 
 	const cardNumberStyle = {
@@ -240,38 +308,34 @@ function StripeCreditCardFields() {
 			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
 				<Label>
 					<LabelText>{ localize( 'Card number' ) }</LabelText>
-					<StripeFieldWrapper hasError={ cardNumberElementData }>
+					<StripeFieldWrapper hasError={ cardNumberError }>
 						<CardNumberElement
 							style={ cardNumberStyle }
 							onReady={ () => {
 								setIsStripeFullyLoaded( true );
 							} }
 							onChange={ input => {
-								handleStripeFieldChange( input, setCardNumberElementData );
+								handleStripeFieldChange( input );
 							} }
 						/>
 						<CardFieldIcon brand={ brand } />
 
-						{ cardNumberElementData && (
-							<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
-						) }
+						{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 					</StripeFieldWrapper>
 				</Label>
 				<FieldRow gap="4%" columnWidths="48% 48%">
 					<LeftColumn>
 						<Label>
 							<LabelText>{ localize( 'Expiry date' ) }</LabelText>
-							<StripeFieldWrapper hasError={ cardExpiryElementData }>
+							<StripeFieldWrapper hasError={ cardExpiryError }>
 								<CardExpiryElement
 									style={ cardNumberStyle }
 									onChange={ input => {
-										handleStripeFieldChange( input, setCardExpiryElementData );
+										handleStripeFieldChange( input );
 									} }
 								/>
 							</StripeFieldWrapper>
-							{ cardExpiryElementData && (
-								<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
-							) }
+							{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }
 						</Label>
 					</LeftColumn>
 					<RightColumn>
@@ -279,11 +343,11 @@ function StripeCreditCardFields() {
 							<LabelText>{ localize( 'Security code' ) }</LabelText>
 							<GridRow gap="4%" columnWidths="67% 29%">
 								<LeftColumn>
-									<StripeFieldWrapper hasError={ cardCvcElementData }>
+									<StripeFieldWrapper hasError={ cardCvcError }>
 										<CardCvcElement
 											style={ cardNumberStyle }
 											onChange={ input => {
-												handleStripeFieldChange( input, setCardCvcElementData );
+												handleStripeFieldChange( input );
 											} }
 										/>
 									</StripeFieldWrapper>
@@ -292,9 +356,7 @@ function StripeCreditCardFields() {
 									<CVVImage />
 								</RightColumn>
 							</GridRow>
-							{ cardCvcElementData && (
-								<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
-							) }
+							{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
 						</Label>
 					</RightColumn>
 				</FieldRow>

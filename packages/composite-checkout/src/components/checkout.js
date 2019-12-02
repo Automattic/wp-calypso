@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -18,9 +18,11 @@ import {
 	usePrimaryDispatch,
 	useRegisterPrimaryStore,
 	usePaymentData,
+	useRegistry,
 } from '../lib/registry';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useActiveStep, ActiveStepProvider, RenderedStepProvider } from '../lib/active-step';
+import { usePaymentMethod } from '../lib/payment-methods';
 import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -65,6 +67,10 @@ export default function Checkout( { steps, className } ) {
 	useRegisterCheckoutStore();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
+	const activePaymentMethod = usePaymentMethod();
+
+	// Re-render if any store changes; that way isComplete can rely on any data
+	useRenderOnStoreUpdate();
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
@@ -96,7 +102,8 @@ export default function Checkout( { steps, className } ) {
 		return {
 			...step,
 			isComplete:
-				!! step.isCompleteCallback && step.isCompleteCallback( { paymentData, activeStep } ),
+				!! step.isCompleteCallback &&
+				step.isCompleteCallback( { paymentData, activeStep, activePaymentMethod } ),
 		};
 	} );
 
@@ -254,4 +261,14 @@ function makeDefaultSteps( localize ) {
 		},
 		getDefaultOrderReviewStep(),
 	];
+}
+
+function useRenderOnStoreUpdate() {
+	const { subscribe } = useRegistry();
+	const [ , setForceReload ] = useState( 0 );
+	useEffect( () => {
+		return subscribe( () => {
+			setForceReload( current => current + 1 );
+		} );
+	}, [ subscribe ] );
 }

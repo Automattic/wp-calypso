@@ -13,11 +13,16 @@ import {
 	makeShoppingCartHook,
 	mockPayPalExpressRequest,
 } from '@automattic/composite-checkout-wpcom';
+import { useTranslate } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import wp from 'lib/wp';
+import notices from 'notices';
+
+const debug = debugFactory( 'calypso:composite-checkout-container' );
 
 const initialCart = {
 	coupon: '',
@@ -121,11 +126,25 @@ export function isApplePayAvailable() {
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
 export default function CompositeCheckoutContainer() {
+	const translate = useTranslate();
+	const onSuccess = () => {
+		debug( 'success' );
+		notices.success( translate( 'Your purchase was successful!' ) );
+	};
+
+	const onFailure = error => {
+		debug( 'error', error );
+		const message = error && error.toString ? error.toString() : error;
+		notices.error( message || translate( 'An error occurred during your purchase.' ) );
+	};
+
 	return (
 		<WPCheckoutWrapper
 			useShoppingCart={ useShoppingCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
+			onSuccess={ onSuccess }
+			onFailure={ onFailure }
 		/>
 	);
 }

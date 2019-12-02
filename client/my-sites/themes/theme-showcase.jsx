@@ -68,7 +68,11 @@ class ThemeShowcase extends React.Component {
 		this.state = {
 			page: 1,
 			showPreview: false,
-			isShowcaseOpen: !! this.props.loggedOutComponent,
+			isShowcaseOpen: !! (
+				this.props.loggedOutComponent ||
+				this.props.search ||
+				this.props.filter
+			),
 		};
 	}
 
@@ -99,6 +103,18 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
+			this.scrollToSearchInput();
+		}
+	}
+
+	scrollToSearchInput = () => {
+		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
+			this.scrollRef.current.scrollIntoView();
+		}
+	};
+
 	toggleShowcase = () => {
 		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
 		this.props.trackMoreThemesClick();
@@ -120,9 +136,7 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
+		this.scrollToSearchInput();
 	};
 
 	/**
@@ -155,9 +169,7 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
+		this.scrollToSearchInput();
 	};
 
 	onUploadClick = () => {
@@ -228,7 +240,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-
+		const isQueried = this.props.search || this.props.filter;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -256,7 +268,7 @@ class ThemeShowcase extends React.Component {
 							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
-					{ ! this.props.loggedOutComponent && (
+					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
 								upsellUrl={ this.props.upsellUrl }
@@ -292,10 +304,12 @@ class ThemeShowcase extends React.Component {
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
+								isShowcaseOpen={ this.state.isShowcaseOpen }
+								scrollToSearchInput={ this.scrollToSearchInput }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
-									<hr ref={ this.scrollRef } />
+									<hr />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
 										{ translate( 'Show All Themes' ) }
@@ -306,6 +320,7 @@ class ThemeShowcase extends React.Component {
 					) }
 
 					<div
+						ref={ this.scrollRef }
 						className={
 							! this.state.isShowcaseOpen
 								? 'themes__hidden-content theme-showcase__all-themes'

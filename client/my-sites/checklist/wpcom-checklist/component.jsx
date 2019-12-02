@@ -137,16 +137,6 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	handleLaunchTaskDismiss = taskId => () => {
-		const { siteId } = this.props;
-
-		if ( taskId ) {
-			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
-			this.trackTaskDismiss( taskId );
-			this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
-		}
-	};
-
 	trackTaskDismiss = taskId => {
 		if ( taskId ) {
 			this.props.recordTracksEvent( 'calypso_checklist_task_dismiss', {
@@ -674,7 +664,7 @@ class WpcomChecklistComponent extends PureComponent {
 				isButtonDisabled={ disabled }
 				noticeText={ noticeText }
 				onClick={ this.handleLaunchSite }
-				onDismiss={ this.handleLaunchTaskDismiss( task.id ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
 				showSkip={ false }
 				title={ translate( 'Launch your site' ) }
 			/>

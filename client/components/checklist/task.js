@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import Focusable from 'components/focusable';
 import Notice from 'components/notice';
 import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
@@ -74,16 +73,12 @@ class Task extends PureComponent {
 
 		if ( onDismiss ) {
 			return (
-				<Focusable
-					className="checklist__task-icon"
-					onClick={ onDismiss }
-					aria-pressed={ completed ? 'true' : 'false' }
-				>
+				<div className="checklist__task-icon">
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ this.renderGridicon() }
-				</Focusable>
+				</div>
 			);
 		}
 
