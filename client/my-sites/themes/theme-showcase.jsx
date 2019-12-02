@@ -64,11 +64,14 @@ const optionShape = PropTypes.shape( {
 class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
-		this.scrollRef = React.createRef();
 		this.state = {
 			page: 1,
 			showPreview: false,
-			isShowcaseOpen: !! this.props.loggedOutComponent,
+			isShowcaseOpen: !! (
+				this.props.loggedOutComponent ||
+				this.props.search ||
+				this.props.filter
+			),
 		};
 	}
 
@@ -120,9 +123,6 @@ class ThemeShowcase extends React.Component {
 				.trim(),
 		} );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
 	};
 
 	/**
@@ -155,9 +155,6 @@ class ThemeShowcase extends React.Component {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
-		if ( ! this.props.loggedOutComponent ) {
-			this.scrollRef.current.scrollIntoView();
-		}
 	};
 
 	onUploadClick = () => {
@@ -228,7 +225,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-
+		const isQueried = this.props.search || this.props.filter;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -256,7 +253,7 @@ class ThemeShowcase extends React.Component {
 							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
-					{ ! this.props.loggedOutComponent && (
+					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
 								upsellUrl={ this.props.upsellUrl }
@@ -295,7 +292,7 @@ class ThemeShowcase extends React.Component {
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
-									<hr ref={ this.scrollRef } />
+									<hr />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
 										{ translate( 'Show All Themes' ) }
