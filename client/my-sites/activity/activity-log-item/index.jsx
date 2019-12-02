@@ -349,7 +349,7 @@ class ActivityLogItem extends Component {
 						title={ translate( 'Restore Site' ) }
 						disableButton={ this.state.disableRestoreButton }
 					>
-						{ translate( '{{time/}} is the selected point for your site Restore.', {
+						{ translate( '{{time/}} is the selected point for your site restore.', {
 							components: {
 								time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
 							},
