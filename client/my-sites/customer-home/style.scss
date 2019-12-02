@@ -1,3 +1,4 @@
+
 .customer-home {
 	&__confetti {
 		display: block;
@@ -87,7 +88,7 @@
 		}
 	}
 	&__card-col-left {
-		margin-bottom: 16px;
+		margin-bottom: 24px;
 		width: 100%;
 
 		@mixin card-col-left-two-col {
@@ -122,14 +123,6 @@
 			@include card-col-right-two-col;
 		}
 	}
-	&__card-mobile {
-		justify-content: space-around;
-	}
-	&__card-subheader {
-		color: var( --color-text-subtle );
-		font-size: 0.85rem;
-		margin: -0.5rem 0 1rem;
-	}
 	&__card-support {
 		display: flex;
 		justify-content: space-between;
@@ -139,7 +132,7 @@
 			width: 137px;
 			height: 119px;
 
-			@include breakpoint( '960px-1040px' ) {
+			@include breakpoint( '>960px' ) {
 				display: none;
 			}
 		}
@@ -147,24 +140,33 @@
 		.vertical-nav {
 			width: 60%;
 
-			@include breakpoint( '960px-1040px' ) {
+			@include breakpoint( '>960px' ) {
 				width: 100%;
 			}
 		}
+	}
+	&__card-mobile {
+		justify-content: space-around;
+	}
+	&__card-subheader {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin: -0.5rem 0 1rem;
 	}
 	&__go-mobile,
 	&__grow-earn {
 		padding-bottom: 12px;
 	}
 	&__layout {
+
 		@include breakpoint( '>960px' ) {
-			display: flex;
-			justify-content: space-between;
-			flex-wrap: wrap;
+			display: grid;
+			grid-gap: 24px;
+			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
 		}
 
 		.checklist__tasks {
-			margin-bottom: 8px;
+			margin-bottom: 16px;
 
 			&-completed-title {
 				margin-top: 24px;
@@ -186,12 +188,7 @@
 	}
 	&__layout-col-left {
 		@include breakpoint( '>960px' ) {
-			width: 70%;
-
-			.card,
-			.checklist__tasks {
-				margin-right: 8px;
-			}
+			grid-column: 1 / span 9;
 		}
 	}
 	&__layout-col-right {
@@ -210,20 +207,7 @@
 		}
 
 		@include breakpoint( '>960px' ) {
-			width: 30%;
-
-			.card {
-				margin-left: 8px;
-			}
-
-			.card.vertical-nav-item {
-				margin-left: 0;
-			}
-		}
-		@include breakpoint( '960px-1040px' ) {
-			.android-app-badge {
-				margin-left: -8px;
-			}
+			grid-column: 10 / span 3;
 		}
 	}
 
@@ -234,21 +218,17 @@
 
 .get-apps__app-badge {
 	display: inline-block;
-	img {
-		max-height: 41px;
-		margin: 9px 0;
-		width: auto;
-	}
 
-	&.android-app-badge {
+	@include breakpoint( '>960px' ) {
 		img {
-			max-height: 59px;
-			margin-top: 0;
-			margin-bottom: 0;
-			margin-right: 0;
+			max-height: 41px;
+			margin: 0;
+			width: auto;
 		}
-		& + .ios-app-badge img {
-			margin-left: 0;
+
+		&.android-app-badge img {
+			max-height: 63px;
+			margin-left: -9px;
 		}
 	}
 }
