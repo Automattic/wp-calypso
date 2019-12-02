@@ -87,7 +87,7 @@ function CheckoutStepHeader( {
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
-			<Stepper isComplete={ isComplete } isActive={ isActive }>
+			<Stepper isComplete={ isComplete } isActive={ isActive } stepNumber={ stepNumber || 0 }>
 				{ stepNumber || null }
 			</Stepper>
 			<StepTitle
@@ -120,7 +120,7 @@ CheckoutStepHeader.propTypes = {
 	onEdit: PropTypes.func,
 };
 
-function Stepper( { isComplete, isActive, className, children } ) {
+function Stepper( { isComplete, isActive, className, children, stepNumber } ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
 	return (
@@ -130,7 +130,7 @@ function Stepper( { isComplete, isActive, className, children } ) {
 					{ children }
 				</StepNumber>
 				<StepNumberCompleted>
-					<CheckIcon />
+					<CheckIcon stepNumber={ stepNumber } />
 				</StepNumberCompleted>
 			</StepNumberInnerWrapper>
 		</StepNumberOuterWrapper>
@@ -141,6 +141,7 @@ Stepper.propTypes = {
 	className: PropTypes.string,
 	isComplete: PropTypes.bool,
 	isActive: PropTypes.bool,
+	stepNumber: PropTypes.number,
 };
 
 const StepWrapper = styled.div`
