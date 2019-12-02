@@ -833,28 +833,22 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step(
-			'Can see checkout page, choose domain privacy option and enter registrar details',
-			async function() {
-				let checkOutPage;
-				try {
-					checkOutPage = await CheckOutPage.Expect( driver );
-				} catch ( err ) {
-					//TODO: Check this code once more when domain registration is not available
-					if (
-						driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) )
-					) {
-						await SlackNotifier.warn(
-							"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
-						);
-						return this.skip();
-					}
+		step( 'Can see checkout page and enter registrar details', async function() {
+			let checkOutPage;
+			try {
+				checkOutPage = await CheckOutPage.Expect( driver );
+			} catch ( err ) {
+				//TODO: Check this code once more when domain registration is not available
+				if ( driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) ) ) {
+					await SlackNotifier.warn(
+						"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
+					);
+					return this.skip();
 				}
-				await checkOutPage.selectAddPrivacyProtectionCheckbox();
-				await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
-				return await checkOutPage.submitForm();
 			}
-		);
+			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			return await checkOutPage.submitForm();
+		} );
 
 		step(
 			'Can then see the secure payment page with the correct products in the cart',
@@ -1068,15 +1062,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step(
-			'Can see checkout page, choose domain privacy option and enter registrar details',
-			async function() {
-				const checkOutPage = await CheckOutPage.Expect( driver );
-				await checkOutPage.selectAddPrivacyProtectionCheckbox();
-				await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
-				return await checkOutPage.submitForm();
-			}
-		);
+		step( 'Can see checkout page and enter registrar details', async function() {
+			const checkOutPage = await CheckOutPage.Expect( driver );
+			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			return await checkOutPage.submitForm();
+		} );
 
 		step(
 			'Can then see the secure payment page with the correct products in the cart',

@@ -54,13 +54,6 @@ export default class CheckOutPage extends AsyncBaseContainer {
 		return await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
 	}
 
-	async selectAddPrivacyProtectionCheckbox() {
-		// The radio button _should_ be selected by default, but let's click it anyway :)
-		const selector = By.css( 'input#registrantType[value="private"]' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		return await driverHelper.setCheckbox( this.driver, selector );
-	}
-
 	async submitForm() {
 		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
 	}
