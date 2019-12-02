@@ -20,7 +20,7 @@ class RecommendedThemes extends React.Component {
 
 	componentDidUpdate( prevProps ) {
 		const { isLoading, isQueried, scrollToSearchInput } = this.props;
-		// When Recommended Themes load, trigger a scroll to results if queried.
+		// When Recommended Themes load, trigger a scroll-to results if queried.
 		if ( prevProps.isLoading !== isLoading && isLoading === false && isQueried ) {
 			scrollToSearchInput();
 		}

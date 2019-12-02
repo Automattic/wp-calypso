@@ -100,6 +100,13 @@ class ThemeShowcase extends React.Component {
 		showUploadButton: true,
 	};
 
+	componentDidMount() {
+		// Hack-Fix for scroll to searchbar when queried to consistently work from "back" button.
+		if ( this.props.search || ( this.props.filter && ! this.props.loggedOutComponent ) ) {
+			setTimeout( this.scrollToSearchInput, 50 );
+		}
+	}
+
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent ) {
 			this.scrollRef.current.scrollIntoView();
