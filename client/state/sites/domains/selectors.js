@@ -17,6 +17,10 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
+export const getAllDomains = state => {
+	return state.sites.domains.items;
+};
+
 /**
  * Returns the list of site domains for the specified site.
  *
