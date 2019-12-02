@@ -71,3 +71,59 @@
 .migrate__cancel {
 	margin-left: 16px;
 }
+
+.migrate__pane {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: inherit;
+	box-shadow: none;
+}
+
+.migrate__illustration {
+	display: block;
+	margin: auto;
+	width: 260px;
+}
+
+.migrate__section-header {
+	.formatted-header__title {
+		font-size: 24px;
+		@include breakpoint('>660px') {
+			font-size: 32px;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+		font-size: 16px;
+	}
+}
+
+.migrate__progress {
+	width: 350px;
+	margin-bottom: 2rem;
+}
+
+.migrate__progress-item {
+	position: relative;
+	list-style-type: none;
+	margin-left: 38px;
+	margin-bottom: 8px;
+	font-size: 14px;
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 2px;
+		left: -28px;
+		width: 20px;
+		height: 20px;
+		background: url( '/calypso/images/importer/circle-gray.svg' ) no-repeat;
+		background-size: 18px;
+	}
+	&.is-active::before {
+		background: url( '/calypso/images/importer/gridicon-checkmark.svg' ) no-repeat;
+		background-size: contain;
+	}
+}

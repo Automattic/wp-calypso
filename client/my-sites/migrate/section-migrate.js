@@ -5,12 +5,13 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
@@ -18,6 +19,7 @@ import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ProgressBar from 'components/progress-bar';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
@@ -37,6 +39,7 @@ const wpcom = wpLib.undocumented();
 class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
+		percent: 0,
 	};
 
 	componentDidMount() {
@@ -84,14 +87,25 @@ class SectionMigrate extends Component {
 		wpcom
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
-				const { status: migrationStatus } = response;
+				const { status: migrationStatus, percent } = response;
 				if ( migrationStatus ) {
-					this.setState( { migrationStatus } );
+					this.setState( {
+						migrationStatus,
+						percent,
+					} );
 				}
 			} )
 			.catch( () => {
 				// @TODO: handle status error
 			} );
+	};
+
+	isInProgress = () => {
+		return includes( [ 'backing-up', 'restoring' ], this.state.migrationStatus );
+	};
+
+	isFinished = () => {
+		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
 	};
 
 	renderCardBusinessFooter() {
@@ -123,13 +137,20 @@ class SectionMigrate extends Component {
 		const viewSiteURL = get( targetSite, 'URL' );
 
 		return (
-			<CompactCard>
-				<div className="migrate__status">Your migration has completed successfully.</div>
-				<Button primary href={ viewSiteURL }>
-					View site
-				</Button>
-				<Button onClick={ this.resetMigration }>Start over</Button>
-			</CompactCard>
+			<>
+				<FormattedHeader
+					className="migrate__section-header"
+					headerText="Congratulations!"
+					align="left"
+				/>
+				<CompactCard>
+					<div className="migrate__status">Your migration has completed successfully.</div>
+					<Button primary href={ viewSiteURL }>
+						View site
+					</Button>
+					<Button onClick={ this.resetMigration }>Start over</Button>
+				</CompactCard>
+			</>
 		);
 	}
 
@@ -185,25 +206,77 @@ class SectionMigrate extends Component {
 
 	renderMigrationError() {
 		return (
-			<CompactCard>
-				<div className="migrate__status">There was an error with your migration.</div>
-				<Button primary onClick={ this.resetMigration }>
-					Try again
-				</Button>
-			</CompactCard>
+			<>
+				<FormattedHeader
+					className="migrate__section-header"
+					headerText="Migrate"
+					subHeaderText="Migrate your WordPress site to WordPress.com"
+					align="left"
+				/>
+				<CompactCard>
+					<div className="migrate__status">There was an error with your migration.</div>
+					<Button primary onClick={ this.resetMigration }>
+						Try again
+					</Button>
+				</CompactCard>
+			</>
 		);
 	}
 
+	renderProgressList() {
+		const { sourceSite, targetSite } = this.props;
+		const sourceSiteDomain = get( sourceSite, 'domain' );
+		const targetSiteDomain = get( targetSite, 'domain' );
+		const backingUpClass = 'migrate__progress-item is-active';
+		let restoringClass = 'migrate__progress-item';
+
+		if ( 'restoring' === this.state.migrationStatus ) {
+			restoringClass += ' is-active';
+		}
+
+		return (
+			<ul className="migrate__progress-list">
+				<li className={ backingUpClass }>Backing up from { sourceSiteDomain }</li>
+				<li className={ restoringClass }>Restoring to { targetSiteDomain }</li>
+			</ul>
+		);
+	}
+
+	renderProgressBar() {
+		if ( this.isInProgress() ) {
+			return (
+				<ProgressBar isPulsing className="migrate__progress" value={ this.state.percent || 0 } />
+			);
+		}
+
+		if ( this.isFinished() ) {
+			return <ProgressBar className="migrate__progress is-complete" value={ 100 } />;
+		}
+	}
+
 	renderMigrationProgress() {
-		const { targetSite } = this.props;
+		const { sourceSite, targetSite } = this.props;
+		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 
 		return (
-			<CompactCard>
-				<div className="migrate__status">
-					{ this.state.migrationStatus } backup to { targetSiteDomain }.
-				</div>
-			</CompactCard>
+			<>
+				<Card className="migrate__pane">
+					<img
+						className="migrate__illustration"
+						src={ '/calypso/images/illustrations/waitTime.svg' }
+						alt=""
+					/>
+					<FormattedHeader
+						className="migrate__section-header"
+						headerText="Migration in progress"
+						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
+						align="center"
+					/>
+					{ this.renderProgressBar() }
+					{ this.renderProgressList() }
+				</Card>
+			</>
 		);
 	}
 
