@@ -20,7 +20,7 @@ const BASE_URL = 'http://__domain__.invalid';
  * @return Url less the omitted params.
  */
 export default function omitUrlParams( url: Falsy, paramsToOmit: string | string[] ): null;
-export default function omitUrlParams( url: URLString, paramsToOmit: string | string[] ): URLString;
+export default function omitUrlParams( url: URLString, paramsToOmit: string | string[] ): URLString | null;
 export default function omitUrlParams(
 	url: URLString | Falsy,
 	paramsToOmit: string | string[]
