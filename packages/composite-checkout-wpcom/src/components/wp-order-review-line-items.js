@@ -36,7 +36,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const [ hasDomainsInCart ] = useHasDomainsInCart();
+	const hasDomainsInCart = useHasDomainsInCart();
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 
 	return (
