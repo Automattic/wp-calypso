@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import {
 	prepareRequestCart,
 	ResponseCart,
-    emptyResponseCart,
+	emptyResponseCart,
 	WPCOMCart,
 	WPCOMCartItem,
 	CheckoutCartItem,
@@ -104,7 +104,7 @@ export function makeShoppingCartHook(
 			};
 			initializeResponseCart().catch( error => {
 				// TODO: figure out what to do here
-				alert( error );
+				alert( error ); // eslint-disable-line no-undef
 			} );
 		}, [] );
 
@@ -119,7 +119,7 @@ export function makeShoppingCartHook(
 			};
 			fetchAndUpdate().catch( error => {
 				// TODO: figure out what to do here
-				alert( error );
+				alert( error ); // eslint-disable-line no-undef
 			} );
 		}, [ cacheStatus, responseCart ] );
 
@@ -127,7 +127,7 @@ export function makeShoppingCartHook(
 		const cart: WPCOMCart = translateWpcomCartToCheckoutCart( responseCart );
 
 		const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
-			alert( 'addItem: ' + itemToAdd );
+			alert( 'addItem: ' + itemToAdd ); // eslint-disable-line no-undef
 			setCacheStatus( 'invalid' );
 			setResponseCart( responseCart );
 		};
@@ -142,13 +142,13 @@ export function makeShoppingCartHook(
 
 		const changePlanLength = ( planItem, planLength ) => {
 			// TODO
-			alert( 'changePlanLength: ' + planLength + planItem );
+			alert( 'changePlanLength: ' + planLength + planItem ); // eslint-disable-line no-undef
 			setResponseCart( responseCart );
 		};
 
 		const updatePricesForAddress = address => {
 			// TODO
-			alert( 'updatePricesForAddress: ' + address );
+			alert( 'updatePricesForAddress: ' + address ); // eslint-disable-line no-undef
 			setResponseCart( responseCart );
 		};
 

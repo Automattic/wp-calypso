@@ -86,9 +86,9 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
-export default function CompositeCheckoutContainer( siteSlug ) {
+export function CompositeCheckoutContainer( siteSlug ) {
 	return (
-		<WPCOMCheckout
+		<WPCheckoutWrapper
 			useShoppingCart={ useShoppingCart( siteSlug ) }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
