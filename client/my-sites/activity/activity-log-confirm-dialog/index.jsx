@@ -49,7 +49,7 @@ const ActivityLogConfirmDialog = ( {
 			<div className="activity-log-confirm-dialog__partial-restore-settings">
 				<p>
 					{ notice
-						? translate( 'Choose the items you wish to rewind:' )
+						? translate( 'Choose the items you wish to restore:' )
 						: translate( 'Choose the items you wish to include in the download:' ) }
 				</p>
 				<FormLabel>

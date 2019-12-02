@@ -50,7 +50,7 @@ export const ActivityLogTour = makeTour(
 						{ translate(
 							'Each block collects all the activities performed on your site ' +
 								'like publishing a post or updating a plugin. ' +
-								'To restore your site to a particular day, click its rewind button.'
+								'To restore your site to a particular day, click its restore button.'
 						) }
 					</p>
 					<ButtonRow>
