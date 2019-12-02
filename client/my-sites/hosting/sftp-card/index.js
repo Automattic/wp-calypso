@@ -102,7 +102,7 @@ export const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<div className="sftp-card__copy-field">
+					<div className="sftp-card__copy-field sftp-card__password-field">
 						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
 						<ClipboardButton className="sftp-card__copy-button" text={ password } compact>
 							{ translate( 'Copy', { context: 'verb' } ) }
@@ -122,7 +122,12 @@ export const SftpCard = ( {
 				<p className="sftp-card__password-explainer">
 					{ translate( 'For security reasons, your password needs a reset to view' ) }
 				</p>
-				<Button onClick={ resetPassword } disabled={ isPasswordLoading } busy={ isPasswordLoading }>
+				<Button
+					onClick={ resetPassword }
+					disabled={ isPasswordLoading }
+					busy={ isPasswordLoading }
+					className="sftp-card__password-reset-button"
+				>
 					{ translate( 'Reset Password' ) }
 				</Button>
 			</>
@@ -191,7 +196,7 @@ export const SftpCard = ( {
 							}
 						) }
 					</p>
-					<Button onClick={ createUser } primary>
+					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
 						{ translate( 'Create SFTP Credentials' ) }
 					</Button>
 				</>
