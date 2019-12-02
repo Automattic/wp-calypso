@@ -23,7 +23,7 @@ import ProgressBar from 'components/progress-bar';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
-import { Interval, EVERY_MINUTE } from 'lib/interval';
+import { Interval, EVERY_THIRTY_SECONDS } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -341,7 +341,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_MINUTE } />
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_THIRTY_SECONDS } />
 				<DocumentHead title="Migrate" />
 				<SidebarNavigation />
 				{ migrationElement }
