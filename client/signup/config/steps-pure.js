@@ -70,6 +70,16 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 		},
 
+		'fse-themes': {
+			stepName: 'fse-themes',
+			props: {
+				designType: 'fse-compatible',
+				quantity: 3,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
