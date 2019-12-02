@@ -16,7 +16,7 @@ export function CheckIcon( { className, stepNumber } ) {
 			className={ className }
 		>
 			<mask
-				id={ 'mask' + stepNumber }
+				id={ 'check-icon-mask' + stepNumber }
 				mask-type="alpha"
 				maskUnits="userSpaceOnUse"
 				x="2"
@@ -29,7 +29,7 @@ export function CheckIcon( { className, stepNumber } ) {
 					fill="white"
 				/>
 			</mask>
-			<g mask={ 'url(#mask' + stepNumber + ')' }>
+			<g mask={ 'url(#check-icon-mask' + stepNumber + ')' }>
 				<rect width="20" height="20" fill="white" />
 			</g>
 		</svg>
