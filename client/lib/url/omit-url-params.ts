@@ -53,9 +53,10 @@ export default function omitUrlParams(
 	);
 
 	const newUrl = new URL( url, BASE_URL );
+	const newSearch = new URLSearchParams( filtered ).toString();
 
 	if ( urlType !== URL_TYPE.PATH_RELATIVE ) {
-		newUrl.search = new URLSearchParams( filtered ).toString();
+		newUrl.search = newSearch;
 		return format( newUrl, urlType );
 	}
 
@@ -64,7 +65,6 @@ export default function omitUrlParams(
 	// E.g. `../foo?bar=baz` becomes `<base>/foo?bar=baz` when fed to `new URL()`
 	// with a base, losing the traversal into the parent directory.
 	// We need to handle these with a string replace instead.
-	const newSearch = new URLSearchParams( filtered ).toString();
 	if ( parsed.search ) {
 		return url.replace( parsed.search, `?${ newSearch }` );
 	}
