@@ -13,8 +13,8 @@ import { useWpcomStore } from '../hooks/wpcom-store';
 
 // These are used only for non-redirect payment methods
 // TODO: write this
-const onSuccess = () => alert( 'Payment succeeded!' );
-const onFailure = error => alert( 'There was a problem with your payment' + error );
+const onSuccess = () => alert( 'Payment succeeded!' ); // eslint-disable-line no-undef
+const onFailure = error => alert( 'There was a problem with your payment' + error ); // eslint-disable-line no-undef
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
@@ -27,7 +27,7 @@ const handleCheckoutEvent = () => () => {
 
 // This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, registry } ) {
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, deleteItem, changePlanLength } = useShoppingCart();
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -39,7 +39,7 @@ export function WPCheckoutWrapper( { useShoppingCart, availablePaymentMethods, r
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
-			items={ itemsWithTax }
+			items={ [ ...items, tax ] }
 			total={ total }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
