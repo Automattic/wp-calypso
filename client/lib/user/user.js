@@ -28,6 +28,7 @@ import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility'
 
 /**
  * User component
+ *
  * @class
  */
 function User() {
@@ -88,7 +89,7 @@ User.prototype.initialize = async function() {
  * Clear localStorage when we detect that there is a mismatch between the ID
  * of the user stored in localStorage and the current user ID
  *
- * @param {Number} userId The new user ID.
+ * @param {number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
 	const storedUserId = store.get( 'wpcom_user_id' );
@@ -102,7 +103,7 @@ User.prototype.clearStoreIfChanged = function( userId ) {
 /**
  * Get user data
  *
- * @returns {Object} The user data.
+ * @returns {object} The user data.
  */
 User.prototype.get = function() {
 	return this.data;
@@ -112,7 +113,6 @@ User.prototype.get = function() {
  * Fetch the current user from WordPress.com via the REST API
  * and stores it in local cache.
  *
- * @uses `wpcom`
  * @returns {Promise<void>} Promise that resolves (with no value) when fetching is finished
  */
 User.prototype.fetch = function() {
@@ -167,7 +167,7 @@ User.prototype.handleFetchFailure = function( error ) {
  * in the browser's localStorage. It also changes the User's fetching and initialized states
  * and emits a change event.
  *
- * @param {Object} userData an object containing the user's information.
+ * @param {object} userData an object containing the user's information.
  */
 User.prototype.handleFetchSuccess = function( userData ) {
 	this.clearStoreIfChanged( userData.ID );
@@ -203,9 +203,9 @@ User.prototype.getLanguage = function() {
  * the short-form query string parameters as options,
  * sets some sane defaults.
  *
- * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
+ * @param {object} options Options per https://secure.gravatar.com/site/implement/images/
  *
- * @returns {String} The user's avatar URL based on the options parameter.
+ * @returns {string} The user's avatar URL based on the options parameter.
  */
 User.prototype.getAvatarUrl = function( options ) {
 	const default_options = {
@@ -243,7 +243,7 @@ User.prototype.clear = async function() {
  *
  * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
  *
- * @returns {(Promise|Object)} If a callback is provided, this is an object representing an XMLHttpRequest.
+ * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
  *                             If no callback is provided, this is a Promise.
  */
 User.prototype.sendVerificationEmail = function( fn ) {
