@@ -186,7 +186,7 @@
 	}
 	&__layout-col-left {
 		@include breakpoint( '>960px' ) {
-			width: 60%;
+			width: 70%;
 
 			.card,
 			.checklist__tasks {
@@ -210,7 +210,7 @@
 		}
 
 		@include breakpoint( '>960px' ) {
-			width: 40%;
+			width: 30%;
 
 			.card {
 				margin-left: 8px;
