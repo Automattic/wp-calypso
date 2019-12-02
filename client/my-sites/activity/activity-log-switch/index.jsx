@@ -35,7 +35,7 @@ class ActivityLogSwitch extends Component {
 	};
 
 	/**
-	 * Renders the main button whose functionality and label varies depending on why restore is unavailable.
+	 * Renders the main button whose functionality and label varies depending on why Jetpack Backup is unavailable.
 	 *
 	 * @returns {object} Primary button.
 	 */

@@ -74,7 +74,7 @@ function ProgressBanner( {
 				statusMessage =
 					'queued' === status
 						? translate( 'Your restore will start in a moment.' )
-						: translate( 'Away we go! Your site is being rewound.' );
+						: translate( 'Away we go! Your site is being restored.' );
 			}
 			break;
 
