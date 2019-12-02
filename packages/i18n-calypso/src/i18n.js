@@ -8,7 +8,7 @@ import LRU from 'lru';
 import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
-import { sprintf } from 'sprintf-js';
+import sprintf from '@tannin/sprintf';
 
 /**
  * Internal dependencies
