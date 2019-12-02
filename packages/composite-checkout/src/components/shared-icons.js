@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export function CheckIcon( { className, stepNumber } ) {
+export function CheckIcon( { className, id } ) {
 	return (
 		<svg
 			width="20"
@@ -16,7 +16,7 @@ export function CheckIcon( { className, stepNumber } ) {
 			className={ className }
 		>
 			<mask
-				id={ 'check-icon-mask' + stepNumber }
+				id={ id + '-check-icon-mask' }
 				mask-type="alpha"
 				maskUnits="userSpaceOnUse"
 				x="2"
@@ -29,7 +29,7 @@ export function CheckIcon( { className, stepNumber } ) {
 					fill="white"
 				/>
 			</mask>
-			<g mask={ 'url(#check-icon-mask' + stepNumber + ')' }>
+			<g mask={ 'url(#' + id + '-check-icon-mask)' }>
 				<rect width="20" height="20" fill="white" />
 			</g>
 		</svg>
@@ -38,7 +38,7 @@ export function CheckIcon( { className, stepNumber } ) {
 
 CheckIcon.propTypes = {
 	className: PropTypes.string,
-	stepNumber: PropTypes.number,
+	id: PropTypes.string,
 };
 
 export function ErrorIcon( { className } ) {
