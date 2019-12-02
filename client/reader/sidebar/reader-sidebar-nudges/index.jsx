@@ -28,7 +28,6 @@ function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) 
 			icon="info-outline"
 			text={ translate( 'Free domain with a plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
-			className="reader-sidebar-nudges"
 		/>
 	);
 }
