@@ -35,8 +35,7 @@ const navigateTo =
  * Makes sure that we can initialize a connection
  * to HappyChat. We'll need this on the API response
  *
- * @param {function} dispatch Redux dispatcher
- * @param {function} getState Redux getState
+ * @param {object} args Redux dispatcher, getState
  */
 export const primeHappychat = ( { dispatch, getState } ) => {
 	const state = getState();

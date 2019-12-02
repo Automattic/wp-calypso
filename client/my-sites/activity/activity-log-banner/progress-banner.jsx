@@ -25,8 +25,8 @@ import { useLocalizedMoment } from 'components/localized-moment';
  * WordPress so no backups should already
  * exist prior to that date 😉
  *
- * @param {Number} ts timestamp in 's' or 'ms'
- * @returns {Number} timestamp in 'ms'
+ * @param {number} ts timestamp in 's' or 'ms'
+ * @returns {number} timestamp in 'ms'
  */
 const ms = ts =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
