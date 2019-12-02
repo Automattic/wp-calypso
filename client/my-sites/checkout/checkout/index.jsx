@@ -355,7 +355,7 @@ export class Checkout extends React.Component {
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
 	 *
-	 * @param {Object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+	 * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
 	 * @returns {Array} of product objects [ { productId: ... }, ... ]
 	 */
 	flattenPurchases( purchases ) {
@@ -420,7 +420,7 @@ export class Checkout extends React.Component {
 	 * If the user purchases additional products via upsell nudges, the original saved receipt ID will be used to
 	 * display the Thank You page for the eCommerce plan purchase.
 	 *
-	 * @param {String} pendingOrReceiptId The receipt id for the transaction
+	 * @param {string} pendingOrReceiptId The receipt id for the transaction
 	 */
 
 	setDestinationIfEcommPlan( pendingOrReceiptId ) {
