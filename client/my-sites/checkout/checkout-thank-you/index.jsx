@@ -627,7 +627,7 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			upgradeIntent: 'plugins',
+			upgradeIntent: getCheckoutUpgradeIntent( state ),
 			isSimplified: [ 'themes', 'plugins' ].indexOf( upgradeIntent ) !== -1,
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
