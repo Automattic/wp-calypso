@@ -253,7 +253,7 @@
 		"clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
 		"clean:packages": "npx lerna run clean --stream",
 		"clean:public": "npx rimraf public",
-		"distclean": "npm run -s clean && npx rimraf node_modules packages/*/node_modules test/e2e/node_modules",
+		"distclean": "npm run -s clean && npx rimraf node_modules apps/*/node_modules packages/*/node_modules test/e2e/node_modules",
 		"docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"eslint-branch": "node bin/eslint-branch.js",
 		"install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
