@@ -18,6 +18,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/gsuite';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
+import RecurringPaymentsStatsNudge from 'blocks/recurring-payments-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import isGSuiteStatsNudgeVisible from 'state/selectors/is-gsuite-stats-nudge-visible';

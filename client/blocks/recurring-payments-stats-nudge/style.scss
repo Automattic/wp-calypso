@@ -1,0 +1,77 @@
+.card.recurring-payments-stats-nudge {
+	padding: 0; // allow section header to perfectly sit over the top of the card
+}
+
+.recurring-payments-stats-nudge__body {
+	align-items: flex-end;
+	display: flex;
+	padding: 11px 24px; // Standard padding
+
+	@include breakpoint( '>960px' ) {
+		max-height: 300px;
+		padding-bottom: 0; // Allow image to go right to the edge of the card
+	}
+}
+
+.recurring-payments-stats-nudge__info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	@include breakpoint( '>960px' ) {
+		padding-right: 12px; // The image has about 12 px of whitespace, this helps "balance" the block
+	}
+}
+
+.recurring-payments-stats-nudge__title {
+	font-size: 21px;
+	font-weight: 400;
+	margin: 10px 0 5px;
+}
+
+.recurring-payments-stats-nudge__description {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.recurring-payments-stats-nudge__button-row {
+	align-content: center;
+	display: flex;
+	margin-bottom: 20px;
+
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 30px;
+	}
+
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
+
+.recurring-payments-stats-nudge__image-wrapper {
+	display: none;
+
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		height: 200px;
+		margin-right: 40px;
+		min-width: 260px;
+	}
+}
+
+.recurring-payments-stats-nudge__image {
+	width: 80%;
+	margin-left: 25px;
+}
+
+.recurring-payments-stats-nudge__close-icon {
+	position: absolute;
+	top: 14px;
+	right: 18px;
+	color: var( --color-neutral-light );
+	cursor: pointer;
+	z-index: z-index( 'root', '.recurring-payments-stats-nudge__close-icon' );
+}
