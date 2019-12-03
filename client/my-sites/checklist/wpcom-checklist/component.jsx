@@ -475,7 +475,7 @@ class WpcomChecklistComponent extends PureComponent {
 			<TaskComponent
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/create-tagline.svg"
-				completedButtonText={ translate( 'Change' ) }
+				completedButtonText={ translate( 'Edit tagline' ) }
 				completedTitle={ translate( 'You created a tagline' ) }
 				description={ translate(
 					'Pique readers’ interest with a little more detail about your site.'
@@ -489,7 +489,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a tagline' ) }
 				showSkip={ false }
-				buttonText={ translate( 'Start' ) }
+				buttonText={ translate( 'Create tagline' ) }
 			/>
 		);
 	};
@@ -897,9 +897,12 @@ class WpcomChecklistComponent extends PureComponent {
 				title={ translate( 'Update your homepage' ) }
 				completedTitle={ translate( 'You updated your homepage' ) }
 				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
-				completedButtonText={ translate( 'Change' ) }
+				completedButtonText={ translate( 'Edit homepage' ) }
 				description={ translate(
 					`We've created the basics, now it's time for you to update the images and text.`
+				) }
+				completedDescription={ translate(
+					`Edit your page anytime you want to change the text or images.`
 				) }
 				steps={ [] }
 				duration={ translate( '%d minute', '%d minutes', { count: 20, args: [ 20 ] } ) }
@@ -911,7 +914,7 @@ class WpcomChecklistComponent extends PureComponent {
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
-				buttonText={ translate( 'Start' ) }
+				buttonText={ translate( 'Update homepage' ) }
 			/>
 		);
 	};
