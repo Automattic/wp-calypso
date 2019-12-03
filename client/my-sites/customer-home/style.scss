@@ -13,9 +13,6 @@
 			grid-column: 1 / span 12;
 			margin: 0;
 		}
-		@include breakpoint( '>1280px' ) {
-			grid-column: 2 / span 10;
-		}
 	}
 	&__confetti {
 		display: block;
@@ -165,14 +162,14 @@
 	&__card-mobile {
 		display: flex;
 
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint( '>1040px' ) {
 			flex-direction: column;
 		}
 
 		.get-apps__app-badge.android-app-badge img {
 			margin-top: 0;
 
-			@include breakpoint( '>1280px' ) {
+			@include breakpoint( '>1040px' ) {
 				margin: 0 0 0 -9px;
 			}
 		}
@@ -192,11 +189,6 @@
 			display: grid;
 			grid-gap: 24px;
 			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
-		}
-
-		@include breakpoint( '>1280px' ) {
-			grid-column: 2 / span 10;
-			grid-template-columns: repeat( 10, [col-start] minmax( 0, 1fr ) );
 		}
 
 		.checklist__tasks {
@@ -224,9 +216,6 @@
 		@include breakpoint( '>1040px' ) {
 			grid-column: 1 / span 8;
 		}
-		@include breakpoint( '>1280px' ) {
-			grid-column: 1 / span 7;
-		}
 	}
 	&__layout-col-right {
 		.vertical-nav {
@@ -244,9 +233,6 @@
 		}
 		@include breakpoint( '>1040px' ) {
 			grid-column: 9 / span 4;
-		}
-		@include breakpoint( '>1280px' ) {
-			grid-column: 8 / span 3;
 		}
 	}
 
