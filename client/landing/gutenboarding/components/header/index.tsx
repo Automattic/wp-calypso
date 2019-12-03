@@ -39,9 +39,8 @@ const Header: FunctionComponent< Props > = ( {
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
-		domain // If we know a domain, do not search.
-			? null
-			: siteTitle, // If we have a siteTitle, use it.
+		// If we know a domain, do not search.
+		! domain && siteTitle,
 		selectorDebounce
 	);
 	const freeDomainSuggestion = useSelect(
