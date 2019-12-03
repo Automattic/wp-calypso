@@ -17,9 +17,9 @@ const exported = {
 	getFeedTitle: function( siteData, feedData, displayUrl ) {
 		let feedTitle;
 
-		if ( siteData && siteData.name ) {
+		if ( siteData?.name ) {
 			feedTitle = siteData.name;
-		} else if ( feedData && feedData.name ) {
+		} else if ( feedData?.name ) {
 			feedTitle = feedData.name;
 		} else {
 			feedTitle = displayUrl;
@@ -43,11 +43,11 @@ const exported = {
 	getSiteUrl: function( siteData, feedData, subscription ) {
 		let siteUrl;
 
-		if ( siteData && siteData.URL ) {
+		if ( siteData?.URL ) {
 			siteUrl = siteData.URL;
-		} else if ( feedData && feedData.URL ) {
+		} else if ( feedData?.URL ) {
 			siteUrl = feedData.URL;
-		} else if ( subscription && subscription.URL ) {
+		} else if ( subscription?.URL ) {
 			siteUrl = subscription.URL;
 		}
 

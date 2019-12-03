@@ -63,20 +63,20 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = feed.name || feed.title;
 	} else if ( ! isDefaultSiteTitle && post && post.site_name ) {
 		siteName = post.site_name;
-	} else if ( site && site.is_error && feed && feed.is_error && ! post ) {
+	} else if ( site?.is_error && feed && feed.is_error && ! post ) {
 		siteName = translate( 'Error fetching feed' );
-	} else if ( site && site.domain ) {
+	} else if ( site?.domain ) {
 		siteName = site.domain;
 	} else {
 		const siteUrl = getSiteUrl( { feed, site, post } );
-		siteName = !! siteUrl ? url.parse( siteUrl ).hostname : null;
+		siteName = siteUrl ? url.parse( siteUrl ).hostname : null;
 	}
 
 	return decodeEntities( siteName );
 };
 
 export const getSiteDescription = ( { site, feed } ) => {
-	const description = ( site && site.description ) || ( feed && feed.description );
+	const description = site?.description || feed?.description;
 	if ( isSiteDescriptionBlacklisted( description ) ) {
 		return null;
 	}
@@ -84,7 +84,7 @@ export const getSiteDescription = ( { site, feed } ) => {
 };
 
 export const getSiteAuthorName = site => {
-	const siteAuthor = site && site.owner;
+	const siteAuthor = site?.owner;
 	const authorFullName =
 		siteAuthor &&
 		( siteAuthor.name ||

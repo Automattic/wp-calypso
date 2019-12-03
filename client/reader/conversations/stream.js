@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,7 +17,7 @@ import ConversationsEmptyContent from 'blocks/conversations/empty';
 import './stream.scss';
 
 export default function( props ) {
-	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
+	const isInternal = props?.store?.id === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
 	const intro = <ConversationsIntro isInternal={ isInternal } />;
 	return (

@@ -65,5 +65,5 @@ export function keyToString( postKey ) {
 }
 
 export function isPostKeyLike( postKey ) {
-	return postKey && postKey.postId && ( postKey.blogId || postKey.feedId );
+	return postKey?.postId && ( postKey.blogId || postKey.feedId );
 }

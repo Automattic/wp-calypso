@@ -20,7 +20,7 @@ export function trackPageLoad( path, title, readerView ) {
 }
 
 export function getStartDate( context ) {
-	if ( context.query && context.query.at ) {
+	if ( context.query?.at ) {
 		const startDate = moment( context.query.at );
 		return startDate.isValid() ? startDate.toISOString() : null;
 	}

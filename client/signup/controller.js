@@ -164,6 +164,7 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
+		// eslint-disable-next-line require-atomic-updates
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -171,7 +172,7 @@ export default {
 			locale: getLocale( context.params ),
 			flowName: flowName,
 			queryObject: query,
-			refParameter: query && query.ref,
+			refParameter: query?.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,

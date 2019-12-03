@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import url from 'url';
 import config from 'config';
 import Debug from 'debug';
@@ -14,7 +14,7 @@ import userUtils from 'lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
 
 function hasDiscoverSlug( post, searchSlug ) {
-	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
+	const metaData = post?.discover_metadata?.discover_fp_post_formats;
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
 }
 
@@ -33,9 +33,7 @@ export function isDiscoverEnabled() {
 }
 
 export function isDiscoverPost( post ) {
-	return !! (
-		get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' )
-	);
+	return !! ( post?.discover_metadata || post?.site_ID === config( 'discover_blog_id' ) );
 }
 
 export function isDiscoverSitePick( post ) {
@@ -43,29 +41,29 @@ export function isDiscoverSitePick( post ) {
 }
 
 export function isInternalDiscoverPost( post ) {
-	return !! get( post, 'discover_metadata.featured_post_wpcom_data' );
+	return !! post?.discover_metadata?.featured_post_wpcom_data;
 }
 
 export function getSiteUrl( post ) {
-	const blogId = get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' );
+	const blogId = post?.discover_metadata?.featured_post_wpcom_data?.blog_id;
 	// If we have a blog ID, we want to send them to the site detail page
-	return blogId ? readerRouteGetSiteUrl( blogId ) : get( post, 'discover_metadata.permalink' );
+	return blogId ? readerRouteGetSiteUrl( blogId ) : post?.discover_metadata?.permalink;
 }
 
 export function getDiscoverBlogName( post ) {
-	return get( post, 'discover_metadata.attribution.blog_name' );
+	return post?.discover_metadata?.attribution?.blog_name;
 }
 export function hasSource( post ) {
 	return isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 }
 
 export function getSourceData( post ) {
-	const sourceData = get( post, 'discover_metadata.featured_post_wpcom_data' );
+	const sourceData = post?.discover_metadata?.featured_post_wpcom_data;
 
 	if ( sourceData ) {
 		return {
-			blogId: get( sourceData, 'blog_id' ),
-			postId: get( sourceData, 'post_id' ),
+			blogId: sourceData?.blog_id,
+			postId: sourceData?.post_id,
 		};
 	}
 	return {};
@@ -73,7 +71,7 @@ export function getSourceData( post ) {
 
 export function getLinkProps( linkUrl ) {
 	const parsedUrl = url.parse( linkUrl ),
-		hostname = get( parsedUrl, 'hostname' ),
+		hostname = parsedUrl?.hostname,
 		isExternal = hostname && hostname !== window.location.hostname;
 
 	return {
@@ -89,11 +87,11 @@ export function getSourceFollowUrl( post ) {
 		return;
 	}
 
-	followUrl = get( post, 'discover_metadata.attribution.blog_url' );
+	followUrl = post?.discover_metadata?.attribution?.blog_url;
 
 	// If it's a site pick, try the permalink
 	if ( ! followUrl && isDiscoverSitePick( post ) ) {
-		followUrl = get( post, 'discover_metadata.permalink' );
+		followUrl = post?.discover_metadata?.permalink;
 	}
 
 	return followUrl || '';
