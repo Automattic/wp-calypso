@@ -72,7 +72,7 @@ class Hosting extends Component {
 		}
 
 		const sftpPhpMyAdminFeaturesEnabled =
-			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 168768859;
+			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 155000000;
 
 		const getAtomicActivationNotice = () => {
 			const { COMPLETE, FAILURE } = transferStates;
