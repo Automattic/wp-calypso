@@ -1,15 +1,21 @@
 
 .customer-home {
-
 	&__main {
-		display: grid;
-		grid-gap: 0;
-		grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+		@include breakpoint( '>1040px' ) {
+			display: grid;
+			grid-gap: 0;
+			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+		}
 	}
 
 	&__page-heading.formatted-header.is-left-align {
-		grid-column: 2 / span 10;
-		margin: 0;
+		@include breakpoint( '>1040px' ) {
+			grid-column: 1 / span 12;
+			margin: 0;
+		}
+		@include breakpoint( '>1280px' ) {
+			grid-column: 2 / span 10;
+		}
 	}
 	&__confetti {
 		display: block;
@@ -157,7 +163,19 @@
 		}
 	}
 	&__card-mobile {
-		justify-content: space-around;
+		display: flex;
+
+		@include breakpoint( '>1280px' ) {
+			flex-direction: column;
+		}
+
+		.get-apps__app-badge.android-app-badge img {
+			margin-top: 0;
+
+			@include breakpoint( '>1280px' ) {
+				margin: 0 0 0 -9px;
+			}
+		}
 	}
 	&__card-subheader {
 		color: var( --color-text-subtle );
@@ -169,12 +187,15 @@
 		padding-bottom: 12px;
 	}
 	&__layout {
-
-		grid-column: 2 / span 10;
-
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>1040px' ) {
+			grid-column: 1 / span 12;
 			display: grid;
 			grid-gap: 24px;
+			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+		}
+
+		@include breakpoint( '>1280px' ) {
+			grid-column: 2 / span 10;
 			grid-template-columns: repeat( 10, [col-start] minmax( 0, 1fr ) );
 		}
 
@@ -200,7 +221,10 @@
 		}
 	}
 	&__layout-col-left {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>1040px' ) {
+			grid-column: 1 / span 8;
+		}
+		@include breakpoint( '>1280px' ) {
 			grid-column: 1 / span 7;
 		}
 	}
@@ -218,30 +242,16 @@
 				right: 0;
 			}
 		}
-
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>1040px' ) {
+			grid-column: 9 / span 4;
+		}
+		@include breakpoint( '>1280px' ) {
 			grid-column: 8 / span 3;
 		}
 	}
 
 	&__loading-placeholder {
 		@include placeholder();
-	}
-}
-
-.get-apps__app-badge {
-	display: inline-block;
-
-	@include breakpoint( '>960px' ) {
-		img {
-			max-height: 41px;
-			margin: 0;
-			width: auto;
-		}
-
-		&.android-app-badge img {
-			max-height: 63px;
-			margin-left: -9px;
-		}
+		grid-column: 1 / span 12;
 	}
 }
