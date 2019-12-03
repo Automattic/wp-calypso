@@ -26,6 +26,7 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 
 class CheckoutThankYouHeader extends PureComponent {
@@ -33,6 +34,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
+		siteJustLaunched: PropTypes.bool,
 		primaryCta: PropTypes.func,
 	};
 
@@ -352,7 +354,13 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
+		const {
+			translate,
+			isDataLoaded,
+			siteJustLaunched,
+			hasFailedPurchases,
+			primaryPurchase,
+		} = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -368,6 +376,8 @@ class CheckoutThankYouHeader extends PureComponent {
 			svg = 'check-emails-desktop.svg';
 		}
 
+		const CHECKMARK_SIZE = 24;
+
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-icon">
@@ -377,7 +387,35 @@ class CheckoutThankYouHeader extends PureComponent {
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
 
-						<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
+						{ primaryPurchase && siteJustLaunched ? (
+							<ul className="checkout-thank-you__success-messages">
+								<li className="checkout-thank-you__success-message-item">
+									<Gridicon icon="checkmark" size={ CHECKMARK_SIZE } />
+									<div>
+										{ preventWidows(
+											translate(
+												'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
+													'Enjoy your powerful new features!',
+												{
+													args: { productName: primaryPurchase.productName },
+													components: { strong: <strong /> },
+												}
+											)
+										) }
+									</div>
+								</li>
+								<li className="checkout-thank-you__success-message-item">
+									<Gridicon icon="checkmark" size={ CHECKMARK_SIZE } />
+									<div>
+										{ translate(
+											"Your site has been launched. You can share it with the world whenever you're ready."
+										) }
+									</div>
+								</li>
+							</ul>
+						) : (
+							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
+						) }
 
 						{ this.getButton() }
 					</div>

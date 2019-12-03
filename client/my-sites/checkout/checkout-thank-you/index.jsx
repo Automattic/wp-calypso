@@ -111,6 +111,7 @@ export class CheckoutThankYou extends React.Component {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
 		isFetchingTransfer: PropTypes.bool,
+		isSimplified: PropTypes.bool,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
@@ -457,14 +458,15 @@ export class CheckoutThankYou extends React.Component {
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-
-				<Card className="checkout-thank-you__footer">
-					<HappinessSupport
-						isJetpack={ wasJetpackPlanPurchased }
-						liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-						showLiveChatButton={ this.isEligibleForLiveChat() }
-					/>
-				</Card>
+				{ ! this.props.isSimplified && (
+					<Card className="checkout-thank-you__footer">
+						<HappinessSupport
+							isJetpack={ wasJetpackPlanPurchased }
+							liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
+							showLiveChatButton={ this.isEligibleForLiveChat() }
+						/>
+					</Card>
+				) }
 			</Main>
 		);
 	}
@@ -531,7 +533,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans, displayMode, customizeUrl } = this.props;
+		const { selectedSite, isSimplified, sitePlans, displayMode, customizeUrl } = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -551,17 +553,22 @@ export class CheckoutThankYou extends React.Component {
 				<div>
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
+						siteJustLaunched={ isSimplified }
 						selectedSite={ selectedSite }
 						displayMode={ displayMode }
 					/>
 
-					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+					{ ! isSimplified && (
+						<>
+							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
-					<div className="checkout-thank-you__purchase-details-list">
-						<PurchaseDetail isPlaceholder />
-						<PurchaseDetail isPlaceholder />
-						<PurchaseDetail isPlaceholder />
-					</div>
+							<div className="checkout-thank-you__purchase-details-list">
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+							</div>
+						</>
+					) }
 				</div>
 			);
 		}
@@ -570,6 +577,7 @@ export class CheckoutThankYou extends React.Component {
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
+					siteJustLaunched={ isSimplified }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
@@ -577,7 +585,7 @@ export class CheckoutThankYou extends React.Component {
 					displayMode={ displayMode }
 				/>
 
-				{ primaryPurchase && (
+				{ ! isSimplified && primaryPurchase && (
 					<CheckoutThankYouFeaturesHeader
 						isDataLoaded={ this.isDataLoaded() }
 						isGenericReceipt={ this.isGenericReceipt() }
@@ -586,7 +594,7 @@ export class CheckoutThankYou extends React.Component {
 					/>
 				) }
 
-				{ ComponentClass && (
+				{ ! isSimplified && ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
 							customizeUrl={ customizeUrl }
@@ -611,6 +619,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 		const activeTheme = getActiveTheme( state, siteId );
+		const upgradeIntent = getCheckoutUpgradeIntent( state );
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
@@ -618,7 +627,8 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			upgradeIntent: getCheckoutUpgradeIntent( state ),
+			upgradeIntent: 'plugins',
+			isSimplified: [ 'themes', 'plugins' ].indexOf( upgradeIntent ) !== -1,
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
