@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Button from 'components/button';
 
 /**
  * Internal dependencies
@@ -55,13 +55,10 @@ export class SidebarBanner extends Component {
 					eventProperties={ { cta_name: ctaName } }
 				/>
 				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
-					<span className="sidebar-banner__icon-wrapper">
-						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
-					</span>
 					<span className="sidebar-banner__content">
 						<span className="sidebar-banner__text">{ text }</span>
 					</span>
-					<span className="sidebar-banner__cta">{ ctaText }</span>
+					<Button compact primary>{ ctaText }</Button>
 				</a>
 			</div>
 		);
