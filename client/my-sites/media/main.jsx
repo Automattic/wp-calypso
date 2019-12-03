@@ -269,7 +269,7 @@ class Media extends Component {
 				}
 			},
 			selectedCount < 2
-				? translate( 'Delete 1 item' )
+				? translate( 'Delete item' )
 				: translate( 'Delete %(selectedCount)s items', {
 						args: {
 							selectedCount: selectedCount,
