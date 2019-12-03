@@ -21,8 +21,7 @@ function wcpomAutoResize( editor ) {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
 	}
 
-	// do not autoreize on iOS
-	if ( editor.settings.inline || tinymce.Env.iOS ) {
+	if ( editor.settings.inline ) {
 		return;
 	}
 
