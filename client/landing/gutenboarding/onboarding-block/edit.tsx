@@ -23,12 +23,12 @@ export default function OnboardingEdit() {
 			<div className="onboarding-block__questions">
 				<h2 className="onboarding-block__questions-heading">
 					{ ! siteVertical &&
-						! siteTitle.length &&
+						! siteTitle &&
 						NO__( "Let's set up your website – it takes only a moment." ) }
 				</h2>
 				<StepperWizard>
 					<VerticalSelect />
-					{ ( siteVertical || siteTitle.length ) && <SiteTitle /> }
+					{ ( siteVertical || siteTitle ) && <SiteTitle /> }
 				</StepperWizard>
 				{ siteVertical && (
 					<div className="onboarding-block__footer">
