@@ -184,7 +184,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{ ' ' }
+			{ __( 'by', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -239,33 +239,27 @@ class Edit extends Component {
 		} = attributes;
 
 		const imageSizeOptions = [
-			{
-				value: 1,
-				label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
-			},
-			{
-				value: 2,
-				label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
-			},
-			{
-				value: 3,
-				label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
-			},
-			{
-				value: 4,
-				label: /* translators: label for extra large size option */ __(
-					'Extra Large',
-					'newspack-blocks'
-				),
-				shortName: /* translators: abbreviation for extra large size */ __(
-					'XL',
-					'newspack-blocks'
-				),
-			},
-		];
+		{
+			value: 1,
+			label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
+		},
+		{
+			value: 2,
+			label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
+		},
+		{
+			value: 3,
+			label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
+		},
+		{
+			value: 4,
+			label: /* translators: label for extra large size option */ __( 'Extra Large', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for extra large size */ __( 'XL', 'newspack-blocks' ),
+		},
+	];
 
 		return (
 			<Fragment>
@@ -330,7 +324,7 @@ class Edit extends Component {
 							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
 								<PanelRow>
 									<ButtonGroup aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
-										{ imageSizeOptions.map( option => {
+										{ imageSizeOptions.map( ( option ) => {
 											const isCurrent = imageScale === option.value;
 											return (
 												<Button
@@ -590,21 +584,14 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const {
-			postsToShow,
-			authors,
-			categories,
-			tags,
-			specificPosts,
-			specificMode,
-		} = props.attributes;
+		const { postsToShow, authors, categories, tags, specificPosts, specificMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
-						include: specificPosts,
-						orderby: 'include',
-				  }
+					include: specificPosts,
+					orderby: 'include'
+				}
 				: {
 						per_page: postsToShow,
 						categories,

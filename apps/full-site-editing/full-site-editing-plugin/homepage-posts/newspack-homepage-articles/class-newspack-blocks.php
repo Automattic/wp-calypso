@@ -40,7 +40,7 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -144,10 +144,10 @@ class Newspack_Blocks {
 				NEWSPACK_BLOCKS__VERSION
 			);
 		}
-		if ( self::is_amp() ) {
+		if ( static::is_amp() ) {
 			return;
 		}
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
@@ -289,5 +289,46 @@ class Newspack_Blocks {
 		add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
 
 		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+	}
+
+	/**
+	 * Builds and returns query args based on block attributes.
+	 *
+	 * @param array $attributes An array of block attributes.
+	 *
+	 * @return array
+	 */
+	public static function build_articles_query( $attributes ) {
+		global $newspack_blocks_post_id;
+		if ( ! $newspack_blocks_post_id ) {
+			$newspack_blocks_post_id = array();
+		}
+		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show  = intval( $attributes['postsToShow'] );
+		$specific_mode  = intval( $attributes['specificMode'] );
+		$args           = array(
+			'post_status'         => 'publish',
+			'suppress_filters'    => false,
+			'ignore_sticky_posts' => true,
+		);
+		if ( $specific_mode && $specific_posts ) {
+			$args['post__in'] = $specific_posts;
+			$args['orderby']  = 'post__in';
+		} else {
+			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+			if ( $authors ) {
+				$args['author__in'] = $authors;
+			}
+			if ( $categories ) {
+				$args['category__in'] = $categories;
+			}
+			if ( $tags ) {
+				$args['tag__in'] = $tags;
+			}
+		}
+		return $args;
 	}
 }
