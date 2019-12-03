@@ -115,6 +115,7 @@ export class CheckoutThankYou extends React.Component {
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
+		upgradeIntent: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
