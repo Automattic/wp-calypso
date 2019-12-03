@@ -67,5 +67,5 @@ export default function isRecurringPaymentsStatsNudgeVisible( state, siteId ) {
 		monthlyVisitors = get( yearStats.slice( -1 ), [ 0, 'views' ], 0 ) / 12;
 	}
 
-	return monthlyVisitors > 10000;
+	return monthlyVisitors > 1000;
 }
