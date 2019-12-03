@@ -86,7 +86,7 @@ const Header: FunctionComponent< Props > = ( {
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
 							onDomainSelect={ setDomain }
-							queryParameters={ siteVertical ? { vertical: siteVertical.id } : undefined }
+							queryParameters={ siteVertical && { vertical: siteVertical.id } }
 						>
 							{ siteTitleElement }
 							<span>{ currentDomain.domain_name }</span>
