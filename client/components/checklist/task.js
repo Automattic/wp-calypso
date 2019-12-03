@@ -125,6 +125,7 @@ class Task extends PureComponent {
 			buttonText,
 			collapsed,
 			completed,
+			completedDescription,
 			completedButtonText,
 			completedTitle,
 			description,
@@ -184,10 +185,12 @@ class Task extends PureComponent {
 
 					{ ! _collapsed && (
 						<div className="checklist__task-content">
-							<p className="checklist__task-description">{ description }</p>
+							<p className="checklist__task-description">
+								{ completed && completedDescription ? completedDescription : description }
+							</p>
 
 							<div className="checklist__task-action-duration-wrapper">
-								{ duration && (
+								{ ! completed && duration && (
 									<small className="checklist__task-duration">
 										{ translate( 'Estimated time:' ) } { duration }
 									</small>
