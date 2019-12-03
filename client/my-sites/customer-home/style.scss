@@ -94,10 +94,10 @@
 				width: auto;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-two-col;
 		}
 	}
@@ -113,10 +113,10 @@
 				margin-right: 6px;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-left-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-left-two-col;
 		}
 	}
@@ -130,10 +130,10 @@
 				margin-left: 6px;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-right-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-right-two-col;
 		}
 	}
