@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # config vars
-NHA_FOLDER=$(cat ./full-site-editing-plugin/homepage-posts/config.json | jq '.nha_folder' | tr -d \")
+CONFIG_FILE="./bin/newspack-sync-config.json"
+CONF_PLUGIN_NAME=$(cat ${CONFIG_FILE} | jq '.plugin_name' | tr -d \")
+CONF_NHA_FOLDER=$(cat ${CONFIG_FILE} | jq '.nha_folder' | tr -d \")
 
 # try whether user passed --release
 if [ -n "$npm_config_release" ]
@@ -22,7 +24,7 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: npm run sync:homepage-posts [arguments]"
+    echo "Usage: npm run sync:${CONF_PLUGIN_NAME} [arguments]"
     echo
     echo Possible arguments:
     echo --branch=master
@@ -36,9 +38,10 @@ fi
 # make a temp directory
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
-TARGET=./full-site-editing-plugin/homepage-posts${NHA_FOLDER}
 
-ENTRY=./full-site-editing-plugin/homepage-posts/index.php
+TARGET=./full-site-editing-plugin/${CONF_PLUGIN_NAME}${CONF_NHA_FOLDER}
+
+ENTRY=./full-site-editing-plugin/${CONF_PLUGIN_NAME}/index.php
 
 # download zip file
 echo Downloading $MODE $NAME
@@ -88,6 +91,7 @@ cp $CODE/class-newspack-blocks.php $TARGET/
 cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
+cp $CONFIG_FILE ./full-site-editing-plugin/${CONF_PLUGIN_NAME}/config.json
 
 echo Sync done.
 
