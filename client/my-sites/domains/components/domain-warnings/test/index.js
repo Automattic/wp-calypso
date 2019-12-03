@@ -255,7 +255,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'verification nudge', () => {
-		test( 'should not show any verification nudge for any unverified domains younger than 2 days if site has FSE enabled', () => {
+		test( 'should not show any verification nudge for any unverified domains younger than 2 days', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -279,7 +279,6 @@ describe( 'index', () => {
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
-				isSiteUsingFSE: true,
 				siteIsUnlaunched: true,
 				moment,
 			};

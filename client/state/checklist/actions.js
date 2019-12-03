@@ -28,13 +28,11 @@ export function receiveSiteChecklist( siteId, checklist ) {
  * Action creator function: SITE_CHECKLIST_REQUEST
  *
  * @param {string} siteId for the checklist
- * @param {boolean} isSiteUsingFSE whether or not the site uses full site editing
  * @returns {object} action object
  */
-export const requestSiteChecklist = ( siteId, isSiteUsingFSE = false ) => ( {
+export const requestSiteChecklist = siteId => ( {
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
-	isSiteUsingFSE,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
