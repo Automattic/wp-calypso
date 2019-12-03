@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flowRight } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -229,6 +230,7 @@ class Home extends Component {
 			siteId,
 			isChecklistComplete,
 			siteIsUnlaunched,
+			isEstablishedSite,
 		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
@@ -249,11 +251,14 @@ class Home extends Component {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
 				{ this.renderCustomerHomeHeader() }
-				<StatsBanners
-					siteId={ siteId }
-					slug={ siteSlug }
-					primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
-				/>
+				{ //Only show upgrade nudges to sites > 2 days old
+				isEstablishedSite && (
+					<StatsBanners
+						siteId={ siteId }
+						slug={ siteSlug }
+						primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
+					/>
+				) }
 				{ renderChecklistCompleteBanner && (
 					<Banner
 						dismissPreferenceName="checklist-complete"
@@ -554,6 +559,7 @@ const connectHome = connect(
 
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
 			// For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information
@@ -571,6 +577,7 @@ const connectHome = connect(
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			isNewlyCreatedSite: isNewSite( state, siteId ),
+			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
