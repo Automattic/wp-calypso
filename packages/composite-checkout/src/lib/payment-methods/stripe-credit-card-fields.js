@@ -437,10 +437,12 @@ const StripeFieldWrapper = styled.span`
 	.StripeElement {
 		display: block;
 		width: 100%;
+		font-size: 16px;
 		box-sizing: border-box;
 		border: 1px solid
 			${props => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor )};
 		padding: 12px 10px;
+		line-height: 1.2;
 	}
 
 	.StripeElement--focus {
