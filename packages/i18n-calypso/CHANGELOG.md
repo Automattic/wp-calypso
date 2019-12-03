@@ -2,6 +2,7 @@ next
 -----
 
 * Update debug to v4
+* Switch from Jed to Tannin, for smaller size as well as runtime speedups
 
 4.1.0
 -----

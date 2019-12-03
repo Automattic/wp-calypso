@@ -1,7 +1,7 @@
 {
 	"name": "i18n-calypso",
 	"version": "4.1.0",
-	"description": "i18n JavaScript library on top of Jed originally used in Calypso",
+	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "types/index.d.ts",
@@ -18,16 +18,17 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
 	"dependencies": {
+		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^3.7.2",
 		"debug": "^4.0.0",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",
 		"interpolate-components": "^1.1.1",
-		"jed": "^1.1.1",
 		"lodash": "^4.17.11",
 		"lru": "^3.1.0",
 		"moment": "^2.24.0",
 		"react": "^16.8.3",
+		"tannin": "^1.1.1",
 		"use-subscription": "^1.2.0"
 	},
 	"scripts": {
