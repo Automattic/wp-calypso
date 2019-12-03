@@ -172,6 +172,9 @@ class Home extends Component {
 					}
 				);
 
+			case 'launched':
+				return translate( 'Next, add fresh content to grow your audience.' );
+
 			default:
 				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
 		}
@@ -192,7 +195,7 @@ class Home extends Component {
 		// Show a thank-you message 30 mins post site creation/purchase
 		if ( isNewlyCreatedSite && displayChecklist ) {
 			if ( siteIsUnlaunched || isAtomic ) {
-				//Only show pre-launch or for Atomic sites
+				//Only show pre-launch, or for Atomic sites
 				return (
 					<React.Fragment>
 						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
@@ -219,7 +222,7 @@ class Home extends Component {
 		}
 
 		// Show a congratulatory message 30 mins post-launch
-		if ( ! siteIsUnlaunched && true ) {
+		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
 			return (
 				<React.Fragment>
 					<img
@@ -230,7 +233,7 @@ class Home extends Component {
 					/>
 					<FormattedHeader
 						headerText={ translate( 'You launched your site!' ) }
-						subHeaderText={ translate( 'Next, keep adding fresh content to grow your audience.' ) }
+						subHeaderText={ this.getChecklistSubHeaderText() }
 					/>
 				</React.Fragment>
 			);
