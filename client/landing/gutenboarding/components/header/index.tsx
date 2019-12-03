@@ -39,7 +39,6 @@ const Header: FunctionComponent< Props > = ( {
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
-		// eslint-disable-next-line no-nested-ternary
 		domain // If we know a domain, do not search.
 			? null
 			: siteTitle, // If we have a siteTitle, use it.
