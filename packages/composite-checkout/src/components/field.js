@@ -110,7 +110,7 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 
-	//override leaky styles with important
+	//override leaky styles from Calypso
 	&[type='text'],
 	&[type='number'] {
 		border: 1px solid
