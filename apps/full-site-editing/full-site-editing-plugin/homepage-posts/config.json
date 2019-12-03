@@ -1,4 +1,5 @@
 {
 	"plugin_name": "homepage-posts",
-	"nha_folder": "/newspack-homepage-articles"
+	"nha_folder": "/newspack-homepage-articles",
+	"nha_block_name": "homepage-articles"
 }
