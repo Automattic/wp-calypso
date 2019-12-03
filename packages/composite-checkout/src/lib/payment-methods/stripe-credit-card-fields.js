@@ -49,6 +49,7 @@ export function createStripeMethod( {
 	getPostalCode,
 	getPhoneNumber,
 	getSubdivisionCode,
+	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
@@ -98,6 +99,7 @@ export function createStripeMethod( {
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
+						domainDetails: getDomainDetails(),
 						paymentMethodToken,
 					},
 				};
@@ -740,7 +742,7 @@ function formatDataForTransactionsEndpoint( {
 	country,
 	postalCode,
 	subdivisionCode,
-	domainDetails, // TODO: get this
+	domainDetails,
 	paymentMethodToken,
 	name,
 	items,

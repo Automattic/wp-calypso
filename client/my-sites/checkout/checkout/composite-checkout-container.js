@@ -33,12 +33,42 @@ async function sendStripeTransaction( transactionData ) {
 	return wpcom.transactions( transactionData );
 }
 
+function getDomainDetails() {
+	const isDomainContactSame = select( 'wpcom' )?.isDomainContactSame?.() ?? false;
+	const {
+		firstName,
+		lastName,
+		email,
+		phoneNumber,
+		address,
+		city,
+		state,
+		country,
+		postalCode,
+	} = isDomainContactSame
+		? select( 'wpcom' )?.getContactInfo?.() ?? {}
+		: select( 'wpcom' )?.getDomainContactInfo?.() ?? {};
+	// TODO: what is getContactInfo for other than the domainDetails?
+	return {
+		firstName,
+		lastName,
+		email,
+		phoneNumber,
+		address,
+		city,
+		state,
+		country,
+		postalCode,
+	};
+}
+
 const stripeMethod = createStripeMethod( {
 	getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
 	getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
 	getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 	getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 	getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
