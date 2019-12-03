@@ -11,10 +11,10 @@ import { ActionType, Vertical, SiteVertical } from './types';
 import { DomainSuggestion } from '../domain-suggestions/types';
 import * as Actions from './actions';
 
-const domain: Reducer< DomainSuggestion | null, ReturnType< typeof Actions[ 'setDomain' ] > > = (
-	state = null,
-	action
-) => {
+const domain: Reducer<
+	DomainSuggestion | undefined,
+	ReturnType< typeof Actions[ 'setDomain' ] >
+> = ( state = undefined, action ) => {
 	if ( action.type === ActionType.SET_DOMAIN ) {
 		return action.domain;
 	}
