@@ -26,7 +26,7 @@ export const fetchChecklist = action =>
 			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
-				with_domain_verification: 1,
+				with_domain_verification: action.isSiteEligibleForFSE ? 1 : 0,
 			},
 		},
 		action

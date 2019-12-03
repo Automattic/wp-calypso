@@ -635,7 +635,7 @@ export class DomainWarnings extends React.PureComponent {
 					.add( 2, 'days' )
 					.isAfter()
 		);
-		if ( this.props.siteIsUnlaunched && isWithinTwoDays ) {
+		if ( this.props.isSiteEligibleForFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
 			// Customer Home nudges this on unlaunched sites.
 			// After two days let's re-display the nudge
 			return;
