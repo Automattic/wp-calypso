@@ -29,11 +29,8 @@ async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction() {
-	// return await wpcom.req.post( '/me/transactions', transaction );
-	return {
-		success: true,
-	};
+async function sendStripeTransaction( transactionData ) {
+	return wpcom.transactions( transactionData );
 }
 
 const stripeMethod = createStripeMethod( {
