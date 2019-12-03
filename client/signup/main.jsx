@@ -202,25 +202,6 @@ class Signup extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName } = this.props;
-		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
-
-		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
-		if (
-			prevProps.flowName &&
-			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
-			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
-			this.getPositionInFlow() > 0 &&
-			this.props.progress.length === 0
-		) {
-			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
-				flow: flowName,
-				step: stepName,
-				previous_flow: prevProps.flowName,
-				previous_step: prevProps.stepName,
-			} );
-		}
-
 		if (
 			get( this.props.signupDependencies, 'siteType' ) !==
 			get( prevProps.signupDependencies, 'siteType' )
@@ -430,7 +411,7 @@ class Signup extends React.Component {
 			this.setState( { scrolling: true } );
 
 			const ANIMATION_LENGTH_MS = 200;
-			const startTime = performance.now();
+			const startTime = window.performance.now();
 			const scrollHeight = window.pageYOffset;
 
 			const scrollToTop = timestamp => {
@@ -438,14 +419,14 @@ class Signup extends React.Component {
 
 				if ( progress < ANIMATION_LENGTH_MS ) {
 					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
-					requestAnimationFrame( scrollToTop );
+					window.requestAnimationFrame( scrollToTop );
 				} else {
 					this.setState( { scrolling: false } );
 					resolve();
 				}
 			};
 
-			requestAnimationFrame( scrollToTop );
+			window.requestAnimationFrame( scrollToTop );
 		} );
 
 		// redirect the user to the next step
