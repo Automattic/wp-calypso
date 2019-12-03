@@ -163,16 +163,8 @@
 	&__card-mobile {
 		display: flex;
 
-		@include breakpoint( '>1040px' ) {
-			flex-direction: column;
-		}
-
 		.get-apps__app-badge.android-app-badge img {
 			margin-top: 0;
-
-			@include breakpoint( '>1040px' ) {
-				margin: 0 0 0 -9px;
-			}
 		}
 	}
 	&__card-subheader {
