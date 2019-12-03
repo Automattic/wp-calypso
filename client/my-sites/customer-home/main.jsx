@@ -185,13 +185,43 @@ class Home extends Component {
 			checklistMode,
 			siteId,
 			currentThemeId,
+			siteIsUnlaunched,
+			isAtomic,
 		} = this.props;
 
+		// Show a thank-you message 30 mins post site creation/purchase
 		if ( isNewlyCreatedSite && displayChecklist ) {
+			if ( siteIsUnlaunched || isAtomic ) {
+				//Only show pre-launch or for Atomic sites
+				return (
+					<React.Fragment>
+						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
+						{ currentThemeId && (
+							<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
+						) }
+						<img
+							src="/calypso/images/signup/confetti.svg"
+							aria-hidden="true"
+							className="customer-home__confetti"
+							alt=""
+						/>
+						<FormattedHeader
+							headerText={
+								this.props.siteHasPaidPlan
+									? translate( 'Thank you for your purchase!' )
+									: translate( 'Your site has been created!' )
+							}
+							subHeaderText={ this.getChecklistSubHeaderText() }
+						/>
+					</React.Fragment>
+				);
+			}
+		}
+
+		// Show a congratulatory message 30 mins post-launch
+		if ( ! siteIsUnlaunched && true ) {
 			return (
 				<React.Fragment>
-					{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
-					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -199,17 +229,14 @@ class Home extends Component {
 						alt=""
 					/>
 					<FormattedHeader
-						headerText={
-							this.props.siteHasPaidPlan
-								? translate( 'Thank you for your purchase!' )
-								: translate( 'Your site has been created!' )
-						}
-						subHeaderText={ this.getChecklistSubHeaderText() }
+						headerText={ translate( 'You launched your site!' ) }
+						subHeaderText={ translate( 'Next, keep adding fresh content to grow your audience.' ) }
 					/>
 				</React.Fragment>
 			);
 		}
 
+		// Show the standard heading otherwise
 		return (
 			<FormattedHeader
 				className="customer-home__page-heading"
