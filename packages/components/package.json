@@ -24,8 +24,10 @@
 	},
 	"files": [
 		"dist",
+		"types",
 		"src"
 	],
+	"types": "types",
 	"dependencies": {
 		"classnames": "^2.2.6",
 		"enzyme": "^3.10.0",
@@ -37,8 +39,8 @@
 		"react-modal": "^3.8.1"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "npx rimraf dist types",
 		"prepublish": "npm run clean",
-		"prepare": "transpile && copy-styles"
+		"prepare": "transpile && tsc && copy-styles"
 	}
 }
