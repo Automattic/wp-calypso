@@ -19,6 +19,7 @@ export default class DeleteAccountFlow {
 			const closeAccountPage = await CloseAccountPage.Expect( this.driver );
 			await closeAccountPage.chooseCloseAccount();
 			await closeAccountPage.enterAccountNameAndClose( name );
+			await closeAccountPage.ConfirmAccountHasBeenClosed();
 			return await LoggedOutMasterbarComponent.Expect( this.driver );
 		} )().catch( err => {
 			SlackNotifier.warn(
