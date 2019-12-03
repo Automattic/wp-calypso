@@ -4,6 +4,7 @@
 		@include breakpoint( '>1040px' ) {
 			display: grid;
 			grid-gap: 0;
+			// stylelint-disable-next-line unit-whitelist
 			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
 		}
 	}
@@ -188,6 +189,7 @@
 			grid-column: 1 / span 12;
 			display: grid;
 			grid-gap: 24px;
+			// stylelint-disable-next-line unit-whitelist
 			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
 		}
 
