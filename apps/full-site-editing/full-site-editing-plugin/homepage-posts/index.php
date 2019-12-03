@@ -12,6 +12,14 @@ define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.17' );
 
 /**
+ * Config file
+ */
+$config = json_decode(
+	file_get_contents( __DIR__ . '/config.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	true
+);
+
+/**
  * Filters block name.
  *
  * @param string $name Block name.
@@ -63,7 +71,7 @@ function homepage_posts_block_args( $args, $name ) {
 }
 add_filter( 'newspack_blocks_block_args', __NAMESPACE__ . '\homepage_posts_block_args', 10, 2 );
 
-require_once __DIR__ . '/newspack-homepage-articles/class-newspack-blocks.php';
-require_once __DIR__ . '/newspack-homepage-articles/class-newspack-blocks-api.php';
+require_once __DIR__ . $config['nha_folder'] . '/class-newspack-blocks.php';
+require_once __DIR__ . $config['nha_folder'] . '/class-newspack-blocks-api.php';
 
-require_once __DIR__ . '/newspack-homepage-articles/blocks/homepage-articles/view.php';
+require_once __DIR__ . $config['nha_folder'] . '/blocks/homepage-articles/view.php';

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# config vars
+NHA_FOLDER=$(cat ./full-site-editing-plugin/homepage-posts/config.json | jq '.nha_folder' | tr -d \")
+
 # try whether user passed --release
 if [ -n "$npm_config_release" ]
 then
@@ -33,7 +36,8 @@ fi
 # make a temp directory
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
-TARGET=./full-site-editing-plugin/homepage-posts/newspack-homepage-articles
+TARGET=./full-site-editing-plugin/homepage-posts${NHA_FOLDER}
+
 ENTRY=./full-site-editing-plugin/homepage-posts/index.php
 
 # download zip file
@@ -71,7 +75,7 @@ if [ ! -f "$CODE/newspack-blocks.php" ]; then
     exit 1
 fi
 
-echo Syncing files to FSE…
+echo "Syncing files to FSE ($TARGET)…"
 
 # ensure target dirs exist
 mkdir -p $TARGET/blocks
