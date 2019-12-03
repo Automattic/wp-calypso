@@ -61,7 +61,6 @@ const CurrentSiteDomainWarnings = ( {
 CurrentSiteDomainWarnings.propTypes = {
 	domains: PropTypes.array,
 	isJetpack: PropTypes.bool,
-	isSiteUsingFSE: PropTypes.bool,
 	selectedSite: PropTypes.object,
 };
 
