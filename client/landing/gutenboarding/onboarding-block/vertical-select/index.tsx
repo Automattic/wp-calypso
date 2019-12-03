@@ -14,7 +14,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical } from '../../stores/onboard/types';
 import { InjectedStepProps } from '../stepper-wizard';
 import Question from '../question';
-import { __TodoAny__ } from 'client/types';
+import { __TodoAny__ } from '../../../../types';
 
 /**
  * Style dependencies
