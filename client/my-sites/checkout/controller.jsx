@@ -52,7 +52,7 @@ export function checkout( context, next ) {
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } />;
+		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } siteId={ selectedSite.ID } />;
 		next();
 		return;
 	}

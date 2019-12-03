@@ -84,7 +84,7 @@ const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].f
 const getCart = ( ...args ) => wpcom.getCart( ...args );
 const setCart = ( ...args ) => wpcom.setCart( ...args );
 
-export default function CompositeCheckoutContainer( { siteSlug } ) {
+export default function CompositeCheckoutContainer( { siteId, siteSlug } ) {
 	const translate = useTranslate();
 	const onSuccess = () => {
 		debug( 'success' );
@@ -104,6 +104,7 @@ export default function CompositeCheckoutContainer( { siteSlug } ) {
 			setCart={ setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
+			siteId={ siteId }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
 		/>
