@@ -104,7 +104,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<h2 class="article-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</h2>
-			<?php
+				<?php
 			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
@@ -164,7 +164,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 							// Use Yoast primary category if set.
 							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
 								$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
-								$category_id = $primary_term->get_primary_term();
+								$category_id  = $primary_term->get_primary_term();
 								if ( $category_id ) {
 									$category = get_term( $category_id );
 								}
@@ -256,126 +256,131 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
  * Registers the `newspack-blocks/homepage-articles` block on server.
  */
 function newspack_blocks_register_homepage_articles() {
+	$name = 'newspack-blocks/homepage-articles';
 	register_block_type(
-		'newspack-blocks/homepage-articles',
-		array(
-			'attributes'      => array(
-				'className'       => array(
-					'type' => 'string',
-				),
-				'showExcerpt'     => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showDate'        => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showImage'       => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showCaption'     => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showAuthor'      => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showAvatar'      => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showCategory'  => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'content'         => array(
-					'type' => 'string',
-				),
-				'postLayout'      => array(
-					'type'    => 'string',
-					'default' => 'list',
-				),
-				'columns'         => array(
-					'type'    => 'integer',
-					'default' => 3,
-				),
-				'postsToShow'     => array(
-					'type'    => 'integer',
-					'default' => 3,
-				),
-				'mediaPosition'   => array(
-					'type'    => 'string',
-					'default' => 'top',
-				),
-				'authors'         => array(
-					'type'    => 'array',
-					'default' => array(),
-					'items'   => array(
-						'type' => 'integer',
+		apply_filters( 'newspack_blocks_block_name', $name ),
+		apply_filters(
+			'newspack_blocks_block_args',
+			array(
+				'attributes'      => array(
+					'className'       => array(
+						'type' => 'string',
+					),
+					'showExcerpt'     => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showDate'        => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showImage'       => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showCaption'     => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'showAuthor'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showAvatar'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showCategory'    => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'content'         => array(
+						'type' => 'string',
+					),
+					'postLayout'      => array(
+						'type'    => 'string',
+						'default' => 'list',
+					),
+					'columns'         => array(
+						'type'    => 'integer',
+						'default' => 3,
+					),
+					'postsToShow'     => array(
+						'type'    => 'integer',
+						'default' => 3,
+					),
+					'mediaPosition'   => array(
+						'type'    => 'string',
+						'default' => 'top',
+					),
+					'authors'         => array(
+						'type'    => 'array',
+						'default' => array(),
+						'items'   => array(
+							'type' => 'integer',
+						),
+					),
+					'categories'      => array(
+						'type'    => 'array',
+						'default' => array(),
+						'items'   => array(
+							'type' => 'integer',
+						),
+					),
+					'tags'            => array(
+						'type'    => 'array',
+						'default' => array(),
+						'items'   => array(
+							'type' => 'integer',
+						),
+					),
+					'specificPosts'   => array(
+						'type'    => 'array',
+						'default' => array(),
+						'items'   => array(
+							'type' => 'integer',
+						),
+					),
+					'typeScale'       => array(
+						'type'    => 'integer',
+						'default' => 4,
+					),
+					'imageScale'      => array(
+						'type'    => 'integer',
+						'default' => 3,
+					),
+					'mobileStack'     => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'imageShape'      => array(
+						'type'    => 'string',
+						'default' => 'landscape',
+					),
+					'minHeight'       => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'sectionHeader'   => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'specificMode'    => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'textColor'       => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'customTextColor' => array(
+						'type'    => 'string',
+						'default' => '',
 					),
 				),
-				'categories'      => array(
-					'type'    => 'array',
-					'default' => array(),
-					'items'   => array(
-						'type' => 'integer',
-					),
-				),
-				'tags'            => array(
-					'type'    => 'array',
-					'default' => array(),
-					'items'   => array(
-						'type' => 'integer',
-					),
-				),
-				'specificPosts'   => array(
-					'type'    => 'array',
-					'default' => array(),
-					'items'   => array(
-						'type' => 'integer',
-					),
-				),
-				'typeScale'       => array(
-					'type'    => 'integer',
-					'default' => 4,
-				),
-				'imageScale'      => array(
-					'type'    => 'integer',
-					'default' => 3,
-				),
-				'mobileStack'     => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'imageShape'    => array(
-					'type'    => 'string',
-					'default' => 'landscape',
-				),
-				'minHeight'       => array(
-					'type'    => 'integer',
-					'default' => 0,
-				),
-				'sectionHeader'   => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'specificMode'    => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'textColor'       => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'customTextColor' => array(
-					'type'    => 'string',
-					'default' => '',
-				),
+				'render_callback' => 'newspack_blocks_render_block_homepage_articles',
 			),
-			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
+			$name
 		)
 	);
 }
