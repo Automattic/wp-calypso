@@ -458,28 +458,32 @@ class Home extends Component {
 								{ translate( 'Make changes to your site or view its current state' ) }
 							</h6>
 							<div className="customer-home__card-col">
-								{ isStaticHomePage ? (
-									<Button
-										href={ editHomePageUrl }
-										primary={ isPrimary }
-										onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-									>
-										{ translate( 'Edit Homepage' ) }
+								<div className="customer-home__card-col-left">
+									{ isStaticHomePage ? (
+										<Button
+											href={ editHomePageUrl }
+											primary={ isPrimary }
+											onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+										>
+											{ translate( 'Edit Homepage' ) }
+										</Button>
+									) : (
+										<Button
+											href={ `/post/${ siteSlug }` }
+											primary={ isPrimary }
+											onClick={ () => {
+												trackAction( 'my_site', 'write_post' );
+											} }
+										>
+											{ translate( 'Write Blog Post' ) }
+										</Button>
+									) }
+								</div>
+								<div className="customer-home__card-col-right">
+									<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+										{ translate( 'View Site' ) }
 									</Button>
-								) : (
-									<Button
-										href={ `/post/${ siteSlug }` }
-										primary={ isPrimary }
-										onClick={ () => {
-											trackAction( 'my_site', 'write_post' );
-										} }
-									>
-										{ translate( 'Write Blog Post' ) }
-									</Button>
-								) }
-								<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-									{ translate( 'View Site' ) }
-								</Button>
+								</div>
 							</div>
 						</Card>
 					) }
