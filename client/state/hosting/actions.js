@@ -8,9 +8,11 @@ import {
 	HOSTING_SFTP_PASSWORD_RESET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
+	HOSTING_PHP_VERSION_SET,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
 import 'state/data-layer/wpcom/sites/hosting/sftp-user';
+import 'state/data-layer/wpcom/sites/hosting/php-version';
 
 export const restoreDatabasePassword = siteId => ( {
 	type: HOSTING_RESTORE_DATABASE_PASSWORD,
@@ -44,4 +46,10 @@ export const resetAtomicSftpPassword = ( siteId, sshUsername ) => ( {
 	type: HOSTING_SFTP_PASSWORD_RESET,
 	siteId,
 	sshUsername,
+} );
+
+export const updateAtomicPhpVersion = ( siteId, version ) => ( {
+	type: HOSTING_PHP_VERSION_SET,
+	siteId,
+	version,
 } );

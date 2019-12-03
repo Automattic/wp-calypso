@@ -15,11 +15,12 @@ import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { updateAtomicPhpVersion } from 'state/hosting/actions';
+import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
 
 /**
  * Style dependencies
@@ -51,42 +52,14 @@ export const requestPhpVersion = siteId => {
 	);
 };
 
-export const setPhpVersion = ( siteId, version ) => {
-	const method = 'POST';
-
-	return requestHttpData(
-		requestId( siteId, method ),
-		http(
-			{
-				method,
-				path: `/sites/${ siteId }/hosting/php-version`,
-				apiNamespace: 'wpcom/v2',
-				body: {
-					version: version,
-				},
-			},
-			{}
-		),
-		{
-			fromApi: () => success => {
-				return [ [ requestId( siteId, method ), success ] ];
-			},
-			freshness: 0,
-		}
-	);
-};
-
 const PhpVersionCard = ( {
+	disabled,
 	loading,
-	recordHostingPhpVersionUpdate,
-	showErrorNotice,
-	showSuccessNotice,
 	siteId,
 	translate,
-	updateResult,
 	updating,
+	updatePhpVersion,
 	version,
-	disabled,
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( '' );
@@ -100,39 +73,6 @@ const PhpVersionCard = ( {
 	}, [ siteId, disabled ] );
 
 	useEffect( () => {
-		const updateNoticeId = 'hosting-php-version';
-
-		if ( updateResult === 'failure' ) {
-			showErrorNotice( translate( 'Failed to set PHP version.' ), {
-				id: updateNoticeId,
-			} );
-		}
-
-		if ( updateResult === 'success' ) {
-			setCurrentPhpVersion( selectedPhpVersion );
-
-			showSuccessNotice(
-				translate( 'PHP version successfully set to %(version)s.', {
-					args: {
-						version: selectedPhpVersion,
-					},
-				} ),
-				{
-					id: updateNoticeId,
-					showDismiss: false,
-					duration: 5000,
-				}
-			);
-		}
-
-		if ( [ 'success', 'failure' ].includes( updateResult ) ) {
-			resetHttpData( requestId( siteId, 'POST' ) );
-
-			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
-		}
-	}, [ updateResult ] );
-
-	useEffect( () => {
 		setCurrentPhpVersion( version );
 	}, [ version ] );
 
@@ -140,6 +80,10 @@ const PhpVersionCard = ( {
 		const newVersion = event.target.value;
 
 		setSelectedPhpVersion( newVersion );
+	};
+
+	const updateVersion = () => {
+		updatePhpVersion( siteId, selectedPhpVersion );
 	};
 
 	const getPhpVersions = () => {
@@ -202,7 +146,7 @@ const PhpVersionCard = ( {
 				{ ! isButtonDisabled && (
 					<Button
 						className="php-version-card__set-version"
-						onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
+						onClick={ updateVersion }
 						busy={ updating }
 					>
 						<span>{ translate( 'Update PHP Version' ) }</span>
@@ -222,27 +166,15 @@ const PhpVersionCard = ( {
 	);
 };
 
-export const recordHostingPhpVersionUpdate = ( version, result ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Hosting Configuration',
-			'Clicked "Update PHP Version" Button in PHP Version box',
-			`PHP Version Update ${ result }`,
-			version
-		),
-		recordTracksEvent( 'calypso_hosting_configuration_php_version_update', {
-			result,
-			version,
-		} )
-	);
-
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 
 		const phpVersionGet = getHttpData( requestId( siteId, 'GET' ) );
 		const phpVersionUpdate = getHttpData( requestId( siteId, 'POST' ) );
-		const version = phpVersionGet?.data ?? '';
+		const version = getAtomicHostingPhpVersion( state, siteId ) || ( phpVersionGet?.data ?? '' );
+
+		console.log( getAtomicHostingPhpVersion( state, siteId ) );
 
 		return {
 			loading: ! props.disabled && ! version && phpVersionGet.state === 'pending',
@@ -253,7 +185,7 @@ export default connect(
 		};
 	},
 	{
-		recordHostingPhpVersionUpdate,
+		updatePhpVersion: updateAtomicPhpVersion,
 		showErrorNotice: errorNotice,
 		showSuccessNotice: successNotice,
 	}
