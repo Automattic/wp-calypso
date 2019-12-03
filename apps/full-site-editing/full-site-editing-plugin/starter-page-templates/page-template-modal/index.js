@@ -49,7 +49,7 @@ class PageTemplateModal extends Component {
 		mapValues( keyBy( templates, 'slug' ), 'title' )
 	);
 
-	// Parse templates blocks and store them into the state.
+	// Parse templates blocks and memoize them.
 	getBlocksByTemplateSlugs = memoize( templates =>
 		reduce(
 			templates,
