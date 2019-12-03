@@ -21,7 +21,6 @@ import {
 } from '../stripe';
 import {
 	useSelect,
-	usePaymentData,
 	useDispatch,
 	useCheckoutHandlers,
 	useLineItems,
@@ -45,6 +44,11 @@ import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
 
 export function createStripeMethod( {
+	getSiteId,
+	getCountry,
+	getPostalCode,
+	getPhoneNumber,
+	getSubdivisionCode,
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
@@ -77,7 +81,26 @@ export function createStripeMethod( {
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
-				stripeResponse = yield { type: 'STRIPE_TRANSACTION_BEGIN', payload };
+				const paymentMethodToken = yield {
+					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						phoneNumber: getPhoneNumber(),
+					},
+				};
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						siteId: getSiteId(),
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						subdivisionCode: getSubdivisionCode(),
+						paymentMethodToken,
+					},
+				};
 			} catch ( error ) {
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
@@ -203,8 +226,11 @@ export function createStripeMethod( {
 			STRIPE_CONFIGURATION_FETCH( action ) {
 				return fetchStripeConfiguration( action.payload );
 			},
+			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
+				return createStripePaymentMethodToken( action.payload );
+			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( formatDataForStripeTransaction( action.payload ) );
+				return sendStripeTransaction( formatDataForTransactionsEndpoint( action.payload ) );
 			},
 		},
 	} );
@@ -586,11 +612,11 @@ function StripePayButton( { disabled } ) {
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
-	const [ paymentData ] = usePaymentData();
-	const { billing = {}, domains = {} } = paymentData;
+	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
+			// TODO: clear this after showing it
 			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
 		}
 		if ( transactionStatus === 'complete' ) {
@@ -626,8 +652,7 @@ function StripePayButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ () =>
 				submitStripePayment( {
-					billing,
-					domains,
+					name,
 					items,
 					total,
 					stripe,
@@ -661,6 +686,7 @@ function StripeSummary() {
 }
 
 async function submitStripePayment( {
+	name,
 	items,
 	total,
 	stripe,
@@ -668,47 +694,33 @@ async function submitStripePayment( {
 	onFailure,
 	successUrl,
 	cancelUrl,
-	billing,
-	domains,
 	beginStripeTransaction,
 } ) {
-	const name = billing.name || '';
-	const country = billing.country || '';
-	const postalCode = billing.zipCode || billing.postalCode || '';
-	const phone = domains.phone || '';
-	const subdivisionCode = billing.state || billing.province || '';
-	// TODO: validate fields
-	const paymentDetailsForStripe = {
+	try {
+		beginStripeTransaction( {
+			stripe,
+			name,
+			items,
+			total,
+			stripeConfiguration,
+			successUrl,
+			cancelUrl,
+		} );
+	} catch ( error ) {
+		onFailure( error );
+		return;
+	}
+}
+
+function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
+	return createStripePaymentMethod( stripe, {
 		name,
 		address: {
 			country,
 			postal_code: postalCode,
 		},
-	};
-
-	if ( phone ) {
-		paymentDetailsForStripe.phone = phone;
-	}
-
-	try {
-		const stripePaymentMethod = await createStripePaymentMethod( stripe, paymentDetailsForStripe );
-		const dataForTransaction = {
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-			paymentData: { billing, domains },
-			stripePaymentMethod,
-			stripeConfiguration,
-			successUrl,
-			cancelUrl,
-		};
-		beginStripeTransaction( dataForTransaction );
-	} catch ( error ) {
-		onFailure( error );
-		return;
-	}
+		...( phoneNumber ? { phone: phoneNumber } : {} ),
+	} );
 }
 
 async function showStripeModalAuth( { stripeConfiguration, response } ) {
@@ -722,24 +734,24 @@ async function showStripeModalAuth( { stripeConfiguration, response } ) {
 	}
 }
 
-function formatDataForStripeTransaction( {
-	name,
-	items,
-	total,
+function formatDataForTransactionsEndpoint( {
+	siteId,
+	couponId, // TODO: get this
 	country,
 	postalCode,
 	subdivisionCode,
-	paymentData,
-	stripePaymentMethod,
+	domainDetails, // TODO: get this
+	paymentMethodToken,
+	name,
+	items,
+	total,
 	stripeConfiguration,
 	successUrl,
 	cancelUrl,
 } ) {
-	const siteId = ''; // TODO: get site id
-	const couponId = null; // TODO: get couponId
 	const payment = {
 		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: stripePaymentMethod.id,
+		payment_key: paymentMethodToken.id,
 		payment_partner: stripeConfiguration.processor_id,
 		name,
 		zip: postalCode,
@@ -757,7 +769,7 @@ function formatDataForStripeTransaction( {
 			postalCode,
 			subdivisionCode,
 		} ),
-		domainDetails: paymentData, // TODO: get this somehow
+		domainDetails,
 		payment,
 	};
 }
@@ -770,8 +782,7 @@ function createCartFromLineItems( {
 	postalCode,
 	subdivisionCode,
 } ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
+	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
 	return {
 		blog_id: siteId,
 		coupon: couponId || '',
@@ -781,7 +792,6 @@ function createCartFromLineItems( {
 		products: items.map( item => ( {
 			product_id: item.id,
 			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
 			currency: item.amount.currency,
 			volume: 1,
 		} ) ),
