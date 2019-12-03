@@ -1,8 +1,9 @@
 /**
  * Internal Dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, isVipSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
@@ -20,9 +21,17 @@ export default function canSiteViewAtomicHosting( state ) {
 
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isSiteOnAtomicPlan( state, siteId ) ) {
+	if ( ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		return false;
 	}
 
-	return canCurrentUser( state, siteId, 'manage_options' );
+	if ( false !== isJetpackSite( siteId ) || false !== isVipSite( siteId ) ) {
+		return false;
+	}
+
+	if ( isEnabled( 'hosting/all-sites' ) ) {
+		return true;
+	}
+
+	return isSiteOnAtomicPlan( state, siteId );
 }
