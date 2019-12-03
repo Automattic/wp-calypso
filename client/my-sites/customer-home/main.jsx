@@ -221,7 +221,7 @@ class Home extends Component {
 			}
 		}
 
-		// Show a congratulatory message 30 mins post-launch
+		// Show a congratulatory message post-launch
 		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
 			return (
 				<React.Fragment>
