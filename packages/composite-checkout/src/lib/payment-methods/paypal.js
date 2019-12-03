@@ -9,39 +9,39 @@ import styled from '@emotion/styled';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
+import { useDispatch, useSelect } from '../../lib/registry';
 import { useMessages, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
-export function createPayPalMethod( { registerStore, makePayPalExpressRequest, getSiteId } ) {
+export function createPayPalMethod( {
+	registerStore,
+	makePayPalExpressRequest,
+	getSiteId,
+	getCountry,
+	getPostalCode,
+	getSubdivisionCode,
+	getPhoneNumber,
+	getDomainDetails,
+} ) {
 	registerStore( 'paypal', {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
-				const {
-					items,
-					country,
-					subdivisionCode,
-					successUrl,
-					cancelUrl,
-					domainDetails,
-					postalCode,
-				} = action.payload;
-				const siteId = getSiteId();
-				const couponId = null; // TODO: get couponId
+				const { items, successUrl, cancelUrl } = action.payload;
 				const dataForApi = {
 					successUrl,
 					cancelUrl,
 					cart: createCartFromLineItems( {
-						siteId,
-						couponId,
+						siteId: getSiteId(),
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						subdivisionCode: getSubdivisionCode(),
+						phoneNumber: getPhoneNumber(),
+						couponId: null, // TODO: get couponId
 						items,
-						country,
-						postalCode,
-						subdivisionCode,
 					} ),
-					domainDetails,
-					'postal-code': postalCode,
+					domainDetails: getDomainDetails(),
+					'postal-code': getPostalCode(),
 				};
 				return makePayPalExpressRequest( dataForApi );
 			},
@@ -108,20 +108,14 @@ export function PaypalSubmitButton( { disabled } ) {
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	const [ items ] = useLineItems();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
-	const [ paymentData ] = usePaymentData();
-	const { billing = {} } = paymentData;
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
 
 	const onClick = () =>
 		submitPaypalPayment( {
 			items,
-			country: billing.country || '',
-			subdivisionCode: billing.state || billing.province || '',
 			successUrl: successRedirectUrl,
 			cancelUrl: failureRedirectUrl,
-			postalCode: billing.zipCode || billing.postalCode,
-			domainDetails: null, // TODO: get this somehow
 		} );
 	return (
 		<Button
@@ -240,8 +234,7 @@ function createCartFromLineItems( {
 	postalCode,
 	subdivisionCode,
 } ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
+	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
 	return {
 		blog_id: siteId,
 		coupon: couponId || '',
@@ -251,7 +244,6 @@ function createCartFromLineItems( {
 		products: items.map( item => ( {
 			product_id: item.id,
 			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
 			currency: item.amount.currency,
 			volume: 1,
 		} ) ),
