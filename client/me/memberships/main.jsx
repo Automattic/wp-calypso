@@ -26,6 +26,11 @@ import { withLocalizedMoment } from 'components/localized-moment';
  */
 import './main.scss';
 
+/**
+ * Image dependencies
+ */
+import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
+
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
@@ -77,7 +82,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
 					title={ translate( 'No Recurring Payments found.' ) }
-					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
+					illustration={ noMembershipsImage }
 				/>
 			</CompactCard>
 		);
