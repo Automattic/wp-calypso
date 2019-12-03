@@ -21,6 +21,7 @@ import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import RecurringPaymentsStatsNudge from 'blocks/recurring-payments-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+import isRecurringPaymentsStatsNudgeVisibleSelector from 'state/selectors/is-recurring-payments-stats-nudge-visible';
 import isGSuiteStatsNudgeVisible from 'state/selectors/is-gsuite-stats-nudge-visible';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
@@ -54,7 +55,16 @@ class StatsBanners extends Component {
 	}
 
 	renderBanner() {
-		if ( this.showUpworkBanner() ) {
+		if ( this.props.isRecurringPaymentsStatsNudgeVisible ) {
+			return (
+				<RecurringPaymentsStatsNudge
+					siteSlug={ this.props.slug }
+					siteId={ this.props.siteId }
+					visible={ true }
+					primaryButton={ this.props.primaryButton }
+				/>
+			);
+		} else if ( this.showUpworkBanner() ) {
 			return this.renderUpworkBanner();
 		} else if ( this.showGSuiteBanner() ) {
 			return this.renderGSuiteBanner();
@@ -145,6 +155,10 @@ export default connect( ( state, ownProps ) => {
 		gsuiteDomainName: getEligibleGSuiteDomain( null, domains ),
 		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
+			state,
+			ownProps.siteId
+		),
+		isRecurringPaymentsStatsNudgeVisible: isRecurringPaymentsStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
 		),
