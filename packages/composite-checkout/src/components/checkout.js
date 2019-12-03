@@ -184,6 +184,7 @@ function CheckoutStepContainer( {
 		>
 			<RenderedStepProvider stepId={ id }>
 				<CheckoutStep
+					id={ id }
 					className={ className }
 					isActive={ isActive }
 					isComplete={ isComplete }

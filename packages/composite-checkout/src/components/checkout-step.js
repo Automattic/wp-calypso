@@ -14,6 +14,7 @@ import Button from './button';
 import { CheckIcon } from './shared-icons';
 
 export default function CheckoutStep( {
+	id,
 	className,
 	stepNumber,
 	title,
@@ -31,6 +32,7 @@ export default function CheckoutStep( {
 		...( isActive ? [ 'checkout-step--is-active' ] : [] ),
 		...( isComplete ? [ 'checkout-step--is-complete' ] : [] ),
 	];
+
 	return (
 		<StepWrapper
 			isActive={ isActive }
@@ -39,6 +41,7 @@ export default function CheckoutStep( {
 			finalStep={ finalStep }
 		>
 			<CheckoutStepHeader
+				id={ id }
 				stepNumber={ stepNumber }
 				title={ title }
 				isActive={ isActive }
@@ -59,6 +62,7 @@ export default function CheckoutStep( {
 }
 
 CheckoutStep.propTypes = {
+	id: PropTypes.string,
 	className: PropTypes.string,
 	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
@@ -70,6 +74,7 @@ CheckoutStep.propTypes = {
 };
 
 function CheckoutStepHeader( {
+	id,
 	className,
 	stepNumber,
 	title,
@@ -87,7 +92,7 @@ function CheckoutStepHeader( {
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
-			<Stepper isComplete={ isComplete } isActive={ isActive }>
+			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
 				{ stepNumber || null }
 			</Stepper>
 			<StepTitle
@@ -112,15 +117,15 @@ function CheckoutStepHeader( {
 }
 
 CheckoutStepHeader.propTypes = {
+	id: PropTypes.string,
 	className: PropTypes.string,
-	stepNumber: PropTypes.number,
 	title: PropTypes.node.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	onEdit: PropTypes.func,
 };
 
-function Stepper( { isComplete, isActive, className, children } ) {
+function Stepper( { isComplete, isActive, className, children, id } ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
 	return (
@@ -130,7 +135,7 @@ function Stepper( { isComplete, isActive, className, children } ) {
 					{ children }
 				</StepNumber>
 				<StepNumberCompleted>
-					<CheckIcon />
+					<CheckIcon id={ id } />
 				</StepNumberCompleted>
 			</StepNumberInnerWrapper>
 		</StepNumberOuterWrapper>
@@ -138,6 +143,7 @@ function Stepper( { isComplete, isActive, className, children } ) {
 }
 
 Stepper.propTypes = {
+	id: PropTypes.string,
 	className: PropTypes.string,
 	isComplete: PropTypes.bool,
 	isActive: PropTypes.bool,
