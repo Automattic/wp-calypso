@@ -24,11 +24,11 @@ import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
  */
 
 export default function getEditorCloseConfig( state, siteId, postType, fseParentPageId ) {
-	// Handle returning to parent editor for full site editing templates
-	if ( 'wp_template_part' === postType ) {
+	// Handle returning to parent editor for full site editing template parts.
+	if ( 'wp_template_part' === postType && fseParentPageId ) {
+		// Note: the label is handled correctly by the FSE plugin in this case.
 		return {
 			url: getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' ),
-			label: fseParentPageId ? translate( 'Back to page' ) : translate( 'Back' ),
 		};
 	}
 

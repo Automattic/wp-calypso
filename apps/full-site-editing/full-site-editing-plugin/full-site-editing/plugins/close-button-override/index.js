@@ -81,40 +81,20 @@ domReady( () => {
 			closeButtonLabel = calypsoifyGutenberg.closeButtonLabel;
 		}
 
-		// Create custom close button for the template part editor.
-		if ( 'wp_template_part' === editorPostType ) {
-			const newCloseButton = document.createElement( 'a' );
-			newCloseButton.href = closeButtonUrl || 'edit.php?post_type=page';
-			const backupLabel = __( 'Go Back' );
-			newCloseButton.setAttribute( 'aria-label', closeButtonLabel || backupLabel );
-			newCloseButton.className = 'components-button components-icon-button is-button is-default';
-			const wideContent = document.createElement( 'div' );
-			wideContent.innerHTML = closeButtonLabel || backupLabel;
-			wideContent.className = 'close-button-override-wide';
-			newCloseButton.prepend( wideContent );
-			const thinContent = document.createElement( 'div' );
-			const abbreviatedContent = __( 'Back' );
-			thinContent.innerHTML = abbreviatedContent;
-			thinContent.className = 'close-button-override-thin';
-			newCloseButton.prepend( thinContent );
-			componentsToolbar.prepend( newCloseButton );
+		const defaultUrl = closeButtonUrl || `edit.php?post_type=${ editorPostType }`;
+
+		let defaultLabel = closeButtonLabel || 'Back';
+		if ( 'page' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Pages' );
+		} else if ( 'post' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Posts' );
+		} else if ( 'wp_template_part' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Template Parts' );
 		}
 
-		// Create a "normal" close button for the page/post editor.
-		if ( 'page' === editorPostType || 'post' === editorPostType ) {
-			const defaultUrl = closeButtonUrl || `edit.php?post_type=${ editorPostType }`;
-
-			let defaultLabel = closeButtonLabel || 'Back';
-			if ( 'page' === editorPostType && ! closeButtonLabel ) {
-				defaultLabel = __( 'Pages' );
-			} else if ( 'post' === editorPostType && ! closeButtonLabel ) {
-				defaultLabel = __( 'Posts' );
-			}
-
-			ReactDOM.render(
-				<BackButtonOverride defaultLabel={ defaultLabel } defaultUrl={ defaultUrl } />,
-				componentsToolbar
-			);
-		}
+		ReactDOM.render(
+			<BackButtonOverride defaultLabel={ defaultLabel } defaultUrl={ defaultUrl } />,
+			componentsToolbar
+		);
 	} );
 } );
