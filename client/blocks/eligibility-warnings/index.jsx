@@ -26,13 +26,28 @@ import Card from 'components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import WarningList from './warning-list';
+import EligibilityWarningsSimplified from './eligibility-warnings-simplified';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export const EligibilityWarnings = ( {
+export const EligibilityWarnings = props => {
+	const simplifiedWarningsHoldList = [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ];
+	const holds = get( props.eligibilityData, 'eligibilityHolds', [] );
+
+	if (
+		holds.length === simplifiedWarningsHoldList.length &&
+		holds.every( hold => simplifiedWarningsHoldList.includes( hold ) )
+	) {
+		return <EligibilityWarningsSimplified { ...props } />;
+	}
+
+	return <EligibilityWarningsFull { ...props } />;
+};
+
+export const EligibilityWarningsFull = ( {
 	backUrl,
 	context,
 	eligibilityData,
