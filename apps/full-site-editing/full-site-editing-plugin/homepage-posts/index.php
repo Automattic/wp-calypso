@@ -32,7 +32,7 @@ function homepage_posts_block_args( $args, $name ) {
 
 	// View style.
 	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.css', __FILE__ );
-	wp_enqueue_style( 'homepage-posts-view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
+	wp_register_style( 'homepage-posts-view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	$args['editor_script'] = 'homepage-posts-editor';
 	$args['editor_style']  = 'homepage-posts-editor';
