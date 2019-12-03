@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import isShallowEqual from '@wordpress/is-shallow-equal';
-
 enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
@@ -17,12 +12,6 @@ export { ActionType };
 export interface SiteVertical {
 	label: string;
 	id: string;
-}
-
-export const EMPTY_FORM_VALUE = Object.freeze( { __EFV__: '__EFV__' } );
-export type FormValue< T > = T | typeof EMPTY_FORM_VALUE;
-export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
-	return value !== EMPTY_FORM_VALUE && ! isShallowEqual( value, EMPTY_FORM_VALUE );
 }
 
 /**

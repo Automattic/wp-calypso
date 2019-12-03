@@ -14,7 +14,6 @@ import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
-import { isFilledFormValue } from '../../stores/onboard/types';
 import { selectorDebounce } from '../../constants';
 
 interface Props {
@@ -40,13 +39,8 @@ const Header: FunctionComponent< Props > = ( {
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
-		// eslint-disable-next-line no-nested-ternary
-		domain // If we know a domain, do not search.
-			? null
-			: isFilledFormValue( siteTitle ) // If we have a siteTitle, use it.
-			? siteTitle
-			: // Otherwise, do not search.
-			  null,
+		// If we know a domain, do not search.
+		! domain && siteTitle,
 		selectorDebounce
 	);
 	const freeDomainSuggestion = useSelect(
@@ -58,7 +52,7 @@ const Header: FunctionComponent< Props > = ( {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				quantity: 1,
-				...( isFilledFormValue( siteVertical ) && { vertical: siteVertical.id } ),
+				...{ vertical: siteVertical?.id },
 			} )?.[ 0 ];
 		},
 		[ domainSearch, siteVertical ]
@@ -88,11 +82,9 @@ const Header: FunctionComponent< Props > = ( {
 					{ currentDomain ? (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ isFilledFormValue( siteTitle ) ? siteTitle : undefined }
+							defaultQuery={ siteTitle }
 							onDomainSelect={ setDomain }
-							queryParameters={
-								isFilledFormValue( siteVertical ) ? { vertical: siteVertical.id } : undefined
-							}
+							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ siteTitleElement }
 							<span>{ currentDomain.domain_name }</span>
@@ -104,11 +96,7 @@ const Header: FunctionComponent< Props > = ( {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button
-						isPrimary
-						isLarge
-						disabled={ isFilledFormValue( siteVertical ) || ! siteVertical }
-					>
+					<Button isPrimary isLarge disabled={ ! siteTitle }>
 						{ NO__( 'Next' ) }
 					</Button>
 				</div>
