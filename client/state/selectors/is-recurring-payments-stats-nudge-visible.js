@@ -13,6 +13,7 @@ import {
 	getSite,
 } from 'state/sites/selectors';
 import { userCan } from 'lib/site/utils';
+import isRecurringPaymentsStatsNudgeDismissed from 'state/selectors/is-recurring-payments-stats-nudge-dismissed';
 
 /**
  * Returns true if the Recurring Payments nudge should be visible in stats
@@ -41,6 +42,10 @@ export default function isRecurringPaymentsStatsNudgeVisible( state, siteId ) {
 	}
 	// We don't want to show the notice to the user that can't use recurring payments
 	if ( ! userCan( 'manage_options', getSite( state, siteId ) ) ) {
+		return false;
+	}
+
+	if ( isRecurringPaymentsStatsNudgeDismissed( state, siteId ) ) {
 		return false;
 	}
 
