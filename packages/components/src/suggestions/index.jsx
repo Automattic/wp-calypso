@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, ReactInstance } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import { find, groupBy, isEqual, partition, property } from 'lodash';
 
 /**
@@ -15,29 +16,21 @@ import Item from './item';
  */
 import './style.scss';
 
-interface Suggestion {
-	category?: string;
-	label: string;
-}
+class Suggestions extends Component {
+	static propTypes = {
+		query: PropTypes.string,
+		suggestions: PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string,
+			} )
+		).isRequired,
+		suggest: PropTypes.func.isRequired,
+		railcar: PropTypes.object,
+	};
 
-type SuggestHandler = ( { suggestion: Suggestion, originalIndex: number } ) => void;
-
-interface Props {
-	onSuggestionItemMount: ( args: { suggestionIndex: number; index: number } ) => void;
-	query: string;
-	suggest: SuggestHandler;
-	suggestions: Suggestion[];
-}
-
-interface State {
-	lastSuggestions: null | Suggestion[];
-	suggestionPosition: number;
-}
-
-class Suggestions extends Component< Props, State > {
 	static defaultProps = {
-		onSuggestionItemMount: () => {},
 		query: '',
+		onSuggestionItemMount: () => {},
 	};
 
 	state = {
@@ -45,9 +38,9 @@ class Suggestions extends Component< Props, State > {
 		suggestionPosition: 0,
 	};
 
-	refsCollection: Record< string, ReactInstance > = {};
+	refsCollection = {};
 
-	static getDerivedStateFromProps( props: Props, state: State ): Partial< State > | null {
+	static getDerivedStateFromProps( props, state ) {
 		if ( isEqual( props.suggestions, state.lastSuggestions ) ) {
 			return null;
 		}
@@ -60,7 +53,7 @@ class Suggestions extends Component< Props, State > {
 
 	getSuggestionsCount = () => this.props.suggestions.length;
 
-	getOriginalIndexFromPosition = ( index: number ) =>
+	getOriginalIndexFromPosition = index =>
 		this.getCategories().reduce( ( foundIndex, category ) => {
 			if ( foundIndex !== -1 ) return foundIndex;
 
@@ -68,14 +61,12 @@ class Suggestions extends Component< Props, State > {
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
-	suggest = ( originalIndex: number ) =>
+	suggest = originalIndex =>
 		this.props.suggest( this.props.suggestions[ originalIndex ], originalIndex );
 
 	moveSelectionDown = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
-		( ReactDOM.findDOMNode(
-			this.refsCollection[ 'suggestion_' + position ]
-		) as HTMLButtonElement ).scrollIntoView( {
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
 			block: 'nearest',
 		} );
 
@@ -86,9 +77,7 @@ class Suggestions extends Component< Props, State > {
 		const position =
 			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
 			this.getSuggestionsCount();
-		( ReactDOM.findDOMNode(
-			this.refsCollection[ 'suggestion_' + position ]
-		) as HTMLButtonElement ).scrollIntoView( {
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
 			block: 'nearest',
 		} );
 
@@ -127,14 +116,12 @@ class Suggestions extends Component< Props, State > {
 		this.suggest( originalIndex );
 	};
 
-	handleMouseOver = ( suggestionPosition: number ) => this.setState( { suggestionPosition } );
+	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
 
 	getCategories() {
 		// We need to remember the original index of the suggestion according to the
 		// `suggestions` prop for tracks and firing callbacks.
-		const withOriginalIndex: Array< Suggestion & {
-			originalIndex: number;
-		} > = this.props.suggestions.map( ( suggestion, originalIndex ) => ( {
+		const withOriginalIndex = this.props.suggestions.map( ( suggestion, originalIndex ) => ( {
 			...suggestion,
 			originalIndex,
 		} ) );
@@ -148,11 +135,7 @@ class Suggestions extends Component< Props, State > {
 		// https://github.com/lodash/lodash/issues/2212
 		const byCategory = groupBy( withCategory, property( 'category' ) );
 
-		const categories: Array< {
-			category?: string;
-			categoryKey: string;
-			suggestions: Array< Suggestion & { index: number; originalIndex: number } >;
-		} > = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
+		const categories = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
 			category,
 			categoryKey: category,
 			suggestions,

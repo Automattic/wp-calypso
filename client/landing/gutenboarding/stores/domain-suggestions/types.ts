@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import { InputArgsObject } from '@wordpress/url';
-
 enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
 export { ActionType };
 
-export interface DomainSuggestionQuery extends InputArgsObject {
+export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
 	 *
