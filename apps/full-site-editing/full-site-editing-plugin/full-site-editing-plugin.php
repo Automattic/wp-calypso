@@ -339,6 +339,6 @@ function load_blog_posts_block() {
 		return;
 	}
 
-	require_once __DIR__ . '/blog-posts/index.php';
+	require_once __DIR__ . '/blog-posts-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
