@@ -20,7 +20,8 @@
 	}
 }
 
-.post-type-page, .post-type-wp_template_part {
+.post-type-page,
+.post-type-wp_template_part {
 	@media ( min-width: 768px ) {
 		// @TODO: remove .edit-post-layout__content when Gutenberg 7.0.0 lands in production
 		.edit-post-layout__content,
@@ -31,7 +32,8 @@
 		// @TODO: remove .edit-post-layout__content when Gutenberg 7.0.0 lands in production
 		.edit-post-layout__content .edit-post-visual-editor,
 		.edit-post-editor-regions__content .edit-post-visual-editor {
-			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+				0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 			flex: none;
 			margin: 36px 32px;
 		}
@@ -42,23 +44,22 @@
 		padding-right: 0;
 	}
 
-	.block-editor-block-list__block[data-align=full] > .block-editor-block-list__block-edit {
+	.block-editor-block-list__block[data-align='full'] > .block-editor-block-list__block-edit {
 		margin-right: 0;
 		margin-left: 0;
 	}
 
-	.block-editor-block-list__block[data-align=wide] > .block-editor-block-list__block-edit {
+	.block-editor-block-list__block[data-align='wide'] > .block-editor-block-list__block-edit {
 		margin-right: 14px;
 		margin-left: 14px;
 	}
 
-	@media( max-width: 1200px ) {
+	@media ( max-width: 1200px ) {
 		// Try to ensure that normally-aligned blocks work properly.
-		.wp-block:not( [data-align=full] ):not( [data-align=wide] ) {
+		.wp-block:not( [data-align='full'] ):not( [data-align='wide'] ) {
 			max-width: 580px;
-
 		}
-		.is-sidebar-opened .wp-block:not( [data-align=full] ):not( [data-align=wide] ) {
+		.is-sidebar-opened .wp-block:not( [data-align='full'] ):not( [data-align='wide'] ) {
 			max-width: 400px;
 		}
 	}
@@ -85,7 +86,10 @@
 		display: block;
 	}
 
-	.wp-block.template__block-container [data-block] {
+	.wp-block.template__block-container
+		.wp-block-column
+		[data-type='core/social-links']
+		[data-block] {
 		margin: 0;
 	}
 }
