@@ -15,8 +15,12 @@ import edit from './edit';
  */
 import './editor.scss';
 import './view.scss';
+import metadata from './block.json';
+const { name, attributes, category } = metadata;
 
-export const name = 'homepage-articles';
+// Name must be exported separately.
+export { name };
+
 export const title = __( 'Homepage Posts', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
@@ -30,7 +34,8 @@ export const icon = (
 export const settings = {
 	title,
 	icon,
-	category: 'newspack',
+	attributes,
+	category,
 	keywords: [
 		__( 'posts', 'newspack-blocks' ),
 		__( 'articles', 'newspack-blocks' ),
@@ -41,103 +46,6 @@ export const settings = {
 		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
 		{ name: 'borders', label: _x( 'Borders', 'block style', 'newspack-blocks' ) },
 	],
-	attributes: {
-		className: {
-			type: 'string',
-		},
-		showExcerpt: {
-			type: 'boolean',
-			default: true,
-		},
-		showDate: {
-			type: 'boolean',
-			default: true,
-		},
-		showImage: {
-			type: 'boolean',
-			default: true,
-		},
-		showCaption: {
-			type: 'boolean',
-			default: false,
-		},
-		imageShape: {
-			type: 'string',
-			default: 'landscape',
-		},
-		minHeight: {
-			type: 'integer',
-			default: 0,
-		},
-		showAuthor: {
-			type: 'boolean',
-			default: true,
-		},
-		showAvatar: {
-			type: 'boolean',
-			default: true,
-		},
-		showCategory: {
-			type: 'boolean',
-			default: false,
-		},
-		postLayout: {
-			type: 'string',
-			default: 'list',
-		},
-		columns: {
-			type: 'integer',
-			default: 3,
-		},
-		postsToShow: {
-			type: 'integer',
-			default: 3,
-		},
-		mediaPosition: {
-			type: 'string',
-			default: 'top',
-		},
-		authors: {
-			type: 'array',
-		},
-		categories: {
-			type: 'array',
-		},
-		tags: {
-			type: 'array',
-		},
-		specificPosts: {
-			type: 'array',
-		},
-		typeScale: {
-			type: 'integer',
-			default: 4,
-		},
-		imageScale: {
-			type: 'integer',
-			default: 3,
-		},
-		mobileStack: {
-			type: 'boolean',
-			default: false,
-		},
-		sectionHeader: {
-			type: 'string',
-			default: '',
-		},
-		specificMode: {
-			type: 'boolean',
-			default: false,
-		},
-		textColor: {
-			type: 'string',
-			default: '',
-		},
-		customTextColor: {
-			type: 'string',
-			default: '',
-		},
-	},
 	supports: {
 		html: false,
 		align: [ 'wide', 'full' ],

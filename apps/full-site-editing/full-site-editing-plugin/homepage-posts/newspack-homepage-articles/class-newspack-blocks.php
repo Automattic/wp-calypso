@@ -40,7 +40,7 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -144,10 +144,10 @@ class Newspack_Blocks {
 				NEWSPACK_BLOCKS__VERSION
 			);
 		}
-		if ( self::is_amp() ) {
+		if ( static::is_amp() ) {
 			return;
 		}
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
@@ -169,17 +169,18 @@ class Newspack_Blocks {
 	 * @return string Class list separated by spaces.
 	 */
 	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
-		$align   = isset( $attributes['align'] ) ? $attributes['align'] : 'center';
-		$classes = array(
-			"wp-block-newspack-blocks-{$type}",
-			"align{$align}",
-		);
+		$classes = [ "wp-block-newspack-blocks-{$type}" ];
+
+		if ( ! empty( $attributes['align'] ) ) {
+			$classes[] = 'align' . $attributes['align'];
+		}
 		if ( isset( $attributes['className'] ) ) {
 			array_push( $classes, $attributes['className'] );
 		}
 		if ( is_array( $extra ) && ! empty( $extra ) ) {
 			$classes = array_merge( $classes, $extra );
 		}
+
 		return implode( $classes, ' ' );
 	}
 
@@ -289,5 +290,104 @@ class Newspack_Blocks {
 		add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
 
 		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+	}
+
+	/**
+	 * Builds and returns query args based on block attributes.
+	 *
+	 * @param array $attributes An array of block attributes.
+	 *
+	 * @return array
+	 */
+	public static function build_articles_query( $attributes ) {
+		global $newspack_blocks_post_id;
+		if ( ! $newspack_blocks_post_id ) {
+			$newspack_blocks_post_id = array();
+		}
+		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show  = intval( $attributes['postsToShow'] );
+		$specific_mode  = intval( $attributes['specificMode'] );
+		$args           = array(
+			'post_status'         => 'publish',
+			'suppress_filters'    => false,
+			'ignore_sticky_posts' => true,
+		);
+		if ( $specific_mode && $specific_posts ) {
+			$args['post__in'] = $specific_posts;
+			$args['orderby']  = 'post__in';
+		} else {
+			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+			if ( $authors ) {
+				$args['author__in'] = $authors;
+			}
+			if ( $categories ) {
+				$args['category__in'] = $categories;
+			}
+			if ( $tags ) {
+				$args['tag__in'] = $tags;
+			}
+		}
+		return $args;
+	}
+
+	/**
+	 * Loads a template with given data in scope.
+	 *
+	 * @param string $template full Path to the template to be included.
+	 * @param array  $data          Data to be passed into the template to be included.
+	 * @return string
+	 */
+	public static function template_inc( $template, $data = array() ) {
+		if ( ! strpos( $template, '.php' ) ) {
+			$template = $template . '.php';
+		}
+		if ( ! is_file( $template ) ) {
+			return '';
+		}
+		ob_start();
+		include $template;
+		$contents = ob_get_contents();
+		ob_end_clean();
+		return $contents;
+	}
+
+	/**
+	 * Prepare an array of authors, taking presence of CoAuthors Plus into account.
+	 *
+	 * @return array Array of WP_User objects.
+	 */
+	public static function prepare_authors() {
+		if ( function_exists( 'coauthors_posts_links' ) ) {
+			$authors = get_coauthors();
+			foreach ( $authors as $author ) {
+				// Check if this is a guest author post type.
+				if ( 'guest-author' === get_post_type( $author->ID ) ) {
+					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+					if ( get_post_thumbnail_id( $author->ID ) ) {
+						$author->avatar = coauthors_get_avatar( $author, 48 );
+					} else {
+						// If there is no avatar, force it to return the current fallback image.
+						$author->avatar = get_avatar( ' ' );
+					}
+				} else {
+					$author->avatar = coauthors_get_avatar( $author, 48 );
+				}
+				$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+			}
+			return $authors;
+		}
+		$id = get_the_author_meta( 'ID' );
+		return array(
+			(object) array(
+				'ID'            => $id,
+				'avatar'        => get_avatar( $id, 48 ),
+				'url'           => get_author_posts_url( $id ),
+				'user_nicename' => get_the_author(),
+				'display_name'  => get_the_author_meta( 'display_name' ),
+			),
+		);
 	}
 }
