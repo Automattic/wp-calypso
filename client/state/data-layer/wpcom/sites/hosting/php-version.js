@@ -40,10 +40,12 @@ const getPhpVersionSuccess = ( action, version ) => {
 const updatePhpVersion = action =>
 	http(
 		{
-			method: 'GET',
+			method: 'POST',
 			path: `/sites/${ action.siteId }/hosting/php-version`,
 			apiNamespace: 'wpcom/v2',
-			body: {},
+			body: {
+				version: action.version,
+			},
 		},
 		action
 	);
