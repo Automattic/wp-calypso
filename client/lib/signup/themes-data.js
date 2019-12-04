@@ -295,16 +295,6 @@ export const themes = [
 		verticals: [],
 	},
 	{
-		name: 'Alves',
-		slug: 'alves',
-		repo: 'pub',
-		fallback: true,
-		description: '',
-		design: 'template-first',
-		demo_uri: 'https://alvesdemo.wordpress.com',
-		verticals: [],
-	},
-	{
 		name: 'Rockfield',
 		slug: 'rockfield',
 		repo: 'pub',
@@ -397,6 +387,16 @@ export const themes = [
 
 	// Start full-site-editing compatible themes
 	{
+		name: 'Alves',
+		slug: 'alves',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://alvesdemo.wordpress.com',
+		verticals: [],
+	},
+	{
 		name: 'Exford',
 		slug: 'exford',
 		repo: 'pub',
@@ -404,6 +404,16 @@ export const themes = [
 		description: '',
 		design: 'fse-compatible',
 		demo_uri: 'https://exforddemo.wordpress.com',
+		verticals: [],
+	},
+	{
+		name: 'Hever',
+		slug: 'hever',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://heverdemo.wordpress.com',
 		verticals: [],
 	},
 	{
@@ -417,16 +427,6 @@ export const themes = [
 		verticals: [],
 	},
 	{
-		name: 'Shawburn',
-		slug: 'shawburn',
-		repo: 'pub',
-		fallback: true,
-		description: '',
-		design: 'fse-compatible',
-		demo_uri: 'https://shawburndemo.wordpress.com',
-		verticals: [],
-	},
-	{
 		name: 'Morden',
 		slug: 'morden',
 		repo: 'pub',
@@ -437,13 +437,13 @@ export const themes = [
 		verticals: [],
 	},
 	{
-		name: 'Hever',
-		slug: 'hever',
+		name: 'Shawburn',
+		slug: 'shawburn',
 		repo: 'pub',
 		fallback: true,
 		description: '',
 		design: 'fse-compatible',
-		demo_uri: 'https://heverdemo.wordpress.com',
+		demo_uri: 'https://shawburndemo.wordpress.com',
 		verticals: [],
 	},
 	{
