@@ -73,7 +73,7 @@ class ThemeShowcase extends React.Component {
 				this.props.loggedOutComponent ||
 				this.props.search ||
 				this.props.filter ||
-				this.props.isShowcaseOpen
+				this.props.hasShowcaseOpened
 			),
 		};
 	}
@@ -107,7 +107,7 @@ class ThemeShowcase extends React.Component {
 
 	componentDidMount() {
 		// Open showcase on state if we open here with query override.
-		if ( this.props.search || ( this.props.filter && ! this.props.isShowcaseOpen ) ) {
+		if ( ( this.props.search || this.props.filter ) && ! this.props.hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
 		}
 	}
@@ -314,7 +314,7 @@ class ThemeShowcase extends React.Component {
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
 								emptyContent={ this.props.emptyContent }
-								isShowcaseOpen={ this.state.isShowcaseOpen }
+								isShowcaseOpen={ isShowcaseOpen }
 								scrollToSearchInput={ this.scrollToSearchInput }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
@@ -332,7 +332,7 @@ class ThemeShowcase extends React.Component {
 					<div
 						ref={ this.scrollRef }
 						className={
-							! this.state.isShowcaseOpen
+							! isShowcaseOpen
 								? 'themes__hidden-content theme-showcase__all-themes'
 								: 'theme-showcase__all-themes'
 						}
@@ -418,7 +418,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	isShowcaseOpen: state.themes.themesUI.themesShowcaseOpen,
+	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
 } );
 
 const mapDispatchToProps = {
