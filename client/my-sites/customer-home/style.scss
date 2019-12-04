@@ -8,6 +8,11 @@
 	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
 	grid-column-gap: $gap;
 }
+@mixin grid-row( $row-start, $span ) {
+	-ms-grid-row: $row-start;
+	-ms-grid-row-span: $span;
+		grid-row: $row-start / span $span;
+}
 @mixin grid-column( $col-start, $span ) {
 	-ms-grid-column: $col-start * 2 - 1;
 	-ms-grid-column-span: $span + ($span - 1);
@@ -28,6 +33,7 @@
 	}
 
 	&__page-heading {
+		@include grid-row( 1, 1 );
 		@include breakpoint( '>1040px' ) {
 			@include grid-column( 1, 12 );
 			margin: 0;
@@ -195,6 +201,7 @@
 		padding-bottom: 12px;
 	}
 	&__layout {
+		@include grid-row( 2, 1 );
 		@include breakpoint( '>1040px' ) {
 			@include grid-column( 1, 12 );
 			@include display-grid;
