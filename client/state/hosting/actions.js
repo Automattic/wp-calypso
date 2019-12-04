@@ -8,6 +8,7 @@ import {
 	HOSTING_SFTP_PASSWORD_RESET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
+	HOSTING_PHP_VERSION_GET,
 	HOSTING_PHP_VERSION_SET,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
@@ -52,4 +53,9 @@ export const updateAtomicPhpVersion = ( siteId, version ) => ( {
 	type: HOSTING_PHP_VERSION_SET,
 	siteId,
 	version,
+} );
+
+export const getAtomicPhpVersion = siteId => ( {
+	type: HOSTING_PHP_VERSION_GET,
+	siteId,
 } );

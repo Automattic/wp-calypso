@@ -3,6 +3,7 @@
  */
 import { keyedReducer, combineReducers } from 'state/utils';
 import {
+	HOSTING_PHP_VERSION_GET_SUCCESS,
 	HOSTING_PHP_VERSION_SET_SUCCESS,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
@@ -27,8 +28,11 @@ const sftpUsers = ( state = {}, { type, users } ) => {
 };
 
 const phpVersion = ( state = null, { type, version } ) => {
-	console.log( type, version );
 	if ( HOSTING_PHP_VERSION_SET_SUCCESS === type ) {
+		return version;
+	}
+
+	if ( HOSTING_PHP_VERSION_GET_SUCCESS === type ) {
 		return version;
 	}
 
