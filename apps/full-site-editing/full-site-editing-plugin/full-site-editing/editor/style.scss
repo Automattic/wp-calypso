@@ -85,4 +85,11 @@
 	.block-editor-writing-flow {
 		display: block;
 	}
+
+	.wp-block.template__block-container
+		.wp-block-column
+		[data-type='core/social-links']
+		[data-block] {
+		margin: 0;
+	}
 }
