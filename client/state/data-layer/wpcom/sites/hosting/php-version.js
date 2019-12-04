@@ -22,9 +22,7 @@ const getPhpVersion = action =>
 			method: 'GET',
 			path: `/sites/${ action.siteId }/hosting/php-version`,
 			apiNamespace: 'wpcom/v2',
-			body: {
-				version: action.version,
-			},
+			body: {},
 		},
 		action
 	);

@@ -26,10 +26,10 @@ import './style.scss';
 
 const PhpVersionCard = ( {
 	disabled,
+	getPhpVersion,
 	loading,
 	siteId,
 	translate,
-	getPhpVersion,
 	updatePhpVersion,
 	version,
 } ) => {
@@ -42,7 +42,7 @@ const PhpVersionCard = ( {
 		if ( ! disabled ) {
 			getPhpVersion( siteId );
 		}
-	}, [ siteId, disabled ] );
+	}, [ disabled, getPhpVersion, siteId ] );
 
 	useEffect( () => {
 		setIsBusy( false );
@@ -89,7 +89,6 @@ const PhpVersionCard = ( {
 		}
 
 		const isButtonDisabled = disabled || ! selectedPhpVersion || selectedPhpVersion === version;
-
 		const selectedValue = selectedPhpVersion || version || ( disabled && recommendedValue );
 
 		return (
