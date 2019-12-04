@@ -5,7 +5,16 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-class Item extends PureComponent {
+interface Props {
+	hasHighlight: boolean;
+	label: string;
+	onMount: () => void;
+	onMouseDown: () => void;
+	onMouseOver: () => void;
+	query: string;
+}
+
+class Item extends PureComponent< Props > {
 	static propTypes = {
 		label: PropTypes.string.isRequired,
 		hasHighlight: PropTypes.bool,
@@ -26,11 +35,12 @@ class Item extends PureComponent {
 
 	/**
 	 * Highlights the part of the text that matches the query.
-	 * @param  {string} text  Text.
-	 * @param  {string} query The text to be matched.
-	 * @return {element}      A React element including the highlighted text.
+	 *
+	 * @param   text  Text.
+	 * @param   query The text to be matched.
+	 * @returns       A React element including the highlighted text.
 	 */
-	createTextWithHighlight( text, query ) {
+	createTextWithHighlight( text: string, query: string ) {
 		const re = new RegExp( '(' + query + ')', 'gi' );
 		const parts = text.split( re );
 
