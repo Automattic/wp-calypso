@@ -21,11 +21,11 @@
 }
 
 .migrate__card-footer {
-	color: var( --color-neutral-40 );
+	color: var( --color-text-subtle );
 	font-size: 13px;
 
 	a {
-		color: var( --color-neutral-40 );
+		color: var( --color-text-subtle );
 		text-decoration: underline;
 	}
 }
@@ -44,7 +44,7 @@
 
 .migrate__sites-arrow {
 	display: flex;
-	color: var( --color-neutral-10 );
+	color: var( --color-text-subtle );
 	padding: 20px 40px 20px 0;
 	@include breakpoint( '>1040px' ) {
 		padding-right: 64px;
