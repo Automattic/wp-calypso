@@ -19,7 +19,7 @@ define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.18' );
  */
 function homepage_posts_block_name( $name ) {
 	if ( 'newspack-blocks/homepage-articles' === $name ) {
-		return 'a8c/homepage-posts';
+		return 'a8c/blog-posts';
 	}
 	return $name;
 }
@@ -49,11 +49,11 @@ function homepage_posts_block_args( $args, $name ) {
 
 	// Editor style.
 	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
-	wp_register_style( 'homepage-posts-editor', $editor_style, [], NEWSPACK_BLOCKS__VERSION );
+	wp_register_style( 'homepage-posts-editor', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	// View style.
 	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.css', __FILE__ );
-	wp_register_style( 'homepage-posts-view', $editor_style, [], NEWSPACK_BLOCKS__VERSION );
+	wp_register_style( 'homepage-posts-view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	$args['editor_script'] = 'homepage-posts-editor';
 	$args['editor_style']  = 'homepage-posts-editor';
