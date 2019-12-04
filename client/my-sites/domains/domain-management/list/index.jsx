@@ -61,7 +61,7 @@ export class List extends React.Component {
 	static propTypes = {
 		selectedSite: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,
-		isRequestingDomains: PropTypes.bool.isRequired,
+		isRequestingDomains: PropTypes.bool,
 		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
