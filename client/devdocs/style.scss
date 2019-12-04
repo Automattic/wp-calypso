@@ -1,4 +1,5 @@
 $devdocs-max-width: 720px;
+$devdocs-max-width-large: 1040px;
 
 // Sidebar Title
 .devdocs__title {
@@ -51,22 +52,6 @@ $devdocs-max-width: 720px;
 .main.devdocs.devdocs__components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
-}
-
-.design__collection {
-	// Use multiple columns when listing components
-	.main.devdocs.is-list & {
-		column-gap: 24px;
-
-		// Show 2 columns for big screens
-		@include breakpoint( '>1280px' ) {
-			column-count: 2;
-		}
-
-		@media ( min-width: 2000px ) {
-			column-count: 3;
-		}
-	}
 }
 
 // We show a list of links for results above
@@ -178,6 +163,10 @@ $devdocs-max-width: 720px;
 		// set the max-width to line up with search
 		@include breakpoint( '<1280px' ) {
 			max-width: $devdocs-max-width;
+		}
+
+		@include breakpoint( '>1280px' ) {
+			max-width: $devdocs-max-width-large;
 		}
 
 		@media ( min-width: 2000px ) {
