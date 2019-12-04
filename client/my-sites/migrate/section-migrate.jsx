@@ -299,7 +299,7 @@ class SectionMigrate extends Component {
 		}
 
 		return (
-			<li key={ `progress-${ migrationStatus }` } className="migrate__progress-item">
+			<li key={ `progress-${ progressState }` } className="migrate__progress-item">
 				<div className="migrate__progress-item-icon">
 					{ this.renderProgressIcon( progressState ) }
 				</div>
