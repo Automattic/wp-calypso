@@ -8,6 +8,7 @@ import {
 	HOSTING_PHP_VERSION_GET,
 	HOSTING_PHP_VERSION_GET_SUCCESS,
 	HOSTING_PHP_VERSION_SET,
+	HOSTING_PHP_VERSION_SET_FAILURE,
 	HOSTING_PHP_VERSION_SET_SUCCESS,
 } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -91,6 +92,10 @@ const updatePhpVersionError = action => {
 		errorNotice( translate( 'Failed to set PHP version.' ), {
 			id: updateNoticeId,
 		} ),
+		{
+			type: HOSTING_PHP_VERSION_SET_FAILURE,
+			siteId: action.siteId,
+		},
 	];
 };
 

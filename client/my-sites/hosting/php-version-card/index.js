@@ -18,6 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Spinner from 'components/spinner';
 import { getAtomicPhpVersion, updateAtomicPhpVersion } from 'state/hosting/actions';
 import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
+import { isUpdatingAtomicPhpVersion } from 'state/selectors/is-updating-atomic-php-version';
 
 /**
  * Style dependencies
@@ -27,6 +28,7 @@ import './style.scss';
 const PhpVersionCard = ( {
 	disabled,
 	getPhpVersion,
+	isBusy,
 	loading,
 	siteId,
 	translate,
@@ -34,7 +36,6 @@ const PhpVersionCard = ( {
 	version,
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
-	const [ isBusy, setIsBusy ] = useState( false );
 
 	const recommendedValue = '7.3';
 
@@ -44,10 +45,6 @@ const PhpVersionCard = ( {
 		}
 	}, [ disabled, getPhpVersion, siteId ] );
 
-	useEffect( () => {
-		setIsBusy( false );
-	}, [ version ] );
-
 	const changePhpVersion = event => {
 		const newVersion = event.target.value;
 
@@ -55,8 +52,6 @@ const PhpVersionCard = ( {
 	};
 
 	const updateVersion = () => {
-		setIsBusy( true );
-
 		updatePhpVersion( siteId, selectedPhpVersion );
 	};
 
@@ -144,6 +139,7 @@ export default connect(
 		const version = getAtomicHostingPhpVersion( state, siteId );
 
 		return {
+			isBusy: isUpdatingAtomicPhpVersion( state, siteId ),
 			loading: ! props.disabled && ! version,
 			siteId,
 			version,
