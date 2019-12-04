@@ -6,5 +6,5 @@
  * @returns {string} PHP Version used, or ''
  */
 export function isUpdatingAtomicPhpVersion( state, siteId ) {
-	return state.atomicHosting?.[ siteId ]?.isUpdatingPhpVersion ?? '';
+	return state.atomicHosting?.[ siteId ]?.isUpdatingPhpVersion;
 }
