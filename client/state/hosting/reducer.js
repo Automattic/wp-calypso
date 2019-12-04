@@ -3,10 +3,8 @@
  */
 import { keyedReducer, combineReducers } from 'state/utils';
 import {
-	HOSTING_PHP_VERSION_GET_SUCCESS,
 	HOSTING_PHP_VERSION_SET,
-	HOSTING_PHP_VERSION_SET_FAILURE,
-	HOSTING_PHP_VERSION_SET_SUCCESS,
+	HOSTING_PHP_VERSION_SET_REQUEST,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
 } from 'state/action-types';
@@ -31,8 +29,7 @@ const sftpUsers = ( state = {}, { type, users } ) => {
 
 const phpVersion = ( state = null, { type, version } ) => {
 	switch ( type ) {
-		case HOSTING_PHP_VERSION_SET_SUCCESS:
-		case HOSTING_PHP_VERSION_GET_SUCCESS:
+		case HOSTING_PHP_VERSION_SET:
 			return version;
 	}
 
@@ -41,10 +38,9 @@ const phpVersion = ( state = null, { type, version } ) => {
 
 const isUpdatingPhpVersion = ( state = false, { type } ) => {
 	switch ( type ) {
+		case HOSTING_PHP_VERSION_SET_REQUEST:
 		case HOSTING_PHP_VERSION_SET:
-		case HOSTING_PHP_VERSION_SET_SUCCESS:
-		case HOSTING_PHP_VERSION_SET_FAILURE:
-			return HOSTING_PHP_VERSION_SET === type;
+			return HOSTING_PHP_VERSION_SET_REQUEST === type;
 	}
 
 	return state;
