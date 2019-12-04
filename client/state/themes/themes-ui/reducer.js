@@ -28,6 +28,7 @@ export const themesBannerVisible = withSchemaValidation(
 	themesBannerVisibleReducer
 );
 
+// "More Themes" button state.
 export function themesShowcaseOpen( state = false, action ) {
 	if ( THEMES_SHOWCASE_OPEN === action.type ) {
 		return true;

@@ -10,6 +10,7 @@ export function hideThemesBanner() {
 	};
 }
 
+// Open "More Themes" search area.
 export function openThemesShowcase() {
 	return {
 		type: THEMES_SHOWCASE_OPEN,
