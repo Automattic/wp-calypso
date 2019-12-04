@@ -30,7 +30,7 @@ import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-desc
 import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import { openThemesShowcase, setThemesBrowsingState } from 'state/themes/themes-ui/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -113,6 +113,16 @@ class ThemeShowcase extends React.Component {
 		}
 	}
 
+	componentWillUnmount() {
+		const { search, filter } = this.props;
+		const browsingState = {
+			search,
+			filter,
+			scrollHeight: document.documentElement.scrollHeight,
+			scrollPosition: window.scrollY,
+		};
+		this.props.setThemesBrowsingState( browsingState );
+	}
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
 			this.scrollToSearchInput();
@@ -420,6 +430,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
+	lastBrowsingState: state.themes.themesUI.themesBrowsingTracker,
 } );
 
 const mapDispatchToProps = {
@@ -427,5 +438,7 @@ const mapDispatchToProps = {
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
+	setThemesBrowsingState: state => setThemesBrowsingState( state ),
 };
+
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

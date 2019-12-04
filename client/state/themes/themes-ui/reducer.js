@@ -55,4 +55,9 @@ export function themesBrowsingTracker( state = initialBrowsingState, action ) {
 	return state;
 }
 
-export default combineReducers( { backPath, themesBannerVisible, themesShowcaseOpen } );
+export default combineReducers( {
+	backPath,
+	themesBannerVisible,
+	themesShowcaseOpen,
+	themesBrowsingTracker,
+} );
