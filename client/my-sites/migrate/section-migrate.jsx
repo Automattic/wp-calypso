@@ -236,8 +236,8 @@ class SectionMigrate extends Component {
 
 		return (
 			<ul className="migrate__progress-list">
-				<li className={ backingUpClass }>Backed up from { sourceSiteDomain }</li>
-				<li className={ restoringClass }>Restored to { targetSiteDomain }</li>
+				<li className={ backingUpClass }>Backing up from { sourceSiteDomain }</li>
+				<li className={ restoringClass }>Restoring to { targetSiteDomain }</li>
 				<li className="migrate__progress-item">Wrapping up</li>
 			</ul>
 		);
