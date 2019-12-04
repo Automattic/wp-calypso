@@ -19,7 +19,7 @@
 		@include breakpoint( '>1040px' ) {
 			@include display-grid;
 			// stylelint-disable-next-line unit-whitelist
-			@include grid-template-columns( 12, 0, 1fr );
+			@include grid-template-columns( 12, 24px, 1fr );
 		}
 	}
 
