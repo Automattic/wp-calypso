@@ -1,21 +1,35 @@
 
+@mixin display-grid {
+	display: -ms-grid;
+	display: grid;
+}
+@mixin grid-template-columns( $cols, $gap, $fr ) {
+	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr;
+	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
+	grid-gap: $gap;
+}
+@mixin grid-column( $col-start, $span ) {
+	-ms-grid-column: $col-start;
+	-ms-grid-column-span: $span + ($span - 1);
+		grid-column: $col-start / span $span;
+}
+
 .customer-home {
 	&__main {
 		@include breakpoint( '>1040px' ) {
-			display: grid;
-			grid-gap: 0;
+			@include display-grid;
 			// stylelint-disable-next-line unit-whitelist
-			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+			@include grid-template-columns( 12, 0, 1fr );
 		}
 	}
 
 	&__upsells {
-		grid-column: span 12;
+		@include grid-column( 1, 12 );
 	}
 
 	&__page-heading {
 		@include breakpoint( '>1040px' ) {
-			grid-column: span 12;
+			@include grid-column( 1, 12 );
 			margin: 0;
 		}
 	}
@@ -182,11 +196,11 @@
 	}
 	&__layout {
 		@include breakpoint( '>1040px' ) {
-			grid-column: 1 / span 12;
-			display: grid;
-			grid-gap: 24px;
+			@include grid-column( 1, 12 );
+			@include display-grid;
 			// stylelint-disable-next-line unit-whitelist
-			grid-template-columns: repeat( 12, [col-start] minmax( 0, 1fr ) );
+			@include grid-template-columns( 12, 24px, 1fr );
+			grid-gap: 24px;
 		}
 
 		.checklist__tasks {
@@ -212,7 +226,7 @@
 	}
 	&__layout-col-left {
 		@include breakpoint( '>1040px' ) {
-			grid-column: 1 / span 8;
+			@include grid-column( 1, 8 );
 		}
 	}
 	&__layout-col-right {
@@ -230,12 +244,12 @@
 			}
 		}
 		@include breakpoint( '>1040px' ) {
-			grid-column: 9 / span 4;
+			@include grid-column( 9, 4 );
 		}
 	}
 
 	&__loading-placeholder {
 		@include placeholder();
-		grid-column: 1 / span 12;
+		@include grid-column( 1, 12 );
 	}
 }
