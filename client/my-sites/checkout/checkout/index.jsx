@@ -437,7 +437,7 @@ export class Checkout extends React.Component {
 			}
 
 			// If atomic site, then replace wordpress.com with wpcomstaging.com
-			if ( selectedSiteSlug.includes( '.wpcomstaging.com' ) ) {
+			if ( selectedSiteSlug && selectedSiteSlug.includes( '.wpcomstaging.com' ) ) {
 				const wpcomStagingDestination = signupDestination.replace(
 					/\b.wordpress.com/,
 					'.wpcomstaging.com'
