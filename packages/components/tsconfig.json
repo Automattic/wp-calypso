@@ -10,7 +10,7 @@
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 
-		"strict": false,
+		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
