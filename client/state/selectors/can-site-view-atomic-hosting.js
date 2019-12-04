@@ -3,7 +3,8 @@
  */
 import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isVipSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
