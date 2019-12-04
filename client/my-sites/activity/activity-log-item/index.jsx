@@ -363,7 +363,7 @@ class ActivityLogItem extends Component {
 						onClose={ this.cancelBackupIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
-						supportLink="https://jetpack.com/support/backups"
+						supportLink="https://jetpack.com/support/backup"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
 						icon={ 'cloud-download' }
