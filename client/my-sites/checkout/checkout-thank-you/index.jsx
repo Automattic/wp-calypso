@@ -7,7 +7,6 @@ import { find, get, identity } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -43,12 +42,12 @@ import {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
-	isDotComPlan,
 	isEcommerce,
 	isGoogleApps,
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
+	isBlogger,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -57,6 +56,7 @@ import {
 } from 'lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
+import BloggerPlanDetails from './blogger-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
@@ -76,10 +76,13 @@ import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
-import getSiteSlug from 'state/sites/selectors/get-site-slug.js';
+import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getActiveTheme } from 'state/themes/selectors';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 /**
  * Style dependencies
@@ -112,6 +115,7 @@ export class CheckoutThankYou extends React.Component {
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
 	};
 
@@ -274,45 +278,52 @@ export class CheckoutThankYou extends React.Component {
 			const failedPurchases = getFailedPurchases( props );
 			if ( purchases.length > 0 && ! failedPurchases.length ) {
 				const domainName = find( purchases, isDomainRegistration ).meta;
-				page( domainManagementList( domainName ) );
+				page.redirect( domainManagementList( domainName ) );
 			}
 		}
 	};
 
 	primaryCta = () => {
+		const { selectedSite, upgradeIntent } = this.props;
+
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
-			const site = this.props.selectedSite.slug;
+			const siteSlug = selectedSite?.slug;
 
-			if ( ! site && getFailedPurchases( this.props ).length > 0 ) {
+			if ( ! siteSlug && getFailedPurchases( this.props ).length > 0 ) {
 				return page( '/start/domain-first' );
 			}
 
+			switch ( upgradeIntent ) {
+				case 'plugins':
+				case 'themes':
+					return page( `/${ upgradeIntent }/${ siteSlug }` );
+			}
+
 			if ( purchases.some( isPlan ) ) {
-				return page( `/plans/my-plan/${ site }` );
-			} else if (
+				return page( `/plans/my-plan/${ siteSlug }` );
+			}
+
+			if (
 				purchases.some( isDomainProduct ) ||
 				purchases.some( isDomainTransfer ) ||
 				purchases.some( isDomainRedemption ) ||
 				purchases.some( isSiteRedirect )
 			) {
-				return page( domainManagementList( this.props.selectedSite.slug ) );
-			} else if ( purchases.some( isGoogleApps ) ) {
-				const purchase = find( purchases, isGoogleApps );
+				return page( domainManagementList( siteSlug ) );
+			}
 
-				return page( emailManagement( this.props.selectedSite.slug, purchase.meta ) );
+			if ( purchases.some( isGoogleApps ) ) {
+				const purchase = find( purchases, isGoogleApps );
+				return page( emailManagement( siteSlug, purchase.meta ) );
 			}
 		}
 
-		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
+		return page( this.props.siteHomeUrl );
 	};
 
 	isEligibleForLiveChat = () => {
 		return isJetpackBusinessPlan( this.props.planSlug );
-	};
-
-	isNewUser = () => {
-		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
 	};
 
 	getAnalyticsProperties = () => {
@@ -363,7 +374,6 @@ export class CheckoutThankYou extends React.Component {
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
-		let wasDotcomPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let delayedTransferPurchase = false;
 
@@ -371,7 +381,6 @@ export class CheckoutThankYou extends React.Component {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
-			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
@@ -417,21 +426,18 @@ export class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if ( wasDotcomPlanPurchased && ( delayedTransferPurchase || this.isNewUser() ) ) {
-			let planProps = {};
-			if ( delayedTransferPurchase ) {
-				planProps = {
-					action: (
-						// eslint-disable-next-line
-						<a className="thank-you-card__button" onClick={ this.startTransfer }>
-							{ translate( 'Start Domain Transfer' ) }
-						</a>
-					),
-					description: translate( "Now let's get your domain transferred." ),
-				};
-			}
+		} else if ( delayedTransferPurchase ) {
+			const planProps = {
+				action: (
+					// eslint-disable-next-line
+					<a className="thank-you-card__button" onClick={ this.startTransfer }>
+						{ translate( 'Start Domain Transfer' ) }
+					</a>
+				),
+				description: translate( "Now let's get your domain transferred." ),
+			};
 
-			// streamlined paid NUX thanks page
+			// domain transfer page
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -439,9 +445,6 @@ export class CheckoutThankYou extends React.Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasJetpackPlanPurchased ) {
-			page( `/plans/my-plan/${ this.props.siteId }?thank-you` );
-			return null;
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
@@ -494,6 +497,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ FailedPurchaseDetails ];
 			} else if ( purchases.some( isJetpackPlan ) ) {
 				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
+			} else if ( purchases.some( isBlogger ) ) {
+				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
 			} else if ( purchases.some( isPremium ) ) {
@@ -526,7 +531,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans, displayMode } = this.props;
+		const { selectedSite, sitePlans, displayMode, customizeUrl } = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -584,6 +589,7 @@ export class CheckoutThankYou extends React.Component {
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							customizeUrl={ customizeUrl }
 							domain={ domain }
 							purchases={ purchases }
 							failedPurchases={ failedPurchases }
@@ -604,6 +610,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
+		const activeTheme = getActiveTheme( state, siteId );
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
@@ -611,6 +618,7 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
+			upgradeIntent: getCheckoutUpgradeIntent( state ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
@@ -618,6 +626,8 @@ export default connect(
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			selectedSiteSlug: getSiteSlug( state, siteId ),
+			siteHomeUrl: getSiteHomeUrl( state, siteId ),
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 		};
 	},
 	dispatch => {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, omitBy } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -131,7 +130,4 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpRichResult ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );

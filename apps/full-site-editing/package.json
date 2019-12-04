@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "1.0.0-alpha.0",
+	"version": "0.16.1",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -9,7 +9,7 @@
 		"directory": "apps/full-site-editing"
 	},
 	"private": true,
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -25,24 +25,27 @@
 		"starter-page-templates": "calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "npm run starter-page-templates",
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
-		"dev": "rimraf dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:*"
+		"global-styles": "calypso-build --source='global-styles'",
+		"build:global-styles": "NODE_ENV=production npm run global-styles",
+		"dev:global-styles": "npm run global-styles",
+		"dev": "npm-run-all --parallel dev:*",
+		"build": "npm-run-all --parallel build:*",
+		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
+		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
+		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^3.1.2",
-		"@wordpress/blocks": "^6.2.3",
-		"@wordpress/components": "^7.3.0",
-		"@wordpress/compose": "^3.2.0",
-		"@wordpress/data": "^4.4.0",
-		"@wordpress/dom-ready": "^2.4.0",
-		"@wordpress/edit-post": "^3.3.4",
-		"@wordpress/editor": "^9.2.4",
-		"@wordpress/element": "^2.3.0",
-		"@wordpress/i18n": "^3.3.0",
-		"@wordpress/nux": "^3.4.0",
-		"@wordpress/plugins": "^2.2.0",
-		"@wordpress/url": "^2.5.0",
-		"classnames": "^2.2.6",
-		"lodash": "^4.17.11"
+		"classnames": "2.2.6"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^4.2.1",
+		"@testing-library/jest-dom": "4.2.4",
+		"@testing-library/react": "9.3.2",
+		"@wordpress/jest-preset-default": "5.2.0",
+		"@wordpress/scripts": "6.0.0",
+		"eslint-plugin-jest": "23.0.3"
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -131,8 +129,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( SettingsPaymentsLocationCurrency )
+	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency )
 );

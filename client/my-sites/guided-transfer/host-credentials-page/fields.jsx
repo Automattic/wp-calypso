@@ -2,7 +2,6 @@
  * This module contains a collection of mini components for composing
  * host details pages
  *
- * @format
  */
 
 /**

@@ -2,7 +2,6 @@
  * Returns an object representing the image editor transform
  *
  *
- * @format
  * @param {Object}  state Global state tree
  * @return {Object}  image editor transform { degrees, scaleX, scaleY }
  */

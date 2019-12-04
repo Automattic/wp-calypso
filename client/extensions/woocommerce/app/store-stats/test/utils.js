@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { assert, expect } from 'chai';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies

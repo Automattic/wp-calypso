@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,6 @@ import React from 'react';
  */
 import { getCreditCardType } from 'lib/checkout';
 import Input from 'my-sites/domains/components/form/input';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 
 class CreditCardNumberInput extends React.Component {
 	render() {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

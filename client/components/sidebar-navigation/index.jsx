@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,55 +5,41 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import TranslatableString from 'components/translatable/proptype';
 
-class SidebarNavigation extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.toggleSidebar = this.toggleSidebar.bind( this );
-	}
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	toggleSidebar( event ) {
-		event.preventDefault();
-		this.props.setLayoutFocus( 'sidebar' );
-	}
-
-	render() {
-		return (
-			<header className="current-section">
-				<a onClick={ this.toggleSidebar } className={ this.props.linkClassName }>
-					<Gridicon icon="chevron-left" />
-					{ this.props.children }
-					<div>
-						<p className={ 'current-section__' + this.props.sectionName + '-title' }>
-							{ this.props.sectionTitle }
-						</p>
-						<h1 className="current-section__section-title">{ this.props.title }</h1>
-					</div>
-				</a>
-			</header>
-		);
-	}
+function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
+	return (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		<header className="current-section">
+			<button onClick={ toggleSidebar }>
+				<Gridicon icon="menu" />
+				{ children }
+				<h1 className="current-section__site-title">{ sectionTitle }</h1>
+			</button>
+		</header>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	);
 }
 
 SidebarNavigation.propTypes = {
-	title: TranslatableString,
-	linkClassName: PropTypes.string,
 	sectionTitle: TranslatableString,
-	sectionName: PropTypes.string.isRequired,
-	setLayoutFocus: PropTypes.func.isRequired,
+	toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default connect(
-	state => ( {
-		title: getDocumentHeadTitle( state ),
-	} ),
-	{ setLayoutFocus }
+	null,
+	{
+		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
+	}
 )( SidebarNavigation );

@@ -6,7 +6,7 @@ Dockerfile
 /.babel-cache
 /build
 /cached-requests.json
-/node_modules
+**/node_modules
 /public
 /server/bundler/*.json
 /server/devdocs/components-usage-stats.json

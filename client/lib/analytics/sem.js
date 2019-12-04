@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -103,6 +101,11 @@ export function updateQueryParamsTracking() {
 			sanitized_query[ key ] = value;
 		}
 	} );
+
+	// Cross domain tracking for AMP.
+	if ( query.amp_client_id ) {
+		window._tkq.push( [ 'identifyAnonUser', query.amp_client_id ] );
+	}
 
 	// Drop SEM cookie update if either of these is missing
 	if ( ! sanitized_query.utm_source || ! sanitized_query.utm_campaign ) {

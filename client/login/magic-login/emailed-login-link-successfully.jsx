@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import {
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
@@ -99,7 +97,4 @@ const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( EmailedLoginLinkSuccessfully ) );
+export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );

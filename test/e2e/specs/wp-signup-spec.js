@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import { By } from 'selenium-webdriver';
 import * as driverManager from '../lib/driver-manager.js';
 import * as driverHelper from '../lib/driver-helper.js';
 import * as dataHelper from '../lib/data-helper.js';
-import * as overrideABTests from '../lib/override-abtest';
 
 import WPHomePage from '../lib/pages/wp-home-page.js';
 import StartPage from '../lib/pages/signup/start-page.js';
@@ -25,12 +22,10 @@ import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
 import CreateYourAccountPage from '../lib/pages/signup/create-your-account-page.js';
 import CheckOutPage from '../lib/pages/signup/checkout-page';
-import CheckOutThankyouPage from '../lib/pages/signup/checkout-thankyou-page.js';
 import ImportFromURLPage from '../lib/pages/signup/import-from-url-page';
 import SiteTypePage from '../lib/pages/signup/site-type-page';
 import SiteTopicPage from '../lib/pages/signup/site-topic-page';
 import SiteTitlePage from '../lib/pages/signup/site-title-page';
-import SiteStylePage from '../lib/pages/signup/site-style-page';
 import LoginPage from '../lib/pages/login-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
@@ -48,8 +43,9 @@ import SettingsPage from '../lib/pages/settings-page';
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component';
-import SideBarComponent from '../lib/components/sidebar-component';
+import SidebarComponent from '../lib/components/sidebar-component';
 import NoSitesComponent from '../lib/components/no-sites-component';
+import StepWrapperComponent from '../lib/components/step-wrapper-component';
 
 import * as SlackNotifier from '../lib/slack-notifier';
 
@@ -57,10 +53,11 @@ import EmailClient from '../lib/email-client.js';
 import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-domain-registration-unavailable-component';
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
-import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
+import AccountSettingsPage from '../lib/pages/account/account-settings-page';
+import ChecklistPage from '../lib/pages/checklist-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -81,7 +78,7 @@ before( async function() {
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @parallel @email', function() {
+	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -108,10 +105,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -147,12 +155,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can log out and request a magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driverManager.ensureNotLoggedIn( driver );
 			const loginPage = await LoginPage.Visit( driver );
 			return await loginPage.requestMagicLink( emailAddress );
 		} );
 
 		step( 'Can see email containing magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			const emailClient = new EmailClient( signupInboxId );
 			const validator = emails => emails.find( email => email.subject.includes( 'WordPress.com' ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
@@ -173,6 +187,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can visit the magic link and we should be logged in', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
@@ -184,7 +201,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a free site, see the site preview, activate email and can publish @parallel', function() {
+	describe( 'Sign up for a free site, see the site preview, activate email and can publish @signup', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -206,10 +223,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -249,7 +277,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a non-blog site on a premium paid plan through main flow using a coupon @parallel @visdiff', function() {
+	describe( 'Sign up for a non-blog site on a premium paid plan through main flow using a coupon @signup @visdiff', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -260,7 +288,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can visit the start page', async function() {
-			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			await StartPage.Visit( driver, StartPage.getStartURL( { flow: 'main', culture: locale } ) );
 		} );
 
 		step( 'Can see the account page and enter account details', async function() {
@@ -394,14 +422,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can accept defaults for about page', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( 'Step Back', 'Store Test Topic', { sell: true } );
-			await aboutPage.submitForm();
-			await driverHelper.waitTillNotPresent( driver, By.css( '.signup is-store-nux' ) ); // Wait for /start/store-nux/themes to load
-			await driver.navigate().back();
-			await aboutPage.unsetCheckBox( { sell: true } );
-			await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectProfessionalType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step( 'Can then see the domains page ', async function() {
@@ -488,7 +523,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @parallel', function() {
+	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -537,11 +572,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
-			return await siteTitlePage.submitForm();
-		} );
-
-		step( 'Can see the "Site style" page, and continue with the default style', async function() {
-			const siteTitlePage = await SiteStylePage.Expect( driver );
 			return await siteTitlePage.submitForm();
 		} );
 
@@ -616,7 +646,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @parallel', function() {
+	describe( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @signup', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -664,11 +694,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
-			return await siteTitlePage.submitForm();
-		} );
-
-		step( 'Can see the "Site style" page, and continue with the default style', async function() {
-			const siteTitlePage = await SiteStylePage.Expect( driver );
 			return await siteTitlePage.submitForm();
 		} );
 
@@ -747,7 +772,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
+	describe( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @signup', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
@@ -808,28 +833,22 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step(
-			'Can see checkout page, choose domain privacy option and enter registrar details',
-			async function() {
-				let checkOutPage;
-				try {
-					checkOutPage = await CheckOutPage.Expect( driver );
-				} catch ( err ) {
-					//TODO: Check this code once more when domain registration is not available
-					if (
-						driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) )
-					) {
-						await SlackNotifier.warn(
-							"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
-						);
-						return this.skip();
-					}
+		step( 'Can see checkout page and enter registrar details', async function() {
+			let checkOutPage;
+			try {
+				checkOutPage = await CheckOutPage.Expect( driver );
+			} catch ( err ) {
+				//TODO: Check this code once more when domain registration is not available
+				if ( driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) ) ) {
+					await SlackNotifier.warn(
+						"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
+					);
+					return this.skip();
 				}
-				await checkOutPage.selectAddPrivacyProtectionCheckbox();
-				await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
-				return await checkOutPage.submitForm();
 			}
-		);
+			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			return await checkOutPage.submitForm();
+		} );
 
 		step(
 			'Can then see the secure payment page with the correct products in the cart',
@@ -880,10 +899,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step(
-			'Can see the secure check out thank you page and click "go to my domain" button to see the domain only settings page',
+			'Can see the domain is ready page and click "Manage Domain" button to see the domain only settings page',
 			async function() {
-				const checkOutThankyouPage = await CheckOutThankyouPage.Expect( driver );
-				await checkOutThankyouPage.goToMyDomain();
 				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
 				await domainOnlySettingsPage.manageDomain();
 				return await DomainDetailsPage.Expect( driver );
@@ -895,15 +912,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			await navBarComponent.clickMySites();
 		} );
 
-		step( 'We should only one option - the settings option', async function() {
-			const sideBarComponent = await SideBarComponent.Expect( driver );
-			const numberMenuItems = await sideBarComponent.numberOfMenuItems();
+		step( 'We should only see one option - the settings option', async function() {
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const numberMenuItems = await sidebarComponent.numberOfMenuItems();
 			assert.strictEqual(
 				numberMenuItems,
 				1,
 				'There is not a single menu item for a domain only site'
 			);
-			const exists = await sideBarComponent.settingsOptionExists();
+			const exists = await sidebarComponent.settingsOptionExists();
 			return assert( exists, 'The settings menu option does not exist' );
 		} );
 
@@ -912,8 +929,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				await ReaderPage.Visit( driver );
 				const navBarComponent = await NavBarComponent.Expect( driver );
 				await navBarComponent.clickMySites();
-				const sidebarComponent = await SideBarComponent.Expect( driver );
-				await sidebarComponent.selectSettings();
+				const sidebarComponent = await SidebarComponent.Expect( driver );
+				await sidebarComponent.settingsOptionExists( true );
 				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
 				await domainOnlySettingsPage.manageDomain();
 				const domainDetailsPage = await DomainDetailsPage.Expect( driver );
@@ -943,7 +960,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
+	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @signup', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
@@ -988,6 +1005,23 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
+		step(
+			'Can see the "Site Type" page, and select online store, and switch flows',
+			async function() {
+				const siteTypePage = await SiteTypePage.Expect( driver );
+				return await siteTypePage.selectOnlineStoreType();
+			}
+		);
+
+		step(
+			'Can see the domains page, and click the back navigation link, returning to original flow',
+			async function() {
+				await FindADomainComponent.Expect( driver );
+				const stepWrapperComponent = await StepWrapperComponent.Expect( driver );
+				await stepWrapperComponent.goBack();
+			}
+		);
+
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
 			return await siteTypePage.selectBusinessType();
@@ -1002,11 +1036,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( siteName );
-			return await siteTitlePage.submitForm();
-		} );
-
-		step( 'Can see the "Site style" page, and continue with the default style', async function() {
-			const siteTitlePage = await SiteStylePage.Expect( driver );
 			return await siteTitlePage.submitForm();
 		} );
 
@@ -1033,15 +1062,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step(
-			'Can see checkout page, choose domain privacy option and enter registrar details',
-			async function() {
-				const checkOutPage = await CheckOutPage.Expect( driver );
-				await checkOutPage.selectAddPrivacyProtectionCheckbox();
-				await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
-				return await checkOutPage.submitForm();
-			}
-		);
+		step( 'Can see checkout page and enter registrar details', async function() {
+			const checkOutPage = await CheckOutPage.Expect( driver );
+			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			return await checkOutPage.submitForm();
+		} );
 
 		step(
 			'Can then see the secure payment page with the correct products in the cart',
@@ -1116,7 +1141,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Basic sign up for a free site @parallel @email @ie11canary', function() {
+	describe( 'Basic sign up for a free site @signup @email @ie11canary', function() {
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function() {
@@ -1137,9 +1162,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the about page and accept defaults', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1180,7 +1217,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up while purchasing premium theme in AUD currency @parallel @email', function() {
+	describe( 'Sign up while purchasing premium theme in AUD currency @signup @email', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1200,10 +1237,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can see the themes page and select premium theme ', async function() {
-			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() );
+			// open Premium page directly. More info https://github.com/Automattic/wp-calypso/pull/36528
+			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() + '/premium' );
 			await themesPage.waitUntilThemesLoaded();
 			await themesPage.setABTestControlGroupsInLocalStorage();
-			await themesPage.showOnlyPremiumThemes();
 			chosenThemeName = await themesPage.getFirstThemeName();
 			return await themesPage.selectNewTheme();
 		} );
@@ -1240,6 +1277,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
 			}
 		);
@@ -1247,6 +1287,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the secure payment page with the chosen theme in the cart',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 				const products = await securePaymentComponent.getProductsNames();
 				assert(
@@ -1290,10 +1333,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		step( 'Can see the theme thanks dialog', async function() {
-			const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
-			await themeDialogComponent.goToThemeDetail();
-		} );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete the plan', async function() {
 			return await new DeletePlanFlow( driver ).deletePlan( 'theme' );
@@ -1304,7 +1344,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe.skip( 'Sign up for free subdomain site @parallel', function() {
+	describe( 'Sign up for free subdomain site @signup', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ blogName }.art.blog`;
 
@@ -1327,7 +1367,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
-					flow: 'onboarding',
 					query: 'vertical=art',
 				} )
 			);
@@ -1358,11 +1397,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedDomainName,
-					blogName
-				);
+				await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+				// More details: https://github.com/Automattic/wp-calypso/pull/35347
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedDomainName,
+				// 	blogName
+				// );
 				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedDomainName.indexOf( actualAddress ) > -1,
@@ -1387,7 +1427,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete site', async function() {
-			const sidebarComponent = await SideBarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.ensureSidebarMenuVisible();
 			await sidebarComponent.selectSettings();
 			const settingsPage = await SettingsPage.Expect( driver );
@@ -1399,7 +1439,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for an account only (no site) then add a site @parallel', function() {
+	describe( 'Sign up for an account only (no site) then add a site @signup', function() {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
@@ -1447,10 +1487,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1490,7 +1541,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a Reader account @parallel', function() {
+	describe( 'Sign up for a Reader account @signup', function() {
 		const userName = dataHelper.getNewBlogName();
 
 		before( async function() {
@@ -1543,21 +1594,36 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	} );
 
 	describe( 'Import a site while signing up @parallel', function() {
-		// Currently must use a Wix site to be importable through this flow.
+		// Currently must use a Wix or GoDaddy site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
 
 		before( async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit import in signup page and prefill url', async function() {
-			await StartPage.Visit(
+		step( 'Can start the import signup flow', async function() {
+			return await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( { culture: locale, flow: 'import', query: `url=${ siteURL }` } )
 			);
+		} );
 
+		step( 'Can then enter account details and continue', async function() {
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				userName,
+				passwordForTestAccounts
+			);
+		} );
+
+		step( 'Can then prefill url of site to import using a query param', async function() {
 			const importFromURLPage = await ImportFromURLPage.Expect( driver );
 			const urlValue = await importFromURLPage.getURLInputValue();
 
@@ -1621,14 +1687,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		} );
 
-		step( 'Can then enter account details and continue', async function() {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+		step(
+			'Can see the domains page prefilled with a suggested domain, and select a free domain',
+			async function() {
+				const findADomainComponent = await FindADomainComponent.Expect( driver );
+				const domainSearch = await findADomainComponent.getSearchInputValue();
 
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				userName,
-				passwordForTestAccounts
-			);
+				assert.strictEqual(
+					domainSearch,
+					'eat-here-its-good',
+					"The suggested domain doesn't match the import site url"
+				);
+
+				await findADomainComponent.waitForResults();
+				return await findADomainComponent.selectFreeAddress();
+			}
+		);
+
+		step( 'Can see the plans page and pick the free plan', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlan();
 		} );
 
 		step(
@@ -1670,36 +1748,38 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
-		const userName = dataHelper.getNewBlogName();
+	// Disable test while Passwordless functionality is completely switched off
+	// https://github.com/Automattic/wp-calypso/pull/37054
+	describe.skip( 'Passwordless signup @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		let verificationLink;
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
-		step( 'Can visit the start page', async function() {
-			return await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
-		} );
+		step(
+			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
+			async function() {
+				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
+				await jetpackAddNewSitePage.overrideABTestInLocalStorage(
+					'passwordlessSignup',
+					'passwordless'
+				);
+				return await jetpackAddNewSitePage.createNewWordPressDotComSite();
+			}
+		);
 
-		step( 'Can see the account page and enter account details', async function() {
+		step( 'Can see passwordless Start page and enter an email', async function() {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				userName,
-				passwordForTestAccounts
-			);
+			return await createYourAccountPage.enterEmailAndSubmit( emailAddress );
 		} );
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			return await siteTypePage.selectBlogType();
+			return await siteTypePage.selectBusinessType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
@@ -1717,7 +1797,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
 			async function() {
-				const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
 				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
@@ -1741,122 +1820,45 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
-				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
+				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
 			}
 		);
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
-
-		after( async function() {
-			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
-		} );
-	} );
-
-	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
-		const userName = dataHelper.getNewBlogName();
-		const blogName = dataHelper.getNewBlogName();
-
-		before( async function() {
-			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
-		} );
-
-		step( 'Can enter the account flow and see the account details page', async function() {
-			await StartPage.Visit(
-				driver,
-				StartPage.getStartURL( {
-					culture: locale,
-					flow: 'account',
-				} )
-			);
-			await CreateYourAccountPage.Expect( driver );
-		} );
-
-		step( 'Can then enter account details and continue', async function() {
-			const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				userName,
-				passwordForTestAccounts
-			);
-		} );
-
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function() {
-				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
+		step( 'Can see email containing verification link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
 			}
-		);
 
-		step(
-			'We are then on the Reader page and have no sites - we click Create Site',
-			async function() {
-				await ReaderPage.Expect( driver );
-				const navBarComponent = await NavBarComponent.Expect( driver );
-				await navBarComponent.clickMySites();
-				const noSitesComponent = await NoSitesComponent.Expect( driver );
-				return await noSitesComponent.createSite();
+			const emailClient = await new EmailClient( signupInboxId );
+			const validator = emails => emails.find( email => email.subject.includes( emailAddress ) );
+			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+
+			for ( const email of emails ) {
+				if ( email.subject.includes( emailAddress ) ) {
+					return ( verificationLink = email.html.links[ 0 ].href );
+				}
 			}
-		);
-
-		step( 'Can see the "Site Type" page, and enter some site information', async function() {
-			const siteTypePage = await SiteTypePage.Expect( driver );
-			return await siteTypePage.selectBlogType();
+			return assert( verificationLink !== undefined, 'Could not locate the login link email.' );
 		} );
 
-		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
-			const siteTopicPage = await SiteTopicPage.Expect( driver );
-			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
-			return await siteTopicPage.submitForm();
-		} );
-
-		step( 'Can see the "Site title" page, and enter the site title', async function() {
-			const siteTitlePage = await SiteTitlePage.Expect( driver );
-			await siteTitlePage.enterSiteTitle( blogName );
-			return await siteTitlePage.submitForm();
-		} );
-
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function() {
-				const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
-				return await findADomainComponent.selectFreeAddress();
+		step( 'Can open verification link and verify account', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
 			}
-		);
-
-		step( 'Can see the plans page and pick the free plan', async function() {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+			await driver.get( verificationLink );
+			const checklistPage = await ChecklistPage.Expect( this.driver );
+			return await checklistPage.isEmailverified();
 		} );
-
-		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+			// Get username from Account settings page
+			// (it's automatically generated for passwordless signup)
+			const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
+			const username = await accountSettingsPage.getUsername();
 
-		after( async function() {
-			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
+			return await new DeleteAccountFlow( driver ).deleteAccount( username );
 		} );
 	} );
 } );

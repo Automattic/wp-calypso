@@ -43,11 +43,11 @@
 		flex: none;
 		margin-bottom: 0;
 		z-index: 10;
-		
+
 		@include breakpoint( '<660px' ) {
 			.search.has-focus {
 				margin: 0 4px;
-				width: calc(100% - 8px);
+				width: calc( 100% - 8px );
 			}
 		}
 	}
@@ -94,7 +94,7 @@
 
 	&.is-selected {
 		background: var( --color-primary );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 

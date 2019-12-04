@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -256,7 +254,10 @@ describe( 'reducer', () => {
 				{ ID: 'twitter', name: 'Twitter' },
 			];
 			const previousState = deepFreeze( {
-				2916284: [ { ID: 'facebook', name: 'Facebook' }, { ID: 'pinterest', name: 'Pinterest' } ],
+				2916284: [
+					{ ID: 'facebook', name: 'Facebook' },
+					{ ID: 'pinterest', name: 'Pinterest' },
+				],
 			} );
 			const state = items( previousState, {
 				type: SHARING_BUTTONS_UPDATE,

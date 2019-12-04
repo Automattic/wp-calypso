@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
@@ -76,6 +77,7 @@ class JetpackNewSite extends Component {
 	render() {
 		return (
 			<div>
+				<DocumentHead title={ this.props.translate( 'Add New Site' ) } />
 				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
 					<div className="jetpack-new-site__header">
@@ -85,7 +87,7 @@ class JetpackNewSite extends Component {
 						<div className="jetpack-new-site__header-text">
 							{ this.props.translate(
 								'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
-							) }{' '}
+							) }{ ' ' }
 						</div>
 					</div>
 					<div className="jetpack-new-site__content">
@@ -157,12 +159,9 @@ class JetpackNewSite extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-);
+const connectComponent = connect( null, {
+	recordTracksEvent,
+} );
 
 export default flowRight(
 	connectComponent,

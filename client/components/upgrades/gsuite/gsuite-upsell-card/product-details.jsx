@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -10,10 +9,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getProductBySlug } from 'state/products-list/selectors';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
-function GSuiteUpsellProductDetails( { currencyCode, cost, domain, plan } ) {
+function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
 	const translate = useTranslate();
 
 	return (
@@ -31,19 +32,24 @@ function GSuiteUpsellProductDetails( { currencyCode, cost, domain, plan } ) {
 					) }
 				</p>
 
-				<GSuitePrice cost={ cost } currencyCode={ currencyCode } showMonthlyPrice />
+				<GSuitePrice product={ product } currencyCode={ currencyCode } />
 			</div>
 
-			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
+			<GSuiteCompactFeatures domainName={ domain } productSlug={ productSlug } type={ 'list' } />
 		</div>
 	);
 }
 
 GSuiteUpsellProductDetails.propTypes = {
 	currencyCode: PropTypes.string,
-	cost: PropTypes.number,
 	domain: PropTypes.string.isRequired,
-	plan: PropTypes.string.isRequired,
+	product: PropTypes.object,
+	productSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
 };
 
-export default GSuiteUpsellProductDetails;
+export default connect(
+	( state, { productSlug } ) => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		product: getProductBySlug( state, productSlug ),
+	} )
+)( GSuiteUpsellProductDetails );

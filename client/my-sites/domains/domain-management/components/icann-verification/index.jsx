@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { EMAIL_VALIDATION_AND_VERIFICATION } from 'lib/url/support';
-import { resendIcannVerification } from 'lib/upgrades/actions';
+import { resendIcannVerification } from 'lib/domains';
 import { errorNotice } from 'state/notices/actions';
 import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
 import getRegistrantWhois from 'state/selectors/get-registrant-whois';
@@ -25,6 +23,7 @@ class IcannVerificationCard extends React.Component {
 		explanationContext: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		whoisData: PropTypes.array,
 	};
 
 	getExplanation() {
@@ -80,8 +79,10 @@ class IcannVerificationCard extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
-	} ),
+	( state, ownProps ) => {
+		return {
+			contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
+		};
+	},
 	{ errorNotice }
 )( localize( IcannVerificationCard ) );

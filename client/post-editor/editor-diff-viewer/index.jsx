@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { debounce, filter, first, flow, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -74,7 +72,7 @@ class EditorDiffViewer extends PureComponent {
 		this.tryScrollingToFirstChangeOrTop();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
 			this.setState( { changeOffsets: [] } );
 		}

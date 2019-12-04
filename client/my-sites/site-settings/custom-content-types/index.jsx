@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -127,7 +125,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog posts' );
+		const fieldLabel = translate( 'Blog Posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (

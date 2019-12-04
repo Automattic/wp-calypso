@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,17 +42,16 @@ class ToolsMenu extends PureComponent {
 			name: 'plugins',
 			label: translate( 'Plugins' ),
 			capability: 'manage_options',
-			queryable: ! isAtomicSite,
+			queryable: ! config.isEnabled( 'calypsoify/plugins' ) || ! isAtomicSite,
 			config: 'manage/plugins',
 			link: '/plugins',
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: canManagePlugins,
-			forceInternalLink: isAtomicSite,
 		};
 	}
 
-	getImportItem = () => {
+	getImportItem() {
 		const { isJetpack, translate } = this.props;
 
 		return {
@@ -65,12 +62,10 @@ class ToolsMenu extends PureComponent {
 			link: '/import',
 			paths: [ '/import' ],
 			wpAdminLink: 'import.php',
-			showOnAllMySites: false,
-			forceInternalLink: ! isJetpack,
 		};
-	};
+	}
 
-	getExportItem = () => {
+	getExportItem() {
 		const { isJetpack, translate } = this.props;
 
 		return {
@@ -81,10 +76,8 @@ class ToolsMenu extends PureComponent {
 			link: '/export',
 			paths: [ '/export' ],
 			wpAdminLink: 'export.php',
-			showOnAllMySites: false,
-			forceInternalLink: ! isJetpack,
 		};
-	};
+	}
 
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
@@ -128,22 +121,13 @@ class ToolsMenu extends PureComponent {
 				onNavigate={ this.onNavigate( menuItem.name ) }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
-				forceInternalLink={ menuItem.forceInternalLink }
 				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
 
 	render() {
-		const menuItems = [];
-
-		if ( config.isEnabled( 'calypsoify/plugins' ) ) {
-			menuItems.push( this.getPluginItem() );
-		}
-
-		menuItems.push( this.getImportItem() );
-
-		menuItems.push( this.getExportItem() );
+		const menuItems = [ this.getPluginItem(), this.getImportItem(), this.getExportItem() ];
 
 		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
 	}

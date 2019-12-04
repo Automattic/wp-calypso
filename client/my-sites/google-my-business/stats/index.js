@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,12 +12,15 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
@@ -130,8 +131,8 @@ class GoogleMyBusinessStats extends Component {
 		}
 
 		return (
-			<div className="gmb-stats__metrics">
-				<div className="gmb-stats__metric">
+			<div className="stats__metrics">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'How customers search for your business' ) }
 						statType="queries"
@@ -154,7 +155,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Where your customers view your business on Google' ) }
 						description={ translate(
@@ -174,7 +175,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Customer Actions' ) }
 						description={ translate(
@@ -220,7 +221,17 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringConnections forceRefresh />
 				<QueryKeyringServices />
 
-				{ ! isLocationVerified && (
+				{ ! locationData && (
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate( 'There is an error with your Google My Business account.' ) }
+					>
+						<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
+					</Notice>
+				) }
+
+				{ !! locationData && ! isLocationVerified && (
 					<Notice
 						status="is-error"
 						text={ translate(

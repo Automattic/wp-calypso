@@ -28,7 +28,7 @@
 	.purchase-item__title,
 	.purchase-item__purchase-date,
 	.purchase-item__purchase-type {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.purchase-item__plan-icon {
@@ -57,9 +57,10 @@
 	.gridicon {
 		padding: 4px;
 		background: var( --color-neutral );
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 	}
-
+	
+	.gridicons-cloud-upload,
 	.gridicons-domains {
 		border-radius: 50%;
 	}
@@ -106,6 +107,6 @@
 }
 
 .purchase-item__purchase-date {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 12px;
 }

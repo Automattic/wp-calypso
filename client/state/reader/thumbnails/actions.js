@@ -1,10 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import debugModule from 'debug';
 import getEmbedMetadata from 'get-video-id';
-import request from 'superagent';
 import { get } from 'lodash';
 
 /**
@@ -82,14 +80,30 @@ export const requestThumbnail = embedUrl => dispatch => {
 			} );
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return request.get( fetchUrl ).then(
-				response => {
-					const thumbnailUrl = get( response, [ 'body', 0, 'thumbnail_large' ] );
+			return fetch( fetchUrl ).then(
+				async response => {
+					let json;
+					try {
+						json = await response.json();
+					} catch ( error ) {
+						dispatch( requestFailure( embedUrl, error ) );
+					}
+
+					const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
 					if ( thumbnailUrl ) {
 						dispatch( requestSuccessful( embedUrl ) );
 						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 					} else {
-						dispatch( requestFailure( embedUrl, { type: BAD_API_RESPONSE, response } ) );
+						dispatch(
+							requestFailure( embedUrl, {
+								type: BAD_API_RESPONSE,
+								response: {
+									status: response.status,
+									ok: response.ok,
+									body: json,
+								},
+							} )
+						);
 					}
 				},
 				error => {

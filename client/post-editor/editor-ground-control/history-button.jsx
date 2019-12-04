@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +35,4 @@ const selectHistory = () =>
 		openPostRevisionsDialog()
 	);
 
-export default connect(
-	null,
-	{ selectHistory }
-)( localize( HistoryButton ) );
+export default connect( null, { selectHistory } )( localize( HistoryButton ) );

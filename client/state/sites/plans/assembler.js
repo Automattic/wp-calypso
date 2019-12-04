@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,10 +34,6 @@ export const createSitePlanObject = plan => {
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
 		subscribedDayMoment: moment( plan.subscribed_date ).startOf( 'day' ),
-		userFacingExpiry: plan.user_facing_expiry,
-		userFacingExpiryMoment: plan.user_facing_expiry
-			? moment( plan.user_facing_expiry ).startOf( 'day' )
-			: null,
 		userIsOwner: Boolean( plan.user_is_owner ),
 	};
 };

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -98,8 +96,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	toggleInfo,
-	localize
-)( StatsPostLikes );
+export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );

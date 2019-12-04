@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { snakeCase } from 'lodash';
 

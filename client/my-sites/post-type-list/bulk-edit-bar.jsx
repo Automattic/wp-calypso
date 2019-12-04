@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

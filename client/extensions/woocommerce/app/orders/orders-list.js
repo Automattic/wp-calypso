@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -53,7 +52,7 @@ class Orders extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const hasAnythingChanged =
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentSearch !== this.props.currentSearch ||
@@ -157,7 +156,7 @@ class Orders extends Component {
 				<TableItem className="orders__table-total">
 					{ refundValue ? (
 						<span>
-							<span className="orders__table-old-total">{ total }</span>{' '}
+							<span className="orders__table-old-total">{ total }</span>{ ' ' }
 							{ formatCurrency( remainingTotal, order.currency ) }
 						</span>
 					) : (

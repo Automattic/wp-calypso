@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -141,7 +140,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { saveOrder }, dispatch )
-)( localize( OrderPaymentCard ) );
+export default connect( null, dispatch => bindActionCreators( { saveOrder }, dispatch ) )(
+	localize( OrderPaymentCard )
+);

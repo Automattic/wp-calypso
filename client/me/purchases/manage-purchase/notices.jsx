@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -22,7 +19,9 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewable,
+	isRechargeable,
 	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
@@ -32,6 +31,7 @@ import {
 import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -63,10 +63,23 @@ class PurchaseNotice extends Component {
 				);
 			}
 
-			if ( config.isEnabled( 'autorenewal-toggle' ) && hasPaymentMethod( purchase ) ) {
+			if ( hasPaymentMethod( purchase ) ) {
+				if ( isRechargeable( purchase ) ) {
+					return translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							"Please enable auto-renewal so you don't lose out on your paid features!",
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					);
+				}
+
 				return translate(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-						"Please enable auto-renewal so you don't lose out on your paid features!",
+						"Please renew before expiry so you don't lose out on your paid features!",
 					{
 						args: {
 							purchaseName: getName( purchase ),
@@ -127,9 +140,8 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		// With the toggle, it doesn't make much sense to have this button.
 		return (
-			! config.isEnabled( 'autorenewal-toggle' ) && (
+			! isRechargeable( purchase ) && (
 				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
 			)
 		);
@@ -293,7 +305,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
 			return null;
 		}
 
@@ -321,7 +333,6 @@ class PurchaseNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )(
+	localize( withLocalizedMoment( PurchaseNotice ) )
+);

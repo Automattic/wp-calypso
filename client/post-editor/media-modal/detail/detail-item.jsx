@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import classNames from 'classnames';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -331,7 +329,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( EditorMediaModalDetailItem );
+export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );

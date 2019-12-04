@@ -1,7 +1,6 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -46,7 +45,7 @@ class Promotions extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -136,7 +135,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Promotions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Promotions ) );

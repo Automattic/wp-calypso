@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +27,6 @@ class CloneReadyStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -143,7 +141,7 @@ class CloneReadyStep extends Component {
 	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Ready to clone!' );
 
@@ -157,7 +155,6 @@ class CloneReadyStep extends Component {
 				subHeaderText={ '' }
 				fallbackSubHeaderText={ '' }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

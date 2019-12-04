@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,13 +13,13 @@ import * as dataHelper from '../lib/data-helper';
 import LoginFlow from '../lib/flows/login-flow';
 
 import PlansPage from '../lib/pages/plans-page';
-import StatsPage from '../lib/pages/stats-page';
+// import StatsPage from '../lib/pages/stats-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
 
-import ReaderPage from '../lib/pages/reader-page.js';
+// import ReaderPage from '../lib/pages/reader-page.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import ShoppingCartWidgetComponent from '../lib/components/shopping-cart-widget-component.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
+// import ShoppingCartWidgetComponent from '../lib/components/shopping-cart-widget-component.js';
+// import SidebarComponent from '../lib/components/sidebar-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
@@ -73,25 +71,33 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		step( 'Can then see secure payment component', async function() {
-			return await SecurePaymentComponent.Expect( driver );
-		} );
+		// Skipped for now. https://github.com/Automattic/jetpack/pull/12839 changed the redirect behavior, which should be updated in near future
+		// step( 'Can then see secure payment component', async function() {
+		// 	return await SecurePaymentComponent.Expect( driver );
+		// } );
 
 		// Remove all items from basket for clean up
-		after( async function() {
-			await ReaderPage.Visit( driver );
+		// after( async function() {
+		// 	await ReaderPage.Visit( driver );
 
-			const navbarComponent = await NavBarComponent.Expect( driver );
-			await navbarComponent.clickMySites();
+		// 	const navbarComponent = await NavBarComponent.Expect( driver );
+		// 	await navbarComponent.clickMySites();
 
-			await StatsPage.Expect( driver );
+		// 	await StatsPage.Expect( driver );
 
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectPlan();
+		// 	const sidebarComponent = await SidebarComponent.Expect( driver );
+		// 	await sidebarComponent.selectPlan();
 
-			await PlansPage.Expect( driver );
-			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-			await shoppingCartWidgetComponent.empty();
+		// 	await PlansPage.Expect( driver );
+		// 	const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
+		// 	await shoppingCartWidgetComponent.empty();
+		// } );
+
+		// TODO: Replace it with landing page flow when it's released
+		step( 'Can see Calypso Plans page', async function() {
+			await driverHelper.refreshIfJNError( driver );
+			const plansPage = await PlansPage.Expect( driver );
+			return await plansPage.waitForPage();
 		} );
 	} );
 

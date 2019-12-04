@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -7,13 +6,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight as compose, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
 import EmbedContainer from 'components/embed-container';

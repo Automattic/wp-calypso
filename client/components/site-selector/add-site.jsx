@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -34,7 +33,4 @@ class SiteSelectorAddSite extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteSelectorAddSite ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );

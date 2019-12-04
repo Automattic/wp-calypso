@@ -7,7 +7,7 @@
 	"keywords": [
 		"wordpress"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.4.4",
-		"debug": "^3.2.6"
+		"debug": "^4.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",

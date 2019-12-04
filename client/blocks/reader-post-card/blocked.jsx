@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -49,11 +48,8 @@ class PostBlocked extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		bumpStat,
-		unblockSite,
-	}
-)( localize( PostBlocked ) );
+export default connect( null, {
+	recordGoogleEvent,
+	bumpStat,
+	unblockSite,
+} )( localize( PostBlocked ) );

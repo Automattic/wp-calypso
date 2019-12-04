@@ -130,7 +130,6 @@ class ActivityLogAggregatedItem extends Component {
 			disableRestore,
 			gmtOffset,
 			moment,
-			rewindState,
 			siteId,
 			timezone,
 			translate,
@@ -158,7 +157,6 @@ class ActivityLogAggregatedItem extends Component {
 								activity={ log }
 								disableRestore={ disableRestore }
 								disableBackup={ disableBackup }
-								hideRestore={ 'active' !== rewindState }
 								siteId={ siteId }
 							/>
 						</Fragment>

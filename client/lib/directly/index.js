@@ -2,7 +2,6 @@
  *
  *
  *
- * @format
  * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
  * @see https:
  */

@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -47,7 +45,7 @@ class AccountSettingsClose extends Component {
 		showConfirmDialog: false,
 	};
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();

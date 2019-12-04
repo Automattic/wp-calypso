@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -121,7 +119,11 @@ class GSuiteStatsNudge extends Component {
 							</p>
 						}
 						<div className="gsuite-stats-nudge__button-row">
-							<Button href={ url } primary onClick={ this.onStartNowClick }>
+							<Button
+								href={ url }
+								primary={ this.props.primaryButton }
+								onClick={ this.onStartNowClick }
+							>
 								{ translate( 'Get G Suite' ) }
 							</Button>
 						</div>

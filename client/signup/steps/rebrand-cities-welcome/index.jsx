@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,7 +50,7 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, stepName, translate } = this.props;
 
 		return (
 			<div className="rebrand-cities-welcome">
@@ -69,7 +67,6 @@ class RebrandCitiesWelcomeStep extends Component {
 							'to get your business online. We’ll need you to create a WordPress.com ' +
 							'account to get you started.'
 					) }
-					signupProgress={ signupProgress }
 					stepContent={ this.renderContent() }
 				/>
 			</div>
@@ -77,7 +74,6 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ setSiteTitle, submitSignupStep }
-)( localize( RebrandCitiesWelcomeStep ) );
+export default connect( null, { setSiteTitle, submitSignupStep } )(
+	localize( RebrandCitiesWelcomeStep )
+);

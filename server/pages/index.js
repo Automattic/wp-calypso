@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,6 @@ import {
 	includes,
 	pick,
 	flatten,
-	forEach,
 	groupBy,
 	intersection,
 	snakeCase,
@@ -35,6 +33,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
@@ -43,23 +42,18 @@ import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
-import { logSectionResponseTime } from './analytics';
+import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [
-	{ path: 'style.css' },
-	{ path: 'editor.css' },
-	{ path: 'tinymce/skins/wordpress/wp-content.css' },
-	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'style-debug-rtl.css' },
-];
+const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -179,24 +173,6 @@ const getFilesForEntrypoint = ( target, name ) => {
 	);
 	return groupAssetsByType( entrypointAssets );
 };
-/**
- * Generate an object that maps asset names name to a server-relative urls.
- * Assets in request and static files are included.
- *
- * @param {String} target The build target name.
- *
- * @returns {Object} Map of asset names to urls
- **/
-function generateStaticUrls( target ) {
-	const urls = { ...staticFilesUrls };
-	const assets = getAssets( target ).assetsByChunkName;
-
-	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset;
-	} );
-
-	return urls;
-}
 
 function getCurrentBranchName() {
 	try {
@@ -252,7 +228,7 @@ function getAcceptedLanguagesFromHeader( header ) {
  * all following handlers (including the locale and redirect ones) can rely on the context values.
  */
 function setupLoggedInContext( req, res, next ) {
-	const isSupportSession = !! req.get( 'x-support-session' );
+	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
@@ -264,7 +240,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request ) {
+function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
@@ -301,19 +277,25 @@ function getDefaultContext( request ) {
 
 	const target = getBuildTargetFromRequest( request );
 
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isWCComConnect =
+		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		request.query[ 'wccom-from' ] &&
+		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
-		urls: generateStaticUrls( target ),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
-		isDebug,
 		requestFrom: request.query.from,
+		isWCComConnect,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),
+		entrypoint: getFilesForEntrypoint( target, entrypoint ),
 		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -323,12 +305,13 @@ function getDefaultContext( request ) {
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		target: target || 'fallback',
 	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug,
 		staticUrls: staticFilesUrls,
 	};
 
@@ -529,6 +512,7 @@ function setUpCSP( req, res, next ) {
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
+			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
@@ -571,7 +555,6 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
@@ -579,9 +562,14 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-function render404( request, response ) {
-	const ctx = getDefaultContext( request );
-	response.status( 404 ).send( renderJsx( '404', ctx ) );
+function render404( req, res ) {
+	const ctx = {
+		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+	};
+
+	res.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
 /* We don't use `next` but need to add it for express.js to
@@ -593,14 +581,13 @@ function renderServerError( err, req, res, next ) {
 		console.error( err );
 	}
 
-	const target = getBuildTargetFromRequest( req );
-
-	res.status( err.status || 500 );
 	const ctx = {
-		urls: generateStaticUrls( target ),
 		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
-	res.send( renderJsx( '500', ctx ) );
+
+	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 }
 
 /**
@@ -646,7 +633,7 @@ module.exports = function() {
 
 	app.set( 'views', __dirname );
 
-	app.use( logSectionResponseTime );
+	app.use( logSectionResponse );
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
@@ -750,7 +737,7 @@ module.exports = function() {
 
 	// Landing pages for domains-related emails
 	app.get( '/domain-services/:action', function( req, res ) {
-		const ctx = getDefaultContext( req );
+		const ctx = getDefaultContext( req, 'entry-domains-landing' );
 		attachBuildTimestamp( ctx );
 		attachHead( ctx );
 		attachI18n( ctx );
@@ -761,45 +748,45 @@ module.exports = function() {
 			query: get( req, 'query', {} ),
 		};
 
-		const target = getBuildTargetFromRequest( req );
-
-		const pageHtml = renderJsx( 'domains-landing', {
-			...ctx,
-			entrypoint: getFilesForEntrypoint( target, 'entry-domains-landing' ),
-		} );
+		const pageHtml = renderJsx( 'domains-landing', ctx );
 		res.send( pageHtml );
 	} );
+
+	function handleSectionPath( section, sectionPath, entrypoint ) {
+		const pathRegex = pathToRegExp( sectionPath );
+
+		app.get( pathRegex, function( req, res, next ) {
+			req.context = {
+				...getDefaultContext( req, entrypoint ),
+				sectionName: section.name,
+			};
+
+			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+				req.context.chunkFiles = getFilesForChunk( section.name, req );
+			} else {
+				req.context.chunkFiles = EMPTY_ASSETS;
+			}
+
+			if ( section.secondary && req.context ) {
+				req.context.hasSecondary = true;
+			}
+
+			if ( section.group && req.context ) {
+				req.context.sectionGroup = section.group;
+			}
+
+			next();
+		} );
+
+		if ( ! section.isomorphic ) {
+			app.get( pathRegex, setUpRoute, serverRender );
+		}
+	}
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( sectionPath => {
-				const pathRegex = pathToRegExp( sectionPath );
-
-				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
-
-					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name, req );
-					} else {
-						req.context.chunkFiles = EMPTY_ASSETS;
-					}
-
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
-					}
-
-					if ( section.group && req.context ) {
-						req.context.sectionGroup = section.group;
-					}
-
-					next();
-				} );
-
-				if ( ! section.isomorphic ) {
-					app.get( pathRegex, setUpRoute, serverRender );
-				}
-			} );
+			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -810,6 +797,12 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	// Set up login routing.
+	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

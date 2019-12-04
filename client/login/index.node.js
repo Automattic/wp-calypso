@@ -1,13 +1,15 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import config from 'config';
 import webRouter from './index.web';
 import { lang } from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+
+/**
+ * Re-exports
+ */
+export { LOGIN_SECTION_DEFINITION } from './index.web';
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {

@@ -16,11 +16,11 @@
 	}
 
 	.wpnc__button {
-		background: var( --color-white );
-		border-color: var( --color-neutral-100 );
+		background: var( --color-surface );
+		border-color: var( --color-neutral-10 );
 		border-style: solid;
 		border-width: 1px 1px 2px;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		cursor: pointer;
 		display: inline-block;
 		margin: 0;
@@ -39,19 +39,19 @@
 		appearance: none;
 
 		&:hover {
-			border-color: var( --color-neutral-200 );
-			color: var( --color-neutral-700 );
+			border-color: var( --color-neutral-20 );
+			color: var( --color-neutral-70 );
 		}
 		&:active {
 			border-width: 2px 1px 1px;
 		}
 		&:visited {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: var( --color-white );
+			background: var( --color-surface );
 			border-color: var( --color-neutral-0 );
 			cursor: default;
 
@@ -65,7 +65,7 @@
 		}
 		&.is-compact {
 			padding: 7px;
-			color: var( --color-neutral-400 );
+			color: var( --color-neutral-40 );
 			font-size: 11px;
 			line-height: 1;
 			text-transform: uppercase;
@@ -94,21 +94,21 @@
 	.wpnc__button.is-primary {
 		background: var( --color-primary );
 		border-color: var( --color-primary );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		&:hover,
 		&:focus {
 			border-color: var( --color-primary-dark );
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 		&[disabled],
 		&:disabled {
-			background: var( --color-primary-50 );
-			border-color: var( --color-primary-200 );
-			color: var( --color-white );
+			background: var( --color-primary-5 );
+			border-color: var( --color-primary-20 );
+			color: var( --color-text-inverted );
 		}
 		&.is-compact {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -121,39 +121,39 @@
 			border-color: var( --color-error );
 		}
 		&:focus {
-			box-shadow: 0 0 0 2px var( --color-error-200 );
+			box-shadow: 0 0 0 2px var( --color-error-20 );
 		}
 		&[disabled],
 		&:disabled {
-			color: var( --color-error-50 );
+			color: var( --color-error-5 );
 			border-color: var( --color-neutral-0 );
 		}
 	}
 
 	.wpnc__button.is-primary.is-scary {
 		background: var( --color-error );
-		border-color: var( --color-error-600 );
-		color: var( --color-white );
+		border-color: var( --color-error-60 );
+		color: var( --color-text-inverted );
 
 		&:hover,
 		&:focus {
-			border-color: var( --color-error-900 );
+			border-color: var( --color-error-100 );
 		}
 		&[disabled],
 		&:disabled {
-			background: var( --color-error-200 );
-			border-color: var( --color-error-300 );
+			background: var( --color-error-20 );
+			border-color: var( --color-error-30 );
 		}
 	}
 
 	.wpnc__button.is-borderless {
 		border: none;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		padding-left: 0;
 		padding-right: 0;
 
 		&:hover {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&:focus {
@@ -169,7 +169,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: var( --color-white );
+			background: var( --color-surface );
 			cursor: default;
 
 			&:active {
@@ -181,11 +181,11 @@
 
 			&:hover,
 			&:focus {
-				color: var( --color-error-600 );
+				color: var( --color-error-60 );
 			}
 
 			&[disabled] {
-				color: var( --color-error-50 );
+				color: var( --color-error-5 );
 			}
 		}
 

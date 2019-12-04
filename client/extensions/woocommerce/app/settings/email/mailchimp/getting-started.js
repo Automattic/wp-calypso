@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React from 'react';
 

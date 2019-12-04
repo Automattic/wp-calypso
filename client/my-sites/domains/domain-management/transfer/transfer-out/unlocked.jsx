@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,
 	requestTransferCode,
-} from 'lib/upgrades/actions';
+} from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
@@ -216,7 +214,7 @@ class Unlocked extends React.Component {
 
 		return (
 			<p>
-				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{' '}
+				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{ ' ' }
 				{ sent
 					? translate(
 							'Our Happiness Engineers have been notified about ' +

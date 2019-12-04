@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
@@ -44,6 +42,12 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import themesImage from 'assets/images/illustrations/themes.svg';
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
+
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
@@ -52,7 +56,6 @@ class UseYourDomainStep extends React.Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
-		isDomainTransferrable: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		mapDomainUrl: PropTypes.string,
 		transferDomainUrl: PropTypes.string,
@@ -130,7 +133,7 @@ class UseYourDomainStep extends React.Component {
 		if ( selectedSite ) {
 			const query = stringify( {
 				initialQuery: this.state.searchQuery.trim(),
-				isDomainTransferrable: this.props.isDomainTransferrable,
+				useStandardBack: true,
 			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
@@ -339,7 +342,7 @@ class UseYourDomainStep extends React.Component {
 	renderSelectTransfer = () => {
 		const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const image = migratingHostImage;
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
 			translate(
@@ -371,7 +374,7 @@ class UseYourDomainStep extends React.Component {
 
 	renderSelectMapping = () => {
 		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/themes.svg';
+		const image = themesImage;
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
 			translate( 'Domain registration and billing will remain at your current provider' ),

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
@@ -108,7 +106,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( DetailsDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DetailsDialog ) );

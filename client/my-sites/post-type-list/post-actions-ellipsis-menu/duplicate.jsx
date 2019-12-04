@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,7 +39,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
 			<QueryJetpackModules siteId={ siteId } />
-			{ translate( 'Copy', { context: 'verb' } ) }
+			{ translate( 'Copy Post' ) }
 		</PopoverMenuItem>
 	);
 }

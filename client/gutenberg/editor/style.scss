@@ -1,4 +1,4 @@
-/** @format */
+
 @import '~@wordpress/edit-post/build-style/style';
 
 .is-group-gutenberg.layout {
@@ -12,7 +12,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-gutenberg::before' );
 }
@@ -21,7 +21,7 @@
 
 .editor__placeholder {
 	.placeholder {
-		@include placeholder;
+		@include placeholder();
 		height: 16px;
 		border-radius: 8px;
 	}

@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -10,11 +13,13 @@ import ReaderPage from '../pages/reader-page.js';
 import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 
 import * as dataHelper from '../data-helper';
+import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
@@ -59,7 +64,12 @@ export default class LoginFlow {
 			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
 		) {
 			console.log( 'Reusing login cookie for ' + this.account.username );
-			return await this.driver.navigate().refresh();
+			await this.driver.navigate().refresh();
+			const continueSelector = By.css( 'div.continue-as-user a' );
+			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
+				await driverHelper.clickWhenClickable( this.driver, continueSelector );
+			}
+			return;
 		}
 
 		console.log( 'Logging in as ' + this.account.username );
@@ -111,6 +121,11 @@ export default class LoginFlow {
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickCreateNewPost( { siteURL: siteURL } );
 
+		if ( usingGutenberg ) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.closeSidebar();
+		}
+
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
@@ -135,6 +150,12 @@ export default class LoginFlow {
 
 		const pagesPage = await PagesPage.Expect( this.driver );
 		await pagesPage.selectAddNewPage();
+
+		if ( usingGutenberg ) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.dismissPageTemplateSelector();
+			await gEditorComponent.closeSidebar();
+		}
 
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );

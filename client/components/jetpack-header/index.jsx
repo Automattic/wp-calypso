@@ -132,6 +132,20 @@ export class JetpackHeader extends PureComponent {
 						/>
 					</JetpackPartnerLogoGroup>
 				);
+			case 'eurodns':
+				return (
+					<JetpackPartnerLogoGroup
+						width={ width || 488 }
+						viewBox="0 0 1034 150"
+						partnerName="EuroDNS"
+					>
+						<AsyncLoad
+							require="components/jetpack-header/eurodns"
+							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
+						/>
+					</JetpackPartnerLogoGroup>
+				);
 			default:
 				return <JetpackLogo full size={ width || 45 } />;
 		}

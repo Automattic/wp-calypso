@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
@@ -93,7 +91,7 @@ class MailChimpSetup extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// No state changes while doing request.
 		if ( nextProps.isBusy ) {
 			return;

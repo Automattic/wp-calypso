@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,16 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
+/**
+ * Image dependencies
+ */
+import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
+
 export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
+				icon={ <img alt="" src={ adsRemovedImage } /> }
 				title={ translate( 'Advertising removed' ) }
 				description={
 					isBusinessPlan

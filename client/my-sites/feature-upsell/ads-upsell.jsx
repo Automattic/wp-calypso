@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -295,10 +293,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( state => canCurrentUserUseAds( state ), '/ads/settings' )

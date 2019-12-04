@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -118,6 +116,7 @@ describe( 'selectors', () => {
 			isUserInputVertical: true,
 			parent: '',
 			preview: '',
+			previewStylesUrl: '',
 			siteType: '',
 			verticalId: '',
 			verticalName: '',

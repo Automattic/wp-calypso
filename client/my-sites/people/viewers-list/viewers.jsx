@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -158,7 +157,4 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Viewers ) );
+export default connect( null, { recordGoogleEvent } )( localize( Viewers ) );

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -111,7 +111,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
-								primary
+								primary={ this.props.primaryButton }
 								onClick={ this.onStartNowClick }
 							>
 								{ this.props.translate( 'Start Now' ) }

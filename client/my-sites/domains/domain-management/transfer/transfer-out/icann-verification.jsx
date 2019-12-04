@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
+import { resendIcannVerification } from 'lib/domains';
 import Button from 'components/button';
 import notices from 'notices';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';

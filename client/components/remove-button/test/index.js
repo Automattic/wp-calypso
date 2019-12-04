@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { identity, noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';

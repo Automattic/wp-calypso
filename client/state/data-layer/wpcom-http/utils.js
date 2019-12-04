@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { get, identity, merge, noop } from 'lodash';
 
 /**
@@ -63,7 +61,7 @@ const getRequestStatus = action => {
 };
 
 export const getRequestKey = fullAction => {
-	const { meta, ...action } = fullAction; // eslint-disable-line no-unused-vars
+	const { meta, ...action } = fullAction;
 	const requestKey = get( meta, 'dataLayer.requestKey' );
 
 	return requestKey ? requestKey : deterministicStringify( action );

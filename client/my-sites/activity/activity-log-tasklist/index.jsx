@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
@@ -620,8 +619,5 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 } );
 
 export default WithItemsToUpdate(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( localize( ActivityLogTasklist ) )
+	connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogTasklist ) )
 );

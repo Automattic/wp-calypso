@@ -1,15 +1,4 @@
-/** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -29,15 +18,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -72,30 +52,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	builderReferralHelpPopover: {
-		datestamp: '20190227',
-		variations: {
-			builderReferralLink: 10,
-			original: 90,
-		},
-		defaultVariation: 'original',
-	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
-	builderReferralHelpBanner: {
-		datestamp: '20190304',
-		variations: {
-			builderReferralBanner: 25,
-			original: 75,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -115,16 +71,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	hideDotBlogSubdomainsV2: {
-		datestamp: '20190626',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	popularPlanBy: {
 		datestamp: '20190529',
 		variations: {
@@ -133,21 +79,55 @@ export default {
 		},
 		defaultVariation: 'siteType',
 	},
-	hideBloggerPlan2: {
-		datestamp: '20190627',
+	skippableDomainStep: {
+		datestamp: '20290717',
 		variations: {
-			hide: 50,
+			skippable: 0,
+			notSkippable: 100,
+		},
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
+	},
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191106',
+		variations: {
+			variantShowPlanBump: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
-		localeTargets: 'any',
+		allowExistingUsers: true,
 	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
+	userStepRecaptcha: {
+		datestamp: '20191111',
 		variations: {
+			show: 50,
 			control: 50,
-			variant: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	gsuitePrice: {
+		datestamp: '20191125',
+		variations: {
+			discount: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

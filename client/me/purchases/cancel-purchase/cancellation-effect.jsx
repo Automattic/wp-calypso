@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,14 @@ import React from 'react';
  * Internal Dependencies
  */
 import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
-import { isDomainMapping, isGoogleApps, isJetpackPlan, isTheme } from 'lib/products-values';
+import {
+	isDomainMapping,
+	isGoogleApps,
+	isJetpackPlan,
+	isDotComPlan,
+	isPlan,
+	isTheme,
+} from 'lib/products-values';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;
@@ -83,14 +88,22 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	return translate(
-		'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.',
-		{
-			args: {
-				cost: refundText,
-			},
-		}
-	);
+	if ( isDotComPlan( purchase ) ) {
+		return translate(
+			'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.',
+			{
+				args: {
+					cost: refundText,
+				},
+			}
+		);
+	}
+
+	return translate( 'You will be refunded %(cost)s.', {
+		args: {
+			cost: refundText,
+		},
+	} );
 }
 
 function nonrefundableCancellationEffectDetail( purchase, translate ) {
@@ -118,14 +131,18 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 		);
 	}
 
-	return translate(
-		"Your plan's features remain active until your subscription expires on %(subscriptionEndDate)s.",
-		{
-			args: {
-				subscriptionEndDate,
-			},
-		}
-	);
+	if ( isPlan( purchase ) ) {
+		return translate(
+			"Your plan's features remain active until your subscription expires on %(subscriptionEndDate)s.",
+			{
+				args: {
+					subscriptionEndDate,
+				},
+			}
+		);
+	}
+
+	return '';
 }
 
 export function cancellationEffectDetail( purchase, translate, overrides = {} ) {

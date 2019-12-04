@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -142,6 +140,7 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			translate,
 			multiSelectEnabled,
+			showPublishedStatus,
 			hasExpandedContent,
 			isTypeWpBlock,
 		} = this.props;
@@ -208,7 +207,7 @@ class PostItem extends React.Component {
 							<span className="post-item__meta-time-status">
 								<a href={ enabledPostLink } className="post-item__time-status-link">
 									<PostTime globalId={ globalId } />
-									<PostStatus globalId={ globalId } />
+									<PostStatus globalId={ globalId } showAll={ showPublishedStatus } />
 								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />
@@ -246,6 +245,7 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
+	showPublishedStatus: PropTypes.bool,
 	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
 	isTypeWpBlock: PropTypes.bool,

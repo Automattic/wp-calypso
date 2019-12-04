@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,7 @@ import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -94,7 +93,7 @@ class Upload extends React.Component {
 		! inProgress && this.props.clearThemeUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
@@ -136,14 +135,14 @@ class Upload extends React.Component {
 		debug( 'Error', { error } );
 
 		const errorCauses = {
-			exists: translate( 'Upload problem: Theme already installed on site.' ),
-			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
-			'too large': translate( 'Upload problem: Theme zip must be under 10MB.' ),
-			incompatible: translate( 'Upload problem: Incompatible theme.' ),
-			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
+			exists: translate( 'Install problem: Theme already installed on site.' ),
+			already_installed: translate( 'Install problem: Theme already installed on site.' ),
+			'too large': translate( 'Install problem: Theme zip must be under 10MB.' ),
+			incompatible: translate( 'Install problem: Incompatible theme.' ),
+			unsupported_mime_type: translate( 'Install problem: Not a valid zip file' ),
 			initiate_failure: translate(
-				'Upload problem: Theme may not be valid. Check that your zip file contains only the theme ' +
-					'you are trying to upload.'
+				'Install problem: Theme may not be valid. Check that your zip file contains only the theme ' +
+					'you are trying to install.'
 			),
 		};
 
@@ -153,7 +152,7 @@ class Upload extends React.Component {
 		} );
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
-		notices.error( cause || translate( 'Problem uploading theme' ) + unknownCause );
+		notices.error( cause || translate( 'Problem installing theme' ) + unknownCause );
 	}
 
 	renderProgressBar() {
@@ -263,11 +262,12 @@ class Upload extends React.Component {
 
 		return (
 			<Main>
+				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
-				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
+				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 				{ upgradeJetpack && (
 					<JetpackManageErrorPage
 						template="updateJetpack"
@@ -330,10 +330,7 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-	),
+	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
 	localize,
 ];
 

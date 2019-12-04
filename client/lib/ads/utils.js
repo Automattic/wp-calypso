@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -32,13 +30,15 @@ export function canAccessWordads( site ) {
 }
 
 export function canAccessAds( site ) {
-	return canAccessWordads( site ) || canUpgradeToUseWordAds( site );
+	return (
+		( canAccessWordads( site ) || canUpgradeToUseWordAds( site ) ) &&
+		userCan( 'manage_options', site )
+	);
 }
 
 export function isWordadsInstantActivationEligible( site ) {
 	if (
-		! site.jetpack &&
-		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
+		( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) ) &&
 		userCan( 'activate_wordads', site )
 	) {
 		return true;

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
@@ -23,14 +24,9 @@ registerBlockType( 'a8c/navigation-menu', {
 	icon,
 	category: 'layout',
 	supports: {
+		align: [ 'wide', 'full', 'right', 'left' ],
 		html: false,
 		reusable: false,
-	},
-	attributes: {
-		themeLocation: {
-			type: 'string',
-			default: 'menu-1',
-		},
 	},
 	edit,
 	save: () => null,

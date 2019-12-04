@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Rewind state schemas in this file are wrapped in an odd way with the
  * `stateSchema()` helper so that the validation errors are more useful
@@ -53,6 +51,21 @@ export const rewind = {
 		reason: { type: 'string' },
 	},
 	required: [ 'restore_id', 'rewind_id', 'status' ],
+};
+
+export const threat = {
+	type: 'object',
+	properties: {
+		id: { type: 'integer' },
+		signature: { type: 'string' },
+		description: { type: 'string' },
+		first_detected: { type: 'string' },
+		fixable: { oneOf: [ { type: 'boolean' }, { type: 'object' } ] },
+		status: { type: 'string', enum: [ 'current', 'fixed', 'in_progress' ] },
+		filename: { type: 'string' },
+		context: { type: 'object' },
+		extension: { type: 'object' },
+	},
 };
 
 export const unavailable = stateSchema( 'unavailable', {
@@ -130,6 +143,12 @@ export const active = stateSchema( 'active', {
 			items: download,
 		},
 		rewind,
+		alerts: {
+			type: 'object',
+			items: {
+				threats: { type: threat },
+			},
+		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],

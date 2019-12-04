@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,11 +13,11 @@ import { isRequestingSite } from 'state/sites/selectors';
 import { isUserConnected } from 'state/jetpack-connect/actions';
 
 class QueryUserConnection extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.request( nextProps );
 		}

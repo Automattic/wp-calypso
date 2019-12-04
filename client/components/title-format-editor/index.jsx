@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +65,7 @@ export class TitleFormatEditor extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.disabled && ! nextProps.disabled ) {
 			this.setState( {
 				editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( nextProps ) ),

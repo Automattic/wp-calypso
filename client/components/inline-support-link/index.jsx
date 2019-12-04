@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -87,7 +85,4 @@ class InlineSupportLink extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ openSupportArticleDialog }
-)( localize( InlineSupportLink ) );
+export default connect( null, { openSupportArticleDialog } )( localize( InlineSupportLink ) );

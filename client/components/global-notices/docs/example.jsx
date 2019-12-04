@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -66,9 +64,6 @@ GlobalNotices.propTypes = {
 	createNotice: PropTypes.func,
 };
 
-const ConnectedGlobalNotices = connect(
-	null,
-	{ createNotice }
-)( GlobalNotices );
+const ConnectedGlobalNotices = connect( null, { createNotice } )( GlobalNotices );
 ConnectedGlobalNotices.displayName = 'GlobalNotices';
 export default ConnectedGlobalNotices;

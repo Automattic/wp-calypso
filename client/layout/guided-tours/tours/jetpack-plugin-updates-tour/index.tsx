@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Fragment } from 'react';
 
 /**
@@ -22,6 +22,14 @@ import {
 
 const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
 
+// Wait until the desired DOM element appears. Check every 125ms.
+// This function is a Redux action creator, hence the two arrows.
+const waitForJetpackToggle = () => async () => {
+	while ( ! document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+		await new Promise( resolve => setTimeout( resolve, 125 ) );
+	}
+};
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
@@ -38,22 +46,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 			target={ JETPACK_TOGGLE_SELECTOR }
 			arrow="top-left"
 			placement="below"
-			wait={ () =>
-				new Promise( resolve => {
-					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-						return resolve();
-					}
-
-					const waitForElement = () => {
-						if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-							return resolve();
-						}
-						setTimeout( waitForElement, 125 );
-					};
-
-					waitForElement();
-				} )
-			}
+			wait={ waitForJetpackToggle }
 			style={ {
 				animationDelay: '0.7s',
 				zIndex: 1,
@@ -64,7 +57,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					<p>
 						{ translate(
 							"Let's activate autoupdates for Jetpack to ensure you're always " +
-								'up-to-date with the latest features and security fixes.'
+								'up to date with the latest features and security fixes.'
 						) }
 					</p>
 					<ButtonRow>
@@ -100,7 +93,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 						<SiteLink isButton href="/plans/my-plan/:site">
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<Quit>{ translate( 'No, thanks.' ) }</Quit>
 					</ButtonRow>
 				</Fragment>
 			) }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ import { withEnhancers } from 'state/utils';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -139,7 +137,4 @@ const mapDispatch = {
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( MagicLogin ) );
+export default connect( mapState, mapDispatch )( localize( MagicLogin ) );

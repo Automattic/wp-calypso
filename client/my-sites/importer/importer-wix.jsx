@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,19 +10,10 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteImporter from './site-importer';
+import importerConfig from 'lib/importer/importer-config';
 
 class ImporterWix extends React.PureComponent {
 	static displayName = 'ImporterWix';
-
-	importerData = {
-		title: 'Wix',
-		icon: 'wix',
-		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation
-		// that doesn't really apply for this importer - we don't upload anything as such.
-		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
-		engine: 'wix',
-	};
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -39,7 +28,11 @@ class ImporterWix extends React.PureComponent {
 	};
 
 	render() {
-		return <SiteImporter importerData={ this.importerData } { ...this.props } />;
+		const importerData = importerConfig( {
+			siteTitle: this.props.siteTitle,
+		} ).wix;
+
+		return <SiteImporter importerData={ importerData } { ...this.props } />;
 	}
 }
 

@@ -2,7 +2,7 @@ $devdocs-max-width: 720px;
 
 // Sidebar Title
 .devdocs__title {
-	color: var( --sidebar-heading-color );
+	color: var( --color-sidebar-text-alternative );
 	font-weight: 300;
 	font-size: 24px;
 	padding: 24px;
@@ -85,21 +85,21 @@ $devdocs-max-width: 720px;
 
 .design__instance-link {
 	display: inline-block;
-	background: var( --color-white );
+	background: var( --color-surface );
 	text-decoration: underline;
 	border-radius: 3px;
 	padding: 3px 6px;
 	margin: 0 6px 4px 0;
 	font-family: $code;
-	box-shadow: 0 1px 2px rgba( var( --color-neutral-700-rgb ), 0.05 );
+	box-shadow: 0 1px 2px rgba( var( --color-neutral-70-rgb ), 0.05 );
 }
 
 // The wrapper containing the actual examples
 .docs-example__wrapper {
 	box-sizing: border-box;
-	background: var( --color-white );
+	background: var( --color-surface );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
-	border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.65 );
+	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 	margin: 0 auto 24px;
 	position: relative;
 
@@ -108,7 +108,7 @@ $devdocs-max-width: 720px;
 		font-size: 18px;
 		font-weight: 300;
 		letter-spacing: 1px;
-		border-bottom: 1px solid rgba( var( --color-neutral-100-rgb ), 0.65 );
+		border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 
 		a,
 		a:visited {
@@ -123,7 +123,7 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-content {
 		background: var( --color-surface-backdrop );
 		padding: 16px;
-		--docs-example-grid: #{hex-to-rgb( $muriel-gray-700 )};
+		--docs-example-grid: var( --color-neutral-70-rgb );
 		box-shadow: inset 0 2px 1px rgba( var( --docs-example-grid ), 0.075 );
 
 		// Grid background
@@ -278,7 +278,7 @@ $devdocs-max-width: 720px;
 
 		.docs-selectors__result-arguments,
 		.docs-selectors__result-return {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			background: var( --color-neutral-0 );
 			border-radius: 4px;
 			padding: 16px 24px;
@@ -294,7 +294,7 @@ $devdocs-max-width: 720px;
 			display: flex;
 			padding-top: 16px;
 			margin-bottom: 24px;
-			border-top: 1px solid var( --color-neutral-100 );
+			border-top: 1px solid var( --color-neutral-10 );
 
 			.docs-selectors__result-arguments-name {
 				width: 30%;
@@ -307,12 +307,12 @@ $devdocs-max-width: 720px;
 		.docs-selectors__result-arguments-name strong,
 		.docs-selectors__param-type {
 			font-family: $code;
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		.docs-selectors__result-arguments-name strong {
-			color: var( --color-neutral-700 );
-			background: var( --color-white );
+			color: var( --color-neutral-70 );
+			background: var( --color-surface );
 			border-radius: 3px;
 			display: inline-block;
 			padding: 2px 8px;
@@ -342,9 +342,13 @@ $devdocs-max-width: 720px;
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
-	margin: 32px auto;
+	margin: 32px 20px;
 	font-size: 16px;
 	font-family: $serif;
+
+	@include breakpoint( '>660px' ) {
+		margin: 32px auto;
+	}
 
 	a {
 		text-decoration: underline;
@@ -360,11 +364,11 @@ $devdocs-max-width: 720px;
 		line-height: 1.2;
 		margin: 32px 0 16px;
 		font-size: 21px;
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	h1 {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 54px;
 		line-height: 1.4;
 		margin-top: 0;
@@ -372,7 +376,7 @@ $devdocs-max-width: 720px;
 
 	h2 {
 		font-size: 32px;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	h3 {
@@ -395,13 +399,13 @@ $devdocs-max-width: 720px;
 
 	pre {
 		padding: 8px;
-		background: var( --color-white );
-		background-color: var( --color-white );
+		background: var( --color-surface );
+		background-color: var( --color-surface );
 		color: var( --color-primary-dark );
 	}
 
 	code {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		border-radius: 3px;
 		color: var( --color-primary-dark );
 		font-size: 15px;
@@ -410,7 +414,7 @@ $devdocs-max-width: 720px;
 	}
 
 	pre > code {
-		background-color: $transparent;
+		background-color: rgba( var( --color-surface-rgb ), 0 );
 		padding: 2px 0;
 	}
 
@@ -419,7 +423,6 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		$invert: var( --color-white );
 		font-weight: bold;
 		font-size: 15px;
 		padding: 1px 5px 2px;
@@ -439,7 +442,7 @@ $devdocs-max-width: 720px;
 
 		&.status-in-progress {
 			background: #2880e2;
-			color: $invert;
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -474,10 +477,13 @@ $devdocs-max-width: 720px;
 	max-width: 150px;
 }
 
-// At the end of documentation and reademe's
+// At the top of documentation and readme's
 a.devdocs__doc-edit-link {
 	text-align: center;
 	text-decoration: underline;
 	float: right;
-	position: relative;
+
+	@include breakpoint( '<660px' ) {
+		margin-right: 12px;
+	}
 }

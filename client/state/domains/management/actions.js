@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -125,9 +123,10 @@ export function requestWhois( domain ) {
  *
  * @param   {String}   domain		domain to query
  * @param   {Object}   whoisData	whois details object
+ * @param	{Bool}     transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
-export function saveWhois( domain, whoisData ) {
+export function saveWhois( domain, whoisData, transferLock ) {
 	return dispatch => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
@@ -136,12 +135,13 @@ export function saveWhois( domain, whoisData ) {
 
 		return wpcom
 			.undocumented()
-			.updateWhois( domain, whoisData )
-			.then( ( { updated } ) => {
-				dispatch( updateWhois( domain, updated ) );
+			.updateWhois( domain, whoisData, transferLock )
+			.then( data => {
+				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 					domain,
+					data,
 				} );
 			} )
 			.catch( error => {

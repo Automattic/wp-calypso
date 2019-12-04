@@ -1,25 +1,32 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import { MAILCHIMP_SETTINGS_RECEIVE, MAILCHIMP_SETTINGS_UPDATE_SUCCESS } from 'state/action-types';
 
-export const items = createReducer(
-	{},
-	{
-		[ MAILCHIMP_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => ( {
-			...state,
-			[ siteId ]: settings,
-		} ),
-		[ MAILCHIMP_SETTINGS_UPDATE_SUCCESS ]: ( state, { siteId, settings } ) => ( {
-			...state,
-			[ siteId ]: settings,
-		} ),
+export const items = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MAILCHIMP_SETTINGS_RECEIVE: {
+			const { siteId, settings } = action;
+
+			return {
+				...state,
+				[ siteId ]: settings,
+			};
+		}
+		case MAILCHIMP_SETTINGS_UPDATE_SUCCESS: {
+			const { siteId, settings } = action;
+
+			return {
+				...state,
+				[ siteId ]: settings,
+			};
+		}
 	}
-);
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

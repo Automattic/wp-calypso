@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Guided Tours Rendering Codemod
  * Transform directly inlined JSX markup into render props. That makes initial load

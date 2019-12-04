@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,8 @@ import { By, until } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
+
+const searchInputSelector = By.className( 'search__input' );
 
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -43,8 +43,11 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getSearchInputValue() {
+		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
+	}
+
 	async searchForBlogNameAndWaitForResults( blogName ) {
-		const searchInputSelector = By.className( 'search__input' );
 		await driverHelper.setWhenSettable( this.driver, searchInputSelector, blogName );
 		return await this.waitForResults();
 	}

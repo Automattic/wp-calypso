@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 
@@ -338,7 +337,4 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentActions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );

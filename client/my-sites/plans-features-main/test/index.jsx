@@ -1,5 +1,3 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -19,8 +17,6 @@ jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnecti
 jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
 jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'components/segmented-control', () => 'SegmentedControl' );
-jest.mock( 'components/segmented-control/item', () => 'SegmentedControlItem' );
 jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
 jest.mock( 'components/main', () => 'MainComponent' );
 jest.mock( 'components/popover', () => 'Popover' );
@@ -56,8 +52,6 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -178,7 +172,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
 			PLAN_FREE,
-			PLAN_BLOGGER,
 			PLAN_PERSONAL,
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
@@ -195,13 +188,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with WP.com plans without free one when requested', () => {
 		const instance = new PlansFeaturesMain( { ...props, hideFreePlan: true } );
 		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_BLOGGER,
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
-			PLAN_BUSINESS,
-			PLAN_ECOMMERCE,
-		] );
+		expect( plans ).toEqual( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] );
 	} );
 
 	test( 'Should render <PlanFeatures /> with monthly WP.com plans when requested', () => {
@@ -212,7 +199,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
-			PLAN_BLOGGER,
 			PLAN_PERSONAL,
 			PLAN_PREMIUM,
 			PLAN_BUSINESS_MONTHLY,
@@ -225,7 +211,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
 			PLAN_FREE,
-			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
@@ -238,7 +223,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
 			PLAN_FREE,
-			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
@@ -278,7 +262,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'personal' } );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().visiblePlans ).toEqual( [
-			PLAN_BLOGGER,
 			PLAN_PERSONAL,
 			PLAN_PREMIUM,
 		] );
@@ -292,7 +275,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().visiblePlans ).toEqual( [
-			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 		] );

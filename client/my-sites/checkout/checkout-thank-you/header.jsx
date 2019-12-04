@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,7 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -92,24 +91,28 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { productName: primaryPurchase.productName },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { productName: primaryPurchase.productName },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
 		if ( isDomainRegistration( primaryPurchase ) ) {
-			return translate(
-				'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
-					'being set up. Your site is doing somersaults in excitement!',
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
+						'being set up. Your site is doing somersaults in excitement!',
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -139,13 +142,15 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isGoogleApps( primaryPurchase ) ) {
-			return translate(
-				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -171,13 +176,15 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isSiteRedirect( primaryPurchase ) ) {
-			return translate(
-				'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -208,8 +215,8 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isChargeback( primaryPurchase ) ) {
-			return translate(
-				'Your chargeback fee is paid. Your site is doing somersaults in excitement!'
+			return preventWidows(
+				translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' )
 			);
 		}
 
@@ -262,19 +269,32 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButtonText = () => {
-		const { translate, hasFailedPurchases, primaryPurchase, displayMode } = this.props;
-		const site = this.props.selectedSite.slug;
+		const {
+			displayMode,
+			hasFailedPurchases,
+			primaryPurchase,
+			selectedSite,
+			translate,
+			upgradeIntent,
+		} = this.props;
+
+		switch ( upgradeIntent ) {
+			case 'plugins':
+				return translate( 'Continue Installing Plugin' );
+			case 'themes':
+				return translate( 'Continue Installing Theme' );
+		}
 
 		if ( 'concierge' === displayMode ) {
 			return translate( 'Schedule my session' );
 		}
 
-		if ( ! site && hasFailedPurchases ) {
+		if ( ! selectedSite?.slug && hasFailedPurchases ) {
 			return translate( 'Register domain' );
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my plan' );
+			return translate( 'View my new features' );
 		}
 
 		if (
@@ -368,7 +388,9 @@ class CheckoutThankYouHeader extends PureComponent {
 }
 
 export default connect(
-	null,
+	state => ( {
+		upgradeIntent: getCheckoutUpgradeIntent( state ),
+	} ),
 	{
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,

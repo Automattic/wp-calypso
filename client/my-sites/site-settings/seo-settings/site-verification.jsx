@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -50,7 +48,7 @@ class SiteVerification extends Component {
 		invalidatedSiteObject: this.props.site,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
 		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
 		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
@@ -61,7 +59,7 @@ class SiteVerification extends Component {
 		this.refreshSite();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId: prevSiteId, translate } = this.props;
 		const { site: nextSite, siteId: nextSiteId } = nextProps;
 		const { dirtyFields } = this.state;
@@ -306,7 +304,7 @@ class SiteVerification extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"
-								label={ translate( 'Enable Site Verification Services.' ) }
+								label={ translate( 'Verify site ownership with third-party services' ) }
 								disabled={ isDisabled }
 							/>
 						</FormFieldset>

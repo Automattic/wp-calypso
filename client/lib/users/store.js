@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { endsWith, find, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:users:store' );
@@ -15,13 +12,13 @@ const debug = debugFactory( 'calypso:users:store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-let _fetchingUsersByNamespace = {}, // store fetching state (boolean)
-	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
-	_usersBySite = {}, // store user objects
-	_totalUsersByNamespace = {}, // store total found for params
-	_usersFetchedByNamespace = {}, // store fetch progress
-	_offsetByNamespace = {}, // store fetch progress
-	_userIDsByNamespace = {}; // store user order
+const _fetchingUsersByNamespace = {}; // store fetching state (boolean)
+const _fetchingUpdatedUsersByNamespace = {}; // store fetching state (boolean)
+const _usersBySite = {}; // store user objects
+const _totalUsersByNamespace = {}; // store total found for params
+const _usersFetchedByNamespace = {}; // store fetch progress
+const _offsetByNamespace = {}; // store fetch progress
+const _userIDsByNamespace = {}; // store user order
 
 const UsersStore = {
 	// This data can help manage infinite scroll
@@ -39,9 +36,9 @@ const UsersStore = {
 	},
 	// Get Users for a set of fetchOptions
 	getUsers: function( fetchOptions ) {
-		let namespace = getNamespace( fetchOptions ),
-			siteId = fetchOptions.siteId,
-			users = [];
+		const namespace = getNamespace( fetchOptions );
+		const siteId = fetchOptions.siteId;
+		const users = [];
 
 		debug( 'getUsers:', namespace );
 
@@ -151,8 +148,8 @@ function addSingleUser( fetchOptions, user, namespace ) {
 }
 
 function updateUsers( fetchOptions, users, total ) {
-	let namespace = getNamespace( fetchOptions ),
-		offset = fetchOptions.offset;
+	const namespace = getNamespace( fetchOptions );
+	const offset = fetchOptions.offset;
 
 	debug( 'updateUsers:', namespace );
 
@@ -176,8 +173,8 @@ function getNamespace( fetchOptions ) {
 }
 
 UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		namespace;
+	const action = payload.action;
+	let namespace;
 
 	switch ( action.type ) {
 		case 'RECEIVE_USERS':

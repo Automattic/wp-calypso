@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,6 @@ class InviteAcceptLoggedOut extends React.Component {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
-
 		const createAccountCallback = ( error, bearerToken ) => {
 			debug( 'Create account error: ' + JSON.stringify( error ) );
 			debug( 'Create account bearerToken: ' + bearerToken );
@@ -159,6 +156,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
+					suggestedUsername=""
 					disableEmailInput={ this.props.forceMatchingEmail }
 					disableEmailExplanation={ this.props.translate(
 						'This invite is only valid for %(email)s.',
@@ -173,7 +171,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( localize( InviteAcceptLoggedOut ) );

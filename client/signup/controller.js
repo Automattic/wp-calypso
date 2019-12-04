@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,12 +22,15 @@ import {
 	getStepSectionName,
 	getValidPath,
 	getFlowPageTitle,
+	shouldForceLogin,
 } from './utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'state/signup/flow/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { login } from 'lib/paths';
 
 /**
  * Constants
@@ -80,10 +82,37 @@ export default {
 		const flowName = getFlowName( context.params );
 		const localeFromParams = getLocale( context.params );
 		const localeFromStore = store.get( 'signup-locale' );
-		context.store.dispatch( setCurrentFlowName( flowName ) );
-
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const signupProgress = getSignupProgress( context.store.getState() );
+
+		// Special case for the user step which may use oauth2 redirect flow
+		// Check if there is a valid flow in progress to resume
+		// We're limited in the number of redirect uris we can provide so we only have a single one at /start/user
+		if ( context.params.flowName === 'user' ) {
+			const alternativeFlowName = getCurrentFlowName( context.store.getState() );
+			if (
+				alternativeFlowName &&
+				alternativeFlowName !== flowName &&
+				canResumeFlow( alternativeFlowName, signupProgress )
+			) {
+				window.location =
+					getStepUrl(
+						alternativeFlowName,
+						getStepName( context.params ),
+						getStepSectionName( context.params ),
+						localeFromStore
+					) +
+					( context.querystring ? '?' + context.querystring : '' ) +
+					( context.hashstring ? '#' + context.hashstring : '' );
+				return;
+			}
+		}
+
+		context.store.dispatch( setCurrentFlowName( flowName ) );
+
+		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
+			return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+		}
 
 		// if flow can be resumed, use saved locale
 		if (
@@ -128,13 +157,15 @@ export default {
 
 		analytics.pageView.record(
 			basePath,
-			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName
+			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName,
+			{ flow: flowName }
 		);
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		context.primary = React.createElement( SignupComponent, {
+			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: getLocale( context.params ),

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { get, includes } from 'lodash';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
 import ImporterLogo from 'my-sites/importer/importer-logo';
-import StartButton from 'my-sites/importer/importer-header/start-button';
 
 /**
  * Style dependencies
@@ -34,23 +32,25 @@ class ImporterHeader extends React.PureComponent {
 			importerState: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired,
 		} ),
-		description: PropTypes.string.isRequired,
+		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
 		icon: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { importerStatus, icon, title, description, site } = this.props;
+		const { importerStatus, icon, title, description } = this.props;
 		const { importerState } = importerStatus;
-		const showStartButton = includes( startStates, importerState );
+		const showStart = includes( startStates, importerState );
+		const headerClasses = classnames( 'importer-header', {
+			'importer-header__is-start': showStart,
+		} );
 
 		return (
-			<header className="importer-header">
+			<header className={ headerClasses }>
 				<ImporterLogo icon={ icon } />
-				{ showStartButton && <StartButton importerStatus={ importerStatus } site={ site } /> }
 				<div className="importer-header__service-info">
 					<h1 className="importer-header__service-title">{ title }</h1>
-					<p>{ description }</p>
+					{ ! showStart && <p>{ description }</p> }
 				</div>
 			</header>
 		);

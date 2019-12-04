@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Disallow collapsible whitespace in translatable strings
  * @author Automattic

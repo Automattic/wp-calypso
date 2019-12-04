@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -44,12 +43,7 @@ export class ChecklistPrompt extends Component {
 				{ isFinished ? (
 					<ChecklistPromptTask
 						description={ translate(
-							'We did it! You have completed {{a}}all the tasks{{/a}} on your checklist.',
-							{
-								components: {
-									a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
-								},
-							}
+							'You did it! You have completed all the tasks on your checklist.'
 						) }
 						title={ translate( 'Your site is ready to share' ) }
 					/>

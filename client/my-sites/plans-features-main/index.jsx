@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +14,7 @@ import { connect } from 'react-redux';
 import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
+	JETPACK_PLANS,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -27,11 +27,17 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_PRODUCTS,
+} from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
+import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
@@ -46,13 +52,22 @@ import {
 } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
+import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
+import ProductSelector from 'blocks/product-selector';
+import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSiteOption, getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import {
+	getSiteOption,
+	getSitePlan,
+	getSiteSlug,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
 import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
@@ -72,13 +87,39 @@ export class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
+		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
 		const { siteId: prevSiteId } = prevProps;
 		if ( siteId && siteId !== prevSiteId ) {
 			this.props.selectHappychatSiteId( siteId );
 		}
+	}
+
+	isJetpackBackupAvailable() {
+		const { displayJetpackPlans, isMultisite, jetpackSupportsBackupProducts, siteId } = this.props;
+
+		// Jetpack Backup products are currently under a feature flag
+		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+			return false;
+		}
+
+		// Jetpack Backup does not support Multisite yet.
+		if ( isMultisite ) {
+			return false;
+		}
+
+		// Only for Jetpack, non-atomic sites
+		if ( ! displayJetpackPlans ) {
+			return false;
+		}
+
+		// Only for sites with Jetpack >= 7.9alpha
+		if ( siteId && ! jetpackSupportsBackupProducts ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	getPlanFeatures() {
@@ -100,6 +141,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			siteType,
 			plansWithScroll,
+			translate,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -117,6 +159,16 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
+				{ this.isJetpackBackupAvailable() && (
+					<FormattedHeader
+						headerText={ translate( 'Plans' ) }
+						subHeaderText={ translate(
+							'Get everything your site needs, in one package — so you can focus on your business.'
+						) }
+						compactOnMobile
+						isSecondary
+					/>
+				) }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -157,10 +209,7 @@ export class PlansFeaturesMain extends Component {
 
 		const currentPlan = getPlan( selectedPlan );
 
-		const hideBloggerPlan =
-			! isBloggerPlan( selectedPlan ) &&
-			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlan2' ) === 'hide';
+		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -274,12 +323,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	constructPath( plansUrl, intervalType, customerType = '' ) {
-		const { selectedFeature, selectedPlan, siteSlug } = this.props;
+		const { selectedFeature, selectedPlan, siteSlug, withDiscount } = this.props;
+
 		return addQueryArgs(
 			{
 				customerType,
 				feature: selectedFeature,
 				plan: selectedPlan,
+				discount: withDiscount,
 			},
 			plansLink( plansUrl, siteSlug, intervalType, true )
 		);
@@ -297,42 +348,45 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
 					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
 					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
 
 	getCustomerTypeToggle() {
-		const { customerType, translate } = this.props;
+		const { customerType, translate, withDiscount } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
+		const queryArgs = {
+			discount: withDiscount,
+		};
 
 		return (
 			<SegmentedControl className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'personal' }
-					path={ '?customerType=personal' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'business' }
-					path={ '?customerType=business' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -343,8 +397,13 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup } = this.props;
 		const className = 'is-free-plan';
+		const callToAction =
+			isInSignup && flowName === 'launch-site'
+				? translate( 'Continue with your free site' )
+				: translate( 'Start with a free site' );
+
 		if ( hideFreePlan ) {
 			return null;
 		}
@@ -354,7 +413,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Not sure yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start with a free site' ) }
+						{ callToAction }
 					</Button>
 				</div>
 			</div>
@@ -372,6 +431,32 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
+	renderProductsSelector() {
+		if ( ! this.isJetpackBackupAvailable() ) {
+			return null;
+		}
+
+		const { basePlansPath, intervalType, translate } = this.props;
+
+		return (
+			<div className="plans-features-main__group is-narrow">
+				<FormattedHeader
+					headerText={ translate( 'Solutions' ) }
+					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
+					compactOnMobile
+					isSecondary
+				/>
+				<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_BACKUP_PRODUCTS } />
+				<ProductSelector
+					products={ JETPACK_PRODUCTS }
+					intervalType={ intervalType }
+					basePlansPath={ basePlansPath }
+					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
+				/>
+			</div>
+		);
+	}
+
 	render() {
 		const { displayJetpackPlans, isInSignup, siteId, plansWithScroll } = this.props;
 		let faqs = null;
@@ -387,7 +472,9 @@ export class PlansFeaturesMain extends Component {
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
 				<QueryPlans />
+				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
+				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
 				<CartData>
 					<PaymentMethods />
@@ -415,6 +502,7 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	customerType: PropTypes.string,
+	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
@@ -467,9 +555,11 @@ export default connect(
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
 			customerType,
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,

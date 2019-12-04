@@ -1,21 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
-import clickOutside from 'click-outside';
-import { uniqueId } from 'lodash';
+import { defer, noop } from 'lodash';
+import { useRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -23,23 +20,33 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
-import isRtlSelector from 'state/selectors/is-rtl';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
  */
-const noop = () => {};
 const debug = debugFactory( 'calypso:popover' );
-const __popovers = new Set();
 
-class Popover extends Component {
+// We accept DOM elements and React component instances as the `context` prop.
+// In case of a React component instance, we'll find the DOM element with `findDOMNode`.
+const PropTypeElement = PropTypes.oneOfType( [
+	PropTypes.instanceOf( Component ),
+	PropTypes.instanceOf( window.Element ),
+] );
+
+class PopoverInner extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
+		context: PropTypeElement,
+		ignoreContext: PropTypeElement,
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
@@ -52,7 +59,6 @@ class Popover extends Component {
 			'left',
 			'top left',
 		] ),
-		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -80,217 +86,167 @@ class Popover extends Component {
 
 	/**
 	 * Flag to determine if we're currently repositioning the Popover
+	 *
 	 * @type {boolean} True if the Popover is being repositioned.
 	 */
 	isUpdatingPosition = false;
 
-	constructor( props ) {
-		super( props );
+	popoverNodeRef = React.createRef();
+	popoverInnerNodeRef = React.createRef();
 
-		this.setPopoverId( props.id );
-
-		// bound methods
-		this.setDOMBehavior = this.setDOMBehavior.bind( this );
-		this.setPosition = this.setPosition.bind( this );
-		this.onClickout = this.onClickout.bind( this );
-		this.onKeydown = this.onKeydown.bind( this );
-		this.onWindowChange = this.onWindowChange.bind( this );
-
-		this.state = {
-			show: props.isVisible,
-			left: -99999,
-			top: -99999,
-			positionClass: this.getPositionClass( props.position ),
-		};
-	}
+	state = {
+		show: this.props.isVisible,
+		left: -99999,
+		top: -99999,
+		positionClass: this.getPositionClass( this.props.position ),
+	};
 
 	componentDidMount() {
 		if ( this.state.show ) {
-			this.bindEscKeyListener();
-			this.bindDebouncedReposition();
-			bindWindowListeners();
+			this.bindListeners();
+			this.setPositionAndFocus();
 		}
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		// update context (target) reference into a property
-		this.domContext = ReactDom.findDOMNode( nextProps.context );
-
-		if ( ! nextProps.isVisible ) {
-			return null;
-		}
-
-		this.setPosition();
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		const { isVisible } = this.props;
-
-		if ( ! prevState.show && this.state.show ) {
-			this.bindEscKeyListener();
-			this.bindDebouncedReposition();
-			bindWindowListeners();
-		}
-
-		if ( isVisible !== prevProps.isVisible ) {
-			if ( isVisible ) {
+		// Show can be delayed with `showDelay`, so `state.show` lags behind `props.isVisible`
+		if ( this.props.isVisible !== prevProps.isVisible ) {
+			if ( this.props.isVisible ) {
 				this.show();
 			} else {
 				this.hide();
 			}
 		}
 
-		if ( ! this.domContainer || ! this.domContext ) {
-			return null;
+		// When showing, bind window listeners, set position and focus.
+		// Corresponds exactly to `componentDidMount`.
+		if ( ! prevState.show && this.state.show ) {
+			this.bindListeners();
+			this.setPositionAndFocus();
 		}
 
-		if ( ! isVisible ) {
-			return null;
+		// When hiding, unbind window listeners. Corresponds exactly to `componentWillUnmount`.
+		if ( prevState.show && ! this.state.show ) {
+			this.unbindListeners();
 		}
 
-		if ( ! this.isUpdatingPosition ) {
-			// update our position even when only our children change, use `isUpdatingPosition` to guard against a loop
-			// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
-			this.debug( 'requesting to update position after render completes' );
-			requestAnimationFrame( () => {
-				// Prevent updating Popover position if it's already unmounted.
-				if (
-					! __popovers.has( this.id ) ||
-					! this.domContainer ||
-					! this.domContext ||
-					! isVisible
-				) {
-					this.isUpdatingPosition = false;
-					return;
-				}
-
+		// update our position even when only our children change, use `isUpdatingPosition` to guard against a loop
+		// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
+		if ( prevState.show && this.state.show && ! this.isUpdatingPosition ) {
+			this.isUpdatingPosition = true;
+			defer( () => {
 				this.setPosition();
 				this.isUpdatingPosition = false;
 			} );
-			this.isUpdatingPosition = true;
 		}
 	}
 
 	componentWillUnmount() {
-		this.debug( 'unmounting .... ' );
+		this.unbindListeners();
+	}
 
+	bindListeners() {
+		this.bindClickoutHandler();
+		this.bindEscKeyListener();
+		this.bindReposition();
+		bindWindowListeners();
+	}
+
+	unbindListeners() {
 		this.unbindClickoutHandler();
-		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();
+		this.unbindReposition();
 		unbindWindowListeners();
-
-		__popovers.delete( this.id );
-		debug( 'current popover instances: ', __popovers.size );
 	}
 
 	// --- ESC key ---
 	bindEscKeyListener() {
-		if ( ! this.props.closeOnEsc ) {
-			return null;
+		if ( this.props.closeOnEsc ) {
+			document.addEventListener( 'keydown', this.onKeydown, true );
 		}
-
-		this.debug( 'adding escKey listener ...' );
-		document.addEventListener( 'keydown', this.onKeydown, true );
 	}
 
 	unbindEscKeyListener() {
-		if ( ! this.props.closeOnEsc ) {
-			return null;
+		if ( this.props.closeOnEsc ) {
+			document.removeEventListener( 'keydown', this.onKeydown, true );
 		}
-
-		this.debug( 'unbinding `escKey` listener ...' );
-		document.removeEventListener( 'keydown', this.onKeydown, true );
 	}
 
-	onKeydown( event ) {
-		if ( event.keyCode !== 27 ) {
-			return null;
-		}
+	onKeydown = event => {
+		if ( event.keyCode === 27 ) {
+			const domContext = ReactDom.findDOMNode( this.props.context );
+			if ( domContext ) {
+				debug( 'Refocusing the previous active DOM node' );
+				domContext.focus();
+			}
 
-		this.close( true );
-	}
+			this.close( true );
+		}
+	};
 
 	// --- click outside ---
-	bindClickoutHandler( el = this.domContainer ) {
-		if ( ! el ) {
-			this.debug( 'no element to bind clickout ' );
-			return null;
-		}
-
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'clickout event already bound' );
-			return null;
-		}
-
-		this.debug( 'binding `clickout` event' );
-		this._clickoutHandlerReference = clickOutside( el, this.onClickout );
+	bindClickoutHandler() {
+		document.addEventListener( 'click', this.onClickout );
 	}
 
 	unbindClickoutHandler() {
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'unbinding `clickout` listener ...' );
-			this._clickoutHandlerReference();
-			this._clickoutHandlerReference = null;
-		}
+		document.removeEventListener( 'click', this.onClickout );
 	}
 
-	onClickout( event ) {
-		let shouldClose =
-			this.domContext && this.domContext.contains && ! this.domContext.contains( event.target );
+	onClickout = event => {
+		const popoverContext = this.popoverInnerNodeRef.current;
+		let shouldClose = popoverContext && ! popoverContext.contains( event.target );
 
-		if ( this.props.ignoreContext && shouldClose ) {
+		if ( shouldClose && this.props.context ) {
+			const domContext = ReactDom.findDOMNode( this.props.context );
+			shouldClose = domContext && ! domContext.contains( event.target );
+		}
+
+		if ( shouldClose && this.props.ignoreContext ) {
 			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
-			shouldClose =
-				shouldClose &&
-				( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
+			shouldClose = ignoreContext && ! ignoreContext.contains( event.target );
 		}
 
 		if ( shouldClose ) {
 			this.close();
 		}
-	}
+	};
 
 	// --- window `scroll` and `resize` ---
-	bindDebouncedReposition() {
+	bindReposition() {
 		window.addEventListener( 'scroll', this.onWindowChange, true );
 		window.addEventListener( 'resize', this.onWindowChange, true );
 	}
 
-	unbindDebouncedReposition() {
-		if ( this.willReposition ) {
-			window.cancelAnimationFrame( this.willReposition );
-			this.willReposition = null;
-		}
-
+	unbindReposition() {
 		window.removeEventListener( 'scroll', this.onWindowChange, true );
 		window.removeEventListener( 'resize', this.onWindowChange, true );
-		this.debug( 'unbinding `debounce reposition` ...' );
 	}
 
-	onWindowChange() {
-		this.willReposition = window.requestAnimationFrame( this.setPosition );
-	}
-
-	setDOMBehavior( domContainer ) {
-		if ( ! domContainer ) {
-			this.unbindClickoutHandler();
-			return null;
-		}
-
-		this.debug( 'setting DOM behavior' );
-
-		this.bindClickoutHandler( domContainer );
-
-		// store DOM element referencies
-		this.domContainer = domContainer;
-
-		// store context (target) reference into a property
-		this.domContext = ReactDom.findDOMNode( this.props.context );
-
+	onWindowChange = () => {
 		this.setPosition();
+	};
+
+	setPositionAndFocus() {
+		this.setPosition();
+		this.focusPopover();
 	}
 
-	getPositionClass( position = this.props.position ) {
+	focusPopover() {
+		// Defer the focus a bit to make sure that the popover already has the final position.
+		// Initially, after first render, the popover is positioned outside the screen, at
+		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
+		// and used to calculate the final position.
+		// Focusing the element while it's off the screen would cause unwanted scrolling.
+		defer( () => {
+			if ( this.popoverNodeRef.current ) {
+				debug( 'focusing the popover' );
+				this.popoverNodeRef.current.focus();
+			}
+		} );
+	}
+
+	getPositionClass( position ) {
 		return `is-${ position.replace( /\s+/g, '-' ) }`;
 	}
 
@@ -298,8 +254,8 @@ class Popover extends Component {
 	 * Adjusts position swapping left and right values
 	 * when right-to-left directionality is found.
 	 *
-	 * @param  {String} position Original position
-	 * @return {String}          Adjusted position
+	 * @param {string} position Original position
+	 * @returns {string} Adjusted position
 	 */
 	adjustRtlPosition( position ) {
 		if ( this.props.isRtl ) {
@@ -334,32 +290,29 @@ class Popover extends Component {
 	 * Computes the position of the Popover in function
 	 * of its main container and the target.
 	 *
-	 * @return {Object} reposition parameters
+	 * @returns {object} reposition parameters
 	 */
 	computePosition() {
-		if ( ! this.props.isVisible ) {
-			return null;
-		}
-
-		const { domContainer, domContext } = this;
 		const { position, relativePosition } = this.props;
+		const domContainer = this.popoverInnerNodeRef.current;
+		const domContext = ReactDom.findDOMNode( this.props.context );
 
-		if ( ! domContainer || ! domContext ) {
-			this.debug( '[WARN] no DOM elements to work' );
+		if ( ! domContext ) {
+			debug( '[WARN] no DOM elements to work' );
 			return null;
 		}
 
 		let suggestedPosition = position;
-		this.debug( 'position: %o', suggestedPosition );
+		debug( 'position: %o', suggestedPosition );
 
 		if ( this.props.autoRtl ) {
 			suggestedPosition = this.adjustRtlPosition( suggestedPosition );
-			this.debug( 'RTL adjusted position: %o', suggestedPosition );
+			debug( 'RTL adjusted position: %o', suggestedPosition );
 		}
 
 		if ( this.props.autoPosition ) {
 			suggestedPosition = suggestPosition( suggestedPosition, domContainer, domContext );
-			this.debug( 'suggested position: %o', suggestedPosition );
+			debug( 'suggested position: %o', suggestedPosition );
 		}
 
 		const reposition = Object.assign(
@@ -371,25 +324,13 @@ class Popover extends Component {
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
 
-		this.debug( 'updating reposition: ', reposition );
+		debug( 'updating reposition: ', reposition );
 
 		return reposition;
 	}
 
-	debug( string, ...args ) {
-		debug( `[%s] ${ string }`, this.id, ...args );
-	}
-
-	setPopoverId( id ) {
-		this.id = id || `pop__${ uniqueId() }`;
-		__popovers.add( this.id );
-
-		this.debug( 'creating ...' );
-		debug( 'current popover instances: ', __popovers.size );
-	}
-
-	setPosition() {
-		this.debug( 'updating position' );
+	setPosition = () => {
+		debug( 'updating position' );
 
 		let position;
 
@@ -406,13 +347,10 @@ class Popover extends Component {
 			position = this.computePosition();
 		}
 
-		if ( ! position ) {
-			return null;
+		if ( position ) {
+			this.setState( position );
 		}
-
-		this.willReposition = null;
-		this.setState( position );
-	}
+	};
 
 	getStylePosition() {
 		const { left, top } = this.state;
@@ -422,10 +360,10 @@ class Popover extends Component {
 	show() {
 		if ( ! this.props.showDelay ) {
 			this.setState( { show: true } );
-			return null;
+			return;
 		}
 
-		this.debug( 'showing in %o', `${ this.props.showDelay }ms` );
+		debug( 'showing in %o', `${ this.props.showDelay }ms` );
 		this.clearShowTimer();
 
 		this._openDelayTimer = setTimeout( () => {
@@ -434,28 +372,20 @@ class Popover extends Component {
 	}
 
 	hide() {
-		// unbind click outside event every time the component is hidden.
-		this.unbindClickoutHandler();
-		this.unbindDebouncedReposition();
-		this.unbindEscKeyListener();
-		unbindWindowListeners();
-
 		this.setState( { show: false } );
 		this.clearShowTimer();
 	}
 
 	clearShowTimer() {
-		if ( ! this._openDelayTimer ) {
-			return null;
+		if ( this._openDelayTimer ) {
+			clearTimeout( this._openDelayTimer );
+			this._openDelayTimer = null;
 		}
-
-		clearTimeout( this._openDelayTimer );
-		this._openDelayTimer = null;
 	}
 
 	close( wasCanceled = false ) {
 		if ( ! this.props.isVisible ) {
-			this.debug( 'popover should be already closed' );
+			debug( 'popover should be already closed' );
 			return null;
 		}
 
@@ -464,33 +394,45 @@ class Popover extends Component {
 
 	render() {
 		if ( ! this.state.show ) {
-			this.debug( 'is hidden. return no render' );
+			debug( 'is hidden. return no render' );
 			return null;
 		}
 
 		if ( ! this.props.context ) {
-			this.debug( 'No `context` to tie. return no render' );
+			debug( 'No `context` to tie. return no render' );
 			return null;
 		}
 
 		const classes = classNames( 'popover', this.props.className, this.state.positionClass );
 
-		this.debug( 'rendering ...' );
-
 		return (
-			<RootChild className={ this.props.rootClassName }>
-				<div style={ this.getStylePosition() } className={ classes }>
-					<div className="popover__arrow" />
-
-					<div ref={ this.setDOMBehavior } className="popover__inner">
-						{ this.props.children }
-					</div>
+			<div
+				ref={ this.popoverNodeRef }
+				aria-label={ this.props[ 'aria-label' ] }
+				id={ this.props.id }
+				role="tooltip"
+				tabIndex="-1"
+				style={ this.getStylePosition() }
+				className={ classes }
+			>
+				<div className="popover__arrow" />
+				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
+					{ this.props.children }
 				</div>
-			</RootChild>
+			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( Popover );
+export default function Popover( props ) {
+	const isRtl = useRtl();
+	// wrapping children inside `<RootChild>` changes the timing of lifecycles and setting refs,
+	// because the children are rendered inside `RootChild`'s `componentDidMount`, later than
+	// usual. That's why we need this wrapper that removes `RootChild` from the inner component
+	// and simplifies its complicated lifecycle logic.
+	return (
+		<RootChild>
+			<PopoverInner { ...props } isRtl={ isRtl } />
+		</RootChild>
+	);
+}

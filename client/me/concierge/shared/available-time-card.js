@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * CalendarCard represents a day of schedulable concierge chats. Each card is expandable to
  * allow the user to select a specific time on the day. If the day has no availability, it will
@@ -10,7 +8,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';

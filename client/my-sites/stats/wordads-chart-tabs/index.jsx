@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -196,7 +194,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	localize,
-	connectComponent
-)( WordAdsChartTabs );
+export default flowRight( localize, connectComponent )( WordAdsChartTabs );

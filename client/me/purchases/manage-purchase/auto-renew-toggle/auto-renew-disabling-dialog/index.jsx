@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,13 +10,23 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
+import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
+import { getSite } from 'state/sites/selectors';
 import './style.scss';
+
+const DIALOG = {
+	GENERAL: 'general',
+	ATOMIC: 'atomic',
+	SURVEY: 'survey',
+};
 
 class AutoRenewDisablingDialog extends Component {
 	static propTypes = {
+		isVisible: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		planName: PropTypes.string.isRequired,
 		siteDomain: PropTypes.string.isRequired,
@@ -25,7 +34,8 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	state = {
-		showAtomicFollowUpDialog: false,
+		dialogType: DIALOG.GENERAL,
+		surveyHasShown: false,
 	};
 
 	getVariation() {
@@ -107,19 +117,33 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	onClickAtomicFollowUpConfirm = () => {
-		this.props.onConfirm() || this.props.onClose();
+		this.props.onConfirm();
+		this.setState( {
+			dialogType: DIALOG.SURVEY,
+		} );
+	};
+
+	closeAndCleanup = () => {
+		this.props.onClose();
+
+		// It is intentional that we don't reset `surveyHasShown` flag here.
+		// That state is for preventing the survey from showing excessively.
+		// The current behavior is that it won't show up until this component has been unmounted and then remounted.
+		this.setState( {
+			dialogType: DIALOG.GENERAL,
+		} );
 	};
 
 	renderAtomicFollowUpDialog = () => {
-		const { siteDomain, onClose, translate } = this.props;
+		const { siteDomain, isVisible, translate } = this.props;
 
 		const exportPath = '//' + siteDomain + '/wp-admin/export.php';
 
 		return (
 			<Dialog
-				isVisible={ true }
+				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog atomic-follow-up"
-				onClose={ onClose }
+				onClose={ this.closeAndCleanup }
 			>
 				<p>
 					{ translate(
@@ -130,7 +154,7 @@ class AutoRenewDisablingDialog extends Component {
 				<ul>
 					<li>
 						<Button href={ exportPath } primary>
-							{ translate( 'Download a backup' ) }
+							{ translate( 'Download a current backup' ) }
 						</Button>
 					</li>
 					<li>
@@ -148,43 +172,69 @@ class AutoRenewDisablingDialog extends Component {
 	onClickGeneralConfirm = () => {
 		if ( 'atomic' === this.getVariation() ) {
 			this.setState( {
-				showAtomicFollowUpDialog: true,
+				dialogType: DIALOG.ATOMIC,
 			} );
 			return;
 		}
 
-		this.props.onConfirm() || this.props.onClose();
+		this.props.onConfirm();
+
+		if ( this.state.surveyHasShown ) {
+			return this.closeAndCleanup();
+		}
+
+		this.setState( {
+			dialogType: DIALOG.SURVEY,
+			surveyHasShown: true,
+		} );
 	};
 
 	renderGeneralDialog = () => {
-		const { onClose, translate } = this.props;
+		const { isVisible, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
 		return (
 			<Dialog
-				isVisible={ true }
+				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog"
-				onClose={ onClose }
+				onClose={ this.closeAndCleanup }
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.onClickGeneralConfirm }>
+				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
+				<Button onClick={ this.onClickGeneralConfirm } primary>
 					{ translate( 'Confirm cancellation' ) }
-				</Button>
-				<Button onClick={ onClose } primary>
-					{ translate( "I'll keep it" ) }
 				</Button>
 			</Dialog>
 		);
 	};
 
+	renderSurvey = () => {
+		const { purchase, isVisible, selectedSite } = this.props;
+
+		return (
+			<CancelAutoRenewalForm
+				purchase={ purchase }
+				selectedSite={ selectedSite }
+				isVisible={ isVisible }
+				onClose={ this.closeAndCleanup }
+			/>
+		);
+	};
+
 	render() {
-		return this.state.showAtomicFollowUpDialog
-			? this.renderAtomicFollowUpDialog()
-			: this.renderGeneralDialog();
+		switch ( this.state.dialogType ) {
+			case DIALOG.GENERAL:
+				return this.renderGeneralDialog();
+			case DIALOG.ATOMIC:
+				return this.renderAtomicFollowUpDialog();
+			case DIALOG.SURVEY:
+				return this.renderSurvey();
+		}
 	}
 }
 
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-} ) )( localize( AutoRenewDisablingDialog ) );
+	selectedSite: getSite( state, purchase.siteId ),
+} ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

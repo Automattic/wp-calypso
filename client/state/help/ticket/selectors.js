@@ -1,4 +1,3 @@
-/** @format */
 export const isTicketSupportEligible = state => {
 	return state.help.ticket.isUserEligible;
 };

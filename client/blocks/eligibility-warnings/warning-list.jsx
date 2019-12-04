@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -37,11 +34,13 @@ export const WarningList = ( { translate, warnings } ) => (
 						:&nbsp;
 						<span className="eligibility-warnings__message-description">{ description }</span>
 					</div>
-					<div className="eligibility-warnings__action">
-						<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
-							<Gridicon icon="help-outline" size={ 24 } />
-						</ExternalLink>
-					</div>
+					{ supportUrl && (
+						<div className="eligibility-warnings__action">
+							<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
+								<Gridicon icon="help-outline" size={ 24 } />
+							</ExternalLink>
+						</div>
+					) }
 				</div>
 			) ) }
 		</Card>

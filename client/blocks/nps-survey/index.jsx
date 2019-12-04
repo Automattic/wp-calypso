@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -59,8 +57,14 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	componentDidUpdate( _, prevState ) {
+		const { hasAvailableConciergeSession, onChangeForm } = this.props;
+
 		if ( prevState.currentForm !== this.state.currentForm ) {
-			this.props.onChangeForm && this.props.onChangeForm( this.state.currentForm );
+			onChangeForm && onChangeForm( this.state.currentForm );
+			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
+				name: this.state.currentForm,
+				has_available_concierge_sessions: hasAvailableConciergeSession,
+			} );
 		}
 	}
 
@@ -108,6 +112,7 @@ export class NpsSurvey extends PureComponent {
 	handleLinkClick = event => {
 		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
+			type: event.target.dataset.type,
 		} );
 		this.onClose( noop );
 	};
@@ -125,14 +130,14 @@ export class NpsSurvey extends PureComponent {
 		}, 0 );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
 
 	shouldShowPromotion() {
 		return (
-			'en' === getLocaleSlug() &&
+			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
 			isNumber( this.state.score ) &&
 			this.state.score < 7
@@ -230,11 +235,23 @@ export class NpsSurvey extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
+								'{{booking}}Reserve a 1:1 Quick Start Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
-										booking: <a href="/me/concierge" onClick={ this.handleLinkClick } />,
-										contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
+										booking: (
+											<a
+												href="/me/concierge"
+												onClick={ this.handleLinkClick }
+												data-type="booking"
+											/>
+										),
+										contact: (
+											<a
+												href={ CALYPSO_CONTACT }
+												onClick={ this.handleLinkClick }
+												data-type="contact"
+											/>
+										),
 									},
 								}
 							) }
@@ -247,7 +264,13 @@ export class NpsSurvey extends PureComponent {
 							'If you would like help with your site, our WordPress.com Happiness Engineers are ready {{contact}}over live chat or email{{/contact}} now.',
 							{
 								components: {
-									contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
+									contact: (
+										<a
+											href={ CALYPSO_CONTACT }
+											onClick={ this.handleLinkClick }
+											data-type="contact"
+										/>
+									),
 								},
 							}
 						) }
@@ -304,13 +327,10 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		submitNpsSurvey,
-		submitNpsSurveyWithNoScore,
-		sendNpsSurveyFeedback,
-		successNotice,
-		recordTracksEvent,
-	}
-)( localize( NpsSurvey ) );
+export default connect( mapStateToProps, {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+	successNotice,
+	recordTracksEvent,
+} )( localize( NpsSurvey ) );

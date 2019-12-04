@@ -1,7 +1,6 @@
 /**
  *  External dependencies
  *
- * @format
  */
 
 import { has, invoke } from 'lodash';
@@ -10,6 +9,7 @@ import { has, invoke } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 import {
 	trackCustomAdWordsRemarketingEvent,
 	trackCustomFacebookConversionEvent,
@@ -21,7 +21,6 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
-import isTracking from 'state/selectors/is-tracking';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) =>
@@ -36,17 +35,16 @@ const pageViewServices = {
 	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
-const loadTrackingTool = ( { trackingTool }, state ) => {
-	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) ) {
-		analytics.hotjar.addHotJarScript();
+const loadTrackingTool = trackingTool => {
+	if ( trackingTool === 'HotJar' ) {
+		addHotJarScript();
 	}
 };
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
-const setOptOut = ( { isOptingOut } ) => analytics.tracks.setOptOut( isOptingOut );
-
-export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
+const dispatcher = action => {
+	const analyticsMeta = action.meta.analytics;
 	analyticsMeta.forEach( ( { type, payload } ) => {
 		const { service = 'default', ...params } = payload;
 
@@ -59,19 +57,24 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( params );
-
-			case ANALYTICS_TRACKING_ON:
-				return loadTrackingTool( params, state );
-
-			case ANALYTICS_TRACKS_OPT_OUT:
-				return setOptOut( params );
 		}
 	} );
 };
 
-export const analyticsMiddleware = store => next => action => {
-	if ( has( action, 'meta.analytics' ) ) {
-		dispatcher( action, store.getState() );
+export const analyticsMiddleware = () => next => action => {
+	switch ( action.type ) {
+		case ANALYTICS_TRACKING_ON:
+			loadTrackingTool( action.trackingTool );
+			return;
+
+		case ANALYTICS_TRACKS_OPT_OUT:
+			analytics.tracks.setOptOut( action.isOptingOut );
+			return;
+
+		default:
+			if ( has( action, 'meta.analytics' ) ) {
+				dispatcher( action );
+			}
 	}
 
 	return next( action );

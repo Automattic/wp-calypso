@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, size } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -25,7 +23,8 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import Button from 'components/button';
 import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
@@ -59,6 +58,7 @@ export class Banner extends Component {
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		customerType: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -70,9 +70,12 @@ export class Banner extends Component {
 	};
 
 	getHref() {
-		const { feature, href, plan, siteSlug } = this.props;
+		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
-		if ( ! href && siteSlug ) {
+		if ( ! href && siteSlug && canUserUpgrade ) {
+			if ( customerType ) {
+				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+			}
 			const baseUrl = `/plans/${ siteSlug }`;
 			if ( feature || plan ) {
 				return addQueryArgs(
@@ -264,9 +267,7 @@ export class Banner extends Component {
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
+	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( Banner );
+export default connect( mapStateToProps, { recordTracksEvent } )( Banner );

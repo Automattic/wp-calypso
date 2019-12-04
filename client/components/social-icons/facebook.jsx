@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -25,6 +22,7 @@ export default class FacebookIcon extends PureComponent {
 
 	render() {
 		const props = omit( this.props, [ 'isDisabled' ] );
+
 		return (
 			<svg
 				className={ classNames( 'social-icons social-icons__facebook', {

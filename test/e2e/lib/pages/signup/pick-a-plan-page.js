@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,6 +43,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		const freePlanButton = By.css( '.plans-skip-button button' );
 
 		await driverHelper.waitTillNotPresent( this.driver, disabledPersonalPlanButton );
+		await driverHelper.scrollIntoView( this.driver, freePlanButton );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
 
@@ -67,6 +66,13 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 				selector = By.css( '.plans-features-main__banner-content button' );
 			}
 		}
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css(
+				'.plan-features__mobile button.is-business-plan, .plan-features__table button.is-business-plan'
+			)
+		);
+		await this.scrollPlanInToView( level );
 
 		await driverHelper.clickWhenClickable( this.driver, selector );
 		try {
@@ -75,5 +81,30 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 			//If the first click doesn't take, try again
 			await driverHelper.clickWhenClickable( this.driver, selector );
 		}
+	}
+
+	async scrollPlanInToView( level ) {
+		// Defaults to showing business plan first, so we need to move to correct plan
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			switch ( level ) {
+				case 'premium':
+					await this.clickDirectionArrow( 'left' );
+					break;
+				case 'personal':
+					await this.clickDirectionArrow( 'left' );
+					await this.clickDirectionArrow( 'left' );
+					break;
+				case 'ecommerce':
+					await this.clickDirectionArrow( 'right' );
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	async clickDirectionArrow( direction ) {
+		const arrowSelector = By.css( `.plan-features__scroll-${ direction } button` );
+		return await driverHelper.clickWhenClickable( this.driver, arrowSelector );
 	}
 }

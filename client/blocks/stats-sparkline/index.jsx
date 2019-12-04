@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get, mapValues, sortBy } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,26 +15,24 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
-const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews, translate } ) => {
+const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews } ) => {
+	const translate = useTranslate();
+
 	if ( ! siteId || ! siteUrl || isJetpack ) {
 		return null;
 	}
 
 	const title = highestViews
-		? translate( 'Highest hourly views %(highestViews)s', {
-				args: { highestViews },
-		  } )
+		? translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } )
 		: null;
 
+	const src = `${ siteUrl }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }`;
+
 	return (
-		<span>
+		<Fragment>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
-			<img
-				className={ className }
-				title={ title }
-				src={ `${ siteUrl }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }` }
-			/>
-		</span>
+			<img className={ className } alt={ title } title={ title } src={ src } />
+		</Fragment>
 	);
 };
 
@@ -60,4 +56,4 @@ export default connect( ( state, ownProps ) => {
 		siteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		highestViews: hourlyViews.length ? hourlyViews[ hourlyViews.length - 1 ] : 0,
 	};
-} )( localize( StatsSparkline ) );
+} )( StatsSparkline );

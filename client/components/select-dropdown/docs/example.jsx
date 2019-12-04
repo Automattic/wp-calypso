@@ -1,19 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownLabel from 'components/select-dropdown/label';
-import DropdownSeparator from 'components/select-dropdown/separator';
 
 class SelectDropdownExample extends React.PureComponent {
 	static displayName = 'SelectDropdownExample';
@@ -29,18 +24,12 @@ class SelectDropdownExample extends React.PureComponent {
 		],
 	};
 
-	constructor( props ) {
-		super( props );
-
-		const initialState = {
-			childSelected: 'Published',
-			selectedCount: 10,
-			compactButtons: false,
-			selectedIcon: <Gridicon icon="align-image-left" size={ 18 } />,
-		};
-
-		this.state = initialState;
-	}
+	state = {
+		childSelected: 'Published',
+		selectedCount: 10,
+		compactButtons: false,
+		selectedIcon: <Gridicon icon="align-image-left" size={ 18 } />,
+	};
 
 	toggleButtons = () => {
 		this.setState( { compactButtons: ! this.state.compactButtons } );
@@ -51,9 +40,9 @@ class SelectDropdownExample extends React.PureComponent {
 
 		return (
 			<div className="docs__select-dropdown-container">
-				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
+				<button className="docs__design-toggle button" onClick={ this.toggleButtons }>
 					{ toggleButtonsText }
-				</a>
+				</button>
 
 				<h3>Items passed as options prop</h3>
 				<SelectDropdown
@@ -69,43 +58,43 @@ class SelectDropdownExample extends React.PureComponent {
 					selectedText={ this.state.childSelected }
 					selectedCount={ this.state.selectedCount }
 				>
-					<DropdownLabel>
+					<SelectDropdown.Label>
 						<strong>Statuses</strong>
-					</DropdownLabel>
+					</SelectDropdown.Label>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						count={ 10 }
 						selected={ this.state.childSelected === 'Published' }
 						onClick={ this.getSelectItemHandler( 'Published', 10 ) }
 					>
 						Published
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						count={ 4 }
 						selected={ this.state.childSelected === 'Scheduled' }
 						onClick={ this.getSelectItemHandler( 'Scheduled', 4 ) }
 					>
 						Scheduled
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						count={ 3343 }
 						selected={ this.state.childSelected === 'Drafts' }
 						onClick={ this.getSelectItemHandler( 'Drafts', 3343 ) }
 					>
 						Drafts
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownSeparator />
+					<SelectDropdown.Separator />
 
-					<DropdownItem
+					<SelectDropdown.Item
 						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
 						onClick={ this.getSelectItemHandler( 'Trashed', 3 ) }
 					>
 						Trashed
-					</DropdownItem>
+					</SelectDropdown.Item>
 				</SelectDropdown>
 
 				<h3 style={ { marginTop: 20 } }>With Icons in Items Passed as Options</h3>
@@ -143,11 +132,11 @@ class SelectDropdownExample extends React.PureComponent {
 					selectedText={ this.state.childSelected }
 					selectedIcon={ this.state.selectedIcon }
 				>
-					<DropdownLabel>
+					<SelectDropdown.Label>
 						<strong>Statuses</strong>
-					</DropdownLabel>
+					</SelectDropdown.Label>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						selected={ this.state.childSelected === 'Published' }
 						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
@@ -157,9 +146,9 @@ class SelectDropdownExample extends React.PureComponent {
 						) }
 					>
 						Published
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						selected={ this.state.childSelected === 'Scheduled' }
 						icon={ <Gridicon icon="calendar" size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
@@ -169,9 +158,9 @@ class SelectDropdownExample extends React.PureComponent {
 						) }
 					>
 						Scheduled
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownItem
+					<SelectDropdown.Item
 						selected={ this.state.childSelected === 'Drafts' }
 						icon={ <Gridicon icon="create" size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
@@ -181,11 +170,11 @@ class SelectDropdownExample extends React.PureComponent {
 						) }
 					>
 						Drafts
-					</DropdownItem>
+					</SelectDropdown.Item>
 
-					<DropdownSeparator />
+					<SelectDropdown.Separator />
 
-					<DropdownItem
+					<SelectDropdown.Item
 						selected={ this.state.childSelected === 'Trashed' }
 						icon={ <Gridicon icon="trash" size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
@@ -195,7 +184,7 @@ class SelectDropdownExample extends React.PureComponent {
 						) }
 					>
 						Trashed
-					</DropdownItem>
+					</SelectDropdown.Item>
 				</SelectDropdown>
 
 				<h3 style={ { marginTop: 20 } }>max-width: 220px;</h3>
@@ -206,17 +195,17 @@ class SelectDropdownExample extends React.PureComponent {
 					selectedText="Published publish publish publish"
 					selectedCount={ 10 }
 				>
-					<DropdownLabel>
+					<SelectDropdown.Label>
 						<strong>Statuses</strong>
-					</DropdownLabel>
-					<DropdownItem count={ 10 } selected={ true }>
+					</SelectDropdown.Label>
+					<SelectDropdown.Item count={ 10 } selected={ true }>
 						Published publish publish publish
-					</DropdownItem>
-					<DropdownItem count={ 4 }> Scheduled scheduled</DropdownItem>
-					<DropdownItem count={ 3343 }>Drafts</DropdownItem>
-					<DropdownItem disabled={ true }>Disabled Item</DropdownItem>
-					<DropdownSeparator />
-					<DropdownItem count={ 3 }>Trashed</DropdownItem>
+					</SelectDropdown.Item>
+					<SelectDropdown.Item count={ 4 }> Scheduled scheduled</SelectDropdown.Item>
+					<SelectDropdown.Item count={ 3343 }>Drafts</SelectDropdown.Item>
+					<SelectDropdown.Item disabled={ true }>Disabled Item</SelectDropdown.Item>
+					<SelectDropdown.Separator />
+					<SelectDropdown.Item count={ 3 }>Trashed</SelectDropdown.Item>
 				</SelectDropdown>
 
 				<h3 style={ { marginTop: 20 } }>Disabled State</h3>
@@ -244,10 +233,12 @@ class SelectDropdownExample extends React.PureComponent {
 			selectedIcon: icon,
 		} );
 
+		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown Item (selected):', childSelected );
 	};
 
 	onDropdownSelect( option ) {
+		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown (selected):', option );
 	}
 }

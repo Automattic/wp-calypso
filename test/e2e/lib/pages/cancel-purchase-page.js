@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 
 	async completeCancellationSurvey() {
 		const e2eReason = 'e2e testing';
-		const dialogClass = '.cancel-purchase__button-warning-dialog';
+		const dialogClass = '.cancel-purchase-form__dialog';
 		const buttonDialogClass = '.dialog__action-buttons';
 		const nextButtonSelector = by.css( `${ buttonDialogClass } button[data-e2e-button="next"]` );
 		await driverHelper.clickWhenClickable(
@@ -69,5 +67,13 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 			this.driver,
 			by.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` )
 		);
+	}
+
+	async completeThemeCancellation() {
+		const buttonDialogClass = '.dialog__action-buttons';
+		const cancelButtonSelector = by.css(
+			`${ buttonDialogClass } button[data-e2e-button="cancel"]`
+		);
+		return await driverHelper.clickWhenClickable( this.driver, cancelButtonSelector );
 	}
 }

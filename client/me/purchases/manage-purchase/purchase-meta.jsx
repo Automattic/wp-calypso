@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,17 +10,17 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import {
 	getName,
-	creditCardExpiresBeforeSubscription,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
+	isRechargeable,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,
@@ -45,6 +42,7 @@ import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
@@ -110,7 +108,7 @@ class PurchaseMeta extends Component {
 	renderRenewsOrExpiresOnLabel() {
 		const { purchase, translate } = this.props;
 
-		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
+		if ( isExpiring( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate( 'Domain expires on' );
 			}
@@ -170,11 +168,7 @@ class PurchaseMeta extends Component {
 			);
 		}
 
-		if (
-			isExpiring( purchase ) ||
-			isExpired( purchase ) ||
-			creditCardExpiresBeforeSubscription( purchase )
-		) {
+		if ( isExpiring( purchase ) || isExpired( purchase ) ) {
 			return moment( purchase.expiryDate ).format( 'LL' );
 		}
 
@@ -197,7 +191,7 @@ class PurchaseMeta extends Component {
 		if ( hasPaymentMethod( purchase ) ) {
 			let paymentInfo = null;
 
-			if ( purchase.payment.type === 'credits' ) {
+			if ( isPaidWithCredits( purchase ) ) {
 				return translate( 'Credits' );
 			}
 
@@ -209,13 +203,6 @@ class PurchaseMeta extends Component {
 						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' ),
 					},
 				} );
-			}
-
-			// Before code-D29008, the purchase info endpoint excluded the payment info
-			// if the auto-renewal is off. This is for emulating the behavior before rolling out the toggle,
-			// so that users can at least still re-enable the auto-renewal through adding a new payment method.
-			if ( ! config.isEnabled( 'autorenewal-toggle' ) && ! isRenewing( purchase ) ) {
-				return translate( 'None' );
 			}
 
 			return (
@@ -310,9 +297,8 @@ class PurchaseMeta extends Component {
 		}
 
 		if (
-			config.isEnabled( 'autorenewal-toggle' ) &&
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
-			hasPaymentMethod( purchase ) &&
+			isRechargeable( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
@@ -342,13 +328,15 @@ class PurchaseMeta extends Component {
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							purchase={ purchase }
-						/>
-					</span>
+					{ site && (
+						<span className="manage-purchase__detail">
+							<AutoRenewToggle
+								planName={ site.plan.product_name_short }
+								siteDomain={ site.domain }
+								purchase={ purchase }
+							/>
+						</span>
+					) }
 				</li>
 			);
 		}
@@ -409,4 +397,4 @@ export default connect( ( state, { purchaseId } ) => {
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 	};
-} )( localize( PurchaseMeta ) );
+} )( localize( withLocalizedMoment( PurchaseMeta ) ) );

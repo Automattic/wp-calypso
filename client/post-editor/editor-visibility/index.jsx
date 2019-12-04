@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { find, get } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -19,7 +17,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import { hasTouch } from 'lib/touch-detect';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -54,7 +51,7 @@ class EditorVisibility extends React.Component {
 		passwordIsValid: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
 			return;
 		}
@@ -258,7 +255,7 @@ class EditorVisibility extends React.Component {
 						selectedIcon={ selectedItem.icon }
 					>
 						{ dropdownItems.map( option => (
-							<DropdownItem
+							<SelectDropdown.Item
 								selected={ option.value === visibility }
 								key={ option.value }
 								value={ option.value }
@@ -266,7 +263,7 @@ class EditorVisibility extends React.Component {
 								icon={ option.icon }
 							>
 								{ option.label }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						) ) }
 					</SelectDropdown>
 					{ 'password' === visibility ? this.renderPasswordInput() : null }

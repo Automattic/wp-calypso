@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 
 /**
@@ -39,7 +37,7 @@ class FocusableExample extends React.PureComponent {
 			<Card>
 				<Focusable onClick={ noop }>
 					<p>
-						This keyboard-accessible component can contain other elements as children, including{' '}
+						This keyboard-accessible component can contain other elements as children, including{ ' ' }
 						<code>p</code>
 						s, <code>div</code>
 						s, or other components.

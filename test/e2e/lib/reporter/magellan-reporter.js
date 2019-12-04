@@ -1,5 +1,3 @@
-/** @format */
-
 const BaseReporter = require( 'testarmada-magellan' ).Reporter;
 const util = require( 'util' );
 
@@ -88,13 +86,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 
 													slackClient.send( {
 														icon_emoji: ':a8c:',
-														text: `Build <https://circleci.com/gh/${
-															process.env.CIRCLE_PROJECT_USERNAME
-														}/${ process.env.CIRCLE_PROJECT_REPONAME }/${
-															process.env.CIRCLE_BUILD_NUM
-														}|#${
-															process.env.CIRCLE_BUILD_NUM
-														}> Upload to slack failed: '${ err }'`,
+														text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Upload to slack failed: '${ err }'`,
 														username: 'e2e Test Runner',
 													} );
 												}
@@ -118,13 +110,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 				if ( test.attempts > 0 ) {
 					slackClient.send( {
 						icon_emoji: ':a8c:',
-						text: `FYI - The following test failed, retried, and passed: (${
-							process.env.BROWSERSIZE
-						}) ${ testObject.title } - Build <https://circleci.com/gh/${
-							process.env.CIRCLE_PROJECT_USERNAME
-						}/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${
-							process.env.CIRCLE_BUILD_NUM
-						}>`,
+						text: `FYI - The following test failed, retried, and passed: (${ process.env.BROWSERSIZE }) ${ testObject.title } - Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }>`,
 						username: 'e2e Test Runner',
 					} );
 				}
@@ -183,11 +169,7 @@ function copyReports( slackClient, reportDir, reportPath, guid ) {
 				}
 				slackClient.send( {
 					icon_emoji: ':a8c:',
-					text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${
-						process.env.CIRCLE_PROJECT_REPONAME
-					}/${ process.env.CIRCLE_BUILD_NUM }|#${
-						process.env.CIRCLE_BUILD_NUM
-					}> Moving file to /reports failed: '${ moveErr }'`,
+					text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Moving file to /reports failed: '${ moveErr }'`,
 					username: 'e2e Test Runner',
 				} );
 			}
@@ -206,11 +188,7 @@ function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 			}
 			slackClient.send( {
 				icon_emoji: ':a8c:',
-				text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${
-					process.env.CIRCLE_PROJECT_REPONAME
-				}/${ process.env.CIRCLE_BUILD_NUM }|#${
-					process.env.CIRCLE_BUILD_NUM
-				}> Moving file to screenshots directory failed: '${ moveErr }'`,
+				text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Moving file to screenshots directory failed: '${ moveErr }'`,
 				username: 'e2e Test Runner',
 			} );
 		} );
@@ -264,11 +242,7 @@ function sendFailureNotif( slackClient, reportDir, testRun ) {
 
 	slackClient.send( {
 		icon_emoji: ':a8c:',
-		text: `<!subteam^S0G7K98MB|flow-patrol-squad-team> Test Run Failed - Build <https://circleci.com/gh/${
-			process.env.CIRCLE_PROJECT_USERNAME
-		}/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${
-			process.env.CIRCLE_BUILD_NUM
-		}>`,
+		text: `<!subteam^S0G7K98MB|flow-patrol-squad-team> Test Run Failed - Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }>`,
 		fields: fieldsObj,
 		username: 'e2e Test Runner',
 	} );

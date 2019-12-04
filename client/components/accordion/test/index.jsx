@@ -1,12 +1,11 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React from 'react';
 import { shallow } from 'enzyme';
 

@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -125,10 +123,7 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		recordTracksEvent: recordTracksEventAction,
-		hideThemesBanner: hideThemesBannerAction,
-	}
-)( localize( ThemesBanner ) );
+export default connect( mapStateToProps, {
+	recordTracksEvent: recordTracksEventAction,
+	hideThemesBanner: hideThemesBannerAction,
+} )( localize( ThemesBanner ) );

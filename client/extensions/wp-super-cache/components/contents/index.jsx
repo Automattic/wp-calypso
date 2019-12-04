@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,7 +46,7 @@ class ContentsTab extends Component {
 		isDeletingExpired: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
 			this.setState( {
 				isDeleting: false,
@@ -246,7 +244,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( ContentsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( ContentsTab );

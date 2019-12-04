@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  *
@@ -36,7 +35,7 @@ class ModerateComment extends Component {
 		this.moderate( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
@@ -119,7 +118,4 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } 
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ModerateComment ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ModerateComment ) );

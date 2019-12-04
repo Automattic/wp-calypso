@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -9,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 class ConversationFollowButton extends React.Component {
 	static propTypes = {

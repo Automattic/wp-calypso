@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import i18n from 'i18n-calypso';
 import { find, pick, get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
@@ -335,8 +334,8 @@ export default {
 		const isValidStartDate =
 			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate )
-			: momentSiteZone.endOf( activeFilter.period );
+			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
 		const extraProps =

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
@@ -21,9 +22,39 @@ registerBlockType( 'a8c/site-description', {
 	),
 	category: 'layout',
 	supports: {
+		align: [ 'wide', 'full' ],
 		html: false,
 		multiple: false,
 		reusable: false,
+	},
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'wide',
+		},
+		textAlign: {
+			type: 'string',
+			default: 'center',
+		},
+		textColor: {
+			type: 'string',
+		},
+		customTextColor: {
+			type: 'string',
+		},
+		backgroundColor: {
+			type: 'string',
+		},
+		customBackgroundColor: {
+			type: 'string',
+		},
+		fontSize: {
+			type: 'string',
+			default: 'small',
+		},
+		customFontSize: {
+			type: 'number',
+		},
 	},
 	edit,
 	save: () => null,

@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -18,7 +17,7 @@ import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites
 import getMemberships from 'state/selectors/get-memberships';
 import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';

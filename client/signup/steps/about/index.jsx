@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -47,7 +46,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import ScreenReaderText from 'components/screen-reader-text';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
 /**
@@ -382,7 +380,7 @@ class AboutStep extends Component {
 					</span>
 
 					<SegmentedControl className="is-primary about__segmented-control">
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
@@ -390,35 +388,35 @@ class AboutStep extends Component {
 								{ translate( 'How comfortable are you with creating a website?' ) }
 							</ScreenReaderText>
 							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 2 }
 							onClick={ this.handleSegmentClick( 2 ) }
 						>
 							2
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 3 }
 							onClick={ this.handleSegmentClick( 3 ) }
 						>
 							3
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 4 }
 							onClick={ this.handleSegmentClick( 4 ) }
 						>
 							4
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
 							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 					</SegmentedControl>
 					<span
 						className="about__segment-label about__max-label"
@@ -522,7 +520,6 @@ class AboutStep extends Component {
 		const {
 			flowName,
 			positionInFlow,
-			signupProgress,
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
@@ -541,7 +538,6 @@ class AboutStep extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }

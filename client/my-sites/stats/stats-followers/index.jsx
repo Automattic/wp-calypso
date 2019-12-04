@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -140,7 +138,7 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData && !! wpcomData.total_wpcom && (
 										<p>
-											{ translate( 'Total WordPress.com Followers' ) }:{' '}
+											{ translate( 'Total WordPress.com Followers' ) }:{ ' ' }
 											{ numberFormat( wpcomData.total_wpcom ) }
 										</p>
 									) }
@@ -160,7 +158,7 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ emailData && !! emailData.total_email && (
 										<p>
-											{ translate( 'Total Email Followers' ) }:{' '}
+											{ translate( 'Total Email Followers' ) }:{ ' ' }
 											{ numberFormat( emailData.total_email ) }
 										</p>
 									) }
@@ -224,7 +222,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatModuleFollowers );
+export default flowRight( connectComponent, localize )( StatModuleFollowers );

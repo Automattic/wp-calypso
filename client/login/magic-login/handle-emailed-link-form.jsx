@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -121,15 +120,17 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 
 		// Redirects to / if no redirect url is available
-		const url = redirectToSanitized ? redirectToSanitized : window.location.origin;
+		const url = redirectToSanitized || '/';
 
 		// user data is persisted in localstorage at `lib/user/user` line 157
 		// therefore we need to reset it before we redirect, otherwise we'll get
 		// mixed data from old and new user
-		user.clear( () => ( window.location.href = url ) );
+		user.clear().then( () => {
+			window.location.href = url;
+		} );
 	};
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
 		if ( ! nextState.hasSubmitted || isFetching ) {
@@ -234,7 +235,4 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HandleEmailedLinkForm ) );
+export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );

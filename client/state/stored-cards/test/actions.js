@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -47,7 +45,7 @@ describe( 'actions', () => {
 		test( 'should dispatch complete action when API returns card item', () => {
 			sandbox.stub( wp, 'undocumented' ).callsFake( () => ( {
 				me: () => ( {
-					storedCardAdd: ( token, callback ) => callback( null, item ),
+					storedCardAdd: async () => item,
 				} ),
 			} ) );
 

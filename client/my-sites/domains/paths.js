@@ -1,9 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { filter, startsWith } from 'lodash';
+import { stringify } from 'qs';
 
 export function domainManagementRoot() {
 	return '/domains/manage';
@@ -121,10 +120,30 @@ export function domainMapping( siteName, domain = '' ) {
 	return path;
 }
 
-export function domainTransferIn( siteName, domain ) {
+/**
+ * Return the path to start an inbound domain transfer to WordPress.com.
+ *
+ * @param { string } siteName         The slug for the site.
+ * @param { string } domain           The domain name.
+ * @param { boolean } useStandardBack Flag to indicate whether the "Back" button in the
+ *                                      transfer page should return to the current URL context.
+ * @returns { string } Path to the inbound domain transfer UI.
+ */
+export function domainTransferIn( siteName, domain, useStandardBack ) {
 	let path = `/domains/add/transfer/${ siteName }`;
+	const params = {};
+
 	if ( domain ) {
-		path += `?initialQuery=${ domain }`;
+		params.initialQuery = domain;
+	}
+
+	if ( useStandardBack ) {
+		params.useStandardBack = true;
+	}
+
+	const queryString = stringify( params );
+	if ( queryString ) {
+		path += '?' + queryString;
 	}
 
 	return path;

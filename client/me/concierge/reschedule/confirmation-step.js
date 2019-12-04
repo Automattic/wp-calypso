@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,29 +17,30 @@ class ConfirmationStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_reschedule_confirmation_step' );
 	}
 
+	handleClick = () => {
+		const { site } = this.props;
+
+		window.location.href = `/me/concierge/${ site.slug }/book`;
+	};
+
 	render() {
-		const { site, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Confirmation
-				description={ translate(
-					'We will send you a calendar invitation and an email with information on how to prepare.'
-				) }
+				description={ translate( 'We will send you an email with information on how to prepare.' ) }
 				title={ translate( 'Your session has been rescheduled!' ) }
 			>
 				<Button
 					className="reschedule__schedule-button"
-					href={ `/stats/day/${ site.slug }` }
+					onClick={ this.handleClick }
 					primary={ true }
 				>
-					{ translate( 'Return to your dashboard' ) }
+					{ translate( 'View your session dashboard' ) }
 				</Button>
 			</Confirmation>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( ConfirmationStep ) );
+export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );

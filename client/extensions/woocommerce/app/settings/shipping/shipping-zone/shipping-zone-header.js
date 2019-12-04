@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { isNumber } from 'lodash';
@@ -40,8 +38,8 @@ const ShippingZoneHeader = ( {
 	const breadcrumbs = [
 		<a href={ getLink( '/store/settings/:site/', site ) }> { translate( 'Settings' ) } </a>,
 		<a href={ getLink( '/store/settings/shipping/:site/', site ) }>
-			{' '}
-			{ translate( 'Shipping' ) }{' '}
+			{ ' ' }
+			{ translate( 'Shipping' ) }{ ' ' }
 		</a>,
 		currentCrumb,
 	];

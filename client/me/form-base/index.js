@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,13 +28,13 @@ export default {
 		return this.state.submittingForm;
 	},
 
-	componentWillReceiveProps: function( nextProp ) {
+	UNSAFE_componentWillReceiveProps: function( nextProp ) {
 		if ( nextProp.showNoticeInitially ) {
 			this.setState( { showNotice: nextProp.showNoticeInitially } );
 		}
 	},
 
-	componentWillUpdate: function() {
+	UNSAFE_componentWillUpdate: function() {
 		this.showNotice();
 	},
 
@@ -93,7 +91,7 @@ export default {
 					this.props.markSaved && this.props.markSaved();
 
 					if ( this.state && this.state.redirect ) {
-						user.clear( () => {
+						user.clear().then( () => {
 							// Sometimes changes in settings require a url refresh to update the UI.
 							// For example when the user changes the language.
 							window.location = this.state.redirect + '?updated=success';

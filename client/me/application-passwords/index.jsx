@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -44,7 +42,7 @@ class ApplicationPasswords extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );
 		}

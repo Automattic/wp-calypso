@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,7 +6,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';

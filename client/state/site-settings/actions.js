@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -16,6 +14,8 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'state/action-types';
 import { normalizeSettings } from './utils';
+
+import 'state/data-layer/wpcom/sites/homepage';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.

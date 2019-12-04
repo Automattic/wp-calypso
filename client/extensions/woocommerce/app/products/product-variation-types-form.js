@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ class ProductVariationTypesForm extends Component {
 		editProductAttribute: PropTypes.func.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { product } = this.props;
 		const attributes =
 			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];

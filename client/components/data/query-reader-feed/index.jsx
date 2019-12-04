@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,13 +14,13 @@ import { shouldFeedBeFetched } from 'state/reader/feeds/selectors';
 import { requestFeed } from 'state/reader/feeds/actions';
 
 class QueryReaderFeed extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.shouldFeedBeFetched ) {
 			this.props.requestFeed( this.props.feedId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId ) {
 			return;
 		}

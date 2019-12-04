@@ -24,6 +24,18 @@ loadjQueryDependentScript( REMOTE_SCRIPT_URL, function( error ) {
 } );
 ```
 
+If the second argument (`callback`) is not provided, then `loadScript()` will return a Promise.
+
+```js
+loadScript( REMOTE_SCRIPT_URL )
+	.then(function() {
+		debug( 'Script loaded!' );
+	} )
+	.catch( function( error ) {
+		debug( 'Script ' + error.src + ' failed to load.' );
+	} );
+```
+
 ### Error handling
 
-The callback should expect a single argument, which will be `null` on success or an object on failure. The object contains the `src` property, which will contain the src url of the script that failed to load.
+If using the callback, it should expect a single argument, which will be `null` on success or an object on failure. This error object contains the `src` property, which will contain the src url of the script that failed to load. If using the Promise form, the error object will be passed to the nearest `catch` handler as a rejection.

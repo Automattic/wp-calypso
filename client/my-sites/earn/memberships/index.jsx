@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,7 +21,6 @@ import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
-import StripeConnectButton from 'components/stripe-connect-button';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
@@ -37,6 +33,8 @@ import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -96,13 +94,22 @@ class MembershipsSection extends Component {
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
 						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 							{
 								args: {
 									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
 									stripe: '2.9%+30c',
 								},
-								components: { em: <em />, br: <br /> },
+								components: {
+									em: <em />,
+									br: <br />,
+									a: (
+										<ExternalLink
+											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											icon={ true }
+										/>
+									),
+								},
 							}
 						) }
 					</div>
@@ -135,7 +142,10 @@ class MembershipsSection extends Component {
 				'renewal_price',
 				'currency',
 				'renew_interval',
-			].join( ',' ),
+				'All time total',
+			]
+				.map( field => '"' + field + '"' )
+				.join( ',' ),
 		]
 			.concat(
 				Object.values( this.props.subscribers ).map( row =>
@@ -151,7 +161,10 @@ class MembershipsSection extends Component {
 						row.plan.renewal_price,
 						row.plan.currency,
 						row.renew_interval,
-					].join( ',' )
+						row.all_time_total,
+					]
+						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.join( ',' )
 				)
 			)
 			.join( '\n' );
@@ -187,9 +200,11 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
-									sub => this.renderSubscriber( sub )
-								) }
+								{ orderBy(
+									Object.values( this.props.subscribers ),
+									[ 'id' ],
+									[ 'desc' ]
+								).map( sub => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ triggeredByInteraction =>
@@ -237,19 +252,27 @@ class MembershipsSection extends Component {
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
-			return this.props.translate( 'Paying %(amount)s/year since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
-			return this.props.translate( 'Paying %(amount)s/month since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		}
 	}
 	renderSubscriberActions( subscriber ) {
@@ -258,9 +281,7 @@ class MembershipsSection extends Component {
 				<PopoverMenuItem
 					target="_blank"
 					rel="noopener norefferer"
-					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${
-						subscriber.user.ID
-					}` }
+					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
 					<Gridicon size={ 18 } icon={ 'external' } />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
@@ -293,6 +314,35 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
+				{ this.props.query.stripe_connect_success === 'earn' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+						) }
+					>
+						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
+							{ this.props.translate( 'Add a Payment Plan' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.query.stripe_connect_success === 'gutenberg' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
+						) }
+					>
+						<NoticeAction
+							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							icon="external"
+						>
+							{ this.props.translate( 'Learn how' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderProducts() }
@@ -300,28 +350,47 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderOnboarding() {
+	renderOnboarding( cta ) {
 		return (
-			<div>
-				<SectionHeader label={ this.props.translate( 'About Recurring Payments' ) } />
-				<Card>
-					<div className="memberships__module-content module-content">
-						<p>
-							{ this.props.translate(
-								'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-							) }
-						</p>
+			<div className="memberships__onboarding-wrapper">
+				<div className="memberships__onboarding-column-info">
+					<div className="memberships__onboarding-header">
+						{ this.props.translate( 'Introducing Recurring Payments.' ) }
 					</div>
-				</Card>
-				<Notice
-					text={ this.props.translate( 'Read more about the Recurring Payments feature.' ) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://support.wordpress.com/recurring-payments-button/` }
-						icon="external"
+					<p className="memberships__onboarding-paragraph">
+						{ this.props.translate(
+							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
+						) }{ ' ' }
+						<ExternalLink
+							href="https://support.wordpress.com/recurring-payments-button/"
+							icon={ true }
+						>
+							{ this.props.translate( 'Learn more.' ) }
+						</ExternalLink>
+					</p>
+					{ cta }
+					<div className="memberships__onboarding-benefits">
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Add multiple subscription options' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Collect payments in 135 countries' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Easily manage subscribers' ) }
+						</div>
+					</div>
+				</div>
+				<div className="memberships__onboarding-column-image">
+					<img
+						src="/calypso/images/recurring-payments/checkout-form-gradient.png"
+						aria-hidden="true"
+						alt=""
 					/>
-				</Notice>
+				</div>
 			</div>
 		);
 	}
@@ -337,72 +406,55 @@ class MembershipsSection extends Component {
 						) }
 					/>
 				) }
-				{ this.renderOnboarding() }
-				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
-				<Card>
-					<div className="memberships__module-content module-content">
-						<p>
-							{ this.props.translate(
-								'Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
-							) }
-						</p>
-						<StripeConnectButton href={ this.props.connectUrl } target="_blank">
-							{ this.props.translate( 'Connect with Stripe' ) }
-						</StripeConnectButton>
-					</div>
-				</Card>
+				{ this.renderOnboarding(
+					<Button primary={ true } href={ this.props.connectUrl }>
+						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
+						<Gridicon size={ 18 } icon={ 'external' } />
+					</Button>
+				) }
 			</div>
 		);
 	}
 
 	render() {
 		if ( this.props.isJetpackTooOld ) {
-			return (
-				<div>
-					{ this.renderOnboarding() }
-					<Notice
-						status="is-warning"
-						text={ this.props.translate(
-							'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
-						) }
-						showDismiss={ false }
-					>
-						<NoticeAction
-							href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-							icon="external"
-						/>
-					</Notice>
-				</div>
+			return this.renderOnboarding(
+				<Notice
+					status="is-warning"
+					text={ this.props.translate(
+						'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
+					) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
+						icon="external"
+					/>
+				</Notice>
 			);
 		}
 
 		if ( ! this.props.paidPlan ) {
-			return (
-				<div>
-					{ this.renderOnboarding() }
-					<UpgradeNudge
-						plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-						shouldDisplay={ () => true }
-						feature={ FEATURE_MEMBERSHIPS }
-						title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-						message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
-					/>
-				</div>
+			return this.renderOnboarding(
+				<UpgradeNudge
+					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
+					shouldDisplay={ () => true }
+					feature={ FEATURE_MEMBERSHIPS }
+					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+				/>
 			);
 		}
 
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
-			return (
-				<div>
-					{ this.renderOnboarding() }
-					<Notice
-						status="is-warning"
-						text={ this.props.translate(
-							'Only site administrators can edit Recurring Payments settings.'
-						) }
-						showDismiss={ false }
-					/>
-				</div>
+			return this.renderOnboarding(
+				<Notice
+					status="is-warning"
+					text={ this.props.translate(
+						'Only site administrators can edit Recurring Payments settings.'
+					) }
+					showDismiss={ false }
+				/>
 			);
 		}
 
@@ -444,7 +496,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ requestSubscribers }
-)( localize( MembershipsSection ) );
+export default connect( mapStateToProps, { requestSubscribers } )(
+	localize( withLocalizedMoment( MembershipsSection ) )
+);

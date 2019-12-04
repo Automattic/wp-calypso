@@ -51,7 +51,7 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
 	"keywords": [ "wordpress" ],
-	"author": "Your Name <you@example.com> (https://yoursite.wordpress.com/)",
+	"author": "Automattic Inc.",
 	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -76,6 +76,8 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 ```
 
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
+
+Running `npm run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
 ## Running Tests
 

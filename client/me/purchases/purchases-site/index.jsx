@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,10 @@ import { some, times } from 'lodash';
  */
 import { getSite, isRequestingSite } from 'state/sites/selectors';
 import { isJetpackPlan } from 'lib/products-values';
+import { JETPACK_PLANS } from 'lib/plans/constants';
+import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import QuerySites from 'components/data/query-sites';
+import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
@@ -56,6 +57,7 @@ const PurchasesSite = ( {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
+
 			<PurchaseSiteHeader
 				siteId={ siteId }
 				name={ name }
@@ -64,6 +66,12 @@ const PurchasesSite = ( {
 			/>
 
 			{ items }
+
+			<ProductPlanOverlapNotices
+				plans={ JETPACK_PLANS }
+				products={ JETPACK_BACKUP_PRODUCTS }
+				siteId={ siteId }
+			/>
 
 			{ ! isPlaceholder && hasLoadedSite && ! site && (
 				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />

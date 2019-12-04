@@ -1,32 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import Gridicon from 'components/gridicon';
+import { useTranslate } from 'i18n-calypso';
 
 // Returns React component with a localized label and optional icon
 function button( label, icon ) {
-	return localize( ( { translate: tr } ) => (
-		<strong>
-			{ icon }
-			{ icon && '\u00A0' /* NBSP between icon and label */ }
-			{ tr( label ) }
-		</strong>
-	) );
+	return () => {
+		const tr = useTranslate();
+		return (
+			<strong>
+				{ icon }
+				{ icon && '\u00A0' /* NBSP between icon and label */ }
+				{ tr( ...label ) }
+			</strong>
+		);
+	};
 }
 
-// Localized texts need to be wrapped in a `translate` function to be found by the l10n bot
-const translate = identity;
+// we use this translate because the i18n scripts are scanning for
+// translate( string ) calls, but the runtime translation hooks are set up with
+// the 'useTranslate' above
+const translate = ( ...args ) => args;
 
 export const AddContentButton = button( translate( 'Add' ), <Gridicon icon="add-outline" /> );
 export const AddMediaButton = button( translate( 'Add Media' ) );
 export const AddNewButton = button( translate( 'Add New' ), <Gridicon icon="add-image" /> );
 export const AllThemesButton = button( translate( 'All Themes' ) );
-export const ChangeButton = button( translate( 'Change' ) );
+export const ChangeButton = button( translate( 'Change', { context: 'verb' } ) );
 export const ContinueButton = button( translate( 'Continue' ) );
 export const DoneButton = button( translate( 'Done' ) );
 export const EditButton = button( translate( 'Edit' ) );

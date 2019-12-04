@@ -1,17 +1,14 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
 import { keyToString } from 'reader/post-key';
 
-export default createReducer(
-	{},
-	{
-		[ READER_EXPAND_CARD ]: ( state, action ) => {
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_EXPAND_CARD: {
 			if ( ! action.payload.postKey ) {
 				return state;
 			}
@@ -22,7 +19,10 @@ export default createReducer(
 				...state,
 				[ keyToString( postKey ) ]: true,
 			};
-		},
-		[ READER_RESET_CARD_EXPANSIONS ]: () => ( {} ),
+		}
+		case READER_RESET_CARD_EXPANSIONS:
+			return {};
 	}
-);
+
+	return state;
+} );

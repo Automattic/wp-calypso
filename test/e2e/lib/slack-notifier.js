@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,11 +26,7 @@ export function warn( message, { suppressDuplicateMessages = false } = {} ) {
 			config.get( 'reportWarningsToSlack' ) === true
 		) {
 			const currentScreenSize = driverManager.currentScreenSize();
-			const detailedMessage = `${ message } - encountered on '${
-				global.browserName
-			}' at screen size '${ currentScreenSize }' in CircleCI build #${
-				process.env.CIRCLE_BUILD_NUM
-			} on branch '${ process.env.CIRCLE_BRANCH }'`;
+			const detailedMessage = `${ message } - encountered on '${ global.browserName }' at screen size '${ currentScreenSize }' in CircleCI build #${ process.env.CIRCLE_BUILD_NUM } on branch '${ process.env.CIRCLE_BRANCH }'`;
 			const slackClient = slack( slackHook );
 			slackClient.send( {
 				icon_emoji: ':a8c:',

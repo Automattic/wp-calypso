@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,20 +11,21 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getWindowInnerWidth } from 'lib/viewport';
 import afterLayoutFlush from 'lib/after-layout-flush';
 import TranslatableString from 'components/translatable/proptype';
 
 /**
+ * Style dependencies
+ */
+import './tabs.scss';
+
+/**
  * Internal Variables
  */
 const MOBILE_PANEL_THRESHOLD = 480;
 
-/**
- * Main
- */
 class NavTabs extends Component {
 	static propTypes = {
 		selectedText: TranslatableString,
@@ -42,6 +41,9 @@ class NavTabs extends Component {
 	state = {
 		isDropdown: false,
 	};
+
+	navGroupRef = React.createRef();
+	tabRefMap = new Map();
 
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
@@ -60,13 +62,23 @@ class NavTabs extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
+	/* Ref that stores the given tab element */
+	storeTabRefs( index ) {
+		return tabElement => {
+			if ( tabElement === null ) {
+				this.tabRefMap.delete( index );
+			} else {
+				this.tabRefMap.set( index, tabElement );
+			}
+		};
+	}
+
 	render() {
-		const tabs = React.Children.map( this.props.children, function( child, index ) {
-			return child && React.cloneElement( child, { ref: 'tab-' + index } );
+		const tabs = React.Children.map( this.props.children, ( child, index ) => {
+			return child && React.cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
-		const tabsClassName = classNames( {
-			'section-nav-tabs': true,
+		const tabsClassName = classNames( 'section-nav-tabs', {
 			'is-dropdown': this.state.isDropdown,
 			'is-open': this.state.isDropdownOpen,
 			'has-siblings': this.props.hasSiblingControls,
@@ -75,7 +87,8 @@ class NavTabs extends Component {
 		const innerWidth = getWindowInnerWidth();
 
 		return (
-			<div className="section-nav-group" ref="navGroup">
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
+			<div className="section-nav-group" ref={ this.navGroupRef }>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
@@ -85,38 +98,35 @@ class NavTabs extends Component {
 					{ this.state.isDropdown && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
 				</div>
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 
-	getTabWidths = () => {
+	getTabWidths() {
 		let totalWidth = 0;
 
-		React.Children.forEach(
-			this.props.children,
-			function( child, index ) {
-				if ( ! child ) {
-					return;
-				}
-				const tabWidth = ReactDom.findDOMNode( this.refs[ 'tab-' + index ] ).offsetWidth;
-				totalWidth += tabWidth;
-			}.bind( this )
-		);
+		this.tabRefMap.forEach( tabElement => {
+			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
+			totalWidth += tabWidth;
+		} );
 
 		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
-	};
+	}
 
-	getDropdown = () => {
-		const dropdownOptions = React.Children.map( this.props.children, function( child, index ) {
+	getDropdown() {
+		const dropdownOptions = React.Children.map( this.props.children, ( child, index ) => {
 			if ( ! child ) {
 				return null;
 			}
 			return (
-				<DropdownItem { ...child.props } key={ 'navTabsDropdown-' + index }>
+				<SelectDropdown.Item { ...child.props } key={ 'navTabsDropdown-' + index }>
 					{ child.props.children }
-				</DropdownItem>
+				</SelectDropdown.Item>
 			);
 		} );
+
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SelectDropdown
 				className="section-nav-tabs__dropdown"
 				selectedText={ this.props.selectedText }
@@ -124,18 +134,17 @@ class NavTabs extends Component {
 			>
 				{ dropdownOptions }
 			</SelectDropdown>
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 		);
-	};
+	}
 
 	setDropdown = () => {
-		let navGroupWidth;
-
 		if ( window.innerWidth > MOBILE_PANEL_THRESHOLD ) {
-			if ( ! this.refs.navGroup ) {
+			if ( ! this.navGroupRef.current ) {
 				return;
 			}
 
-			navGroupWidth = this.refs.navGroup.offsetWidth;
+			const navGroupWidth = this.navGroupRef.current.offsetWidth;
 
 			this.getTabWidths();
 

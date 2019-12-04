@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Enforce recommended Gridicon size attributes
  * @author Automattic
@@ -18,7 +17,7 @@ const rule = require( '../../../lib/rules/jsx-gridicon-size' ),
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: 'babel-eslint',
+	parser: require.resolve( 'babel-eslint' ),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 	},

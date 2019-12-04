@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {
@@ -58,7 +56,10 @@ function getTimeframeText( promotion, translate, moment ) {
 	return translate( 'No end date' );
 }
 
-const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
+function PromotionsListRow( { site, promotion } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	return (
 		<TableRow href={ getLink( '/store/promotion/:site/' + promotion.id, site ) }>
 			<TableItem isTitle className="promotions__list-promotion">
@@ -70,7 +71,7 @@ const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
 			<TableItem>{ getTimeframeText( promotion, translate, moment ) }</TableItem>
 		</TableRow>
 	);
-};
+}
 
 PromotionsListRow.propTypes = {
 	site: PropTypes.shape( {
@@ -79,4 +80,4 @@ PromotionsListRow.propTypes = {
 	promotion: PropTypes.shape( {} ),
 };
 
-export default localize( PromotionsListRow );
+export default PromotionsListRow;

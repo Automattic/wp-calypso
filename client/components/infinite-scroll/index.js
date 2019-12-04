@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -123,6 +121,6 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 	}
 }
 
-export default ( hasIntersectionObserver
+export default hasIntersectionObserver
 	? InfiniteScrollWithIntersectionObserver
-	: InfiniteScrollWithScrollEvent );
+	: InfiniteScrollWithScrollEvent;

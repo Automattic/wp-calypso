@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -101,9 +101,6 @@ class ProfileLink extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLink );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLink );

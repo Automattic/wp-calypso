@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg */
 
 /**
@@ -5,17 +6,20 @@
  */
 import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { inIframe, sendMessage } from './utils';
+
+const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 /**
  * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
@@ -92,10 +96,19 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-trash', e => {
-		e.preventDefault();
-
-		calypsoPort.postMessage( { action: 'trashPost' } );
+	use( registry => {
+		return {
+			dispatch: namespace => {
+				const actions = { ...registry.dispatch( namespace ) };
+				if ( namespace === 'core/editor' && actions.trashPost ) {
+					actions.trashPost = () => {
+						debug( 'override core/editor trashPost action to use postlist trash' );
+						calypsoPort.postMessage( { action: 'trashPost' } );
+					};
+				}
+				return actions;
+			},
+		};
 	} );
 }
 
@@ -145,11 +158,13 @@ function handlePressThis( calypsoPort ) {
 		const unsubscribe = subscribe( () => {
 			// Calypso sends the message as soon as the iframe is loaded, so we
 			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is no specific hook or selector for that, so we use
-			// `isCleanNewPost` which is triggered when everything is initialized if
-			// the post is new.
-			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
-			if ( ! isCleanNewPost ) {
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( ! editorIsReady ) {
 				return;
 			}
 
@@ -186,7 +201,7 @@ function handlePressThis( calypsoPort ) {
 				);
 			}
 
-			dispatch( 'core/editor' ).resetBlocks( blocks );
+			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
 			dispatch( 'core/editor' ).editPost( { title: title } );
 		} );
 	}
@@ -276,6 +291,38 @@ function handlePostLockTakeover( calypsoPort ) {
 	} );
 }
 
+function handlePostStatusChange( calypsoPort ) {
+	// Keep a reference to the current status
+	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+
+	subscribe( () => {
+		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+		if ( status === newStatus ) {
+			// The status has not changed
+			return;
+		}
+
+		if ( select( 'core/editor' ).isEditedPostDirty() ) {
+			// Wait for the status change to be confirmed by the server
+			return;
+		}
+
+		// Did the client know about the status before this update?
+		const hadStatus = !! status;
+
+		// Update our reference to the current status
+		status = newStatus;
+
+		if ( ! hadStatus ) {
+			// We didn't have a status before this update, so, don't notify
+			return;
+		}
+
+		// Notify that the status has changed
+		calypsoPort.postMessage( { action: 'postStatusChange', payload: { status } } );
+	} );
+}
+
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
@@ -302,7 +349,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	 * Updates all the blocks containing a given edited image.
 	 *
 	 * @param {Array} blocks Array of block objects for the current post.
-	 * @param {Object} image The edited image.
+	 * @param {object} image The edited image.
 	 * @param {number} image.id The image ID.
 	 * @param {string} image.url The new image URL.
 	 * @param {string} image.status The new image status. "deleted" or "updated" (default).
@@ -459,8 +506,8 @@ function handlePreview( calypsoPort ) {
 			dispatch( 'core/editor' ).autosave( { isPreview: true } );
 		}
 		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}
@@ -521,19 +568,20 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function handleGoToAllPosts( calypsoPort ) {
-	if ( ! calypsoifyGutenberg.closeUrl ) {
-		return;
-	}
-
+function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
-		calypsoPort.postMessage( {
-			action: 'goToAllPosts',
-			payload: {
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+
+		const { port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'closeEditor',
+				payload: {
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				},
 			},
-		} );
+			[ port2 ]
+		);
 	} );
 }
 
@@ -565,7 +613,7 @@ function openLinksInParentFrame() {
 }
 
 /**
- * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
@@ -582,6 +630,80 @@ function openCustomizer( calypsoPort ) {
 			},
 		} );
 	} );
+}
+
+/**
+ * Sends a message to Calypso when clicking the "Edit Header" or "Edit Footer"
+ * buttons in order to perform the navigation in Calypso instead of in the iFrame.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openTemplatePartLinks( calypsoPort ) {
+	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', e => {
+		e.preventDefault();
+		e.stopPropagation(); // Otherwise it will port the message twice.
+
+		// Get the template part ID from the current href.
+		const templatePartId = parseInt( getQueryArg( e.target.href, 'post' ), 10 );
+
+		const { port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'openTemplatePart',
+				payload: {
+					templatePartId,
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				},
+			},
+			[ port2 ]
+		);
+	} );
+}
+
+/**
+ * Ensures the calypsoifyGutenberg close URL matches the one on the client.
+ * This is important because we modify the close URL client side in the
+ * context of template part blocks in FSE.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getCloseButtonUrl( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCloseButtonUrl',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		const { closeUrl, label } = data;
+		calypsoifyGutenberg.closeUrl = closeUrl;
+		calypsoifyGutenberg.closeButtonLabel = label;
+
+		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
+	};
+}
+
+/**
+ * Passes uncaught errors in window.onerror to Calypso for logging.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleUncaughtErrors( calypsoPort ) {
+	window.onerror = ( ...error ) => {
+		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
+		// We therefore stringify the error with a custom replacer containing the object's properties.
+		const errorObject = error[ 4 ]; // the 5th argument is the error object
+		error[ 4 ] =
+			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
+
+		// The other parameters don't need encoded since they are numbers or strings.
+		calypsoPort.postMessage( {
+			action: 'logError',
+			payload: { error },
+		} );
+	};
 }
 
 function initPort( message ) {
@@ -651,17 +773,25 @@ function initPort( message ) {
 		// handle post lock state change to takeover
 		handlePostLockTakeover( calypsoPort );
 
+		handlePostStatusChange( calypsoPort );
+
 		handleUpdateImageBlocks( calypsoPort );
 
 		handleInsertClassicBlockMedia( calypsoPort );
 
 		handlePreview( calypsoPort );
 
-		handleGoToAllPosts( calypsoPort );
+		handleCloseEditor( calypsoPort );
 
 		openLinksInParentFrame();
 
 		openCustomizer( calypsoPort );
+
+		openTemplatePartLinks( calypsoPort );
+
+		getCloseButtonUrl( calypsoPort );
+
+		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

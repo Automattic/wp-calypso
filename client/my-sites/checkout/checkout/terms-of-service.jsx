@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
 } from 'lib/url/support';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class TermsOfService extends React.Component {

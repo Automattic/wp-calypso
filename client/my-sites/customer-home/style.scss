@@ -1,0 +1,254 @@
+.customer-home {
+	&__confetti {
+		display: block;
+		width: 320px;
+		margin: 0 auto;
+	}
+	&__launch-button {
+		& .button {
+			font-size: 18px;
+			width: 100%;
+			height: 50px;
+		}
+	}
+	&__box-action {
+		margin-bottom: 16px;
+		width: 100%;
+
+		.button {
+			border-width: 1px;
+			display: block;
+			min-height: 85px;
+			height: 100%;
+			min-width: 100%;
+			padding: 24px;
+			text-align: center;
+		}
+		.button:hover {
+			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
+		}
+
+		span {
+			display: block;
+		}
+
+		@mixin box-action-two-col {
+			margin-bottom: 24px;
+			width: 48%;
+
+			.button {
+				flex: 1;
+				margin: 0 auto;
+				padding: 30px 24px;
+			}
+		}
+		@include breakpoint( '>1280px' ) {
+			@include box-action-two-col;
+		}
+		@include breakpoint( '800px-960px' ) {
+			@include box-action-two-col;
+		}
+	}
+	&__card-checklist-heading {
+		margin-bottom: -16px;
+	}
+	&__card-boxes {
+		padding-bottom: 0;
+	}
+	&__boxes {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+		align-items: stretch;
+	}
+	&__card-col {
+		display: block;
+
+		.button {
+			display: block;
+			text-align: center;
+			width: 100%;
+		}
+
+		@mixin card-col-two-col {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+
+			.button {
+				width: auto;
+			}
+		}
+		@include breakpoint( '>1040px' ) {
+			@include card-col-two-col;
+		}
+		@include breakpoint( '800px-960px' ) {
+			@include card-col-two-col;
+		}
+	}
+	&__card-col-left {
+		margin-bottom: 16px;
+		width: 100%;
+
+		@mixin card-col-left-two-col {
+			margin-bottom: 0;
+			width: 50%;
+
+			.button {
+				margin-right: 6px;
+			}
+		}
+		@include breakpoint( '>1040px' ) {
+			@include card-col-left-two-col;
+		}
+		@include breakpoint( '800px-960px' ) {
+			@include card-col-left-two-col;
+		}
+	}
+	&__card-col-right {
+		width: 100%;
+
+		@mixin card-col-right-two-col {
+			width: 50%;
+
+			.button {
+				margin-left: 6px;
+			}
+		}
+		@include breakpoint( '>1040px' ) {
+			@include card-col-right-two-col;
+		}
+		@include breakpoint( '800px-960px' ) {
+			@include card-col-right-two-col;
+		}
+	}
+	&__card-mobile {
+		justify-content: space-around;
+	}
+	&__card-subheader {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin: -0.5rem 0 1rem;
+	}
+	&__card-support {
+		display: flex;
+		justify-content: space-between;
+
+		img {
+			margin: 0 7% 0 0;
+			width: 137px;
+			height: 119px;
+
+			@include breakpoint( '960px-1040px' ) {
+				display: none;
+			}
+		}
+
+		.vertical-nav {
+			width: 60%;
+
+			@include breakpoint( '960px-1040px' ) {
+				width: 100%;
+			}
+		}
+	}
+	&__go-mobile,
+	&__grow-earn {
+		padding-bottom: 12px;
+	}
+	&__layout {
+		@include breakpoint( '>960px' ) {
+			display: flex;
+			justify-content: space-between;
+			flex-wrap: wrap;
+		}
+
+		.checklist__tasks {
+			margin-bottom: 8px;
+
+			&-completed-title {
+				margin-top: 24px;
+			}
+		}
+
+		.checklist__task::before {
+			display: none;
+		}
+	}
+	&__layout-col {
+		.card-heading {
+			margin-top: -8px;
+		}
+
+		a:last-child .vertical-nav-item {
+			border-bottom: none;
+		}
+	}
+	&__layout-col-left {
+		@include breakpoint( '>960px' ) {
+			width: 60%;
+
+			.card,
+			.checklist__tasks {
+				margin-right: 8px;
+			}
+		}
+	}
+	&__layout-col-right {
+		.vertical-nav {
+			margin-top: 0;
+		}
+
+		.vertical-nav-item {
+			border-bottom: 1px solid var( --color-neutral-5 );
+			box-shadow: none;
+			padding: 12px 0;
+
+			.gridicon {
+				right: 0;
+			}
+		}
+
+		@include breakpoint( '>960px' ) {
+			width: 40%;
+
+			.card {
+				margin-left: 8px;
+			}
+
+			.card.vertical-nav-item {
+				margin-left: 0;
+			}
+		}
+		@include breakpoint( '960px-1040px' ) {
+			.android-app-badge {
+				margin-left: -8px;
+			}
+		}
+	}
+
+	&__loading-placeholder {
+		@include placeholder();
+	}
+}
+
+.get-apps__app-badge {
+	display: inline-block;
+	img {
+		max-height: 41px;
+		margin: 9px 0;
+		width: auto;
+	}
+
+	&.android-app-badge {
+		img {
+			max-height: 59px;
+			margin-top: 0;
+			margin-bottom: 0;
+			margin-right: 0;
+		}
+		& + .ios-app-badge img {
+			margin-left: 0;
+		}
+	}
+}

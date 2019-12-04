@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,9 +21,7 @@ export const requestBlogStickerRemove = action =>
 	http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${
-				action.payload.stickerName
-			}`,
+			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${ action.payload.stickerName }`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
 		},

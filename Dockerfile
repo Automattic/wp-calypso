@@ -1,4 +1,4 @@
-FROM node:10.15.2
+FROM node:10.16.3
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -6,6 +6,7 @@ WORKDIR    /calypso
 
 ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
+ENV        PROGRESS=true
 
 # Build a "base" layer
 #
@@ -20,12 +21,20 @@ ENV        NODE_PATH=/calypso/server:/calypso/client
 COPY       ./env-config.sh /tmp/env-config.sh
 RUN        bash /tmp/env-config.sh
 
+# Build a node_modules layer
+#
+# This one builds out our node_modules tree. Since we use
+# file: references, we have to copy over our
+# package.json, lockfiles, and the contents of packages/*
+COPY package.json package-lock.json /calypso/
+COPY packages /calypso/packages
+RUN npm ci
+
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY       . /calypso/
-RUN        npm ci
 
 # Build the final layer
 #

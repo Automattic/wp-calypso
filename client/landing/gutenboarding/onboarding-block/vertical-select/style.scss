@@ -1,0 +1,32 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+.vertical-select {
+	.suggestions__category-heading {
+		padding: 12px 16px;
+		color: $dark-gray-300;
+		line-height: 18px;
+		border: 1px solid $light-gray-500;
+	}
+	.suggestions__wrapper {
+		background: $white;
+		position: fixed;
+		margin-left: 8px;
+		max-width: 440px;
+		max-height: 440px;
+		overflow: auto;
+		border: 1px solid $blue-medium-focus;
+	}
+	.suggestions__item {
+		border-color: $light-gray-500;
+		.suggestions__label.is-emphasized {
+			font-weight: normal;
+			color: $blue-medium-900;
+		}
+		&:focus,
+		&:active {
+			.suggestions__label.is-emphasized {
+				color: $blue-medium-focus;
+			}
+		}
+	}
+}

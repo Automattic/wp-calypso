@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -55,7 +53,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearPluginUpload( siteId );
@@ -148,7 +146,7 @@ class PluginUpload extends React.Component {
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
-				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
+				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				{ upgradeJetpack && (
 					<JetpackManageErrorPage
 						template="updateJetpack"
@@ -205,10 +203,12 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
-	),
+	connect( mapStateToProps, {
+		uploadPlugin,
+		clearPluginUpload,
+		initiateAutomatedTransferWithPluginZip,
+		successNotice,
+	} ),
 	localize,
 ];
 

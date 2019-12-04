@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Segmented Control
 
 Segmented Control manipulates the content shown following an exclusive or “either/or” pattern.
@@ -17,7 +15,6 @@ A good example for this case is navigation. Sometimes the option that is selecte
 ```jsx
 import React from 'react';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 
 export default class extends React.Component {
 	// ...
@@ -25,40 +22,40 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SegmentedControl>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'all' }
 					onClick={ this.handleFilterClick( 'all' ) }
 				>
 					All
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'unread' }
 					onClick={ this.handleFilterClick( 'unread' ) }
 				>
 					Unread
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'comments' }
 					onClick={ this.handleFilterClick( 'comments' ) }
 				>
 					Comments
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'follows' }
 					onClick={ this.handleFilterClick( 'follows' ) }
 				>
 					Follows
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'likes' }
 					onClick={ this.handleFilterClick( 'likes' ) }
 				>
 					Likes
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	},

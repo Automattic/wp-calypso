@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,6 +15,7 @@ import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 
 /**
  * Style dependencies
@@ -45,13 +45,17 @@ export class ChecklistNavigation extends Component {
 	};
 
 	render() {
-		const { siteSlug, translate, showNotification, taskList } = this.props;
+		const { isLoading, siteSlug, translate, showNotification, taskList } = this.props;
+		const { total, completed } = taskList.getCompletionStatus();
+
+		if ( total === completed || isLoading ) {
+			return null;
+		}
 
 		const buttonClasses = classNames( 'checklist-navigation__count', {
 			'has-notification': showNotification,
 		} );
 
-		const { total, completed } = taskList.getCompletionStatus();
 		const checklistLink = '/checklist/' + siteSlug;
 
 		return (
@@ -90,6 +94,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteSlug: getSiteSlug( state, siteId ),
+			isLoading: isSiteChecklistLoading( state, siteId ),
 		};
 	},
 	{ recordTracksEvent }

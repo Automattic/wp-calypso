@@ -6,42 +6,42 @@
 	&.is-focused {
 		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px var( --color-primary-100 );
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
 
 		&:hover {
-			box-shadow: 0 0 0 2px var( --color-primary-200 );
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
 		}
 
 		&.is-valid {
-			box-shadow: 0 0 0 2px var( --color-success-50 );
+			box-shadow: 0 0 0 2px var( --color-success-5 );
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px var( --color-success-50 );
+			box-shadow: 0 0 0 2px var( --color-success-5 );
 		}
 
 		&.is-error {
-			box-shadow: 0 0 0 2px var( --color-error-50 );
+			box-shadow: 0 0 0 2px var( --color-error-5 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px var( --color-error-100 );
+			box-shadow: 0 0 0 2px var( --color-error-10 );
 		}
 	}
 
 	&.is-disabled {
 		background: var( --color-neutral-0 );
 		border-color: var( --color-neutral-0 );
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		opacity: 1;
-		-webkit-text-fill-color: var( --color-neutral-200 );
+		-webkit-text-fill-color: var( --color-neutral-20 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 	}
 
@@ -50,7 +50,7 @@
 	}
 
 	&.is-valid:hover {
-		border-color: var( --color-success-400 );
+		border-color: var( --color-success-40 );
 	}
 
 	&.is-error {
@@ -58,7 +58,7 @@
 	}
 
 	&.is-error:hover {
-		border-color: var( --color-error-500 );
+		border-color: var( --color-error-50 );
 	}
 }
 

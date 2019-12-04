@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -78,7 +77,7 @@ class ChecklistOnboardingWelcome extends Component {
 					</p>
 					<p className="checklist-onboarding-welcome__task-estimate">
 						<Gridicon icon="time" size={ 18 } />
-						{ translate( 'Estimated time:' ) }{' '}
+						{ translate( 'Estimated time:' ) }{ ' ' }
 						{ translate( '%d minute', '%d minutes', { count: 15, args: [ 15 ] } ) }
 					</p>
 				</div>

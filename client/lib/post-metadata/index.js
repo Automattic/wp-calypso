@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { find } from 'lodash';
+import { getThemeIdFromStylesheet } from 'state/themes/utils';
 
 /**
  * Module variables
  */
-let REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
-	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/,
-	PostMetadata;
+const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
+	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/;
 
 function getValueByKey( metadata, key ) {
 	const meta = find( metadata, { key: key } );
@@ -35,7 +33,7 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 		} );
 }
 
-PostMetadata = {
+const PostMetadata = {
 	/**
 	 * Given a post object, returns the Publicize custom message assigned to
 	 * that post, or `undefined` if the value cannot be determined.
@@ -84,6 +82,21 @@ PostMetadata = {
 	},
 
 	/**
+	 * Given a post object, returns the theme id of a template-first theme, or `undefined` if the value
+	 * cannot be determined.
+	 *
+	 * @param  {Object} post Post object
+	 * @return {String|undefined} ThemeId on success.
+	 */
+	homepageTemplate: function( post ) {
+		if ( ! post ) {
+			return;
+		}
+
+		return getThemeIdFromStylesheet( getValueByKey( post.metadata, '_tft_homepage_template' ) );
+	},
+
+	/**
 	 * Given a post object, returns a human-readable address label representing
 	 * the geographic location saved for that post, or `undefined` if the value
 	 * cannot be determined.
@@ -123,14 +136,12 @@ PostMetadata = {
 	 * @return {string}      Array of geographic float coordinates
 	 */
 	geoCoordinates: function( post ) {
-		let latitude, longitude;
-
 		if ( ! post ) {
 			return;
 		}
 
-		latitude = parseFloat( getValueByKey( post.metadata, 'geo_latitude' ) );
-		longitude = parseFloat( getValueByKey( post.metadata, 'geo_longitude' ) );
+		const latitude = parseFloat( getValueByKey( post.metadata, 'geo_latitude' ) );
+		const longitude = parseFloat( getValueByKey( post.metadata, 'geo_longitude' ) );
 
 		if ( latitude && longitude ) {
 			return [ latitude, longitude ];

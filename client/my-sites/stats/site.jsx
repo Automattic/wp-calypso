@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,12 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
@@ -28,10 +26,11 @@ import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
+import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
-import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -124,31 +123,18 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, isJetpack, siteId, slug } = this.props;
+		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let videoList;
-		let podcastList;
+		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays, and tags and categories are not supported in JetPack Stats
+		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
-			videoList = (
-				<StatsModule
-					path="videoplays"
-					moduleStrings={ moduleStrings.videoplays }
-					period={ this.props.period }
-					query={ query }
-					statType="statsVideoPlays"
-					showSummaryLink
-				/>
-			);
-		}
-		if ( config.isEnabled( 'manage/stats/file-downloads' ) ) {
-			podcastList = (
+			fileDownloadList = (
 				<StatsModule
 					path="filedownloads"
 					moduleStrings={ moduleStrings.filedownloads }
@@ -156,6 +142,7 @@ class StatsSite extends Component {
 					query={ query }
 					statType="statsFileDownloads"
 					showSummaryLink
+					useShortLabel={ true }
 				/>
 			);
 		}
@@ -164,13 +151,19 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats' ) } />
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="stats__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
+				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
 					interval={ period }
@@ -178,7 +171,9 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<StatsBanners siteId={ siteId } slug={ slug } />
+					{ ! isCustomerHomeEnabled && (
+						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
+					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -224,7 +219,7 @@ class StatsSite extends Component {
 								statType="statsSearchTerms"
 								showSummaryLink
 							/>
-							{ videoList }
+							{ fileDownloadList }
 						</div>
 						<div className="stats__module-column">
 							<Countries
@@ -260,7 +255,14 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ podcastList }
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
 						</div>
 					</div>
 				</div>
@@ -280,6 +282,7 @@ export default connect(
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

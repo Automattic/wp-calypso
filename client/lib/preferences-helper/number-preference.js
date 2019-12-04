@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,4 @@ class NumberPreference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	null
-)( localize( NumberPreference ) );
+export default connect( null, null )( localize( NumberPreference ) );

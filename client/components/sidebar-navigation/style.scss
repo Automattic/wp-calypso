@@ -2,12 +2,40 @@
  * Sidebar Navigation Header in Sections
  */
 .current-section {
-	a p {
-		font-size: 9px;
-		margin: 3px 0 -4px;
+	position: relative;
+	margin: 0 0 8px;
+
+	@include breakpoint( '>660px' ) {
+		display: none;
 	}
 
-	.current-section__section-title {
-		font-size: 18px;
+	button {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		cursor: pointer;
+		padding: 8px 0;
+		color: var( --color-neutral-70 );
+		background: var( --color-surface );
+		border-bottom: 1px solid var( --color-neutral-10 );
+		font-size: 15px;
+		line-height: 1.5;
+		text-align: left;
+		width: 100%;
+	}
+
+	.gridicons-menu {
+		color: var( --color-neutral-light );
+		margin: 0 8px;
+	}
+}
+
+.layout__page-title {
+	font-size: 24px;
+	font-weight: 300;
+	margin: 16px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 8px;
 	}
 }

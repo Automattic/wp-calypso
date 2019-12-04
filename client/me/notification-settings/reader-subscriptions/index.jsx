@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -30,6 +27,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import Main from 'components/main';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -251,13 +249,11 @@ const NotificationSubscriptions = createReactClass( {
 	},
 } );
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( null, { recordGoogleEvent } );
 
 export default flowRight(
 	connectComponent,
 	localize,
-	protectForm
+	protectForm,
+	withLocalizedMoment
 )( NotificationSubscriptions );

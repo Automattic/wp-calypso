@@ -14,14 +14,14 @@ SiteRedirectStore.get()
 SiteRedirectStore.getBySite( 'example.wordpress.com' )
 ```
 
-To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):
+To interact with the store, use the actions made available in the [`actions`](../actions.js) module:
 
 ```js
 import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
 	updateSiteRedirect,
-} from 'lib/upgrades/actions';
+} from 'lib/domains/site-redirect/actions';
 
 closeSiteRedirectNotice( 'example.wordpress.com' );
 fetchSiteRedirect( 'example.wordpress.com' );

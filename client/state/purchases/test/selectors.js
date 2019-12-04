@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -60,7 +58,7 @@ describe( 'selectors', () => {
 				purchases: {
 					data: [
 						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
+						{ ID: 2, product_name: 'premium plan', blog_id: 1337, is_rechargable: true },
 					],
 					error: null,
 					isFetchingSitePurchases: false,
@@ -94,6 +92,7 @@ describe( 'selectors', () => {
 				includedDomainPurchaseAmount: undefined,
 				isCancelable: false,
 				isDomainRegistration: false,
+				isRechargeable: true,
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,

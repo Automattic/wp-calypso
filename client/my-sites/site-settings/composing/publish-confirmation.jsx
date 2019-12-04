@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ class PublishConfirmation extends Component {
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
 			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
 		}
@@ -50,7 +48,7 @@ class PublishConfirmation extends Component {
 		if ( showPublishFlow ) {
 			return (
 				<FormFieldset>
-					<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
+					<FormLabel>{ translate( 'Show Publish Confirmation' ) }</FormLabel>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'The Block Editor handles the Publish confirmation setting. ' +

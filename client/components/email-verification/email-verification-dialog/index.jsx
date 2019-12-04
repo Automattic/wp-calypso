@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Button from 'components/button';
 import Spinner from 'components/spinner';
 import { getCurrentUserEmail } from 'state/current-user/selectors';

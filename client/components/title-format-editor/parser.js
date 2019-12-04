@@ -1,4 +1,3 @@
-/** @format */
 import {
 	compact,
 	flowRight as compose,

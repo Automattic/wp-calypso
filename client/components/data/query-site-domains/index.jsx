@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,55 +11,20 @@ import { bindActionCreators } from 'redux';
 import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-class QuerySiteDomains extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestSiteDomains = this.requestSiteDomains.bind( this );
+const request = siteId => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {
+		dispatch( fetchSiteDomains( siteId ) );
 	}
+};
 
-	componentWillMount() {
-		this.requestSiteDomains();
-	}
+export default function QuerySiteDomains( { siteId } ) {
+	const dispatch = useDispatch();
 
-	componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.requestingSiteDomains ||
-			! nextProps.siteId ||
-			this.props.siteId === nextProps.siteId
-		) {
-			return;
-		}
-		this.requestSiteDomains( nextProps );
-	}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	requestSiteDomains( props = this.props ) {
-		if ( ! props.requestingSiteDomains && props.siteId ) {
-			props.fetchSiteDomains( props.siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-QuerySiteDomains.propTypes = {
-	siteId: PropTypes.number,
-	requestingSiteDomains: PropTypes.bool,
-	fetchSiteDomains: PropTypes.func,
-};
-
-QuerySiteDomains.defaultProps = {
-	fetchSiteDomains: () => {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSiteDomains: isRequestingSiteDomains( state, ownProps.siteId ),
-		};
-	},
-	dispatch => {
-		return bindActionCreators( { fetchSiteDomains }, dispatch );
-	}
-)( QuerySiteDomains );
+QuerySiteDomains.propTypes = { siteId: PropTypes.number.isRequired };

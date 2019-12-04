@@ -1,16 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -37,7 +34,6 @@ import { preventWidows } from 'lib/formatting';
 /**
  * Stylesheet dependencies
  */
-
 import './style.scss';
 
 const maxFollowers = 1000;

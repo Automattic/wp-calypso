@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -21,6 +18,13 @@ import { localizeUrl } from 'lib/i18n-utils';
 // TODO: update supportUrls and maybe create similar mapping for warnings
 function getHoldMessages( siteSlug, translate ) {
 	return {
+		BLOCKED_ATOMIC_TRANSFER: {
+			title: translate( 'Blocked' ),
+			description: translate(
+				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+			),
+			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
+		},
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
 			description: translate(
@@ -50,25 +54,9 @@ function getHoldMessages( siteSlug, translate ) {
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NON_ADMIN_USER: {
-			title: translate( 'Site owner only' ),
-			description: translate( 'Only the site owner can use this feature.' ),
+			title: translate( 'Site administrator only' ),
+			description: translate( 'Only the site administrators can use this feature.' ),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/user-roles/' ),
-		},
-		NOT_DOMAIN_OWNER: {
-			title: translate( 'Domain owner only' ),
-			description: translate(
-				'The primary domain on this site is owned by a different user. Change the primary domain to one that you own, or contact support to have this domain transferred to you.'
-			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
-		},
-		NO_WPCOM_NAMESERVERS: {
-			title: translate( 'Domain not using WordPress.com name servers' ),
-			description: translate(
-				"This domain is not using WordPress.com name servers, so it's not pointing to your site. Change your name servers over at your domain provider's. If you're not sure how to do that, contact them for help."
-			),
-			supportUrl:
-				'https://en.support.wordpress.com/domains/map-existing-domain/' +
-				'#2-ask-your-domain-provider-to-update-your-dns-settings',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Domain pointing to a different site' ),

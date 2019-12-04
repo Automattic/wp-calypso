@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -201,6 +199,6 @@ class StickyPanelWithScrollEvent extends React.Component {
 	}
 }
 
-export default ( hasIntersectionObserver
+export default hasIntersectionObserver
 	? StickyPanelWithIntersectionObserver
-	: StickyPanelWithScrollEvent );
+	: StickyPanelWithScrollEvent;

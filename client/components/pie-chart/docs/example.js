@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -109,7 +107,7 @@ class PieChartExample extends Component {
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-									<label>{ 'Show' }</label>{' '}
+									<label>{ 'Show' }</label>{ ' ' }
 									<input
 										name={ seriesName }
 										type="checkbox"

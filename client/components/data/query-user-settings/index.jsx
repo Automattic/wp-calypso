@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
 import { fetchUserSettings } from 'state/user-settings/actions';
 
 class QueryUserSettings extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.fetchUserSettings();
 	}
 
@@ -22,7 +20,4 @@ class QueryUserSettings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ fetchUserSettings }
-)( QueryUserSettings );
+export default connect( null, { fetchUserSettings } )( QueryUserSettings );

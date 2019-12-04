@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -23,7 +22,7 @@ import {
 	emailManagement,
 } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
 import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
 import {
@@ -87,6 +86,13 @@ class GSuiteAddUsers extends React.Component {
 	handleCancel = () => {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click' );
 		this.goToEmail();
+	};
+
+	handleReturnKeyPress = event => {
+		// Simulate an implicit submission for the add user form :)
+		if ( event.key === 'Enter' ) {
+			this.handleContinue();
+		}
 	};
 
 	handleUsersChange = changedUsers => {
@@ -190,6 +196,7 @@ class GSuiteAddUsers extends React.Component {
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
+							onReturnKeyPress={ this.handleReturnKeyPress }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
@@ -253,7 +260,7 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDecoratedSiteDomains( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 		return {
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -65,8 +63,11 @@ class Security extends React.Component {
 					</p>
 
 					<AccountPassword
-						userSettings={ this.props.userSettings }
 						accountPasswordData={ this.props.accountPasswordData }
+						autocomplete="new-password"
+						// Hint to LastPass not to attempt autofill
+						data-lpignore="true"
+						userSettings={ this.props.userSettings }
 					/>
 				</Card>
 			</Main>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -101,7 +99,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsModuleSummaryLinks );
+export default flowRight( connectComponent, localize )( StatsModuleSummaryLinks );

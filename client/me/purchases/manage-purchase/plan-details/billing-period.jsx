@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { isMonthly } from 'lib/plans/constants';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -33,11 +31,11 @@ class PlanBillingPeriod extends Component {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
 
-		addItem( planItem( yearlyPlanSlug ) );
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
+		addItem( planItem( yearlyPlanSlug ) );
 		page( '/checkout/' + purchase.domain );
 	};
 
@@ -114,9 +112,6 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PlanBillingPeriod ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PlanBillingPeriod ) );

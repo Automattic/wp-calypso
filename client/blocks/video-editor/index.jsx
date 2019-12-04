@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -53,7 +51,7 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
 			this.setState( {
 				error: true,
@@ -167,8 +165,6 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
-				{ error && this.renderError() }
-
 				<figure>
 					<div className="video-editor__content">
 						<div className="video-editor__preview-wrapper">
@@ -202,6 +198,8 @@ class VideoEditor extends Component {
 						/>
 					</div>
 				</figure>
+
+				{ error && this.renderError() }
 			</div>
 		);
 	}

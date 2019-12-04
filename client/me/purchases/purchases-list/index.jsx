@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -50,7 +48,9 @@ class PurchasesList extends Component {
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
 				<div>
-					{ this.props.isBusinessPlanUser && <ConciergeBanner /> }
+					{ this.props.isBusinessPlanUser && (
+						<ConciergeBanner recordTracksEvent={ this.props.recordTracksEvent } />
+					) }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
 						<PurchasesSite

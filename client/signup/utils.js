@@ -1,8 +1,8 @@
-/** @format **/
 /**
  * Exernal dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, pick } from 'lodash';
+import cookie from 'cookie';
+import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -18,21 +18,9 @@ const user = userFactory();
 const { defaultFlowName } = flows;
 
 export function getFlowName( parameters ) {
-	const flow =
-		parameters.flowName && isFlowName( parameters.flowName )
-			? parameters.flowName
-			: defaultFlowName;
-	return maybeFilterFlowName( flow, flows.filterFlowName );
-}
-
-function maybeFilterFlowName( flowName, filterCallback ) {
-	if ( filterCallback && typeof filterCallback === 'function' ) {
-		const filteredFlow = filterCallback( flowName );
-		if ( isFlowName( filteredFlow ) ) {
-			return filteredFlow;
-		}
-	}
-	return flowName;
+	return parameters.flowName && isFlowName( parameters.flowName )
+		? parameters.flowName
+		: defaultFlowName;
 }
 
 function isFlowName( pathFragment ) {
@@ -188,19 +176,65 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 
 export function getFilteredSteps( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	return filter( progress, step => includes( flow.steps, step.stepName ) );
+
+	if ( ! flow ) {
+		return [];
+	}
+
+	return sortBy(
+		// filter steps...
+		filter( progress, step => includes( flow.steps, step.stepName ) ),
+		// then order according to the flow definition...
+		( { stepName } ) => flow.steps.indexOf( stepName )
+	);
 }
 
 export function getFirstInvalidStep( flowName, progress ) {
 	return find( getFilteredSteps( flowName, progress ), { status: 'invalid' } );
 }
 
-export function getCompletedSteps( flowName, progress ) {
+export function getCompletedSteps( flowName, progress, options = {} ) {
+	// Option to check that the current `flowName` matches the `lastKnownFlow`.
+	// This is to ensure that when resuming progress, we only do so if
+	// the last known flow matches the one that the user is returning to.
+	if ( options.shouldMatchFlowName ) {
+		return filter(
+			getFilteredSteps( flowName, progress ),
+			step => 'in-progress' !== step.status && step.lastKnownFlow === flowName
+		);
+	}
 	return filter( getFilteredSteps( flowName, progress ), step => 'in-progress' !== step.status );
 }
 
 export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
+	const flowStepsInProgressStore = getCompletedSteps( flowName, progress, {
+		shouldMatchFlowName: true,
+	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
+
+export const persistSignupDestination = url => {
+	const WEEK_IN_SECONDS = 3600 * 24 * 7;
+	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
+	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
+};
+
+export const retrieveSignupDestination = () => {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.wpcom_signup_complete_destination;
+};
+
+export const clearSignupDestinationCookie = () => {
+	// Set expiration to a random time in the past so that the cookie gets removed.
+	const expirationDate = new Date( new Date().getTime() - 1000 );
+	const options = { path: '/', expires: expirationDate };
+
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
+};
+
+export const shouldForceLogin = flowName => {
+	const flow = flows.getFlow( flowName );
+	return !! flow && flow.forceLogin;
+};

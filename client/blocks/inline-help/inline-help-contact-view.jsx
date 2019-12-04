@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +18,9 @@ import isSupportVariationDetermined from 'state/selectors/is-support-variation-d
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const InlineHelpContactView = ( {
-	/* eslint-disable no-unused-vars, no-shadow */
+	/* eslint-disable no-shadow */
 	isSupportVariationDetermined = false,
-	/* eslint-enable no-unused-vars, no-shadow */
+	/* eslint-enable no-shadow */
 	supportVariation,
 	selectedSite,
 } ) => {

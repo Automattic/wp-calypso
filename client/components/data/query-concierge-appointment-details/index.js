@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 import { requestConciergeAppointmentDetails } from 'state/concierge/actions';
 
 class QueryConciergeAppointmentDetails extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { appointmentId, scheduleId } = this.props;
 		this.props.requestConciergeAppointmentDetails( scheduleId, appointmentId );
 	}
@@ -22,7 +20,6 @@ class QueryConciergeAppointmentDetails extends Component {
 	}
 }
 
-export default connect(
-	state => state,
-	{ requestConciergeAppointmentDetails }
-)( QueryConciergeAppointmentDetails );
+export default connect( state => state, { requestConciergeAppointmentDetails } )(
+	QueryConciergeAppointmentDetails
+);

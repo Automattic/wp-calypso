@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -126,7 +125,7 @@ class MailChimpDashboard extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { translate } = nextProps;
 		if ( false === nextProps.isSaving && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {

@@ -1,6 +1,3 @@
-/** @format */
-const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
-
 const config = {
 	// see https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
 	sourceType: 'unambiguous',
@@ -18,15 +15,6 @@ const config = {
 	],
 	plugins: [
 		'@babel/plugin-syntax-dynamic-import',
-		isBrowser && [
-			'module-resolver',
-			{
-				alias: {
-					lodash: 'lodash-es',
-					'lodash/': ( [ , name ] ) => `lodash-es/${ name }`,
-				},
-			},
-		],
 		[
 			'@babel/transform-runtime',
 			{

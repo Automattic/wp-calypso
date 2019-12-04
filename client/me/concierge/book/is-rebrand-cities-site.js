@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * We have an initiative partnership called Rebrand Cities, where our partners help businesses
  * set up a WordPress.com Business site. The site owners are then encouraged to book a Concierge

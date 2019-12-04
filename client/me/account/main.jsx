@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +20,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
+import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from 'components/card';
 import Button from 'components/button';
@@ -81,7 +81,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
@@ -254,7 +254,7 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{' '}
+				{ ' ' }
 				{ translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{
@@ -595,7 +595,7 @@ const Account = createReactClass( {
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={

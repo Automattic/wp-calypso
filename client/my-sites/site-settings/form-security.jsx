@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -79,7 +77,7 @@ class SiteSettingsFormSecurity extends Component {
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
-							title={ translate( 'Spam filtering' ) }
+							title={ translate( 'Anti-spam' ) }
 						/>
 						<SpamFilteringSettings
 							dirtyFields={ dirtyFields }
@@ -92,7 +90,7 @@ class SiteSettingsFormSecurity extends Component {
 					</div>
 				) }
 
-				<SettingsSectionHeader title={ translate( 'WordPress.com sign in' ) } />
+				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
 				<Sso
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }

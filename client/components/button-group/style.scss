@@ -37,8 +37,8 @@
 			background-image: linear-gradient(
 				-45deg,
 				var( --color-accent ) 28%,
-				var( --color-accent-600 ) 28%,
-				var( --color-accent-600 ) 72%,
+				var( --color-accent-60 ) 28%,
+				var( --color-accent-60 ) 72%,
 				var( --color-accent ) 72%
 			);
 		}
@@ -47,7 +47,7 @@
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, var( --color-neutral-0 ) 28%, var( --color-white ) 28%, var( --color-white ) 72%, var( --color-neutral-0 ) 72% );
+		background-image: linear-gradient( -45deg, var( --color-neutral-0 ) 28%, var( --color-surface ) 28%, var( --color-surface ) 72%, var( --color-neutral-0 ) 72% );
 		display: inline-block;
 		border-radius: 4px;
 

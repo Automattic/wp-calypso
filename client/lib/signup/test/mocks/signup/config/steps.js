@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -96,4 +94,18 @@ export default {
 		stepName: 'site-topic-and-title',
 		providesDependencies: [ 'siteTopic', 'siteTitle' ],
 	},
+
+	'site-topic-with-optional-theme': {
+		stepName: 'site-topic-with-optional-theme',
+		providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+		optionalDependencies: [ 'themeSlugWithRepo' ],
+	},
+
+	'site-topic-with-optional-survey-question': {
+		stepName: 'site-topic-with-optional-survey-question',
+		providesDependencies: [ 'siteTopic', 'surveyQuestion' ],
+		optionalDependencies: [ 'surveyQuestion' ],
+	},
 };
+
+export const isDomainStepSkippable = jest.fn( () => false );

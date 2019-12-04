@@ -17,7 +17,7 @@ import Divider from '../divider';
  */
 import './waiting-notification-approval.scss';
 
-export default function WaitingTwoFactorNotificationApproval() {
+export default function WaitingTwoFactorNotificationApproval( { isJetpack } ) {
 	const translate = useTranslate();
 
 	return (
@@ -32,7 +32,7 @@ export default function WaitingTwoFactorNotificationApproval() {
 				<PushNotificationIllustration />
 			</Card>
 			<Divider>{ translate( 'or' ) }</Divider>
-			<TwoFactorActions twoFactorAuthType="push" />
+			<TwoFactorActions twoFactorAuthType="push" isJetpack={ isJetpack } />
 		</Fragment>
 	);
 }

@@ -3,10 +3,10 @@
 		fill: var( --color-primary );
 	}
 	text {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 
 		&.is-offset-text {
-			fill: var( --color-neutral-700 );
+			fill: var( --color-neutral-70 );
 		}
 	}
 }

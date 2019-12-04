@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -14,6 +12,7 @@ import page from 'page';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
 
 class TransferRestrictionMessage extends React.PureComponent {
@@ -42,6 +41,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 			transferEligibleDate,
 			transferRestrictionStatus,
 			translate,
+			moment,
 		} = this.props;
 
 		const transferEligibleMoment = moment( transferEligibleDate );
@@ -88,8 +88,8 @@ class TransferRestrictionMessage extends React.PureComponent {
 					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
-						domain: domain,
-						daysAgoRegistered: moment().diff( moment( creationDate ), 'days' ),
+						domain,
+						daysAgoRegistered: this.props.moment().diff( creationDate, 'days' ),
 						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
 					},
 					components: {
@@ -137,4 +137,4 @@ class TransferRestrictionMessage extends React.PureComponent {
 	}
 }
 
-export default localize( TransferRestrictionMessage );
+export default localize( withLocalizedMoment( TransferRestrictionMessage ) );

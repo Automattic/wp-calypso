@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import { forEach, reduce, omit, get, has } from 'lodash';

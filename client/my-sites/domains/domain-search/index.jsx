@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,17 +18,18 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
-import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
+import { addItem, removeItem } from 'lib/cart/actions';
+import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
 import {
 	hasDomainInCart,
 	domainMapping,
 	domainTransfer,
-	domainRegistration as domnRegistration,
+	domainRegistration,
 	updatePrivacyForDomain,
 } from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -102,25 +102,41 @@ class DomainSearch extends Component {
 	}
 
 	addDomain( suggestion ) {
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
+		const {
+			domain_name: domain,
+			product_slug: productSlug,
+			supports_privacy: supportsPrivacy,
+		} = suggestion;
 
-		let domainRegistration = domnRegistration( {
-			domain: suggestion.domain_name,
-			productSlug: suggestion.product_slug,
-			extra: { privacy_available: suggestion.supports_privacy },
+		this.props.recordAddDomainButtonClick( domain, 'domains' );
+
+		let registration = domainRegistration( {
+			domain,
+			productSlug,
+			extra: { privacy_available: supportsPrivacy },
 		} );
 
-		if ( suggestion.supports_privacy ) {
-			domainRegistration = updatePrivacyForDomain( domainRegistration, true );
+		if ( supportsPrivacy ) {
+			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		addItems( [ domainRegistration ] );
-		goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
+		addItem( registration );
+
+		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
+			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+		} else {
+			page( '/checkout/' + this.props.selectedSiteSlug );
+		}
 	}
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		removeDomainFromCart( suggestion );
+		removeItem(
+			domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+			} )
+		);
 	}
 
 	render() {
@@ -200,7 +216,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: siteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

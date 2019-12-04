@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flow } from 'lodash';
 
 /**
@@ -38,10 +37,7 @@ EditorSidebarHeader.propTypes = {
 
 export default flow(
 	localize,
-	connect(
-		null,
-		{
-			closeSidebar: closeEditorSidebar,
-		}
-	)
+	connect( null, {
+		closeSidebar: closeEditorSidebar,
+	} )
 )( EditorSidebarHeader );

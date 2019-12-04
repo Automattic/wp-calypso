@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,15 +12,20 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
+/**
+ * Image dependencies
+ */
+import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
+import customDomainBloggerImage from 'assets/images/illustrations/custom-domain-blogger.svg';
+
 const CustomDomainPurchaseDetail = ( {
 	selectedSite,
 	hasDomainCredit,
 	onlyBlogDomain,
 	translate,
 } ) => {
-	const customDomainIcon =
-		'/calypso/images/illustrations/custom-domain' + ( onlyBlogDomain ? '-blogger' : '' ) + '.svg';
-	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
+	const customDomainIcon = onlyBlogDomain ? customDomainBloggerImage : customDomainImage;
+	if ( hasDomainCredit ) {
 		return (
 			<PurchaseDetail
 				icon={ <img alt="" src={ customDomainIcon } /> }

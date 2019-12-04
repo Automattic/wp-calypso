@@ -6,7 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-
+	
 	@include breakpoint( '>660px' ) {
 		align-items: flex-end;
 		font-size: 16px;
@@ -14,16 +14,23 @@
 		.featured-domain-suggestions & {
 			align-items: flex-start;
 		}
-	}
 
-	.is-section-signup & {
+		&.domain-product-price__domain-step-copy-updates {
+			align-items: flex-start;
+		}
+	}
+		
+
+	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
 		@include breakpoint( '>660px' ) {
+			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}
 
 	.is-section-domains & {
 		@include breakpoint( '>800px' ) {
+			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}
@@ -44,7 +51,7 @@
 
 	.domain-product-price__free-text,
 	.domain-product-price__sale-price {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		display: block;
 	}
 
@@ -53,6 +60,10 @@
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
+	}
+
+	.domain-product-price__free-price {
+		color: var( --color-success );
 	}
 
 	.domain-product-price__price,
@@ -65,14 +76,10 @@
 		line-height: 1.7;
 		margin-top: 2px;
 
-		small {
-			opacity: 1;
-		}
-
 		.domain-product-price__price,
 		.domain-product-price__renewal-price {
 			font-size: 80%;
-			opacity: 0.6;
+			color: var( --color-text-subtle );
 		}
 
 		@include breakpoint( '>660px' ) {

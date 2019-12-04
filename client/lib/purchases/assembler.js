@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -43,11 +41,15 @@ function createPurchaseObject( purchase ) {
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
+		isRechargeable: Boolean( purchase.is_rechargable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
+		partnerName: purchase.partner_name,
+		partnerSlug: purchase.partner_slug,
+		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
@@ -59,6 +61,7 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
+		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,

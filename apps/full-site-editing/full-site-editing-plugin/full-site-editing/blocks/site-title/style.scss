@@ -1,20 +1,12 @@
+@import '../../sass/mixins';
+
 .block-editor {
-	.wp-block-a8c-site-title {
-		&, &:focus {
-			display: inline;
-			color: #111111;
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-				'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-			font-size: 1.125em;
-			font-weight: normal;
-			letter-spacing: -0.02em;
-			line-height: 1.2;
-			margin: 0;
-			box-shadow: none;
-		}
+	.wp-block-a8c-site-title:focus {
+		box-shadow: none;
+		background-color: transparent;
 	}
-	.site-title__save-button {
-		margin-left: auto;
-		display: block;
+
+	.wp-block.is-selected .wp-block-a8c-site-title {
+		@include hide-input-placeholder;
 	}
 }

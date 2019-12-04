@@ -155,7 +155,6 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( localize( InviteAcceptLoggedIn ) );
+export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
+	localize( InviteAcceptLoggedIn )
+);

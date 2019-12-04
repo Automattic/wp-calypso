@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ const UkAddressFieldset = props => {
 	const { getFieldProps, translate } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
-			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city', true ) } />
-			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
+			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city' ) } />
+			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code' ) } />
 		</div>
 	);
 };

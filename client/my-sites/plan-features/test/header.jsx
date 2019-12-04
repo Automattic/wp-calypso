@@ -1,5 +1,3 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -21,6 +19,7 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 /**

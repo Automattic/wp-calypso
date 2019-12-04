@@ -1,10 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,8 +15,8 @@ import Card from 'components/card';
  */
 import './style.scss';
 
-const ActionPanel = ( { children } ) => {
-	return <Card className="action-panel">{ children }</Card>;
+const ActionPanel = ( { children, className } ) => {
+	return <Card className={ classnames( 'action-panel', className ) }>{ children }</Card>;
 };
 
 export default ActionPanel;

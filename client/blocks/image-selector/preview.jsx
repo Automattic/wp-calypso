@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -69,7 +67,12 @@ export class ImageSelectorPreview extends Component {
 		// already have the data for the media item, so first update the state
 		this.updateImageState( () => {
 			const { itemIds, siteId } = this.props;
-			if ( isEqual( this.state.images.map( image => image.ID ), itemIds ) ) {
+			if (
+				isEqual(
+					this.state.images.map( image => image.ID ),
+					itemIds
+				)
+			) {
 				return;
 			}
 

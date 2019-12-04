@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,7 @@ import EmptyContent from 'components/empty-content';
 import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -78,6 +77,11 @@ class People extends React.Component {
 					title={ `People > ${ titlecase( filter ) }` }
 				/>
 				<SidebarNavigation />
+				<FormattedHeader
+					className="people__page-heading"
+					headerText={ translate( 'People' ) }
+					align="left"
+				/>
 				<div>
 					{
 						<PeopleSectionNav

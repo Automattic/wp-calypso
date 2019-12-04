@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -21,6 +19,18 @@ export function getCSSLinkHtml( url ) {
 }
 
 /**
+ * Returns Gutenberg theme.css URL based on a style.css URL
+ *
+ * @param  {String}  url	The css file path of Gutenberg's style.css
+ * @param  {Boolean} isRtl	If the current locale is a right-to-left language
+ * @return {String}			The Gutenberg theme.css URL
+ */
+export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
+	const themeCss = 'theme' + ( isRtl ? '-rtl.css' : '.css' );
+	return url.replace( 'style.css', themeCss );
+};
+
+/**
  * Releases an existing object URL to let the browser know not to keep the reference to the file any longer.
  * For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
  *
@@ -33,18 +43,20 @@ export function revokeObjectURL( objectUrl ) {
 /**
  * Returns a WordPress page shell HTML
  *
- * @param  {Object}  content   Object containing `title`, `tagline` and `body` strings
- * @param  {String}  cssUrl    A URL to the theme CSS file
- * @param  {String}  fontUrl   A URL to the font CSS file
- * @param  {Boolean} isRtl     If the current locale is a right-to-left language
- * @param  {String}  langSlug  The slug of the current locale
- * @param  {Boolean} scrolling Whether to allow scrolling on the body
- * @return {String}            The HTML source.
+ * @param  {Object}  content            Object containing `title`, `tagline` and `body` strings
+ * @param  {String}  cssUrl             A URL to the theme CSS file
+ * @param  {String}  fontUrl            A URL to the font CSS file
+ * @param  {String}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.
+ * @param  {Boolean} isRtl              If the current locale is a right-to-left language
+ * @param  {String}  langSlug           The slug of the current locale
+ * @param  {Boolean} scrolling          Whether to allow scrolling on the body
+ * @return {String}                     The HTML source.
  */
 export function getIframeSource(
 	content,
 	cssUrl,
 	fontUrl,
+	gutenbergStylesUrl,
 	isRtl = false,
 	langSlug = 'en',
 	scrolling = true
@@ -56,13 +68,14 @@ export function getIframeSource(
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
-			<title>${ content.title } – ${ content.tagline }</title>
-			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v5.8.0/build/block-library/style.css" />
+			<title></title>
+			${ getCSSLinkHtml( gutenbergStylesUrl ) }
+			${ getCSSLinkHtml( getGutenbergThemeCssUrl( gutenbergStylesUrl, isRtl ) ) }
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
 				body {
-					padding-bottom: 25px;
+					padding-bottom: 50px;
 				}
 
 				* {
@@ -84,17 +97,16 @@ export function getIframeSource(
 				.site {
 					opacity: 1;
 					transition: opacity 1s ease-in;
+					pointer-events: none;
 				}
 
-				@media only screen and (min-width: 768px) {
-					/*
-						Some of the themes (business sophisticated) use js to dynamically set the height of the banner
-						Let's set a fixed max-height.
-					*/
-					.entry .entry-content .wp-block-cover-image,
-					.entry .entry-content .wp-block-cover {
-						min-height: 500px !important;
-					}
+				/*
+					Some of the themes (business sophisticated) use js to dynamically set the height of the banner
+					Let's set a fixed max-height.
+				*/
+				.entry .entry-content .wp-block-cover-image,
+				.entry .entry-content .wp-block-cover {
+					height: 480px !important;
 				}
 
 				/*
@@ -108,6 +120,20 @@ export function getIframeSource(
 				.wp-block-gallery .blocks-gallery-item figure {
 				   flex-direction: column;
 				   height: auto;
+				}
+
+				/*
+					Override for post list items
+				*/
+				.a8c-posts-list__item article > * {
+					margin-top: 16px;
+					margin-bottom: 16px;
+				}
+				/*
+					Override for subscribe button
+				*/
+				.wp-block-jetpack-subscriptions span.button {
+					display: inline-block;
 				}
 
 				.is-loading .wp-block-cover,
@@ -130,7 +156,9 @@ export function getIframeSource(
 				<header id="masthead" class="site-header">
 					<div class="site-branding-container">
 						<div class="site-branding">
-							<p class="site-title signup-site-preview__title">${ content.title }</p>
+							<p class="site-title">
+								<a href="#" class="signup-site-preview__title"></a>
+							</p>
 						</div>
 					</div>
 				</header>
@@ -154,4 +182,21 @@ export function getIframeSource(
 	}
 
 	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
+}
+
+/**
+ * @param {String} paramName e.g. "Vertical", "CompanyName"
+ * @returns {String} CSS class that will wrap the parameter in the preview DOM
+ */
+export function getPreviewParamClass( paramName ) {
+	return `signup-site-preview__${ paramName }`;
+}
+
+/**
+ * @param {String} title site title
+ * @param {String} tagline site tagline
+ * @returns {String} String to be used as <title> in preview
+ */
+export function createPreviewDocumentTitle( title, tagline ) {
+	return `${ title } – ${ tagline }`;
 }

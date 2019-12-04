@@ -1,4 +1,3 @@
-/** @format */
 export const fields = [
 	'ID',
 	'name',

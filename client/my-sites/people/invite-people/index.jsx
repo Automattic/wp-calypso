@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ContractorSelect from 'my-sites/people/contractor-select';
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
 import FormButton from 'components/forms/form-button';
@@ -70,12 +69,13 @@ class InvitePeople extends React.Component {
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
-	componentWillReceiveProps() {
+	UNSAFE_componentWillReceiveProps() {
 		this.setState( this.resetState() );
 	}
 
 	resetState = () => {
 		return {
+			isExternal: false,
 			usernamesOrEmails: [],
 			role: 'follower',
 			message: '',
@@ -154,6 +154,11 @@ class InvitePeople extends React.Component {
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
+	onExternalChange = event => {
+		const isExternal = event.target.checked;
+		this.setState( { isExternal } );
+	};
+
 	refreshValidation = () => {
 		const errors =
 				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
@@ -214,10 +219,17 @@ class InvitePeople extends React.Component {
 		}
 
 		const formId = uniqueId();
-		const { usernamesOrEmails, message, role } = this.state;
+		const { usernamesOrEmails, message, role, isExternal } = this.state;
 
 		this.setState( { sendingInvites: true, formId } );
-		this.props.sendInvites( this.props.siteId, usernamesOrEmails, role, message, formId );
+		this.props.sendInvites(
+			this.props.siteId,
+			usernamesOrEmails,
+			role,
+			message,
+			formId,
+			isExternal
+		);
 
 		const groupedInvitees = groupBy( usernamesOrEmails, invitee => {
 			return includes( invitee, '@' ) ? 'email' : 'username';
@@ -225,6 +237,7 @@ class InvitePeople extends React.Component {
 
 		this.props.recordTracksEventAction( 'calypso_invite_people_form_submit', {
 			role,
+			is_external: isExternal,
 			number_invitees: usernamesOrEmails.length,
 			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
@@ -287,6 +300,11 @@ class InvitePeople extends React.Component {
 
 	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
+	isExternalRole = role => {
+		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
+		return includes( roles, role );
+	};
+
 	renderInviteForm = () => {
 		const {
 			site,
@@ -340,6 +358,13 @@ class InvitePeople extends React.Component {
 							disabled={ this.state.sendingInvites }
 							explanation={ this.renderRoleExplanation() }
 						/>
+
+						{ this.isExternalRole( this.state.role ) && (
+							<ContractorSelect
+								onChange={ this.onExternalChange }
+								checked={ this.state.isExternal }
+							/>
+						) }
 
 						<FormFieldset>
 							<FormLabel htmlFor="message">{ translate( 'Custom Message' ) }</FormLabel>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,11 +13,11 @@ import { isRequestingSiteSettings } from 'state/site-settings/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
 
 class QuerySiteSettings extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestSettings( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
 			return;

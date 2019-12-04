@@ -1,21 +1,2 @@
-// The Muriel Color Palette
-@import '../__color-studio/color-variables';
-
-// TODO: where possible we should replace the colors below with the Muriel Color Palette.
-// The goals is to eventually have a single source of truth for colors across all our products.
-// For more details see: https://github.com/Automattic/color-studio/
-
-// Jetpack Green
-$green-jetpack: #00be28;
-
-// Grays
-$gray: $muriel-gray-300;
-
-// See wordpress.com/design-handbook/colors/ for more info.
-
-// Essentials
-$transparent: rgba( 255, 255, 255, 0 );
-
-// Layout
-$masterbar-color: $muriel-blue-500;
-$sidebar-bg-color: $muriel-gray-0;
+@import '../__color-studio/color-properties';
+@import '../__color-studio/color-properties-rgb';

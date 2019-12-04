@@ -27,8 +27,12 @@ function recordGravatarMisclick() {
 }
 
 function ProfileGravatar( props ) {
+	const parentClassName = [ 'profile-gravatar', props.inSidebar ? 'is-in-sidebar' : '' ].join(
+		' '
+	);
+
 	return (
-		<div className="profile-gravatar">
+		<div className={ parentClassName }>
 			<div role="presentation" onClick={ props.recordGravatarMisclick }>
 				<Animate type="appear">
 					<Gravatar user={ props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
@@ -40,7 +44,4 @@ function ProfileGravatar( props ) {
 	);
 }
 
-export default connect(
-	null,
-	{ recordGravatarMisclick }
-)( ProfileGravatar );
+export default connect( null, { recordGravatarMisclick } )( ProfileGravatar );

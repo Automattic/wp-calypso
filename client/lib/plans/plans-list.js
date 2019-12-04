@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -68,6 +66,7 @@ const getPlanBloggerDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
@@ -123,6 +122,7 @@ const getPlanPersonalDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -167,6 +167,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -175,7 +176,6 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 			constants.FEATURE_ACCEPT_PAYMENTS,
 			constants.FEATURE_SHIPPING_CARRIERS,
@@ -212,6 +212,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -226,6 +227,7 @@ const getPlanPremiumDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Freelancers:{{/strong}}' +
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
 			{
 				components: {
@@ -238,6 +240,7 @@ const getPlanPremiumDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
 	getPlanCompareFeatures: () =>
@@ -250,6 +253,7 @@ const getPlanPremiumDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -279,6 +283,7 @@ const getPlanPremiumDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -293,8 +298,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
-				' storage, and the ability to remove WordPress.com branding.',
+				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			{
 				components: {
 					strong: (
@@ -306,8 +310,7 @@ const getPlanBusinessDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
-				' storage, and the ability to remove WordPress.com branding.'
+				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
 		i18n.translate(
@@ -323,6 +326,7 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -331,7 +335,6 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 		] ),
 	getPromotedFeatures: () => [
@@ -364,6 +367,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -410,6 +414,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_BLOGGER ]: {
@@ -635,10 +641,24 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: () =>
-			i18n.translate(
-				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-			),
+		getTagline: feature => {
+			switch ( feature ) {
+				case constants.FEATURE_JETPACK_BACKUP_DAILY:
+				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, real-time backups, and priority support.'
+					);
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, and priority support.'
+					);
+				default:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+					);
+			}
+		},
 		getDescription: () =>
 			i18n.translate(
 				'The features most needed by WordPress sites' +
@@ -660,6 +680,8 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM ]: {
@@ -716,11 +738,15 @@ export const PLANS_LIST = {
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_CONCIERGE_SETUP,
 				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -775,11 +801,15 @@ export const PLANS_LIST = {
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_CONCIERGE_SETUP,
 				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -821,6 +851,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -861,6 +896,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -921,6 +961,14 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -980,6 +1028,14 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 };
 

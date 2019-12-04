@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -49,7 +47,7 @@ const Sso = ( {
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="sso"
-						label={ translate( 'Allow sign in using WordPress.com accounts' ) }
+						label={ translate( 'Allow users to log in to this site using WordPress.com accounts' ) }
 						description="Use WordPress.com's secure authentication"
 						disabled={ isRequestingSettings || isSavingSettings || ssoModuleUnavailable }
 					/>

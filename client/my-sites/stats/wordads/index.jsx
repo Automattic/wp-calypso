@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import page from 'page';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -17,16 +15,20 @@ import moment from 'moment';
  */
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
+import EmptyContent from 'components/empty-content';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import DatePicker from '../stats-date-picker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import JetpackColophon from 'components/jetpack-colophon';
 import WordAdsEarnings from './earnings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { canCurrentUserUseAds } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import StickyPanel from 'components/sticky-panel';
@@ -119,7 +121,7 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const { date, site, siteId, slug } = this.props;
+		const { canAccessAds, date, isAdmin, site, siteId, slug } = this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -136,6 +138,7 @@ class WordAds extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout={ true }>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
@@ -145,53 +148,75 @@ class WordAds extends Component {
 				/>
 				<PrivacyPolicyBanner />
 				<SidebarNavigation />
-				<StatsNavigation
-					selectedItem={ 'wordads' }
-					interval={ period }
-					siteId={ siteId }
-					slug={ slug }
+				<FormattedHeader
+					className="wordads__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
 				/>
-				<div id="my-stats-content" className="wordads">
-					<WordAdsChartTabs
-						activeTab={ getActiveTab( this.props.chartTab ) }
-						activeLegend={ this.state.activeLegend }
-						availableLegend={ this.getAvailableLegend() }
-						onChangeLegend={ this.onChangeLegend }
-						barClick={ this.barClick }
-						switchTab={ this.switchChart }
-						charts={ CHARTS }
-						queryDate={ queryDate }
-						period={ this.props.period }
-						chartTab={ this.props.chartTab }
+				{ ! canAccessAds && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={
+							! isAdmin
+								? translate( 'You are not authorized to view this page' )
+								: translate( 'WordAds is not enabled on your site' )
+						}
+						action={ isAdmin ? translate( 'Explore WordAds' ) : false }
+						actionURL={ '/earn/ads-settings/' + slug }
 					/>
-					<StickyPanel className="stats__sticky-navigation">
-						<StatsPeriodNavigation
-							date={ queryDate }
-							hidePreviousArrow={
-								( 'day' === period || 'week' === period ) &&
-								moment( queryDate ).isSameOrBefore( '2018-10-01' )
-							} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
-							hideNextArrow={ yesterday === queryDate }
-							period={ period }
-							url={ `/stats/ads/${ period }/${ slug }` }
-						>
-							<DatePicker
-								period={ period }
-								date={ queryDate }
-								query={ query }
-								statsType="statsAds"
-								showQueryDate
+				) }
+				{ canAccessAds && (
+					<Fragment>
+						<StatsNavigation
+							selectedItem={ 'wordads' }
+							interval={ period }
+							siteId={ siteId }
+							slug={ slug }
+						/>
+						<div id="my-stats-content" className="wordads">
+							<WordAdsChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
 							/>
-						</StatsPeriodNavigation>
-					</StickyPanel>
-					<div className="stats__module-list">
-						<WordAdsEarnings site={ site } />
-					</div>
-				</div>
+							<StickyPanel className="stats__sticky-navigation">
+								<StatsPeriodNavigation
+									date={ queryDate }
+									hidePreviousArrow={
+										( 'day' === period || 'week' === period ) &&
+										moment( queryDate ).isSameOrBefore( '2018-10-01' )
+									} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
+									hideNextArrow={ yesterday === queryDate }
+									period={ period }
+									url={ `/stats/ads/${ period }/${ slug }` }
+								>
+									<DatePicker
+										period={ period }
+										date={ queryDate }
+										query={ query }
+										statsType="statsAds"
+										showQueryDate
+									/>
+								</StatsPeriodNavigation>
+							</StickyPanel>
+							<div className="stats__module-list">
+								<WordAdsEarnings site={ site } />
+							</div>
+						</div>
 
-				<JetpackColophon />
+						<JetpackColophon />
+					</Fragment>
+				) }
 			</Main>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
@@ -203,6 +228,8 @@ export default connect(
 			site,
 			siteId,
 			slug: getSelectedSiteSlug( state ),
+			canAccessAds: canCurrentUserUseAds( state, siteId ),
+			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 		};
 	},
 	{ recordGoogleEvent }

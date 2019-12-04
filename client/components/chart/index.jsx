@@ -1,12 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import { noop } from 'lodash';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,7 +13,6 @@ import { hasTouch } from 'lib/touch-detect';
 import { useWindowResizeCallback } from 'lib/track-element-size';
 import Tooltip from 'components/tooltip';
 import Notice from 'components/notice';
-import isRtlSelector from 'state/selectors/is-rtl';
 import BarContainer from './bar-container';
 
 /**
@@ -100,7 +97,7 @@ function Chart( {
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
-	const { chartData, isEmptyChart, yMax } = useMemo(() => {
+	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		if ( ! hasResized ) {
 			return {};
 		}
@@ -113,7 +110,7 @@ function Chart( {
 			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized ]);
+	}, [ data, maxBars, hasResized ] );
 
 	// If we don't have any sizing info yet, render an empty chart with the ref.
 	if ( ! hasResized ) {
@@ -196,6 +193,4 @@ Chart.defaultProps = {
 	minTouchBarWidth: 42,
 };
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( localize( Chart ) );
+export default withRtl( localize( Chart ) );

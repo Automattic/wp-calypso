@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -71,9 +70,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			/>
 
 			<FAQItem
-				question={ translate( 'Can I upload my own theme?' ) }
+				question={ translate( 'Can I install my own theme?' ) }
 				answer={ translate(
-					"Yes! With the WordPress.com Business plan you can upload any theme you'd like." +
+					"Yes! With the WordPress.com Business plan you can install any theme you'd like." +
 						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
 						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 					{

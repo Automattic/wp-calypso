@@ -1,13 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
+import { flatten, filter, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -33,17 +33,20 @@ import {
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
+	hasEcommercePlan,
 	hasPlan,
 	hasOnlyRenewalItems,
 	hasTransferProduct,
+	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
+import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/store-transactions';
+import { hasDomainDetails } from 'lib/transaction/selectors';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
@@ -58,18 +61,12 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import {
-	addItem,
-	replaceCartWithItems,
-	replaceItem,
-	applyCoupon,
-	resetTransaction,
-	setDomainDetails,
-} from 'lib/upgrades/actions';
+import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'lib/cart/actions';
+import { resetTransaction, setDomainDetails } from 'lib/transaction/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
@@ -82,7 +79,6 @@ import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -90,8 +86,13 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { loadTrackingTool } from 'state/analytics/actions';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
+import { isExternal } from 'lib/url';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -104,6 +105,7 @@ export class Checkout extends React.Component {
 		couponCode: PropTypes.string,
 		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
+		loadTrackingTool: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -113,7 +115,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		resetTransaction();
 	}
 
@@ -132,12 +134,13 @@ export class Checkout extends React.Component {
 			applyCoupon( this.props.couponCode );
 		}
 
+		this.props.loadTrackingTool( 'HotJar' );
 		window.scrollTo( 0, 0 );
 	}
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
@@ -294,6 +297,10 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
+		if ( startsWith( this.props.product, 'jetpack_backup' ) ) {
+			cartItem = jetpackProductItem( this.props.product );
+		}
+
 		if ( cartItem ) {
 			addItem( cartItem );
 		}
@@ -301,7 +308,10 @@ export class Checkout extends React.Component {
 
 	redirectIfEmptyCart() {
 		const { selectedSiteSlug, transaction } = this.props;
-		let redirectTo = '/plans/';
+
+		if ( ! transaction ) {
+			return true;
+		}
 
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
@@ -326,6 +336,8 @@ export class Checkout extends React.Component {
 			return false;
 		}
 
+		let redirectTo = '/plans/';
+
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
 		}
@@ -346,6 +358,21 @@ export class Checkout extends React.Component {
 		return flatten( Object.values( purchases ) );
 	}
 
+	getUrlWithQueryParam( url, queryParams ) {
+		const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
+
+		return formatUrl( {
+			protocol,
+			hostname,
+			port,
+			pathname,
+			query: {
+				...query,
+				...queryParams,
+			},
+		} );
+	}
+
 	getEligibleDomainFromCart() {
 		const domainRegistrations = getDomainRegistrations( this.props.cart );
 		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
@@ -356,25 +383,164 @@ export class Checkout extends React.Component {
 		return domainsForGSuite;
 	}
 
+	getFallbackDestination( pendingOrReceiptId ) {
+		const { selectedSiteSlug, selectedFeature, cart, isJetpackNotAtomic, product } = this.props;
+
+		const isCartEmpty = isEmpty( getAllCartItems( cart ) );
+		const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
+
+		// We will show the Thank You page if there's a site slug and either one of the following is true:
+		// - has a receipt number
+		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
+		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
+			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
+			// If we just purchased a Jetpack product, redirect to the my plans page.
+			if ( isJetpackNotAtomic && isJetpackProduct ) {
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
+			}
+			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
+			if ( isJetpackNotAtomic ) {
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
+			}
+
+			return selectedFeature && isValidFeatureKey( selectedFeature )
+				? `/checkout/thank-you/features/${ selectedFeature }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
+				: `/checkout/thank-you/${ selectedSiteSlug }/${ pendingOrReceiptId }`;
+		}
+
+		return '/';
+	}
+
+	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
+		const { isNewlyCreatedSite, selectedSiteSlug, cart } = this.props;
+
+		if ( isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
+			const hasGoogleAppsInCart = hasGoogleApps( cart );
+
+			// Maybe show either the G Suite or plan upgrade upsell pages
+			if (
+				! hasGoogleAppsInCart &&
+				! hasConciergeSession( cart ) &&
+				hasDomainRegistration( cart )
+			) {
+				const domainsForGSuite = this.getEligibleDomainFromCart();
+				if ( domainsForGSuite.length ) {
+					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`;
+				}
+			}
+		}
+
+		return;
+	}
+
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
+	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
+		const { cart, selectedSiteSlug, previousRoute } = this.props;
+
+		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
+		// This tests the flow that was not eligible for G Suite.
+		// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
+		// then skip this section so that we do not show further upsells.
+		if (
+			config.isEnabled( 'upsell/concierge-session' ) &&
+			stepResult &&
+			isEmpty( stepResult.failed_purchases ) &&
+			! hasConciergeSession( cart ) &&
+			! hasJetpackPlan( cart ) &&
+			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
+			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
+		) {
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
+
+			// A user just purchased one of the qualifying plans
+			// Show them the concierge session upsell page
+
+			// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
+			// being offered and so sold, to be inline with HE availability.
+			// To dial back, uncomment the condition below and modify the test config.
+			// if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
+			// }
+		}
+
+		return;
+	}
+
 	getCheckoutCompleteRedirectPath = () => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the G Suite / Concierge / Checklist logic.
 
-		let renewalItem, displayModeParam;
+		let renewalItem,
+			displayModeParam = {};
 		const {
 			cart,
+			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
+		const siteDesignType = get( selectedSite, 'options.design_type' );
+
+		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
+
+		// If we're given an explicit `redirectTo` query arg, make sure it's either internal
+		// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
+		// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
+		if ( redirectTo ) {
+			if ( ! isExternal( redirectTo ) ) {
+				return redirectTo;
+			}
+
+			const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
+
+			// We cannot simply compare `hostname` to `selectedSiteSlug`, since the latter
+			// might contain a path in the case of Jetpack subdirectory installs.
+			if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
+				const sanitizedRedirectTo = formatUrl( {
+					protocol,
+					hostname,
+					port,
+					pathname,
+					query: {
+						post: parseInt( query.post, 10 ),
+						action: 'edit',
+						plan_upgraded: 1,
+					},
+				} );
+				return sanitizedRedirectTo;
+			}
+		}
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+		let pendingOrReceiptId;
+
+		if ( get( stepResult, 'receipt_id', false ) ) {
+			pendingOrReceiptId = stepResult.receipt_id;
+		} else if ( get( stepResult, 'orderId', false ) ) {
+			pendingOrReceiptId = 'pending/' + stepResult.orderId;
+		} else {
+			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
+		}
+
+		const signupDestination =
+			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -388,86 +554,57 @@ export class Checkout extends React.Component {
 				: '/checkout/thank-you/plans';
 		}
 
+		// If cart is empty, then send the user to a generic page (not post-purchase related).
+		// For example, this case arises when a Skip button is clicked on a concierge upsell
+		// nudge opened by a direct link to /offer-support-session.
+		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
+			return signupDestination;
+		}
+
+		// Domain only flow
 		if ( cart.create_new_blog ) {
-			return `/checkout/thank-you/no-site/${ receiptId }`;
+			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		if ( ! selectedSiteSlug ) {
-			return '/checkout/thank-you/features';
+		// Handle the redirect path after a purchase of GSuite
+		// The onboarding checklist currently supports the blog type only.
+		if ( hasGoogleApps( cart ) && domainReceiptId && 'store' !== siteDesignType ) {
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+				site: selectedSiteSlug,
+				plan: 'paid',
+			} );
+
+			return `${ signupDestination }?d=gsuite`;
 		}
 
-		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
-			const siteDesignType = get( selectedSite, 'options.design_type' );
-			const hasGoogleAppsInCart = hasGoogleApps( cart );
-
-			// Handle the redirect path after a purchase of GSuite
-			// The onboarding checklist currently supports the blog type only.
-			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
-				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-					site: selectedSiteSlug,
-					plan: 'paid',
-				} );
-
-				const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
-
-				return `/${ destination }/${ selectedSiteSlug }?d=gsuite`;
-			}
-
-			// Maybe show either the G Suite or Concierge Session upsell pages
-			if (
-				! hasGoogleAppsInCart &&
-				! hasConciergeSession( cart ) &&
-				hasDomainRegistration( cart )
-			) {
-				const domainsForGSuite = this.getEligibleDomainFromCart();
-				if ( domainsForGSuite.length ) {
-					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-						domainsForGSuite[ 0 ].meta
-					}/${ receiptId }`;
-				}
-			}
+		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge(
+			pendingOrReceiptId,
+			stepResult
+		);
+		if ( redirectPathForGSuiteUpsell ) {
+			return redirectPathForGSuiteUpsell;
 		}
 
-		// Test showing the concierge session upsell page after the user purchases a qualifying plan
-		// This tests the flow that was not eligible for G Suite
-		// There's an additional test above that tests directly aginst the G Suite upsell
-		if (
-			config.isEnabled( 'upsell/concierge-session' ) &&
-			! hasConciergeSession( cart ) &&
-			! hasJetpackPlan( cart ) &&
-			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
-		) {
-			// A user just purchased one of the qualifying plans
-			// Show them the concierge session upsell page
-			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ receiptId }`;
-			}
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
+			pendingOrReceiptId,
+			stepResult
+		);
+		if ( redirectPathForConciergeUpsell ) {
+			return redirectPathForConciergeUpsell;
 		}
 
 		if ( hasConciergeSession( cart ) ) {
-			displayModeParam = 'd=concierge';
+			displayModeParam = { d: 'concierge' };
 		}
 
-		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
-
-		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			if ( this.props.redirectToPageBuilder ) {
-				return getEditHomeUrl( selectedSiteSlug );
-			}
-			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
-
-			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
+		if ( this.props.isEligibleForSignupDestination ) {
+			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
 
-		if ( this.props.isJetpackNotAtomic ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
-		}
-
-		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${
-					this.props.selectedFeature
-			  }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }${ queryParam }`;
+		return this.getUrlWithQueryParam(
+			this.getFallbackDestination( pendingOrReceiptId ),
+			displayModeParam
+		);
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {
@@ -482,14 +619,22 @@ export class Checkout extends React.Component {
 			isDomainOnly,
 			reduxStore,
 			selectedSiteId,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
+
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
+
+		// Removes the destination cookie only if redirecting to the signup destination.
+		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+		// An exception is when we have an eCommerce plan in cart, in which case we always
+		// take to the thank you page so destination cookie can be cleared.
+		if ( redirectPath.includes( destinationFromCookie ) || hasEcommercePlan( cart ) ) {
+			clearSignupDestinationCookie();
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			// checkouts for renewals redirect back to `/purchases` with a notice
@@ -532,8 +677,10 @@ export class Checkout extends React.Component {
 						{
 							args: {
 								productName: renewalItem.product_name,
-								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
-								date: i18n.moment( product.expiry ).format( 'LL' ),
+								duration: this.props.moment
+									.duration( { days: renewalItem.bill_period } )
+									.humanize(),
+								date: this.props.moment( product.expiry ).format( 'LL' ),
 								email: product.user_email,
 							},
 						}
@@ -558,6 +705,8 @@ export class Checkout extends React.Component {
 		if ( selectedSiteId ) {
 			this.props.requestSite( selectedSiteId );
 		}
+
+		this.props.setHeaderText( '' );
 
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
@@ -584,7 +733,15 @@ export class Checkout extends React.Component {
 	};
 
 	content() {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			transaction,
+			cart,
+			cards,
+			productsList,
+			setHeaderText,
+			userCountryCode,
+		} = this.props;
 
 		if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
@@ -597,22 +754,22 @@ export class Checkout extends React.Component {
 		if ( this.needsDomainDetails() ) {
 			return (
 				<DomainDetailsForm
-					cart={ this.props.cart }
-					productsList={ this.props.productsList }
-					userCountryCode={ this.props.userCountryCode }
+					cart={ cart }
+					productsList={ productsList }
+					userCountryCode={ userCountryCode }
 				/>
 			);
 		}
 
 		return (
 			<SecurePaymentForm
-				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				cards={ this.props.cards }
+				cart={ cart }
+				transaction={ transaction }
+				cards={ cards }
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList }
+				products={ productsList }
 				selectedSite={ selectedSite }
-				setHeaderText={ this.props.setHeaderText }
+				setHeaderText={ setHeaderText }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
@@ -660,7 +817,6 @@ export class Checkout extends React.Component {
 					shouldShowTax={ shouldShowTax( this.props.cart ) }
 					key="picker"
 				/>
-				<hr className="checkout__subscription-length-picker-separator" key="separator" />
 			</React.Fragment>
 		);
 	}
@@ -697,8 +853,7 @@ export class Checkout extends React.Component {
 	}
 
 	needsDomainDetails() {
-		const cart = this.props.cart;
-		const transaction = this.props.transaction;
+		const { cart, transaction } = this.props;
 
 		if ( cart && hasOnlyRenewalItems( cart ) ) {
 			return false;
@@ -706,6 +861,7 @@ export class Checkout extends React.Component {
 
 		return (
 			cart &&
+			transaction &&
 			! hasDomainDetails( transaction ) &&
 			( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
 		);
@@ -732,6 +888,15 @@ export class Checkout extends React.Component {
 			analyticsProps = { site: selectedSiteSlug };
 		} else {
 			analyticsPath = '/checkout/no-site';
+		}
+
+		if ( this.props.children ) {
+			this.props.setHeaderText( '' );
+			return React.Children.map( this.props.children, child => {
+				return React.cloneElement( child, {
+					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
+				} );
+			} );
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -767,17 +932,17 @@ export default connect(
 			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
-			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(
+			isEligibleForSignupDestination: isEligibleForSignupDestination(
 				state,
 				selectedSiteId,
 				props.cart
 			),
-			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
@@ -787,5 +952,6 @@ export default connect(
 		clearSitePlans,
 		fetchReceiptCompleted,
 		requestSite,
+		loadTrackingTool,
 	}
-)( localize( Checkout ) );
+)( localize( withLocalizedMoment( Checkout ) ) );

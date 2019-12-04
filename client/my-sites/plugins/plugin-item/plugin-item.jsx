@@ -378,10 +378,4 @@ class PluginItem extends Component {
 	}
 }
 
-export default compose(
-	connect(
-		null,
-		{ errorNotice }
-	),
-	localize
-)( PluginItem );
+export default compose( connect( null, { errorNotice } ), localize )( PluginItem );

@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Fragment } from 'react';
 import { delay, negate as not } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -35,29 +33,37 @@ function isFeaturedImageSet() {
 	return !! query( '.editor-featured-image.is-assigned' ).length;
 }
 
-function openSidebar( { reduxStore } ) {
-	if ( getCurrentLayoutFocus( reduxStore.getState() ) !== 'sidebar' ) {
-		reduxStore.dispatch( setLayoutFocus( 'sidebar' ) );
+// Open the sidebar with a Redux action dispatch and then wait 200ms before proceeding.
+// This function is a Redux action creator. The returned thunk will be dispatched and the
+// returned promise waited for.
+const openSidebar = () => async ( dispatch, getState ) => {
+	if ( getCurrentLayoutFocus( getState() ) !== 'sidebar' ) {
+		dispatch( setLayoutFocus( 'sidebar' ) );
 	}
 
-	return new Promise( function( resolve, reject ) {
-		getCurrentLayoutFocus( reduxStore.getState() ) === 'sidebar' ? delay( resolve, 200 ) : reject();
-	} );
-}
-
-function openFeatureImageUploadDialog() {
-	if ( ! query( '.editor-media-modal' ).length ) {
-		const buttons = query(
-			'[data-tip-target="accordion-featured-image"] .editor-drawer-well__placeholder, ' +
-				'[data-tip-target="accordion-featured-image"] .editor-featured-image__preview .image-preloader'
-		);
-		if ( buttons.length ) {
-			buttons[ 0 ].click();
-		}
+	if ( getCurrentLayoutFocus( getState() ) !== 'sidebar' ) {
+		throw new Error( 'Could not open sidebar' );
 	}
 
-	return true;
-}
+	await new Promise( resolve => delay( resolve, 200 ) );
+};
+
+// Open the image upload dialog by finding the open button in DOM and clicking it.
+// This function is a Redux action thunk, hence the two arrows (and unused `dispatch` param).
+const openFeatureImageUploadDialog = () => () => {
+	if ( query( '.editor-media-modal' ).length ) {
+		return;
+	}
+
+	const buttons = query(
+		'[data-tip-target="accordion-featured-image"] .editor-drawer-well__placeholder, ' +
+			'[data-tip-target="accordion-featured-image"] .editor-featured-image__preview .image-preloader'
+	);
+
+	if ( buttons.length ) {
+		buttons[ 0 ].click();
+	}
+};
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistPublishPostTour = makeTour(

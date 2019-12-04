@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import React, { Component } from 'react';
@@ -14,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import SpinnerButton from 'components/spinner-button';
 import FoldableCard from 'components/foldable-card';
-import Interval, { EVERY_SECOND } from 'lib/interval';
+import { Interval, EVERY_SECOND } from 'lib/interval';
 import AdvancedSettings from './advanced-settings';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -26,11 +23,11 @@ import {
 import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/exporter/selectors';
 
 class ExportCard extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.props.advancedSettingsFetch( newProps.siteId );
 		}
@@ -90,14 +87,8 @@ const trackExportClick = ( scope = 'all' ) =>
 	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	advancedSettingsFetch: flowRight(
-		dispatch,
-		advancedSettingsFetch
-	),
-	setPostType: flowRight(
-		dispatch,
-		setPostType
-	),
+	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
 	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
@@ -107,7 +98,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ExportCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );

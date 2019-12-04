@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditorNotice should display custom post type view label 1`] = `
-<GlobalNoticesContainer
-  className="editor-notice is-global"
->
+<GlobalNoticesContainer>
   <Localized(Notice)
     showDismiss={true}
     status="is-success"
@@ -13,9 +11,7 @@ exports[`EditorNotice should display custom post type view label 1`] = `
 `;
 
 exports[`EditorNotice should display publish success for custom post type 1`] = `
-<GlobalNoticesContainer
-  className="editor-notice is-global"
->
+<GlobalNoticesContainer>
   <Localized(Notice)
     showDismiss={true}
     status="is-success"
@@ -35,9 +31,7 @@ exports[`EditorNotice should display publish success for custom post type 1`] = 
 `;
 
 exports[`EditorNotice should display publish success for page 1`] = `
-<GlobalNoticesContainer
-  className="editor-notice is-global"
->
+<GlobalNoticesContainer>
   <Localized(Notice)
     showDismiss={true}
     status="is-success"
@@ -63,9 +57,7 @@ exports[`EditorNotice should display publish success for page 1`] = `
 `;
 
 exports[`EditorNotice should display publish success for post 1`] = `
-<GlobalNoticesContainer
-  className="editor-notice is-global"
->
+<GlobalNoticesContainer>
   <Localized(Notice)
     showDismiss={true}
     status="is-success"

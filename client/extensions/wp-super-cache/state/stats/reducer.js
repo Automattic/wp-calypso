@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
@@ -29,20 +26,32 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated generating state
  */
-export const generating = createReducer(
-	{},
-	{
-		[ WP_SUPER_CACHE_GENERATE_STATS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ WP_SUPER_CACHE_GENERATE_STATS_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+export const generating = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WP_SUPER_CACHE_GENERATE_STATS: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: true };
+		}
+		case WP_SUPER_CACHE_GENERATE_STATS_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case WP_SUPER_CACHE_GENERATE_STATS_SUCCESS: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -52,20 +61,32 @@ export const generating = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated deleting state
  */
-const deleting = createReducer(
-	{},
-	{
-		[ WP_SUPER_CACHE_DELETE_FILE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ WP_SUPER_CACHE_DELETE_FILE_FAILURE ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+const deleting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WP_SUPER_CACHE_DELETE_FILE: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: true };
+		}
+		case WP_SUPER_CACHE_DELETE_FILE_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case WP_SUPER_CACHE_DELETE_FILE_SUCCESS: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Tracks the stats for a particular site.
@@ -74,14 +95,18 @@ const deleting = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated stats
  */
-const items = createReducer(
-	{},
-	{
-		[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId, stats } ) => ( {
-			...state,
-			[ siteId ]: stats,
-		} ),
-		[ WP_SUPER_CACHE_DELETE_CACHE_SUCCESS ]: ( state, { siteId, deleteExpired } ) => {
+const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WP_SUPER_CACHE_GENERATE_STATS_SUCCESS: {
+			const { siteId, stats } = action;
+
+			return {
+				...state,
+				[ siteId ]: stats,
+			};
+		}
+		case WP_SUPER_CACHE_DELETE_CACHE_SUCCESS: {
+			const { siteId, deleteExpired } = action;
 			let emptyCache = {
 				expired: 0,
 				expired_list: {},
@@ -108,8 +133,9 @@ const items = createReducer(
 					},
 				},
 			};
-		},
-		[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId, url, isSupercache, isCached } ) => {
+		}
+		case WP_SUPER_CACHE_DELETE_FILE_SUCCESS: {
+			const { siteId, url, isSupercache, isCached } = action;
 			const cacheType = isSupercache ? 'supercache' : 'wpcache';
 			const listType = isCached ? 'cached_list' : 'expired_list';
 			const countType = isCached ? 'cached' : 'expired';
@@ -128,10 +154,11 @@ const items = createReducer(
 					},
 				},
 			};
-		},
-	},
-	statsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	deleting,

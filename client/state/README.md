@@ -159,16 +159,16 @@ const hexPersister = ( state = 0, { type } ) => {
 	switch ( type ) {
 		case INCREMENT:
 			return state + 1;
-		
+
 		case DECREMENT:
 			return state - 1;
-		
+
 		case DESERIALIZE:
 			return parseInt( state, 16 );
-		
+
 		case SERIALIZE:
 			return state.toString( 16 );
-		
+
 		default:
 			return state;
 	}
@@ -183,11 +183,9 @@ hexNumbers.hasCustomPersistence = true;
 When Calypso boots up it loads the last-known state out of persistent storage in the browser.
 If that state was saved from an old version of the reducer code it could be incompatible with the new state model.
 Thankfully we are given the ability to validate the schema and conditionally load the persisted state only if it's valid.
-This can be done by passing a schema into a call to `createReducer()`, but sometimes `createReducer()` provides more abstraction than is necessary.
 
 This helper produces a new reducer given an original reducer and schema.
 The new reducer will automatically validate the persisted state when Calypso loads and reinitialize if it isn't valid.
-It is in most regards a lightweight version of `createReducer()`.
 
 #### Example
 

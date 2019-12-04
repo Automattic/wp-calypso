@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isEmpty, flowRight as compose } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 
@@ -321,10 +320,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default compose(
-	connect(
-		null,
-		mapDispatchToProps
-	),
+	connect( null, mapDispatchToProps ),
 	localize,
 	withLocalizedMoment
 )( DateRangeSelector );

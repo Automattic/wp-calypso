@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -116,7 +115,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentListHeader ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentListHeader ) );

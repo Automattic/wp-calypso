@@ -1,22 +1,3 @@
-
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
 	height: 80px;
-	background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-default.svg' );
-
-	&.is-classic-bright {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-light.svg' );
-	}
-
-	&.is-powder-snow {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-snow.svg' );
-	}
-
-	&.is-nightfall {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-nightfall.svg' );
-	}
-
-	&.is-sakura {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-sakura.svg' );
-	}
-
 }

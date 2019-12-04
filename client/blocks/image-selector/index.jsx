@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -114,7 +112,7 @@ export class ImageSelector extends Component {
 					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
 					enabledFilters={ [ 'images' ] }
 					galleryViewEnabled={ false }
-					{ ...! multiple && { single: true } }
+					{ ...( ! multiple && { single: true } ) }
 				/>
 			</MediaLibrarySelectedData>
 		);
