@@ -603,7 +603,7 @@ class WpcomChecklistComponent extends PureComponent {
 			<TaskComponent
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/mobile-app.svg"
-				completedButtonText={ translate( 'Download' ) }
+				completedButtonText={ translate( 'Download mobile app' ) }
 				completedTitle={ translate( 'You downloaded the WordPress app' ) }
 				description={ translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
@@ -617,7 +617,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Get the WordPress app' ) }
 				showSkip={ true }
-				buttonText={ translate( 'Start' ) }
+				buttonText={ translate( 'Download mobile app' ) }
 			/>
 		);
 	};
