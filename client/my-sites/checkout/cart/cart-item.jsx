@@ -45,7 +45,7 @@ export class CartItem extends React.Component {
 	};
 
 	price() {
-		const { cartItem, translate } = this.props;
+		const { cart, cartItem, translate } = this.props;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
 			return translate( 'Loading price' );
@@ -66,21 +66,25 @@ export class CartItem extends React.Component {
 		}
 
 		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
-			const { cost_before_coupon: costBeforeCoupon } = cartItem;
+			const {
+				cost_before_coupon: costBeforeCoupon,
+				is_sale_coupon_applied: isSaleCouponApplied,
+			} = cartItem;
+			const { is_coupon_applied: isCouponApplied } = cart;
 
-			if ( costBeforeCoupon ) {
+			if ( isSaleCouponApplied ) {
 				return (
 					<div className="cart__gsuite-discount">
-						<span className="cart__gsuite-discount-regular-price">
-							{ costBeforeCoupon }
-						</span>
+						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
 
 						<span className="cart__gsuite-discount-discounted-price">
 							{ cost } { cartItem.currency }
 						</span>
 
 						<span className="cart__gsuite-discount-text">
-							{ translate( 'Discount for first year' ) }
+							{ isCouponApplied
+								? translate( 'Multiple discounts' )
+								: translate( 'Discount for first year' ) }
 						</span>
 					</div>
 				);
