@@ -298,6 +298,24 @@ class KeyedSuggestions extends React.Component {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
+		const taxonomyTranslations = {
+			feature: i18n.translate( 'Feature', {
+				context: 'Theme Showcase filter name',
+			} ),
+			layout: i18n.translate( 'Layout', {
+				context: 'Theme Showcase filter name',
+			} ),
+			column: i18n.translate( 'Columns', {
+				context: 'Theme Showcase filter name',
+			} ),
+			subject: i18n.translate( 'Subject', {
+				context: 'Theme Showcase filter name',
+			} ),
+			style: i18n.translate( 'Style', {
+				context: 'Theme Showcase filter name',
+			} ),
+		};
+
 		for ( const key in suggestions ) {
 			if ( ! has( suggestions, key ) ) {
 				continue;
@@ -308,7 +326,7 @@ class KeyedSuggestions extends React.Component {
 			//Add header
 			rendered.push(
 				<div className="keyed-suggestions__category" key={ key }>
-					<span className="keyed-suggestions__category-name">{ key }</span>
+					<span className="keyed-suggestions__category-name">{ taxonomyTranslations[ key ] }</span>
 					<span className="keyed-suggestions__category-counter">
 						{ i18n.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total },
