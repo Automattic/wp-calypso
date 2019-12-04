@@ -456,4 +456,14 @@ export const themes = [
 		demo_uri: 'https://shawburndemo.wordpress.com',
 		verticals: [],
 	},
+	{
+		name: 'Alves',
+		slug: 'alves',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'fse-compatible',
+		demo_uri: 'https://alvesdemo.wordpress.com',
+		verticals: [],
+	},
 ];
