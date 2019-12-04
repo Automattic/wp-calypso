@@ -9,7 +9,7 @@
 	grid-gap: $gap;
 }
 @mixin grid-column( $col-start, $span ) {
-	-ms-grid-column: $col-start;
+	-ms-grid-column: $col-start * 2 - 1;
 	-ms-grid-column-span: $span + ($span - 1);
 		grid-column: $col-start / span $span;
 }
