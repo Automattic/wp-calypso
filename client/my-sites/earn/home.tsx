@@ -23,6 +23,15 @@ import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Image dependencies
+ */
+import earnSectionImage from 'assets/images/earn/earn-section.svg';
+import adsImage from 'assets/images/earn/ads.svg';
+import recurringImage from 'assets/images/earn/recurring.svg';
+import referralImage from 'assets/images/earn/referral.svg';
+import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
+
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
@@ -88,7 +97,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				}
 			),
 			image: {
-				path: '/calypso/images/earn/simple-payments.svg',
+				path: simplePaymentsImage,
 			},
 			actions: {
 				cta,
@@ -144,7 +153,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			body,
 			badge: translate( 'New' ),
 			image: {
-				path: '/calypso/images/earn/recurring.svg',
+				path: recurringImage,
 			},
 			actions: {
 				cta,
@@ -191,7 +200,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						components
 				  ),
 			image: {
-				path: '/calypso/images/earn/referral.svg',
+				path: referralImage,
 			},
 			actions: {
 				cta,
@@ -243,7 +252,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			image: {
-				path: '/calypso/images/earn/ads.svg',
+				path: adsImage,
 			},
 			actions: {
 				cta,
@@ -256,7 +265,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		header: {
 			title: translate( 'Start earning money now' ),
 			image: {
-				path: '/calypso/images/earn/earn-section.svg',
+				path: earnSectionImage,
 			},
 			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
 		},
