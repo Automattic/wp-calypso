@@ -18,6 +18,7 @@ import { select, dispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import * as metadata from './block.json';
+import './editor.scss';
 import './style.scss';
 import { transforms, isValidHomepagePostsBlockType } from './transforms';
 
@@ -58,24 +59,26 @@ registerBlockType( metadata.name, {
 
 		return (
 			<Fragment>
+				{ canBeUpgraded && (
+					<div className="posts-list__notice notice notice-info notice-alt">
+						<p>
+							<span className="posts-list__message">
+								{ __(
+									'An improved version of this block is available. Upgrade for a better, more natural way to manage your blog post listings.',
+									'full-site-editing'
+								) }
+							</span>
+							<Button isButton isLarge isDefault onClick={ upgradeBlock }>
+								{ __( 'Upgrade Block', 'full-site-editing' ) }
+							</Button>
+						</p>
+					</div>
+				) }
 				<Placeholder
 					icon={ icon }
 					label={ __( 'Your recent blog posts will be displayed here.', 'full-site-editing' ) }
-					instructions={
-						canBeUpgraded
-							? __(
-									'An improved version of this block is available. Get more controls and visual preview right inside the block editor.',
-									'full-site-editing'
-							  )
-							: null
-					}
 				>
-					{ canBeUpgraded ? (
-						<Button isPrimary onClick={ upgradeBlock }>
-							{ __( 'Upgrade Block', 'full-site-editing' ) }
-						</Button>
-					) : null }
-					{ ! canBeUpgraded && isSelected ? (
+					{ isSelected ? (
 						<RangeControl
 							label={ __( 'Number of posts to show', 'full-site-editing' ) }
 							value={ attributes.postsPerPage }
