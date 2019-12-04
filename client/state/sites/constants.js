@@ -16,6 +16,7 @@ export const SITE_REQUEST_FIELDS = [
 	'lang',
 	'launch_status',
 	'is_fse_active',
+	'is_fse_eligible',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

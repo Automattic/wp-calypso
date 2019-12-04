@@ -16,6 +16,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
 
 const ruleWhiteList = [
 	'unverifiedDomainsCanManage',
@@ -37,6 +38,7 @@ const CurrentSiteDomainWarnings = ( {
 	isJetpack,
 	selectedSite,
 	siteIsUnlaunched,
+	isSiteEligibleForFSE,
 } ) => {
 	if ( ! selectedSite || ( isJetpack && ! isAtomic ) ) {
 		// Simple and Atomic sites. Not Jetpack sites.
@@ -52,6 +54,7 @@ const CurrentSiteDomainWarnings = ( {
 				selectedSite={ selectedSite }
 				domains={ domains }
 				ruleWhiteList={ ruleWhiteList }
+				isSiteEligibleForFSE={ isSiteEligibleForFSE }
 				siteIsUnlaunched={ siteIsUnlaunched }
 			/>
 		</div>
@@ -61,6 +64,7 @@ const CurrentSiteDomainWarnings = ( {
 CurrentSiteDomainWarnings.propTypes = {
 	domains: PropTypes.array,
 	isJetpack: PropTypes.bool,
+	isSiteEligibleForFSE: PropTypes.bool,
 	selectedSite: PropTypes.object,
 };
 
@@ -73,5 +77,6 @@ export default connect( state => {
 		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
 		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
+		isSiteEligibleForFSE: isSiteEligibleForFullSiteEditing( state, selectedSiteId ),
 	};
 } )( CurrentSiteDomainWarnings );
