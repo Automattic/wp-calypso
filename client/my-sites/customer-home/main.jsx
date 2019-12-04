@@ -282,11 +282,13 @@ class Home extends Component {
 				{ this.renderCustomerHomeHeader() }
 				{ //Only show upgrade nudges to sites > 2 days old
 				isEstablishedSite && (
-					<StatsBanners
-						siteId={ siteId }
-						slug={ siteSlug }
-						primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
-					/>
+					<div class="customer-home__upsells">
+						<StatsBanners
+							siteId={ siteId }
+							slug={ siteSlug }
+							primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
+						/>
+					</div>
 				) }
 				{ renderChecklistCompleteBanner && (
 					<Banner

@@ -9,6 +9,10 @@
 		}
 	}
 
+	&__upsells {
+		grid-column: span 12;
+	}
+
 	&__page-heading.formatted-header.is-left-align {
 		@include breakpoint( '>1040px' ) {
 			grid-column: 1 / span 12;
