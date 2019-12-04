@@ -33,7 +33,7 @@ add_filter( 'newspack_blocks_block_name', __NAMESPACE__ . '\homepage_posts_block
  * @return array
  */
 function homepage_posts_block_args( $args, $name ) {
-	if ( 'newspack-blocks/homepage-articles' !== $name ) {
+	if ( 'homepage-articles' !== $name ) {
 		return $args;
 	}
 
