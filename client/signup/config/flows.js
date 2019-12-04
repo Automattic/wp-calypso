@@ -51,6 +51,10 @@ function getSignupDestination( dependencies ) {
 	return `/checklist/${ dependencies.siteSlug }`;
 }
 
+function getLaunchDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=launched`;
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -67,6 +71,7 @@ const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
+	getLaunchDestination,
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
