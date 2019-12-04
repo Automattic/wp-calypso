@@ -5,6 +5,7 @@ import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
@@ -26,7 +27,11 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	if ( false !== isJetpackSite( state, siteId ) || false !== isVipSite( state, siteId ) ) {
+	if ( false !== isVipSite( state, siteId ) ) {
+		return false;
+	}
+
+	if ( false !== isJetpackSite( state, siteId ) && true !== isSiteAtomic( state, siteId ) ) {
 		return false;
 	}
 
