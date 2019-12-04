@@ -91,7 +91,7 @@ const PhpVersionCard = ( {
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
-						disabled={ disabled }
+						disabled={ disabled || isBusy }
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
 						value={ selectedValue }
