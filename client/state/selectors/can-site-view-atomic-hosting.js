@@ -25,7 +25,7 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	if ( false !== isJetpackSite( siteId ) || false !== isVipSite( siteId ) ) {
+	if ( false !== isJetpackSite( state, siteId ) || false !== isVipSite( state, siteId ) ) {
 		return false;
 	}
 
