@@ -416,7 +416,8 @@ export class Checkout extends React.Component {
 	}
 
 	/**
-	 * If there is an ecommerce plan in cart, saves the destination cookie as Thank You page along with the receipt id.
+	 * If there is an ecommerce plan in cart, then irrespective of the signup flow destination, the final destination
+	 * will always be "Thank You" page for the eCommerce plan. This is because the ecommerce store setup happens in this page.
 	 * If the user purchases additional products via upsell nudges, the original saved receipt ID will be used to
 	 * display the Thank You page for the eCommerce plan purchase.
 	 *
@@ -424,15 +425,10 @@ export class Checkout extends React.Component {
 	 */
 
 	setDestinationIfEcommPlan( pendingOrReceiptId ) {
-		const { cart } = this.props;
+		const { cart, selectedSiteSlug } = this.props;
 
 		if ( hasEcommercePlan( cart ) ) {
-			const ecommDestination = this.getUrlWithQueryParam(
-				this.getFallbackDestination( pendingOrReceiptId ),
-				{ fReceiptId: pendingOrReceiptId }
-			);
-
-			persistSignupDestination( ecommDestination );
+			persistSignupDestination( this.getFallbackDestination( pendingOrReceiptId ) );
 		} else {
 			const signupDestination = retrieveSignupDestination();
 
@@ -440,13 +436,13 @@ export class Checkout extends React.Component {
 				return;
 			}
 
-			const { query } = parseUrl( signupDestination, true );
-
-			if ( query && query.fReceiptId ) {
-				const ecommDestination = this.getUrlWithQueryParam(
-					this.getFallbackDestination( query.fReceiptId )
+			// If atomic site, then replace wordpress.com with wpcomstaging.com
+			if ( selectedSiteSlug.includes( '.wpcomstaging.com' ) ) {
+				const wpcomStagingDestination = signupDestination.replace(
+					/\b.wordpress.com/,
+					'.wpcomstaging.com'
 				);
-				persistSignupDestination( ecommDestination );
+				persistSignupDestination( wpcomStagingDestination );
 			}
 		}
 	}
@@ -624,7 +620,6 @@ export class Checkout extends React.Component {
 
 		// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 		// when purchasing a concierge session.
-
 		if ( hasConciergeSession( cart ) ) {
 			displayModeParam = { d: 'concierge' };
 		}
