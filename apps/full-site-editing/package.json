@@ -22,11 +22,11 @@
 		"posts-list-block": "calypso-build --source='posts-list-block'",
 		"dev:posts-list-block": "npm run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
-		"homepage-posts-editor": "calypso-build --source='homepage-posts/editor'",
-		"homepage-posts-view": "calypso-build --source='homepage-posts/view'",
-		"homepage-posts": "npm-run-all --parallel homepage-posts-*",
-		"dev:homepage-posts": "npm run homepage-posts",
-		"build:homepage-posts": "NODE_ENV=production npm run homepage-posts",
+		"blog-posts-block-editor": "calypso-build --source='blog-posts-block/editor'",
+		"blog-posts-block-view": "calypso-build --source='blog-posts-block/view'",
+		"blog-posts-block": "npm-run-all --parallel blog-posts-block-*",
+		"dev:blog-posts-block": "npm run blog-posts-block",
+		"build:blog-posts-block": "NODE_ENV=production npm run blog-posts-block",
 		"starter-page-templates": "calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "npm run starter-page-templates",
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
@@ -41,7 +41,7 @@
 		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
-		"sync:homepage-posts": "./bin/sync-homepage-posts.sh"
+		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
