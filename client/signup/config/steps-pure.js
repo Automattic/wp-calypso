@@ -74,7 +74,7 @@ export function generateSteps( {
 			stepName: 'fse-themes',
 			props: {
 				designType: 'fse-compatible',
-				quantity: 9,
+				quantity: 6,
 			},
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
