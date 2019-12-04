@@ -88,7 +88,8 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) => {
+// const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) => {
+const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_KEYRINGS_REQUEST_SUCCESS: {
 			const { siteId, keyrings } = action;
@@ -135,7 +136,7 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,
