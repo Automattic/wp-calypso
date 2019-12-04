@@ -616,7 +616,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Get the WordPress app' ) }
-				showSkip={ false }
+				showSkip={ true }
 				buttonText={ translate( 'Start' ) }
 			/>
 		);
