@@ -13,9 +13,9 @@
 		grid-column: span 12;
 	}
 
-	&__page-heading.formatted-header.is-left-align {
+	&__page-heading {
 		@include breakpoint( '>1040px' ) {
-			grid-column: 1 / span 12;
+			grid-column: span 12;
 			margin: 0;
 		}
 	}
