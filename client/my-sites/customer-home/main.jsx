@@ -173,7 +173,7 @@ class Home extends Component {
 				);
 
 			case 'launched':
-				return translate( 'Next, add fresh content to grow your audience.' );
+				return translate( 'Make sure you share it with everyone and show it off.' );
 
 			default:
 				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
