@@ -66,7 +66,6 @@
 		"help": true,
 		"help/courses": true,
 		"hosting": true,
-		"hosting/all-sites": true,
 		"hosting/sftp-phpmyadmin": true,
 		"i18n/community-translator": false,
 		"i18n/translation-scanner": true,
