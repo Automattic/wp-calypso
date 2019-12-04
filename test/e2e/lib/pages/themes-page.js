@@ -100,7 +100,6 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clearSearch() {
-		await this.openShowcase();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.themes-magic-search-card__icon-close' )
