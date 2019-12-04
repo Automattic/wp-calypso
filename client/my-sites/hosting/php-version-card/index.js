@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -16,9 +16,10 @@ import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Spinner from 'components/spinner';
-import { getAtomicPhpVersion, updateAtomicPhpVersion } from 'state/hosting/actions';
+import { updateAtomicPhpVersion } from 'state/hosting/actions';
 import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
 import { isUpdatingAtomicPhpVersion } from 'state/selectors/is-updating-atomic-php-version';
+import QuerySitePhpVersion from 'components/data/query-site-php-version';
 
 /**
  * Style dependencies
@@ -27,7 +28,6 @@ import './style.scss';
 
 const PhpVersionCard = ( {
 	disabled,
-	getPhpVersion,
 	isBusy,
 	loading,
 	siteId,
@@ -38,12 +38,6 @@ const PhpVersionCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 
 	const recommendedValue = '7.3';
-
-	useEffect( () => {
-		if ( ! disabled ) {
-			getPhpVersion( siteId );
-		}
-	}, [ disabled, getPhpVersion, siteId ] );
 
 	const changePhpVersion = event => {
 		const newVersion = event.target.value;
@@ -125,6 +119,7 @@ const PhpVersionCard = ( {
 
 	return (
 		<Card className="php-version-card">
+			<QuerySitePhpVersion siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
 			{ getContent() }
@@ -146,7 +141,6 @@ export default connect(
 		};
 	},
 	{
-		getPhpVersion: getAtomicPhpVersion,
 		updatePhpVersion: updateAtomicPhpVersion,
 	}
 )( localize( PhpVersionCard ) );
