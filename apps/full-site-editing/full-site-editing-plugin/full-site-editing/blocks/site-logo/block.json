@@ -1,0 +1,12 @@
+{
+	"name": "a8c/site-logo",
+	"category": "layout",
+	"attributes": {
+		"align": {
+			"type": "string"
+		},
+		"width": {
+			"type": "number"
+		}
+	}
+}

@@ -5,6 +5,7 @@ import './blocks/navigation-menu';
 import './blocks/post-content';
 import './blocks/site-credit';
 import './blocks/site-description';
+import './blocks/site-logo';
 import './blocks/site-title';
 import './blocks/template';
 import './plugins/close-button-override';

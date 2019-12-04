@@ -1,0 +1,18 @@
+.custom-logo-link {
+	cursor: inherit;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.wp-block-site-logo {
+	.editor-media-placeholder__button {
+		margin-bottom: 0;
+	}
+
+	.block-editor-media-placeholder__cancel-button {
+		flex-basis: 100%;
+		text-align: center;
+	}
+}
