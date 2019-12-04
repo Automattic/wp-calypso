@@ -20,7 +20,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.16' );
+define( 'PLUGIN_VERSION', '0.16.1' );
 
 /**
  * Load Full Site Editing.
