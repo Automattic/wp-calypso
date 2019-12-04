@@ -108,22 +108,27 @@
 .migrate__progress-item {
 	position: relative;
 	list-style-type: none;
-	margin-left: 38px;
+	margin-left: 8px;
 	margin-bottom: 8px;
 	font-size: 14px;
-	&::before {
-		content: '';
-		display: block;
-		position: absolute;
-		top: 2px;
-		left: -28px;
-		width: 20px;
-		height: 20px;
-		background: url( '/calypso/images/importer/circle-gray.svg' ) no-repeat;
-		background-size: 18px;
+	line-height: 24px;
+	display: flex;
+}
+
+.migrate__progress-item-icon {
+	width: 24px;
+	margin-right: 12px;
+	display: flex;
+
+	.spinner {
+		margin-left: 1px;
 	}
-	&.is-active::before {
-		background: url( '/calypso/images/importer/gridicon-checkmark.svg' ) no-repeat;
-		background-size: contain;
-	}
+}
+
+.migrate__progress-item-icon-success {
+	color: var( --color-success );
+}
+
+.migrate__progress-item-text {
+	display: flex;
 }

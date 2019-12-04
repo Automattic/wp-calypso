@@ -23,6 +23,7 @@ import ProgressBar from 'components/progress-bar';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
+import Spinner from 'components/spinner';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -223,38 +224,6 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderProgressList() {
-		const { sourceSite, targetSite } = this.props;
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
-		const backingUpClass = 'migrate__progress-item is-active';
-		let restoringClass = 'migrate__progress-item';
-
-		if ( 'restoring' === this.state.migrationStatus ) {
-			restoringClass += ' is-active';
-		}
-
-		return (
-			<ul className="migrate__progress-list">
-				<li className={ backingUpClass }>Backing up from { sourceSiteDomain }</li>
-				<li className={ restoringClass }>Restoring to { targetSiteDomain }</li>
-				<li className="migrate__progress-item">Wrapping up</li>
-			</ul>
-		);
-	}
-
-	renderProgressBar() {
-		if ( this.isInProgress() ) {
-			return (
-				<ProgressBar isPulsing className="migrate__progress" value={ this.state.percent || 0 } />
-			);
-		}
-
-		if ( this.isFinished() ) {
-			return <ProgressBar className="migrate__progress is-complete" value={ 100 } />;
-		}
-	}
-
 	renderMigrationProgress() {
 		const { sourceSite, targetSite } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
@@ -278,6 +247,74 @@ class SectionMigrate extends Component {
 					{ this.renderProgressList() }
 				</Card>
 			</>
+		);
+	}
+
+	renderProgressBar() {
+		if ( this.isInProgress() ) {
+			return (
+				<ProgressBar isPulsing className="migrate__progress" value={ this.state.percent || 0 } />
+			);
+		}
+
+		if ( this.isFinished() ) {
+			return <ProgressBar className="migrate__progress is-complete" value={ 100 } />;
+		}
+	}
+
+	renderProgressIcon( progressState ) {
+		const { migrationStatus } = this.state;
+
+		if ( progressState === migrationStatus ) {
+			return <Spinner />;
+		}
+
+		if ( 'backing-up' === progressState ) {
+			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
+		}
+
+		return <img alt="" src="/calypso/images/importer/circle-gray.svg" />;
+	}
+
+	renderProgressItem( progressState ) {
+		const { migrationStatus } = this.state;
+		const { sourceSite, targetSite } = this.props;
+		const sourceSiteDomain = get( sourceSite, 'domain' );
+		const targetSiteDomain = get( targetSite, 'domain' );
+
+		let progressItemText;
+		switch ( progressState ) {
+			case 'backing-up':
+				progressItemText = `Backed up from ${ sourceSiteDomain }`;
+				if ( migrationStatus === 'backing-up' ) {
+					progressItemText = `Backing up from ${ sourceSiteDomain }`;
+				}
+				break;
+			case 'restoring':
+				progressItemText = `Restoring to ${ targetSiteDomain }`;
+				break;
+			case 'done':
+				progressItemText = 'Wrapping up';
+				break;
+		}
+
+		return (
+			<li key={ `progress-${ migrationStatus }` } className="migrate__progress-item">
+				<div className="migrate__progress-item-icon">
+					{ this.renderProgressIcon( progressState ) }
+				</div>
+				<div className="migrate__progress-item-text">{ progressItemText }</div>
+			</li>
+		);
+	}
+
+	renderProgressList() {
+		const steps = [ 'backing-up', 'restoring', 'done' ];
+
+		return (
+			<ul className="migrate__progress-list">
+				{ steps.map( step => this.renderProgressItem( step ) ) }
+			</ul>
 		);
 	}
 
