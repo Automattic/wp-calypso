@@ -4,7 +4,7 @@
  * WordPress dependencies
  */
 import ServerSideRender from '@wordpress/server-side-render';
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import {
@@ -17,7 +17,7 @@ import {
 	withColors,
 	withFontSizes,
 } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, Notice } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 /**
@@ -35,12 +35,36 @@ const NavigationMenuEdit = ( {
 	textColor,
 	isPublished,
 } ) => {
+	const [ upgradeNudgeVisible, setUpgradeNudgeVisible ] = useState( true );
+
 	const { customFontSize, textAlign } = attributes;
 
 	const actualFontSize = customFontSize || fontSize.size;
 
+	const upgradeBlock = () => {};
+
 	return (
 		<Fragment>
+			{ upgradeNudgeVisible && (
+				<Notice
+					onRemove={ () => setUpgradeNudgeVisible( false ) }
+					actions={ [
+						{
+							label: __( 'Upgrade Block', 'full-site-editing' ),
+							onClick: upgradeBlock,
+						},
+					] }
+				>
+					<p>
+						<span className="posts-list__message">
+							{ __(
+								'An improved version of the Navigation block is available. Upgrade for a better, more natural way to manage your Navigation.',
+								'full-site-editing'
+							) }
+						</span>
+					</p>
+				</Notice>
+			) }
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
