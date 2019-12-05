@@ -83,6 +83,7 @@ export class ThemesList extends React.Component {
 				price={ this.props.getPrice( theme.id ) }
 				installing={ this.props.isInstalling( theme.id ) }
 				upsellUrl={ this.props.upsellUrl }
+				bookmarkRef={ this.props.bookmarkRef }
 			/>
 		);
 	}

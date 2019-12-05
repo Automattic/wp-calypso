@@ -66,7 +66,7 @@ class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.scrollRef = React.createRef();
-
+		this.bookmarkRef = React.createRef();
 		this.state = {
 			page: 1,
 			showPreview: false,
@@ -113,14 +113,17 @@ class ThemeShowcase extends React.Component {
 			this.props.openThemesShowcase();
 		}
 		// Scroll to recover last browsing state if same conditions.
-		if (
-			search === lastBrowsingState.search &&
-			filter === lastBrowsingState.filter &&
-			document.body.scrollHeight > lastBrowsingState.scrollPosition
-		) {
+		if ( lastBrowsingState.id ) {
 			setTimeout( () => {
-				window.scrollTo( 0, lastBrowsingState.scrollPosition );
-			}, 10 );
+				const lastTheme = this.bookmarkRef.current;
+				if ( lastTheme ) {
+					lastTheme.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+						inline: 'center',
+					} );
+				}
+			}, 40 );
 		}
 	}
 
@@ -129,10 +132,10 @@ class ThemeShowcase extends React.Component {
 		const browsingState = {
 			search,
 			filter,
-			scrollPosition: window.scrollY,
 		};
 		this.props.setThemesBrowsingState( browsingState );
 	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
 			this.scrollToSearchInput();
@@ -337,6 +340,7 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 								isShowcaseOpen={ isShowcaseOpen }
 								scrollToSearchInput={ this.scrollToSearchInput }
+								bookmarkRef={ this.bookmarkRef }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
@@ -420,6 +424,7 @@ class ThemeShowcase extends React.Component {
 							} }
 							trackScrollPage={ this.props.trackScrollPage }
 							emptyContent={ this.props.emptyContent }
+							bookmarkRef={ this.bookmarkRef }
 						/>
 						<ThemePreview />
 						{ this.props.children }
