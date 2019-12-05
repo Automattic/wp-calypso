@@ -237,15 +237,25 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 ### getDefaultOrderReviewStep
 
-TODO
+Returns a [Step object](#steps) which displays an order review. Although it can be modified before passing it to [Checkout](#checkout), by default it has no way to modify the purchase (eg: you cannot delete items). Typically this is the last step of a form. Can be overridden completely to create a custom review step.
+
+If not used as the last step, the two following properties should be customized if you want to provide translations:
+
+- getEditButtonAriaLabel
+- getNextStepButtonAriaLabel
 
 ### getDefaultOrderSummaryStep
 
-TODO
+Returns a [Step object](#steps) which displays an order summary. Although it can be modified before passing it to [Checkout](#checkout), by default it has no step number and cannot be made active. Typically used as the first step.
 
 ### getDefaultPaymentMethodStep
 
-TODO
+Returns a [Step object](#steps) which displays a form to choose a [Paymet Method](#payment-methods). It can be modified before passing it to [Checkout](#checkout). The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
+
+The two following properties should be customized if you want to provide translations:
+
+- getEditButtonAriaLabel
+- getNextStepButtonAriaLabel
 
 ### formatValueForCurrency(currency, int)
 
