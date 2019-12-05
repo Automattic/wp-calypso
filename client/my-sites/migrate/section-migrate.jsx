@@ -379,7 +379,6 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				// TODO - maybe only refresh while we're on the progress page at some point
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 				<DocumentHead title="Migrate" />
 				<SidebarNavigation />
