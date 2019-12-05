@@ -26,8 +26,6 @@ import getRequest from 'state/selectors/get-request';
  */
 import './style.scss';
 
-let updateRequestPhpVersion = null; // Used to check if request is loading
-
 const PhpVersionCard = ( {
 	disabled,
 	isBusy,
@@ -48,8 +46,6 @@ const PhpVersionCard = ( {
 	};
 
 	const updateVersion = () => {
-		updateRequestPhpVersion = selectedPhpVersion;
-
 		updatePhpVersion( siteId, selectedPhpVersion );
 	};
 
@@ -138,9 +134,7 @@ export default connect(
 		const version = getAtomicHostingPhpVersion( state, siteId );
 
 		return {
-			isBusy:
-				getRequest( state, updateAtomicPhpVersion( siteId, updateRequestPhpVersion ) )?.isLoading ??
-				false,
+			isBusy: getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
 			loading: ! props.disabled && ! version,
 			siteId,
 			version,

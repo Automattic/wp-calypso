@@ -56,6 +56,7 @@ export const updateAtomicPhpVersion = ( siteId, version ) => ( {
 	meta: {
 		dataLayer: {
 			trackRequest: true,
+			requestKey: `${ HOSTING_PHP_VERSION_SET_REQUEST }-${ siteId }`,
 		},
 	},
 } );
