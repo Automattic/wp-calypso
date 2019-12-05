@@ -16,7 +16,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnBusinessPlan from 'state/selectors/is-site-on-business-plan';
+import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -61,7 +61,7 @@ class Hosting extends Component {
 		const {
 			canViewAtomicHosting,
 			clickActivate,
-			isBusinessSite,
+			isOnAtomicPlan,
 			isDisabled,
 			isTransferring,
 			requestSiteById,
@@ -186,7 +186,7 @@ class Hosting extends Component {
 					}
 					align="left"
 				/>
-				{ isBusinessSite ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
 			</Main>
 		);
@@ -204,7 +204,7 @@ export default connect(
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
-			isBusinessSite: isSiteOnBusinessPlan( state, siteId ),
+			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
