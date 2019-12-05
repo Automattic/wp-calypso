@@ -1,23 +1,21 @@
 <?php
 /**
- * Server-side rendering of the `newspack-blocks/author-bio` block.
+ * Server-side rendering of the `newspack-blocks/homepage-posts` block.
  *
  * @package WordPress
  */
 
 /**
- * Renders the `newspack-blocks/author-bio` block on server.
+ * Renders the `newspack-blocks/homepage-posts` block on server.
  *
  * @param array $attributes The block attributes.
  *
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
-	$posts_to_show = intval( $attributes['postsToShow'] );
-
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -54,7 +52,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' has-text-color';
 	}
 	if ( '' !== $attributes['textColor'] ) {
-			$classes .= ' has-' . $attributes['textColor'] . '-color';
+		$classes .= ' has-' . $attributes['textColor'] . '-color';
 	}
 
 	$styles = '';
@@ -63,39 +61,81 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$post_counter = 0;
+	$articles_rest_url = add_query_arg(
+		array_merge(
+			array_map(
+				function( $attribute ) {
+					return false === $attribute ? '0' : $attribute;
+				},
+				$attributes
+			),
+			[ 'page' => 2 ]
+		),
+		rest_url( '/newspack-blocks/v1/articles' )
+	);
 
 	ob_start();
 
-	if ( $article_query->have_posts() ) :
-		?>
+	if ( $article_query->have_posts() ) : ?>
 		<div>
 			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
 						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 					</h2>
-					<?php
-				endif;
-				?>
+				<?php endif; ?>
 				<?php
+
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
 				* around dynamically calculating the height of the the article list on load.
 				* As a result we render the same standards-based markup for all requests.
 				*/
-				echo Newspack_Blocks::template_inc( __DIR__ . '/templates/articles-list.php', [
-					'article_query' => $article_query,
-					'attributes'    => $attributes,
-				] );
+
+				echo Newspack_Blocks::template_inc(
+					__DIR__ . '/templates/articles-list.php',
+					[
+						'articles_rest_url' => $articles_rest_url,
+						'article_query'     => $article_query,
+						'attributes'        => $attributes,
+					]
+				);
 				?>
 			</div>
+			<?php
+
+			/*
+			 * AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
+			 * we do not display the "More" button on AMP-requests. This feature is deliberately
+			 * disabled.
+			 *
+			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
+			 * @see https://wp.me/paYJgx-jW
+			 */
+			$page = $article_query->paged ?? 1;
+
+			$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
+
+			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) :
+				?>
+				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
+					<?php _e( 'Load more articles', 'newspack-blocks' ); ?>
+				</button>
+				<p data-load-more-loading-text hidden>
+					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
+				</p>
+				<p data-load-more-error-text hidden>
+					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
+				</p>
+			<?php endif; ?>
+
 		</div>
-	<?php
+		<?php
 	endif;
 
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+
 	return $content;
 }
 
@@ -121,6 +161,7 @@ function newspack_blocks_register_homepage_articles() {
 }
 add_action( 'init', 'newspack_blocks_register_homepage_articles' );
 
+
 /**
  * Renders author avatar markup.
  *
@@ -130,13 +171,15 @@ add_action( 'init', 'newspack_blocks_register_homepage_articles' );
  */
 function newspack_blocks_format_avatars( $author_info ) {
 	$elements = array_map(
-		function( $author ) {
+		function ( $author ) {
 			return sprintf( '<a href="%s">%s</a>', $author->url, $author->avatar );
 		},
 		$author_info
 	);
+
 	return implode( '', $elements );
 }
+
 /**
  * Renders byline markup.
  *
@@ -147,17 +190,18 @@ function newspack_blocks_format_avatars( $author_info ) {
 function newspack_blocks_format_byline( $author_info ) {
 	$index    = -1;
 	$elements = array_merge(
-		array(
+		[
 			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
-		),
+		],
 		array_reduce(
 			$author_info,
-			function( $accumulator, $author ) use ( $author_info, &$index ) {
+			function ( $accumulator, $author ) use ( $author_info, &$index ) {
 				$index ++;
 				$penultimate = count( $author_info ) - 2;
+
 				return array_merge(
 					$accumulator,
-					array(
+					[
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
@@ -166,11 +210,12 @@ function newspack_blocks_format_byline( $author_info ) {
 						),
 						( $index < $penultimate ) ? ', ' : '',
 						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
-					)
+					]
 				);
 			},
-			array()
+			[]
 		)
 	);
+
 	return implode( '', $elements );
 }
