@@ -76,7 +76,6 @@ import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
@@ -88,6 +87,7 @@ import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edi
  * Style dependencies
  */
 import './style.scss';
+import { isExternal } from '../../../lib/url';
 
 function getPurchases( props ) {
 	return [
@@ -119,6 +119,7 @@ export class CheckoutThankYou extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
+		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -286,7 +287,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	primaryCta = () => {
-		const { selectedSite, upgradeIntent } = this.props;
+		const { selectedSite, redirectTo } = this.props;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
@@ -296,10 +297,8 @@ export class CheckoutThankYou extends React.Component {
 				return page( '/start/domain-first' );
 			}
 
-			switch ( upgradeIntent ) {
-				case 'plugins':
-				case 'themes':
-					return page( `/${ upgradeIntent }/${ siteSlug }` );
+			if ( ! isExternal( redirectTo ) ) {
+				return page( redirectTo );
 			}
 
 			if ( purchases.some( isPlan ) ) {
@@ -534,7 +533,15 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, isSimplified, sitePlans, displayMode, customizeUrl } = this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			sitePlans,
+			displayMode,
+			customizeUrl,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -554,8 +561,10 @@ export class CheckoutThankYou extends React.Component {
 				<div>
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
-						siteJustLaunched={ isSimplified }
+						isSimplified={ isSimplified }
 						selectedSite={ selectedSite }
+						upgradeIntent={ upgradeIntent }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
 						displayMode={ displayMode }
 					/>
 
@@ -578,10 +587,12 @@ export class CheckoutThankYou extends React.Component {
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
-					siteJustLaunched={ isSimplified }
+					isSimplified={ isSimplified }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
+					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 				/>
@@ -620,7 +631,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 		const activeTheme = getActiveTheme( state, siteId );
-		const upgradeIntent = getCheckoutUpgradeIntent( state );
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
@@ -628,8 +638,9 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			upgradeIntent: getCheckoutUpgradeIntent( state ),
-			isSimplified: [ 'themes', 'plugins' ].indexOf( upgradeIntent ) !== -1,
+			isSimplified:
+				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
+				-1,
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:

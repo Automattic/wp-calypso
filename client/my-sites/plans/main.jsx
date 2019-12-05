@@ -39,6 +39,7 @@ class Plans extends React.Component {
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
+		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
 
@@ -159,6 +160,7 @@ class Plans extends React.Component {
 								intervalType={ this.props.intervalType }
 								selectedFeature={ this.props.selectedFeature }
 								selectedPlan={ this.props.selectedPlan }
+								redirectTo={ this.props.redirectTo }
 								withDiscount={ this.props.withDiscount }
 								discountEndDate={ this.props.discountEndDate }
 								site={ selectedSite }

@@ -10,7 +10,7 @@ import { extendAction } from 'state/utils';
 import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 
-const encodeQueryParameters = queryParams => {
+export const encodeQueryParameters = queryParams => {
 	return queryParams
 		.map(
 			( [ queryKey, queryValue ] ) =>
