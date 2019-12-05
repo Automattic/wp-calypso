@@ -37,7 +37,7 @@ export default function addQueryArgs( args: QueryArgs, url: URLString ): URLStri
 
 	const parsed = new URL( url, BASE_URL );
 
-	const newSearch = new URLSearchParams( parsed.searchParams );
+	const newSearch = new URLSearchParams( parsed.search );
 	for ( const key of Object.keys( args ) ) {
 		newSearch.set( key, String( args[ key ] ) );
 	}
