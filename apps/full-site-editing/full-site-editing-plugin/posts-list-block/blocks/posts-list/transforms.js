@@ -9,7 +9,7 @@
 import { createBlock } from '@wordpress/blocks';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const HOMEPAGE_POSTS_BLOCK_TYPES = [ 'a8c/homepage-posts', 'newspack-blocks/homepage-articles' ];
+const HOMEPAGE_POSTS_BLOCK_TYPES = [ 'a8c/blog-posts', 'newspack-blocks/homepage-articles' ];
 
 const getTransformFunction = type => ( { postsPerPage } ) => {
 	// Configure the Newspack block to look as close as possible
