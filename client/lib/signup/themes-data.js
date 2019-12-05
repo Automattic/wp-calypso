@@ -225,6 +225,16 @@ export const themes = [
 
 	// Start Template-first themes
 	{
+		name: 'Alves',
+		slug: 'alves',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'template-first',
+		demo_uri: 'https://alvesdemo.wordpress.com',
+		verticals: [],
+	},
+	{
 		name: 'Barnsbury',
 		slug: 'barnsbury',
 		repo: 'pub',
@@ -242,6 +252,16 @@ export const themes = [
 		description: '',
 		design: 'template-first',
 		demo_uri: 'https://dalstondemo.wordpress.com',
+		verticals: [],
+	},
+	{
+		name: 'Hever',
+		slug: 'hever',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'template-first',
+		demo_uri: 'https://heverdemo.wordpress.com',
 		verticals: [],
 	},
 	{
@@ -275,6 +295,16 @@ export const themes = [
 		verticals: [],
 	},
 	{
+		name: 'Morden',
+		slug: 'morden',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'template-first',
+		demo_uri: 'https://mordendemo.wordpress.com',
+		verticals: [],
+	},
+	{
 		name: 'Balasana',
 		slug: 'balasana',
 		repo: 'pub',
@@ -302,6 +332,16 @@ export const themes = [
 		description: '',
 		design: 'template-first',
 		demo_uri: 'https://rockfielddemo.wordpress.com',
+		verticals: [],
+	},
+	{
+		name: 'Stow',
+		slug: 'stow',
+		repo: 'pub',
+		fallback: true,
+		description: '',
+		design: 'template-first',
+		demo_uri: 'https://stowdemo.wordpress.com',
 		verticals: [],
 	},
 	{
