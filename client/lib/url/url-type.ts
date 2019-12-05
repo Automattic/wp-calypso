@@ -28,6 +28,7 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
 /**
  * Determine the type of a URL, with regards to its completeness.
+ *
  * @param url the URL to analyze
  *
  * @returns the type of the URL
@@ -52,8 +53,11 @@ export function determineUrlType( url: URLString | URL ): URL_TYPE {
 
 	try {
 		// If we can parse the URL without a base, it's an absolute URL.
+		// The polyfill works differently, however, so we need to take that into account.
 		parsed = new URL( url );
-		return URL_TYPE.ABSOLUTE;
+		if ( parsed.protocol && parsed.protocol !== ':' ) {
+			return URL_TYPE.ABSOLUTE;
+		}
 	} catch {
 		// Do nothing.
 	}
