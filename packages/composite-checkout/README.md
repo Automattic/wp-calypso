@@ -4,6 +4,10 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 ## Installation
 
+**This package is still in development and not yet published.**
+
+Once published, you'll be able to install this package using npm with:
+
 `npm install @automattic/composite-checkout`
 
 ## Description
@@ -19,27 +23,21 @@ These steps can be customized or replaced, and additional steps can be added.
 
 It's also possible to build an entirely custom form using the other components exported by this package.
 
-### Select payment method
+## How to use this package
 
-The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors.
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
 
-![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
+The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
-### Review order
-
-The review step presents a simple list of line items and a total, followed by a purchase button.
-
-![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/review-step.png 'Review Order Step')
-
-### Submitting the form
+## Submitting the form
 
 When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
 
-If the payment method succeeds, the `onSuccess` prop will be called instead. It's important not to provision anything based on this callback, as it could be called by a malicious user. Instead, provisioning should be handled separately server-to-server.
+If the payment method succeeds, the `onSuccess` prop will be called instead.
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-### Steps
+## Steps
 
 The `Checkout` component accepts an optional `steps` prop which is an array of Step objects. Each Step is an object with properties that include both React elements to display at certain times as well as metadata about how the step should be displayed. Here's an example step:
 
@@ -83,7 +81,7 @@ All properties except for `id` are optional.
 
 ## Example
 
-See the file `demo/index.js`.
+See the [demo](demo/index.js) for an example of using this package.
 
 ## Styles and Themes
 
@@ -210,6 +208,34 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### createApplePayMethod
+
+TODO
+
+### createRegistry
+
+TODO
+
+### createPayPalMethod
+
+TODO
+
+### createStripeMethod
+
+TODO
+
+### getDefaultOrderReviewStep
+
+TODO
+
+### getDefaultOrderSummaryStep
+
+TODO
+
+### getDefaultPaymentMethodStep
+
+TODO
 
 ### formatValueForCurrency(currency, int)
 
