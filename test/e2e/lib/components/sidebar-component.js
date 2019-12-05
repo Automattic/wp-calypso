@@ -109,6 +109,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectStoreOption() {
+		await await driverHelper.waitTillPresentAndDisplayed( this.driver, this.storeSelector );
 		return await driverHelper.clickWhenClickable( this.driver, this.storeSelector );
 	}
 
