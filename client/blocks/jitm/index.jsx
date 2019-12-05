@@ -18,6 +18,7 @@ import { getTopJITM } from 'state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'state/jitm/actions';
 import AsyncLoad from 'components/async-load';
 import QueryJITM from 'components/data/query-jitm';
+import 'state/data-layer/wpcom/marketing';
 
 const debug = debugFactory( 'calypso:jitm' );
 
