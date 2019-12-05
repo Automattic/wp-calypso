@@ -14,7 +14,9 @@ export default function QuerySiteSelectedEditor( { siteId } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( requestSelectedEditor( siteId ) );
+		if ( siteId ) {
+			dispatch( requestSelectedEditor( siteId ) );
+		}
 	}, [ dispatch, siteId ] );
 
 	return null;
