@@ -6,7 +6,7 @@ import {
 	THEME_BACK_PATH_SET,
 	THEMES_BANNER_HIDE,
 	THEMES_SHOWCASE_OPEN,
-	THEMES_BROWSING_STATE_SET,
+	THEMES_BOOKMARK_SET,
 } from 'state/action-types';
 import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
@@ -48,7 +48,7 @@ const initialBookmark = {
 };
 
 export function themesBookmark( state = initialBookmark, action ) {
-	if ( THEMES_BROWSING_STATE_SET === action.type ) {
+	if ( THEMES_BOOKMARK_SET === action.type ) {
 		return { ...state, ...action.payload };
 	}
 	return state;

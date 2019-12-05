@@ -112,8 +112,12 @@ class ThemeShowcase extends React.Component {
 		if ( ( search || filter ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
 		}
-		// Scroll to recover last browsing state if same conditions.
-		if ( themesBookmark.id ) {
+		// Scroll to bookmark if applicable.
+		if (
+			search === themesBookmark.search &&
+			filter === themesBookmark.filter &&
+			themesBookmark.id
+		) {
 			setTimeout( () => {
 				const lastTheme = this.bookmarkRef.current;
 				if ( lastTheme ) {
@@ -128,6 +132,7 @@ class ThemeShowcase extends React.Component {
 	}
 
 	componentWillUnmount() {
+		// Save query info to help determine if we should return to bookmark later.
 		const { search, filter } = this.props;
 		const browsingState = {
 			search,
