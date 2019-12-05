@@ -54,6 +54,7 @@ import {
 	isSiteRedirect,
 	isTheme,
 } from 'lib/products-values';
+import { isExternal } from 'lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
 import BloggerPlanDetails from './blogger-plan-details';
@@ -76,7 +77,6 @@ import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
@@ -111,12 +111,15 @@ export class CheckoutThankYou extends React.Component {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
 		isFetchingTransfer: PropTypes.bool,
+		isSimplified: PropTypes.bool,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
+		upgradeIntent: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
+		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -284,7 +287,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	primaryCta = () => {
-		const { selectedSite, upgradeIntent } = this.props;
+		const { selectedSite, redirectTo } = this.props;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
@@ -294,10 +297,8 @@ export class CheckoutThankYou extends React.Component {
 				return page( '/start/domain-first' );
 			}
 
-			switch ( upgradeIntent ) {
-				case 'plugins':
-				case 'themes':
-					return page( `/${ upgradeIntent }/${ siteSlug }` );
+			if ( ! isExternal( redirectTo ) ) {
+				return page( redirectTo );
 			}
 
 			if ( purchases.some( isPlan ) ) {
@@ -457,14 +458,15 @@ export class CheckoutThankYou extends React.Component {
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-
-				<Card className="checkout-thank-you__footer">
-					<HappinessSupport
-						isJetpack={ wasJetpackPlanPurchased }
-						liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-						showLiveChatButton={ this.isEligibleForLiveChat() }
-					/>
-				</Card>
+				{ ! this.props.isSimplified && (
+					<Card className="checkout-thank-you__footer">
+						<HappinessSupport
+							isJetpack={ wasJetpackPlanPurchased }
+							liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
+							showLiveChatButton={ this.isEligibleForLiveChat() }
+						/>
+					</Card>
+				) }
 			</Main>
 		);
 	}
@@ -531,7 +533,15 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans, displayMode, customizeUrl } = this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			sitePlans,
+			displayMode,
+			customizeUrl,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -551,17 +561,24 @@ export class CheckoutThankYou extends React.Component {
 				<div>
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
+						isSimplified={ isSimplified }
 						selectedSite={ selectedSite }
+						upgradeIntent={ upgradeIntent }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
 						displayMode={ displayMode }
 					/>
 
-					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+					{ ! isSimplified && (
+						<>
+							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
-					<div className="checkout-thank-you__purchase-details-list">
-						<PurchaseDetail isPlaceholder />
-						<PurchaseDetail isPlaceholder />
-						<PurchaseDetail isPlaceholder />
-					</div>
+							<div className="checkout-thank-you__purchase-details-list">
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+							</div>
+						</>
+					) }
 				</div>
 			);
 		}
@@ -570,14 +587,17 @@ export class CheckoutThankYou extends React.Component {
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
+					isSimplified={ isSimplified }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
+					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
 				/>
 
-				{ primaryPurchase && (
+				{ ! isSimplified && primaryPurchase && (
 					<CheckoutThankYouFeaturesHeader
 						isDataLoaded={ this.isDataLoaded() }
 						isGenericReceipt={ this.isGenericReceipt() }
@@ -586,7 +606,7 @@ export class CheckoutThankYou extends React.Component {
 					/>
 				) }
 
-				{ ComponentClass && (
+				{ ! isSimplified && ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
 							customizeUrl={ customizeUrl }
@@ -618,7 +638,9 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			upgradeIntent: getCheckoutUpgradeIntent( state ),
+			isSimplified:
+				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
+				-1,
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
