@@ -117,8 +117,8 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 50,
-			control: 50,
+			variantShowUpdates: 90,
+			control: 10,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
