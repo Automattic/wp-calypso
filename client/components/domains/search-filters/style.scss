@@ -217,5 +217,9 @@
 
 	.token-field__suggestion {
 		color: var( --color-neutral-70 );
+		&.is-selected span {
+			color: var( --color-text-inverted );
+		}
 	}
 }
+
