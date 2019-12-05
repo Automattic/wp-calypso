@@ -259,22 +259,32 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationProgress() {
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
+		const subHeaderText = translate(
+			`We're moving everything from {{span}}%(sourceSiteDomain)s{{/span}} ` +
+				`to {{span}}%(targetSiteDomain)s{{/span}}.`,
+			{
+				args: { sourceSiteDomain: sourceSiteDomain, targetSiteDomain: targetSiteDomain },
+				components: {
+					span: <span className="migrate__domain" />,
+				},
+			}
+		);
 
 		return (
 			<>
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime.svg' }
+						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
 						alt=""
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
 						headerText="Migration in progress"
-						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
+						subHeaderText={ subHeaderText }
 						align="center"
 					/>
 					{ this.renderStartTime() }
@@ -316,7 +326,13 @@ class SectionMigrate extends Component {
 			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
 		}
 
-		return <img alt="" src="/calypso/images/importer/circle-gray.svg" />;
+		return (
+			<img
+				alt=""
+				src="/calypso/images/importer/circle-gray.svg"
+				className="migrate__progress-item-icon-todo"
+			/>
+		);
 	}
 
 	renderProgressItem( progressState ) {
