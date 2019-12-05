@@ -218,7 +218,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( '200 GB storage' ),
 		getDescription: () =>
 			i18n.translate(
-				"With increased storage space you'll be able to upload more images, videos, audio, and documents to your website."
+				'Upload more images, audio, and documents to your website with increased storage space.'
 			),
 	},
 
@@ -294,8 +294,8 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				"With increased storage space you'll be able to upload " +
-					'more images, videos, audio, and documents to your website.'
+				'Upload more images, audio, and documents to your website with ' +
+					'increased storage space.'
 			),
 		getStoreSlug: () => 'unlimited_space',
 	},
@@ -596,8 +596,8 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				"With increased storage space you'll be able to upload " +
-					'more images, videos, audio, and documents to your website.'
+				'Upload more images, audio, and documents to your website with ' +
+					'increased storage space.'
 			),
 	},
 
