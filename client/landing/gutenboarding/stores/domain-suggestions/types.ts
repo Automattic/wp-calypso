@@ -3,10 +3,9 @@
  */
 import { InputArgs } from '@wordpress/url';
 
-enum ActionType {
+export enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
-export { ActionType };
 
 // We're extending InputArgs in order to add an index signature,
 // which we need for using `DomainSuggestionQuery` objects with `addQueryArgs`.
