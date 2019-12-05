@@ -83,6 +83,7 @@ import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'state/themes/selectors';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 
 /**
  * Style dependencies
@@ -287,7 +288,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	primaryCta = () => {
-		const { selectedSite, redirectTo } = this.props;
+		const { selectedSite, upgradeIntent, redirectTo } = this.props;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
@@ -299,6 +300,13 @@ export class CheckoutThankYou extends React.Component {
 
 			if ( ! isExternal( redirectTo ) ) {
 				return page( redirectTo );
+			}
+
+			switch ( upgradeIntent ) {
+				case 'plugins':
+					return page( redirectTo );
+				case 'themes':
+					return page( `/${ upgradeIntent }/${ siteSlug }` );
 			}
 
 			if ( purchases.some( isPlan ) ) {
@@ -638,6 +646,7 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
+			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
 			isSimplified:
 				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
 				-1,
