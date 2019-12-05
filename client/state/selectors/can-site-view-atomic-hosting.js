@@ -3,8 +3,10 @@
  */
 import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackNotAtomicSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import getRawSite from 'state/selectors/get-raw-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
@@ -22,15 +24,19 @@ export default function canSiteViewAtomicHosting( state ) {
 
 	const siteId = getSelectedSiteId( state );
 
+	if ( ! getRawSite( state, siteId ) ) {
+		return false;
+	}
+
 	if ( ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		return false;
 	}
 
-	if ( isVipSite( state, siteId ) !== false ) {
+	if ( isVipSite( state, siteId ) ) {
 		return false;
 	}
 
-	if ( isJetpackNotAtomicSite( state, siteId ) !== false ) {
+	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
 		return false;
 	}
 
