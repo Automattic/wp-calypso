@@ -60,7 +60,6 @@ class StatsBanners extends Component {
 				<RecurringPaymentsStatsNudge
 					siteSlug={ this.props.slug }
 					siteId={ this.props.siteId }
-					visible={ true }
 					primaryButton={ this.props.primaryButton }
 				/>
 			);

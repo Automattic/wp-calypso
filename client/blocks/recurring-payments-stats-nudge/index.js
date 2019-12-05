@@ -33,6 +33,7 @@ class RecurringPaymentsStatsNudge extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		primaryButton: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
