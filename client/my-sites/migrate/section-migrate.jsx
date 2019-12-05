@@ -293,9 +293,6 @@ class SectionMigrate extends Component {
 			case 'restoring':
 				progressItemText = `Restoring to ${ targetSiteDomain }`;
 				break;
-			case 'done':
-				progressItemText = 'Wrapping up';
-				break;
 		}
 
 		return (
@@ -309,7 +306,7 @@ class SectionMigrate extends Component {
 	}
 
 	renderProgressList() {
-		const steps = [ 'backing-up', 'restoring', 'done' ];
+		const steps = [ 'backing-up', 'restoring' ];
 
 		return (
 			<ul className="migrate__progress-list">
