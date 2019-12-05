@@ -1,9 +1,16 @@
+/**
+ * External dependencies
+ */
+import { InputArgs } from '@wordpress/url';
+
 enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
 export { ActionType };
 
-export interface DomainSuggestionQuery {
+// We're extending InputArgs in order to add an index signature,
+// which we need for using `DomainSuggestionQuery` objects with `addQueryArgs`.
+export interface DomainSuggestionQuery extends InputArgs {
 	/**
 	 * True to include .blog subdomain suggestions
 	 *
