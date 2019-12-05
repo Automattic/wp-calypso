@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { hideThemesBanner, openThemesShowcase } from '../actions';
-import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN } from 'state/action-types';
+import { hideThemesBanner, openThemesShowcase, setThemesBookmark } from '../actions';
+import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'hideThemesBanner()', () => {
@@ -19,6 +19,17 @@ describe( 'actions', () => {
 			const action = openThemesShowcase();
 			expect( action ).toEqual( {
 				type: THEMES_SHOWCASE_OPEN,
+			} );
+		} );
+	} );
+
+	describe( 'setThemesBookmark()', () => {
+		test( 'Should return the expected action object', () => {
+			const myFancyPayload = { a: 0, b: '1' };
+			const action = setThemesBookmark( myFancyPayload );
+			expect( action ).toEqual( {
+				type: THEMES_BOOKMARK_SET,
+				payload: myFancyPayload,
 			} );
 		} );
 	} );

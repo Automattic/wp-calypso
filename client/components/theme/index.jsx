@@ -22,6 +22,7 @@ import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setThemesBookmark } from 'state/themes/themes-ui/actions';
 
 /**
  * Style dependencies
@@ -197,7 +198,8 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
-		const bookmarkRef = theme.id === themesBookmark.id ? this.props.bookmarkRef : null;
+		const bookmarkRef =
+			themesBookmark && theme.id === themesBookmark.id ? this.props.bookmarkRef : null;
 
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
@@ -251,6 +253,7 @@ export class Theme extends Component {
 								active={ this.props.active }
 								onMoreButtonClick={ this.props.onMoreButtonClick }
 								options={ this.props.buttonContents }
+								setThemesBookmark={ this.props.setThemesBookmark }
 							/>
 						) : null }
 					</div>
@@ -264,4 +267,6 @@ const mapStateToProps = state => ( {
 	themesBookmark: state.themes.themesUI.themesBookmark,
 } );
 
-export default connect( mapStateToProps, { recordTracksEvent } )( localize( Theme ) );
+export default connect( mapStateToProps, { recordTracksEvent, setThemesBookmark } )(
+	localize( Theme )
+);

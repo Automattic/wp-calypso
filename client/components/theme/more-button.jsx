@@ -3,7 +3,6 @@
  */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isFunction, map } from 'lodash';
@@ -16,7 +15,6 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import { isOutsideCalypso } from 'lib/url';
-import { setThemesBookmark } from 'state/themes/themes-ui/actions';
 
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
@@ -120,4 +118,4 @@ ThemeMoreButton.propTypes = {
 	active: PropTypes.bool,
 };
 
-export default connect( null, { setThemesBookmark } )( ThemeMoreButton );
+export default ThemeMoreButton;
