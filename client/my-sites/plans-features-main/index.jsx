@@ -138,6 +138,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			withDiscount,
 			discountEndDate,
+			redirectTo,
 			siteId,
 			siteType,
 			plansWithScroll,
@@ -180,6 +181,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
@@ -376,14 +378,20 @@ export class PlansFeaturesMain extends Component {
 			<SegmentedControl className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ customerType === 'personal' }
-					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
+					path={ addQueryArgs(
+						{ ...queryArgs, customerType: 'personal' },
+						document.location.search
+					) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
 					selected={ customerType === 'business' }
-					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
+					path={ addQueryArgs(
+						{ ...queryArgs, customerType: 'business' },
+						document.location.search
+					) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
 				</SegmentedControl.Item>
@@ -436,7 +444,7 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate } = this.props;
+		const { basePlansPath, intervalType, translate, redirectTo } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -452,6 +460,7 @@ export class PlansFeaturesMain extends Component {
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
+					redirectTo={ redirectTo }
 				/>
 			</div>
 		);
@@ -508,6 +517,7 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
+	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
