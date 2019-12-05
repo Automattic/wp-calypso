@@ -211,19 +211,29 @@ An optional boolean prop, `collapsed`, can be used to simplify the output for wh
 
 ### createApplePayMethod
 
-TODO
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
 
 ### createRegistry
 
-TODO
+Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
 
 ### createPayPalMethod
 
-TODO
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `makePayPalExpressRequest: async ?object => object`. An async function that sends the request to the endpoint to get the redirect url.
 
 ### createStripeMethod
 
-TODO
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
+- `sendStripeTransaction: async ?object => object`. An async function that sends the request to the endpoint.
 
 ### getDefaultOrderReviewStep
 
