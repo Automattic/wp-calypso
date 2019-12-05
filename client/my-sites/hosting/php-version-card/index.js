@@ -18,13 +18,15 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Spinner from 'components/spinner';
 import { updateAtomicPhpVersion } from 'state/hosting/actions';
 import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
-import { isUpdatingAtomicPhpVersion } from 'state/selectors/is-updating-atomic-php-version';
 import QuerySitePhpVersion from 'components/data/query-site-php-version';
+import getRequest from 'state/selectors/get-request';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+let updateRequestPhpVersion = null; // Used to check if request is loading
 
 const PhpVersionCard = ( {
 	disabled,
@@ -46,6 +48,8 @@ const PhpVersionCard = ( {
 	};
 
 	const updateVersion = () => {
+		updateRequestPhpVersion = selectedPhpVersion;
+
 		updatePhpVersion( siteId, selectedPhpVersion );
 	};
 
@@ -134,7 +138,9 @@ export default connect(
 		const version = getAtomicHostingPhpVersion( state, siteId );
 
 		return {
-			isBusy: isUpdatingAtomicPhpVersion( state, siteId ),
+			isBusy:
+				getRequest( state, updateAtomicPhpVersion( siteId, updateRequestPhpVersion ) )?.isLoading ??
+				false,
 			loading: ! props.disabled && ! version,
 			siteId,
 			version,
