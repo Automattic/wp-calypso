@@ -21,7 +21,7 @@ export function openThemesShowcase() {
 	};
 }
 
-export function setThemesBrowsingState( state ) {
+export function setThemesBookmark( state ) {
 	return {
 		type: THEMES_BROWSING_STATE_SET,
 		payload: state,

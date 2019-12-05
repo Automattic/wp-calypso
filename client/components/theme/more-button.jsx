@@ -16,7 +16,7 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import { isOutsideCalypso } from 'lib/url';
-import { setThemesBrowsingState } from 'state/themes/themes-ui/actions';
+import { setThemesBookmark } from 'state/themes/themes-ui/actions';
 
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
@@ -25,7 +25,7 @@ class ThemeMoreButton extends Component {
 
 	togglePopover = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		this.props.setThemesBrowsingState( { id: this.props.themeId } );
+		this.props.setThemesBookmark( { id: this.props.themeId } );
 		! this.state.showPopover &&
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
 	};
@@ -120,4 +120,4 @@ ThemeMoreButton.propTypes = {
 	active: PropTypes.bool,
 };
 
-export default connect( null, { setThemesBrowsingState } )( ThemeMoreButton );
+export default connect( null, { setThemesBookmark } )( ThemeMoreButton );

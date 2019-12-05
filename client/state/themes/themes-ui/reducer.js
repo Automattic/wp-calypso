@@ -41,13 +41,13 @@ export function themesShowcaseOpen( state = false, action ) {
 	return state;
 }
 
-const initialBrowsingState = {
-	scrollPosition: 0,
+const initialBookmark = {
 	search: '',
 	filter: '',
+	id: '',
 };
 
-export function themesBrowsingTracker( state = initialBrowsingState, action ) {
+export function themesBookmark( state = initialBookmark, action ) {
 	if ( THEMES_BROWSING_STATE_SET === action.type ) {
 		return { ...state, ...action.payload };
 	}
@@ -58,5 +58,5 @@ export default combineReducers( {
 	backPath,
 	themesBannerVisible,
 	themesShowcaseOpen,
-	themesBrowsingTracker,
+	themesBookmark,
 } );

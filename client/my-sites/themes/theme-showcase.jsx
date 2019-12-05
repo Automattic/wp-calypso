@@ -30,7 +30,7 @@ import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-desc
 import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { openThemesShowcase, setThemesBrowsingState } from 'state/themes/themes-ui/actions';
+import { openThemesShowcase, setThemesBookmark } from 'state/themes/themes-ui/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -107,13 +107,13 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
-		const { search, filter, hasShowcaseOpened, lastBrowsingState } = this.props;
+		const { search, filter, hasShowcaseOpened, themesBookmark } = this.props;
 		// Open showcase on state if we open here with query override.
 		if ( ( search || filter ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
 		}
 		// Scroll to recover last browsing state if same conditions.
-		if ( lastBrowsingState.id ) {
+		if ( themesBookmark.id ) {
 			setTimeout( () => {
 				const lastTheme = this.bookmarkRef.current;
 				if ( lastTheme ) {
@@ -133,7 +133,7 @@ class ThemeShowcase extends React.Component {
 			search,
 			filter,
 		};
-		this.props.setThemesBrowsingState( browsingState );
+		this.props.setThemesBookmark( browsingState );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -445,7 +445,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
-	lastBrowsingState: state.themes.themesUI.themesBrowsingTracker,
+	themesBookmark: state.themes.themesUI.themesBookmark,
 } );
 
 const mapDispatchToProps = {
@@ -453,7 +453,7 @@ const mapDispatchToProps = {
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
-	setThemesBrowsingState: state => setThemesBrowsingState( state ),
+	setThemesBookmark: state => setThemesBookmark( state ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

@@ -139,7 +139,7 @@ export class Theme extends Component {
 	};
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, lastBrowsingState } = this.props;
+		const { active, price, theme, translate, upsellUrl, themesBookmark } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -197,7 +197,7 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
-		const bookmarkRef = theme.id === lastBrowsingState.id ? this.props.bookmarkRef : null;
+		const bookmarkRef = theme.id === themesBookmark.id ? this.props.bookmarkRef : null;
 
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
@@ -261,7 +261,7 @@ export class Theme extends Component {
 }
 
 const mapStateToProps = state => ( {
-	lastBrowsingState: state.themes.themesUI.themesBrowsingTracker,
+	themesBookmark: state.themes.themesUI.themesBookmark,
 } );
 
 export default connect( mapStateToProps, { recordTracksEvent } )( localize( Theme ) );
