@@ -304,7 +304,6 @@ export class CheckoutThankYou extends React.Component {
 
 			switch ( upgradeIntent ) {
 				case 'plugins':
-					return page( redirectTo );
 				case 'themes':
 					return page( `/${ upgradeIntent }/${ siteSlug }` );
 			}
