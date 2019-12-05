@@ -179,9 +179,6 @@ export class List extends React.Component {
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
 		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
-		const sectionHref = this.props.renderAllSites
-			? domainManagementList( this.props.selectedSite.slug )
-			: null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -202,9 +199,7 @@ export class List extends React.Component {
 
 				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ sectionLabel } href={ sectionHref }>
-					{ this.headerButtons() }
-				</SectionHeader>
+				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
