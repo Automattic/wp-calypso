@@ -187,8 +187,18 @@
 	&__card-mobile {
 		display: flex;
 
-		.get-apps__app-badge.android-app-badge img {
-			margin-top: 0;
+		.get-apps__app-badge {
+			margin: 0 9px 0 0;
+
+			img {
+				margin: 0;
+			}
+
+			&.android-app-badge img {
+				position: relative;
+				top: -16%;
+				left: -6.1919%;
+			}
 		}
 	}
 	&__card-subheader {
