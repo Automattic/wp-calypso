@@ -392,7 +392,7 @@ export function getProductClass( productSlug ) {
  * Get Jetpack product display name based on the product purchase object.
  *
  * @param   product {object}             Product purchase object
- * @returns         {string|HTMLElement} Product display name
+ * @returns         {string|object} Product display name
  */
 export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
@@ -405,7 +405,7 @@ export function getJetpackProductDisplayName( product ) {
  * Get Jetpack product tagline based on the product purchase object.
  *
  * @param   product {object}             Product purchase object
- * @returns         {string|HTMLElement} Product tagline
+ * @returns         {string|object} Product tagline
  */
 export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
