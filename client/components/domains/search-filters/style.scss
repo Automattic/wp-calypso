@@ -91,13 +91,13 @@
 
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row-reverse;
+	flex-flow: row;
 	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
 		margin-left: 1em;
-		&:last-child {
+		&:first-child {
 			margin-left: 0;
 		}
 
@@ -120,7 +120,7 @@
 	}
 
 	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 6 ) {
+		.search-filters__tld-button:nth-child( n + 8 ) {
 		display: none;
 	}
 
