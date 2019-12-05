@@ -28,6 +28,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 		case Steps.IntentGathering:
 			return (
 				<div className="onboarding-block__acquire-intent">
+					<div
+						className="onboarding-block__background"
+						data-vertical={ siteVertical && siteVertical.id }
+					/>
 					<div className="onboarding-block__questions">
 						<h2 className="onboarding-block__questions-heading">
 							{ ! siteVertical &&
