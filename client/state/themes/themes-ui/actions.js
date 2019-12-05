@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	THEMES_BANNER_HIDE,
-	THEMES_SHOWCASE_OPEN,
-	THEMES_BROWSING_STATE_SET,
-} from 'state/action-types';
+import { THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/action-types';
 
 // Hides the theme showcase banner.
 export function hideThemesBanner() {
@@ -23,7 +19,7 @@ export function openThemesShowcase() {
 
 export function setThemesBookmark( state ) {
 	return {
-		type: THEMES_BROWSING_STATE_SET,
+		type: THEMES_BOOKMARK_SET,
 		payload: state,
 	};
 }
