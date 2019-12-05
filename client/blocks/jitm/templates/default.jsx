@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,23 +15,27 @@ export default function DefaultTemplate( {
 	message,
 	description,
 	featureClass,
-	currentSite,
+	tracks,
+	trackImpression,
 	onClick,
 	onDismiss,
 } ) {
 	return (
-		<Banner
-			callToAction={ CTA.message }
-			title={ message }
-			description={ description }
-			disableHref
-			dismissPreferenceName={ featureClass + '123' }
-			dismissTemporary={ true }
-			onDismiss={ onDismiss }
-			onClick={ onClick }
-			event={ `jitm_nudge_click_${ id }` }
-			href={ `https://jetpack.com/redirect/?source=jitm-${ id }&site=${ currentSite.domain }` }
-			target={ '_blank' }
-		/>
+		<>
+			{ trackImpression && trackImpression() }
+			<Banner
+				callToAction={ CTA.message }
+				title={ message }
+				description={ description }
+				disableHref
+				dismissPreferenceName={ featureClass + '123' }
+				dismissTemporary={ true }
+				onDismiss={ onDismiss }
+				onClick={ onClick }
+				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
+				href={ CTA.link }
+				target={ '_blank' }
+			/>
+		</>
 	);
 }
