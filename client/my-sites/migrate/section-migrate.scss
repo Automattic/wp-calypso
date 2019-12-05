@@ -71,3 +71,64 @@
 .migrate__cancel {
 	margin-left: 16px;
 }
+
+.migrate__pane {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: inherit;
+	box-shadow: none;
+}
+
+.migrate__illustration {
+	display: block;
+	margin: auto;
+	width: 260px;
+}
+
+.migrate__section-header {
+	.formatted-header__title {
+		font-size: 24px;
+		@include breakpoint('>660px') {
+			font-size: 32px;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+		font-size: 16px;
+	}
+}
+
+.migrate__progress {
+	width: 350px;
+	margin-bottom: 2rem;
+}
+
+.migrate__progress-item {
+	position: relative;
+	list-style-type: none;
+	margin-left: 8px;
+	margin-bottom: 8px;
+	font-size: 14px;
+	line-height: 24px;
+	display: flex;
+}
+
+.migrate__progress-item-icon {
+	width: 24px;
+	margin-right: 12px;
+	display: flex;
+
+	.spinner {
+		margin-left: 1px;
+	}
+}
+
+.migrate__progress-item-icon-success {
+	color: var( --color-success );
+}
+
+.migrate__progress-item-text {
+	display: flex;
+}
