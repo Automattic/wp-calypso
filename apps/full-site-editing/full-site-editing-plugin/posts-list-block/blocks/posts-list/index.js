@@ -8,7 +8,7 @@ import {
 	getPossibleBlockTransformations,
 } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { Placeholder, RangeControl, PanelBody, Button } from '@wordpress/components';
+import { Placeholder, RangeControl, PanelBody, Notice } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
 import { select, dispatch } from '@wordpress/data';
@@ -60,19 +60,21 @@ registerBlockType( metadata.name, {
 		return (
 			<Fragment>
 				{ canBeUpgraded && (
-					<div className="posts-list__notice notice notice-info notice-alt">
-						<p>
-							<span className="posts-list__message">
-								{ __(
-									'An improved version of this block is available. Upgrade for a better, more natural way to manage your blog post listings.',
-									'full-site-editing'
-								) }
-							</span>
-							<Button isButton isLarge isDefault onClick={ upgradeBlock }>
-								{ __( 'Upgrade Block', 'full-site-editing' ) }
-							</Button>
-						</p>
-					</div>
+					<Notice
+						actions={ [
+							{
+								label: __( 'Upgrade Block', 'full-site-editing' ),
+								onClick: upgradeBlock,
+							},
+						] }
+						className="posts-list__notice"
+						isDismissible={ false }
+					>
+						{ __(
+							'An improved version of this block is available. Upgrade for a better, more natural way to manage your blog post listings.',
+							'full-site-editing'
+						) }
+					</Notice>
 				) }
 				<Placeholder
 					icon={ icon }
