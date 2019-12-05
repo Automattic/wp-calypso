@@ -90,11 +90,6 @@ const updatePhpVersionError = action => {
 		errorNotice( translate( 'Failed to set PHP version.' ), {
 			id: updateNoticeId,
 		} ),
-		{
-			type: HOSTING_PHP_VERSION_SET,
-			siteId: action.siteId,
-			version: action.version,
-		},
 	];
 };
 
