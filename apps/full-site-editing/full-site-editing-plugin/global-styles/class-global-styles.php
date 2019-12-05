@@ -206,8 +206,8 @@ class Global_Styles {
 		add_filter( 'jetpack_global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
 		add_filter( 'jetpack_global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
 
+		// Setup editor.
 		if ( $this->can_use_global_styles() ) {
-			// Setup editor.
 			add_action(
 				'enqueue_block_editor_assets',
 				[ $this, 'enqueue_block_editor_assets' ]
@@ -217,14 +217,14 @@ class Global_Styles {
 				[ $this, 'block_editor_settings' ],
 				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 			);
-
-			// Setup front-end.
-			add_action(
-				'wp_enqueue_scripts',
-				[ $this, 'wp_enqueue_scripts' ],
-				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
-			);
 		}
+
+		// Setup front-end.
+		add_action(
+			'wp_enqueue_scripts',
+			[ $this, 'wp_enqueue_scripts' ],
+			PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
+		);
 	}
 
 	/**
