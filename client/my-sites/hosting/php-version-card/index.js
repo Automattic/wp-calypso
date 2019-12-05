@@ -28,8 +28,8 @@ import './style.scss';
 
 const PhpVersionCard = ( {
 	disabled,
-	isBusy,
-	loading,
+	isUpdatingPhpVersion,
+	isGettingPhpVersion,
 	siteId,
 	translate,
 	updatePhpVersion,
@@ -73,7 +73,7 @@ const PhpVersionCard = ( {
 	};
 
 	const getContent = () => {
-		if ( loading ) {
+		if ( isGettingPhpVersion ) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ const PhpVersionCard = ( {
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
-						disabled={ disabled || isBusy }
+						disabled={ disabled || isUpdatingPhpVersion }
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
 						value={ selectedValue }
@@ -107,8 +107,8 @@ const PhpVersionCard = ( {
 					<Button
 						className="php-version-card__set-version"
 						onClick={ updateVersion }
-						busy={ isBusy }
-						disabled={ isBusy }
+						busy={ isUpdatingPhpVersion }
+						disabled={ isUpdatingPhpVersion }
 					>
 						<span>{ translate( 'Update PHP Version' ) }</span>
 					</Button>
@@ -123,7 +123,7 @@ const PhpVersionCard = ( {
 			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
 			{ getContent() }
-			{ loading && <Spinner /> }
+			{ isGettingPhpVersion && <Spinner /> }
 		</Card>
 	);
 };
@@ -134,8 +134,9 @@ export default connect(
 		const version = getAtomicHostingPhpVersion( state, siteId );
 
 		return {
-			isBusy: getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
-			loading: ! props.disabled && ! version,
+			isUpdatingPhpVersion:
+				getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
+			isGettingPhpVersion: ! props.disabled && ! version,
 			siteId,
 			version,
 		};
