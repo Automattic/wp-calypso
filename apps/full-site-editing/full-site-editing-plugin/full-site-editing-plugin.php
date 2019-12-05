@@ -318,3 +318,27 @@ function enqueue_coblocks_gallery_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
+
+/**
+ * Load Homepage Posts block.
+ */
+function load_homepage_posts_block() {
+	$disable_block = (
+		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_option( 'active_plugins', [] ), true ) ||
+		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_site_option( 'active_sitewide_plugins', [] ), true )
+	);
+
+	/**
+	 * Can be used to disable the Homepage Posts block.
+	 *
+	 * @since 0.15.1
+	 *
+	 * @param bool $disable_block True if Homepage Posts block should be enabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_homepage_posts_block', $disable_block ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/homepage-posts/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_homepage_posts_block' );

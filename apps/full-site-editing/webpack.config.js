@@ -24,24 +24,28 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  *
- * @param  {object}  env                           environment options
- * @param  {object}  argv                          options map
- * @param  {string}  argv.source                   plugin slug
- * @param  {string}  argv.entry                    entry path
- * @return {object}                                webpack config
+ * @param   {object}  env                           environment options
+ * @param   {object}  argv                          options map
+ * @param   {string}  argv.source                   plugin slug
+ * @param   {string}  argv.entry                    entry path
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig( env = {}, argv = {} ) {
 	env.WP = true;
 
 	const source = argv.source;
+	const sourceSegments = source.split( path.sep );
+	const packageName = sourceSegments[ 0 ];
+	const scriptName =
+		sourceSegments.length > 1 ? sourceSegments.slice( 1 ).join( path.sep ) : source;
 
 	// object provides ability to name the entry point
 	// which enables dynamic file names
 	const entry = {
-		[ source ]: path.join( __dirname, 'full-site-editing-plugin', source ),
+		[ scriptName ]: path.join( __dirname, 'full-site-editing-plugin', source ),
 	};
 
-	const outputPath = path.join( __dirname, 'full-site-editing-plugin', source, 'dist' );
+	const outputPath = path.join( __dirname, 'full-site-editing-plugin', packageName, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
