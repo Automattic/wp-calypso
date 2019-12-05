@@ -27,7 +27,11 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
 
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useCheckoutHandlers](#useCheckoutHandlers), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [usePrimaryDispatch](#usePrimaryDispatch), [usePrimarySelect](#usePrimarySelect), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
+
+Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive).
 
 ## Submitting the form
 
@@ -187,10 +191,6 @@ Each should include in its `children` a `CheckoutNextStepButton` if there is a f
 
 If a step has the `onEdit` prop, it will include an "Edit" link which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way. The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
-### useAllPaymentMethods()
-
-A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
-
 ### OrderReviewLineItems
 
 Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
@@ -257,33 +257,77 @@ The two following properties should be customized if you want to provide transla
 - getEditButtonAriaLabel
 - getNextStepButtonAriaLabel
 
-### formatValueForCurrency(currency, int)
+### formatValueForCurrency
 
 Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
-### renderDisplayValueMarkdown(displayValue)
+### renderDisplayValueMarkdown
 
 Takes one argument, a displayValue string, and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
 
-### useCheckoutHandlers()
+### useActiveStep
+
+TODO
+
+### useAllPaymentMethods
+
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
+
+### useCheckoutHandlers
 
 A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
 
-### useLineItems()
-
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
-
-### useCheckoutRedirects()
+### useCheckoutRedirects
 
 A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
 
-### usePaymentMethod()
+### useDispatch
+
+TODO
+
+### useIsStepActive
+
+TODO
+
+### useLineItems
+
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+
+### usePaymentData
+
+TODO
+
+### usePaymentMethod
 
 A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
 
-### usePaymentMethodId()
+### usePaymentMethodId
 
 A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
+
+### usePrimaryDispatch
+
+TODO
+
+### usePrimarySelect
+
+TODO
+
+### useRegisterStore
+
+TODO
+
+### useRegistry
+
+TODO
+
+### useSelect
+
+TODO
+
+### useTotal
+
+TODO
 
 ## FAQ
 
