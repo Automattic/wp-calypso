@@ -52,6 +52,6 @@
 		"@testing-library/react": "9.3.2",
 		"@wordpress/jest-preset-default": "5.2.0",
 		"@wordpress/scripts": "6.0.0",
-		"eslint-plugin-jest": "23.0.3"
+		"eslint-plugin-jest": "23.1.1"
 	}
 }
