@@ -279,7 +279,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, cart } = this.props;
+		const { planSlug, cart, isJetpackNotAtomic } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -301,7 +301,7 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if ( startsWith( this.props.product, 'jetpack_backup' ) ) {
+		if ( startsWith( this.props.product, 'jetpack_backup' ) && isJetpackNotAtomic ) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
 
