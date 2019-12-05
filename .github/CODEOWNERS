@@ -130,3 +130,6 @@
 
 # WPcom Block Editor
 /apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax
+
+# Gutenboarding
+/client/landing/gutenboarding @Automattic/luna
