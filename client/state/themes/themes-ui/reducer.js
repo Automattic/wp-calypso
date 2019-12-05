@@ -43,13 +43,12 @@ export function themesShowcaseOpen( state = false, action ) {
 
 const initialBrowsingState = {
 	scrollPosition: 0,
-	scrollHeight: 0,
 	search: '',
 	filter: '',
 };
 
 export function themesBrowsingTracker( state = initialBrowsingState, action ) {
-	if ( THEMES_BROWSING_STATE_SET ) {
+	if ( THEMES_BROWSING_STATE_SET === action.type ) {
 		return { ...state, ...action.payload };
 	}
 	return state;

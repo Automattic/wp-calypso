@@ -107,9 +107,20 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
+		const { search, filter, hasShowcaseOpened, lastBrowsingState } = this.props;
 		// Open showcase on state if we open here with query override.
-		if ( ( this.props.search || this.props.filter ) && ! this.props.hasShowcaseOpened ) {
+		if ( ( search || filter ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
+		}
+		// Scroll to recover last browsing state if same conditions.
+		if (
+			search === lastBrowsingState.search &&
+			filter === lastBrowsingState.filter &&
+			document.body.scrollHeight > lastBrowsingState.scrollPosition
+		) {
+			setTimeout( () => {
+				window.scrollTo( 0, lastBrowsingState.scrollPosition );
+			}, 10 );
 		}
 	}
 
@@ -118,7 +129,6 @@ class ThemeShowcase extends React.Component {
 		const browsingState = {
 			search,
 			filter,
-			scrollHeight: document.documentElement.scrollHeight,
 			scrollPosition: window.scrollY,
 		};
 		this.props.setThemesBrowsingState( browsingState );
