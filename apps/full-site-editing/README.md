@@ -6,6 +6,7 @@ This app contains:
   - `full-site-editing` Plugin
   - `posts-list-block` Plugin
   - `starter-page-templates` Plugin
+  - `blog-posts-block` Plugin
 
 ## File Architecture
 

@@ -1,4 +1,4 @@
-# Homepage Posts
+# Blog Posts Block
 
 This block allows you to list your posts in various layouts and filter them by criteria like category, tag or author.
 
@@ -24,7 +24,7 @@ Once your changes land on the Newspack side, coordinate with the team (over issu
 While being in `apps/full-site-editing/` directory, you can run:
 
 ```
-npm run sync:homepage-posts --release=1.0.0-alpha.17
+npm run sync:blog-posts-block --release=1.0.0-alpha.17
 ```
 
 This will pull the code from the release and integrate it into this repository. Please review changes, make sure to update `NEWSPACK_BLOCKS__VERSION` in [index.php](./index.php) and commit.
