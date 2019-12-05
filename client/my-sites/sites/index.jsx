@@ -42,6 +42,11 @@ class Sites extends Component {
 			return ! site.is_vip;
 		}
 
+		// Hosting routes are not applicable to Jetpack or VIP sites.
+		if ( /^\/hosting-config/.test( path ) ) {
+			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+		}
+
 		return site;
 	};
 
