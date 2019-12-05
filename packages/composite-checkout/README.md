@@ -27,7 +27,7 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
 
-Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useCheckoutHandlers](#useCheckoutHandlers), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [usePrimaryDispatch](#usePrimaryDispatch), [usePrimarySelect](#usePrimarySelect), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useCheckoutHandlers](#useCheckoutHandlers), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
@@ -267,67 +267,67 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 ### useActiveStep
 
-TODO
+A React Hook that will return the currently active [Step object](#steps). Only works within a step.
 
 ### useAllPaymentMethods
 
-A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useCheckoutHandlers
 
-A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
+A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useCheckoutRedirects
 
-A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
+A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useDispatch
 
-TODO
+A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useIsStepActive
 
-TODO
+A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
 
 ### useLineItems
 
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentData
 
-TODO
+The [Checkout](#Checkout) component registers a [Data store](#data-stores) called 'checkout'. Rather than creating a custom store, any component can use this default store to keep arbitrary data with this React Hook. It returns a two element array, where the first element is the current payment data object (the state of the 'checkout' store) and the second argument is a function which will update the payment data object. The update function takes two arguments: a string which will be used as the property name for the modified data, and arbitrary data to be stored in that property.
+
+For example,
+
+```js
+const [ paymentData, updatePaymentData ] = usePaymentData();
+const onClick = () => updatePaymentData( 'color', 'green' );
+// On next render, paymentData.color === 'green'
+```
 
 ### usePaymentMethod
 
-A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
+A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentMethodId
 
-A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
-
-### usePrimaryDispatch
-
-TODO
-
-### usePrimarySelect
-
-TODO
+A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useRegisterStore
 
-TODO
+A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useRegistry
 
-TODO
+A React Hook that returns the @wordpress/data registry. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useSelect
 
-TODO
+A React Hook that accepts a callback which is provided the `select` function from the [Data store](#data-stores). The `select()` function can be called with the name of a store and will return the bound selectors for that store. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useTotal
 
-TODO
+A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
 
 ## FAQ
 
