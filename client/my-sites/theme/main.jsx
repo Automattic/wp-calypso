@@ -49,6 +49,8 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
+import { encodeQueryParameters } from 'state/http';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -91,6 +93,7 @@ class ThemeSheet extends React.Component {
 		isActive: PropTypes.bool,
 		isPurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isSiteUnlaunched: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -603,6 +606,7 @@ class ThemeSheet extends React.Component {
 			isJetpack,
 			isVip,
 			translate,
+			isSiteUnlaunched,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
 		} = this.props;
@@ -614,7 +618,7 @@ class ThemeSheet extends React.Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
+		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans?';
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title =
@@ -649,9 +653,24 @@ class ThemeSheet extends React.Component {
 		let pageUpsellBanner, previewUpsellBanner;
 		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip;
 		if ( hasUpsellBanner ) {
+			const bannerURL =
+				plansUrl +
+				'&' +
+				encodeQueryParameters( [
+					[
+						'redirect_to',
+						`/checkout/thank-you/${ siteSlug }/:receiptId?` +
+							encodeQueryParameters( [
+								[ 'intent', 'install_plugin' ],
+								[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
+								[ 'redirect_to', document.location.pathname ],
+							] ),
+					],
+				] );
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
+					href={ bannerURL + '&customerType=business' }
 					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
 					description={ translate(
@@ -660,7 +679,6 @@ class ThemeSheet extends React.Component {
 					event="themes_plan_particular_free_with_plan"
 					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
-					href={ plansUrl }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
@@ -789,6 +807,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
+			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),

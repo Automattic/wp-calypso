@@ -39,6 +39,8 @@ import {
 	isRequestingSites,
 	canJetpackSiteManage,
 } from 'state/sites/selectors';
+import { encodeQueryParameters } from 'state/http';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
@@ -554,8 +556,21 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
-		const { translate, siteSlug } = this.props;
-		const bannerURL = `/checkout/${ siteSlug }/business`;
+		const { translate, siteSlug, isSiteUnlaunched } = this.props;
+
+		const bannerURL =
+			`/checkout/${ siteSlug }/business?` +
+			encodeQueryParameters( [
+				[
+					'redirect_to',
+					`/checkout/thank-you/${ siteSlug }/:receiptId?` +
+						encodeQueryParameters( [
+							[ 'intent', 'install_plugin' ],
+							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
+							[ 'redirect_to', document.location.pathname ],
+						] ),
+				],
+			] );
 		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -654,6 +669,7 @@ export default flow(
 				selectedSite: getSelectedSite( state ),
 				siteSlug: getSelectedSiteSlug( state ),
 				sites: getSelectedOrAllSitesJetpackCanManage( state ),
+				isSiteUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
 				isRequestingRecommendedPlugins: ! Array.isArray( recommendedPlugins ),
 				recommendedPlugins: recommendedPlugins || [],
 			};

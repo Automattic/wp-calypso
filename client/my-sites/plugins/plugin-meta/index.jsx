@@ -40,8 +40,10 @@ import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import { encodeQueryParameters } from 'state/http';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -599,12 +601,24 @@ export class PluginMeta extends Component {
 	};
 
 	renderUpsell() {
-		const { translate, slug } = this.props;
+		const { translate, slug, isSiteUnlaunched } = this.props;
 
 		if ( this.props.isVipSite ) {
 			return null;
 		}
-		const bannerURL = `/checkout/${ slug }/business`;
+		const bannerURL =
+			`/checkout/${ slug }/business?` +
+			encodeQueryParameters( [
+				[
+					'redirect_to',
+					`/checkout/thank-you/${ slug }/:receiptId?` +
+						encodeQueryParameters( [
+							[ 'intent', 'install_plugin' ],
+							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
+							[ 'redirect_to', document.location.pathname ],
+						] ),
+				],
+			] );
 		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -715,6 +729,7 @@ const mapStateToProps = state => {
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 	};

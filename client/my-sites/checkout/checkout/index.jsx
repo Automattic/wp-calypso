@@ -522,12 +522,24 @@ export class Checkout extends React.Component {
 
 		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
 
+		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
+		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
+		let pendingOrReceiptId;
+
+		if ( get( stepResult, 'receipt_id', false ) ) {
+			pendingOrReceiptId = stepResult.receipt_id;
+		} else if ( get( stepResult, 'orderId', false ) ) {
+			pendingOrReceiptId = 'pending/' + stepResult.orderId;
+		} else {
+			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
+		}
+
 		// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 		// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 		// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
 		if ( redirectTo ) {
 			if ( ! isExternal( redirectTo ) ) {
-				return redirectTo;
+				return redirectTo.replace( ':receiptId', pendingOrReceiptId );
 			}
 
 			const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
@@ -548,18 +560,6 @@ export class Checkout extends React.Component {
 				} );
 				return sanitizedRedirectTo;
 			}
-		}
-
-		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
-		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		let pendingOrReceiptId;
-
-		if ( get( stepResult, 'receipt_id', false ) ) {
-			pendingOrReceiptId = stepResult.receipt_id;
-		} else if ( get( stepResult, 'orderId', false ) ) {
-			pendingOrReceiptId = 'pending/' + stepResult.orderId;
-		} else {
-			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
