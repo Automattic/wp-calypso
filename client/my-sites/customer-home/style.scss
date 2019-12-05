@@ -186,20 +186,8 @@
 	}
 	&__card-mobile {
 		display: flex;
-
-		.get-apps__app-badge {
-			margin: 0 9px 0 0;
-
-			img {
-				margin: 0;
-			}
-
-			&.android-app-badge img {
-				position: relative;
-				top: -16%;
-				left: -6.1919%;
-			}
-		}
+		flex-direction: row;
+		align-items: center;
 	}
 	&__card-subheader {
 		color: var( --color-text-subtle );
