@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global calypsoifyGutenberg */
+/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort */
 
 /**
  * External dependencies
@@ -18,6 +18,11 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { inIframe, sendMessage } from './utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -72,7 +77,7 @@ function triggerConversionPrompt( calypsoPort ) {
  */
 function transmitDraftId( calypsoPort ) {
 	// Bail if we are not writing a new post.
-	if ( ! /wp-admin\/post-new.php/.test( location.href ) ) {
+	if ( ! /wp-admin\/post-new.php/.test( window.location.href ) ) {
 		return;
 	}
 
