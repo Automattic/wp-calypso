@@ -95,7 +95,7 @@ export function JITM( props ) {
 		<>
 			<QueryJITM siteId={ currentSite.ID } messagePath={ messagePath } />
 			{ jitm &&
-				renderTemplate( props.template, {
+				renderTemplate( jitm.template || props.template, {
 					...jitm,
 					...getEventHandlers( props, dispatch ),
 					currentSite,
