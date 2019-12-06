@@ -4,6 +4,10 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 ## Installation
 
+**This package is still in development and not yet published.**
+
+Once published, you'll be able to install this package using npm with:
+
 `npm install @automattic/composite-checkout`
 
 ## Description
@@ -19,27 +23,25 @@ These steps can be customized or replaced, and additional steps can be added.
 
 It's also possible to build an entirely custom form using the other components exported by this package.
 
-### Select payment method
+## How to use this package
 
-The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors.
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
 
-![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useCheckoutHandlers](#useCheckoutHandlers), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
-### Review order
+The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
-The review step presents a simple list of line items and a total, followed by a purchase button.
+Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive).
 
-![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/review-step.png 'Review Order Step')
-
-### Submitting the form
+## Submitting the form
 
 When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
 
-If the payment method succeeds, the `onSuccess` prop will be called instead. It's important not to provision anything based on this callback, as it could be called by a malicious user. Instead, provisioning should be handled separately server-to-server.
+If the payment method succeeds, the `onSuccess` prop will be called instead.
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-### Steps
+## Steps
 
 The `Checkout` component accepts an optional `steps` prop which is an array of Step objects. Each Step is an object with properties that include both React elements to display at certain times as well as metadata about how the step should be displayed. Here's an example step:
 
@@ -83,7 +85,7 @@ All properties except for `id` are optional.
 
 ## Example
 
-See the file `demo/index.js`.
+See the [demo](demo/index.js) for an example of using this package.
 
 ## Styles and Themes
 
@@ -189,10 +191,6 @@ Each should include in its `children` a `CheckoutNextStepButton` if there is a f
 
 If a step has the `onEdit` prop, it will include an "Edit" link which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way. The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
-### useAllPaymentMethods()
-
-A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
-
 ### OrderReviewLineItems
 
 Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
@@ -211,33 +209,125 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
-### formatValueForCurrency(currency, int)
+### createApplePayMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
+
+### createRegistry
+
+Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
+
+### createPayPalMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `makePayPalExpressRequest: async ?object => object`. An async function that sends the request to the endpoint to get the redirect url.
+
+### createStripeMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
+- `sendStripeTransaction: async ?object => object`. An async function that sends the request to the endpoint.
+
+### getDefaultOrderReviewStep
+
+Returns a [Step object](#steps) which displays an order review. Although it can be modified before passing it to [Checkout](#checkout), by default it has no way to modify the purchase (eg: you cannot delete items). Typically this is the last step of a form. Can be overridden completely to create a custom review step.
+
+If not used as the last step, the two following properties should be customized if you want to provide translations:
+
+- getEditButtonAriaLabel
+- getNextStepButtonAriaLabel
+
+### getDefaultOrderSummaryStep
+
+Returns a [Step object](#steps) which displays an order summary. Although it can be modified before passing it to [Checkout](#checkout), by default it has no step number and cannot be made active. Typically used as the first step.
+
+### getDefaultPaymentMethodStep
+
+Returns a [Step object](#steps) which displays a form to choose a [Paymet Method](#payment-methods). It can be modified before passing it to [Checkout](#checkout). The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
+
+The two following properties should be customized if you want to provide translations:
+
+- getEditButtonAriaLabel
+- getNextStepButtonAriaLabel
+
+### formatValueForCurrency
 
 Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
-### renderDisplayValueMarkdown(displayValue)
+### renderDisplayValueMarkdown
 
 Takes one argument, a displayValue string, and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
 
-### useCheckoutHandlers()
+### useActiveStep
 
-A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
+A React Hook that will return the currently active [Step object](#steps). Only works within a step.
 
-### useLineItems()
+### useAllPaymentMethods
 
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### useCheckoutRedirects()
+### useCheckoutHandlers
 
-A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
+A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### usePaymentMethod()
+### useCheckoutRedirects
 
-A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
+A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### usePaymentMethodId()
+### useDispatch
 
-A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
+A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useIsStepActive
+
+A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
+
+### useLineItems
+
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentData
+
+The [Checkout](#Checkout) component registers a [Data store](#data-stores) called 'checkout'. Rather than creating a custom store, any component can use this default store to keep arbitrary data with this React Hook. It returns a two element array, where the first element is the current payment data object (the state of the 'checkout' store) and the second argument is a function which will update the payment data object. The update function takes two arguments: a string which will be used as the property name for the modified data, and arbitrary data to be stored in that property.
+
+For example,
+
+```js
+const [ paymentData, updatePaymentData ] = usePaymentData();
+const onClick = () => updatePaymentData( 'color', 'green' );
+// On next render, paymentData.color === 'green'
+```
+
+### usePaymentMethod
+
+A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentMethodId
+
+A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useRegisterStore
+
+A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useRegistry
+
+A React Hook that returns the @wordpress/data registry. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useSelect
+
+A React Hook that accepts a callback which is provided the `select` function from the [Data store](#data-stores). The `select()` function can be called with the name of a store and will return the bound selectors for that store. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useTotal
+
+A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
 
 ## FAQ
 
