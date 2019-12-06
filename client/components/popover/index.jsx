@@ -85,11 +85,19 @@ class PopoverInner extends Component {
 	};
 
 	/**
-	 * Flag to determine if we're currently repositioning the Popover
+	 * Timeout ID that determines if repositioning the Popover is currently scheduled and lets us
+	 * cancel the task.
 	 *
-	 * @type {boolean} True if the Popover is being repositioned.
+	 * @type {number|null} `setTimeout` handle or null
 	 */
-	isUpdatingPosition = false;
+	scheduledPositionUpdate = null;
+
+	/**
+	 * Timeout ID for the scheduled focus. Lets us cancel the task when hiding/unmounting.
+	 *
+	 * @type {number|null} `setTimeout` handle or null
+	 */
+	scheduledFocus = null;
 
 	popoverNodeRef = React.createRef();
 	popoverInnerNodeRef = React.createRef();
@@ -130,13 +138,14 @@ class PopoverInner extends Component {
 			this.unbindListeners();
 		}
 
-		// update our position even when only our children change, use `isUpdatingPosition` to guard against a loop
-		// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
-		if ( prevState.show && this.state.show && ! this.isUpdatingPosition ) {
-			this.isUpdatingPosition = true;
-			defer( () => {
+		// Update our position even when only our children change. To prevent infinite loops,
+		// use `defer` and avoid scheduling a second update when one is already scheduled by
+		// setting and checking `this.scheduledPositionUpdate`.
+		// See https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
+		if ( prevState.show && this.state.show && this.scheduledPositionUpdate == null ) {
+			this.scheduledPositionUpdate = defer( () => {
 				this.setPosition();
-				this.isUpdatingPosition = false;
+				this.scheduledPositionUpdate = null;
 			} );
 		}
 	}
@@ -157,6 +166,18 @@ class PopoverInner extends Component {
 		this.unbindEscKeyListener();
 		this.unbindReposition();
 		unbindWindowListeners();
+
+		// cancel the scheduled reposition when the Popover is being removed from DOM
+		if ( this.scheduledPositionUpdate != null ) {
+			window.clearTimeout( this.scheduledPositionUpdate );
+			this.scheduledPositionUpdate = null;
+		}
+
+		// cancel the scheduled focus when we're hiding the Popover before the task had a chance to run
+		if ( this.scheduledFocus != null ) {
+			window.clearTimeout( this.scheduledFocus );
+			this.scheduledFocus = null;
+		}
 	}
 
 	// --- ESC key ---
@@ -238,11 +259,12 @@ class PopoverInner extends Component {
 		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
 		// and used to calculate the final position.
 		// Focusing the element while it's off the screen would cause unwanted scrolling.
-		defer( () => {
+		this.scheduledFocus = defer( () => {
 			if ( this.popoverNodeRef.current ) {
 				debug( 'focusing the popover' );
 				this.popoverNodeRef.current.focus();
 			}
+			this.scheduledFocus = null;
 		} );
 	}
 
