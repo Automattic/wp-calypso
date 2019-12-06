@@ -15,14 +15,6 @@ There are two editors supported:
 
 The block editor integration provides features for the following type of sites and editors:
 
-- [`/common`](./src/common): Logic than runs on both environments (WP Admin and Calypso).
-- [`/calypso`](./src/calypso): Logic than runs only on the Calypso iframed block editor.
-
-| | WordPress.com site | Jetpack site |
-| [`common`](./src/common) | ✅ | ✅ |
-| [`wpcom`](./src/wpcom) |
-| [`calypso`](./src/calypso) |
-
 <table>
   <tr>
     <th colspan="2">&nbsp;</th>
