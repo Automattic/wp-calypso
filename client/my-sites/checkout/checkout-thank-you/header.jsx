@@ -384,7 +384,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
 
-						{ isPlan( primaryPurchase ) && isSimplified ? (
+						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
