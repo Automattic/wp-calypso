@@ -198,9 +198,12 @@ class DesignAssets extends React.Component {
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Buttons
+						componentUsageStats={ componentsUsageStats.button }
+						readmeFilePath="/packages/components/src/button"
+					/>
 					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="card" />
+					<Cards readmeFilePath="/packages/components/src/card" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
@@ -253,13 +256,13 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
-					<ProgressBar readmeFilePath="progress-bar" />
+					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
 					<PromoSection readmeFilePath="promo-section" />
 					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon readmeFilePath="ribbon" />
-					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
+					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
+					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
@@ -273,7 +276,7 @@ class DesignAssets extends React.Component {
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions readmeFilePath="suggestions" />
+					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
