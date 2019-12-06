@@ -20,8 +20,6 @@ const { registerStore } = registry;
 
 const wpcom = wp.undocumented();
 
-export const getServerCart = wpcom.getCart;
-
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
@@ -76,12 +74,15 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
+const getCart = ( ...args ) => wpcom.getCart( ...args );
+const setCart = ( ...args ) => wpcom.setCart( ...args );
+
 export function CompositeCheckoutContainer( { siteSlug } ) {
 	return (
 		<WPCheckoutWrapper
 			siteSlug={ siteSlug }
-			getCart={ wpcom.getCart }
-			setCart={ wpcom.setCart }
+			getCart={ getCart }
+			setCart={ setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		/>

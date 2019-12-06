@@ -66,6 +66,8 @@ export function WPCheckoutWrapper( {
 
 WPCheckoutWrapper.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	useShoppingCart: PropTypes.func.isRequired,
 	registry: PropTypes.object.isRequired,
+	siteSlug: PropTypes.string,
+	setCart: PropTypes.func.isRequired,
+	getCart: PropTypes.func.isRequired,
 };
