@@ -97,37 +97,24 @@ describe( '#themesShowcaseOpen', () => {
 } );
 
 describe( '#themesBookmark', () => {
-	test( 'initializes search, filter, and id as empty strings', () => {
+	test( 'initializes state as empty string', () => {
 		const state = themesBookmark( undefined, {} );
-		expect( state ).toEqual( {
-			search: '',
-			filter: '',
-			id: '',
-		} );
+		expect( state ).toEqual( '' );
 	} );
 
-	test( 'adds and overrites given values on THEMES_BOOKMARK_SET', () => {
+	test( 'sets given value on THEMES_BOOKMARK_SET', () => {
 		const state = themesBookmark( undefined, {
 			type: THEMES_BOOKMARK_SET,
-			payload: { id: 'fubarId', fubarKey: 'fubarValue' },
+			payload: 'fubarId',
 		} );
-		expect( state ).toEqual( {
-			search: '',
-			filter: '',
-			id: 'fubarId',
-			fubarKey: 'fubarValue',
-		} );
+		expect( state ).toEqual( 'fubarId' );
 	} );
 
 	test( 'fubar action does not alter state', () => {
 		const state = themesBookmark( undefined, {
 			type: 'FUBAR_ACTION',
-			payload: { id: 'fubarId', fubarKey: 'fubarValue ' },
+			payload: 'fubarId',
 		} );
-		expect( state ).toEqual( {
-			search: '',
-			filter: '',
-			id: '',
-		} );
+		expect( state ).toEqual( '' );
 	} );
 } );

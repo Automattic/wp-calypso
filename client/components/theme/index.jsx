@@ -146,7 +146,7 @@ export class Theme extends Component {
 	};
 
 	setBookmark = () => {
-		this.props.setThemesBookmark( { id: this.props.theme.id } );
+		this.props.setThemesBookmark( this.props.theme.id );
 	};
 
 	render() {
@@ -262,7 +262,6 @@ export class Theme extends Component {
 								active={ this.props.active }
 								onMoreButtonClick={ this.props.onMoreButtonClick }
 								options={ this.props.buttonContents }
-								setThemesBookmark={ this.props.setThemesBookmark }
 							/>
 						) : null }
 					</div>

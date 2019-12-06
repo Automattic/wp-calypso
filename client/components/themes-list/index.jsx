@@ -77,8 +77,7 @@ export class ThemesList extends React.Component {
 		}
 		// Decide if we should pass ref for bookmark.
 		const { themesBookmark } = this.props;
-		const bookmarkRef =
-			themesBookmark && themesBookmark.id === theme.id ? this.props.bookmarkRef : null;
+		const bookmarkRef = themesBookmark === theme.id ? this.props.bookmarkRef : null;
 
 		return (
 			<Theme

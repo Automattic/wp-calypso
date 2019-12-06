@@ -47,7 +47,6 @@ exports[`Theme rendering with default display buttonContents should match snapsh
             },
           }
         }
-        setThemesBookmark={[Function]}
         themeId="twentyseventeen"
       />
     </div>

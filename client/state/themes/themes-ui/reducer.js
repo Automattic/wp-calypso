@@ -41,15 +41,9 @@ export function themesShowcaseOpen( state = false, action ) {
 	return state;
 }
 
-const initialBookmark = {
-	search: '',
-	filter: '',
-	id: '',
-};
-
-export function themesBookmark( state = initialBookmark, action ) {
+export function themesBookmark( state = '', action ) {
 	if ( THEMES_BOOKMARK_SET === action.type ) {
-		return { ...state, ...action.payload };
+		return action.payload;
 	}
 	return state;
 }

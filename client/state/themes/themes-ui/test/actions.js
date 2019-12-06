@@ -25,11 +25,10 @@ describe( 'actions', () => {
 
 	describe( 'setThemesBookmark()', () => {
 		test( 'Should return the expected action object', () => {
-			const myFancyPayload = { a: 0, b: '1' };
-			const action = setThemesBookmark( myFancyPayload );
+			const action = setThemesBookmark( 'abc' );
 			expect( action ).toEqual( {
 				type: THEMES_BOOKMARK_SET,
-				payload: myFancyPayload,
+				payload: 'abc',
 			} );
 		} );
 	} );
