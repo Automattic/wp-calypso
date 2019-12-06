@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { get, includes } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -38,10 +39,16 @@ class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
+		startTime: null,
 	};
 
 	componentDidMount() {
 		this.updateFromAPI();
+		this.onMount( () => {
+			if ( null === this.state.startTime ) {
+				this.setState( { startTime: this.getStartTime() } );
+			}
+		} );
 	}
 
 	getImportHref = () => {
@@ -69,6 +76,40 @@ class SectionMigrate extends Component {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
+	getStartTime = () => {
+		if ( ! window.localStorage ) {
+			return;
+		}
+
+		return window.localStorage.getItem( 'siteMigrationStartTime' );
+	};
+
+	setStartTime = () => {
+		if ( ! window.localStorage ) {
+			return;
+		}
+		const localeSlug = getLocaleSlug();
+		const startTime = moment()
+			.locale( localeSlug )
+			.format( 'h:m a D MMM' );
+		this.setState( { startTime: startTime } );
+		window.localStorage.setItem( 'siteMigrationStartTime', startTime );
+	};
+
+	clearStartTime = () => {
+		if ( ! window.localStorage ) {
+			return;
+		}
+		this.setState( { startTime: null } );
+		window.localStorage.removeItem( 'siteMigrationStartTime' );
+	};
+
+	renderMigrationTime = () => {
+		if ( null !== this.state.startTime ) {
+			return 'Migration started at ' + this.state.startTime;
+		}
+	};
+
 	startMigration = () => {
 		const { sourceSiteId, targetSiteId } = this.props;
 
@@ -77,6 +118,8 @@ class SectionMigrate extends Component {
 		}
 
 		this.setState( { migrationStatus: 'backing-up' } );
+		this.setStartTime();
+
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
 
@@ -363,15 +406,18 @@ class SectionMigrate extends Component {
 
 			case 'done':
 				migrationElement = this.renderMigrationComplete();
+				this.clearStartTime();
 				break;
 
 			case 'error':
 				migrationElement = this.renderMigrationError();
+				this.clearStartTime();
 				break;
 
 			case 'unknown':
 			default:
 				migrationElement = this.renderLoading();
+				this.clearStartTime();
 		}
 
 		return (
