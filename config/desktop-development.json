@@ -52,7 +52,6 @@
 		"jetpack/connect/site-questions": false,
 		"jetpack/connection-rebranding": true,
 		"jetpack/happychat": true,
-		"jetpack/onboarding": true,
 		"jetpack_core_inline_update": true,
 		"jitms": false,
 		"keyboard-shortcuts": true,
