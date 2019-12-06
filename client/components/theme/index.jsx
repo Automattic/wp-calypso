@@ -204,6 +204,8 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
+		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
+
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
 				{ this.isBeginnerTheme() && (
@@ -211,7 +213,7 @@ export class Theme extends Component {
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content" ref={ this.props.bookmarkRef }>
+				<div className="theme__content" { ...bookmarkRef }>
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
