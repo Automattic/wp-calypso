@@ -116,6 +116,7 @@ ThemeMoreButton.propTypes = {
 		} )
 	).isRequired,
 	active: PropTypes.bool,
+	setThemesBookmark: PropTypes.func,
 };
 
 export default ThemeMoreButton;

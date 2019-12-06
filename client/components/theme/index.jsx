@@ -73,6 +73,12 @@ export class Theme extends Component {
 		actionLabel: PropTypes.string,
 		// Translate function,
 		translate: PropTypes.func,
+		// Themes bookmark items.
+		setThemesBookmark: PropTypes.func,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -140,7 +146,7 @@ export class Theme extends Component {
 	};
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, themesBookmark } = this.props;
+		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -198,9 +204,6 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
-		const bookmarkRef =
-			themesBookmark && theme.id === themesBookmark.id ? this.props.bookmarkRef : null;
-
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
 				{ this.isBeginnerTheme() && (
@@ -208,7 +211,7 @@ export class Theme extends Component {
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content" ref={ bookmarkRef }>
+				<div className="theme__content" ref={ this.props.bookmarkRef }>
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
@@ -263,10 +266,4 @@ export class Theme extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	themesBookmark: state.themes.themesUI.themesBookmark,
-} );
-
-export default connect( mapStateToProps, { recordTracksEvent, setThemesBookmark } )(
-	localize( Theme )
-);
+export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
