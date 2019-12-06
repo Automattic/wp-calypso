@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { Dialog } from '@automattic/components';
 import Main from 'components/main';
 import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -18,7 +19,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
-import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -164,7 +164,13 @@ class CurrentPlan extends Component {
 				>
 					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 				</div>
-				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+
+				<AsyncLoad
+					require="blocks/product-purchase-features-list"
+					placeholder={ null }
+					plan={ currentPlanSlug }
+					isPlaceholder={ isLoading }
+				/>
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
