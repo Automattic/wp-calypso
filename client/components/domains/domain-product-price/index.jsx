@@ -76,9 +76,8 @@ class DomainProductPrice extends React.Component {
 		}
 
 		const priceText = this.props.showTestCopy
-			? this.props.translate( 'Renews at %(cost)s {{small}}/year{{/small}}', {
+			? this.props.translate( 'Renews at %(cost)s / year', {
 					args: { cost: this.props.price },
-					components: { small: <small /> },
 			  } )
 			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
 					args: { cost: this.props.price },
