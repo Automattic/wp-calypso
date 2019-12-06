@@ -14,6 +14,7 @@ export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -283,7 +284,7 @@ export function generateFlows( {
 
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-		destination: getSignupDestination,
+		destination: getLaunchDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-11-22',

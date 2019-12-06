@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop, times } from 'lodash';
+import { isEqual, isEmpty, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -72,10 +72,14 @@ export class ThemesList extends React.Component {
 	}
 
 	renderTheme( theme, index ) {
+		if ( isEmpty( theme ) ) {
+			return null;
+		}
 		// Decide if we should pass ref for bookmark.
 		const { themesBookmark } = this.props;
 		const bookmarkRef =
 			themesBookmark && themesBookmark.id === theme.id ? this.props.bookmarkRef : null;
+
 		return (
 			<Theme
 				key={ 'theme-' + theme.id }

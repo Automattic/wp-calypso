@@ -172,6 +172,9 @@ class Home extends Component {
 					}
 				);
 
+			case 'launched':
+				return translate( 'Make sure you share it with everyone and show it off.' );
+
 			default:
 				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
 		}
@@ -185,13 +188,43 @@ class Home extends Component {
 			checklistMode,
 			siteId,
 			currentThemeId,
+			siteIsUnlaunched,
+			isAtomic,
 		} = this.props;
 
+		// Show a thank-you message 30 mins post site creation/purchase
 		if ( isNewlyCreatedSite && displayChecklist ) {
+			if ( siteIsUnlaunched || isAtomic ) {
+				//Only show pre-launch, or for Atomic sites
+				return (
+					<React.Fragment>
+						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
+						{ currentThemeId && (
+							<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
+						) }
+						<img
+							src="/calypso/images/signup/confetti.svg"
+							aria-hidden="true"
+							className="customer-home__confetti"
+							alt=""
+						/>
+						<FormattedHeader
+							headerText={
+								this.props.siteHasPaidPlan
+									? translate( 'Thank you for your purchase!' )
+									: translate( 'Your site has been created!' )
+							}
+							subHeaderText={ this.getChecklistSubHeaderText() }
+						/>
+					</React.Fragment>
+				);
+			}
+		}
+
+		// Show a congratulatory message post-launch
+		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
 			return (
 				<React.Fragment>
-					{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
-					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -199,17 +232,14 @@ class Home extends Component {
 						alt=""
 					/>
 					<FormattedHeader
-						headerText={
-							this.props.siteHasPaidPlan
-								? translate( 'Thank you for your purchase!' )
-								: translate( 'Your site has been created!' )
-						}
+						headerText={ translate( 'You launched your site!' ) }
 						subHeaderText={ this.getChecklistSubHeaderText() }
 					/>
 				</React.Fragment>
 			);
 		}
 
+		// Show the standard heading otherwise
 		return (
 			<FormattedHeader
 				className="customer-home__page-heading"

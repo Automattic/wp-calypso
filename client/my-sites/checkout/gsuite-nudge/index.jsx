@@ -36,12 +36,7 @@ export class GSuiteNudge extends React.Component {
 	};
 
 	handleSkipClick = () => {
-		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
-		page(
-			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
-				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		);
+		this.props.handleCheckoutCompleteRedirect();
 	};
 
 	handleAddEmailClick = cartItems => {

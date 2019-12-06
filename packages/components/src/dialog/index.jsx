@@ -124,7 +124,7 @@ class Dialog extends Component {
 				role="dialog"
 				shouldCloseOnEsc={ shouldCloseOnEsc }
 			>
-				<div className={ contentClassName } tabIndex="-1">
+				<div className={ contentClassName } tabIndex={ -1 }>
 					{ this.props.children }
 				</div>
 				{ this.renderButtonsBar() }

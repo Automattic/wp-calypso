@@ -90,7 +90,11 @@ import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
-import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
+import {
+	persistSignupDestination,
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -275,7 +279,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, cart } = this.props;
+		const { planSlug, cart, isJetpackNotAtomic } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -297,7 +301,7 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if ( startsWith( this.props.product, 'jetpack_backup' ) ) {
+		if ( startsWith( this.props.product, 'jetpack_backup' ) && isJetpackNotAtomic ) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
 
@@ -351,7 +355,7 @@ export class Checkout extends React.Component {
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
 	 *
-	 * @param {Object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+	 * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
 	 * @returns {Array} of product objects [ { productId: ... }, ... ]
 	 */
 	flattenPurchases( purchases ) {
@@ -409,6 +413,38 @@ export class Checkout extends React.Component {
 		}
 
 		return '/';
+	}
+
+	/**
+	 * If there is an ecommerce plan in cart, then irrespective of the signup flow destination, the final destination
+	 * will always be "Thank You" page for the eCommerce plan. This is because the ecommerce store setup happens in this page.
+	 * If the user purchases additional products via upsell nudges, the original saved receipt ID will be used to
+	 * display the Thank You page for the eCommerce plan purchase.
+	 *
+	 * @param {string} pendingOrReceiptId The receipt id for the transaction
+	 */
+
+	setDestinationIfEcommPlan( pendingOrReceiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasEcommercePlan( cart ) ) {
+			persistSignupDestination( this.getFallbackDestination( pendingOrReceiptId ) );
+		} else {
+			const signupDestination = retrieveSignupDestination();
+
+			if ( ! signupDestination ) {
+				return;
+			}
+
+			// If atomic site, then replace wordpress.com with wpcomstaging.com
+			if ( selectedSiteSlug && selectedSiteSlug.includes( '.wpcomstaging.com' ) ) {
+				const wpcomStagingDestination = signupDestination.replace(
+					/\b.wordpress.com/,
+					'.wpcomstaging.com'
+				);
+				persistSignupDestination( wpcomStagingDestination );
+			}
+		}
 	}
 
 	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
@@ -494,8 +530,6 @@ export class Checkout extends React.Component {
 			selectedSiteSlug,
 			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
-		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
-		const siteDesignType = get( selectedSite, 'options.design_type' );
 
 		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
 
@@ -539,6 +573,8 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
+		this.setDestinationIfEcommPlan( pendingOrReceiptId );
+
 		const signupDestination =
 			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
 
@@ -566,17 +602,6 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		// Handle the redirect path after a purchase of GSuite
-		// The onboarding checklist currently supports the blog type only.
-		if ( hasGoogleApps( cart ) && domainReceiptId && 'store' !== siteDesignType ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
-				plan: 'paid',
-			} );
-
-			return `${ signupDestination }?d=gsuite`;
-		}
-
 		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge(
 			pendingOrReceiptId,
 			stepResult
@@ -593,8 +618,14 @@ export class Checkout extends React.Component {
 			return redirectPathForConciergeUpsell;
 		}
 
+		// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
+		// when purchasing a concierge session.
 		if ( hasConciergeSession( cart ) ) {
 			displayModeParam = { d: 'concierge' };
+		}
+
+		if ( hasGoogleApps( cart ) ) {
+			displayModeParam = { d: 'gsuite' };
 		}
 
 		if ( this.props.isEligibleForSignupDestination ) {
@@ -630,9 +661,7 @@ export class Checkout extends React.Component {
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
-		// An exception is when we have an eCommerce plan in cart, in which case we always
-		// take to the thank you page so destination cookie can be cleared.
-		if ( redirectPath.includes( destinationFromCookie ) || hasEcommercePlan( cart ) ) {
+		if ( redirectPath.includes( destinationFromCookie ) ) {
 			clearSignupDestinationCookie();
 		}
 

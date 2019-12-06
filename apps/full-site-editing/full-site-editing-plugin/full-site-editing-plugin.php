@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.16.1
+ * Version: 0.16.2
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -20,7 +20,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.16.1' );
+define( 'PLUGIN_VERSION', '0.16.2' );
 
 /**
  * Load Full Site Editing.
@@ -318,3 +318,27 @@ function enqueue_coblocks_gallery_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
+
+/**
+ * Load Blog Posts block.
+ */
+function load_blog_posts_block() {
+	$disable_block = (
+		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_option( 'active_plugins', array() ), true ) ||
+		in_array( 'newspack-blocks/newspack-blocks.php', (array) get_site_option( 'active_sitewide_plugins', array() ), true )
+	);
+
+	/**
+	 * Can be used to disable the Blog Posts block.
+	 *
+	 * @since 0.15.1
+	 *
+	 * @param bool $disable_block True if Blog Posts block should be enabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_blog_posts_block', $disable_block ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/blog-posts-block/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );

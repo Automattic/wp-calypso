@@ -33,6 +33,7 @@ import getSiteId from 'state/selectors/get-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	domainManagementContactsPrivacy,
@@ -201,6 +202,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
+
+	// If migration is in progress, only /migrate paths should be loaded for the site
+	const isActiveMigration = isSiteMigrationInProgress( state, selectedSite.ID );
+
+	if ( isActiveMigration && ! startsWith( context.pathname, '/migrate/' ) ) {
+		page.redirect( `/migrate/${ selectedSite.slug }` );
+		return false;
+	}
 
 	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );

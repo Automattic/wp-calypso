@@ -23,7 +23,6 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import SiteRedirectStore from 'lib/domains/site-redirect/store';
 import StoreConnection from 'components/data/store-connection';
 import UsersStore from 'lib/users/store';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
@@ -35,7 +34,6 @@ function getStateFromStores( props ) {
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
-		location: SiteRedirectStore.getBySite( props.selectedSite.domain ),
 		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
@@ -62,7 +60,6 @@ class DomainManagementData extends React.Component {
 		needsNameservers: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
-		needsSiteRedirect: PropTypes.bool,
 		needsUsers: PropTypes.bool,
 		productsList: PropTypes.object,
 		selectedDomainName: PropTypes.string,
@@ -106,7 +103,6 @@ class DomainManagementData extends React.Component {
 			needsNameservers,
 			needsPlans,
 			needsProductsList,
-			needsSiteRedirect,
 			needsUsers,
 			selectedSite,
 		} = this.props;
@@ -120,9 +116,6 @@ class DomainManagementData extends React.Component {
 		}
 		if ( needsNameservers ) {
 			stores.push( NameserversStore );
-		}
-		if ( needsSiteRedirect ) {
-			stores.push( SiteRedirectStore );
 		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );

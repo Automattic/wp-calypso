@@ -50,4 +50,6 @@ cached-requests.json
 
 # Monorepo output
 /apps/*/dist/
+/apps/*/types/
 /packages/*/dist/
+/packages/*/types/
