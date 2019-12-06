@@ -109,6 +109,7 @@ describe( 'reducer', () => {
 
 		expect( state ).toEqual( {
 			12345678: {
+				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 			},
 		} );
@@ -117,6 +118,7 @@ describe( 'reducer', () => {
 	test( 'should accumulate sites', () => {
 		const previousState = {
 			12345678: {
+				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 			},
 		};
@@ -128,9 +130,11 @@ describe( 'reducer', () => {
 
 		expect( state ).toEqual( {
 			12345678: {
+				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 			},
 			9876543: {
+				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
 			},
 		} );
