@@ -544,7 +544,7 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
 
 		const {
 			availableForPurchase,
@@ -563,20 +563,22 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
+		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
+
 		if ( siteIsPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
 				return;
 			}
 			this.setState( {
-				checkoutUrl,
+				checkoutUrl: checkoutUrlWithArgs,
 				choosingPlanSlug: productSlug,
 				showingSiteLaunchDialog: true,
 			} );
 			return;
 		}
 
-		page( checkoutUrl );
+		page( checkoutUrlWithArgs );
 	}
 
 	renderTopButtons() {
