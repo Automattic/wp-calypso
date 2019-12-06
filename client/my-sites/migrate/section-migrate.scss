@@ -105,6 +105,12 @@
 	margin-bottom: 2rem;
 }
 
+.migrate__start-time {
+	margin-bottom: 8px;
+	color: var( --color-text-subtle );
+	font-size: 14px;
+}
+
 .migrate__progress-item {
 	position: relative;
 	list-style-type: none;

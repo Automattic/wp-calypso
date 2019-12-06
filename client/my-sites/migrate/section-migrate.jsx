@@ -39,16 +39,10 @@ class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
-		startTime: null,
 	};
 
 	componentDidMount() {
 		this.updateFromAPI();
-		this.onMount( () => {
-			if ( null === this.state.startTime ) {
-				this.setState( { startTime: this.getStartTime() } );
-			}
-		} );
 	}
 
 	getImportHref = () => {
@@ -91,8 +85,7 @@ class SectionMigrate extends Component {
 		const localeSlug = getLocaleSlug();
 		const startTime = moment()
 			.locale( localeSlug )
-			.format( 'h:m a D MMM' );
-		this.setState( { startTime: startTime } );
+			.format( 'LT D MMMM' );
 		window.localStorage.setItem( 'siteMigrationStartTime', startTime );
 	};
 
@@ -100,14 +93,7 @@ class SectionMigrate extends Component {
 		if ( ! window.localStorage ) {
 			return;
 		}
-		this.setState( { startTime: null } );
 		window.localStorage.removeItem( 'siteMigrationStartTime' );
-	};
-
-	renderMigrationTime = () => {
-		if ( null !== this.state.startTime ) {
-			return 'Migration started at ' + this.state.startTime;
-		}
 	};
 
 	startMigration = () => {
@@ -286,11 +272,21 @@ class SectionMigrate extends Component {
 						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
 						align="center"
 					/>
+					{ this.renderStartTime() }
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
 				</Card>
 			</>
 		);
+	}
+
+	renderStartTime() {
+		const startTime = this.getStartTime();
+		if ( ! startTime ) {
+			return;
+		}
+
+		return <div className="migrate__start-time">Migration started at { startTime }</div>;
 	}
 
 	renderProgressBar() {
@@ -417,7 +413,6 @@ class SectionMigrate extends Component {
 			case 'unknown':
 			default:
 				migrationElement = this.renderLoading();
-				this.clearStartTime();
 		}
 
 		return (
