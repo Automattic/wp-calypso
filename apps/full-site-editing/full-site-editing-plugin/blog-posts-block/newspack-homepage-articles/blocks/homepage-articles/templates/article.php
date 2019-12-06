@@ -85,7 +85,21 @@ call_user_func(
 					<?php
 					if ( $attributes['showAuthor'] ) :
 						if ( $attributes['showAvatar'] ) :
-							echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
+							echo wp_kses(
+								newspack_blocks_format_avatars( $authors ),
+								array(
+									'img'      => array(
+										'class'  => true,
+										'src'    => true,
+										'alt'    => true,
+										'width'  => true,
+										'height' => true,
+										'data-*' => true,
+										'srcset' => true,
+									),
+									'noscript' => array(),
+								)
+							);
 						endif;
 						?>
 						<span class="byline">

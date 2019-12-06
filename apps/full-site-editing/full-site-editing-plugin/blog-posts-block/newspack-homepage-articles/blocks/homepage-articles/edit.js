@@ -225,6 +225,7 @@ class Edit extends Component {
 			imageScale,
 			mobileStack,
 			minHeight,
+			moreButton,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -296,6 +297,14 @@ class Edit extends Component {
 								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
 							}
 							required
+						/>
+					) }
+					{ ! specificMode && (
+						<ToggleControl
+							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+							checked={ moreButton }
+							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
 				</PanelBody>
@@ -455,6 +464,7 @@ class Edit extends Component {
 			postsToShow,
 			postLayout,
 			mediaPosition,
+			moreButton,
 			columns,
 			categories,
 			typeScale,
@@ -463,6 +473,7 @@ class Edit extends Component {
 			sectionHeader,
 			showCaption,
 			showCategory,
+			specificMode,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -576,6 +587,13 @@ class Edit extends Component {
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 				</div>
+
+				{ ! specificMode && latestPosts && moreButton && (
+					<button className="button" type="button">
+						{ __( 'More…', 'newspack-blocks' ) }
+					</button>
+				) }
+
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
