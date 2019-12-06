@@ -8,11 +8,7 @@ import {
 	createStripeMethod,
 	createApplePayMethod,
 } from '@automattic/composite-checkout';
-import {
-	WPCheckoutWrapper,
-	makeShoppingCartHook,
-	mockPayPalExpressRequest,
-} from '@automattic/composite-checkout-wpcom';
+import { WPCheckoutWrapper, mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
@@ -25,13 +21,6 @@ const { registerStore } = registry;
 const wpcom = wp.undocumented();
 
 export const getServerCart = wpcom.getCart;
-
-const useShoppingCart = cartKey => {
-	return makeShoppingCartHook(
-		cartParam => wpcom.setCart( cartKey, cartParam ),
-		() => wpcom.getCart( cartKey )
-	);
-};
 
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
@@ -90,7 +79,9 @@ const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].f
 export function CompositeCheckoutContainer( { siteSlug } ) {
 	return (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCart( siteSlug ) }
+			siteSlug={ siteSlug }
+			getCart={ wpcom.getCart }
+			setCart={ wpcom.setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		/>

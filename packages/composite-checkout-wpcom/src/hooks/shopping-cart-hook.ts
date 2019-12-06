@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Internal dependencies
@@ -67,99 +67,100 @@ type CacheStatus = 'valid' | 'invalid';
  *       required by the checkout component. This data is otherwise
  *       not changed.
  *
- * @param setServerCart
+ * @param cartKey
+ *     The cart key
+ * @param setCart
  *     An asynchronous wrapper around the wpcom shopping cart POST
  *     endpoint. We pass this in to make testing easier.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
- * @param getServerCart
+ * @param getCart
  *     An asynchronous wrapper around the wpcom shopping cart GET
  *     endpoint. We pass this in to make testing easier.
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
- * @returns
- *     A hook () => ShoppingCartManager to be passed as a prop to
- *     WPCOMCheckout, where it should be called exactly once per render.
+ * @returns ShoppingCartManager
  */
-export function makeShoppingCartHook(
-	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
-	getServerCart: () => Promise< ResponseCart >
-): () => ShoppingCartManager {
-	return () => {
-		// Stored shopping cart endpoint response. We manipulate this
-		// directly and pass it back to the endpoint on update events.
-		// Note that on the first render this state is undefined
-		// since we have to get the initial cart response asynchronously.
-		const [ responseCart, setResponseCart ] = useState< ResponseCart >( emptyResponseCart );
+export function useShoppingCart( cartKey, setCart, getCart ): ShoppingCartManager {
+	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
+		cartKey,
+		setCart,
+	] );
+	const getServerCart = useCallback( () => getCart( cartKey ), [ cartKey, getCart ] );
 
-		// Used to determine whether we need to re-validate the cart on
-		// the backend. We can't use responseCart directly to decide this
-		// in e.g. useEffect because this causes an infinite loop.
-		const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'invalid' );
+	// Stored shopping cart endpoint response. We manipulate this
+	// directly and pass it back to the endpoint on update events.
+	// Note that on the first render this state is undefined
+	// since we have to get the initial cart response asynchronously.
+	const [ responseCart, setResponseCart ] = useState< ResponseCart >( emptyResponseCart );
 
-		// Asynchronously initialize the cart. This should happen exactly once.
-		useEffect( () => {
-			const initializeResponseCart = async () => {
-				const response = await getServerCart();
+	// Used to determine whether we need to re-validate the cart on
+	// the backend. We can't use responseCart directly to decide this
+	// in e.g. useEffect because this causes an infinite loop.
+	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'invalid' );
+
+	// Asynchronously initialize the cart. This should happen exactly once.
+	useEffect( () => {
+		const initializeResponseCart = async () => {
+			const response = await getServerCart();
+			setResponseCart( response );
+			setCacheStatus( 'valid' );
+		};
+		initializeResponseCart().catch( error => {
+			// TODO: figure out what to do here
+			alert( error ); // eslint-disable-line no-undef
+		} );
+	}, [ getServerCart ] );
+
+	// Asynchronously re-validate when the cache is dirty.
+	useEffect( () => {
+		const fetchAndUpdate = async () => {
+			if ( cacheStatus === 'invalid' ) {
+				const response = await setServerCart( prepareRequestCart( responseCart ) );
 				setResponseCart( response );
 				setCacheStatus( 'valid' );
-			};
-			initializeResponseCart().catch( error => {
-				// TODO: figure out what to do here
-				alert( error ); // eslint-disable-line no-undef
-			} );
-		}, [] );
-
-		// Asynchronously re-validate when the cache is dirty.
-		useEffect( () => {
-			const fetchAndUpdate = async () => {
-				if ( cacheStatus === 'invalid' ) {
-					const response = await setServerCart( prepareRequestCart( responseCart ) );
-					setResponseCart( response );
-					setCacheStatus( 'valid' );
-				}
-			};
-			fetchAndUpdate().catch( error => {
-				// TODO: figure out what to do here
-				alert( error ); // eslint-disable-line no-undef
-			} );
-		}, [ cacheStatus, responseCart ] );
-
-		// Translate the responseCart into the format needed in checkout.
-		const cart: WPCOMCart = translateWpcomCartToCheckoutCart( responseCart );
-
-		const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
-			alert( 'addItem: ' + itemToAdd ); // eslint-disable-line no-undef
-			setCacheStatus( 'invalid' );
-			setResponseCart( responseCart );
+			}
 		};
+		fetchAndUpdate().catch( error => {
+			// TODO: figure out what to do here
+			alert( error ); // eslint-disable-line no-undef
+		} );
+	}, [ setServerCart, cacheStatus, responseCart ] );
 
-		const removeItem: ( WPCOMCartItem ) => void = itemToRemove => {
-			const filteredProducts = responseCart.products.filter( ( _, index ) => {
-				return index !== itemToRemove.wpcom_meta.uuid;
-			} );
-			setCacheStatus( 'invalid' );
-			setResponseCart( { ...responseCart, products: filteredProducts } );
-		};
+	// Translate the responseCart into the format needed in checkout.
+	const cart: WPCOMCart = translateWpcomCartToCheckoutCart( responseCart );
 
-		const changePlanLength = ( planItem, planLength ) => {
-			// TODO
-			alert( 'changePlanLength: ' + planLength + planItem ); // eslint-disable-line no-undef
-			setResponseCart( responseCart );
-		};
-
-		const updatePricesForAddress = address => {
-			// TODO
-			alert( 'updatePricesForAddress: ' + address ); // eslint-disable-line no-undef
-			setResponseCart( responseCart );
-		};
-
-		return {
-			items: cart.items,
-			tax: cart.tax,
-			total: cart.total,
-			addItem,
-			removeItem,
-			changePlanLength,
-			updatePricesForAddress,
-		} as ShoppingCartManager;
+	const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
+		alert( 'addItem: ' + itemToAdd ); // eslint-disable-line no-undef
+		setCacheStatus( 'invalid' );
+		setResponseCart( responseCart );
 	};
+
+	const removeItem: ( WPCOMCartItem ) => void = itemToRemove => {
+		const filteredProducts = responseCart.products.filter( ( _, index ) => {
+			return index !== itemToRemove.wpcom_meta.uuid;
+		} );
+		setCacheStatus( 'invalid' );
+		setResponseCart( { ...responseCart, products: filteredProducts } );
+	};
+
+	const changePlanLength = ( planItem, planLength ) => {
+		// TODO
+		alert( 'changePlanLength: ' + planLength + planItem ); // eslint-disable-line no-undef
+		setResponseCart( responseCart );
+	};
+
+	const updatePricesForAddress = address => {
+		// TODO
+		alert( 'updatePricesForAddress: ' + address ); // eslint-disable-line no-undef
+		setResponseCart( responseCart );
+	};
+
+	return {
+		items: cart.items,
+		tax: cart.tax,
+		total: cart.total,
+		addItem,
+		removeItem,
+		changePlanLength,
+		updatePricesForAddress,
+	} as ShoppingCartManager;
 }
