@@ -286,7 +286,7 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		return <div className="migrate__start-time">Migration started at { startTime }</div>;
+		return <div className="migrate__start-time">Migration started { startTime }</div>;
 	}
 
 	renderProgressBar() {
