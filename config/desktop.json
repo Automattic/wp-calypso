@@ -72,7 +72,6 @@
 		"me/trophies": false,
 		"oauth": true,
 		"persist-redux": true,
-		"plans/jetpack-backup": false,
 		"plans/jetpack-scan": false,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,

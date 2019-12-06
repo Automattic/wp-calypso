@@ -486,13 +486,11 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
-					{ config.isEnabled( 'plans/jetpack-backup' ) && (
-						<ProductPlanOverlapNotices
-							plans={ JETPACK_PLANS }
-							products={ JETPACK_BACKUP_PRODUCTS }
-							siteId={ siteId }
-						/>
-					) }
+					<ProductPlanOverlapNotices
+						plans={ JETPACK_PLANS }
+						products={ JETPACK_BACKUP_PRODUCTS }
+						siteId={ siteId }
+					/>
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</Fragment>
