@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import Gridicon from 'components/gridicon';
 
@@ -13,7 +13,13 @@ import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 
-export const WarningList = ( { translate, warnings } ) => (
+interface ExternalProps {
+	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
+}
+
+type Props = ExternalProps & LocalizeProps;
+
+export const WarningList = ( { translate, warnings }: Props ) => (
 	<div>
 		<SectionHeader
 			label={ translate(

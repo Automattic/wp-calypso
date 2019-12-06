@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import Gridicon from 'components/gridicon';
 
@@ -15,7 +15,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldMessages( siteSlug, translate ) {
+function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			title: translate( 'Blocked' ),
@@ -29,14 +29,17 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Just a minute! Please wait until the installation is finished, then try again.'
 			),
+			supportUrl: null,
 		},
 		NO_JETPACK_SITES: {
 			title: translate( 'Not available for Jetpack sites' ),
 			description: translate( 'Try using a different site.' ),
+			supportUrl: null,
 		},
 		NO_VIP_SITES: {
 			title: translate( 'Not available for VIP sites' ),
 			description: translate( 'Try using a different site.' ),
+			supportUrl: null,
 		},
 		SITE_PRIVATE: {
 			title: translate( 'Public site needed' ),
@@ -71,12 +74,14 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.'
 			),
+			supportUrl: null,
 		},
 		EMAIL_UNVERIFIED: {
 			title: translate( 'Confirm your email address' ),
 			description: translate(
 				"Check your email for a message we sent you when you signed up. Click the link inside to confirm your email address. You may have to check your email client's spam folder."
 			),
+			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
 			title: translate( 'Upload not available' ),
@@ -88,8 +93,15 @@ function getHoldMessages( siteSlug, translate ) {
 	};
 }
 
-export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
-	const holdMessages = getHoldMessages( siteSlug, translate );
+interface ExternalProps {
+	holds: string[];
+	isPlaceholder: boolean;
+}
+
+type Props = ExternalProps & LocalizeProps;
+
+export const HoldList = ( { holds, isPlaceholder, translate }: Props ) => {
+	const holdMessages = getHoldMessages( translate );
 
 	return (
 		<div>
@@ -112,34 +124,43 @@ export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
 					</div>
 				) }
 				{ ! isPlaceholder &&
-					map( holds, hold => (
-						<div className="eligibility-warnings__hold" key={ hold }>
-							<Gridicon icon="notice-outline" size={ 24 } />
-							<div className="eligibility-warnings__message">
-								<span className="eligibility-warnings__message-title">
-									{ holdMessages[ hold ].title }
-								</span>
-								:&nbsp;
-								<span className="eligibility-warnings__message-description">
-									{ holdMessages[ hold ].description }
-								</span>
-							</div>
-							{ holdMessages[ hold ].supportUrl && (
-								<div className="eligibility-warnings__action">
-									<Button
-										compact
-										href={ holdMessages[ hold ].supportUrl }
-										rel="noopener noreferrer"
-									>
-										{ translate( 'Help' ) }
-									</Button>
+					map( holds, hold =>
+						! isKnownHoldType( hold, holdMessages ) ? null : (
+							<div className="eligibility-warnings__hold" key={ hold }>
+								<Gridicon icon="notice-outline" size={ 24 } />
+								<div className="eligibility-warnings__message">
+									<span className="eligibility-warnings__message-title">
+										{ holdMessages[ hold ].title }
+									</span>
+									:&nbsp;
+									<span className="eligibility-warnings__message-description">
+										{ holdMessages[ hold ].description }
+									</span>
 								</div>
-							) }
-						</div>
-					) ) }
+								{ holdMessages[ hold ].supportUrl && (
+									<div className="eligibility-warnings__action">
+										<Button
+											compact
+											href={ holdMessages[ hold ].supportUrl }
+											rel="noopener noreferrer"
+										>
+											{ translate( 'Help' ) }
+										</Button>
+									</div>
+								) }
+							</div>
+						)
+					) }
 			</Card>
 		</div>
 	);
 };
+
+function isKnownHoldType(
+	hold: string,
+	holdMessages: ReturnType< typeof getHoldMessages >
+): hold is keyof ReturnType< typeof getHoldMessages > {
+	return holdMessages.hasOwnProperty( hold );
+}
 
 export default localize( HoldList );
