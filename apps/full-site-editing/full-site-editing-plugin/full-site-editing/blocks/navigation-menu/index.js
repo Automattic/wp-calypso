@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import transforms from './transforms';
 import './style.scss';
 
 const icon = (
@@ -30,4 +31,5 @@ registerBlockType( 'a8c/navigation-menu', {
 	},
 	edit,
 	save: () => null,
+	transforms,
 } );

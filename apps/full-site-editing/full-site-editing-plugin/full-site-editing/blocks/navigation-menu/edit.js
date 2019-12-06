@@ -18,11 +18,13 @@ import {
 	withFontSizes,
 } from '@wordpress/block-editor';
 import { PanelBody, Notice } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { getPossibleBlockTransformations, switchToBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
+import { isValidCoreNavigationBlockType } from './transforms';
 
 const NavigationMenuEdit = ( {
 	attributes,
@@ -34,6 +36,8 @@ const NavigationMenuEdit = ( {
 	setTextColor,
 	textColor,
 	isPublished,
+	canBeUpgradedToCoreNavigationBlock,
+	upgradeToCoreNavigationBlock,
 } ) => {
 	const [ upgradeNudgeVisible, setUpgradeNudgeVisible ] = useState( true );
 
@@ -41,17 +45,15 @@ const NavigationMenuEdit = ( {
 
 	const actualFontSize = customFontSize || fontSize.size;
 
-	const upgradeBlock = () => {};
-
 	return (
 		<Fragment>
-			{ upgradeNudgeVisible && (
+			{ upgradeNudgeVisible && canBeUpgradedToCoreNavigationBlock && (
 				<Notice
 					onRemove={ () => setUpgradeNudgeVisible( false ) }
 					actions={ [
 						{
 							label: __( 'Upgrade Block', 'full-site-editing' ),
-							onClick: upgradeBlock,
+							onClick: upgradeToCoreNavigationBlock,
 						},
 					] }
 				>
@@ -114,9 +116,34 @@ const NavigationMenuEdit = ( {
 export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
-	withSelect( select => {
+	withSelect( ( select, { clientId } ) => {
+		const block = select( 'core/block-editor' ).getBlock( clientId );
+
+		const possibleTransforms = getPossibleBlockTransformations( [ block ] );
+
+		const coreNavigationBlockUpgradeTransform = possibleTransforms.find(
+			transform => transform && isValidCoreNavigationBlockType( transform.name )
+		);
+
+		const canBeUpgradedToCoreNavigationBlock = !! coreNavigationBlockUpgradeTransform;
+
 		return {
 			isPublished: select( 'core/editor' ).isCurrentPostPublished(),
+			coreNavigationBlockUpgradeTransform,
+			canBeUpgradedToCoreNavigationBlock,
+			block,
+		};
+	} ),
+	withDispatch( ( dispatch, { clientId, block, coreNavigationBlockUpgradeTransform } ) => {
+		const upgradeToCoreNavigationBlock = () => {
+			return dispatch( 'core/block-editor' ).replaceBlocks(
+				clientId,
+				switchToBlockType( block, coreNavigationBlockUpgradeTransform.name )
+			);
+		};
+
+		return {
+			upgradeToCoreNavigationBlock,
 		};
 	} ),
 ] )( NavigationMenuEdit );
