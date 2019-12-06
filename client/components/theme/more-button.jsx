@@ -23,7 +23,6 @@ class ThemeMoreButton extends Component {
 
 	togglePopover = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		this.props.setThemesBookmark( { id: this.props.themeId } );
 		! this.state.showPopover &&
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
 	};
@@ -116,7 +115,6 @@ ThemeMoreButton.propTypes = {
 		} )
 	).isRequired,
 	active: PropTypes.bool,
-	setThemesBookmark: PropTypes.func,
 };
 
 export default ThemeMoreButton;

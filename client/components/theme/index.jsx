@@ -145,6 +145,10 @@ export class Theme extends Component {
 		} );
 	};
 
+	setBookmark = () => {
+		this.props.setThemesBookmark( { id: this.props.theme.id } );
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -207,7 +211,7 @@ export class Theme extends Component {
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
 
 		return (
-			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
+			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
 				{ this.isBeginnerTheme() && (
 					<Ribbon className="theme__ribbon" color="green">
 						{ translate( 'Beginner' ) }
