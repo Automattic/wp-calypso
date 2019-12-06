@@ -18,8 +18,11 @@ export default {
 		{
 			type: 'block',
 			blocks: [ CORE_NAVIGATION_BLOCK_TYPE ],
-			transform: () => {
-				return createBlock( CORE_NAVIGATION_BLOCK_TYPE, {} );
+			transform: attributes => {
+				return createBlock( CORE_NAVIGATION_BLOCK_TYPE, {
+					align: attributes.align,
+					itemsJustification: attributes.textAlign,
+				} );
 			},
 		},
 	],
