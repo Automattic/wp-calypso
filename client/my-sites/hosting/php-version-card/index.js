@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,131 +15,38 @@ import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import Spinner from 'components/spinner';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { updateAtomicPhpVersion } from 'state/hosting/actions';
+import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
+import QuerySitePhpVersion from 'components/data/query-site-php-version';
+import getRequest from 'state/selectors/get-request';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const requestId = ( siteId, method ) => `hosting-php-version-${ method }-${ siteId }`;
-
-export const requestPhpVersion = siteId => {
-	const method = 'GET';
-
-	return requestHttpData(
-		requestId( siteId, method ),
-		http(
-			{
-				method,
-				path: `/sites/${ siteId }/hosting/php-version`,
-				apiNamespace: 'wpcom/v2',
-				body: {},
-			},
-			{}
-		),
-		{
-			fromApi: () => version => {
-				return [ [ requestId( siteId, method ), version ] ];
-			},
-			freshness: 0,
-		}
-	);
-};
-
-export const setPhpVersion = ( siteId, version ) => {
-	const method = 'POST';
-
-	return requestHttpData(
-		requestId( siteId, method ),
-		http(
-			{
-				method,
-				path: `/sites/${ siteId }/hosting/php-version`,
-				apiNamespace: 'wpcom/v2',
-				body: {
-					version: version,
-				},
-			},
-			{}
-		),
-		{
-			fromApi: () => success => {
-				return [ [ requestId( siteId, method ), success ] ];
-			},
-			freshness: 0,
-		}
-	);
-};
-
 const PhpVersionCard = ( {
-	loading,
-	recordHostingPhpVersionUpdate,
-	showErrorNotice,
-	showSuccessNotice,
+	disabled,
+	isUpdatingPhpVersion,
+	isGettingPhpVersion,
 	siteId,
 	translate,
-	updateResult,
-	updating,
+	updatePhpVersion,
 	version,
-	disabled,
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
-	const [ currentPhpVersion, setCurrentPhpVersion ] = useState( '' );
 
 	const recommendedValue = '7.3';
-
-	useEffect( () => {
-		if ( ! disabled ) {
-			requestPhpVersion( siteId );
-		}
-	}, [ siteId, disabled ] );
-
-	useEffect( () => {
-		const updateNoticeId = 'hosting-php-version';
-
-		if ( updateResult === 'failure' ) {
-			showErrorNotice( translate( 'Failed to set PHP version.' ), {
-				id: updateNoticeId,
-			} );
-		}
-
-		if ( updateResult === 'success' ) {
-			setCurrentPhpVersion( selectedPhpVersion );
-
-			showSuccessNotice(
-				translate( 'PHP version successfully set to %(version)s.', {
-					args: {
-						version: selectedPhpVersion,
-					},
-				} ),
-				{
-					id: updateNoticeId,
-					showDismiss: false,
-					duration: 5000,
-				}
-			);
-		}
-
-		if ( [ 'success', 'failure' ].includes( updateResult ) ) {
-			resetHttpData( requestId( siteId, 'POST' ) );
-
-			recordHostingPhpVersionUpdate( selectedPhpVersion, updateResult );
-		}
-	}, [ updateResult ] );
-
-	useEffect( () => {
-		setCurrentPhpVersion( version );
-	}, [ version ] );
 
 	const changePhpVersion = event => {
 		const newVersion = event.target.value;
 
 		setSelectedPhpVersion( newVersion );
+	};
+
+	const updateVersion = () => {
+		updatePhpVersion( siteId, selectedPhpVersion );
 	};
 
 	const getPhpVersions = () => {
@@ -166,22 +73,19 @@ const PhpVersionCard = ( {
 	};
 
 	const getContent = () => {
-		if ( loading ) {
+		if ( isGettingPhpVersion ) {
 			return;
 		}
 
-		const isButtonDisabled =
-			disabled || ! selectedPhpVersion || selectedPhpVersion === currentPhpVersion;
-
-		const selectedValue =
-			selectedPhpVersion || currentPhpVersion || ( disabled && recommendedValue );
+		const isButtonDisabled = disabled || ! selectedPhpVersion || selectedPhpVersion === version;
+		const selectedValue = selectedPhpVersion || version || ( disabled && recommendedValue );
 
 		return (
 			<div>
 				<div>
 					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
 					<FormSelect
-						disabled={ disabled }
+						disabled={ disabled || isUpdatingPhpVersion }
 						className="php-version-card__version-select"
 						onChange={ changePhpVersion }
 						value={ selectedValue }
@@ -189,7 +93,7 @@ const PhpVersionCard = ( {
 						{ getPhpVersions().map( option => {
 							return (
 								<option
-									disabled={ option.value === currentPhpVersion }
+									disabled={ option.value === version }
 									value={ option.value }
 									key={ option.label }
 								>
@@ -202,8 +106,9 @@ const PhpVersionCard = ( {
 				{ ! isButtonDisabled && (
 					<Button
 						className="php-version-card__set-version"
-						onClick={ () => setPhpVersion( siteId, selectedPhpVersion ) }
-						busy={ updating }
+						onClick={ updateVersion }
+						busy={ isUpdatingPhpVersion }
+						disabled={ isUpdatingPhpVersion }
 					>
 						<span>{ translate( 'Update PHP Version' ) }</span>
 					</Button>
@@ -214,47 +119,29 @@ const PhpVersionCard = ( {
 
 	return (
 		<Card className="php-version-card">
+			<QuerySitePhpVersion siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
 			{ getContent() }
-			{ loading && <Spinner /> }
+			{ isGettingPhpVersion && <Spinner /> }
 		</Card>
 	);
 };
 
-export const recordHostingPhpVersionUpdate = ( version, result ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Hosting Configuration',
-			'Clicked "Update PHP Version" Button in PHP Version box',
-			`PHP Version Update ${ result }`,
-			version
-		),
-		recordTracksEvent( 'calypso_hosting_configuration_php_version_update', {
-			result,
-			version,
-		} )
-	);
-
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
-
-		const phpVersionGet = getHttpData( requestId( siteId, 'GET' ) );
-		const phpVersionUpdate = getHttpData( requestId( siteId, 'POST' ) );
-		const version = phpVersionGet?.data ?? '';
+		const version = getAtomicHostingPhpVersion( state, siteId );
 
 		return {
-			loading: ! props.disabled && ! version && phpVersionGet.state === 'pending',
+			isUpdatingPhpVersion:
+				getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
+			isGettingPhpVersion: ! props.disabled && ! version,
 			siteId,
-			updating: phpVersionUpdate.state === 'pending',
-			updateResult: phpVersionUpdate.state,
 			version,
 		};
 	},
 	{
-		recordHostingPhpVersionUpdate,
-		showErrorNotice: errorNotice,
-		showSuccessNotice: successNotice,
+		updatePhpVersion: updateAtomicPhpVersion,
 	}
 )( localize( PhpVersionCard ) );

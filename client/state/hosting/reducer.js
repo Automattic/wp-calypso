@@ -1,9 +1,12 @@
 /**
  * Internal dependencies
  */
-
 import { keyedReducer, combineReducers } from 'state/utils';
-import { HOSTING_SFTP_USER_UPDATE, HOSTING_SFTP_USERS_SET } from 'state/action-types';
+import {
+	HOSTING_PHP_VERSION_SET,
+	HOSTING_SFTP_USER_UPDATE,
+	HOSTING_SFTP_USERS_SET,
+} from 'state/action-types';
 
 export const sftpUsers = ( state = {}, { type, users } ) => {
 	if ( type === HOSTING_SFTP_USERS_SET ) {
@@ -19,10 +22,21 @@ export const sftpUsers = ( state = {}, { type, users } ) => {
 			};
 		} );
 	}
+
+	return state;
+};
+
+const phpVersion = ( state = null, { type, version } ) => {
+	switch ( type ) {
+		case HOSTING_PHP_VERSION_SET:
+			return version;
+	}
+
 	return state;
 };
 
 const atomicHostingReducer = combineReducers( {
+	phpVersion,
 	sftpUsers,
 } );
 
