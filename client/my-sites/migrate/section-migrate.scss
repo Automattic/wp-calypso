@@ -1,3 +1,17 @@
+$masterbar-height: 46px;
+
+@include breakpoint( '>660px' ) {
+	.layout.is-section-migrate.is-full-height-layout {
+		height: 100%;
+
+		.layout__content,
+		.layout__primary,
+		.main {
+			height: 100%;
+		}
+	}
+}
+
 .migrate__placeholder {
 	color: transparent;
 	background-color: var( --studio-gray-10 );
@@ -56,6 +70,7 @@
 
 .migrate__list {
 	margin: 16px 0 32px;
+
 	li {
 		list-style-type: none;
 		line-height: 30px;
@@ -72,12 +87,22 @@
 	margin-left: 16px;
 }
 
+.migrate__wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+}
+
 .migrate__pane {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	background: inherit;
 	box-shadow: none;
+	@include breakpoint( '>660px' ) {
+		margin-top: -$masterbar-height;
+	}
 }
 
 .migrate__illustration {
@@ -105,10 +130,13 @@
 	margin-bottom: 2rem;
 }
 
+.migrate__progress-list {
+	margin: 0;
+}
+
 .migrate__progress-item {
 	position: relative;
 	list-style-type: none;
-	margin-left: 8px;
 	margin-bottom: 8px;
 	font-size: 14px;
 	line-height: 24px;

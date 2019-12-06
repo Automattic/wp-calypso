@@ -14,6 +14,7 @@ import checkout from './checkout/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
+import isFullHeightLayout from './full-height-layout/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import guidedTour from './guided-tours/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
@@ -34,9 +35,9 @@ import themeSetup from './theme-setup/reducers';
 /**
  * Tracks the currently selected site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
@@ -85,9 +86,10 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 
 /**
  * Tracks if the notifications panel is open
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isNotificationsOpen = function( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
@@ -107,6 +109,7 @@ const reducer = combineReducers( {
 	guidedTour,
 	gutenbergOptInDialog,
 	hasSidebar,
+	isFullHeightLayout,
 	isLoading,
 	isNotificationsOpen,
 	isPreviewShowing,

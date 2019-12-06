@@ -30,6 +30,7 @@ import {
 	getSectionName,
 } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isFullHeightLayout from 'state/ui/selectors/is-full-height-layout';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
@@ -115,6 +116,7 @@ class Layout extends Component {
 				'has-no-sidebar': ! this.props.hasSidebar,
 				'has-chat': this.props.chatIsOpen,
 				'has-no-masterbar': this.props.masterbarIsHidden,
+				'is-full-height-layout': this.props.isFullHeightLayout,
 				'is-jetpack-login': this.props.isJetpackLogin,
 				'is-jetpack-site': this.props.isJetpack,
 				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
@@ -212,6 +214,7 @@ export default connect( state => {
 		sectionGroup,
 		sectionName,
 		hasSidebar: hasSidebar( state ),
+		isFullHeightLayout: isFullHeightLayout( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),

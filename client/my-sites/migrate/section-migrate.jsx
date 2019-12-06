@@ -28,6 +28,7 @@ import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { setFullHeightLayout, unsetFullHeightLayout } from 'state/ui/full-height-layout/actions';
 import wpLib from 'lib/wp';
 
 /**
@@ -45,6 +46,10 @@ class SectionMigrate extends Component {
 
 	componentDidMount() {
 		this.updateFromAPI();
+	}
+
+	componentWillUnmount() {
+		this.props.unsetFullHeightLayout();
 	}
 
 	getImportHref = () => {
@@ -136,6 +141,7 @@ class SectionMigrate extends Component {
 	renderMigrationComplete() {
 		const { targetSite } = this.props;
 		const viewSiteURL = get( targetSite, 'URL' );
+		this.props.unsetFullHeightLayout();
 
 		return (
 			<>
@@ -206,6 +212,8 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationError() {
+		this.props.unsetFullHeightLayout();
+
 		return (
 			<>
 				<FormattedHeader
@@ -229,8 +237,10 @@ class SectionMigrate extends Component {
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 
+		this.props.setFullHeightLayout();
+
 		return (
-			<>
+			<div className="migrate__wrapper">
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
@@ -246,7 +256,7 @@ class SectionMigrate extends Component {
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
 				</Card>
-			</>
+			</div>
 		);
 	}
 
@@ -407,5 +417,9 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite }
+	{
+		navigateToSelectedSourceSite,
+		setFullHeightLayout,
+		unsetFullHeightLayout,
+	}
 )( localize( SectionMigrate ) );
