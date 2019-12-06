@@ -49,7 +49,7 @@
 		"@babel/runtime": "7.7.4",
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
-		"@github/webauthn-json": "0.3.6",
+		"@github/webauthn-json": "0.4.1",
 		"@ungap/url-search-params": "0.1.4",
 		"@webcomponents/url": "0.7.4",
 		"@wordpress/api-fetch": "3.7.0",
