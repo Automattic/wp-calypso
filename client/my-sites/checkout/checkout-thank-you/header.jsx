@@ -29,7 +29,7 @@ import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 
-class CheckoutThankYouHeader extends PureComponent {
+export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,

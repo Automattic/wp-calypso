@@ -119,13 +119,27 @@ describe( 'CheckoutThankYou', () => {
 			const comp = shallow( <CheckoutThankYou { ...props } /> );
 			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 1 );
 			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 1 );
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteJustLaunched ).toBeFalsy();
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBeFalsy();
 		} );
 		test( 'Should display a simplified version when isSimplified is set to true', () => {
 			const comp = shallow( <CheckoutThankYou { ...props } isSimplified={ true } /> );
 			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 0 );
 			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 0 );
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteJustLaunched ).toBe( true );
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBe( true );
+		} );
+		test( 'Should pass props down to CheckoutThankYou', () => {
+			const comp = shallow(
+				<CheckoutThankYou
+					{ ...props }
+					isSimplified={ true }
+					siteUnlaunchedBeforeUpgrade={ true }
+					upgradeIntent={ 'plugins' }
+				/>
+			);
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteUnlaunchedBeforeUpgrade ).toBe(
+				true
+			);
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().upgradeIntent ).toBe( 'plugins' );
 		} );
 	} );
 
