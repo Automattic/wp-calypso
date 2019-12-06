@@ -10,6 +10,7 @@ import { CheckoutProvider } from '@automattic/composite-checkout';
  */
 import WPCheckout from './wp-checkout';
 import { useWpcomStore } from '../hooks/wpcom-store';
+import { useShoppingCart } from '../hooks/shopping-cart-hook';
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
@@ -22,13 +23,17 @@ const handleCheckoutEvent = () => () => {
 
 // This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( {
-	useShoppingCart,
+	siteSlug,
+	setCart,
+	getCart,
 	availablePaymentMethods,
 	registry,
-	onSuccess,
-	onFailure,
 } ) {
-	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart(
+		siteSlug,
+		setCart,
+		getCart
+	);
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -56,6 +61,8 @@ export function WPCheckoutWrapper( {
 
 WPCheckoutWrapper.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	useShoppingCart: PropTypes.func.isRequired,
 	registry: PropTypes.object.isRequired,
+	siteSlug: PropTypes.string,
+	setCart: PropTypes.func.isRequired,
+	getCart: PropTypes.func.isRequired,
 };

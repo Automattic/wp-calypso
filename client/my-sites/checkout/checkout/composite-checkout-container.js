@@ -29,13 +29,6 @@ const { registerStore } = registry;
 
 const wpcom = wp.undocumented();
 
-const useShoppingCartWithKey = cartKey => {
-	return makeShoppingCartHook(
-		cartParam => wpcom.setCart( cartKey, cartParam ),
-		() => wpcom.getCart( cartKey )
-	);
-};
-
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
@@ -90,6 +83,9 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
+const getCart = ( ...args ) => wpcom.getCart( ...args );
+const setCart = ( ...args ) => wpcom.setCart( ...args );
+
 export default function CompositeCheckoutContainer( siteSlug ) {
 	const translate = useTranslate();
 	const onSuccess = () => {
@@ -105,7 +101,9 @@ export default function CompositeCheckoutContainer( siteSlug ) {
 
 	return (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCartWithKey( siteSlug ) }
+			siteSlug={ siteSlug }
+			getCart={ getCart }
+			setCart={ setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			onSuccess={ onSuccess }
