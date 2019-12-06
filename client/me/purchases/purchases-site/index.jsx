@@ -11,12 +11,12 @@ import { some, times } from 'lodash';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { getSite, isRequestingSite } from 'state/sites/selectors';
 import { isJetpackPlan } from 'lib/products-values';
 import { JETPACK_PLANS } from 'lib/plans/constants';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import QuerySites from 'components/data/query-sites';
-import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
@@ -67,7 +67,9 @@ const PurchasesSite = ( {
 
 			{ items }
 
-			<ProductPlanOverlapNotices
+			<AsyncLoad
+				require="blocks/product-plan-overlap-notices"
+				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_BACKUP_PRODUCTS }
 				siteId={ siteId }
