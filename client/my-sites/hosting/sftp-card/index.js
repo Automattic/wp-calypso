@@ -110,7 +110,7 @@ export const SftpCard = ( {
 					</div>
 					<p className="sftp-card__password-warning">
 						{ translate(
-							'Save your password someplace safe. A reset will be needed to view again.'
+							'Save your password somewhere safe. You will need to reset it to view it again.'
 						) }
 					</p>
 				</>
@@ -120,7 +120,7 @@ export const SftpCard = ( {
 		return (
 			<>
 				<p className="sftp-card__password-explainer">
-					{ translate( 'For security reasons, your password needs a reset to view' ) }
+					{ translate( 'For security reasons, you must reset your password to view it.' ) }
 				</p>
 				<Button
 					onClick={ resetPassword }
