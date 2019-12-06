@@ -11,7 +11,7 @@ import {
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
 
-export function getExitCheckoutUrl( cart, siteSlug ) {
+export function getExitCheckoutUrl( cart, siteSlug, upgradeIntent ) {
 	let url = '/plans/';
 
 	if ( hasRenewalItem( cart ) ) {
@@ -19,6 +19,12 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 			siteName = siteSlug || purchaseDomain;
 
 		return managePurchase( siteName, purchaseId );
+	}
+
+	switch ( upgradeIntent ) {
+		case 'plugins':
+		case 'themes':
+			url = `/${ upgradeIntent }/`;
 	}
 
 	if ( hasDomainRegistration( cart ) ) {

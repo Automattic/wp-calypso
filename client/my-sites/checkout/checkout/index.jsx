@@ -63,6 +63,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'lib/cart/actions';
 import { resetTransaction, setDomainDetails } from 'lib/transaction/actions';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -343,7 +344,11 @@ export class Checkout extends React.Component {
 		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
+			redirectTo = getExitCheckoutUrl(
+				this.state.previousCart,
+				selectedSiteSlug,
+				this.props.upgradeIntent
+			);
 		}
 
 		page.redirect( redirectTo );
@@ -974,6 +979,7 @@ export default connect(
 			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
+			upgradeIntent: getCheckoutUpgradeIntent( state ),
 		};
 	},
 	{
