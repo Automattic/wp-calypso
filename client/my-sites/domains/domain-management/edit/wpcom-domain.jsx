@@ -14,10 +14,10 @@ import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-<<<<<<< HEAD
-import SiteAddressChanger from 'blocks/site-address-changer';
+import { domainManagementChangeSiteAddress } from 'my-sites/domains/paths';
 import { getDomainTypeText } from 'lib/domains';
 import { type as domainTypes } from 'lib/domains/constants';
+
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 
 class WpcomDomain extends React.Component {
@@ -31,15 +31,6 @@ class WpcomDomain extends React.Component {
 			'Domain Name',
 			domain.name
 		);
-=======
-import { type as domainTypes } from 'lib/domains/constants';
-import { domainManagementChangeSiteAddress } from 'my-sites/domains/paths';
-
-// eslint-disable-next-line react/prefer-es6-class
-const WpcomDomain = createReactClass( {
-	displayName: 'WpcomDomain',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
->>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 		this.props.recordTracksEvent( 'calypso_domain_management_edit_navigation_click', {
 			action: 'edit_site_address',
@@ -47,27 +38,32 @@ const WpcomDomain = createReactClass( {
 		} );
 	};
 
-	handleChangeSiteAddressClick() {
-		this.recordEvent( 'navigationClick', 'Change Site Address', this.props.domain );
-	},
+	handleChangeSiteAddressClick = () => {
+		const { domain } = this.props;
+		const domainType = getDomainTypeText( domain );
+
+		this.props.recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Change Site Address" navigation link on a ${ domainType } in Edit`,
+			'Domain Name',
+			domain.name
+		);
+
+		this.props.recordTracksEvent( 'calypso_domain_management_change_navigation_click', {
+			action: 'change_site_address',
+			section: domain.type,
+		} );
+	};
 
 	getEditSiteAddressBlock() {
 		const { domain } = this.props;
-<<<<<<< HEAD
 
 		if ( domain.isWpcomStagingDomain ) {
 			return;
 		}
 
-		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
-			const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
-			const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
-			return <SiteAddressChanger currentDomain={ domain } currentDomainSuffix={ domainSuffix } />;
-		}
-=======
 		const isWpcomDomain = get( domain, 'type' ) === domainTypes.WPCOM;
 		const path = domainManagementChangeSiteAddress( this.props.selectedSite.slug, domain.name );
->>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 		return (
 			<VerticalNav>
@@ -116,12 +112,7 @@ const WpcomDomain = createReactClass( {
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-<<<<<<< HEAD
 	}
 }
-=======
-	},
-} );
->>>>>>> Move Change Site Address tool to its own page linked from the domain settings page. Updates to simplify copy and styles for mobile web.
 
 export default connect( null, { recordTracksEvent, recordGoogleEvent } )( localize( WpcomDomain ) );
