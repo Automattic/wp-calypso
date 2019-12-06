@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
@@ -42,9 +43,19 @@ class Sites extends Component {
 			return ! site.is_vip;
 		}
 
-		// Hosting routes are not applicable to Jetpack or VIP sites.
 		if ( /^\/hosting-config/.test( path ) ) {
-			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+			// Hosting routes are not applicable to any VIP or WP.org Jetpack sites.
+			if ( site.is_vip || ( site.jetpack && ! site.options.is_automated_transfer ) ) {
+				return false;
+			}
+
+			// Hosting routes apply to all Atomic sites.
+			if ( site.options.is_automated_transfer ) {
+				return true;
+			}
+
+			// hosting/all-sites allows Simple sites, so they can be exposed to upgrade notices.
+			return isEnabled( 'hosting/all-sites' );
 		}
 
 		return site;
