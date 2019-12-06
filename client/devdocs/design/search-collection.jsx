@@ -35,20 +35,21 @@ const shouldShowInstance = ( example, filter, component ) => {
 };
 
 const getReadmeFilePath = ( section, example ) => {
-	if ( ! example.props.readmeFilePath ) {
+	let path = example.props.readmeFilePath;
+
+	if ( ! path ) {
 		return null;
 	}
 
-	if ( example.props.readmeFilePath.charAt( 0 ) === '/' ) {
-		return `${ example.props.readmeFilePath }/README.md`;
+	if ( ! path.startsWith( '/' ) ) {
+		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
 	}
 
-	switch ( section ) {
-		case 'design':
-			return `/client/components/${ example.props.readmeFilePath }/README.md`;
-		default:
-			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	if ( ! path.endsWith( 'README.md' ) ) {
+		path = `${ path }/README.md`;
 	}
+
+	return path;
 };
 
 const Collection = ( {
