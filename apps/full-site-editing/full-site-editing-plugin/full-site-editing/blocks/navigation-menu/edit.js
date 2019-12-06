@@ -60,7 +60,7 @@ const NavigationMenuEdit = ( {
 					<p>
 						<span className="posts-list__message">
 							{ __(
-								'An improved version of the Navigation block is available. Upgrade for a better, more natural way to manage your Navigation.',
+								'Upgrade to an improved version of the Navigation block. There may be small visual changes. As such, we recommend you upgrade and preview your changes before updating your site.',
 								'full-site-editing'
 							) }
 						</span>
