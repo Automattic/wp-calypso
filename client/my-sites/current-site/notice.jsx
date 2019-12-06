@@ -41,6 +41,7 @@ import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import { getSectionName } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
@@ -271,7 +272,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress } = this.props;
+		const { site, isMigrationInProgress, sectionName } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -289,7 +290,7 @@ export class SiteNotice extends React.Component {
 					( config.isEnabled( 'jitms' ) && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:sidebar_notice` }
+							messagePath={ `calypso:${ sectionName }:sidebar_notice` }
 							template="sidebar-banner"
 						/>
 					) ) }
@@ -308,6 +309,7 @@ export class SiteNotice extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
@@ -322,6 +324,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			sectionName: getSectionName( state ),
 		};
 	},
 	dispatch => {
