@@ -20,7 +20,7 @@ export function createCreditCardMethod() {
 		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: <CreditCardFields />,
-		SubmitButtonComponent: CreditCardSubmitButton,
+		submitButton: <CreditCardSubmitButton />,
 		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};

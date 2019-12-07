@@ -89,7 +89,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 			} );
 
-			it( 'renders the payment method SubmitButtonComponent', () => {
+			it( 'renders the payment method submitButton', () => {
 				const { getByText } = render( <MyCheckout /> );
 				expect( getByText( 'Pay Please' ) ).toBeTruthy();
 			} );
@@ -155,7 +155,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 			} );
 
-			it( 'renders the payment method SubmitButtonComponent', () => {
+			it( 'renders the payment method submitButton', () => {
 				const { getByText } = render( <MyCheckout /> );
 				expect( getByText( 'Pay Please' ) ).toBeTruthy();
 			} );
@@ -424,31 +424,31 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent', () => {
+		it( 'renders the payment method submitButton', () => {
 			const { getByText } = render( <MyCheckout /> );
 			expect( getByText( 'Pay Please' ) ).toBeTruthy();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if any steps are incomplete and the last step is not active', () => {
+		it( 'renders the payment method submitButton disabled if any steps are incomplete and the last step is not active', () => {
 			const { getByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if any steps are incomplete and the last step is active', () => {
+		it( 'renders the payment method submitButton disabled if any steps are incomplete and the last step is active', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 3 ] ] } /> );
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if all steps are complete but the last step is not active', () => {
+		it( 'renders the payment method submitButton disabled if all steps are complete but the last step is not active', () => {
 			const { getByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent active if all steps are complete and the last step is active', () => {
+		it( 'renders the payment method submitButton active if all steps are complete and the last step is active', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
 			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
@@ -460,7 +460,7 @@ function createMockMethod() {
 		id: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
-		SubmitButtonComponent: props => <button { ...props }>Pay Please</button>,
+		submitButton: props => <button { ...props }>Pay Please</button>,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};

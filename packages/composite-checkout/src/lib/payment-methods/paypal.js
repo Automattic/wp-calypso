@@ -80,7 +80,7 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 	return {
 		id: 'paypal',
 		label: <PaypalLabel />,
-		SubmitButtonComponent: PaypalSubmitButton,
+		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
 		getAriaLabel: localize => localize( 'PayPal' ),
 	};
