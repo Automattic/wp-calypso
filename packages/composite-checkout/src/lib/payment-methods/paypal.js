@@ -79,7 +79,7 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 
 	return {
 		id: 'paypal',
-		LabelComponent: PaypalLabel,
+		label: <PaypalLabel />,
 		SubmitButtonComponent: PaypalSubmitButton,
 		SummaryComponent: () => {
 			const localize = useLocalize();

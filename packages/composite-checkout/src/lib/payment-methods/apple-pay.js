@@ -62,7 +62,7 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 	} );
 	return {
 		id: 'apple-pay',
-		LabelComponent: ApplePayLabel,
+		label: <ApplePayLabel />,
 		SubmitButtonComponent: ApplePaySubmitButton,
 		SummaryComponent: ApplePaySummary,
 		CheckoutWrapper: StripeHookProvider,

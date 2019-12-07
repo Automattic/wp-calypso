@@ -70,7 +70,7 @@ describe( 'Checkout', () => {
 				);
 			} );
 
-			it( 'renders the payment method LabelComponent', () => {
+			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
@@ -136,7 +136,7 @@ describe( 'Checkout', () => {
 				);
 			} );
 
-			it( 'renders the payment method LabelComponent', () => {
+			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
@@ -458,7 +458,7 @@ describe( 'Checkout', () => {
 function createMockMethod() {
 	return {
 		id: 'mock',
-		LabelComponent: () => <span data-testid="mock-label">Mock Label</span>,
+		label: <span data-testid="mock-label">Mock Label</span>,
 		PaymentMethodComponent: MockPaymentForm,
 		SubmitButtonComponent: props => <button { ...props }>Pay Please</button>,
 		SummaryComponent: () => 'Mock Method',

@@ -84,7 +84,7 @@ export function CheckoutPaymentMethodsTitle() {
 
 function PaymentMethod( {
 	id,
-	LabelComponent,
+	label,
 	PaymentMethodComponent,
 	SummaryComponent,
 	checked,
@@ -104,7 +104,7 @@ function PaymentMethod( {
 			checked={ checked }
 			onChange={ onClick ? () => onClick( id ) : null }
 			ariaLabel={ ariaLabel }
-			label={ <LabelComponent /> }
+			label={ label }
 		>
 			{ PaymentMethodComponent && (
 				<PaymentMethodComponent isActive={ checked } summary={ summary } />
@@ -119,7 +119,7 @@ PaymentMethod.propTypes = {
 	checked: PropTypes.bool.isRequired,
 	ariaLabel: PropTypes.string.isRequired,
 	PaymentMethodComponent: PropTypes.elementType,
-	LabelComponent: PropTypes.elementType,
+	label: PropTypes.node,
 	SummaryComponent: PropTypes.elementType,
 	summary: PropTypes.bool,
 };

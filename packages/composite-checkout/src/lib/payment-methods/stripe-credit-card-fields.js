@@ -211,7 +211,7 @@ export function createStripeMethod( {
 
 	return {
 		id: 'stripe-card',
-		LabelComponent: CreditCardLabel,
+		label: <CreditCardLabel />,
 		PaymentMethodComponent: StripeCreditCardFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,

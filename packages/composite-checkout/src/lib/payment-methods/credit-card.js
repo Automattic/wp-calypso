@@ -18,7 +18,7 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 export function createCreditCardMethod() {
 	return {
 		id: 'card',
-		LabelComponent: CreditCardLabel,
+		label: <CreditCardLabel />,
 		PaymentMethodComponent: CreditCardFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		SummaryComponent: CreditCardSummary,
@@ -116,5 +116,5 @@ function CreditCardLogos( className ) {
 }
 
 function submitCreditCardPayment() {
-	alert( 'Thank you!' );
+	window.alert( 'Thank you!' );
 }
