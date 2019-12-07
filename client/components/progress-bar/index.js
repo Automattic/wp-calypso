@@ -1,1 +1,1 @@
-export { ProgressBar as default } from '@automattic/components';
+export { ProgressBar as default } from '@automattic/calypso-ui';

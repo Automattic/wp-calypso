@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,6 +30,7 @@ import {
 export class PaymentBox extends PureComponent {
 	constructor() {
 		super();
+		this.handlePaymentMethodChange = this.handlePaymentMethodChange.bind( this );
 	}
 
 	componentDidUpdate() {
@@ -41,14 +44,14 @@ export class PaymentBox extends PureComponent {
 		}
 	}
 
-	handlePaymentMethodChange = paymentMethod => {
+	handlePaymentMethodChange( paymentMethod ) {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
 			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
 			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
-	};
+	}
 
 	getPaymentProviderLabel( method ) {
 		let labelLogo = (
@@ -117,10 +120,10 @@ export class PaymentBox extends PureComponent {
 		return (
 			<NavItem
 				key={ method }
+				className={ method }
 				href=""
 				onClick={ this.handlePaymentMethodChange( method ) }
 				selected={ this.props.currentPaymentMethod === method }
-				onKeyPress={ event => this.choosePaymentMethodWithKeyboard( event, method ) }
 			>
 				{ this.getPaymentProviderLabel( method ) }
 			</NavItem>
@@ -136,28 +139,7 @@ export class PaymentBox extends PureComponent {
 		} );
 	}
 
-	renderPaymentMethod = ( paymentMethods, titleText ) => {
-		if ( paymentMethods ) {
-			return (
-				<SectionNav selectedText={ titleText }>
-					<NavTabs>{ paymentMethods }</NavTabs>
-				</SectionNav>
-			);
-		}
-
-		return null;
-	};
-
-	choosePaymentMethodWithKeyboard = ( event, method ) => {
-		const code = event.keyCode || event.which;
-		if ( code === 13 ) {
-			//13 is the enter keycode
-			this.props.onSelectPaymentMethod( method );
-		}
-	};
-
 	render() {
-		const paymentMethods = this.getPaymentMethods();
 		const cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
@@ -169,11 +151,17 @@ export class PaymentBox extends PureComponent {
 			  } )
 			: this.props.translate( 'Loading…' );
 
+		const paymentMethods = this.getPaymentMethods();
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
 
-				{ this.renderPaymentMethod( paymentMethods, titleText ) }
+				{ paymentMethods && (
+					<SectionNav selectedText={ titleText }>
+						<NavTabs>{ paymentMethods }</NavTabs>
+					</SectionNav>
+				) }
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">

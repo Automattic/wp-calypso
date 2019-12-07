@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -19,10 +21,8 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
-	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getDisplayName,
-	getPartnerName,
+	getName,
 	getRenewalPrice,
 	handleRenewNowClick,
 	hasPaymentMethod,
@@ -30,13 +30,13 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	isPartnerPurchase,
 	isRefundable,
 	isRenewable,
 	isRenewal,
 	isRenewing,
 	isSubscription,
 	purchaseType,
+	cardProcessorSupportsUpdates,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -54,18 +54,13 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
-	isJetpackBackup,
-	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
-import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
-import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -144,7 +139,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
+		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -166,10 +161,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) ) {
-			return null;
-		}
-
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ this.handleRenew }>
 				{ translate( 'Renew Now' ) }
@@ -181,10 +172,6 @@ class ManagePurchase extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( ! this.props.site ) {
-			return null;
-		}
-
-		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -213,10 +200,6 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
-		if ( isPartnerPurchase( this.props.purchase ) ) {
-			return null;
-		}
-
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
@@ -231,7 +214,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -313,14 +296,6 @@ class ManagePurchase extends Component {
 			);
 		}
 
-		if ( isJetpackBackup( purchase ) ) {
-			return (
-				<div className="manage-purchase__plan-icon">
-					<Gridicon icon="cloud-upload" size={ 48 } />
-				</div>
-			);
-		}
-
 		return null;
 	}
 
@@ -358,9 +333,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && (
-						<ProductLink purchase={ purchase } selectedSite={ site } />
-					) }
+					<ProductLink purchase={ purchase } selectedSite={ site } />
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
@@ -400,13 +373,12 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, translate } = this.props;
+		const { purchase, siteId } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
 			'is-premium': isPremium( purchase ),
 			'is-business': isBusiness( purchase ),
-			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
@@ -417,31 +389,21 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							{ isPartnerPurchase( purchase ) ? (
-								<div className="manage-purchase__contact-partner">
-									{ translate( 'Please contact your site host %(partnerName)s for details', {
-										args: {
-											partnerName: getPartnerName( purchase ),
-										},
-									} ) }
-								</div>
-							) : (
-								<PlanPrice
-									rawPrice={ getRenewalPrice( purchase ) }
-									currencyCode={ purchase.currencyCode }
-									taxText={ purchase.taxText }
-									isOnSale={ !! purchase.saleAmount }
-								/>
-							) }
+							<PlanPrice
+								rawPrice={ getRenewalPrice( purchase ) }
+								currencyCode={ purchase.currencyCode }
+								taxText={ purchase.taxText }
+								isOnSale={ !! purchase.saleAmount }
+							/>
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
-					{ ! isPartnerPurchase( purchase ) && (
-						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
-					) }
+
+					<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
+
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
@@ -486,13 +448,6 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
-					{ config.isEnabled( 'plans/jetpack-backup' ) && (
-						<ProductPlanOverlapNotices
-							plans={ JETPACK_PLANS }
-							products={ JETPACK_BACKUP_PRODUCTS }
-							siteId={ siteId }
-						/>
-					) }
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</Fragment>

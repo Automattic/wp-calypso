@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,4 +46,7 @@ export class CartButtons extends React.Component {
 	};
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( CartButtons ) );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( CartButtons ) );

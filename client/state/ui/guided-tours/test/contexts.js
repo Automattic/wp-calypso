@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -6,7 +7,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies

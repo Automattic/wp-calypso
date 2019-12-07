@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -144,4 +145,7 @@ const mapDispatchToProps = {
 	track: recordTracksEvent,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistBanner ) );

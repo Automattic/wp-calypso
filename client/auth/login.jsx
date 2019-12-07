@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -73,9 +75,27 @@ export class Auth extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
+	hasLoginDetails() {
+		if ( this.state.login === '' || this.state.password === '' ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	canSubmitForm() {
 		// No submission until the ajax has finished
-		return ! this.state.inProgress;
+		if ( this.state.inProgress ) {
+			return false;
+		}
+
+		// If we have 2fa set then don't allow submission until a code is entered
+		if ( this.state.requires2fa ) {
+			return parseInt( this.state.auth_code, 10 ) > 0;
+		}
+
+		// Don't allow submission until username+password is entered
+		return this.hasLoginDetails();
 	}
 
 	render() {
@@ -168,6 +188,9 @@ export class Auth extends Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Auth ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( Auth ) );

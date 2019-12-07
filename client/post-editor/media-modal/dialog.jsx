@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 
 /**
  * Style dependencies

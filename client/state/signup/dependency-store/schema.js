@@ -1,3 +1,4 @@
+/** @format */
 export const dependencyStoreSchema = {
 	type: 'object',
 	properties: {

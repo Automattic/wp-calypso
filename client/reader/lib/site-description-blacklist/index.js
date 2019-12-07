@@ -1,3 +1,4 @@
+/** @format */
 const siteDescriptionBlacklist = new Set( [
 	'Just another WordPress.com site',
 	'Just another WordPress site',

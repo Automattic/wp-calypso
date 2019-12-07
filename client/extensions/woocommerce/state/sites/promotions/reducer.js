@@ -1,3 +1,5 @@
+/** @format */
+
 // TODO: whenever it's possible, change to rely on the stored data under
 // products and coupons instead of accumulating duplicate state here.
 // It would be best to do this after further updates to the data layer.
@@ -10,7 +12,7 @@ import { fill, find, findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_COUPON_DELETED,
 	WOOCOMMERCE_COUPON_UPDATED,
@@ -28,23 +30,13 @@ const initialState = {
 	promotions: null,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_COUPON_DELETED:
-			return couponDeleted( state, action );
-		case WOOCOMMERCE_COUPON_UPDATED:
-			return couponUpdated( state, action );
-		case WOOCOMMERCE_COUPONS_UPDATED:
-			return couponsUpdated( state, action );
-		case WOOCOMMERCE_PRODUCT_UPDATED:
-			return productUpdated( state, action );
-		case WOOCOMMERCE_PRODUCT_VARIATION_UPDATED:
-			return productVariationUpdated( state, action );
-		case WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS:
-			return productsRequestSuccess( state, action );
-	}
-
-	return state;
+export default createReducer( initialState, {
+	[ WOOCOMMERCE_COUPON_DELETED ]: couponDeleted,
+	[ WOOCOMMERCE_COUPON_UPDATED ]: couponUpdated,
+	[ WOOCOMMERCE_COUPONS_UPDATED ]: couponsUpdated,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdated,
+	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
 } );
 
 function couponDeleted( state, action ) {

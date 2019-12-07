@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -27,7 +29,7 @@ class QueryShippingZones extends Component {
 		this.props.actions.fetchShippingClasses( siteId );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { siteId, loaded } = this.props;
 
 		if ( siteId && ! loaded ) {
@@ -35,7 +37,7 @@ class QueryShippingZones extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( { siteId, loaded } ) {
+	componentWillReceiveProps( { siteId, loaded } ) {
 		//site ID changed, fetch new settings
 		if ( siteId !== this.props.siteId && ! loaded ) {
 			this.fetch( siteId );

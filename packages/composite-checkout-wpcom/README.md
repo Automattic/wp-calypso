@@ -1,4 +1,0 @@
-composite-checkout-wpcom
-========================
-
-

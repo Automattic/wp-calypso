@@ -3,6 +3,7 @@
  * from the API when checking sync status for a site.
  *
  *
+ * @format
  * @return {Array} Array of strings that are expected keys in API response.
  */
 

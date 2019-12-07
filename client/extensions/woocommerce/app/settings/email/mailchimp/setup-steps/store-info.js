@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { languages } from 'languages';
+import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
@@ -85,7 +87,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 				<FormLabel>
 					{ translate( 'Locale' ) }
 					<LanguagePicker
-						languages={ languages }
+						languages={ config( 'languages' ) }
 						valueKey="langSlug"
 						value={ storeData.store_locale }
 						onChange={ selectLanguage }

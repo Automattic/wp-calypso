@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -54,11 +56,11 @@ export class TaxonomyManagerList extends Component {
 		requestedPages: [ 1 ],
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.termIds = map( this.props.terms, 'ID' );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		if ( newProps.terms !== this.props.terms ) {
 			this.termIds = map( newProps.terms, 'ID' );
 		}

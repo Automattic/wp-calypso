@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -148,11 +149,11 @@ class CrossPost extends PureComponent {
 					{ index + 2 < array.length && <span>, </span> }
 					{ index + 2 === array.length && (
 						<span>
-							{ ' ' }
+							{' '}
 							{ translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
-							} ) }{ ' ' }
+							} ) }{' '}
 						</span>
 					) }
 				</span>

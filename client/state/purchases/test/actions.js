@@ -1,5 +1,6 @@
 /**
  * @jest-environment jsdom
+ * @format
  */
 /**
  * External dependencies
@@ -102,10 +103,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/complete actions', () => {
-			return removePurchase(
-				purchaseId,
-				userId
-			)( spy ).then( () => {
+			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,
@@ -127,10 +125,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/remove actions', () => {
-			return removePurchase(
-				purchaseId,
-				userId
-			)( spy ).then( () => {
+			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_FAILED,
 					error: errorMessage,

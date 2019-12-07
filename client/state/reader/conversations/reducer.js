@@ -13,16 +13,17 @@ import {
 	READER_POSTS_RECEIVE,
 } from 'state/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
 /**
  * Tracks all known conversation following statuses.
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_CONVERSATION_FOLLOW: {
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ READER_CONVERSATION_FOLLOW ]: ( state, action ) => {
 			const newState = assign( {}, state, {
 				[ key(
 					action.payload.siteId,
@@ -30,14 +31,14 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				) ]: CONVERSATION_FOLLOW_STATUS.following,
 			} );
 			return newState;
-		}
-		case READER_CONVERSATION_MUTE: {
+		},
+		[ READER_CONVERSATION_MUTE ]: ( state, action ) => {
 			const newState = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId ) ]: CONVERSATION_FOLLOW_STATUS.muting,
 			} );
 			return newState;
-		}
-		case READER_CONVERSATION_UPDATE_FOLLOW_STATUS: {
+		},
+		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
 			const stateKey = key( action.payload.siteId, action.payload.postId );
 
 			// If followStatus is null, remove the key from the state map entirely
@@ -50,8 +51,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			} );
 
 			return newState;
-		}
-		case READER_POSTS_RECEIVE: {
+		},
+		[ READER_POSTS_RECEIVE ]: ( state, action ) => {
 			if ( ! action.posts ) {
 				return state;
 			}
@@ -69,11 +70,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			}
 
 			return { ...state, ...newState };
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	itemsSchema
+);
 
 export default combineReducers( {
 	items,

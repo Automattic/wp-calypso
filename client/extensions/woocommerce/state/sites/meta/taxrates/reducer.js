@@ -1,24 +1,25 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_TAXRATES_REQUEST,
 	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_TAXRATES_REQUEST: {
+export default createReducer(
+	{},
+	{
+		[ WOOCOMMERCE_TAXRATES_REQUEST ]: () => {
 			return LOADING;
-		}
-		case WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS: {
-			const { data } = action;
-			return data;
-		}
-	}
+		},
 
-	return state;
-} );
+		[ WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return data;
+		},
+	}
+);

@@ -4,6 +4,7 @@
  *
  *
  *
+ * @format
  * @see https:
  * @param {String}   content TinyMCE Editor content
  * @return {String}           Content with strings removed from empty paragraphs

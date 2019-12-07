@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -46,10 +48,7 @@ describe( 'getTimezones()', () => {
 
 			[
 				'America',
-				[
-					[ 'America/Blanc-Sablon', 'Blanc-Sablon' ],
-					[ 'America/Boa_Vista', 'Boa Vista' ],
-				],
+				[ [ 'America/Blanc-Sablon', 'Blanc-Sablon' ], [ 'America/Boa_Vista', 'Boa Vista' ] ],
 			],
 
 			[ 'Indian', [ [ 'Indian/Comoro', 'Comoro' ] ] ],

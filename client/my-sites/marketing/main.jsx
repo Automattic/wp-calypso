@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,7 +24,6 @@ import NavTabs from 'components/section-nav/tabs';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
@@ -86,14 +87,9 @@ export const Sharing = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
+			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
-			<FormattedHeader
-				className="marketing__page-heading"
-				headerText={ translate( 'Marketing and Integrations' ) }
-				align="left"
-			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
@@ -140,7 +136,7 @@ export default connect( state => {
 
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-		showConnections: !! siteId,
+		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
 		showTraffic: canManageOptions && !! siteId,
 		isVip: isVipSite( state, siteId ),
 		siteId,

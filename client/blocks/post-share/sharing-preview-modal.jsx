@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import SharingPreviewPane from 'blocks/sharing-preview-pane';
 
 const SharingPreviewModal = props => {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -51,10 +53,6 @@ function getSignupDestination( dependencies ) {
 	return `/checklist/${ dependencies.siteSlug }`;
 }
 
-function getLaunchDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=launched`;
-}
-
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -63,18 +61,12 @@ function getChecklistThemeDestination( dependencies ) {
 	return `/checklist/${ dependencies.siteSlug }?d=theme`;
 }
 
-function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
-}
-
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
-	getLaunchDestination,
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
-	getEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -110,8 +102,13 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * @param {string} flowName The name of the flow to return
-	 * @returns {object} A flow object
+	 * `currentStepName` is the current step in the signup flow. It is used
+	 * to determine if any AB variations should be assigned after it is completed.
+	 * Example use case: To determine if a new signup step should be part of the flow or not.
+	 *
+	 * @param {String} flowName The name of the flow to return
+	 * @param {String} currentStepName The current step. See description above
+	 * @returns {Object} A flow object
 	 */
 	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -147,7 +144,7 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {string} step Name of the step to be excluded.
+	 * @param {String} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.push( step );

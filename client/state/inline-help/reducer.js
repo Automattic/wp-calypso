@@ -1,7 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -22,69 +23,44 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 
-export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
-	switch ( action.type ) {
-		case INLINE_HELP_POPOVER_SHOW:
-			return { ...state, isVisible: true };
-		case INLINE_HELP_POPOVER_HIDE:
-			return { ...state, isVisible: false };
+export const popover = createReducer(
+	{
+		isVisible: false,
+	},
+	{
+		[ INLINE_HELP_POPOVER_SHOW ]: state => ( { ...state, isVisible: true } ),
+		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
 	}
+);
 
-	return state;
-} );
-
-export const checklistPrompt = (
-	state = {
+export const checklistPrompt = createReducer(
+	{
 		isVisible: false,
 		taskId: null,
 		step: 0,
 	},
-	action
-) => {
-	switch ( action.type ) {
-		case INLINE_HELP_CHECKLIST_PROMPT_SHOW:
-			return { ...state, isVisible: true };
-		case INLINE_HELP_CHECKLIST_PROMPT_HIDE:
-			return {
-				...state,
-				isVisible: false,
-				taskId: null,
-				step: 0,
-			};
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID: {
-			const { taskId } = action;
-			return { ...state, taskId };
-		}
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_STEP: {
-			const { step } = action;
-			return { ...state, step };
-		}
-		case SERIALIZE:
-			return state;
-	}
-
-	return state;
-};
-
-checklistPrompt.hasCustomPersistence = true;
-
-export const onboardingWelcomePrompt = withoutPersistence(
-	(
-		state = {
+	{
+		[ INLINE_HELP_CHECKLIST_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
+		[ INLINE_HELP_CHECKLIST_PROMPT_HIDE ]: state => ( {
+			...state,
 			isVisible: false,
-		},
-		action
-	) => {
-		switch ( action.type ) {
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW:
-				return { ...state, isVisible: true };
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE:
-				return { ...state, isVisible: false };
-			case INLINE_HELP_POPOVER_HIDE:
-				return { ...state, isVisible: false };
-		}
+			taskId: null,
+			step: 0,
+		} ),
+		[ INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID ]: ( state, { taskId } ) => ( { ...state, taskId } ),
+		[ INLINE_HELP_CHECKLIST_PROMPT_SET_STEP ]: ( state, { step } ) => ( { ...state, step } ),
+		[ SERIALIZE ]: state => state,
+	}
+);
 
-		return state;
+export const onboardingWelcomePrompt = createReducer(
+	{
+		isVisible: false,
+	},
+	{
+		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
+		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
+		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
 	}
 );
 
@@ -106,92 +82,75 @@ export function requesting( state = {}, action ) {
 	return state;
 }
 
-export const search = withoutPersistence(
-	(
-		state = {
-			searchQuery: '',
-			items: {},
+export const search = createReducer(
+	{
+		searchQuery: '',
+		items: {},
+		selectedResult: -1,
+		shouldOpenSelectedResult: false,
+	},
+	{
+		[ INLINE_HELP_SEARCH_REQUEST ]: ( state, action ) => ( {
+			...state,
+			searchQuery: action.searchQuery,
+		} ),
+		[ INLINE_HELP_SEARCH_REQUEST_SUCCESS ]: ( state, action ) => ( {
+			...state,
 			selectedResult: -1,
-			shouldOpenSelectedResult: false,
+			items: {
+				...state.items,
+				[ action.searchQuery ]: action.searchResults,
+			},
+		} ),
+		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => ( {
+			...state,
+			selectedResult: action.resultIndex,
+		} ),
+		[ INLINE_HELP_SELECT_NEXT_RESULT ]: state => {
+			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+				return {
+					...state,
+					selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
+				};
+			}
+
+			return {
+				...state,
+				selectedResult: -1,
+			};
 		},
-		action
-	) => {
-		switch ( action.type ) {
-			case INLINE_HELP_SEARCH_REQUEST:
+		[ INLINE_HELP_SELECT_PREVIOUS_RESULT ]: state => {
+			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+				const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
 				return {
 					...state,
-					searchQuery: action.searchQuery,
-				};
-			case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
-				return {
-					...state,
-					selectedResult: -1,
-					items: {
-						...state.items,
-						[ action.searchQuery ]: action.searchResults,
-					},
-				};
-			case INLINE_HELP_SELECT_RESULT:
-				return {
-					...state,
-					selectedResult: action.resultIndex,
-				};
-			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					return {
-						...state,
-						selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
-					};
-				}
-
-				return {
-					...state,
-					selectedResult: -1,
+					selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
 				};
 			}
-			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
-					return {
-						...state,
-						selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
-					};
-				}
 
-				return {
-					...state,
-					selectedResult: -1,
-				};
-			}
-		}
-
-		return state;
+			return {
+				...state,
+				selectedResult: -1,
+			};
+		},
 	}
 );
 
 const searchResults = combineReducers( { requesting, search } );
 
-export const contactForm = withoutPersistence(
-	(
-		state = {
+export const contactForm = createReducer(
+	{
+		isShowingQandASuggestions: false,
+	},
+	{
+		[ INLINE_HELP_CONTACT_FORM_RESET ]: state => ( {
+			...state,
 			isShowingQandASuggestions: false,
-		},
-		action
-	) => {
-		switch ( action.type ) {
-			case INLINE_HELP_CONTACT_FORM_RESET:
-				return {
-					...state,
-					isShowingQandASuggestions: false,
-				};
-			case INLINE_HELP_CONTACT_FORM_SHOW_QANDA:
-				return {
-					...state,
-					isShowingQandASuggestions: true,
-				};
-		}
-
-		return state;
+		} ),
+		[ INLINE_HELP_CONTACT_FORM_SHOW_QANDA ]: state => ( {
+			...state,
+			isShowingQandASuggestions: true,
+		} ),
 	}
 );
 

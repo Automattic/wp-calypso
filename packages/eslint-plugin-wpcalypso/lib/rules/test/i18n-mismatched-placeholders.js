@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Ensure placeholder counts match between singular and plural strings
  * @author Automattic

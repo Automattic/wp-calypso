@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -94,13 +96,16 @@ FreeShippingMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect( null, ( dispatch, ownProps ) => ( {
-	actions: bindActionCreatorsWithSiteId(
-		{
-			setFreeShippingCondition,
-			setFreeShippingMinCost,
-		},
-		dispatch,
-		ownProps.siteId
-	),
-} ) )( localize( FreeShippingMethod ) );
+export default connect(
+	null,
+	( dispatch, ownProps ) => ( {
+		actions: bindActionCreatorsWithSiteId(
+			{
+				setFreeShippingCondition,
+				setFreeShippingMinCost,
+			},
+			dispatch,
+			ownProps.siteId
+		),
+	} )
+)( localize( FreeShippingMethod ) );

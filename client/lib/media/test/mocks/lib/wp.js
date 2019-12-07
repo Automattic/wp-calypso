@@ -1,3 +1,4 @@
+/** @format */
 const stubs = {
 	mediaAdd: () => {},
 	mediaAddExternal: () => {},

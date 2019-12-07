@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -57,4 +59,7 @@ class ChecklistShowShare extends PureComponent {
 		);
 	}
 }
-export default connect( null, { recordTracksEvent } )( ChecklistShowShare );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( ChecklistShowShare );

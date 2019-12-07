@@ -1,20 +1,20 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { createReducer, combineReducers } from 'state/utils';
 
-const summary = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_EARNINGS_RECEIVE:
-			return {
-				...state,
-				[ action.siteId ]: action.earnings,
-			};
+const summary = createReducer(
+	{},
+	{
+		[ MEMBERSHIPS_EARNINGS_RECEIVE ]: ( state, data ) => ( {
+			...state,
+			[ data.siteId ]: data.earnings,
+		} ),
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	summary,

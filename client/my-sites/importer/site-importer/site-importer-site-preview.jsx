@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +13,7 @@ import classNames from 'classnames';
  */
 import Spinner from 'components/spinner';
 import ExternalLink from 'components/external-link';
+import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { loadmShotsPreview } from 'lib/mshots';
@@ -109,10 +111,9 @@ class SiteImporterSitePreview extends React.Component {
 								</div>
 								<div className={ containerClass }>
 									<div className="site-importer__site-preview-column-container">
-										<img
+										<MiniSitePreview
 											className="site-importer__site-preview"
-											src={ this.state.sitePreviewImage }
-											alt={ this.props.translate( 'Screenshot of your site.' ) }
+											imageSrc={ this.state.sitePreviewImage }
 										/>
 										<ImportableContent importData={ this.props.importData } />
 									</div>
@@ -160,4 +161,7 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( SiteImporterSitePreview ) );

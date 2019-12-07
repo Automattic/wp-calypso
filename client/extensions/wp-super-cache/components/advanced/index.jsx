@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -58,4 +60,7 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'is_cache_enabled', 'is_super_cache_enabled' ] );
 };
 
-export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( AdvancedTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( AdvancedTab );

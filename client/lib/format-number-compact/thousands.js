@@ -1,3 +1,4 @@
+/** @format */
 export const THOUSANDS = {
 	en: {
 		symbol: 'K',

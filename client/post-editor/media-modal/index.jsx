@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -116,7 +118,7 @@ export class EditorMediaModal extends Component {
 		this.state = this.getDefaultState( props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
@@ -141,7 +143,7 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { view, mediaLibrarySelectedItems, site, single } = this.props;
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );

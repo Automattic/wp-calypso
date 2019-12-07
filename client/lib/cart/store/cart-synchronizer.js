@@ -1,9 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { assign, flowRight, get } from 'lodash';
+import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
+import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
 import debugFactory from 'debug';
 
 /**
@@ -31,7 +34,7 @@ function preprocessCartFromServer( cart ) {
 // NOTE: This object has underscored keys to match the rest of the attributes
 //   in the `CartValue object`.
 function createClientMetadata() {
-	return { last_server_response_date: new Date().toISOString() };
+	return { last_server_response_date: i18n.moment().toISOString() };
 }
 
 // FIXME: Temporary fix to cast string product IDs to numbers. There is a bug
@@ -70,16 +73,23 @@ function CartSynchronizer( cartKey, wpcom ) {
 
 Emitter( CartSynchronizer.prototype );
 
-CartSynchronizer.prototype.handleDispatch = function( { action } ) {
-	switch ( action.type ) {
-		case TRANSACTION_STEP_SET:
-			if ( action.step.first && ! action.step.last ) {
-				this.pause();
-			}
+CartSynchronizer.prototype.handleDispatch = function( payload ) {
+	const { action } = payload;
 
-			if ( action.step.last && ! action.step.first ) {
-				this.resume();
-			}
+	if ( action.type !== TRANSACTION_STEP_SET ) {
+		return;
+	}
+
+	const { step } = action;
+
+	if ( step.first && step.last ) {
+		return;
+	}
+
+	if ( step.first ) {
+		this.pause();
+	} else if ( step.last ) {
+		this.resume();
 	}
 };
 
@@ -118,7 +128,10 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
+		this._queuedChanges = flowRight(
+			changeFunction,
+			this._queuedChanges
+		);
 	} else {
 		this._queuedChanges = changeFunction;
 	}

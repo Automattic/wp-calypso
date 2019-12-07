@@ -7,10 +7,9 @@ import {
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import actionLog from './action-log/reducer';
 import billingTransactions from './billing-transactions/reducer';
-import checkout from './checkout/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
@@ -47,13 +46,8 @@ export function selectedSiteId( state = null, action ) {
 	return state;
 }
 
-export const siteSelectionInitialized = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case SELECTED_SITE_SET:
-			return true;
-	}
-
-	return state;
+export const siteSelectionInitialized = createReducer( false, {
+	[ SELECTED_SITE_SET ]: () => true,
 } );
 
 export function hasSidebar( state = true, action ) {
@@ -72,15 +66,9 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export const isPreviewShowing = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case PREVIEW_IS_SHOWING: {
-			const { isShowing } = action;
-			return isShowing !== undefined ? isShowing : state;
-		}
-	}
-
-	return state;
+export const isPreviewShowing = createReducer( false, {
+	[ PREVIEW_IS_SHOWING ]: ( state, { isShowing } ) =>
+		isShowing !== undefined ? isShowing : state,
 } );
 
 /**
@@ -99,7 +87,6 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 const reducer = combineReducers( {
 	actionLog,
 	billingTransactions,
-	checkout,
 	comments,
 	dropZone,
 	editor,

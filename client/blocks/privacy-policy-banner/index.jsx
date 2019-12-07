@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -182,7 +183,10 @@ const mapDispatchToProps = {
 };
 
 export default compose(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
 	withLocalizedMoment,
 	localize
 )( PrivacyPolicyBanner );

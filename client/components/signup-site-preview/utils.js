@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -100,13 +102,15 @@ export function getIframeSource(
 					pointer-events: none;
 				}
 
-				/*
-					Some of the themes (business sophisticated) use js to dynamically set the height of the banner
-					Let's set a fixed max-height.
-				*/
-				.entry .entry-content .wp-block-cover-image,
-				.entry .entry-content .wp-block-cover {
-					height: 480px !important;
+				@media only screen and (min-width: 768px) {
+					/*
+						Some of the themes (business sophisticated) use js to dynamically set the height of the banner
+						Let's set a fixed max-height.
+					*/
+					.entry .entry-content .wp-block-cover-image,
+					.entry .entry-content .wp-block-cover {
+						min-height: 500px !important;
+					}
 				}
 
 				/*

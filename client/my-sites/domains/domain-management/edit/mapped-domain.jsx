@@ -1,32 +1,32 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
-import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import {
-	domainManagementDns,
-	domainManagementDomainConnectMapping,
-	domainTransferIn,
-} from 'my-sites/domains/paths';
+import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
-export class MappedDomain extends React.Component {
+// eslint-disable-next-line react/prefer-es6-class
+const MappedDomain = createReactClass( {
+	displayName: 'MappedDomain',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate, moment } = this.props;
+		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -36,12 +36,13 @@ export class MappedDomain extends React.Component {
 							'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
 					} ) }
 				>
-					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
+					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
 		}
 
-		const expirationMessage = ( domain.expiry && moment( domain.expiry ).format( 'LL' ) ) || (
+		const expirationMessage = ( domain.expirationMoment &&
+			domain.expirationMoment.format( 'LL' ) ) || (
 			<em>
 				{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }
 			</em>
@@ -57,11 +58,11 @@ export class MappedDomain extends React.Component {
 				{ expirationMessage }
 			</Property>
 		);
-	}
+	},
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
+	handlePaymentSettingsClick() {
+		this.recordEvent( 'paymentSettingsClick', this.props.domain );
+	},
 
 	domainWarnings() {
 		return (
@@ -72,7 +73,7 @@ export class MappedDomain extends React.Component {
 				ruleWhiteList={ [ 'wrongNSMappedDomains' ] }
 			/>
 		);
-	}
+	},
 
 	render() {
 		return (
@@ -82,7 +83,7 @@ export class MappedDomain extends React.Component {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	}
+	},
 
 	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
@@ -108,7 +109,7 @@ export class MappedDomain extends React.Component {
 				</Card>
 			</div>
 		);
-	}
+	},
 
 	getVerticalNav() {
 		return (
@@ -116,16 +117,15 @@ export class MappedDomain extends React.Component {
 				{ this.emailNavItem() }
 				{ this.dnsRecordsNavItem() }
 				{ this.domainConnectMappingNavItem() }
-				{ this.transferMappedDomainNavItem() }
 			</VerticalNav>
 		);
-	}
+	},
 
 	emailNavItem() {
 		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	}
+	},
 
 	dnsRecordsNavItem() {
 		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
@@ -133,7 +133,7 @@ export class MappedDomain extends React.Component {
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
 		);
-	}
+	},
 
 	domainConnectMappingNavItem() {
 		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
@@ -151,25 +151,8 @@ export class MappedDomain extends React.Component {
 				{ this.props.translate( 'Connect Your Domain' ) }
 			</VerticalNavItem>
 		);
-	}
+	},
+} );
 
-	transferMappedDomainNavItem() {
-		const { domain, selectedSite, translate } = this.props;
-
-		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
-			return null;
-		}
-
-		const path = domainTransferIn( selectedSite.slug, domain.name, true );
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ translate( 'Transfer Domain to WordPress.com' ) }
-			</VerticalNavItem>
-		);
-	}
-}
-
-export default connect( null, { recordPaymentSettingsClick } )(
-	localize( withLocalizedMoment( MappedDomain ) )
-);
+export { MappedDomain };
+export default localize( MappedDomain );

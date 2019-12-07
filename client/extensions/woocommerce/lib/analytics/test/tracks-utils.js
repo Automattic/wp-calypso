@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,11 +42,10 @@ describe( 'recordTrack', () => {
 			},
 		};
 
-		recordTrack(
-			tracksSpy,
-			noop,
-			tracksStore
-		)( 'calypso_woocommerce_tracks_utils_test', eventProps );
+		recordTrack( tracksSpy, noop, tracksStore )(
+			'calypso_woocommerce_tracks_utils_test',
+			eventProps
+		);
 
 		expect( tracksSpy.recordEvent ).to.have.been.calledWith(
 			'calypso_woocommerce_tracks_utils_test',
@@ -63,11 +64,10 @@ describe( 'recordTrack', () => {
 			},
 		};
 
-		recordTrack(
-			{ recordEvent: noop },
-			debugSpy,
-			tracksStore
-		)( 'calypso_woocommerce_tracks_utils_test', eventProps );
+		recordTrack( { recordEvent: noop }, debugSpy, tracksStore )(
+			'calypso_woocommerce_tracks_utils_test',
+			eventProps
+		);
 
 		expect( debugSpy ).to.have.been.calledWith(
 			"track 'calypso_woocommerce_tracks_utils_test': ",
@@ -101,11 +101,7 @@ describe( 'recordTrack', () => {
 			},
 		};
 
-		recordTrack(
-			tracksSpy,
-			debugSpy,
-			tracksStore
-		)( 'calypso_woocommerce_tracks_utils_test', {
+		recordTrack( tracksSpy, debugSpy, tracksStore )( 'calypso_woocommerce_tracks_utils_test', {
 			a: 1,
 		} );
 

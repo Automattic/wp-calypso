@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic

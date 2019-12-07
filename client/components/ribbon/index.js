@@ -1,1 +1,1 @@
-export { Ribbon as default } from '@automattic/components';
+export { Ribbon as default } from '@automattic/calypso-ui';

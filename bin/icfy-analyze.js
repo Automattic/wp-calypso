@@ -1,3 +1,5 @@
+/** @format */
+
 const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/lib/analyzer' );
 const { existsSync, statSync, readFileSync, writeFileSync } = require( 'fs' );
 const { createHash } = require( 'crypto' );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,11 +26,11 @@ class QueryUsersSuggestions extends Component {
 		isRequesting: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}

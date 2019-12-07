@@ -74,18 +74,6 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 };
 
 /**
- * Track update and publish action for Global Styles plugin.
- *
- * @param {string} eventName Name of the track event.
- * @return {function}
- */
-const trackGlobalStyles = eventName => options => {
-	tracksRecordEvent( eventName, {
-		...options,
-	} );
-};
-
-/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -93,11 +81,6 @@ const trackGlobalStyles = eventName => options => {
  * @type {object}
  */
 const REDUX_TRACKING = {
-	'jetpack/global-styles': {
-		resetLocalChanges: 'wpcom_global_styles_reset',
-		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
-		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
-	},
 	'core/editor': {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',

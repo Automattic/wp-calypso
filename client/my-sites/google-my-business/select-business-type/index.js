@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -50,7 +52,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/marketing/tools/${ this.props.siteSlug }` );
+		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
 	handleConnect = keyringConnection => {
@@ -118,7 +120,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{ ' ' }
+					} ) }{' '}
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -165,7 +167,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker

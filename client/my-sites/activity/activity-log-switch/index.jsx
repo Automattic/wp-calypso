@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,7 +37,7 @@ class ActivityLogSwitch extends Component {
 	};
 
 	/**
-	 * Renders the main button whose functionality and label varies depending on why Jetpack Backup is unavailable.
+	 * Renders the main button whose functionality and label varies depending on why Rewind is unavailable.
 	 *
 	 * @returns {object} Primary button.
 	 */
@@ -120,15 +122,15 @@ class ActivityLogSwitch extends Component {
 				</h3>
 				<Card className="activity-log-switch__feature">
 					<h4 className="activity-log-switch__feature-heading">
-						{ translate( 'Restore to any event' ) }
+						{ translate( 'Rewind to any event' ) }
 					</h4>
 					<div className="activity-log-switch__feature-content">
 						<p>
 							{ translate(
 								'As soon as you switch over, we will start tracking every change made ' +
-									'to your site and allow you to restore to any past event. ' +
+									'to your site and allow you to rewind to any past event. ' +
 									'If you lose a file, get hacked, or just liked your site better before some changes, ' +
-									'you can restore with a click of a button.'
+									'you can rewind with a click of a button.'
 							) }
 						</p>
 					</div>

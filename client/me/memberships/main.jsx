@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,17 +20,11 @@ import QueryMembershipsSubscriptions from 'components/data/query-memberships-sub
 import SectionHeader from 'components/section-header';
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
  */
 import './main.scss';
-
-/**
- * Image dependencies
- */
-import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
@@ -82,7 +77,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
 					title={ translate( 'No Recurring Payments found.' ) }
-					illustration={ noMembershipsImage }
+					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
 				/>
 			</CompactCard>
 		);
@@ -102,4 +97,4 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 
 export default connect( state => ( {
 	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
-} ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );
+} ) )( localize( MembershipsHistory ) );

@@ -63,6 +63,7 @@ export default function() {
 	if ( isLoggedOut ) {
 		page(
 			'/jetpack/connect/authorize/:locale?',
+			controller.maybeOnboard,
 			controller.setMasterbar,
 			controller.signupForm,
 			makeLayout,
@@ -71,6 +72,7 @@ export default function() {
 	} else {
 		page(
 			'/jetpack/connect/authorize/:locale?',
+			controller.maybeOnboard,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.setMasterbar,
 			controller.authorizeForm,

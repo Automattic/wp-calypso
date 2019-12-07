@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,6 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 /**
  * Image dependencies
  */
-import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
 import advertisingRemovedImage from 'assets/images/upgrades/advertising-removed.svg';
 import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
@@ -67,16 +67,6 @@ const PremiumPlanDetails = ( {
 								'With your plan, all WordPress.com advertising has been removed from your site.'
 						  )
 				}
-			/>
-
-			<PurchaseDetail
-				icon={ <img alt="" src={ analyticsImage } /> }
-				title={ translate( 'Connect to Google Analytics' ) }
-				description={ translate(
-					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
-				) }
-				buttonText={ translate( 'Connect Google Analytics' ) }
-				href={ '/settings/analytics/' + selectedSite.slug }
 			/>
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />

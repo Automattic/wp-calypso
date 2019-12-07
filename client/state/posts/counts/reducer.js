@@ -17,7 +17,7 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -133,20 +133,21 @@ export const counts = ( () => {
 		} );
 	}
 
-	return withSchemaValidation( countsSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
-			case POST_COUNTS_RESET_INTERNAL_STATE: {
+	return createReducerWithValidation(
+		{},
+		{
+			[ POST_COUNTS_RESET_INTERNAL_STATE ]: state => {
 				currentUserId = undefined;
 				postStatuses = {};
 
 				return state;
-			}
-			case CURRENT_USER_RECEIVE: {
+			},
+			[ CURRENT_USER_RECEIVE ]: ( state, action ) => {
 				currentUserId = action.user.ID;
 
 				return state;
-			}
-			case POSTS_RECEIVE: {
+			},
+			[ POSTS_RECEIVE ]: ( state, action ) => {
 				action.posts.forEach( post => {
 					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
 					const postStatus = postStatuses[ postStatusKey ];
@@ -162,29 +163,28 @@ export const counts = ( () => {
 				} );
 
 				return state;
-			}
-			case POST_SAVE: {
+			},
+			[ POST_SAVE ]: ( state, action ) => {
 				const { siteId, postId, post } = action;
 				if ( ! post.status ) {
 					return state;
 				}
 
 				return transitionPostStateToStatus( state, siteId, postId, post.status );
-			}
-			case POST_DELETE: {
+			},
+			[ POST_DELETE ]: ( state, action ) => {
 				return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
-			}
-			case POST_COUNTS_RECEIVE: {
+			},
+			[ POST_COUNTS_RECEIVE ]: ( state, action ) => {
 				return merge( {}, state, {
 					[ action.siteId ]: {
 						[ action.postType ]: action.counts,
 					},
 				} );
-			}
-		}
-
-		return state;
-	} );
+			},
+		},
+		countsSchema
+	);
 } )();
 
 export default combineReducers( {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,14 +37,14 @@ class ProductCategories extends Component {
 		this.debouncedOnSearch = debounce( this.onSearch, 500 );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { siteId } = this.props;
 		if ( siteId ) {
 			this.props.fetchProductCategories( siteId, { page: 1 } );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {
@@ -143,4 +145,7 @@ const mapDispatchToProps = dispatch => ( {
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductCategories ) );

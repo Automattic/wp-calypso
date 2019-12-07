@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { Inserter } from '@wordpress/block-editor';
+import { Inserter } from '@wordpress/editor';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 
 const PostContentBlockAppender = compose(
 	withSelect( select => {
-		const { getEditorSettings } = select( 'core/editor' );
-		const { getBlocks } = select( 'core/block-editor' );
+		const { getBlocks, getEditorSettings } = select( 'core/editor' );
 		const { getEditorMode } = select( 'core/edit-post' );
 
 		const postContentBlock = getBlocks().find( block => block.name === 'a8c/post-content' );

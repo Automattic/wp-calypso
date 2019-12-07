@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,6 @@ import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import { withLocalizedMoment } from 'components/localized-moment';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
@@ -242,4 +242,4 @@ export default connect( ( state, props ) => {
 		selectedSite: getSelectedSite( state ),
 		userId: getCurrentUserId( state ),
 	};
-} )( localize( withLocalizedMoment( CancelPurchase ) ) );
+} )( localize( CancelPurchase ) );

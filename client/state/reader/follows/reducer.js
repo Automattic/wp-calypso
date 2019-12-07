@@ -25,7 +25,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
@@ -106,30 +106,31 @@ function updateNotificationSubscription( state, { payload, type } ) {
 	};
 }
 
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_RECORD_FOLLOW: {
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ READER_RECORD_FOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.url );
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
 			};
-		}
-		case READER_RECORD_UNFOLLOW: {
+		},
+		[ READER_RECORD_UNFOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.url );
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
 			};
-		}
-		case READER_FOLLOW_ERROR: {
+		},
+		[ READER_FOLLOW_ERROR ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { error: action.payload.error } ),
 			};
-		}
-		case READER_FOLLOW: {
+		},
+		[ READER_FOLLOW ]: ( state, action ) => {
 			let urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const newValues = { is_following: true };
 
@@ -176,8 +177,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 					newValues
 				),
 			} );
-		}
-		case READER_UNFOLLOW: {
+		},
+		[ READER_UNFOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const currentFollow = state[ urlKey ];
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
@@ -193,8 +194,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 					},
 				} ),
 			};
-		}
-		case READER_FOLLOWS_RECEIVE: {
+		},
+		[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
 			const follows = action.payload.follows;
 			const keyedNewFollows = reduce(
 				follows,
@@ -210,8 +211,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				{}
 			);
 			return merge( {}, state, keyedNewFollows );
-		}
-		case READER_SITE_REQUEST_SUCCESS: {
+		},
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
 			const incomingSite = action.payload;
 			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
 				return state;
@@ -229,22 +230,15 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				...state,
 				[ urlKey ]: merge( {}, currentFollow, newFollow ),
 			};
-		}
-		case READER_SUBSCRIBE_TO_NEW_POST_EMAIL:
-			return updateEmailSubscription( state, action );
-		case READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION:
-			return updateEmailSubscription( state, action );
-		case READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL:
-			return updateEmailSubscription( state, action );
-		case READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL:
-			return updateEmailSubscription( state, action );
-		case READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL:
-			return updateEmailSubscription( state, action );
-		case READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
-			return updateNotificationSubscription( state, action );
-		case READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
-			return updateNotificationSubscription( state, action );
-		case READER_FOLLOWS_SYNC_COMPLETE: {
+		},
+		[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: updateEmailSubscription,
+		[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: updateEmailSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: updateEmailSubscription,
+		[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: updateEmailSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: updateEmailSubscription,
+		[ READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: updateNotificationSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: updateNotificationSubscription,
+		[ READER_FOLLOWS_SYNC_COMPLETE ]: ( state, action ) => {
 			const seenSubscriptions = new Set( action.payload );
 
 			// diff what we saw vs. what's in state and remove anything extra
@@ -254,32 +248,22 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// we show on the manage listing. Items without an ID are either inflight follows
 			// or follows that we picked up from a feed, site, or post object.
 			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
-		}
-		case SERIALIZE:
-			return pickBy( state, item => item.ID && item.is_following );
-	}
+		},
+		[ SERIALIZE ]: state => pickBy( state, item => item.ID && item.is_following ),
+	},
+	itemsSchema
+);
 
-	return state;
+export const itemsCount = createReducer( 0, {
+	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
+		return action.payload.totalCount ? action.payload.totalCount : state;
+	},
 } );
 
-export const itemsCount = withoutPersistence( ( state = 0, action ) => {
-	switch ( action.type ) {
-		case READER_FOLLOWS_RECEIVE: {
-			return action.payload.totalCount ? action.payload.totalCount : state;
-		}
-	}
-
-	return state;
-} );
-
-export const lastSyncTime = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case READER_FOLLOWS_SYNC_START: {
-			return Date.now();
-		}
-	}
-
-	return state;
+export const lastSyncTime = createReducer( null, {
+	[ READER_FOLLOWS_SYNC_START ]: () => {
+		return Date.now();
+	},
 } );
 
 export default combineReducers( {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -214,7 +216,7 @@ export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
 	return every( queryWithDefaults, ( value, key ) => {
 		switch ( key ) {
-			case 'search': {
+			case 'search':
 				if ( ! value ) {
 					return true;
 				}
@@ -233,13 +235,13 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				return (
 					foundInTaxonomies ||
-					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
-					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
-					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
-					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+					( ( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
+						( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
+						( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
+						( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) ) )
 				);
-			}
-			case 'filter': {
+
+			case 'filter':
 				if ( ! value ) {
 					return true;
 				}
@@ -248,21 +250,8 @@ export function isThemeMatchingQuery( query, theme ) {
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
 				return every( filters, f => some( theme.taxonomies, terms => some( terms, { slug: f } ) ) );
-			}
 		}
 
 		return true;
 	} );
-}
-
-/**
- * Returns the slugs of the theme's given taxonomy.
- *
- * @param  {Object} theme    The theme object.
- * @param  {String} taxonomy The taxonomy items to get.
- * @return {Array}           An array of theme taxonomy slugs.
- */
-export function getThemeTaxonomySlugs( theme, taxonomy ) {
-	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
-	return items.map( ( { slug } ) => slug );
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -89,11 +91,11 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyComputedCrop );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { bounds, aspectRatio, crop } = this.props;
 
 		if ( ! isEqual( bounds, newProps.bounds ) ) {

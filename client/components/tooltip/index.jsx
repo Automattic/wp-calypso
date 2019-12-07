@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,6 +37,7 @@ function Tooltip( props ) {
 		<Popover
 			autoPosition={ props.autoPosition }
 			className={ classes }
+			rootClassName={ props.rootClassName }
 			context={ props.context }
 			id={ props.id }
 			isVisible={ props.isVisible }
@@ -52,6 +55,7 @@ Tooltip.propTypes = {
 	id: PropTypes.string,
 	isVisible: PropTypes.bool,
 	position: PropTypes.string,
+	rootClassName: PropTypes.string,
 	status: PropTypes.string,
 	showDelay: PropTypes.number,
 	showOnMobile: PropTypes.bool,

@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -8,8 +9,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import MockDate from 'mockdate';
-import { translate } from 'i18n-calypso';
-import moment from 'moment';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies

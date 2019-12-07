@@ -7,7 +7,7 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, withSchemaValidation } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
@@ -24,10 +24,10 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SITE_STATS_REQUEST: {
-			const { siteId, statType, query } = action;
+export const requests = createReducer(
+	{},
+	{
+		[ SITE_STATS_REQUEST ]: ( state, { siteId, statType, query } ) => {
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -36,9 +36,8 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 					},
 				},
 			} );
-		}
-		case SITE_STATS_RECEIVE: {
-			const { siteId, statType, query, date } = action;
+		},
+		[ SITE_STATS_RECEIVE ]: ( state, { siteId, statType, query, date } ) => {
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -47,9 +46,8 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 					},
 				},
 			} );
-		}
-		case SITE_STATS_REQUEST_FAILURE: {
-			const { siteId, statType, query } = action;
+		},
+		[ SITE_STATS_REQUEST_FAILURE ]: ( state, { siteId, statType, query } ) => {
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
@@ -58,11 +56,9 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 					},
 				},
 			} );
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The

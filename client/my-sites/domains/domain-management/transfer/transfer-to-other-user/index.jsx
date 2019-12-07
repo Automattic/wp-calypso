@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,7 +26,7 @@ import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import SectionHeader from 'components/section-header';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -72,7 +74,7 @@ class TransferOtherUser extends React.Component {
 		return user.ID;
 	};
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
+	componentWillUpdate( nextProps, nextState ) {
 		if ( nextState && ! nextState.selectedUserId ) {
 			const defaultUser = head( this.filterAvailableUsers( nextProps.users ) );
 			if ( defaultUser ) {

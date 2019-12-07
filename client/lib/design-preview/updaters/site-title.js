@@ -1,3 +1,4 @@
+/** @format */
 export default function siteTitle( previewDoc, customizations ) {
 	if ( ! customizations.siteTitle ) {
 		return;

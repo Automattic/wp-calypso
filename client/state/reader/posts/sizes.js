@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Module vars
  */

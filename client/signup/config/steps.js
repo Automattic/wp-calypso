@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -41,8 +43,5 @@ export default generateSteps( {
 } );
 
 export function isDomainStepSkippable( flowName ) {
-	return (
-		flowName === 'test-fse' ||
-		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
-	);
+	return flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable';
 }

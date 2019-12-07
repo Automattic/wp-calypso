@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -8,7 +10,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched.
@@ -18,17 +20,10 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Boolean}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case BILLING_TRANSACTION_REQUEST:
-			return true;
-		case BILLING_TRANSACTION_REQUEST_FAILURE:
-			return false;
-		case BILLING_TRANSACTION_REQUEST_SUCCESS:
-			return false;
-	}
-
-	return state;
+export const requesting = createReducer( false, {
+	[ BILLING_TRANSACTION_REQUEST ]: () => true,
+	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: () => false,
+	[ BILLING_TRANSACTION_REQUEST_SUCCESS ]: () => false,
 } );
 
 /**
@@ -39,17 +34,10 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {Object} action Action payload
  * @return {Boolean}        Updated state
  */
-export const error = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case BILLING_TRANSACTION_REQUEST_FAILURE:
-			return true;
-		case BILLING_TRANSACTION_REQUEST_SUCCESS:
-			return false;
-		case BILLING_TRANSACTION_ERROR_CLEAR:
-			return false;
-	}
-
-	return state;
+export const error = createReducer( false, {
+	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: () => true,
+	[ BILLING_TRANSACTION_REQUEST_SUCCESS ]: () => false,
+	[ BILLING_TRANSACTION_ERROR_CLEAR ]: () => false,
 } );
 
 /**
@@ -60,15 +48,8 @@ export const error = withoutPersistence( ( state = false, action ) => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const data = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case BILLING_TRANSACTION_RECEIVE: {
-			const { receipt } = action;
-			return receipt;
-		}
-	}
-
-	return state;
+export const data = createReducer( null, {
+	[ BILLING_TRANSACTION_RECEIVE ]: ( state, { receipt } ) => receipt,
 } );
 
 export default keyedReducer(

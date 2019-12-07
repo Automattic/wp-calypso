@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Console dispatcher Redux store enhancer
  *

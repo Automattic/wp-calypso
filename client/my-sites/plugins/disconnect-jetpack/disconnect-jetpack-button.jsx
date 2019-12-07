@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -55,22 +57,21 @@ class DisconnectJetpackButton extends Component {
 		];
 
 		return (
-			<Fragment>
+			<Button
+				{ ...pick( this.props, buttonPropsList ) }
+				borderless={ linkDisplay }
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				className="disconnect-jetpack-button"
+				compact
+				id={ `disconnect-jetpack-${ site.ID }` }
+				onClick={ this.handleClick }
+				scary
+			>
+				{ text ||
+					translate( 'Disconnect', {
+						context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
+					} ) }
 				<QuerySitePlans siteId={ site.ID } />
-				<Button
-					{ ...pick( this.props, buttonPropsList ) }
-					borderless={ linkDisplay }
-					className="disconnect-jetpack-button"
-					compact
-					id={ `disconnect-jetpack-${ site.ID }` }
-					onClick={ this.handleClick }
-					scary
-				>
-					{ text ||
-						translate( 'Disconnect', {
-							context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
-						} ) }
-				</Button>
 				<DisconnectJetpackDialog
 					isVisible={ this.state.dialogVisible }
 					onClose={ this.hideDialog }
@@ -78,7 +79,7 @@ class DisconnectJetpackButton extends Component {
 					siteId={ site.ID }
 					disconnectHref={ this.props.redirect }
 				/>
-			</Fragment>
+			</Button>
 		);
 	}
 }
@@ -98,7 +99,10 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect( null, {
-	recordGoogleEvent: recordGoogleEventAction,
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( DisconnectJetpackButton ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( DisconnectJetpackButton ) );

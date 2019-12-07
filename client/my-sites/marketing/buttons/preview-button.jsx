@@ -99,11 +99,8 @@ class SharingButtonsPreviewButton extends React.Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default connect(
-	state => ( {
+export default connect( state => {
+	return {
 		path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ),
-	} ),
-	null,
-	null,
-	{ forwardRef: true }
-)( SharingButtonsPreviewButton );
+	};
+} )( SharingButtonsPreviewButton );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ import {
 	clearCompletedNotification,
 	deauthorizeAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -246,5 +248,8 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeConnectedDialog )
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( PaymentMethodStripeConnectedDialog )
 );

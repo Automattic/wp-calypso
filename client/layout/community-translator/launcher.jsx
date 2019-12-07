@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,7 +17,7 @@ import classNames from 'classnames';
 import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';

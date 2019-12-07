@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -94,4 +96,7 @@ export function mapStateToProps( state ) {
 // something like <QueryHelpCourses />
 const fetchCourses = () => receiveHelpCourses( helpCourses );
 
-export default connect( mapStateToProps, { fetchCourses } )( localize( Courses ) );
+export default connect(
+	mapStateToProps,
+	{ fetchCourses }
+)( localize( Courses ) );

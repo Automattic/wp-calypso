@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,13 +16,13 @@ import { isRequestingList } from 'state/reader/lists/selectors';
 import { requestList } from 'state/reader/lists/actions';
 
 class QueryReaderList extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.isRequestingList ) {
 			this.props.requestList( this.props.owner, this.props.slug );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.isRequestingList ||
 			( this.props.owner === nextProps.owner && this.props.slug === nextProps.slug )

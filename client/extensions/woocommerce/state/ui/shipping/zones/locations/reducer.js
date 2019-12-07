@@ -1,11 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { find, pull } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
@@ -34,28 +38,33 @@ export const initialState = {
 	pristine: true,
 };
 
-function handleLocationsEdit( state ) {
+const reducer = {};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT ] = state => {
 	return {
 		...state,
 		temporaryChanges: { ...initialState },
 	};
-}
+};
 
-function handleLocationsClose( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE ] = state => {
 	const { temporaryChanges, ...committedChanges } = state;
 	return mergeLocationEdits( committedChanges, temporaryChanges );
-}
+};
 
-function handleLocationsCancel( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL ] = state => {
 	return {
 		...state,
 		temporaryChanges: null,
 	};
-}
+};
 
 // There's no way to handle continent / country selection state having just the changes, so here we'll just
 // "journal" the changes and that will be parsed by the selectors
-function handleLocationsSelectContinent( state, { continentCode, selected } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_CONTINENT ] = (
+	state,
+	{ continentCode, selected }
+) => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -71,9 +80,12 @@ function handleLocationsSelectContinent( state, { continentCode, selected } ) {
 			],
 		},
 	};
-}
+};
 
-function handleLocationsSelectCountry( state, { countryCode, selected } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_COUNTRY ] = (
+	state,
+	{ countryCode, selected }
+) => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -89,9 +101,12 @@ function handleLocationsSelectCountry( state, { countryCode, selected } ) {
 			],
 		},
 	};
-}
+};
 
-function handleLocationsSelectState( state, { stateCode, selected } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_STATE ] = (
+	state,
+	{ stateCode, selected }
+) => {
 	const states = state.temporaryChanges.states || {
 		add: [],
 		remove: [],
@@ -119,9 +134,9 @@ function handleLocationsSelectState( state, { stateCode, selected } ) {
 			states: { add, remove, removeAll },
 		},
 	};
-}
+};
 
-function handleLocationsEditPostcode( state, { postcode } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT_POSTCODE ] = ( state, { postcode } ) => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -129,9 +144,9 @@ function handleLocationsEditPostcode( state, { postcode } ) {
 			postcode,
 		},
 	};
-}
+};
 
-function handleLocationsFilterByWholeCountry( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_WHOLE_COUNTRY ] = state => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -140,9 +155,9 @@ function handleLocationsFilterByWholeCountry( state ) {
 			states: null,
 		},
 	};
-}
+};
 
-function handleLocationsFilterByState( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_STATE ] = state => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -155,9 +170,9 @@ function handleLocationsFilterByState( state ) {
 			},
 		},
 	};
-}
+};
 
-function handleFilterByPostcode( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_POSTCODE ] = state => {
 	return {
 		...state,
 		temporaryChanges: {
@@ -166,51 +181,12 @@ function handleFilterByPostcode( state ) {
 			states: null,
 		},
 	};
-}
+};
 
-export default ( state = initialState, action ) => {
-	let newState = state;
-	switch ( action.type ) {
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT:
-			newState = handleLocationsEdit( state, action );
-			break;
+const mainReducer = createReducer( initialState, reducer );
 
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE:
-			newState = handleLocationsClose( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL:
-			newState = handleLocationsCancel( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_CONTINENT:
-			newState = handleLocationsSelectContinent( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_COUNTRY:
-			newState = handleLocationsSelectCountry( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_STATE:
-			newState = handleLocationsSelectState( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT_POSTCODE:
-			newState = handleLocationsEditPostcode( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_WHOLE_COUNTRY:
-			newState = handleLocationsFilterByWholeCountry( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_STATE:
-			newState = handleLocationsFilterByState( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_POSTCODE:
-			newState = handleFilterByPostcode( state, action );
-			break;
-	}
+export default ( state, action ) => {
+	const newState = mainReducer( state, action );
 
 	if (
 		state.temporaryChanges &&

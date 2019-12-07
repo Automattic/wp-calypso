@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -26,7 +28,7 @@ const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --dif
 
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
-// run prettier for any files in the commit
+// run prettier for any files in the commit that have @format within their first docblock
 files.forEach( file => {
 	const text = fs.readFileSync( file, 'utf8' );
 	// File has unstaged changes. It's a bad idea to modify and add it before commit.
@@ -43,7 +45,7 @@ files.forEach( file => {
 	}
 
 	fs.writeFileSync( file, formattedText );
-	console.log( `Prettier formatting file: ${ file }` );
+	console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
 	execSync( `git add ${ file }` );
 } );
 

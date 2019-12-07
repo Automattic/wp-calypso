@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductBySlug } from 'state/products-list/selectors';
+import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteFeatures from 'components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
@@ -32,7 +34,7 @@ import './style.scss';
 export const GSuitePurchaseCta = ( {
 	currencyCode,
 	domainName,
-	product,
+	gsuiteBasicCost,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
@@ -66,7 +68,6 @@ export const GSuitePurchaseCta = ( {
 			noticeStatus="is-info"
 		>
 			<QueryProductsList />
-
 			<CompactCard>
 				<header>
 					<h3 className="gsuite-purchase-cta__product-logo">
@@ -75,7 +76,6 @@ export const GSuitePurchaseCta = ( {
 					</h3>
 				</header>
 			</CompactCard>
-
 			<CompactCard className="gsuite-purchase-cta__header">
 				<div className="gsuite-purchase-cta__header-description">
 					<h2 className="gsuite-purchase-cta__header-description-title">
@@ -88,10 +88,8 @@ export const GSuitePurchaseCta = ( {
 								'storage, docs, calendars, and more integrated with your site.'
 						) }
 					</p>
-
 					<div>
-						<GSuitePrice product={ product } currencyCode={ currencyCode } />
-
+						<GSuitePrice cost={ gsuiteBasicCost } currencyCode={ currencyCode } showMonthlyPrice />
 						{ upgradeAvailable && (
 							<Button
 								className="gsuite-purchase-cta__get-gsuite-button"
@@ -110,10 +108,9 @@ export const GSuitePurchaseCta = ( {
 					<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 				</div>
 			</CompactCard>
-
 			<CompactCard className="gsuite-purchase-cta__info">
 				<GSuiteFeatures domainName={ domainName } productSlug={ 'gapps' } />
-				<GSuiteLearnMore onLearnMoreClick={ handleLearnMoreClick } />
+				<GSuiteLearnMore onClick={ handleLearnMoreClick } />
 			</CompactCard>
 		</EmailVerificationGate>
 	);
@@ -122,15 +119,15 @@ export const GSuitePurchaseCta = ( {
 GSuitePurchaseCta.propTypes = {
 	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
-	product: PropTypes.object,
+	gsuiteBasicCost: PropTypes.number,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
 	state => ( {
+		gsuiteBasicCost: getProductCost( state, 'gapps' ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, 'gapps' ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

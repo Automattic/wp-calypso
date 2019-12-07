@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -12,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
 import EmbedContainer from 'components/embed-container';

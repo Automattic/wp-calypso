@@ -55,7 +55,7 @@ export default class InfiniteList extends React.Component {
 	topPlaceholderRef = React.createRef();
 	bottomPlaceholderRef = React.createRef();
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const url = page.current;
 		let newState, scrollTop;
 
@@ -117,7 +117,7 @@ export default class InfiniteList extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
@@ -160,11 +160,9 @@ export default class InfiniteList extends React.Component {
 
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
-			setTimeout( () => {
-				this.cancelAnimationFrame();
-				this.updateScroll( {
-					triggeredByScroll: false,
-				} );
+			this.cancelAnimationFrame();
+			this.updateScroll( {
+				triggeredByScroll: false,
 			} );
 		}
 	}

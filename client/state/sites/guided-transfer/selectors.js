@@ -1,3 +1,4 @@
+/** @format */
 import { find, matches, some } from 'lodash';
 
 export function getGuidedTransferError( state, siteId ) {

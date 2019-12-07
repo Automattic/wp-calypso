@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import QuerySites from 'components/data/query-sites';
 import NpsSurvey from 'blocks/nps-survey';
 import {
@@ -138,10 +140,13 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	setNpsSurveyDialogShowing,
-	submitNpsSurveyWithNoScore,
-	setupNpsSurveyDevTrigger,
-	setupNpsSurveyEligibility,
-	markNpsSurveyShownThisSession,
-} )( NpsSurveyNotice );
+export default connect(
+	mapStateToProps,
+	{
+		setNpsSurveyDialogShowing,
+		submitNpsSurveyWithNoScore,
+		setupNpsSurveyDevTrigger,
+		setupNpsSurveyEligibility,
+		markNpsSurveyShownThisSession,
+	}
+)( NpsSurveyNotice );

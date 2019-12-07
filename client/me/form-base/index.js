@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,13 +30,13 @@ export default {
 		return this.state.submittingForm;
 	},
 
-	UNSAFE_componentWillReceiveProps: function( nextProp ) {
+	componentWillReceiveProps: function( nextProp ) {
 		if ( nextProp.showNoticeInitially ) {
 			this.setState( { showNotice: nextProp.showNoticeInitially } );
 		}
 	},
 
-	UNSAFE_componentWillUpdate: function() {
+	componentWillUpdate: function() {
 		this.showNotice();
 	},
 

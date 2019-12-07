@@ -153,4 +153,7 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId, productId } ) => ( {
 		dispatch( setCustomsItemOriginCountry( orderId, siteId, productId, value ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ItemRow ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ItemRow ) );

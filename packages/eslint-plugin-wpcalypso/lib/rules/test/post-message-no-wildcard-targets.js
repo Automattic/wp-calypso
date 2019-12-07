@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow using the wildcard `*` in postMessage
  * @author Automattic

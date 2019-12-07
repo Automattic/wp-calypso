@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -71,7 +72,7 @@ export default EnhancedComponent =>
 			this.handleResize();
 		}
 
-		UNSAFE_componentWillReceiveProps( nextProps ) {
+		componentWillReceiveProps( nextProps ) {
 			this.handleResize( nextProps );
 		}
 

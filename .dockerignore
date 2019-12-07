@@ -6,7 +6,7 @@ Dockerfile
 /.babel-cache
 /build
 /cached-requests.json
-**/node_modules
+/node_modules
 /public
 /server/bundler/*.json
 /server/devdocs/components-usage-stats.json
@@ -16,9 +16,3 @@ Dockerfile
 # Tests do not need to be included in build
 /server/**/test/**
 /client/**/test/**
-
-# Monorepo output
-/apps/*/dist/
-/apps/*/types/
-/packages/*/dist/
-/packages/*/types/

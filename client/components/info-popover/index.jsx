@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,6 +42,7 @@ export default class InfoPopover extends Component {
 			'left',
 			'top left',
 		] ),
+		rootClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -80,9 +83,11 @@ export default class InfoPopover extends Component {
 					aria-label={ translate( 'More information' ) }
 					onClick={ this.handleClick }
 					ref={ this.iconRef }
-					className={ classNames( 'info-popover', this.props.className, {
-						'is-active': this.state.showPopover,
-					} ) }
+					className={ classNames(
+						'info-popover',
+						{ 'is-active': this.state.showPopover },
+						this.props.className
+					) }
 				>
 					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
 				</button>
@@ -96,6 +101,7 @@ export default class InfoPopover extends Component {
 						position={ this.props.position }
 						onClose={ this.handleClose }
 						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						rootClassName={ this.props.rootClassName }
 					>
 						{ this.props.children }
 					</Popover>

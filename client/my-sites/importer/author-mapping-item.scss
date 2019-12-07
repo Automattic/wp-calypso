@@ -1,34 +1,22 @@
 .importer__author-mapping {
-	padding: 0.5em 0 0.75em;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
-
-	& > span:last-of-type {
-		width: 50%;
-
-		@include breakpoint( '<480px' ) {
-			width: 65%;
-		}
-	}
+	height: 58px;
 
 	.author-selector__author-toggle {
+		width: 45%;
 		padding-top: 4px;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		width: 100%;
+		margin-right: -7px;
+		float: right;
+	}
 
-		@include breakpoint( '<480px' ) {
-			font-size: 12px;
-		}
+	div.user {
+		display: inline;
 	}
 }
 
 .importer__source-author {
 	width: 45%;
-	padding-top: 0.5em;
+	padding-top: 7px;
+	float: left;
 	display: inline-block;
 	color: var( --color-neutral-70 );
 	text-align: left;
@@ -37,17 +25,9 @@
 	white-space: nowrap;
 	font-size: 14px;
 	font-weight: 600;
-
-	@include breakpoint( '<480px' ) {
-		width: 35%;
-	}
 }
 
 .importer__mapping-relation {
 	float: left;
 	color: var( --color-neutral-20 );
-
-	@include breakpoint( '<480px') {
-		display: none;
-	}
 }

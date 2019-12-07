@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -117,7 +119,6 @@ export class UpsellNudge extends React.Component {
 			isLoggedIn,
 			upsellType,
 			translate,
-			siteSlug,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -130,7 +131,6 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
-						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>
@@ -145,7 +145,6 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
-						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -42,11 +44,11 @@ class FormCountrySelectFromApi extends Component {
 		value: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}

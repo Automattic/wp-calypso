@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -258,4 +260,7 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( Theme ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( Theme ) );

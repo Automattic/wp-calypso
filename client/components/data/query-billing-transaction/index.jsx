@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -29,7 +31,7 @@ class QueryBillingTransaction extends Component {
 		this.fetch( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.fetch( nextProps );
 	}
 

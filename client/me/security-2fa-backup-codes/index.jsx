@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -161,6 +163,9 @@ class Security2faBackupCodes extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Security2faBackupCodes ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( Security2faBackupCodes ) );

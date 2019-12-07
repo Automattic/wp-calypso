@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -165,52 +167,6 @@ TransactionFlow.prototype._paymentHandlers = {
 		);
 	},
 
-	WPCOM_Billing_Ebanx: function() {
-		const { newCardDetails } = this._initialData.payment;
-		const { successUrl, cancelUrl } = this._initialData;
-		const paymentType = newCardDetails.tokenized_payment_data ? 'token' : undefined;
-		const validation = validatePaymentDetails( newCardDetails, paymentType );
-
-		if ( ! isEmpty( validation.errors ) ) {
-			this._pushStep( {
-				name: INPUT_VALIDATION,
-				error: new ValidationError( 'invalid-card-details', validation.errors ),
-				first: true,
-				last: true,
-			} );
-			return;
-		}
-
-		this._pushStep( { name: INPUT_VALIDATION, first: true } );
-		debug( 'submitting transaction with new card (ebanx)' );
-
-		this._createCardToken( gatewayData => {
-			const { name, country, 'postal-code': zip } = newCardDetails;
-
-			// Ebanx payments require additional customer documentation.
-			// @see https://developers.ebanx.com/api-reference/ebanx-payment-api/ebanx-payment-guide/guide-create-a-payment/brazil/
-			const ebanxPaymentData = {
-				payment_method: gatewayData.paymentMethod,
-				payment_key: gatewayData.token,
-				name,
-				zip,
-				country,
-				successUrl,
-				cancelUrl,
-				state: newCardDetails.state,
-				city: newCardDetails.city,
-				address_1: newCardDetails[ 'address-1' ],
-				address_2: newCardDetails[ 'address-2' ],
-				street_number: newCardDetails[ 'street-number' ],
-				phone_number: newCardDetails[ 'phone-number' ],
-				document: newCardDetails.document,
-				device_id: gatewayData.deviceId,
-			};
-
-			this._submitWithPayment( ebanxPaymentData );
-		} );
-	},
-
 	WPCOM_Billing_WPCOM: function() {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
@@ -235,7 +191,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new stripe elements card' );
 
-		const { name, country, 'postal-code': zip, 'phone-number': phone } = newCardDetails;
+		const { name, country, 'postal-code': zip } = newCardDetails;
 		const paymentDetailsForStripe = {
 			name,
 			address: {
@@ -243,10 +199,6 @@ TransactionFlow.prototype._paymentHandlers = {
 				postal_code: zip,
 			},
 		};
-
-		if ( phone ) {
-			paymentDetailsForStripe.phone = phone;
-		}
 
 		try {
 			const stripePaymentMethod = await createStripePaymentMethod(
@@ -287,41 +239,6 @@ TransactionFlow.prototype._paymentHandlers = {
 			} );
 		}
 	},
-
-	WPCOM_Billing_Web_Payment: async function() {
-		const { newCardDetails } = this._initialData.payment;
-		const { successUrl, cancelUrl, stripeConfiguration } = this._initialData;
-		const { name, country, 'postal-code': zip, payment_key } = newCardDetails;
-		debug( 'submitting transaction with new stripe elements web payment', this._initialData );
-
-		try {
-			if ( ! payment_key ) {
-				throw new Error( 'Payment failed. Please try again.' );
-			}
-			const response = await this._submitWithPayment( {
-				// This is functionally the same as a stripe card at this point so we use this payment method
-				payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-				payment_key,
-				payment_partner: stripeConfiguration.processor_id,
-				name,
-				zip,
-				country,
-				successUrl,
-				cancelUrl,
-			} );
-			debug( 'received web payment transaction response', response );
-
-			if ( response && response.message && response.message.payment_intent_client_secret ) {
-				await this.stripeModalAuth( stripeConfiguration, response );
-			}
-		} catch ( error ) {
-			this._pushStep( {
-				name: RECEIVED_PAYMENT_KEY_RESPONSE,
-				error,
-				last: true,
-			} );
-		}
-	},
 };
 
 TransactionFlow.prototype._createCardToken = function( callback ) {
@@ -349,31 +266,55 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	const transaction = {
 		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 		domain_details: this._initialData.domainDetails,
-		payment,
+		payment: payment,
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
-	return wp
-		.undocumented()
-		.transactions( transaction )
-		.then( data => {
-			if ( data.message ) {
-				this._pushStep( { name: MODAL_AUTHORIZATION, data, last: false } );
-			} else if ( data.redirect_url ) {
-				this._pushStep( { name: REDIRECTING_FOR_AUTHORIZATION, data, last: true } );
-			} else {
-				this._pushStep( { name: RECEIVED_WPCOM_RESPONSE, data, last: true } );
+	return new Promise( resolve => {
+		wpcom.transactions( 'POST', transaction, ( error, data ) => {
+			if ( error ) {
+				this._pushStep( {
+					name: RECEIVED_WPCOM_RESPONSE,
+					error,
+					last: true,
+				} );
+				// This should probably reject but since the error is already
+				// reported just above, that might risk double-reporting or
+				// changing the step to the wrong one, so this just resolves
+				// without data instead.
+				resolve();
+				return;
 			}
 
-			return data;
-		} )
-		.catch( error => {
-			this._pushStep( { name: RECEIVED_WPCOM_RESPONSE, error, last: true } );
-			// This should probably reject the error but since the error is already
-			// reported just above, that might risk double-reporting or
-			// changing the step to the wrong one, so this just resolves
-			// without data instead.
+			if ( data.message ) {
+				this._pushStep( {
+					name: MODAL_AUTHORIZATION,
+					data: data,
+					last: false,
+				} );
+				resolve( data );
+				return;
+			}
+
+			if ( data.redirect_url ) {
+				this._pushStep( {
+					name: REDIRECTING_FOR_AUTHORIZATION,
+					data: data,
+					last: true,
+				} );
+				resolve( data );
+				return;
+			}
+
+			this._pushStep( {
+				name: RECEIVED_WPCOM_RESPONSE,
+				data,
+				last: true,
+			} );
+
+			resolve( data );
 		} );
+	} );
 };
 
 TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration, response ) {
@@ -545,3 +486,30 @@ export async function getStripeConfiguration( requestArgs ) {
 	debug( 'Stripe configuration', config );
 	return config;
 }
+
+export function hasDomainDetails( transaction ) {
+	return ! isEmpty( transaction.domainDetails );
+}
+
+export function newCardPayment( newCardDetails ) {
+	return {
+		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		newCardDetails: newCardDetails || {},
+	};
+}
+
+export function newStripeCardPayment( newCardDetails ) {
+	return {
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
+		newCardDetails: newCardDetails || {},
+	};
+}
+
+export function storedCardPayment( storedCard ) {
+	return {
+		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
+		storedCard: storedCard,
+	};
+}
+
+export const fullCreditsPayment = { paymentMethod: 'WPCOM_Billing_WPCOM' };

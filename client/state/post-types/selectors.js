@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Returns the known post types for a site.
  *

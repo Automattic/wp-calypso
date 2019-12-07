@@ -1,3 +1,5 @@
+/** @format */
+
 // booking status
 export const CONCIERGE_STATUS_BOOKED = 'booked';
 export const CONCIERGE_STATUS_BOOKING = 'booking';

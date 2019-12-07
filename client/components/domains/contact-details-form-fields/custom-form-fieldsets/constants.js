@@ -1,3 +1,5 @@
+/** @format */
+
 export const CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES = [ 'GB', 'IE' ];
 
 // We must exclude country codes that return

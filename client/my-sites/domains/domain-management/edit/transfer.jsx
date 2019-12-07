@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,10 +13,10 @@ import page from 'page';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -25,18 +27,17 @@ import { Notice } from 'components/notice';
 import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class Transfer extends React.PureComponent {
 	render() {
-		const { domain, selectedSite, translate, moment } = this.props;
+		const { domain, selectedSite, translate } = this.props;
 		const content = this.getDomainDetailsCard();
 
 		let transferNotice;
 		let cancelNavItem;
 		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
 			transferNotice = (
-				<Notice status={ 'is-warning' } showDismiss={ false }>
+				<Notice status={ 'is-info' } showDismiss={ false }>
 					{ translate(
 						'This transfer has been started and is waiting for authorization from your current provider. ' +
 							'If you need to cancel the transfer, please contact them for assistance.'
@@ -44,46 +45,22 @@ class Transfer extends React.PureComponent {
 				</Notice>
 			);
 
-			if ( domain.transferEndDate ) {
+			if ( domain.transferEndDateMoment ) {
 				transferNotice = (
-					<Notice status={ 'is-warning' } showDismiss={ false }>
+					<Notice status={ 'is-info' } showDismiss={ false }>
 						{ translate(
 							'This transfer has been started and is waiting for authorization from your current provider. ' +
 								'It should complete by %(transferFinishDate)s. ' +
 								'If you need to cancel the transfer, please contact them for assistance.',
 							{
 								args: {
-									transferFinishDate: moment( domain.transferEndDate ).format( 'LL' ),
+									transferFinishDate: domain.transferEndDateMoment.format( 'LL' ),
 								},
 							}
 						) }
 					</Notice>
 				);
 			}
-		} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
-			transferNotice = (
-				<Notice status={ 'is-error' } showDismiss={ false }>
-					{ translate( 'The transfer has failed. {{a}}Learn more{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href="https://en.support.wordpress.com/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					} ) }
-				</Notice>
-			);
-
-			cancelNavItem = (
-				<VerticalNav>
-					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
-						{ translate( 'Cancel Transfer' ) }
-					</VerticalNavItem>
-				</VerticalNav>
-			);
 		} else {
 			cancelNavItem = (
 				<VerticalNav>
@@ -161,7 +138,7 @@ class Transfer extends React.PureComponent {
 	};
 
 	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
+		this.props.paymentSettingsClick( this.props.domain );
 	};
 
 	startTransfer = () => {
@@ -189,9 +166,25 @@ class Transfer extends React.PureComponent {
 	}
 }
 
-export default connect( null, {
-	errorNotice,
-	fetchSiteDomains,
-	recordPaymentSettingsClick,
-	successNotice,
-} )( localize( withLocalizedMoment( Transfer ) ) );
+const paymentSettingsClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
+			section: domain.type,
+		} )
+	);
+
+export default connect(
+	null,
+	{
+		errorNotice,
+		fetchSiteDomains,
+		paymentSettingsClick,
+		successNotice,
+	}
+)( localize( Transfer ) );

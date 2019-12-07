@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -93,7 +95,7 @@ class InlineConnectButton extends Component {
 		this.props.recordGoogleEvent( 'Sharing', eventName, id );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isFetching === true ) {
 			this.setState( { isConnecting: false, isRefreshing: false } );
 		}

@@ -1,3 +1,4 @@
+/** @format */
 export const suggestions = {
 	en: [
 		'Anime',

@@ -25,7 +25,6 @@ class NavItem extends PureComponent {
 		selected: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		onClick: PropTypes.func,
-		onKeyPress: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		disabled: PropTypes.bool,
 		count: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -75,7 +74,6 @@ class NavItem extends PureComponent {
 					disabled={ this.props.disabled }
 					role="menuitem"
 					rel={ this.props.isExternalLink ? 'external' : null }
-					onKeyPress={ this.props.onKeyPress }
 				>
 					<span className={ 'section-nav-' + itemClassPrefix + '__text' }>
 						{ this.props.children }

@@ -1,3 +1,4 @@
+/** @format */
 export const GSUITE_INITIAL_STEP = 'gsuite_initial_step';
 export const GSUITE_SURVEY_STEP = 'gsuite_survey_step';
 

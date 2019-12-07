@@ -1,3 +1,4 @@
+/** @format */
 // Maximum number of comments that will be shown per page.
 export const COMMENTS_PER_PAGE = 20;
 

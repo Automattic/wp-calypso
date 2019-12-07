@@ -4,18 +4,19 @@
 const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const path = require( 'path' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
- * @param  {object}    _                              Options
+ * @param  {Object}    _                              Options
+ * @param  {boolean}   _.preserveCssCustomProperties  whether Custom Properties and properties using them should be preserved in their original form
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {object}    _.postCssConfig                PostCSS config
  *
- * @returns {object}                                  webpack loader object
+ * @return {Object}                                   webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
+module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -28,16 +29,19 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 		{
 			loader: require.resolve( 'postcss-loader' ),
 			options: {
-				config: postCssConfig,
+				config: {
+					ctx: {
+						preserveCssCustomProperties,
+					},
+					path: path.join( __dirname, '..' ),
+				},
 			},
 		},
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				prependData: prelude,
-				sassOptions: {
-					includePaths,
-				},
+				includePaths,
+				data: prelude,
 			},
 		},
 	],
@@ -46,12 +50,12 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param  {object}   _                Options
- * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
- * @param  {string}   _.filename       filename pattern to use for CSS chunk files
- * @param  {boolean}  _.minify         whether to minify CSS
+ * @param  {Object}   _                Options
+ * @param  {String}   _.chunkFilename  filename pattern to use for CSS files
+ * @param  {String}   _.filename       filename pattern to use for CSS chunk files
+ * @param  {Boolean}  _.minify         whether to minify CSS
  *
- * @returns {object[]}                 styling relevant webpack plugin objects
+ * @return {Object[]}                  styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
 	new MiniCssExtractPluginWithRTL( {

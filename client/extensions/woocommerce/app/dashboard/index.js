@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -294,4 +296,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { fetchCounts } )( localize( Dashboard ) );
+export default connect(
+	mapStateToProps,
+	{ fetchCounts }
+)( localize( Dashboard ) );

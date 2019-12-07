@@ -41,7 +41,7 @@ describe( 'TemplateSelectorPreview', () => {
 				<TemplateSelectorPreview viewportWidth={ 960 } />
 			);
 
-			expect( getByText( 'Select a layout to preview.' ) ).toBeInTheDocument();
+			expect( getByText( 'Select a page template to preview.' ) ).toBeInTheDocument();
 			expect( queryByTestId( 'block-template-preview' ) ).not.toBeInTheDocument();
 		} );
 
@@ -58,7 +58,7 @@ describe( 'TemplateSelectorPreview', () => {
 				<TemplateSelectorPreview blocks={ invalidBlocksProp } viewportWidth={ 960 } />
 			);
 
-			expect( getByText( 'Select a layout to preview.' ) ).toBeInTheDocument();
+			expect( getByText( 'Select a page template to preview.' ) ).toBeInTheDocument();
 			expect( queryByTestId( 'block-template-preview' ) ).not.toBeInTheDocument();
 		} );
 	} );

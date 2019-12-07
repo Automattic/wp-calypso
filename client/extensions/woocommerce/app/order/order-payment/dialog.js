@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ import {
 	getPaymentMethod,
 } from 'woocommerce/state/sites/payment-methods/selectors';
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
@@ -69,7 +70,7 @@ class RefundDialog extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	componentWillReceiveProps = newProps => {
 		const newSiteId = newProps.siteId;
 		const oldSiteId = this.props.siteId;
 

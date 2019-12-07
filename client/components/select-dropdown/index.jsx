@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -106,10 +108,7 @@ class SelectDropdown extends Component {
 		}
 
 		// Otherwise find the first option that is an item, i.e., not label or separator
-		return get(
-			find( this.props.options, item => item && ! item.isLabel ),
-			'value'
-		);
+		return get( find( this.props.options, item => item && ! item.isLabel ), 'value' );
 	}
 
 	getSelectedText() {

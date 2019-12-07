@@ -7,15 +7,12 @@
 					"CTA": {
 						"properties": {
 							"hook": {
-								"type": [ "string", "null" ]
+								"type": "string"
 							},
 							"message": {
 								"type": "string"
 							},
 							"primary": {
-								"type": "boolean"
-							},
-							"newWindow": {
 								"type": "boolean"
 							}
 						},
@@ -29,30 +26,17 @@
 							"description": {
 								"type": "string"
 							},
+							"emblem": {
+								"type": "null"
+							},
 							"icon": {
-								"type": [ "string", "null" ]
+								"type": "string"
 							},
 							"message": {
 								"type": "string"
-							},
-							"list": {
-								"items": {
-									"properties": {
-										"item": {
-											"type": "string"
-										},
-										"url": {
-											"type": [ "string", "null" ]
-										}
-									}
-								},
-								"type": "array"
 							}
 						},
 						"type": "object"
-					},
-					"expires": {
-						"type": "integer"
 					},
 					"feature_class": {
 						"type": "string"

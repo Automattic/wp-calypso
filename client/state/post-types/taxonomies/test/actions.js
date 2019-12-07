@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -68,10 +69,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return requestPostTypeTaxonomies(
-				2916284,
-				'post'
-			)( spy ).then( () => {
+			return requestPostTypeTaxonomies( 2916284, 'post' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePostTypeTaxonomies( 2916284, 'post', [
 						{ name: 'category', label: 'Categories' },
@@ -82,10 +80,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
-			return requestPostTypeTaxonomies(
-				2916284,
-				'post'
-			)( spy ).then( () => {
+			return requestPostTypeTaxonomies( 2916284, 'post' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -95,10 +90,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestPostTypeTaxonomies(
-				2916284,
-				'foo'
-			)( spy ).then( () => {
+			return requestPostTypeTaxonomies( 2916284, 'foo' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId: 2916284,

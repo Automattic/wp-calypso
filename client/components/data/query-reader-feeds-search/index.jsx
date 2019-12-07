@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,7 +24,7 @@ class QueryFeedSearch extends Component {
 		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			excludeFollowed: this.props.excludeFollowed,
@@ -30,7 +32,7 @@ class QueryFeedSearch extends Component {
 		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		nextProps.requestFeedSearch( {
 			query: nextProps.query,
 			excludeFollowed: nextProps.excludeFollowed,
@@ -43,4 +45,7 @@ class QueryFeedSearch extends Component {
 	}
 }
 
-export default connect( null, { requestFeedSearch } )( QueryFeedSearch );
+export default connect(
+	null,
+	{ requestFeedSearch }
+)( QueryFeedSearch );

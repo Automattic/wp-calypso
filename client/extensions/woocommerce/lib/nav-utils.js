@@ -1,3 +1,5 @@
+/** @format */
+
 /* Returns a string with :site replaced with the site.slug
  *
  * @param {String} path Relative or absolute URL with :site in it.

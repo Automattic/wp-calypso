@@ -1,3 +1,4 @@
+/** @format */
 export const titleSchema = {
 	type: 'string',
 };

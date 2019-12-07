@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Are two strings equal, when ignoring whitespace and case?
  *

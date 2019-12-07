@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,11 +35,11 @@ import ImageThumb from 'woocommerce/components/image-thumb';
 const ITEM_HEIGHT = 70;
 
 class ProductCategories extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.catIds = map( this.props.categories, 'id' );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		if ( newProps.categories !== this.props.categories ) {
 			this.catIds = map( newProps.categories, 'id' );
 		}
@@ -211,4 +212,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductCategories ) );

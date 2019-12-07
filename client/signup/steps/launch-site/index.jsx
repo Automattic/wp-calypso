@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,4 +22,7 @@ class LaunchSiteComponent extends Component {
 	}
 }
 
-export default connect( null, { submitSignupStep } )( LaunchSiteComponent );
+export default connect(
+	null,
+	{ submitSignupStep }
+)( LaunchSiteComponent );

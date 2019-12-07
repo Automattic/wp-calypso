@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -60,8 +62,8 @@ const ProductCategoryHeader = ( { onDelete, onSave, translate, site, category, i
 	const breadcrumbs = [
 		<a href={ getLink( '/store/products/:site/', site ) }> { translate( 'Products' ) } </a>,
 		<a href={ getLink( '/store/products/categories/:site/', site ) }>
-			{ ' ' }
-			{ translate( 'Categories' ) }{ ' ' }
+			{' '}
+			{ translate( 'Categories' ) }{' '}
 		</a>,
 		currentCrumb,
 	];

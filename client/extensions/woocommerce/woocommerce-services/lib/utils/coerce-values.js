@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Retrieve a field's schema, handling referenced schema definitions if need be.
  *

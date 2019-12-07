@@ -55,7 +55,6 @@ interface Step {
 	dependencies?: string[];
 	providedDependencies?: string[];
 	providesDependencies?: string[];
-	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
 }
@@ -199,13 +198,7 @@ export default class SignupFlowController {
 				return;
 			}
 
-			const optionalDependencies = step.optionalDependencies || [];
-
-			const dependenciesNotProvided = difference(
-				step.providesDependencies,
-				optionalDependencies,
-				storedDependencies
-			);
+			const dependenciesNotProvided = difference( step.providesDependencies, storedDependencies );
 
 			if ( dependenciesNotProvided.length > 0 ) {
 				throw new Error(
@@ -228,13 +221,12 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
 	 *
-	 * @returns {Array} a list of dependency names
+	 * @return {array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
-		return flatMap(
-			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
-		).concat( this._flow.providesDependenciesInQuery || [] );
+		return flatMap( this._flow.steps, stepName =>
+			get( steps, [ stepName, 'providesDependencies' ], [] )
+		).concat( this._flow.providesDependenciesInQuery );
 	}
 
 	_process() {
@@ -298,23 +290,6 @@ export default class SignupFlowController {
 			dependencies
 		);
 
-		/*
-			AB Test: passwordlessSignup
-
-			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
-
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
-			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
-		*/
-		if ( get( step, 'isPasswordlessSignupForm' ) ) {
-			this._processingSteps.delete( step.stepName );
-			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
-				step: step.stepName,
-			} );
-			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
-			return;
-		}
-
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );
@@ -353,9 +328,8 @@ export default class SignupFlowController {
 	}
 
 	_getStoredDependencies() {
-		const requiredDependencies = flatMap(
-			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+		const requiredDependencies = flatMap( this._flow.steps, stepName =>
+			get( steps, [ stepName, 'providesDependencies' ], [] )
 		);
 
 		return reduce(

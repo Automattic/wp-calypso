@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,7 +25,7 @@ class MagicSearchWelcome extends React.Component {
 	state = { suggestionPosition: -1 };
 
 	onMouseDown = event => {
-		this.props.suggestionsCallback( event.target.getAttribute( 'data-key' ) + ':' );
+		this.props.suggestionsCallback( event.target.textContent + ':' );
 		event.stopPropagation();
 		event.preventDefault();
 	};
@@ -47,11 +49,10 @@ class MagicSearchWelcome extends React.Component {
 	 * Provides keybord support for component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
 	 *
-	 * @param  {object} event  Keybord event
-	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
+	 * @param  {Object} event  Keybord event
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
 	 */
 	handleKeyEvent = event => {
-		const position = this.state.suggestionPosition;
 		switch ( event.key ) {
 			case 'ArrowDown':
 				this.movePositionBy( +1 );
@@ -62,6 +63,7 @@ class MagicSearchWelcome extends React.Component {
 				event.preventDefault();
 				break;
 			case 'Enter':
+				const position = this.state.suggestionPosition;
 				if ( position !== -1 ) {
 					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
 					event.stopPropagation();
@@ -83,40 +85,18 @@ class MagicSearchWelcome extends React.Component {
 			}
 		);
 
-		const taxonomyTranslations = {
-			feature: i18n.translate( 'Feature', {
-				context: 'Theme Showcase filter name',
-			} ),
-			layout: i18n.translate( 'Layout', {
-				context: 'Theme Showcase filter name',
-			} ),
-			column: i18n.translate( 'Columns', {
-				context: 'Theme Showcase filter name',
-			} ),
-			subject: i18n.translate( 'Subject', {
-				context: 'Theme Showcase filter name',
-			} ),
-			style: i18n.translate( 'Style', {
-				context: 'Theme Showcase filter name',
-			} ),
-		};
-
 		return (
 			<div
 				className={ themesTokenTypeClass }
 				onMouseDownCapture={ this.onMouseDown }
 				key={ taxonomy }
-				data-key={ taxonomy }
 			>
 				<Gridicon
 					icon={ taxonomyToGridicon( taxonomy ) }
 					className="themes-magic-search-card__welcome-taxonomy-icon"
 					size={ 18 }
 				/>
-				{ taxonomyTranslations[ taxonomy ] ||
-					i18n.translate( 'Unknown', {
-						context: 'Theme Showcase filter name',
-					} ) }
+				{ taxonomy }
 			</div>
 		);
 	};

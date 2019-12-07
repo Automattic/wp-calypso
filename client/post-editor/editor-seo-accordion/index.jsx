@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -68,15 +70,16 @@ class EditorSeoAccordion extends Component {
 								'The post content is used by default.'
 						) }
 						labelText={ translate( 'Meta Description' ) }
-					/>
-					<CountedTextarea
-						maxLength="300"
-						acceptableLength={ 159 }
-						placeholder={ translate( 'Write a description…' ) }
-						aria-label={ translate( 'Write a description…' ) }
-						value={ metaDescription }
-						onChange={ this.onMetaChange }
-					/>
+					>
+						<CountedTextarea
+							maxLength="300"
+							acceptableLength={ 159 }
+							placeholder={ translate( 'Write a description…' ) }
+							aria-label={ translate( 'Write a description…' ) }
+							value={ metaDescription }
+							onChange={ this.onMetaChange }
+						/>
+					</EditorDrawerLabel>
 					{ isJetpack && (
 						<div>
 							<Button className="editor-seo-accordion__preview-button" onClick={ this.showPreview }>

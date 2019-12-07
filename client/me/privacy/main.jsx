@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -140,4 +142,7 @@ const Privacy = createReactClass( {
 	},
 } );
 
-export default compose( localize, protectForm )( Privacy );
+export default compose(
+	localize,
+	protectForm
+)( Privacy );

@@ -1,47 +1,59 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Fragment, useReducer } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import MasterbarItem from './item';
 import LanguagePickerModal from 'components/language-picker/modal';
-import { languages } from 'languages';
+import switchLocale from 'lib/i18n-utils/switch-locale';
+import config from 'config';
 import { setLocale } from 'state/ui/language/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
-function QuickLanguageSwitcher( props ) {
-	const [ isShowingModal, toggleLanguagesModal ] = useReducer( toggled => ! toggled, false );
-	const onSelected = languageSlug => props.setLocale( languageSlug );
+class QuickLanguageSwitcher extends React.Component {
+	state = {
+		isShowingModal: false,
+	};
 
-	return (
-		<Fragment>
-			<MasterbarItem
-				icon="globe"
-				className="masterbar__quick-language-switcher"
-				onClick={ toggleLanguagesModal }
-			>
-				{ props.selectedLanguageSlug }
-			</MasterbarItem>
-			{ isShowingModal && (
+	toggleLanguagesModal = () => this.setState( { isShowingModal: ! this.state.isShowingModal } );
+
+	onClick = event => {
+		this.toggleLanguagesModal();
+		event.preventDefault();
+	};
+
+	onSelected = languageSlug => {
+		switchLocale( languageSlug );
+		this.props.setLocale( languageSlug );
+	};
+
+	render() {
+		const selectedLanguageSlug = getLocaleSlug();
+
+		return (
+			<div className="masterbar__item masterbar__quick-language-switcher">
+				<MasterbarItem icon="globe" onClick={ this.onClick }>
+					{ selectedLanguageSlug }
+				</MasterbarItem>
+
 				<LanguagePickerModal
-					isVisible
-					languages={ languages }
-					selected={ props.selectedLanguageSlug }
-					onSelected={ onSelected }
-					onClose={ toggleLanguagesModal }
+					isVisible={ this.state.isShowingModal }
+					languages={ config( 'languages' ) }
+					selected={ selectedLanguageSlug }
+					onSelected={ this.onSelected }
+					onClose={ this.toggleLanguagesModal }
 				/>
-			) }
-		</Fragment>
-	);
+			</div>
+		);
+	}
 }
 
 export default connect(
-	state => ( {
-		selectedLanguageSlug: getCurrentLocaleSlug( state ),
-	} ),
+	null,
 	{ setLocale }
 )( QuickLanguageSwitcher );

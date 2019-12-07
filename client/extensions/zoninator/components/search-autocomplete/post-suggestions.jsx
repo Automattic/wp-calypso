@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find, map } from 'lodash';
@@ -10,11 +13,11 @@ import { find, map } from 'lodash';
  * Internal depencencies
  */
 import QueryPosts from 'components/data/query-posts';
+import Suggestions from 'components/suggestions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { Suggestions } from '@automattic/components';
 
-class PostSuggestions extends Component {
+class PostSuggestions extends PureComponent {
 	static propTypes = {
 		exclude: PropTypes.array,
 		posts: PropTypes.array.isRequired,
@@ -28,9 +31,9 @@ class PostSuggestions extends Component {
 		search: '',
 	};
 
-	suggestionsRef = React.createRef();
+	setSuggestions = ref => ( this.suggestionsRef = ref );
 
-	handleKeyEvent = event => this.suggestionsRef.current.handleKeyEvent( event );
+	handleKeyEvent = event => this.suggestionsRef.handleKeyEvent( event );
 
 	suggest = ( { postId } ) => this.props.suggest( find( this.props.posts, { ID: postId } ) );
 
@@ -39,15 +42,16 @@ class PostSuggestions extends Component {
 		const suggestions = map( posts, post => ( { label: post.title, postId: post.ID } ) );
 
 		return (
-			<Fragment>
+			<div>
 				<QueryPosts siteId={ siteId } query={ { search, exclude } } />
+
 				<Suggestions
-					ref={ this.suggestionsRef }
+					ref={ this.setSuggestions }
 					query={ search }
 					suggestions={ suggestions }
 					suggest={ this.suggest }
 				/>
-			</Fragment>
+			</div>
 		);
 	}
 }
@@ -61,6 +65,11 @@ const mapStateToProps = ( state, { exclude, search } ) => {
 	};
 };
 
-const connectComponent = connect( mapStateToProps, null, null, { forwardRef: true } );
+const connectComponent = connect(
+	mapStateToProps,
+	null,
+	null,
+	{ withRef: true }
+);
 
 export default connectComponent( PostSuggestions );

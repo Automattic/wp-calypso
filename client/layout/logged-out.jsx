@@ -1,11 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes, get, startsWith } from 'lodash';
+import { includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,11 +26,6 @@ import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
 	if ( section.name === 'devdocs' ) {
@@ -41,7 +39,6 @@ const hasSidebar = section => {
 const LayoutLoggedOut = ( {
 	currentRoute,
 	isJetpackLogin,
-	isPopup,
 	isJetpackWooCommerceFlow,
 	wccomFrom,
 	masterbarIsHidden,
@@ -63,7 +60,6 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
-		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
 		'is-wccom-oauth-flow':
@@ -136,18 +132,16 @@ LayoutLoggedOut.propTypes = {
 export default connect( state => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
-	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-	const noMasterbarForRoute = startsWith( currentRoute, '/log-in/jetpack' );
-	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
+	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
-		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {
 		currentRoute,
 		isJetpackLogin,
-		isPopup,
 		isJetpackWooCommerceFlow,
 		wccomFrom,
 		masterbarIsHidden:

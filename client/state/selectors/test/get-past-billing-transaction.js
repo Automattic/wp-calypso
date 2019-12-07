@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import { clone } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -34,7 +36,7 @@ describe( 'getPastBillingTransaction()', () => {
 		const output = getPastBillingTransaction( state, '12345678' );
 		expect( output ).toEqual( {
 			...state.billingTransactions.items.past[ 0 ],
-			date: new Date( '2016-12-12T11:22:33+0000' ),
+			date: moment( '2016-12-12T11:22:33+0000' ).toDate(),
 		} );
 	} );
 

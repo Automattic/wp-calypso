@@ -1,9 +1,10 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import { receiveRestoreSuccess } from '../';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
+import { requestRewindState } from 'state/rewind/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

@@ -36,7 +36,7 @@ class Checklist extends PureComponent {
 		this.notifyCompletion();
 	}
 
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
+	componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setState( { expandedTaskIndex: undefined } );
 		}

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -80,7 +82,7 @@ class ImageEditor extends React.Component {
 
 	editCanvasRef = React.createRef();
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -169,7 +171,9 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
+		const canvasComponent = this.editCanvasRef.current.getWrappedInstance();
+
+		canvasComponent.toBlob( this.convertBlobToImage );
 	};
 
 	onCancel = () => {

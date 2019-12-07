@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +23,8 @@ import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'state/domains/dns/actions';
-import { validateAllFields, getNormalizedData } from 'state/domains/dns/utils';
+import { addDns } from 'lib/upgrades/actions';
+import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {
@@ -93,7 +94,7 @@ class DnsAddNew extends React.Component {
 		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,
@@ -124,16 +125,17 @@ class DnsAddNew extends React.Component {
 			);
 			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
-			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
-				() =>
-					this.props.successNotice( translate( 'The DNS record has been added.' ), {
-						duration: 5000,
-					} ),
-				error =>
+			addDns( this.props.selectedDomainName, normalizedData, error => {
+				if ( error ) {
 					this.props.errorNotice(
 						error.message || translate( 'The DNS record has not been added.' )
-					)
-			);
+					);
+				} else {
+					this.props.successNotice( translate( 'The DNS record has been added.' ), {
+						duration: 5000,
+					} );
+				}
+			} );
 		} );
 	};
 
@@ -212,8 +214,10 @@ class DnsAddNew extends React.Component {
 	}
 }
 
-export default connect( null, {
-	addDns,
-	errorNotice,
-	successNotice,
-} )( localize( DnsAddNew ) );
+export default connect(
+	null,
+	{
+		errorNotice,
+		successNotice,
+	}
+)( localize( DnsAddNew ) );

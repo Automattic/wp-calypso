@@ -1,3 +1,4 @@
+/** @format */
 import siteTitle from './updaters/site-title';
 
 const updaterFunctions = [ siteTitle ];

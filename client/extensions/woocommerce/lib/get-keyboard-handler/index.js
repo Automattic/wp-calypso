@@ -5,6 +5,7 @@
  * exists) if the down/up arrows are pressed.
  *
  *
+ * @format
  * @param {Function} callback A callback function
  * @return {Function} the callback to fire on a keydown event
  */

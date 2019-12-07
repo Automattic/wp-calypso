@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -28,10 +29,10 @@ describe( 'AccordionStatus', () => {
 		};
 		const wrapper = shallow( <AccordionStatus { ...status } /> );
 
-		expect( wrapper.find( 'a' ) )
+		expect( wrapper )
 			.to.have.prop( 'href' )
 			.equal( 'https://wordpress.com' );
-		expect( wrapper.find( 'a' ) ).to.have.className( 'is-error' );
+		expect( wrapper ).to.have.className( 'is-error' );
 		expect( wrapper.find( Gridicon ) )
 			.to.have.prop( 'icon' )
 			.equal( 'notice' );
@@ -46,8 +47,8 @@ describe( 'AccordionStatus', () => {
 	test( 'should render with default props', () => {
 		const wrapper = shallow( <AccordionStatus /> );
 
-		expect( wrapper.find( 'a' ) ).to.not.have.prop( 'href' );
-		expect( wrapper.find( 'a' ) ).to.have.className( 'is-info' );
+		expect( wrapper ).to.not.have.prop( 'href' );
+		expect( wrapper ).to.have.className( 'is-info' );
 		expect( wrapper.find( Gridicon ) )
 			.to.have.prop( 'icon' )
 			.equal( 'info' );
@@ -57,16 +58,16 @@ describe( 'AccordionStatus', () => {
 	test( 'should show tooltip on hover', () => {
 		const wrapper = shallow( <AccordionStatus text="Warning!" /> );
 
-		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.false;
+		expect( wrapper.find( Tooltip ) ).to.not.have.prop( 'isVisible' );
 		expect( wrapper.find( Tooltip ) )
 			.to.have.prop( 'position' )
 			.equal( 'top' );
 
-		wrapper.find( 'a' ).simulate( 'mouseEnter' );
+		wrapper.simulate( 'mouseEnter' );
 
 		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.true;
 
-		wrapper.find( 'a' ).simulate( 'mouseLeave' );
+		wrapper.simulate( 'mouseLeave' );
 
 		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.false;
 	} );
@@ -75,7 +76,7 @@ describe( 'AccordionStatus', () => {
 		const spy = sinon.spy();
 		const wrapper = shallow( <AccordionStatus onClick={ spy } /> );
 
-		wrapper.find( 'a' ).simulate( 'click' );
+		wrapper.simulate( 'click' );
 
 		expect( spy ).to.have.been.calledOnce;
 	} );

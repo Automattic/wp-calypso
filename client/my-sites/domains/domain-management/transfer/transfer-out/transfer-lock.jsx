@@ -1,22 +1,22 @@
 /**
  *  External Dependencies
+ *
+ * @format
  */
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { useLocalizedMoment } from 'components/localized-moment';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
 import { getSelectedDomain } from 'lib/domains';
 
 const TransferLock = props => {
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const { transferAwayEligibleAt } = getSelectedDomain( props );
+	const { translate } = props;
+	const { transferAwayEligibleAtMoment } = getSelectedDomain( props );
 
 	return (
 		<div>
@@ -28,7 +28,7 @@ const TransferLock = props => {
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
-							date: moment( transferAwayEligibleAt ).format( 'LL' ),
+							date: transferAwayEligibleAtMoment.format( 'LL' ),
 						},
 						components: {
 							strong: <strong />,
@@ -47,4 +47,4 @@ const TransferLock = props => {
 	);
 };
 
-export default TransferLock;
+export default localize( TransferLock );

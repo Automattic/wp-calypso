@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,12 +43,12 @@ class AuthorSwitcherShell extends React.Component {
 		showAuthorMenu: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.instance = instance;
 		instance++;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.fetchOptions.siteId ||
 			nextProps.fetchOptions.siteId !== this.props.fetchOptions.siteId

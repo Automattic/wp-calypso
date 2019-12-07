@@ -6,7 +6,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
@@ -23,17 +23,10 @@ import {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case HAPPINESS_ENGINEERS_FETCH:
-			return true;
-		case HAPPINESS_ENGINEERS_FETCH_FAILURE:
-			return false;
-		case HAPPINESS_ENGINEERS_FETCH_SUCCESS:
-			return false;
-	}
-
-	return state;
+export const requesting = createReducer( false, {
+	[ HAPPINESS_ENGINEERS_FETCH ]: () => true,
+	[ HAPPINESS_ENGINEERS_FETCH_FAILURE ]: () => false,
+	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => false,
 } );
 
 /**
@@ -45,16 +38,15 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {Object} action Action object
  * @return {Array}         Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case HAPPINESS_ENGINEERS_RECEIVE: {
-			const { happinessEngineers } = action;
+export const items = createReducerWithValidation(
+	null,
+	{
+		[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
 			return map( happinessEngineers, 'avatar_URL' );
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	itemsSchema
+);
 
 export default combineReducers( {
 	requesting,

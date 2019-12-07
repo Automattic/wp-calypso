@@ -1,3 +1,5 @@
+/** @format */
+
 export function isOffline( state ) {
 	return state.application.connectionState === 'OFFLINE';
 }

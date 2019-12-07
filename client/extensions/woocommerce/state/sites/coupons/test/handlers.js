@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -46,10 +48,7 @@ describe( 'handlers', () => {
 		test( 'should dispatch a page update', () => {
 			const response = {
 				data: {
-					body: [
-						{ id: 1, code: '1' },
-						{ id: 2, code: '2' },
-					],
+					body: [ { id: 1, code: '1' }, { id: 2, code: '2' } ],
 					headers: {
 						[ 'X-WP-TotalPages' ]: '1',
 						[ 'X-WP-Total' ]: '2',
@@ -79,14 +78,8 @@ describe( 'handlers', () => {
 			const action = fetchCoupons( siteId, { page: 1, per_page: 30 } );
 			const body1 = [ { id: 1 }, { id: 2, code: '2' } ];
 			const body2 = [ { id: 1, code: '1' }, { code: '2' } ];
-			const body3 = [
-				{ id: 1, code: '1' },
-				{ id: 'x', code: '2' },
-			];
-			const body4 = [
-				{ id: 1, code: '1' },
-				{ id: 2, code: 45 },
-			];
+			const body3 = [ { id: 1, code: '1' }, { id: 'x', code: '2' } ];
+			const body4 = [ { id: 1, code: '1' }, { id: 2, code: 45 } ];
 
 			response.data.body = body1;
 			const result1 = requestCouponsSuccess( action, response );

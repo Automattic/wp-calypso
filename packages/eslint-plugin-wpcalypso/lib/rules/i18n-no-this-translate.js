@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow the use of this.translate
  * @author Automattic

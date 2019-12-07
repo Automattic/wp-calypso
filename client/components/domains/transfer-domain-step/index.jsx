@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -82,18 +84,16 @@ class TransferDomainStep extends React.Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
-		const forcePrecheck = get( this.props, 'forcePrecheck', false );
 		return {
 			authCodeValid: null,
 			domain: null,
 			domainsWithPlansOnly: false,
 			inboundTransferStatus: {},
-			isTransferable: forcePrecheck,
-			precheck: forcePrecheck,
+			precheck: get( this.props, 'forcePrecheck', false ),
 			searchQuery: this.props.initialQuery || '',
 			submittingAuthCodeCheck: false,
 			submittingAvailability: false,
-			submittingWhois: forcePrecheck,
+			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
 		};
 	}
@@ -379,7 +379,6 @@ class TransferDomainStep extends React.Component {
 			this.setState( {
 				domain: null,
 				inboundTransferStatus: {},
-				isTransferable: false,
 				precheck: false,
 				notice: null,
 				searchQuery: '',
@@ -479,36 +478,21 @@ class TransferDomainStep extends React.Component {
 
 		this.props.recordFormSubmitInTransferDomain( searchQuery );
 
-		this.setState( {
-			isTransferable: false,
-			notice: null,
-			suggestion: null,
-			submittingAvailability: true,
-		} );
+		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
 		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
 			this.setState( prevState => {
-				const { isTransferable, submittingAvailability, submittingWhois, suggestion } = prevState;
+				const { submittingAvailability, submittingWhois } = prevState;
 
 				return {
 					domain,
-					precheck:
-						prevState.domain !== null &&
-						isTransferable &&
-						! suggestion &&
-						! submittingAvailability &&
-						! submittingWhois,
+					precheck: prevState.domain && ! submittingAvailability && ! submittingWhois,
 				};
 			} );
 
-			if (
-				this.props.isSignupStep &&
-				this.state.domain &&
-				! this.transferIsRestricted() &&
-				this.state.isTransferable
-			) {
+			if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
 				this.props.onTransferDomain( domain );
 			}
 		} );
@@ -530,7 +514,6 @@ class TransferDomainStep extends React.Component {
 						case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 							this.setState( {
 								domain,
-								isTransferable: true,
 								supportsPrivacy: get( result, 'supports_privacy', false ),
 							} );
 							break;

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,4 +11,7 @@ import { connect } from 'react-redux';
 import QueryCountries from 'components/data/query-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 
-export default connect( null, { requestCountries: fetchPaymentCountries } )( QueryCountries );
+export default connect(
+	null,
+	{ requestCountries: fetchPaymentCountries }
+)( QueryCountries );

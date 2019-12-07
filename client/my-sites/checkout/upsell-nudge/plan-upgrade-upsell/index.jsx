@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -33,10 +35,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 		return (
 			<>
-				<PageViewTracker
-					path="/checkout/:site/offer-plan-upgrade/:upgrade_item/:receipt_id"
-					title={ title }
-				/>
+				<PageViewTracker path="/checkout/:site/plan-upgrade-nudge/:receipt_id" title={ title } />
 				<DocumentHead title={ title } />
 				{ receiptId ? (
 					<CompactCard className="plan-upgrade-upsell__card-header">{ this.header() }</CompactCard>
@@ -64,13 +63,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 	body() {
 		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
 		const bundleValue = planRawPrice * 77;
-		const premiumThemePriceLow = planRawPrice * 0.73;
-		const premiumThemePriceHigh = planRawPrice * 1.045;
+		const premiumThemePriceLow = planDiscountedRawPrice * 1.37;
+		const premiumThemePriceHigh = planDiscountedRawPrice * 2.75;
 		return (
 			<>
 				<h2 className="plan-upgrade-upsell__header">
 					{ translate(
-						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
+						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
 						{
 							args: {
 								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
@@ -118,7 +117,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"That's exactly why we've partnered with some of the world's greatest designers to offer over 250 high-end designs that you can use to make your site look incredible."
+								"That's exactly why we've partnered with some of the world's greatest designers to offer nearly 200 high-end designs that you can use to make your site looks incredible."
 							) }
 						</p>
 						<p>
@@ -133,7 +132,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Typically, this type of high-end WordPress theme {{b}}costs an average of %(premiumThemePriceLow)s, with some going as high as %(premiumThemePriceHigh)s and more{{/b}}.',
+								'Normally, each of these WordPress themes {{b}}cost between %(premiumThemePriceLow)s and %(premiumThemePriceHigh)s or more{{/b}}.',
 								{
 									args: {
 										premiumThemePriceLow: formatCurrency( premiumThemePriceLow, currencyCode, {
@@ -149,12 +148,10 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'But if you upgrade to a Premium plan with this special offer, you will get our full collection of over 250 premium themes for just an additional %(discountPrice)s!',
+								'But if you upgrade to a Premium plan with this special offer, you can enjoy the full collection of premium themes for just an additional %(discountPrice)s!',
 								{
 									args: {
-										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-											stripZeros: true,
-										} ),
+										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
 									},
 								}
 							) }
@@ -182,7 +179,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, or share multiple social posts at a time.',
+										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, to scheduling multiple social posts at a time.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -194,7 +191,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand out and never be the same as others.',
+										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand and never be the same as others.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -215,15 +212,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Upgrade to the Premium plan and access over 250 premium themes for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
+									'Upgrade to the Premium plan (and access nearly 200 premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
 									{
 										components: { del: <del /> },
 										args: {
 											bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
+											fullPrice: formatCurrency( planRawPrice, currencyCode ),
+											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
 										},
 									}
 								) }

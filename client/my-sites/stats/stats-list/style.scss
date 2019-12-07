@@ -123,7 +123,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -157,7 +157,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -748,7 +748,7 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon

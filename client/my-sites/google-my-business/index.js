@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
-import { getSiteHomeUrl } from 'state/sites/selectors';
 import { requestKeyringServices } from 'state/sharing/services/actions';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
@@ -42,7 +43,7 @@ const redirectUnauthorized = ( context, next ) => {
 	const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
 	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	if ( ! siteIsGMBEligible || ! canUserManageOptions ) {
-		page.redirect( getSiteHomeUrl( state, siteId ) );
+		page.redirect( `/stats/${ context.params.site }` );
 	}
 
 	next();
@@ -96,7 +97,7 @@ export default function( router ) {
 			} else if ( hasLocationsAvailable && siteIsGMBEligible ) {
 				page.redirect( `/google-my-business/select-location/${ context.params.site }` );
 			} else {
-				page.redirect( getSiteHomeUrl( state, siteId ) );
+				page.redirect( `/stats/${ context.params.site }` );
 			}
 		},
 		stats,

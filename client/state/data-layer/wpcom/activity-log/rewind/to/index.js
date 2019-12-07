@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { errorNotice } from 'state/notices/actions';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
+import { requestRewindState } from 'state/rewind/actions';
 import { REWIND_RESTORE, REWIND_CLONE } from 'state/action-types';
 import { SchemaError } from 'lib/make-json-schema-parser';
 

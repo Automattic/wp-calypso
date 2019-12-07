@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import { getSite } from 'state/sites/selectors';
 
 const SiteExample = ( { site } ) => (
 	<Card style={ { padding: 0 } }>
-		<Site site={ site } homeLink />
+		<Site site={ site } />
 		<Site compact site={ site } homeLink={ true } />
 	</Card>
 );

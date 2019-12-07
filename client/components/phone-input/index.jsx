@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
-import { find, identity } from 'lodash';
+import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -28,41 +30,26 @@ import './style.scss';
 class PhoneInput extends React.PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func.isRequired,
-		className: PropTypes.string,
-		isError: PropTypes.bool,
-		disabled: PropTypes.bool,
-		name: PropTypes.string,
 		value: PropTypes.string.isRequired,
 		countryCode: PropTypes.string.isRequired,
 		countriesList: PropTypes.array.isRequired,
-		enableStickyCountry: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		setComponentReference: noop,
 		enableStickyCountry: true,
 	};
 
-	state = {
-		freezeSelection: false,
-	};
+	constructor( props ) {
+		super( props );
 
-	numberInput = undefined;
+		this.state = {
+			freezeSelection: false,
+		};
 
-	setNumberInputRef = element => {
-		this.numberInput = element;
-
-		const { inputRef } = this.props;
-
-		if ( ! inputRef ) {
-			return;
-		}
-
-		if ( typeof inputRef === 'function' ) {
-			inputRef( element );
-		} else {
-			inputRef.current = element;
-		}
-	};
+		this.handleInput = this.handleInput.bind( this );
+		this.handleCountrySelection = this.handleCountrySelection.bind( this );
+	}
 
 	/**
 	 * Returns the country meta with default values for countries with missing metadata. Never returns null.
@@ -95,9 +82,14 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
+		this.props.setComponentReference( this );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillUnmount() {
+		this.props.setComponentReference( undefined );
+	}
+
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.value === this.props.value &&
 			nextProps.countryCode === this.props.countryCode
@@ -111,16 +103,10 @@ class PhoneInput extends React.PureComponent {
 		this.props.onChange( { value, countryCode } );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if (
-			nextProps.value === this.props.value &&
-			nextProps.countryCode === this.props.countryCode
-		) {
-			return;
-		}
-		const currentFormat = this.props.value;
-		const currentCursorPoint = this.numberInput.selectionStart;
-		const nextFormat = nextProps.value;
+	componentWillUpdate( nextProps ) {
+		const currentFormat = this.props.value,
+			currentCursorPoint = this.numberInput.selectionStart,
+			nextFormat = nextProps.value;
 
 		let newCursorPoint = currentCursorPoint;
 		/*
@@ -184,7 +170,7 @@ class PhoneInput extends React.PureComponent {
 		return formatNumber( value, this.getCountry( countryCode ) );
 	}
 
-	handleInput = event => {
+	handleInput( event ) {
 		const inputValue = event.target.value;
 		if ( inputValue === this.props.value ) {
 			// nothing changed
@@ -199,7 +185,7 @@ class PhoneInput extends React.PureComponent {
 		);
 
 		this.props.onChange( { value, countryCode } );
-	};
+	}
 
 	/**
 	 * Calculates the input and country
@@ -215,7 +201,7 @@ class PhoneInput extends React.PureComponent {
 		return { value: calculatedValue, countryCode: calculatedCountryCode };
 	}
 
-	handleCountrySelection = event => {
+	handleCountrySelection( event ) {
 		const newCountryCode = event.target.value;
 		if ( newCountryCode === this.props.countryCode ) {
 			return;
@@ -246,7 +232,9 @@ class PhoneInput extends React.PureComponent {
 			value: this.format( inputValue, newCountryCode ),
 		} );
 		this.setState( { freezeSelection: this.props.enableStickyCountry } );
-	};
+	}
+
+	setNumberInputRef = c => ( this.numberInput = c );
 
 	render() {
 		return (

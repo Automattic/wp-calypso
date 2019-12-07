@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -121,7 +123,6 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -133,7 +134,6 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
 					/>
 				) }
 			</div>

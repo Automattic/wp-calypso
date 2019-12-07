@@ -24,4 +24,7 @@ const mapDispatchToProps = {
 	viewSettings: actions.ui.viewSettings,
 };
 
-export default connect( null, mapDispatchToProps )( ListHeader );
+export default connect(
+	null,
+	mapDispatchToProps
+)( ListHeader );

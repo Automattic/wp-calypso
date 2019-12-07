@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -116,7 +118,10 @@ const wpcomNameServersLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
-	wpcomNameServersLearnMoreClick,
-	wpcomNameServersToggleButtonClick,
-} )( localize( NameserversToggle ) );
+export default connect(
+	null,
+	{
+		wpcomNameServersLearnMoreClick,
+		wpcomNameServersToggleButtonClick,
+	}
+)( localize( NameserversToggle ) );

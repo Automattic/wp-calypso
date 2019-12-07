@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic
@@ -24,7 +25,7 @@ const EXPECTED_FOO_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo__
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+	parser: 'babel-eslint',
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 		sourceType: 'module',

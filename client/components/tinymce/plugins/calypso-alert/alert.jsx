@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class Alert extends React.Component {

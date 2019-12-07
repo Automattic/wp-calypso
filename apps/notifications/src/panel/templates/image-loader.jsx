@@ -26,11 +26,11 @@ export class ImageLoader extends Component {
 		status: LoadStatus.PENDING,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.createLoader();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}

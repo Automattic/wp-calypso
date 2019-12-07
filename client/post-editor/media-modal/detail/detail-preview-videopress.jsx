@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -46,7 +48,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		this.destroy();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
 			this.pause();
 		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {

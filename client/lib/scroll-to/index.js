@@ -1,3 +1,5 @@
+/** @format */
+
 const scrollers = new Map();
 
 function getCurrentScroll( container ) {

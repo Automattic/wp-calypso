@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,7 +30,7 @@ class QueryPostStats extends Component {
 		heartbeat: PropTypes.number,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { requestingPostStats, siteId, postId } = this.props;
 		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
 			this.requestPostStats( this.props );
@@ -39,7 +41,7 @@ class QueryPostStats extends Component {
 		this.clearInterval();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
 			! ( siteId && ! isUndefined( postId ) ) ||

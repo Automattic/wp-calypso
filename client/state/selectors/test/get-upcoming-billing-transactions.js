@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,7 +34,7 @@ describe( 'getUpcomingBillingTransactions()', () => {
 			},
 		};
 		const expected = state.billingTransactions.items.upcoming.map( transaction => {
-			transaction.date = new Date( transaction.date );
+			transaction.date = moment( transaction.date ).toDate();
 			return transaction;
 		} );
 		const output = getUpcomingBillingTransactions( state );

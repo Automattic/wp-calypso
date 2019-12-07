@@ -1,3 +1,4 @@
+/** @format */
 export const siteVerticalSchema = {
 	type: 'object',
 	additionalProperties: false,

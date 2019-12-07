@@ -27,7 +27,7 @@ export class StatusBar extends React.Component {
 	 * in here, there is no need to have an explicit
 	 * `show()` function.
 	 */
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( '' == nextProps.statusMessage ) return;
 
 		if ( nextProps.statusMessage == this.props.statusMessage ) return;

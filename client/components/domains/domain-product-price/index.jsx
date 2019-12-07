@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -46,17 +48,7 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( this.props.showTestCopy ) {
-					message = (
-						<>
-							Registration fee: <del>{ this.props.price }</del>{' '}
-							<span className="domain-product-price__free-price">Free</span>
-						</>
-					);
-				} else {
-					message = translate( 'First year included in paid plans' );
-				}
-
+				message = translate( 'First year included in paid plans' );
 				if ( isMappingProduct ) {
 					message = translate( 'Included in paid plans' );
 				}
@@ -74,23 +66,19 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		const priceText = this.props.showTestCopy
-			? `Renews at ${ this.props.price }/year`
-			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
+		return (
+			<div className="domain-product-price__price">
+				{ this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
 					args: { cost: this.props.price },
 					components: { small: <small /> },
-			  } );
-
-		return <div className="domain-product-price__price">{ priceText }</div>;
+				} ) }
+			</div>
+		);
 	}
 
 	renderFreeWithPlan() {
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
-		} );
-
 		return (
-			<div className={ className }>
+			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
 				{ this.renderFreeWithPlanText() }
 				{ this.renderFreeWithPlanPrice() }
 			</div>
@@ -98,17 +86,9 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFree() {
-		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
-		} );
-
-		const productPriceClassName = classnames( 'domain-product-price__price', {
-			'domain-product-price__free-price': this.props.showTestCopy,
-		} );
-
 		return (
-			<div className={ className }>
-				<div className={ productPriceClassName }>{ this.props.translate( 'Free' ) }</div>
+			<div className={ classnames( 'domain-product-price' ) }>
+				<span className="domain-product-price__price">{ this.props.translate( 'Free' ) }</span>
 			</div>
 		);
 	}

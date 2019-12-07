@@ -1,9 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -11,20 +14,55 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-const request = siteId => ( dispatch, getState ) => {
-	if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {
-		dispatch( fetchSiteDomains( siteId ) );
+class QuerySiteDomains extends Component {
+	constructor( props ) {
+		super( props );
+		this.requestSiteDomains = this.requestSiteDomains.bind( this );
 	}
-};
 
-export default function QuerySiteDomains( { siteId } ) {
-	const dispatch = useDispatch();
+	componentWillMount() {
+		this.requestSiteDomains();
+	}
 
-	useEffect( () => {
-		dispatch( request( siteId ) );
-	}, [ dispatch, siteId ] );
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.requestingSiteDomains ||
+			! nextProps.siteId ||
+			this.props.siteId === nextProps.siteId
+		) {
+			return;
+		}
+		this.requestSiteDomains( nextProps );
+	}
 
-	return null;
+	requestSiteDomains( props = this.props ) {
+		if ( ! props.requestingSiteDomains && props.siteId ) {
+			props.fetchSiteDomains( props.siteId );
+		}
+	}
+
+	render() {
+		return null;
+	}
 }
 
-QuerySiteDomains.propTypes = { siteId: PropTypes.number.isRequired };
+QuerySiteDomains.propTypes = {
+	siteId: PropTypes.number,
+	requestingSiteDomains: PropTypes.bool,
+	fetchSiteDomains: PropTypes.func,
+};
+
+QuerySiteDomains.defaultProps = {
+	fetchSiteDomains: () => {},
+};
+
+export default connect(
+	( state, ownProps ) => {
+		return {
+			requestingSiteDomains: isRequestingSiteDomains( state, ownProps.siteId ),
+		};
+	},
+	dispatch => {
+		return bindActionCreators( { fetchSiteDomains }, dispatch );
+	}
+)( QuerySiteDomains );

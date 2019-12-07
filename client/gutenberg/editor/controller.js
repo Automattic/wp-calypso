@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import page from 'page';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, getSiteOption } from 'state/sites/selectors';
+import { getSiteUrl } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
@@ -38,13 +39,6 @@ function determinePostType( context ) {
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
-	}
-
-	if ( 'home' === context.params.post ) {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-
-		return parseInt( getSiteOption( state, siteId, 'page_on_front' ), 10 );
 	}
 
 	// both post and site are in the path
@@ -84,7 +78,7 @@ function waitForSiteIdAndSelectedEditor( context ) {
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
  *
- * @param {object} context  Shared context in the route.
+ * @param {Object} context  Shared context in the route.
  * @param {Function} next   Next registered callback for the route.
  * @returns {*}             Whatever the next callback returns.
  */
@@ -179,13 +173,11 @@ export const post = ( context, next ) => {
 
 	context.primary = (
 		<CalypsoifyIframe
-			key={ postId }
 			postId={ postId }
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
 			fseParentPageId={ fseParentPageId }
-			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 		/>
 	);
 

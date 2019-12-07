@@ -1,3 +1,4 @@
+/** @format */
 export const surveyStepSchema = {
 	type: 'object',
 	properties: {

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 
 import { bindActionCreators } from 'redux';
@@ -119,7 +120,7 @@ class Settings extends React.Component {
 		this.fetchSettings( this.props );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.fetchSettings( nextProps );
 		}
@@ -292,4 +293,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( Settings );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( Settings );

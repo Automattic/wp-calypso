@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'components/purchase-detail', () => 'PurchaseDetail' );
 jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,6 +30,7 @@ import {
 	find,
 	reject,
 } from 'lodash';
+import moment from 'moment';
 import url from 'url';
 
 /**
@@ -437,7 +440,7 @@ export function isDateEqual( localDateEdit, savedDate ) {
 		return true;
 	}
 
-	return localDateEdit && new Date( localDateEdit ).getTime() === new Date( savedDate ).getTime();
+	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
 }
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {
@@ -590,7 +593,7 @@ export const isBackDatedPublished = function( post, status ) {
 
 	const effectiveStatus = status || post.status;
 
-	return effectiveStatus === 'future' && new Date( post.date ) < Date.now();
+	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
 };
 
 // Return published status of a post. Optionally, the `status` can be overridden
@@ -660,7 +663,7 @@ export const isBackDated = function( post ) {
 		return false;
 	}
 
-	return new Date( post.date ) < new Date( post.modified );
+	return moment( post.date ).isBefore( moment( post.modified ) );
 };
 
 export const isPage = function( post ) {

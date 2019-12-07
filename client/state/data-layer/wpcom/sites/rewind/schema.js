@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Rewind state schemas in this file are wrapped in an odd way with the
  * `stateSchema()` helper so that the validation errors are more useful

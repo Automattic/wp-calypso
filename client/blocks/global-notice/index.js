@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -18,7 +20,7 @@ export class GlobalNotice extends Component {
 		text: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { notice } = this.props.displayNotice( this.props.text, { isPersistent: true } );
 		this.notice = notice;
 	}
@@ -34,7 +36,10 @@ export class GlobalNotice extends Component {
 	}
 }
 
-export const InfoNotice = connect( null, {
-	displayNotice: infoNotice,
-	removeNotice,
-} )( GlobalNotice );
+export const InfoNotice = connect(
+	null,
+	{
+		displayNotice: infoNotice,
+		removeNotice,
+	}
+)( GlobalNotice );

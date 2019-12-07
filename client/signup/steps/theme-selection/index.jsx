@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,20 +23,14 @@ import { isEnabled } from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class ThemeSelectionStep extends Component {
 	static propTypes = {
 		designType: PropTypes.string,
-		quantity: PropTypes.number,
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
-		useHeadstart: PropTypes.bool,
 		translate: PropTypes.func,
+		useHeadstart: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -44,13 +39,12 @@ class ThemeSelectionStep extends Component {
 	};
 
 	pickTheme = themeId => {
-		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
-			headstart: useHeadstart,
+			headstart: true,
 		} );
 
 		this.props.submitSignupStep(
@@ -60,7 +54,6 @@ class ThemeSelectionStep extends Component {
 			},
 			{
 				themeSlugWithRepo: repoSlug,
-				useThemeHeadstart: useHeadstart,
 			}
 		);
 
@@ -73,7 +66,6 @@ class ThemeSelectionStep extends Component {
 				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.pickTheme }
-				quantity={ this.props.quantity }
 			/>
 		);
 	}
@@ -95,61 +87,27 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	headerText() {
-		const { flowName, translate } = this.props;
-
-		if ( this.isStoreSignup() ) {
-			return translate( 'Choose a store theme.' );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( 'Pick your site design' );
-		}
-		return translate( 'Choose a theme.' );
-	}
-
-	headerTextIfFirstStep() {
-		const { flowName, translate } = this.props;
-
-		if ( flowName === 'test-fse' ) {
-			return translate( "Let's get started by picking your site design" );
-		}
-
-		// Use the default header text
-		return undefined;
-	}
-
-	subHeaderText() {
-		const { flowName, translate } = this.props;
-
-		if ( this.isStoreSignup() ) {
-			return translate( 'Pick one of our store themes to start with. You can change this later.', {
-				context: 'Themes step subheader in Signup',
-			} );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( "You'll be able to customize your new site in hundreds of ways." );
-		}
-		return translate(
-			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
-			{ context: 'Themes step subheader in Signup' }
-		);
-	}
-
 	render() {
-		const { useHeadstart, flowName } = this.props;
-
-		// If a user skips the step in `design-first` or `test-fse` let segment and vertical determine content.
-		const defaultDependencies =
-			'design-first' === flowName || 'test-fse' === flowName
-				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
-				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
-
-		const headerText = this.headerText();
-		const headerTextIfFirstStep = this.headerTextIfFirstStep();
-		const subHeaderText = this.subHeaderText();
+		const storeSignup = this.isStoreSignup();
+		const defaultDependencies = this.props.useHeadstart
+			? { themeSlugWithRepo: 'pub/twentysixteen' }
+			: undefined;
+		const { translate } = this.props;
+		const headerText = storeSignup
+			? translate( 'Choose a store theme.' )
+			: translate( 'Choose a theme.' );
+		const subHeaderText = storeSignup
+			? translate( 'Pick one of our store themes to start with. You can change this later.', {
+					context: 'Themes step subheader in Signup',
+			  } )
+			: translate(
+					'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
+					{ context: 'Themes step subheader in Signup' }
+			  );
 
 		return (
 			<StepWrapper
 				fallbackHeaderText={ headerText }
-				headerText={ headerTextIfFirstStep }
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderThemesList() }

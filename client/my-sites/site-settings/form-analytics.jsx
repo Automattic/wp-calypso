@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,23 +23,35 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { isPremium, isBusiness, isEnterprise, isVipPlan, isEcommerce } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isVipPlan,
+	isEcommerce,
+} from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TERM_ANNUALLY,
+} from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasPlanWithAnalytics = overSome(
-	isPremium,
+const hasBusinessPlan = overSome(
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
+	isJetpackBusiness,
 	isVipPlan
 );
 
@@ -115,7 +129,7 @@ export class GoogleAnalyticsForm extends Component {
 			? translate(
 					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
 			  )
-			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
+			: translate( 'Connect your site to Google Analytics in seconds with the Business plan' );
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
@@ -137,7 +151,7 @@ export class GoogleAnalyticsForm extends Component {
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-							type: TYPE_PREMIUM,
+							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
 						title={ nudgeTitle }
@@ -270,7 +284,7 @@ export class GoogleAnalyticsForm extends Component {
 		if ( ! this.props.site ) {
 			return null;
 		}
-		// Only show Google Analytics for users with a premium or above plan.
+		// Only show Google Analytics for business users.
 		return this.form();
 	}
 }
@@ -278,7 +292,8 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );
+	const isGoogleAnalyticsEligible =
+		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -300,7 +315,12 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-const connectComponent = connect( mapStateToProps, mapDispatchToProps, null, { pure: false } );
+const connectComponent = connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	null,
+	{ pure: false }
+);
 
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 

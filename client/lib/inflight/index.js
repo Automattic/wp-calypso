@@ -1,3 +1,4 @@
+/** @format */
 const inflight = new Set();
 
 // Utility methods to track inflight async requests

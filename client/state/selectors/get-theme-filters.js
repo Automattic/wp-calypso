@@ -2,6 +2,7 @@
  * Returns the list of available theme filters
  *
  *
+ * @format
  * @param {Object}  state Global state tree
  * @return {Object}        A nested list of theme filters, keyed by filter slug
  */

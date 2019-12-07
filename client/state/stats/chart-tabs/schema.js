@@ -1,3 +1,4 @@
+/** @format */
 export const countsSchema = {
 	type: 'object',
 	// additionalProperties: false,

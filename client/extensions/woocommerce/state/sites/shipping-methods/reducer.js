@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS,
@@ -11,16 +13,12 @@ import { LOADING } from 'woocommerce/state/constants';
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_SHIPPING_METHODS_REQUEST: {
-			return LOADING;
-		}
-		case WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS: {
-			const { data } = action;
-			return data;
-		}
-	}
+export default createReducer( null, {
+	[ WOOCOMMERCE_SHIPPING_METHODS_REQUEST ]: () => {
+		return LOADING;
+	},
 
-	return state;
+	[ WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		return data;
+	},
 } );

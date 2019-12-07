@@ -1,10 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { debounce, forEach } from 'lodash';
-import isShallowEqual from '@wordpress/is-shallow-equal';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
@@ -88,7 +91,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 		if (
 			this.props.content.body !== nextProps.content.body ||
-			! isShallowEqual( this.props.content.params, nextProps.content.params )
+			! shallowEqual( this.props.content.params, nextProps.content.params )
 		) {
 			this.setContentParams( nextProps.content.params );
 		}

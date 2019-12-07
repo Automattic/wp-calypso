@@ -36,7 +36,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
               />
             </div>
             <span
-              class="template-selector-item__template-title"
               id="label-template-selector-control-17-blank"
             >
               Blank
@@ -62,7 +61,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
               />
             </div>
             <span
-              class="template-selector-item__template-title"
               id="label-template-selector-control-17-template-1"
             >
               Template 1
@@ -88,7 +86,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
               />
             </div>
             <span
-              class="template-selector-item__template-title"
               id="label-template-selector-control-17-template-2"
             >
               Template 2
@@ -114,7 +111,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
               />
             </div>
             <span
-              class="template-selector-item__template-title"
               id="label-template-selector-control-17-template-3"
             >
               Template 3

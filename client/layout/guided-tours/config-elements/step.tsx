@@ -96,7 +96,7 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition: boolean = false;
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
@@ -119,7 +119,7 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
+	componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );

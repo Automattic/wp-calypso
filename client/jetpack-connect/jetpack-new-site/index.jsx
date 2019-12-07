@@ -87,7 +87,7 @@ class JetpackNewSite extends Component {
 						<div className="jetpack-new-site__header-text">
 							{ this.props.translate(
 								'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
-							) }{ ' ' }
+							) }{' '}
 						</div>
 					</div>
 					<div className="jetpack-new-site__content">
@@ -159,9 +159,12 @@ class JetpackNewSite extends Component {
 	}
 }
 
-const connectComponent = connect( null, {
-	recordTracksEvent,
-} );
+const connectComponent = connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+);
 
 export default flowRight(
 	connectComponent,

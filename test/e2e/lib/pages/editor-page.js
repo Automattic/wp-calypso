@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -169,11 +171,10 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'span[data-e2e-insert-type="payment-button"]' )
 		);
-		await driverHelper.clickWhenClickable(
+		await driverHelper.clickIfPresent(
 			this.driver,
-			by.css(
-				'.editor-simple-payments-modal__navigation .section-header__actions .gridicons-plus-small'
-			)
+			by.css( '.editor-simple-payments-modal button svg.gridicons-plus-small' ),
+			2
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,

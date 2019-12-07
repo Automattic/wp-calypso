@@ -1,11 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ function RecentRenewalListItem( { domain, productName, expiryMoment, translate }
 	return (
 		expiryMoment && (
 			<li>
-				<strong>{ domain }</strong>{ ' ' }
+				<strong>{ domain }</strong>{' '}
 				{ translate( '%(productName)s recently renewed and will expire on %(expiryDate)s', {
 					args: {
 						productName,
@@ -39,7 +40,7 @@ RecentRenewalListItem.propTypes = {
 };
 
 function getRecentRenewalProductsMatchingIds( products, ids ) {
-	const oldestMoment = moment().subtract( 30, 'days' );
+	const oldestMoment = i18n.moment().subtract( 30, 'days' );
 	return products.filter( product => {
 		return (
 			ids.includes( product.productId ) &&

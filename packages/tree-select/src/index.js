@@ -1,3 +1,5 @@
+/** @format */
+
 const defaultGetCacheKey = ( ...args ) => args.join();
 
 const isFunction = fn => {
@@ -67,7 +69,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 /*
  * This object will be used as a WeakMap key if a dependency is a falsy value (null, undefined, ...)
  */
-const NULLISH_KEY = {};
+const STATIC_FALSY_KEY = {};
 
 /*
  * First tries to get the value for the key.
@@ -77,10 +79,7 @@ const NULLISH_KEY = {};
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
-	if ( key != null && Object( key ) !== key ) {
-		throw new TypeError( 'key must be an object, `null`, or `undefined`' );
-	}
-	const weakMapKey = key || NULLISH_KEY;
+	const weakMapKey = key || STATIC_FALSY_KEY;
 
 	const existingMap = map.get( weakMapKey );
 	if ( existingMap ) {

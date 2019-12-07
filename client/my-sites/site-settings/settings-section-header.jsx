@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,11 +19,11 @@ const SettingsSectionHeader = ( {
 	onButtonClick,
 	showButton,
 	title,
+	translate,
+	moment,
 	numberFormat,
 	...buttonProps
 } ) => {
-	const translate = useTranslate();
-
 	return (
 		<SectionHeader label={ title } id={ id }>
 			{ children }
@@ -48,4 +48,4 @@ SettingsSectionHeader.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default SettingsSectionHeader;
+export default localize( SettingsSectionHeader );

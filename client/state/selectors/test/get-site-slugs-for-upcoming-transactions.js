@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,10 +26,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 123456, blog_id: '2916284' },
-						{ id: 888888, blog_id: '1234567' },
-					],
+					upcoming: [ { id: 123456, blog_id: '2916284' }, { id: 888888, blog_id: '1234567' } ],
 				},
 			},
 		};
@@ -48,10 +47,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 123456, blog_id: '2916284' },
-						{ id: 234567, blog_id: '2916284' },
-					],
+					upcoming: [ { id: 123456, blog_id: '2916284' }, { id: 234567, blog_id: '2916284' } ],
 				},
 			},
 		};

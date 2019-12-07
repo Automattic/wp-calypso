@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -32,14 +34,18 @@ class PriceSummary extends Component {
 		this.setState( { tooltipVisible: false } );
 	};
 
-	tooltipContextRef = React.createRef();
+	setTooltipContext = tooltipContext => {
+		if ( tooltipContext ) {
+			this.setState( { tooltipContext } );
+		}
+	};
 
 	renderDiscountExplanation = () => {
 		const { translate } = this.props;
 		return (
 			<div className="label-purchase-modal__price-item-help">
 				<Gridicon
-					ref={ this.tooltipContextRef }
+					ref={ this.setTooltipContext }
 					icon="help-outline"
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
@@ -48,7 +54,7 @@ class PriceSummary extends Component {
 				<Tooltip
 					className="label-purchase-modal__price-item-tooltip is-dialog-visible"
 					isVisible={ this.state.tooltipVisible }
-					context={ this.tooltipContextRef.current }
+					context={ this.state.tooltipContext }
 				>
 					{ translate(
 						'WooCommerce Services gives you access to USPS ' +

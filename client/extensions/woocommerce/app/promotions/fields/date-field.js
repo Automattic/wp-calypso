@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DatePicker from 'components/date-picker';
-import { withLocalizedMoment } from 'components/localized-moment';
 import FormField from './form-field';
 
 const DateField = props => {
@@ -40,4 +41,4 @@ DateField.propTypes = {
 	edit: PropTypes.func,
 };
 
-export default localize( withLocalizedMoment( DateField ) );
+export default localize( DateField );

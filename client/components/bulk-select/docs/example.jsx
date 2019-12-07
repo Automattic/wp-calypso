@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,10 +16,7 @@ export default class extends React.Component {
 	static displayName = 'BulkSelects';
 
 	state = {
-		elements: [
-			{ title: 'Apples', selected: true },
-			{ title: 'Oranges', selected: false },
-		],
+		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
 	};
 
 	handleToggleAll = checkedState => {

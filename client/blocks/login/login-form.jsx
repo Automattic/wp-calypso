@@ -26,7 +26,6 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import {
@@ -186,14 +185,21 @@ export class LoginForm extends Component {
 
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
-		const { onSuccess, redirectTo, domain } = this.props;
+		const { onSuccess, redirectTo, domain, isJetpackWooCommerceFlow } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+				login_method: 'email',
+			} );
+		}
 
 		this.props
 			.loginUser( usernameOrEmail, password, redirectTo, domain )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+
 				onSuccess( redirectTo );
 			} )
 			.catch( error => {
@@ -226,17 +232,10 @@ export class LoginForm extends Component {
 	};
 
 	shouldUseRedirectLoginFlow() {
-		const { currentRoute, oauth2Client } = this.props;
+		const { oauth2Client } = this.props;
 		// If calypso is loaded in a popup, we don't want to open a second popup for social login
 		// let's use the redirect flow instead in that case
-		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-
-		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social login.
-		// See p1HpG7-7nj-p2 for more information.
-		if ( isPopup && '/log-in/jetpack' === currentRoute ) {
-			isPopup = false;
-		}
-
+		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
 		// disable for oauth2 flows for now
 		return ! oauth2Client && isPopup;
 	}
@@ -264,26 +263,11 @@ export class LoginForm extends Component {
 	}
 
 	onWooCommerceSocialSuccess = ( ...args ) => {
-		this.recordWooCommerceLoginTracks( 'social' );
+		this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+			login_method: 'google',
+		} );
 		this.props.onSuccess( args );
 	};
-
-	recordWooCommerceLoginTracks( method ) {
-		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-				login_method: method,
-			} );
-		} else if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			'cart' === wccomFrom
-		) {
-			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
-				login_method: method,
-			} );
-		}
-	}
 
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
@@ -292,7 +276,6 @@ export class LoginForm extends Component {
 			this.props.getAuthAccountType( this.state.usernameOrEmail );
 			return;
 		}
-		this.recordWooCommerceLoginTracks( 'email' );
 		this.loginUser();
 	};
 
@@ -573,6 +556,28 @@ export class LoginForm extends Component {
 						</p>
 					) }
 
+					{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
+						<p className="login__form-terms login__form-terms-bottom">
+							{ preventWidows(
+								this.props.translate(
+									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+									{
+										components: {
+											tosLink: (
+												<a
+													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								),
+								5
+							) }
+						</p>
+					) }
+
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>
 							{ this.isPasswordView() || this.isFullView()
@@ -620,13 +625,12 @@ export default connect(
 
 		return {
 			accountType,
-			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),

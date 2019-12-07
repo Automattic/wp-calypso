@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -171,4 +173,8 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize, toggleInfo )( StatsPostDetailMonths );
+export default flowRight(
+	connectComponent,
+	localize,
+	toggleInfo
+)( StatsPostDetailMonths );

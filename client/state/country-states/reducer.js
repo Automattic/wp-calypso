@@ -7,53 +7,39 @@ import {
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Stores the complete list of states, indexed by locale key
-export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case COUNTRY_STATES_RECEIVE:
-			return {
-				...state,
-				[ action.countryCode ]: action.countryStates,
-			};
-	}
-
-	return state;
-} );
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ COUNTRY_STATES_RECEIVE ]: ( state, action ) => ( {
+			...state,
+			[ action.countryCode ]: action.countryStates,
+		} ),
+	},
+	itemSchema
+);
 
 // Tracks states list fetching state
-export const isFetching = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case COUNTRY_STATES_REQUEST: {
-			const { countryCode } = action;
-
-			return {
-				...state,
-				[ countryCode ]: true,
-			};
-		}
-		case COUNTRY_STATES_REQUEST_SUCCESS: {
-			const { countryCode } = action;
-
-			return {
-				...state,
-				[ countryCode ]: false,
-			};
-		}
-		case COUNTRY_STATES_REQUEST_FAILURE: {
-			const { countryCode } = action;
-
-			return {
-				...state,
-				[ countryCode ]: false,
-			};
-		}
+export const isFetching = createReducer(
+	{},
+	{
+		[ COUNTRY_STATES_REQUEST ]: ( state, { countryCode } ) => ( {
+			...state,
+			[ countryCode ]: true,
+		} ),
+		[ COUNTRY_STATES_REQUEST_SUCCESS ]: ( state, { countryCode } ) => ( {
+			...state,
+			[ countryCode ]: false,
+		} ),
+		[ COUNTRY_STATES_REQUEST_FAILURE ]: ( state, { countryCode } ) => ( {
+			...state,
+			[ countryCode ]: false,
+		} ),
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	isFetching,

@@ -9,7 +9,7 @@ import {
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'state/action-types';
-import { keyedReducer, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { createReducer, keyedReducer, withSchemaValidation } from 'state/utils';
 
 const stubNull = () => null;
 
@@ -42,37 +42,23 @@ export const restoreProgress = withSchemaValidation(
 	restoreProgressSchema,
 	keyedReducer(
 		'siteId',
-		withoutPersistence( ( state = {}, action ) => {
-			switch ( action.type ) {
-				case REWIND_RESTORE:
-					return startProgress( state, action );
-				case REWIND_RESTORE_DISMISS_PROGRESS:
-					return stubNull( state, action );
-				case REWIND_RESTORE_UPDATE_PROGRESS:
-					return updateProgress( state, action );
-				case REWIND_RESTORE_DISMISS:
-					return stubNull( state, action );
+		createReducer(
+			{},
+			{
+				[ REWIND_RESTORE ]: startProgress,
+				[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
+				[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
+				[ REWIND_RESTORE_DISMISS ]: stubNull,
 			}
-
-			return state;
-		} )
+		)
 	)
 );
 
 export const restoreRequest = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = undefined, action ) => {
-		switch ( action.type ) {
-			case REWIND_RESTORE:
-				return undefined;
-			case REWIND_RESTORE_DISMISS:
-				return undefined;
-			case REWIND_RESTORE_REQUEST: {
-				const { activityId } = action;
-				return activityId;
-			}
-		}
-
-		return state;
+	createReducer( undefined, {
+		[ REWIND_RESTORE ]: () => undefined,
+		[ REWIND_RESTORE_DISMISS ]: () => undefined,
+		[ REWIND_RESTORE_REQUEST ]: ( state, { activityId } ) => activityId,
 	} )
 );

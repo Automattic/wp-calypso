@@ -1,3 +1,4 @@
+/** @format */
 const element = ( () => {
 	if ( document.implementation && document.implementation.createHTMLDocument ) {
 		return document.implementation.createHTMLDocument( '' ).createElement( 'textarea' );

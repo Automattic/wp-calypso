@@ -20,32 +20,14 @@ class Starter_Page_Templates {
 	private static $instance = null;
 
 	/**
-	 * Cache key for templates array.
-	 *
-	 * @var string
-	 */
-	public $templates_cache_key;
-
-	/**
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
-		$this->templates_cache_key = implode(
-			'_',
-			[
-				'starter_page_templates',
-				PLUGIN_VERSION,
-				get_option( 'site_vertical', 'default' ),
-				get_locale(),
-			]
-		);
-
 		add_action( 'init', [ $this, 'register_scripts' ] );
 		add_action( 'init', [ $this, 'register_meta_field' ] );
 		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'delete_attachment', [ $this, 'clear_sideloaded_image_cache' ] );
-		add_action( 'switch_theme', [ $this, 'clear_templates_cache' ] );
 	}
 
 	/**
@@ -130,7 +112,7 @@ class Starter_Page_Templates {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
-		if ( 'page' !== $screen->id ) {
+		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
 			return;
 		}
 
@@ -176,11 +158,6 @@ class Starter_Page_Templates {
 				'templates'       => array_merge( $default_templates, $vertical_templates ),
 				'vertical'        => $vertical,
 				'segment'         => $segment,
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'screenAction'    => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'           => normalize_theme_slug( get_stylesheet() ),
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'isFrontPage'     => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
@@ -204,13 +181,16 @@ class Starter_Page_Templates {
 	 * @return array Containing vertical name and template list or nothing if an error occurred.
 	 */
 	public function fetch_vertical_data() {
-		$vertical_templates = get_transient( $this->templates_cache_key );
+		$vertical_id        = get_option( 'site_vertical', 'default' );
+		$transient_key      = implode( '_', [ 'starter_page_templates', PLUGIN_VERSION, $vertical_id, get_locale() ] );
+		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
-			$vertical_id = get_option( 'site_vertical', 'default' );
 			$request_url = add_query_arg(
-				[ '_locale' => $this->get_iso_639_locale() ],
+				[
+					'_locale' => $this->get_iso_639_locale(),
+				],
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
@@ -218,7 +198,7 @@ class Starter_Page_Templates {
 				return [];
 			}
 			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
-			set_transient( $this->templates_cache_key, $vertical_templates, DAY_IN_SECONDS );
+			set_transient( $transient_key, $vertical_templates, DAY_IN_SECONDS );
 		}
 
 		return $vertical_templates;
@@ -234,13 +214,6 @@ class Starter_Page_Templates {
 		if ( ! empty( $url ) ) {
 			delete_transient( 'fse_sideloaded_image_' . hash( 'crc32b', $url ) );
 		}
-	}
-
-	/**
-	 * Deletes cached templates data when theme switches.
-	 */
-	public function clear_templates_cache() {
-		delete_transient( $this->templates_cache_key );
 	}
 
 	/**

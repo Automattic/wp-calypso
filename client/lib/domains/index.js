@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -160,16 +162,6 @@ function isMappedDomain( domain ) {
 	return domain.type === domainTypes.MAPPED;
 }
 
-/**
- * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
- *
- * @param {object} domain - domain object
- * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
- */
-function isMappedDomainWithWpcomNameservers( domain ) {
-	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
-}
-
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
 	return find( domains, domain => {
 		if ( domain.name !== selectedDomainName ) {
@@ -209,7 +201,7 @@ function hasMappedDomain( domains ) {
  * for our purposes, the approach should be "good enough" for a long time.
  *
  * @param {string}     domainName     The domain name parse the tld from
- * @returns {string}                   The TLD or an empty string
+ * @return {string}                   The TLD or an empty string
  */
 function getTld( domainName ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
@@ -242,27 +234,17 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
-function getUnformattedDomainPrice( slug, productsList ) {
+function getDomainPrice( slug, productsList, currencyCode ) {
 	let price = get( productsList, [ slug, 'cost' ], null );
-
 	if ( price ) {
 		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+		price = formatCurrency( price, currencyCode );
 	}
 
 	return price;
 }
 
-function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {
-	let price = getUnformattedDomainPrice( slug, productsList );
-
-	if ( price ) {
-		price = formatCurrency( price, currencyCode, { stripZeros } );
-	}
-
-	return price;
-}
-
-function getUnformattedDomainSalePrice( slug, productsList ) {
+function getDomainSalePrice( slug, productsList, currencyCode ) {
 	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
 	const couponValidForNewDomainPurchase = get(
 		productsList,
@@ -274,17 +256,7 @@ function getUnformattedDomainSalePrice( slug, productsList ) {
 		return null;
 	}
 
-	return saleCost;
-}
-
-function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {
-	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
-
-	if ( saleCost ) {
-		saleCost = formatCurrency( saleCost, currencyCode, { stripZeros } );
-	}
-
-	return saleCost;
+	return formatCurrency( saleCost, currencyCode );
 }
 
 function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
@@ -353,14 +325,6 @@ function getDomainSuggestionSearch( search, minLength = 2 ) {
 	return cleanedSearch;
 }
 
-function resendIcannVerification( domainName, onComplete ) {
-	return wpcom.undocumented().resendIcannVerification( domainName, onComplete );
-}
-
-function requestGdprConsentManagementLink( domainName, onComplete ) {
-	return wpcom.undocumented().requestGdprConsentManagementLink( domainName, onComplete );
-}
-
 export {
 	canRedirect,
 	checkAuthCode,
@@ -378,18 +342,13 @@ export {
 	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
-	getUnformattedDomainPrice,
-	getUnformattedDomainSalePrice,
 	hasMappedDomain,
 	isHstsRequired,
 	isMappedDomain,
-	isMappedDomainWithWpcomNameservers,
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
 	startInboundTransfer,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
-	resendIcannVerification,
-	requestGdprConsentManagementLink,
 };

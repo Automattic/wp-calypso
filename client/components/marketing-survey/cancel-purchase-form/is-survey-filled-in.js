@@ -1,4 +1,6 @@
-export default function isSurveyFilledIn( survey, isImport = false ) {
+/** @format */
+
+export default function isSurveyFilledIn( survey ) {
 	const answeredBothQuestions = survey.questionOneRadio && survey.questionTwoRadio;
 
 	if ( survey.questionOneRadio === 'anotherReasonOne' && survey.questionOneText === '' ) {
@@ -6,10 +8,6 @@ export default function isSurveyFilledIn( survey, isImport = false ) {
 	}
 
 	if ( survey.questionTwoRadio === 'anotherReasonTwo' && survey.questionTwoText === '' ) {
-		return false;
-	}
-
-	if ( isImport && ! survey.importQuestionRadio ) {
 		return false;
 	}
 

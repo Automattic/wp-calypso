@@ -1,3 +1,4 @@
+/** @format */
 export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
 	patternProperties: {

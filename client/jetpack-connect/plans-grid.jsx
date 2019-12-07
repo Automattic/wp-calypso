@@ -81,6 +81,9 @@ class JetpackPlansGrid extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( JetpackPlansGrid ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( JetpackPlansGrid ) );

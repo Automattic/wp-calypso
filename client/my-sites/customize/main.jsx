@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -19,6 +21,7 @@ import page from 'page';
 import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
 import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { requestSite } from 'state/sites/actions';
 import { themeActivated } from 'state/themes/actions';
@@ -27,9 +30,6 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
-import { addItem } from 'lib/cart/actions';
-import { trackClick } from 'my-sites/themes/helpers';
-import { themeItem } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -69,7 +69,7 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -88,7 +88,7 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
@@ -129,9 +129,7 @@ class Customize extends React.Component {
 	goBack = () => {
 		const path = this.getPreviousPath();
 
-		if ( path.includes( '/themes' ) ) {
-			trackClick( 'customizer', 'close' );
-		}
+		Actions.close( path );
 
 		debug( 'returning to previous page', path );
 		page.back( path );
@@ -272,15 +270,11 @@ class Customize extends React.Component {
 					this.setState( { iframeLoaded: true } );
 					break;
 				case 'activated':
-					trackClick( 'customizer', 'activate' );
-					page( '/themes/' + site.slug );
-					this.props.themeActivated( message.theme.stylesheet, site.ID, 'customizer' );
+					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
 				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					addItem( themeItem( themeSlug, 'customizer' ) );
-					trackClick( 'customizer', 'purchase' );
-					page( '/checkout/' + site.slug );
+					Actions.purchase( themeSlug, site );
 					break;
 				}
 				case 'navigateTo': {

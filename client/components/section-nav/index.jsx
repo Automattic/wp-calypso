@@ -40,11 +40,11 @@ class SectionNav extends Component {
 		mobileOpen: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.checkForSiblingControls( this.props.children );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.checkForSiblingControls( nextProps.children );
 
 		if ( ! this.hasSiblingControls ) {

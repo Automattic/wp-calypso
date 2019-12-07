@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,7 @@ export default function( ...propNames ) {
 			}, this );
 		},
 
-		UNSAFE_componentWillReceiveProps: function( nextProps ) {
+		componentWillReceiveProps: function( nextProps ) {
 			propNames.forEach( function( propName ) {
 				if ( this.props[ propName ] !== nextProps[ propName ] ) {
 					// unbind the change event from the existing property instance

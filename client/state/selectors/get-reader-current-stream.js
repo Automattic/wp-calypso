@@ -1,3 +1,5 @@
+/** @format */
+
 function getCurrentStream( state ) {
 	return state.ui.reader.currentStream;
 }

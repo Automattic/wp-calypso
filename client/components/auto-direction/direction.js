@@ -1,3 +1,4 @@
+/** @format */
 // Strong directionality characters
 // http://www.unicode.org/reports/tr9/#Bidirectional_Character_Types
 const RIGHT_TO_LEFT = [

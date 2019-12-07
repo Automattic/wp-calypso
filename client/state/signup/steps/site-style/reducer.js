@@ -3,18 +3,18 @@
  */
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_STYLE_SET } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { siteStyleSchema } from './schema';
 
-export default withSchemaValidation( siteStyleSchema, ( state = '', action ) => {
-	switch ( action.type ) {
-		case SIGNUP_STEPS_SITE_STYLE_SET: {
+export default createReducerWithValidation(
+	'',
+	{
+		[ SIGNUP_STEPS_SITE_STYLE_SET ]: ( state, action ) => {
 			return action.siteStyle;
-		}
-		case SIGNUP_COMPLETE_RESET: {
+		},
+		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return '';
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	siteStyleSchema
+);

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -96,7 +98,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'edit_posts',
+				capability: 'upload_files',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -141,7 +143,7 @@ class SiteMenu extends PureComponent {
 		}
 
 		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
-		if ( 'wp_template_part' === menuItem.name ) {
+		if ( 'wp_template' === menuItem.name ) {
 			return null;
 		}
 
@@ -160,10 +162,8 @@ class SiteMenu extends PureComponent {
 		}
 
 		let preload;
-		if ( 'post' === menuItem.name ) {
-			preload = 'posts';
-		} else if ( 'page' === menuItem.name ) {
-			preload = 'pages';
+		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
+			preload = 'posts-pages';
 		} else if ( 'comments' === menuItem.name ) {
 			preload = 'comments';
 		} else {

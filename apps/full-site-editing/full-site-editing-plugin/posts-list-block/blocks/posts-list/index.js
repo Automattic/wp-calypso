@@ -1,26 +1,17 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
-import {
-	registerBlockType,
-	switchToBlockType,
-	getPossibleBlockTransformations,
-} from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { Placeholder, RangeControl, PanelBody, Button } from '@wordpress/components';
+import { Placeholder, RangeControl, PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/block-editor';
-import { select, dispatch } from '@wordpress/data';
-/* eslint-enable import/no-extraneous-dependencies */
+import { InspectorControls } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
 import * as metadata from './block.json';
-import './editor.scss';
 import './style.scss';
-import { transforms, isValidHomepagePostsBlockType } from './transforms';
 
 const icon = (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -40,68 +31,34 @@ registerBlockType( metadata.name, {
 		reusable: false,
 	},
 	attributes: metadata.attributes,
-	edit: ( { attributes, setAttributes, clientId, isSelected } ) => {
-		const block = select( 'core/block-editor' ).getBlock( clientId );
-
-		// Find if any of possible transformations is into the Homepage Posts block.
-		const possibleTransforms = getPossibleBlockTransformations( [ block ] );
-		const homepagePostsTransform = possibleTransforms.find(
-			transform => transform && isValidHomepagePostsBlockType( transform.name )
-		);
-		const canBeUpgraded = !! homepagePostsTransform;
-
-		const upgradeBlock = () => {
-			dispatch( 'core/block-editor' ).replaceBlocks(
-				block.clientId,
-				switchToBlockType( block, homepagePostsTransform.name )
-			);
-		};
-
-		return (
-			<Fragment>
-				{ canBeUpgraded && (
-					<div className="posts-list__notice notice notice-info notice-alt">
-						<p>
-							<span className="posts-list__message">
-								{ __(
-									'An improved version of this block is available. Upgrade for a better, more natural way to manage your blog post listings.',
-									'full-site-editing'
-								) }
-							</span>
-							<Button isButton isLarge isDefault onClick={ upgradeBlock }>
-								{ __( 'Upgrade Block', 'full-site-editing' ) }
-							</Button>
-						</p>
-					</div>
-				) }
-				<Placeholder
-					icon={ icon }
-					label={ __( 'Your recent blog posts will be displayed here.', 'full-site-editing' ) }
-				>
-					{ isSelected ? (
-						<RangeControl
-							label={ __( 'Number of posts to show', 'full-site-editing' ) }
-							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
-							min={ 1 }
-							max={ 50 }
-						/>
-					) : null }
-				</Placeholder>
-				<InspectorControls>
-					<PanelBody>
-						<RangeControl
-							label={ __( 'Number of posts', 'full-site-editing' ) }
-							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
-							min={ 1 }
-							max={ 50 }
-						/>
-					</PanelBody>
-				</InspectorControls>
-			</Fragment>
-		);
-	},
+	edit: ( { attributes, setAttributes, isSelected } ) => (
+		<Fragment>
+			<Placeholder
+				icon={ icon }
+				label={ __( 'Your recent blog posts will be displayed here.', 'full-site-editing' ) }
+			>
+				{ isSelected ? (
+					<RangeControl
+						label={ __( 'Number of posts to show', 'full-site-editing' ) }
+						value={ attributes.postsPerPage }
+						onChange={ val => setAttributes( { postsPerPage: val } ) }
+						min={ 1 }
+						max={ 50 }
+					/>
+				) : null }
+			</Placeholder>
+			<InspectorControls>
+				<PanelBody>
+					<RangeControl
+						label={ __( 'Number of posts', 'full-site-editing' ) }
+						value={ attributes.postsPerPage }
+						onChange={ val => setAttributes( { postsPerPage: val } ) }
+						min={ 1 }
+						max={ 50 }
+					/>
+				</PanelBody>
+			</InspectorControls>
+		</Fragment>
+	),
 	save: () => null,
-	transforms,
 } );

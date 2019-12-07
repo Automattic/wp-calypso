@@ -10,8 +10,8 @@
 const PreviewTemplateTitle = ( { title, transform } ) => (
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	<div className="editor-post-title" style={ { transform } }>
-		<div className="wp-block editor-post-title__block">
-			<textarea className="editor-post-title__input" value={ title } onChange={ () => {} } />
+		<div className="editor-post-title__block">
+			<textarea className="editor-post-title__input" value={ title } />
 		</div>
 	</div>
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

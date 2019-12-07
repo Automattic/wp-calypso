@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,22 +8,16 @@ import { uniqueId, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PROMOTION_EDIT,
 	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_PROMOTION_EDIT:
-			return editPromotionAction( state, action );
-		case WOOCOMMERCE_PROMOTION_EDIT_CLEAR:
-			return clearPromotionEditsAction( state, action );
-	}
-
-	return state;
+export default createReducer( null, {
+	[ WOOCOMMERCE_PROMOTION_EDIT ]: editPromotionAction,
+	[ WOOCOMMERCE_PROMOTION_EDIT_CLEAR ]: clearPromotionEditsAction,
 } );
 
 function editPromotionAction( edits, action ) {

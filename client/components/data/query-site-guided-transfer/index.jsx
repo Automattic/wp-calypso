@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -25,11 +27,11 @@ class QuerySiteGuidedTransfer extends Component {
 		}
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}
@@ -56,4 +58,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 const mapDispatchToProps = dispatch =>
 	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( QuerySiteGuidedTransfer );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,7 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { requestPlans } from 'state/plans/actions';
 
 class QueryPlans extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.requestingPlans ) {
 			this.props.requestPlans();
 		}

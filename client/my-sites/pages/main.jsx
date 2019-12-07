@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,7 +24,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
 
 /**
  * Style dependencies
@@ -102,13 +103,8 @@ class PagesMain extends React.Component {
 		return (
 			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
-				<DocumentHead title={ translate( 'Pages' ) } />
+				<DocumentHead title={ translate( 'Site Pages' ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="pages__page-heading"
-					headerText={ translate( 'Pages' ) }
-					align="left"
-				/>
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }

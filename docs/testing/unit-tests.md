@@ -208,6 +208,7 @@ When stubbing DOM properties or methods in the global scope, make sure to includ
 ```javascript
 
 /**
+ * @format
  * @jest-environment jsdom
  */
 import { myModuleFunctionThatOpensANewWindow } from '../my-module';

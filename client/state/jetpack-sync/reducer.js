@@ -1,6 +1,7 @@
 /**
  * External dependencis
  *
+ * @format
  */
 
 import { pick, get } from 'lodash';

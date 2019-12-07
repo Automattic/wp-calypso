@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -126,16 +128,24 @@ class PublicizeMessage extends Component {
 						labelText={ translate( 'Customize the message', {
 							context: 'Post editor sharing message heading',
 						} ) }
-					/>
+					>
+						<TrackInputChanges onNewValue={ this.recordStats }>
+							{ this.renderTextarea() }
+						</TrackInputChanges>
+					</EditorDrawerLabel>
 				) }
-				<TrackInputChanges onNewValue={ this.recordStats }>
-					{ this.renderTextarea() }
-				</TrackInputChanges>
+
+				{ ! displayMessageHeading && (
+					<TrackInputChanges onNewValue={ this.recordStats }>
+						{ this.renderTextarea() }
+					</TrackInputChanges>
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordEditorStat, recordEditorEvent } )(
-	localize( PublicizeMessage )
-);
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( localize( PublicizeMessage ) );

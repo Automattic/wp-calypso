@@ -34,8 +34,9 @@ interface ExternalProps {
 	planSlug: T.PlanSlug;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps &
-	ConnectedProps > = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
+	ExternalProps & ConnectedProps
+> = ( {
 	buttonText,
 	hasPlanFeature,
 	onDefaultButtonClick,

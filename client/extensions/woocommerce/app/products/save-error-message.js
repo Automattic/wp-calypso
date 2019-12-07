@@ -1,3 +1,5 @@
+/** @format */
+
 export function getSaveErrorMessage( slug, productName, translate ) {
 	switch ( slug ) {
 		case 'product_invalid_sku':

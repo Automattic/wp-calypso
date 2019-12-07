@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,7 +26,6 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		const commentContent = By.xpath( `//div[@class='comment-content']/p[.='${ comment }']` );
 
 		await this.switchToFrameIfJetpack();
-		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
 		await driverHelper.clickWhenClickable( this.driver, commentForm );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, commentFormWordPress );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, submitButton );

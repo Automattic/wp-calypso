@@ -3,6 +3,7 @@
  * the specified site, or false otherwise.
  *
  *
+ * @format
  * @param {Number}  siteId Site ID
  * @return {Boolean}        Whether a request is in progress
  */

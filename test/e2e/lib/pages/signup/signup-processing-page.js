@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -19,7 +21,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 
 	async waitForPage() {
 		try {
-			await driverHelper.isEventuallyPresentAndDisplayed(
+			await driverHelper.waitTillPresentAndDisplayed(
 				this.driver,
 				this.expectedElementSelector,
 				this.explicitWaitMS

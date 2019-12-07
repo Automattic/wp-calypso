@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Convert a string or number to valid reader ID
  *

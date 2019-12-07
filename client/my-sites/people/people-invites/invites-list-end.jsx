@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,7 +30,7 @@ class InvitesListEnd extends React.PureComponent {
 		this.bumpedStat = false;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.found > nextProps.shown && ! this.bumpedStat ) {
 			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );
 			this.bumpedStat = true;
@@ -57,4 +59,7 @@ class InvitesListEnd extends React.PureComponent {
 	}
 }
 
-export default connect( null, { bumpStat } )( localize( InvitesListEnd ) );
+export default connect(
+	null,
+	{ bumpStat }
+)( localize( InvitesListEnd ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,11 +19,11 @@ class QueryFeed extends PureComponent {
 		zoneId: PropTypes.number.isRequired,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.requestFeed( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
 			return;
 		}
@@ -36,6 +38,9 @@ class QueryFeed extends PureComponent {
 	}
 }
 
-const connectComponent = connect( null, { requestFeed } );
+const connectComponent = connect(
+	null,
+	{ requestFeed }
+);
 
 export default connectComponent( QueryFeed );

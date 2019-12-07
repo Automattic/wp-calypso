@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -292,7 +294,12 @@ describe( 'reducer', () => {
 
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				[ 12345678 ]: [ 'test' ],
+				[ 12345678 ]: {
+					onboarding: {
+						...settings.onboarding,
+						siteTitle: {},
+					},
+				},
 			} );
 			const state = settingsReducer( original, { type: DESERIALIZE } );
 

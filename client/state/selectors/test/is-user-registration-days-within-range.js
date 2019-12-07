@@ -1,3 +1,10 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { stub } from 'sinon';
+
 /**
  * Internal dependencies
  */
@@ -9,12 +16,14 @@ jest.mock( 'state/current-user/selectors', () => ( {
 
 describe( 'isUserRegistrationDaysWithinRange()', () => {
 	const state = 'state';
-	const registrationDate = '2019-03-15';
+	const registrationDate = 'registrationDate';
+	const moment = {
+		diff: stub(),
+	};
 
 	test( 'should return null when there is no current user date', () => {
 		getCurrentUserDate.withArgs( state ).returns( null );
-		const refDate = registrationDate;
-		expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( null );
+		expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.null;
 	} );
 
 	describe( 'when there is a current user date', () => {
@@ -23,28 +32,28 @@ describe( 'isUserRegistrationDaysWithinRange()', () => {
 		} );
 
 		test( 'should return false when user has been registered for less than the lower bound', () => {
-			const refDate = new Date( '2019-03-16' );
-			expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( false );
+			moment.diff.withArgs( registrationDate, 'days', true ).returns( 1 );
+			expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.false;
 		} );
 
 		test( 'should return true when user has been registered for exactly the lower bound', () => {
-			const refDate = new Date( '2019-03-20' );
-			expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( true );
+			moment.diff.withArgs( registrationDate, 'days', true ).returns( 5 );
+			expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.true;
 		} );
 
 		test( 'should return true when user has been registered for greater than the lower bound and less than the upper bound', () => {
-			const refDate = new Date( '2019-03-22' );
-			expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( true );
+			moment.diff.withArgs( registrationDate, 'days', true ).returns( 7 );
+			expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.true;
 		} );
 
 		test( 'should return true when user has been registered for exactly the upper bound', () => {
-			const refDate = new Date( '2019-03-25' );
-			expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( true );
+			moment.diff.withArgs( registrationDate, 'days', true ).returns( 10 );
+			expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.true;
 		} );
 
 		test( 'should return false when user has been registered for greater than the upper bound', () => {
-			const refDate = new Date( '2019-03-30' );
-			expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( false );
+			moment.diff.withArgs( registrationDate, 'days', true ).returns( 15 );
+			expect( isUserRegistrationDaysWithinRange( state, moment, 5, 10 ) ).to.be.false;
 		} );
 	} );
 } );

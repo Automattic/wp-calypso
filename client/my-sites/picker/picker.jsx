@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -36,7 +38,7 @@ class SitePicker extends React.Component {
 		isRendered: this.props.currentLayoutFocus === 'sites',
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
 			this.setState( { isRendered: true } );
 		}
@@ -109,6 +111,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
-	wrapWithClickOutside( SitePicker )
-);
+export default connect(
+	mapStateToProps,
+	{ setNextLayoutFocus, setLayoutFocus }
+)( wrapWithClickOutside( SitePicker ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -113,7 +115,7 @@ class UpworkStatsNudge extends Component {
 						<div className="upwork-stats-nudge__button-row">
 							<Button
 								href={ '/experts/upwork?source=stat-banner' }
-								primary={ this.props.primaryButton }
+								primary
 								onClick={ this.onStartNowClick }
 								target="_blank"
 								rel="noopener noreferrer"

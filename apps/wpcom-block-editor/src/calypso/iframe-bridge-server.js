@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg */
 
 /**
@@ -291,38 +290,6 @@ function handlePostLockTakeover( calypsoPort ) {
 	} );
 }
 
-function handlePostStatusChange( calypsoPort ) {
-	// Keep a reference to the current status
-	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-
-	subscribe( () => {
-		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-		if ( status === newStatus ) {
-			// The status has not changed
-			return;
-		}
-
-		if ( select( 'core/editor' ).isEditedPostDirty() ) {
-			// Wait for the status change to be confirmed by the server
-			return;
-		}
-
-		// Did the client know about the status before this update?
-		const hadStatus = !! status;
-
-		// Update our reference to the current status
-		status = newStatus;
-
-		if ( ! hadStatus ) {
-			// We didn't have a status before this update, so, don't notify
-			return;
-		}
-
-		// Notify that the status has changed
-		calypsoPort.postMessage( { action: 'postStatusChange', payload: { status } } );
-	} );
-}
-
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
@@ -349,7 +316,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	 * Updates all the blocks containing a given edited image.
 	 *
 	 * @param {Array} blocks Array of block objects for the current post.
-	 * @param {object} image The edited image.
+	 * @param {Object} image The edited image.
 	 * @param {number} image.id The image ID.
 	 * @param {string} image.url The new image URL.
 	 * @param {string} image.status The new image status. "deleted" or "updated" (default).
@@ -572,7 +539,7 @@ function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 
-		const { port2 } = new MessageChannel();
+		const { port1, port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
 				action: 'closeEditor',
@@ -582,6 +549,15 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
+
+		// We only want to navigate back if the client tells us to.
+		// We need to give it a chance to set if the post is dirty
+		// before we can navigate away.
+		port1.onmessage = ( { data } ) => {
+			port1.close(); // We only want to recieve this once.
+			// data is the URL to which we go back:
+			window.open( data, '_top' );
+		};
 	} );
 }
 
@@ -633,30 +609,62 @@ function openCustomizer( calypsoPort ) {
 }
 
 /**
- * Sends a message to Calypso when clicking the "Edit Header" or "Edit Footer"
- * buttons in order to perform the navigation in Calypso instead of in the iFrame.
+ * Ensures the Calypso block editor is opened when editing a template part.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', e => {
-		e.preventDefault();
-		e.stopPropagation(); // Otherwise it will port the message twice.
+function setupEditTemplateLinks( calypsoPort ) {
+	// We only want this when editing a full site page.
+	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
+		return;
+	}
 
-		// Get the template part ID from the current href.
-		const templatePartId = parseInt( getQueryArg( e.target.href, 'post' ), 10 );
+	const handleNewTemplateLinks = link => {
+		const templateId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
 
-		const { port2 } = new MessageChannel();
+		const { port1, port2 } = new MessageChannel();
+
+		port1.onmessage = ( { data } ) => {
+			link.setAttribute( 'target', '_parent' );
+			link.setAttribute( 'href', data );
+		};
+
+		// Ask for another URl for the template:
 		calypsoPort.postMessage(
 			{
-				action: 'openTemplatePart',
-				payload: {
-					templatePartId,
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
-				},
+				action: 'getTemplateEditorUrl',
+				payload: { templateId },
 			},
 			[ port2 ]
 		);
+	};
+
+	subscribe( () => {
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const initialized = currentPost && currentPost.id;
+
+		if ( ! initialized ) {
+			return;
+		}
+
+		// When the template block becomes selected, we want to change
+		// the link of the "edit template" button.
+		const selectedBlock = select( 'core/editor' ).getSelectedBlock();
+
+		if ( selectedBlock && 'a8c/template' === selectedBlock.name ) {
+			const getImpendingLinks = setInterval( () => {
+				const editTemplateLink = document.querySelector(
+					'[data-type="a8c/template"] .template-block__overlay a'
+				);
+
+				// Keep looking for it as the DOM may not have loaded yet:
+				if ( ! editTemplateLink ) {
+					return;
+				}
+				clearInterval( getImpendingLinks );
+				handleNewTemplateLinks( editTemplateLink );
+			} );
+		}
 	} );
 }
 
@@ -677,32 +685,8 @@ function getCloseButtonUrl( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { closeUrl, label } = data;
-		calypsoifyGutenberg.closeUrl = closeUrl;
-		calypsoifyGutenberg.closeButtonLabel = label;
-
-		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
-	};
-}
-
-/**
- * Passes uncaught errors in window.onerror to Calypso for logging.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleUncaughtErrors( calypsoPort ) {
-	window.onerror = ( ...error ) => {
-		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
-		// We therefore stringify the error with a custom replacer containing the object's properties.
-		const errorObject = error[ 4 ]; // the 5th argument is the error object
-		error[ 4 ] =
-			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
-
-		// The other parameters don't need encoded since they are numbers or strings.
-		calypsoPort.postMessage( {
-			action: 'logError',
-			payload: { error },
-		} );
+		// data is the closeUrl:
+		calypsoifyGutenberg.closeUrl = data;
 	};
 }
 
@@ -773,8 +757,6 @@ function initPort( message ) {
 		// handle post lock state change to takeover
 		handlePostLockTakeover( calypsoPort );
 
-		handlePostStatusChange( calypsoPort );
-
 		handleUpdateImageBlocks( calypsoPort );
 
 		handleInsertClassicBlockMedia( calypsoPort );
@@ -787,11 +769,9 @@ function initPort( message ) {
 
 		openCustomizer( calypsoPort );
 
-		openTemplatePartLinks( calypsoPort );
+		setupEditTemplateLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
-
-		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

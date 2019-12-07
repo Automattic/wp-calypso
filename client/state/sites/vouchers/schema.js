@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	//state.sites.vouchers = {};
 	type: 'object',

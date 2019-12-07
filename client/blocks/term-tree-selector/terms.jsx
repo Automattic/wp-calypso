@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -88,7 +90,7 @@ class TermTreeSelectorList extends Component {
 
 	state = this.constructor.initialState;
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -101,7 +103,7 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.constructor.initialState );
 		}
@@ -190,14 +192,13 @@ class TermTreeSelectorList extends Component {
 	hasNoSearchResults = () => {
 		return (
 			! this.props.loading &&
-			this.props.terms &&
-			! this.props.terms.length &&
+			( this.props.terms && ! this.props.terms.length ) &&
 			!! this.state.searchTerm.length
 		);
 	};
 
 	hasNoTerms = () => {
-		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
+		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
 	};
 
 	getItem = index => {

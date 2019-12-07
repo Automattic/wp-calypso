@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +19,6 @@ import EditorStatusLabelPlaceholder from './placeholder';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -37,7 +39,7 @@ class EditorStatusLabel extends React.Component {
 		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.post !== this.props.post ) {
 			// the post has been updated, so update the current time so that
 			// it will be the most up-to-date when re-rendering
@@ -140,4 +142,4 @@ export default connect( state => {
 	const isNew = isEditorNewPost( state );
 
 	return { isNew, post };
-} )( localize( withLocalizedMoment( EditorStatusLabel ) ) );
+} )( localize( EditorStatusLabel ) );

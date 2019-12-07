@@ -1,3 +1,4 @@
+/** @format */
 export const productsListSchema = {
 	type: 'object',
 	additionalProperties: false,

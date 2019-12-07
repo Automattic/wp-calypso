@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -115,11 +117,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
-			return deleteCache(
-				siteId,
-				false,
-				true
-			)( spy ).then( () => {
+			return deleteCache( siteId, false, true )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 					deleteExpired: true,
@@ -129,10 +127,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return deleteCache(
-				failedSiteId,
-				false
-			)( spy ).then( () => {
+			return deleteCache( failedSiteId, false )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId: failedSiteId,

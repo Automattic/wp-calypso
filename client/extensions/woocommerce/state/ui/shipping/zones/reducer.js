@@ -1,11 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
@@ -29,21 +33,23 @@ export const initialState = {
 	currentlyEditingId: null,
 };
 
-function handleZoneAdd( state ) {
+const reducer = {};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_ADD ] = state => {
 	const id = nextBucketIndex( state.creates );
 	// The action of "adding" a zone must not alter the edits, since the user can cancel the zone edit later
-	return handleZoneOpen( state, { id } );
-}
+	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ]( state, { id } );
+};
 
-function handleZoneCancel( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_CANCEL ] = state => {
 	// "Canceling" editing a zone is equivalent at "closing" it without any changes
-	return handleZoneClose( {
+	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ]( {
 		...state,
 		currentlyEditingChanges: {},
 	} );
-}
+};
 
-function handleZoneClose( state ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = state => {
 	const { currentlyEditingChanges, currentlyEditingId } = state;
 	if ( null === currentlyEditingId ) {
 		return state;
@@ -85,9 +91,9 @@ function handleZoneClose( state ) {
 		currentlyEditingId: null,
 		[ bucket ]: newBucket,
 	};
-}
+};
 
-function handleZoneEditName( state, { name } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { name } ) => {
 	if ( null === state.currentlyEditingId ) {
 		return state;
 	}
@@ -98,9 +104,9 @@ function handleZoneEditName( state, { name } ) {
 			name,
 		},
 	};
-}
+};
 
-function handleZoneOpen( state, { id } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
 	return {
 		...state,
 		currentlyEditingId: id,
@@ -110,9 +116,9 @@ function handleZoneOpen( state, { id } ) {
 			locations: locationsInitialState,
 		},
 	};
-}
+};
 
-function handleZoneRemove( state, { id } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 	const newState = {
 		...state,
 		currentlyEditingId: null,
@@ -127,9 +133,9 @@ function handleZoneRemove( state, { id } ) {
 	newState[ bucket ] = reject( state[ bucket ], { id } );
 
 	return newState;
-}
+};
 
-function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
 	if ( zone.id !== state.currentlyEditingId ) {
 		return state;
 	}
@@ -139,9 +145,9 @@ function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
 		currentlyEditingId: data.id,
 		currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
 	};
-}
+};
 
-function handleZoneDeleted( state, { originatingAction: { zone } } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
 	if ( zone.id !== state.currentlyEditingId ) {
 		return state;
 	}
@@ -150,9 +156,12 @@ function handleZoneDeleted( state, { originatingAction: { zone } } ) {
 		...state,
 		currentlyEditingId: null,
 	};
-}
+};
 
-function handleZoneLocationsUpdated( state, { originatingAction: { zoneId } } ) {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = (
+	state,
+	{ originatingAction: { zoneId } }
+) => {
 	if ( zoneId !== state.currentlyEditingId ) {
 		return state;
 	}
@@ -164,47 +173,12 @@ function handleZoneLocationsUpdated( state, { originatingAction: { zoneId } } ) 
 			locations: locationsInitialState,
 		},
 	};
-}
+};
 
-export default ( state = initialState, action ) => {
-	let newState = state;
-	switch ( action.type ) {
-		case WOOCOMMERCE_SHIPPING_ZONE_ADD:
-			newState = handleZoneAdd( state, action );
-			break;
+const mainReducer = createReducer( initialState, reducer );
 
-		case WOOCOMMERCE_SHIPPING_ZONE_CANCEL:
-			newState = handleZoneCancel( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_CLOSE:
-			newState = handleZoneClose( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME:
-			newState = handleZoneEditName( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_OPEN:
-			newState = handleZoneOpen( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_REMOVE:
-			newState = handleZoneRemove( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED:
-			newState = handleZoneUpdated( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_DELETED:
-			newState = handleZoneDeleted( state, action );
-			break;
-
-		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
-			newState = handleZoneLocationsUpdated( state, action );
-			break;
-	}
+export default ( state, action ) => {
+	const newState = mainReducer( state, action );
 
 	if ( null !== newState.currentlyEditingId ) {
 		const methodsState = newState.currentlyEditingChanges.methods;

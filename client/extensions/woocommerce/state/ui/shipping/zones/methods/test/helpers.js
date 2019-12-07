@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -75,10 +77,7 @@ describe( 'mergeMethodEdits', () => {
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
 			creates: [ { id: { index: 0 } }, { id: { index: 1 } } ],
-			updates: [
-				{ id: 1, title: 'Wololo' },
-				{ id: 3, title: 'Wololo' },
-			],
+			updates: [ { id: 1, title: 'Wololo' }, { id: 3, title: 'Wololo' } ],
 			deletes: [ { id: 2 }, { id: 4 } ],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,

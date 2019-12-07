@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -38,7 +40,7 @@ export default class extends React.Component {
 		return (
 			<div className={ classes } role="alert">
 				<span id={ this.props.id }>
-					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{ ' ' }
+					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{' '}
 					{ this.props.text }
 				</span>
 			</div>

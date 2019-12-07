@@ -16,7 +16,6 @@ import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
@@ -26,7 +25,6 @@ import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
@@ -151,19 +149,13 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats and Insights' ) } />
+				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
-				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="stats__section-header"
-					headerText={ translate( 'Stats and Insights' ) }
-					align="left"
-				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
 					interval={ period }
@@ -171,9 +163,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && (
-						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
-					) }
+					{ ! isCustomerHomeEnabled && <StatsBanners siteId={ siteId } slug={ slug } /> }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }

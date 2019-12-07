@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,11 +22,11 @@ class QueryJetpackSettings extends Component {
 		requestJetpackSettings: PropTypes.func,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,20 +14,21 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK,
 } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_SITE_BLOCK: {
+export const items = createReducer(
+	{},
+	{
+		[ READER_SITE_BLOCK ]: ( state, action ) => {
 			return {
 				...state,
 				[ action.payload.siteId ]: true,
 			};
-		}
-		case READER_SITE_UNBLOCK: {
+		},
+		[ READER_SITE_UNBLOCK ]: ( state, action ) => {
 			return omit( state, action.payload.siteId );
-		}
-		case READER_SITE_REQUEST_SUCCESS: {
+		},
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
 			if ( ! action.payload.is_blocked ) {
 				if ( ! state[ action.payload.ID ] ) {
 					return state;
@@ -39,8 +41,8 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 				...state,
 				[ action.payload.ID ]: true,
 			};
-		}
-		case READER_SITE_BLOCKS_RECEIVE: {
+		},
+		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
 			if ( ! action.payload || ! action.payload.sites ) {
 				return state;
 			}
@@ -58,43 +60,34 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 				...state,
 				...newBlocks,
 			};
-		}
+		},
 	}
+);
 
-	return state;
+export const currentPage = createReducer( 1, {
+	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		if ( ! action.payload || ! action.payload.page ) {
+			return state;
+		}
+
+		return action.payload.page;
+	},
 } );
 
-export const currentPage = withoutPersistence( ( state = 1, action ) => {
-	switch ( action.type ) {
-		case READER_SITE_BLOCKS_RECEIVE: {
-			if ( ! action.payload || ! action.payload.page ) {
-				return state;
-			}
-
-			return action.payload.page;
+export const lastPage = createReducer( null, {
+	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		if ( ! action.payload || ! action.payload.page || action.payload.count > 0 ) {
+			return state;
 		}
-	}
 
-	return state;
+		return action.payload.page;
+	},
 } );
 
-export const lastPage = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case READER_SITE_BLOCKS_RECEIVE: {
-			if ( ! action.payload || ! action.payload.page || action.payload.count > 0 ) {
-				return state;
-			}
-
-			return action.payload.page;
-		}
-	}
-
-	return state;
-} );
-
-export const inflightPages = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_SITE_BLOCKS_REQUEST: {
+export const inflightPages = createReducer(
+	{},
+	{
+		[ READER_SITE_BLOCKS_REQUEST ]: ( state, action ) => {
 			if ( ! action.payload || ! action.payload.page ) {
 				return state;
 			}
@@ -103,18 +96,16 @@ export const inflightPages = withoutPersistence( ( state = {}, action ) => {
 				...state,
 				[ action.payload.page ]: true,
 			};
-		}
-		case READER_SITE_BLOCKS_RECEIVE: {
+		},
+		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
 			if ( ! action.payload || ! action.payload.page ) {
 				return state;
 			}
 
 			return omit( state, action.payload.page );
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	items,

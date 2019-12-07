@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,11 +15,11 @@ import { isRequestingPlugins } from '../../../state/plugins/selectors';
 import { requestPlugins } from '../../../state/plugins/actions';
 
 class QueryPlugins extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.requestPlugins( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {

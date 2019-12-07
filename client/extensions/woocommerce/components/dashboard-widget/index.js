@@ -2,6 +2,7 @@
  *
  * External dependencies
  *
+ * @format
  */
 
 import React, { Component } from 'react';
@@ -36,7 +37,9 @@ class DashboardWidget extends Component {
 		this.props.onSettingsClose();
 	};
 
-	settingsToggleRef = React.createRef();
+	setSettingsToggle = c => {
+		this.settingsToggle = c;
+	};
 
 	showTooltip = () => {
 		this.setState( { showTooltip: true } );
@@ -83,12 +86,12 @@ class DashboardWidget extends Component {
 					onClick={ this.toggleSettingsPanel }
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
-					ref={ this.settingsToggleRef }
+					ref={ this.setSettingsToggle }
 					size={ 18 }
 				/>
 				<Tooltip
 					baseClassName="dashboard-widget__settings-tooltip"
-					context={ this.settingsToggleRef.current }
+					context={ this.settingsToggle }
 					isVisible={ showTooltip }
 				>
 					{ translate( 'Settings', {
@@ -98,7 +101,7 @@ class DashboardWidget extends Component {
 				{ hasSettingsPanel && (
 					<Popover
 						className="woocommerce dashboard-widget__settings-popover"
-						context={ this.settingsToggleRef.current }
+						context={ this.settingsToggle }
 						isVisible={ showDialog }
 						onClose={ this.onSettingsPanelClose }
 						position="bottom left"

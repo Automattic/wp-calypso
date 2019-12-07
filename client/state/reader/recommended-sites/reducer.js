@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,7 @@ import { uniqBy } from 'lodash';
  * Internal dependencies
  */
 import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Tracks mappings between randomization seeds and site recs.
@@ -19,13 +20,9 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  */
 export const items = keyedReducer(
 	'seed',
-	withoutPersistence( ( state = [], action ) => {
-		switch ( action.type ) {
-			case READER_RECOMMENDED_SITES_RECEIVE:
-				return uniqBy( state.concat( action.payload.sites ), 'feedId' );
-		}
-
-		return state;
+	createReducer( [], {
+		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
+			uniqBy( state.concat( action.payload.sites ), 'feedId' ),
 	} )
 );
 
@@ -39,13 +36,9 @@ export const items = keyedReducer(
  */
 export const pagingOffset = keyedReducer(
 	'seed',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
-			case READER_RECOMMENDED_SITES_RECEIVE:
-				return Math.max( action.payload.offset, state );
-		}
-
-		return state;
+	createReducer( null, {
+		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
+			Math.max( action.payload.offset, state ),
 	} )
 );
 

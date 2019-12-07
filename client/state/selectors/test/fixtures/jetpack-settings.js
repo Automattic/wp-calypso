@@ -1,3 +1,4 @@
+/** @format */
 export const settings = {
 	12345678: {
 		setting_1: 4321,

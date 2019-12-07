@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,7 +25,7 @@ export default class NumberInput extends Component {
 		text: this.props.value,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.focused && nextProps.value !== this.props.value ) {
 			this.setState( { text: nextProps.value } );
 		}

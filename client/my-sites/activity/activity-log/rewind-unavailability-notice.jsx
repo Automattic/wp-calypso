@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ export const RewindUnavailabilityNotice = ( {
 					href={ adminUrl }
 					title={ translate( 'The site is not connected.' ) }
 					description={ translate(
-						"We can't back up or restore your site until it has been reconnected."
+						"We can't back up or rewind your site until it has been reconnected."
 					) }
 				/>
 			);

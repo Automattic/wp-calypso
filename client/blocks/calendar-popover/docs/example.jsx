@@ -1,8 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React, { PureComponent } from 'react';
-import moment from 'moment';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,8 +16,6 @@ import CalendarPopover from 'blocks/calendar-popover';
 const tomorrow = date => date.date( date.date() + 1 );
 
 class CalendarPopoverExample extends PureComponent {
-	buttonRef = React.createRef();
-
 	state = { show: false, currentDate: tomorrow( moment() ) };
 
 	toggle = () => this.setState( { show: ! this.state.show } );
@@ -24,12 +25,12 @@ class CalendarPopoverExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<Button primary ref={ this.buttonRef } onClick={ this.toggle }>
+				<Button primary ref="button" onClick={ this.toggle }>
 					Show Popover
 				</Button>
 
 				<CalendarPopover
-					context={ this.buttonRef.current }
+					context={ this.refs && this.refs.button }
 					isVisible={ this.state.show }
 					selectedDay={ this.state.currentDate }
 					onClose={ this.close }

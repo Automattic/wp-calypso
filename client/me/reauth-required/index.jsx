@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 /**
  * Internal Dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -266,4 +266,7 @@ const ReauthRequired = createReactClass( {
 } );
 /* eslint-enable jsx-a11y/no-autofocus */
 
-export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( ReauthRequired ) );

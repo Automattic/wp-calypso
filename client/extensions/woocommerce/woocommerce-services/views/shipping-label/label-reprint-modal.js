@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -99,4 +101,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ReprintDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ReprintDialog ) );

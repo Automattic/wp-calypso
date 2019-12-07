@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ import Gridicon from 'components/gridicon';
  */
 import EditPackage from './edit-package';
 import checkInputs from './modal-errors';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import inputFilters from './input-filters';
@@ -57,10 +59,7 @@ const AddPackageDialog = props => {
 
 		//get reserved box names:
 		const boxNames = concat(
-			difference(
-				customPackages.map( boxPackage => boxPackage.name ),
-				[ editName ]
-			), //existing custom boxes
+			difference( customPackages.map( boxPackage => boxPackage.name ), [ editName ] ), //existing custom boxes
 			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);

@@ -1,3 +1,5 @@
+/** @format */
+
 // This code combines the Mocha spec and xunit outputs with a dynamically allocated directory for xunit output
 
 /**

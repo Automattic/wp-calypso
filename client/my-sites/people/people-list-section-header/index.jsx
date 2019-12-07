@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -16,7 +18,6 @@ import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
@@ -50,20 +51,6 @@ class PeopleListSectionHeader extends Component {
 		return '/people/new/' + siteSlug;
 	}
 
-	getPopoverText() {
-		const { currentRoute, translate } = this.props;
-
-		if ( startsWith( currentRoute, '/people/followers' ) ) {
-			return translate( 'A list of people currently following your site' );
-		}
-
-		if ( startsWith( currentRoute, '/people/email-followers' ) ) {
-			return translate( 'A list of people who are subscribed to your blog via email only' );
-		}
-
-		return null;
-	}
-
 	render() {
 		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
@@ -75,7 +62,6 @@ class PeopleListSectionHeader extends Component {
 				count={ count }
 				label={ label }
 				isPlaceholder={ this.props.isPlaceholder }
-				popoverText={ this.getPopoverText() }
 			>
 				{ children }
 				{ siteLink && (
@@ -95,7 +81,6 @@ const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		currentRoute: getCurrentRoute( state ),
 	};
 };
 

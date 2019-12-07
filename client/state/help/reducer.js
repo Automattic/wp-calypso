@@ -1,9 +1,11 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 import { HELP_CONTACT_FORM_SITE_SELECT, HELP_LINKS_RECEIVE } from 'state/action-types';
 import courses from './courses/reducer';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 
@@ -14,13 +16,8 @@ import ticket from './ticket/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const selectedSiteId = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case HELP_CONTACT_FORM_SITE_SELECT:
-			return action.siteId;
-	}
-
-	return state;
+export const selectedSiteId = createReducer( null, {
+	[ HELP_CONTACT_FORM_SITE_SELECT ]: ( state, action ) => action.siteId,
 } );
 
 /**

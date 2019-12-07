@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -32,7 +34,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		this.state = { loading: false };
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.item.URL === nextProps.item.URL ) {
 			return null;
 		}

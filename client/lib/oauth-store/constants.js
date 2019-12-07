@@ -1,3 +1,5 @@
+/** @format */
+
 export const actions = {
 	AUTH_LOGIN: 'AUTH_LOGIN',
 	RECEIVE_AUTH_LOGIN: 'RECEIVE_AUTH_LOGIN',

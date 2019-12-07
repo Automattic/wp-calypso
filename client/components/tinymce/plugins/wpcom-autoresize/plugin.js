@@ -4,7 +4,9 @@
  * Adapted from WordPress.
  *
  *
+ * @format
  * @copyright 2015 by the WordPress contributors.
+ * @license See CREDITS.md.
  */
 
 /**
@@ -13,27 +15,28 @@
 import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
-	const settings = { ...editor.settings };
-	let oldSize = 0;
+	let settings = editor.settings,
+		oldSize = 0;
 
 	function isFullscreen() {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
 	}
 
-	if ( editor.settings.inline ) {
+	// do not autoreize on iOS
+	if ( editor.settings.inline || tinymce.Env.iOS ) {
 		return;
 	}
 
 	function isEndOfEditor() {
-		let element, child;
-		const range = editor.selection.getRng();
+		let range, start, body, element, child;
+		range = editor.selection.getRng();
 
 		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
 			return false;
 		}
 
-		const start = range.startContainer;
-		const body = editor.getBody();
+		start = range.startContainer;
+		body = editor.getBody();
 		element = start;
 		do {
 			child = element;
@@ -46,15 +49,27 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function resize( e ) {
-		let deltaSize, resizeHeight, myHeight;
-		const DOM = tinymce.DOM;
-		const doc = editor.getDoc();
-		const { body, documentElement: docElm } = doc;
+		let deltaSize,
+			doc,
+			body,
+			docElm,
+			DOM = tinymce.DOM,
+			resizeHeight,
+			myHeight,
+			marginTop,
+			marginBottom,
+			paddingTop,
+			paddingBottom,
+			borderTop,
+			borderBottom;
 
+		doc = editor.getDoc();
 		if ( ! doc ) {
 			return;
 		}
 
+		body = doc.body;
+		docElm = doc.documentElement;
 		resizeHeight = settings.autoresize_min_height;
 
 		if ( ! body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
@@ -67,14 +82,14 @@ function wcpomAutoResize( editor ) {
 		}
 
 		// Calculate outer height of the body element using CSS styles
-		const marginTop = editor.dom.getStyle( body, 'margin-top', true );
-		const marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
-		const paddingTop = editor.dom.getStyle( body, 'padding-top', true );
-		const borderTop = editor.dom.getStyle( body, 'border-top-width', true );
-		const borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
+		marginTop = editor.dom.getStyle( body, 'margin-top', true );
+		marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
+		paddingTop = editor.dom.getStyle( body, 'padding-top', true );
+		borderTop = editor.dom.getStyle( body, 'border-top-width', true );
+		borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
 		// paddingBottom seems to get reset to 1 somewhere, so grab
 		// autoresize_bottom_margin directly here
-		const paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
+		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
 
 		myHeight =
 			body.offsetHeight +
@@ -164,8 +179,10 @@ function wcpomAutoResize( editor ) {
 
 	// Add padding at the bottom for better UX
 	editor.on( 'init', function() {
-		const overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
-		const bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
+		let overflowPadding, bottomMargin;
+
+		overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
+		bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
 
 		if ( overflowPadding !== false ) {
 			editor.dom.setStyles( editor.getBody(), {

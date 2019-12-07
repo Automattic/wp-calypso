@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -34,13 +36,13 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.setState( {
 			newNote: this.props.hasUnseenNotifications,
 		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
@@ -156,4 +158,7 @@ const mapDispatchToProps = {
 	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MasterbarItemNotifications );

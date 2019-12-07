@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
@@ -14,20 +16,19 @@ import {
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_SETUP_CHOICES_REQUEST: {
+export default createReducer(
+	{},
+	{
+		[ WOOCOMMERCE_SETUP_CHOICES_REQUEST ]: () => {
 			return LOADING;
-		}
-		case WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS: {
-			const { data } = action;
-			return data;
-		}
-		case WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS: {
-			const { data } = action;
-			return { ...state, ...data };
-		}
-	}
+		},
 
-	return state;
-} );
+		[ WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return data;
+		},
+
+		[ WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return { ...state, ...data };
+		},
+	}
+);

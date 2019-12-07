@@ -1,7 +1,9 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -17,7 +19,6 @@ import DomainTransferFlag from 'my-sites/domains/domain-management/components/do
 import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -49,7 +50,7 @@ class ListItem extends React.PureComponent {
 
 	content() {
 		return (
-			<button className="domain-management-list-item__link" onClick={ this.handleClick }>
+			<div className="domain-management-list-item__link" onClick={ this.handleClick }>
 				{ this.icon() }
 				<div className="domain-management-list-item__title">{ this.props.domain.name }</div>
 				<span className="domain-management-list-item__meta">
@@ -61,7 +62,7 @@ class ListItem extends React.PureComponent {
 					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
-			</button>
+			</div>
 		);
 	}
 
@@ -116,14 +117,14 @@ class ListItem extends React.PureComponent {
 	}
 
 	showDomainExpirationWarning( domain ) {
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 
 		if ( domain.expired ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: moment( domain.expiry ).fromNow(),
+							timeSinceExpiry: domain.expirationMoment.fromNow(),
 						},
 						context:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -132,12 +133,15 @@ class ListItem extends React.PureComponent {
 			);
 		}
 
-		if ( domain.expiry && moment( domain.expiry ) < this.props.moment().add( 30, 'days' ) ) {
+		if (
+			domain.expirationMoment &&
+			domain.expirationMoment < this.props.moment().add( 30, 'days' )
+		) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
 					{ translate( 'Expires %(timeUntilExpiry)s', {
 						args: {
-							timeUntilExpiry: moment( domain.expiry ).fromNow(),
+							timeUntilExpiry: domain.expirationMoment.fromNow(),
 						},
 						context:
 							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -183,4 +187,4 @@ class ListItem extends React.PureComponent {
 	}
 }
 
-export default localize( withLocalizedMoment( ListItem ) );
+export default localize( ListItem );

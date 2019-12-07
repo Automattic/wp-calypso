@@ -40,7 +40,7 @@ const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( this.getStateObject( nextProps ) );
 	}
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -87,4 +89,7 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	purchaseLabel: () => dispatch( purchaseLabel( orderId, siteId ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseButton ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PurchaseButton ) );

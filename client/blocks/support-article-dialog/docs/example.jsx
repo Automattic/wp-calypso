@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,9 +29,12 @@ class SupportArticleDialogExample extends Component {
 	}
 }
 
-const ConnectedExample = connect( null, {
-	openSupportArticleDialog,
-} )( SupportArticleDialogExample );
+const ConnectedExample = connect(
+	null,
+	{
+		openSupportArticleDialog,
+	}
+)( SupportArticleDialogExample );
 
 ConnectedExample.displayName = 'SupportArticleDialog';
 

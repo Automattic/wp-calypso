@@ -19,7 +19,11 @@
 	}
 
 	.conversations__intro-character {
-		height: 140px;
+		background: url( '/calypso/images/reader/reader-conversations-characters.svg' ) no-repeat 8px
+			bottom;
+		background-size: 97%;
+		flex: 0 0 245px;
+		min-height: 140px;
 		margin-right: -8px; // prevent right crop of illustration
 
 		// Hides the character when main content column gets too narrow

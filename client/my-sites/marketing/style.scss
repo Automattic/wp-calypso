@@ -77,8 +77,7 @@
 	}
 }
 
-.buttons__sharing-settings,
-.connections__sharing-settings {
+.sharing-settings {
 	// labels, checkboxes, radio
 
 	label label {
@@ -105,7 +104,7 @@
 	}
 }
 
-.connections__sharing-settings.connections__sharing-connections {
+.sharing-settings.sharing-connections {
 	@include breakpoint( '<480px' ) {
 		padding: 16px 0;
 	}
@@ -460,7 +459,7 @@
 
 // Sharing Buttons Section
 
-.buttons__sharing-settings.buttons__sharing-buttons {
+.sharing-settings.sharing-buttons {
 	.sharing-button-styles {
 		box-shadow: 0 -2px 0 var( --color-neutral-0 ) inset;
 		padding-bottom: 0.5em;
@@ -1109,7 +1108,7 @@
 	max-width: 300px;
 }
 
-.connections__sharing-connections__mailchimp-gutenberg_explanation {
+.sharing-connections__mailchimp-gutenberg_explanation {
 	margin-top: 1.5em;
 }
 

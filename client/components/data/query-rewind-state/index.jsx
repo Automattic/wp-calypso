@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestRewindState } from 'state/rewind/state/actions';
+import { requestRewindState } from 'state/rewind/actions';
 
 export class QueryRewindState extends Component {
 	componentDidMount() {
@@ -39,4 +40,7 @@ const mapDispatchToProps = {
 	requestState: requestRewindState,
 };
 
-export default connect( null, mapDispatchToProps )( QueryRewindState );
+export default connect(
+	null,
+	mapDispatchToProps
+)( QueryRewindState );

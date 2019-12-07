@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -31,13 +33,13 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.loaded ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( { loaded } ) {
+	componentWillReceiveProps( { loaded } ) {
 		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}

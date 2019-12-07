@@ -17,7 +17,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
@@ -51,11 +51,11 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.maybeValidateSSO();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
 
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {

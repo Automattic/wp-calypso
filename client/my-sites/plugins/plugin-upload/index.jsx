@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -53,7 +55,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearPluginUpload( siteId );
@@ -203,12 +205,10 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect( mapStateToProps, {
-		uploadPlugin,
-		clearPluginUpload,
-		initiateAutomatedTransferWithPluginZip,
-		successNotice,
-	} ),
+	connect(
+		mapStateToProps,
+		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
+	),
 	localize,
 ];
 

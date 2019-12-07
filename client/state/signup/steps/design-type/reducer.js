@@ -3,18 +3,18 @@
  */
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_DESIGN_TYPE_SET } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { designTypeSchema } from './schema';
 
-export default withSchemaValidation( designTypeSchema, ( state = '', action ) => {
-	switch ( action.type ) {
-		case SIGNUP_STEPS_DESIGN_TYPE_SET: {
+export default createReducerWithValidation(
+	'',
+	{
+		[ SIGNUP_STEPS_DESIGN_TYPE_SET ]: ( state, action ) => {
 			return action.designType;
-		}
-		case SIGNUP_COMPLETE_RESET: {
+		},
+		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return '';
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	designTypeSchema
+);

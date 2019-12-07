@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 
-import { THEME_BACK_PATH_SET, THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN } from 'state/action-types';
+import { THEME_BACK_PATH_SET, THEMES_BANNER_HIDE } from 'state/action-types';
 import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 
@@ -28,12 +30,4 @@ export const themesBannerVisible = withSchemaValidation(
 	themesBannerVisibleReducer
 );
 
-// "More Themes" button state.
-export function themesShowcaseOpen( state = false, action ) {
-	if ( THEMES_SHOWCASE_OPEN === action.type ) {
-		return true;
-	}
-	return state;
-}
-
-export default combineReducers( { backPath, themesBannerVisible, themesShowcaseOpen } );
+export default combineReducers( { backPath, themesBannerVisible } );

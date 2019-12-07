@@ -1,3 +1,4 @@
+/** @format */
 let _loadedViaHistory = false;
 
 export default {

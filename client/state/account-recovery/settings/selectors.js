@@ -1,3 +1,4 @@
+/** @format */
 export const isAccountRecoverySettingsReady = state => {
 	return state.accountRecovery.settings.isReady;
 };

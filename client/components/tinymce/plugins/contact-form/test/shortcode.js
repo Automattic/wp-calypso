@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -72,10 +74,7 @@ describe( 'contact form shortcode serializer', () => {
 
 	test( 'should serialize multiple fields', () => {
 		const shortcode = serialize( {
-			fields: [
-				{ type: 'text', label: 'First Name' },
-				{ type: 'text', label: 'Last Name' },
-			],
+			fields: [ { type: 'text', label: 'First Name' }, { type: 'text', label: 'Last Name' } ],
 		} );
 
 		assert.equal(

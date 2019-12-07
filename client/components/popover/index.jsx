@@ -1,19 +1,21 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
-import { defer, uniqueId } from 'lodash';
-import { withRtl } from 'i18n-calypso';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { RootChild } from '@automattic/components';
+import RootChild from 'components/root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -21,6 +23,7 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Style dependencies
@@ -42,6 +45,7 @@ class Popover extends Component {
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
+		isFocusOnShow: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
@@ -54,6 +58,7 @@ class Popover extends Component {
 			'left',
 			'top left',
 		] ),
+		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -71,6 +76,7 @@ class Popover extends Component {
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
+		isFocusOnShow: false,
 		isRtl: false,
 		isVisible: false,
 		position: 'top',
@@ -113,7 +119,7 @@ class Popover extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
 		this.domContext = ReactDom.findDOMNode( nextProps.context );
 
@@ -248,9 +254,7 @@ class Popover extends Component {
 			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
 			shouldClose =
 				shouldClose &&
-				ignoreContext &&
-				ignoreContext.contains &&
-				! ignoreContext.contains( event.target );
+				( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
 		}
 
 		if ( shouldClose ) {
@@ -280,7 +284,7 @@ class Popover extends Component {
 	}
 
 	focusPopover() {
-		if ( ! this.popoverNode ) {
+		if ( ! this.props.isFocusOnShow || ! this.popoverNode ) {
 			return null;
 		}
 
@@ -307,7 +311,7 @@ class Popover extends Component {
 
 		this.setPosition();
 
-		defer( () => this.focusPopover() );
+		this.focusPopover();
 	}
 
 	getPositionClass( position = this.props.position ) {
@@ -498,15 +502,14 @@ class Popover extends Component {
 		this.debug( 'rendering ...' );
 
 		return (
-			<RootChild>
-				<div
-					aria-label={ this.props[ 'aria-label' ] }
-					id={ this.id }
-					role="tooltip"
-					tabIndex="-1"
-					style={ this.getStylePosition() }
-					className={ classes }
-				>
+			<RootChild
+				aria-label={ this.props[ 'aria-label' ] }
+				className={ this.props.rootClassName }
+				id={ this.id }
+				role="tooltip"
+				tabIndex={ this.props.isFocusOnShow ? 0 : null }
+			>
+				<div style={ this.getStylePosition() } className={ classes }>
 					<div className="popover__arrow" />
 					<div ref={ this.setDOMBehavior } className="popover__inner">
 						{ this.props.children }
@@ -517,4 +520,6 @@ class Popover extends Component {
 	}
 }
 
-export default withRtl( Popover );
+export default connect( state => ( {
+	isRtl: isRtlSelector( state ),
+} ) )( Popover );

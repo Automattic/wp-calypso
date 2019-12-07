@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,20 +10,13 @@ import React from 'react';
  */
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 
-/**
- * Image dependencies
- */
-import earnSectionImage from 'assets/images/earn/earn-section.svg';
-import recurringImage from 'assets/images/earn/recurring.svg';
-import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoSectionExample = () => {
 	const promos: PromoSectionProps = {
 		header: {
 			title: 'Start earning money',
 			image: {
-				path: earnSectionImage,
+				path: '/calypso/images/earn/earn-section.svg',
 			},
 			body: 'There is a range of ways to earn money through your WordPress.com Site.',
 		},
@@ -31,7 +26,7 @@ const PromoSectionExample = () => {
 				body:
 					'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. Available to any site with a Premium plan.',
 				image: {
-					path: simplePaymentsImage,
+					path: '/calypso/images/earn/simple-payments.svg',
 				},
 				cta: {
 					text: 'Collect One-time Payments',
@@ -43,7 +38,7 @@ const PromoSectionExample = () => {
 				body:
 					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
 				image: {
-					path: recurringImage,
+					path: '/calypso/images/earn/recurring.svg',
 				},
 				cta: {
 					text: 'Collect Recurring Payments',

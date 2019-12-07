@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -45,16 +47,6 @@ export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
 }
 
-export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
-	const screenshots = get( getSiteVerticalData( state ), 'previewScreenshots' );
-
-	return get(
-		screenshots,
-		viewportDevice,
-		get( screenshots, viewportDevice === 'phone' ? 'phoneHighDpi' : 'desktopHighDpi' )
-	);
-}
-
 export function getSiteVerticalPreviewStyles( state ) {
 	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
 }
@@ -74,10 +66,6 @@ export function getSiteVerticalSlug( state ) {
 
 export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
-}
-
-export function getSiteVerticalSuggestedTheme( state ) {
-	return get( state, 'signup.steps.siteVertical.suggestedTheme' );
 }
 
 // Used to fill `vertical` param to pass to to `/domains/suggestions`

@@ -1,6 +1,7 @@
 /**
  * User stub
  *
+ * @format
  */
 
 let isLoggedIn = false;

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -27,7 +29,9 @@ import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-
 import { isRequestingSites } from 'state/sites/selectors';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { StripeHookProvider } from 'lib/stripe';
+import { withStripe } from 'lib/stripe';
+
+const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
 
 function EditCardDetails( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -77,17 +81,15 @@ function EditCardDetails( props ) {
 				{ titles.editCardDetails }
 			</HeaderCake>
 
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
-				<CreditCardForm
-					apiParams={ { purchaseId: props.purchase.id } }
-					createCardToken={ createCardUpdateToken }
-					initialValues={ props.card }
-					purchase={ props.purchase }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					siteSlug={ props.siteSlug }
-					successCallback={ successCallback }
-				/>
-			</StripeHookProvider>
+			<CreditCardFormWithStripe
+				apiParams={ { purchaseId: props.purchase.id } }
+				createCardToken={ createCardUpdateToken }
+				initialValues={ props.card }
+				purchase={ props.purchase }
+				recordFormSubmitEvent={ recordFormSubmitEvent }
+				siteSlug={ props.siteSlug }
+				successCallback={ successCallback }
+			/>
 		</Main>
 	);
 }
@@ -115,4 +117,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );
+export default connect(
+	mapStateToProps,
+	{ clearPurchases, recordTracksEvent }
+)( EditCardDetails );

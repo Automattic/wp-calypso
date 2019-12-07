@@ -1,3 +1,4 @@
+/** @format */
 // TODO: Add unit tests for the following functions.
 
 /**

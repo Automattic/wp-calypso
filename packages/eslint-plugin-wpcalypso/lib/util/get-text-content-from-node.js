@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Utility for retrieving the final translatable string from an AST
  * node for tests that focus on the strings themselves.

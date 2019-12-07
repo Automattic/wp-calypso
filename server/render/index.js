@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +14,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { isDefaultLocale, isLocaleRtl } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
@@ -20,6 +22,7 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
+import isRTL from 'state/selectors/is-rtl';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import initialReducer from 'state/reducer';
@@ -134,7 +137,7 @@ export function attachI18n( context ) {
 	if ( context.store ) {
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
 
-		const isLocaleRTL = isLocaleRtl( context.lang );
+		const isLocaleRTL = isRTL( context.store.getState() );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }

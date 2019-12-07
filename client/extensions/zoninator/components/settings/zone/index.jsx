@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -50,7 +52,7 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
 			return;
 		}
@@ -168,4 +170,7 @@ const connectComponent = connect(
 	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight( connectComponent, localize )( Zone );
+export default flowRight(
+	connectComponent,
+	localize
+)( Zone );

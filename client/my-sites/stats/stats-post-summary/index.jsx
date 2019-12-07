@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -14,7 +17,6 @@ import SummaryChart from '../stats-summary';
 import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import QueryPostStats from 'components/data/query-post-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
 /**
@@ -174,4 +176,7 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostSummary );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsPostSummary );

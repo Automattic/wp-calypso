@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -61,7 +62,7 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	 * @returns {Boolean} whether the "outer" range encloses the "inner" range
 	 */
 	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
-		innerStart !== 0 && innerEnd !== 0 && outerStart <= innerStart && outerEnd >= innerEnd;
+		innerStart !== 0 && innerEnd !== 0 && ( outerStart <= innerStart && outerEnd >= innerEnd );
 
 /**
  * Builds a tree of ranges

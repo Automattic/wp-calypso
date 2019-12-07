@@ -1,3 +1,5 @@
+/** @format **/
+
 /**
  * External dependencies
  */

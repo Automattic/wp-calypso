@@ -1,3 +1,4 @@
+/** @format */
 const DOMAIN_PURCHASE = {
 	expiryStatus: 'active',
 	id: 10001,

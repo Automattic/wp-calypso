@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, find, isEqual } from 'lodash';
+import { get, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -21,14 +22,14 @@ import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
-import { submit } from 'lib/store-transactions';
-import analytics from 'lib/analytics';
-import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
+	newCardPayment,
 	newStripeCardPayment,
 	storedCardPayment,
-} from 'lib/transaction/payments';
+} from 'lib/store-transactions';
+import analytics from 'lib/analytics';
+import { setPayment, submitTransaction } from 'lib/upgrades/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -39,16 +40,24 @@ import {
 	getLocationOrigin,
 	isPaymentMethodEnabled,
 } from 'lib/cart-values';
-import { hasFreeTrial } from 'lib/cart-values/cart-items';
+import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
-import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
-import { displayError, clear } from './notices';
+import {
+	INPUT_VALIDATION,
+	MODAL_AUTHORIZATION,
+	RECEIVED_AUTHORIZATION_RESPONSE,
+	REDIRECTING_FOR_AUTHORIZATION,
+	RECEIVED_WPCOM_RESPONSE,
+} from 'lib/store-transactions/step-types';
+import { getTld } from 'lib/domains';
+import { displayError, clear } from 'lib/upgrades/notices';
+import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
-import { isWpComEcommercePlan } from 'lib/plans';
-import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -89,6 +98,13 @@ export class SecurePaymentForm extends Component {
 
 		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
 
+		if (
+			this.props.cart &&
+			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' )
+		) {
+			this.shouldUseStripeElements = true;
+		}
+
 		switch ( visiblePaymentBox ) {
 			case 'credits':
 			case 'free-trial':
@@ -96,7 +112,7 @@ export class SecurePaymentForm extends Component {
 				// FIXME: The endpoint doesn't currently support transactions with no
 				//   payment info, so for now we rely on the credits payment method for
 				//   free carts.
-				newPayment = fullCreditsPayment();
+				newPayment = fullCreditsPayment;
 				break;
 
 			case 'credit-card':
@@ -109,7 +125,11 @@ export class SecurePaymentForm extends Component {
 				if ( this.getInitialCard() ) {
 					newPayment = storedCardPayment( this.getInitialCard() );
 				} else if ( ! get( this.props.transaction, 'payment.newCardDetails', null ) ) {
-					newPayment = newStripeCardPayment();
+					if ( this.shouldUseStripeElements ) {
+						newPayment = newStripeCardPayment();
+					} else {
+						newPayment = newCardPayment();
+					}
 				}
 				break;
 
@@ -171,40 +191,32 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const { cart, transaction } = this.props;
-
+		const params = pick( this.props, [ 'cart', 'transaction' ] );
 		const origin = getLocationOrigin( window.location );
-		const successUrl = origin + this.props.redirectTo();
-		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
 
-		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );
+		params.successUrl = origin + this.props.redirectTo();
+		params.cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			params.cancelUrl += this.props.selectedSite.slug;
+		} else {
+			params.cancelUrl += 'no-site';
+		}
+
+		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
 		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
-			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
+			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
 		try {
-			await this.maybeSetSiteToPublic( { cart } );
+			await this.maybeSetSiteToPublic( { cart: params.cart } );
 		} catch ( e ) {
 			debug( 'Error setting site to public', e );
 			displayError();
 			return;
 		}
 
-		submit(
-			{
-				cart,
-				payment: transaction.payment,
-				domainDetails: transaction.domainDetails,
-				successUrl,
-				cancelUrl,
-				stripe: transaction.stripe,
-				stripeConfiguration: transaction.stripeConfiguration,
-			},
-			// Execute every step handler in its own event loop tick, so that a complete React
-			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
-			// like the `TransactionStepsMixin` are called with every step.
-			step => defer( () => setTransactionStep( step ) )
-		);
+		submitTransaction( params );
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
@@ -214,13 +226,14 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		const productsInCart = get( cart, 'products', [] );
+		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
+			return (
+				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
+				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
+			);
+		} );
 
-		if (
-			! find( productsInCart, ( { product_slug = '' } ) => {
-				return isWpComEcommercePlan( product_slug );
-			} )
-		) {
+		if ( ! forcedAtomicProducts.length ) {
 			return;
 		}
 
@@ -240,20 +253,115 @@ export class SecurePaymentForm extends Component {
 		debug( 'transaction step: ' + step.name );
 
 		this.displayNotices( cart, step );
-		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
+		this.recordAnalytics( step );
 
 		this.finishIfLastStep( cart, selectedSite, step );
 	}
 
 	displayNotices( cart, step ) {
-		if ( step.error && step.name !== INPUT_VALIDATION ) {
-			displayError( step.error );
+		if ( step.error ) {
+			step.name !== INPUT_VALIDATION && displayError( step.error );
 			return;
 		}
 
-		if ( step.name === RECEIVED_WPCOM_RESPONSE ) {
-			clear();
+		switch ( step.name ) {
+			case 'received-wpcom-response':
+				clear();
+				break;
 		}
+	}
+
+	recordAnalytics( step ) {
+		const cartValue = this.props.cart;
+
+		switch ( step.name ) {
+			case 'input-validation':
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: step.error.code,
+					} );
+				} else {
+					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+						credits: cartValue.credits,
+						payment_method: this.props.transaction.payment.paymentMethod,
+					} );
+				}
+				break;
+
+			case MODAL_AUTHORIZATION:
+				analytics.tracks.recordEvent( 'calypso_checkout_modal_authorization' );
+				break;
+
+			case REDIRECTING_FOR_AUTHORIZATION:
+				// TODO: wire in payment method
+				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
+				break;
+
+			case RECEIVED_AUTHORIZATION_RESPONSE:
+			case RECEIVED_WPCOM_RESPONSE:
+				if ( step.error ) {
+					debug( 'authorization error', step.error );
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.code || step.error.error,
+						reason: this.formatError( step.error ),
+					} );
+
+					this.recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: false,
+					} );
+				} else if ( step.data ) {
+					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
+					// zero-value cost and would thus lead to a wrong computation of conversions
+					if ( ! hasFreeTrial( cartValue ) ) {
+						analytics.recordPurchase( { cart: cartValue, orderId: step.data.receipt_id } );
+					}
+
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
+						coupon_code: cartValue.coupon,
+						currency: cartValue.currency,
+						payment_method: this.props.transaction.payment.paymentMethod,
+						total_cost: cartValue.total_cost,
+					} );
+
+					cartValue.products.forEach( function( cartItem ) {
+						analytics.tracks.recordEvent(
+							'calypso_checkout_product_purchase',
+							removeNestedProperties( cartItem )
+						);
+					} );
+
+					this.recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: true,
+					} );
+				}
+				break;
+
+			default:
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: this.formatError( step.error ),
+					} );
+				}
+		}
+	}
+
+	recordDomainRegistrationAnalytics( parameters ) {
+		const cart = parameters.cart,
+			success = parameters.success;
+
+		getDomainRegistrations( cart ).forEach( function( cartItem ) {
+			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
+
+			analytics.tracks.recordEvent( 'calypso_domain_registration', {
+				domain_name: cartItem.meta,
+				domain_tld: getTld( cartItem.meta ),
+				success: success,
+			} );
+		} );
 	}
 
 	finishIfLastStep( cart, selectedSite, step ) {
@@ -269,6 +377,30 @@ export class SecurePaymentForm extends Component {
 				this.props.handleCheckoutCompleteRedirect();
 			} );
 		}
+	}
+
+	formatError( error ) {
+		let formatedMessage = '';
+
+		if ( typeof error.message === 'object' ) {
+			formatedMessage += Object.keys( error.message ).join( ', ' );
+		} else if ( typeof error.message === 'string' ) {
+			formatedMessage += error.message;
+		}
+
+		if ( error.error ) {
+			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		if ( error.decline_code ) {
+			formatedMessage = error.decline_code + ': ' + formatedMessage;
+		}
+
+		if ( error.code ) {
+			formatedMessage = error.code + ': ' + formatedMessage;
+		}
+
+		return formatedMessage;
 	}
 
 	renderCreditsPaymentBox() {
@@ -444,8 +576,11 @@ export class SecurePaymentForm extends Component {
 			>
 				<WebPaymentBox
 					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					transactionStep={ this.props.transaction.step }
 					countriesList={ this.props.countriesList }
 					onSubmit={ this.handlePaymentBoxSubmit }
+					translate={ this.props.translate }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
 				>
 					{ this.props.children }
@@ -468,10 +603,18 @@ export class SecurePaymentForm extends Component {
 				return this.renderFreeCartPaymentBox();
 
 			case 'credit-card':
+				if ( this.shouldUseStripeElements ) {
+					return (
+						<div>
+							{ this.renderGreatChoiceHeader() }
+							{ this.renderStripeElementsPaymentBox() }
+						</div>
+					);
+				}
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
-						{ this.renderStripeElementsPaymentBox() }
+						{ this.renderCreditCardPaymentBox() }
 					</div>
 				);
 

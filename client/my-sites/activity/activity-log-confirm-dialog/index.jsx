@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -49,7 +50,7 @@ const ActivityLogConfirmDialog = ( {
 			<div className="activity-log-confirm-dialog__partial-restore-settings">
 				<p>
 					{ notice
-						? translate( 'Choose the items you wish to restore:' )
+						? translate( 'Choose the items you wish to rewind:' )
 						: translate( 'Choose the items you wish to include in the download:' ) }
 				</p>
 				<FormLabel>
@@ -119,4 +120,7 @@ const mapDispatchToProps = {
 	happychatEvent: () => recordTracksEvent( 'calypso_activitylog_confirm_dialog' ),
 };
 
-export default connect( null, mapDispatchToProps )( localize( ActivityLogConfirmDialog ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( ActivityLogConfirmDialog ) );

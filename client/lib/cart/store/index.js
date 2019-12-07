@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,6 @@ import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
-	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
@@ -19,11 +19,10 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-} from 'lib/cart/action-types';
-import {
+	GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
-} from 'lib/transaction/action-types';
+} from 'lib/upgrades/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
@@ -147,7 +146,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
+		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
 			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
@@ -202,12 +201,16 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
+					case 'WPCOM_Billing_MoneyPress_Paygate': {
+						const paymentDetails = get( action, 'payment.newCardDetails', {} );
+						postalCode = paymentDetails[ 'postal-code' ];
+						countryCode = paymentDetails.country;
+						break;
+					}
 					case 'WPCOM_Billing_WPCOM':
 						postalCode = null;
 						countryCode = null;
 						break;
-					case 'WPCOM_Billing_Ebanx':
-					case 'WPCOM_Billing_Web_Payment':
 					case 'WPCOM_Billing_Stripe_Payment_Method': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];

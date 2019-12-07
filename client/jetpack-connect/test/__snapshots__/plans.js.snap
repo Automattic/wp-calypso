@@ -13,7 +13,7 @@ exports[`Plans should render plans 1`] = `
     title="Plans"
   />
   <Connect(QueryPlans) />
-  <QuerySitePlans
+  <Connect(QuerySitePlans)
     siteId={1234567}
   />
   <Connect(Localized(JetpackPlansGrid))
@@ -157,7 +157,7 @@ exports[`Plans should render plans 1`] = `
         eventName="calypso_jpc_plans_chat_initiated"
         label="Need help?"
       >
-        <JetpackConnectHelpButton
+        <Connect(Localized(JetpackConnectHelpButton))
           label="Need help?"
         />
       </Connect(Localized(JetpackConnectHappychatButton))>

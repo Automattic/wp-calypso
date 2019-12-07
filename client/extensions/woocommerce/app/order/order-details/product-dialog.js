@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { find, uniqBy, uniqueId } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
@@ -82,7 +83,7 @@ class OrderProductDialog extends Component {
 		products: [],
 	};
 
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {

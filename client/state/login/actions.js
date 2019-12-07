@@ -51,7 +51,6 @@ import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
-import { get as webauthn_auth } from '@github/webauthn-json';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -174,63 +173,6 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 	nonceType,
 	twoStepNonce,
 } );
-
-export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
-	const twoFactorAuthType = 'webauthn';
-	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
-	const loginParams = {
-		user_id: getTwoFactorUserId( getState() ),
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-		auth_type: twoFactorAuthType,
-	};
-	return postLoginRequest( 'webauthn-challenge-endpoint', {
-		...loginParams,
-		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-	} )
-		.then( response => {
-			const parameters = get( response, 'body.data', [] );
-			const twoStepNonce = get( parameters, 'two_step_nonce' );
-
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
-			}
-			return webauthn_auth( { publicKey: parameters } );
-		} )
-		.then( assertion => {
-			const response = assertion.response;
-			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
-				delete response.userHandle;
-			}
-			return postLoginRequest( 'webauthn-authentication-endpoint', {
-				...loginParams,
-				client_data: JSON.stringify( assertion ),
-				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-				remember_me: true,
-			} );
-		} )
-		.then( response => {
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
-			} );
-		} )
-		.catch( httpError => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
-
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
-			}
-
-			const error = getErrorFromHTTPError( httpError );
-
-			dispatch( {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error,
-			} );
-
-			return Promise.reject( error );
-		} );
-};
 
 /**
  * Logs a user in with a two factor verification code.

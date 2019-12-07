@@ -1,3 +1,4 @@
+/** @format */
 export const restoreProgressSchema = {
 	type: 'object',
 	patternProperties: {

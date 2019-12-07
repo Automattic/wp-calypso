@@ -1,3 +1,5 @@
+/** @format */
+
 export const captureConsole = testFn => ( callback = () => {} ) => {
 	const original = console;
 	const replacement = {

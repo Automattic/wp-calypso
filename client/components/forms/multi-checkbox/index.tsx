@@ -23,7 +23,7 @@ interface Props {
 	name?: string;
 }
 
-type DivProps = Omit< React.ComponentPropsWithoutRef< 'div' >, 'className' >;
+type DivProps = React.ComponentProps< 'div' >;
 
 export default function MultiCheckbox( props: Props & DivProps ) {
 	const {

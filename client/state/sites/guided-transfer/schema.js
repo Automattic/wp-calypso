@@ -1,3 +1,4 @@
+/** @format */
 export const guidedTransferStatusSchema = {
 	type: 'object',
 	additionalProperties: false,

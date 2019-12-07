@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -53,11 +55,11 @@ class TransferDomainPrecheck extends React.Component {
 		unlockCheckClicked: false,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.UNSAFE_componentWillReceiveProps( this.props );
+	componentWillMount() {
+		this.componentWillReceiveProps( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// Reset steps if domain became locked again
 		if ( false === nextProps.unlocked ) {
 			this.resetSteps();

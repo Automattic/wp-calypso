@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,12 +19,11 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
-	getSiteVerticalPreviewScreenshot,
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-theme';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -65,7 +65,6 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
-		verticalPreviewScreenshot: PropTypes.string,
 		verticalPreviewStyles: PropTypes.string,
 	};
 
@@ -82,10 +81,7 @@ class SiteMockups extends Component {
 	shouldComponentUpdate( nextProps ) {
 		// Debouncing updates to the preview content
 		// prevents the flashing effect.
-		if (
-			nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ||
-			nextProps.verticalPreviewScreenshot !== this.props.verticalPreviewScreenshot
-		) {
+		if ( nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ) {
 			this.updateDebounced();
 			return false;
 		}
@@ -95,7 +91,7 @@ class SiteMockups extends Component {
 
 	updateDebounced = debounce( () => {
 		this.forceUpdate();
-		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot ) {
+		if ( this.props.verticalPreviewContent ) {
 			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
@@ -154,12 +150,11 @@ class SiteMockups extends Component {
 			title,
 			themeSlug,
 			verticalPreviewContent,
-			verticalPreviewScreenshot,
 			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshot,
+			'is-empty': isEmpty( verticalPreviewContent ),
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -214,8 +209,6 @@ export default connect(
 			siteStyle,
 			siteType,
 			verticalPreviewContent,
-			// Used to determine whether content has changed, choose any screenshot
-			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot( state, 'desktop' ),
 			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),

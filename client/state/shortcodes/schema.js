@@ -1,3 +1,4 @@
+/** @format */
 export const shortcodesSchema = {
 	type: 'object',
 	patternProperties: {

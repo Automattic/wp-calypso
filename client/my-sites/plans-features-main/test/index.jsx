@@ -1,3 +1,5 @@
+/** @format */
+
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -238,11 +240,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		hideFreePlan: true,
 		withWPPlanTabs: true,
 	};
-
-	beforeEach( () => {
-		global.document = { location: { search: '' } };
-	} );
-
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
 		const instance = new PlansFeaturesMain( { ...myProps } );
 		const comp = shallow( instance.render() );
@@ -297,19 +294,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		expect(
 			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
 		).toBe( false );
-	} );
-
-	test( 'Should add existing query arguments to personal and business tab links', () => {
-		global.document = { location: { search: '?fake=item' } };
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=personal"]' ).length
-		).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=business"]' ).length
-		).toBe( 1 );
 	} );
 
 	test( 'Highlights TYPE_PERSONAL as popular plan for blog site type', () => {

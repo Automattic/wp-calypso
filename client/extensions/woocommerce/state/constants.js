@@ -1,6 +1,7 @@
 /**
  * This file contains helper constants for the redux state.
  *
+ * @format
  */
 
 export const LOADING = 'LOADING';

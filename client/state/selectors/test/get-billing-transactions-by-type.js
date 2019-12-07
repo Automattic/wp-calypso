@@ -1,3 +1,10 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+import { moment } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -31,7 +38,7 @@ describe( 'getBillingTransactionsByType()', () => {
 			{
 				id: '12345678',
 				amount: '$1.23',
-				date: new Date( '2016-12-12T11:22:33+0000' ),
+				date: moment( '2016-12-12T11:22:33+0000' ).toDate(),
 			},
 		] );
 	} );
@@ -42,7 +49,7 @@ describe( 'getBillingTransactionsByType()', () => {
 			{
 				id: '87654321',
 				amount: '$4.56',
-				date: new Date( '2016-10-12T11:22:33+0000' ),
+				date: moment( '2016-10-12T11:22:33+0000' ).toDate(),
 			},
 		] );
 	} );

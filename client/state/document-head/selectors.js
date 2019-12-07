@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { compact } from 'lodash';
 
 /**
@@ -9,7 +12,7 @@ import { compact } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
-import getSiteTitle from 'state/sites/selectors/get-site-title';
+import { getSiteTitle } from 'state/sites/selectors';
 
 const UNREAD_COUNT_CAP = 40;
 

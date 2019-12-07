@@ -2,6 +2,7 @@
  * Detect error looking in the reponse data object.
  *
  *
+ * @format
  * @param {Function} handler - wpcom handler
  * @return {Function} handler wrapper
  */

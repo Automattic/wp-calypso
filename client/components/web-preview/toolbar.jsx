@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -166,6 +168,9 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PreviewToolbar ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( PreviewToolbar ) );

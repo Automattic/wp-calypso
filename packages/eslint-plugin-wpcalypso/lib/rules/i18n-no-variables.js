@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow variables as translate strings
  * @author Automattic

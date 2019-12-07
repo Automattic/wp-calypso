@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 	WOOCOMMERCE_PROMOTIONS_SEARCH,
@@ -13,15 +15,9 @@ const initialState = {
 	searchFilter: '',
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
-		case WOOCOMMERCE_PROMOTIONS_PAGE_SET:
-			return promotionsPageSet( state, action );
-		case WOOCOMMERCE_PROMOTIONS_SEARCH:
-			return promotionsSearch( state, action );
-	}
-
-	return state;
+export default createReducer( initialState, {
+	[ WOOCOMMERCE_PROMOTIONS_PAGE_SET ]: promotionsPageSet,
+	[ WOOCOMMERCE_PROMOTIONS_SEARCH ]: promotionsSearch,
 } );
 
 function promotionsPageSet( state, action ) {

@@ -1,1 +1,1 @@
-export { CompactCard as default } from '@automattic/components';
+export { CompactCard as default } from '@automattic/calypso-ui';

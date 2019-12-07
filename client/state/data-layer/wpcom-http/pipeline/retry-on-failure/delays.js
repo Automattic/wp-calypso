@@ -10,6 +10,7 @@
  * naïve delay formulas.
  *
  *
+ * @format
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays
  */
 

@@ -1,7 +1,9 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -17,7 +19,6 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostStats from 'components/data/query-post-stats';
 import QueryPosts from 'components/data/query-posts';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import toggleInfo from '../toggle-info';
@@ -218,6 +219,5 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 export default flowRight(
 	connectComponent,
 	localize,
-	toggleInfo,
-	withLocalizedMoment
+	toggleInfo
 )( StatsPostDetailWeeks );

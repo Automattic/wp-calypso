@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,9 +30,7 @@ class ImporterWix extends React.PureComponent {
 	};
 
 	render() {
-		const importerData = importerConfig( {
-			siteTitle: this.props.siteTitle,
-		} ).wix;
+		const importerData = importerConfig().wix;
 
 		return <SiteImporter importerData={ importerData } { ...this.props } />;
 	}

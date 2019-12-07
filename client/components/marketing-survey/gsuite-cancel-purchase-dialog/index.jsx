@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -11,7 +13,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import * as steps from './steps';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getName, purchaseType } from 'lib/purchases';
@@ -104,7 +106,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, site, purchase ) );
+		survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
 
 		const response = await survey.submit();
 		if ( ! response.success ) {

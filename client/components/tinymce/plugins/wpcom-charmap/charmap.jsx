@@ -4,6 +4,7 @@
  * Adapted from WordPress.
  *
  *
+ * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  * @see https:
@@ -19,7 +20,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class CharMap extends React.Component {

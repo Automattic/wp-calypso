@@ -1,6 +1,7 @@
 /**
  * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
  *
+ * @format
  */
 
 /**

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,4 +25,7 @@ class BooleanPreference extends Component {
 	}
 }
 
-export default connect( null, null )( localize( BooleanPreference ) );
+export default connect(
+	null,
+	null
+)( localize( BooleanPreference ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import SiteGround from './siteground';
 import Pressable from './pressable';
 import SectionHeader from 'components/section-header';
 import { guidedTransferItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
+import { addItem } from 'lib/upgrades/actions';
 import page from 'page';
 import { saveHostDetails } from 'state/sites/guided-transfer/actions';
 import {
@@ -49,7 +50,7 @@ class HostCredentialsPage extends Component {
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isAwaitingPurchase ) {
 			this.redirectToCart();
 		}
@@ -108,4 +109,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	submit: data => dispatch( saveHostDetails( siteId, data ) ),
 } );
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );
+export default localize(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( HostCredentialsPage )
+);

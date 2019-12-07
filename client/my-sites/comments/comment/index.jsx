@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -58,11 +59,11 @@ export class Comment extends Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.debounceScrollToOffset = debounce( this.scrollToOffset, 100 );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
 		const { isBulkMode, isPostView } = nextProps;
 

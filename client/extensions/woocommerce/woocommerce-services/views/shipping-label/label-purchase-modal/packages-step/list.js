@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -119,4 +121,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageList ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PackageList ) );

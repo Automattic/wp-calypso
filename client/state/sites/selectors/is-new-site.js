@@ -1,9 +1,12 @@
 /**
+ * External dependencies
+ */
+import moment from 'moment';
+
+/**
  * Internal dependencies
  */
 import getSiteOption from './get-site-option';
-
-const MINUTE_IN_MS = 60 * 1000;
 
 /**
  * Returns true if the site is created less than 30 mins ago.
@@ -21,5 +24,5 @@ export default function isNewSite( state, siteId ) {
 	}
 
 	// less than 30 minutes
-	return Date.now() - new Date( createdAt ) < 30 * MINUTE_IN_MS;
+	return moment().diff( createdAt, 'minutes' ) < 30;
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Encode single characters with backslashes.
  *

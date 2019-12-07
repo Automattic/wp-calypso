@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -221,10 +223,7 @@ describe( 'reducer', () => {
 
 		test( 'should remove edits update state for a single payment method on successful update', () => {
 			const state = {
-				updates: [
-					{ id: 'stripe', title: 'Testing Stripe' },
-					{ id: 'paypal', title: 'PayPal' },
-				],
+				updates: [ { id: 'stripe', title: 'Testing Stripe' }, { id: 'paypal', title: 'PayPal' } ],
 			};
 
 			const action = {

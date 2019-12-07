@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +11,6 @@ import {
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_JETPACK_BACKUP_DAILY,
-	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_VIDEO_UPLOADS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -68,7 +67,6 @@ import {
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
-	planHasSuperiorFeature,
 } from '../index';
 
 describe( 'isFreePlan', () => {
@@ -443,12 +441,12 @@ describe( 'findSimilarPlansKeys', () => {
 		expect( findSimilarPlansKeys( PLAN_BLOGGER_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal( [
 			PLAN_BLOGGER,
 		] );
-		expect(
-			findSimilarPlansKeys( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } )
-		).to.deep.equal( [ PLAN_PERSONAL ] );
-		expect(
-			findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } )
-		).to.deep.equal( [ PLAN_BUSINESS ] );
+		expect( findSimilarPlansKeys( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal(
+			[ PLAN_PERSONAL ]
+		);
+		expect( findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).to.deep.equal(
+			[ PLAN_BUSINESS ]
+		);
 
 		expect( findSimilarPlansKeys( PLAN_JETPACK_PERSONAL, { term: TERM_MONTHLY } ) ).to.deep.equal( [
 			PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -869,28 +867,5 @@ describe( 'planHasFeature', () => {
 
 	test( 'should return false when a plan does not have a feature', () => {
 		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).to.be.false;
-	} );
-} );
-
-describe( 'planHasSuperiorFeature', () => {
-	test( 'should return true when a yearly plan has a superior feature', () => {
-		expect( planHasSuperiorFeature( PLAN_JETPACK_BUSINESS, FEATURE_JETPACK_BACKUP_DAILY ) ).to.be
-			.true;
-	} );
-
-	test( 'should return true when a monthly plan has a superior feature', () => {
-		expect( planHasSuperiorFeature( PLAN_JETPACK_BUSINESS_MONTHLY, FEATURE_JETPACK_BACKUP_DAILY ) )
-			.to.be.true;
-	} );
-
-	test( 'should return false when a yearly plan does not have a superior feature', () => {
-		expect( planHasSuperiorFeature( PLAN_JETPACK_BUSINESS, FEATURE_JETPACK_BACKUP_REALTIME ) ).to.be
-			.false;
-	} );
-
-	test( 'should return false when a monthly plan does not have a superior feature', () => {
-		expect(
-			planHasSuperiorFeature( PLAN_JETPACK_BUSINESS_MONTHLY, FEATURE_JETPACK_BACKUP_REALTIME )
-		).to.be.false;
 	} );
 } );

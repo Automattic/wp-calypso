@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -16,7 +18,7 @@ registerHandlers( 'state/data-layer/wpcom/wordads/status/index.js', {
 				http(
 					{
 						method: 'GET',
-						path: `/sites/${ action.siteId }/wordads/account`,
+						path: `/sites/${ action.siteId }/wordads/status`,
 					},
 					action
 				),

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -56,4 +58,7 @@ const connectComponent = connect(
 	{ addZone }
 );
 
-export default flowRight( connectComponent, localize )( ZoneCreator );
+export default flowRight(
+	connectComponent,
+	localize
+)( ZoneCreator );

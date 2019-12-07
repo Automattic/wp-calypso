@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import webdriver, { until } from 'selenium-webdriver';
+import webdriver from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -14,23 +16,13 @@ import * as dataHelper from './data-helper';
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
-export async function highlightElement( driver, element ) {
-	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
-		return await driver.executeScript(
-			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
-			element
-		);
-	}
-}
-
 export function clickWhenClickable( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
 		function() {
 			return driver.findElement( selector ).then(
-				async function( element ) {
-					await highlightElement( driver, element );
+				function( element ) {
 					return element.click().then(
 						function() {
 							return true;
@@ -205,8 +197,7 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 	for ( let x = 0; x < attempts; x++ ) {
 		driver.findElement( selector ).then(
-			async function( element ) {
-				await highlightElement( driver, element );
+			function( element ) {
 				element.click().then(
 					function() {
 						return true;
@@ -273,12 +264,13 @@ export function setWhenSettable(
 ) {
 	const self = this;
 	const logValue = secureValue === true ? '*********' : value;
-
+	if ( global.browserName === 'chrome' && pauseBetweenKeysMS === 0 ) {
+		pauseBetweenKeysMS = 1;
+	}
 	return driver.wait(
 		async function() {
 			await self.waitForFieldClearable( driver, selector );
 			const element = await driver.findElement( selector );
-			await highlightElement( driver, element );
 			if ( pauseBetweenKeysMS === 0 ) {
 				await element.sendKeys( value );
 			} else {
@@ -559,8 +551,4 @@ export async function acceptAlertIfPresent( driver ) {
 	} catch ( error ) {
 		return false;
 	}
-}
-
-export async function waitForAlertPresent( driver ) {
-	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,7 +26,6 @@ import {
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
-import { localizeUrl } from 'lib/i18n-utils';
 import { login } from 'lib/paths';
 
 /**
@@ -106,19 +107,11 @@ class SocialLoginForm extends Component {
 	};
 
 	handleAppleResponse = response => {
-		const { onSuccess, socialService } = this.props;
-		let redirectTo = this.props.redirectTo;
+		const { onSuccess, redirectTo } = this.props;
 
 		if ( ! response.id_token ) {
 			return;
 		}
-
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with apple redirect flow
-		if ( socialService === 'apple' && ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
-
-		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const user = response.user || {};
 
@@ -163,7 +156,7 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLoginAndRememberRedirect = service => {
+	trackLogin = service => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
 		if ( this.props.redirectTo ) {
@@ -171,15 +164,15 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	getRedirectUrl = service => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
+	getRedirectUrl = ( uxMode, service ) => {
+		return uxMode
+			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+					login( { isNative: true, socialService: service } ) }`
+			: null;
 	};
 
 	render() {
 		const { redirectTo, uxMode } = this.props;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
-
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
@@ -187,22 +180,13 @@ class SocialLoginForm extends Component {
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
 						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( 'google' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
+						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
+						onClick={ this.trackLogin.bind( null, 'google' ) }
 					/>
 
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( 'apple' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
+						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
 
 					<p className="login__social-tos">
@@ -212,13 +196,7 @@ class SocialLoginForm extends Component {
 								' {{a}}Terms of Service{{/a}}.',
 							{
 								components: {
-									a: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
+									a: <a href="https://wordpress.com/tos" />,
 								},
 							}
 						) }

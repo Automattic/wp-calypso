@@ -1,3 +1,4 @@
+/** @format */
 export function isLikesPopoverOpen( state, postGlobalId ) {
 	if ( ! postGlobalId ) {
 		// Avoid returning `true` if an invalid post ID is passed.

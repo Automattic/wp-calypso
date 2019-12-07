@@ -11,6 +11,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
   </legend>
   <label
     className="form-label"
+    locale="en"
   >
     <input
       checked={false}
@@ -26,6 +27,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
   </label>
   <label
     className="form-label"
+    locale="en"
   >
     <input
       checked={false}
@@ -41,6 +43,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
   </label>
   <label
     className="form-label"
+    locale="en"
   >
     <input
       checked={false}
@@ -56,6 +59,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
   </label>
   <label
     className="form-label"
+    locale="en"
   >
     <input
       checked={false}

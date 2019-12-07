@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,11 +16,11 @@ import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import { requestThumbnail } from 'state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.embedUrl !== this.props.embedUrl ) {
 			this.request( nextProps );
 		}
@@ -47,4 +49,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( QueryReaderThumbnails );

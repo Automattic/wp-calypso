@@ -19,13 +19,14 @@ import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { submitSurvey } from 'lib/purchases/actions';
+import { submitSurvey } from 'lib/upgrades/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
 		reason: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 		// Provided by HOCs
+		moment: PropTypes.func,
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -43,7 +44,7 @@ class ConfirmDisconnection extends PureComponent {
 	];
 
 	submitSurvey = () => {
-		const { purchase, reason, site, siteId, text } = this.props;
+		const { moment, purchase, reason, site, siteId, text } = this.props;
 
 		const surveyData = {
 			'why-cancel': {
@@ -58,7 +59,7 @@ class ConfirmDisconnection extends PureComponent {
 		submitSurvey(
 			'calypso-disconnect-jetpack-july2019',
 			siteId,
-			enrichedSurveyData( surveyData, site, purchase )
+			enrichedSurveyData( surveyData, moment(), site, purchase )
 		);
 	};
 

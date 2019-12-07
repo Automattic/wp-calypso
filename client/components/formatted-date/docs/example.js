@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 
 import React, { PureComponent } from 'react';

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,9 +34,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from '@automattic/components/src/button/docs/example';
+import Buttons from 'components/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from '@automattic/components/src/card/docs/example';
+import Cards from '@automattic/calypso-ui/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -89,15 +90,13 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
-import ProductCard from 'components/product-card/docs/example';
-import ProductIcon from 'components/product-icon/docs/example';
-import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import ProgressBar from '@automattic/calypso-ui/src/progress-bar/docs/example';
 import PromoSection from 'components/promo-section/docs/example';
 import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from '@automattic/components/src/ribbon/docs/example';
-import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import Ribbon from '@automattic/calypso-ui/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
@@ -110,7 +109,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
-import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
@@ -198,12 +197,9 @@ class DesignAssets extends React.Component {
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons
-						componentUsageStats={ componentsUsageStats.button }
-						readmeFilePath="/packages/components/src/button"
-					/>
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
 					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="/packages/components/src/card" />
+					<Cards readmeFilePath="card" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
@@ -256,27 +252,25 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
-					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
+					<ProgressBar readmeFilePath="progress-bar" />
 					<PromoSection readmeFilePath="promo-section" />
 					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
-					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
+					<Ribbon readmeFilePath="ribbon" />
+					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
-					<ProductCard readmeFilePath="product-card" />
-					<ProductIcon readmeFilePath="product-icon" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
+					<Suggestions readmeFilePath="suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
@@ -323,7 +317,10 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssetsExport = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
+	DesignAssetsExport = connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( DesignAssets );
 }
 
 export default DesignAssetsExport;

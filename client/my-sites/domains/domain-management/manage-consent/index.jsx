@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,8 +19,9 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import Button from 'components/button';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import { getSelectedDomain, requestGdprConsentManagementLink } from 'lib/domains';
+import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
+import { requestGdprConsentManagementLink } from 'lib/upgrades/actions';
 
 class ManageConsent extends React.Component {
 	static propTypes = {

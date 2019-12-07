@@ -1,9 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
+import { moment } from 'i18n-calypso';
 import { range, random } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -13,7 +15,7 @@ import LineChart from 'components/line-chart';
 
 const NUM_DATA_SERIES = 3;
 
-export default class LineChartExample extends Component {
+class LineChartExample extends Component {
 	static displayName = 'LineChart';
 
 	static createData( dataMin, dataMax, seriesLength ) {
@@ -93,9 +95,9 @@ export default class LineChartExample extends Component {
 	render() {
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleDataControls }>
+				<a className="docs__design-toggle button" onClick={ this.toggleDataControls }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
-				</button>
+				</a>
 
 				<Card>
 					<LineChart
@@ -107,35 +109,29 @@ export default class LineChartExample extends Component {
 
 				{ this.state.showDataControls && (
 					<div>
-						<label>
-							Data Min
-							<input
-								type="number"
-								value={ this.state.dataMin }
-								min="0"
-								onChange={ this.changeDataMin }
-							/>
-						</label>
+						<label>Data Min</label>
+						<input
+							type="number"
+							value={ this.state.dataMin }
+							min="0"
+							onChange={ this.changeDataMin }
+						/>
 
-						<label>
-							Data Max
-							<input
-								type="number"
-								value={ this.state.dataMax }
-								min="0"
-								onChange={ this.changeDataMax }
-							/>
-						</label>
+						<label>Data Max</label>
+						<input
+							type="number"
+							value={ this.state.dataMax }
+							min="0"
+							onChange={ this.changeDataMax }
+						/>
 
-						<label>
-							Series Length
-							<input
-								type="number"
-								value={ this.state.seriesLength }
-								min="3"
-								onChange={ this.changeSeriesLength }
-							/>
-						</label>
+						<label>Series Length</label>
+						<input
+							type="number"
+							value={ this.state.seriesLength }
+							min="3"
+							onChange={ this.changeSeriesLength }
+						/>
 
 						<div>
 							<label>
@@ -153,3 +149,5 @@ export default class LineChartExample extends Component {
 		);
 	}
 }
+
+export default LineChartExample;

@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,

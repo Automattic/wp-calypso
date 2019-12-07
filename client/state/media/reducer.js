@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
 } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
 export const queries = ( () => {
@@ -44,26 +46,23 @@ export const queries = ( () => {
 		};
 	}
 
-	return withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case MEDIA_RECEIVE: {
-				const { siteId, media, found, query } = action;
+	return createReducer(
+		{},
+		{
+			[ MEDIA_RECEIVE ]: ( state, { siteId, media, found, query } ) => {
 				return applyToManager( state, siteId, 'receive', true, media, { found, query } );
-			}
-			case MEDIA_DELETE: {
-				const { siteId, mediaIds } = action;
+			},
+			[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
 				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
-			}
+			},
 		}
-
-		return state;
-	} );
+	);
 } )();
 
-export const queryRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_REQUESTING: {
-			const { siteId, query } = action;
+export const queryRequests = createReducer(
+	{},
+	{
+		[ MEDIA_REQUESTING ]: ( state, { siteId, query } ) => {
 			return {
 				...state,
 				[ siteId ]: {
@@ -71,25 +70,21 @@ export const queryRequests = withoutPersistence( ( state = {}, action ) => {
 					[ MediaQueryManager.QueryKey.stringify( query ) ]: true,
 				},
 			};
-		}
-		case MEDIA_REQUEST_SUCCESS: {
-			const { siteId, query } = action;
+		},
+		[ MEDIA_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
 			};
-		}
-		case MEDIA_REQUEST_FAILURE: {
-			const { siteId, query } = action;
+		},
+		[ MEDIA_REQUEST_FAILURE ]: ( state, { siteId, query } ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
 			};
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -100,10 +95,10 @@ export const queryRequests = withoutPersistence( ( state = {}, action ) => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const mediaItemRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_ITEM_REQUESTING: {
-			const { siteId, mediaId } = action;
+export const mediaItemRequests = createReducer(
+	{},
+	{
+		[ MEDIA_ITEM_REQUESTING ]: ( state, { siteId, mediaId } ) => {
 			return {
 				...state,
 				[ siteId ]: {
@@ -111,25 +106,21 @@ export const mediaItemRequests = withoutPersistence( ( state = {}, action ) => {
 					[ mediaId ]: true,
 				},
 			};
-		}
-		case MEDIA_ITEM_REQUEST_SUCCESS: {
-			const { siteId, mediaId } = action;
+		},
+		[ MEDIA_ITEM_REQUEST_SUCCESS ]: ( state, { siteId, mediaId } ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], mediaId ),
 			};
-		}
-		case MEDIA_ITEM_REQUEST_FAILURE: {
-			const { siteId, mediaId } = action;
+		},
+		[ MEDIA_ITEM_REQUEST_FAILURE ]: ( state, { siteId, mediaId } ) => {
 			return {
 				...state,
 				[ siteId ]: omit( state[ siteId ], mediaId ),
 			};
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	queries,

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,6 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
@@ -34,7 +35,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
-import { infoNotice, withoutNotice } from 'state/notices/actions';
+import { withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
@@ -248,20 +249,21 @@ class Page extends Component {
 		];
 	}
 
-	setPostsPage = pageId => () =>
+	setPostsPage = () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
 			show_on_front: 'page',
-			page_for_posts: pageId,
+			page_for_posts: this.props.page.ID,
 		} );
 
 	getPostsPageItem() {
-		const { canManageOptions, isFullSiteEditing, page, translate } = this.props;
+		const { canManageOptions, isFullSiteEditing, translate } = this.props;
 
 		if (
 			! canManageOptions ||
 			isFullSiteEditing ||
 			! this.props.hasStaticFrontPage ||
-			'publish' !== page.status ||
+			'publish' !== this.props.page.status ||
+			this.props.isPostsPage ||
 			this.props.isFrontPage
 		) {
 			return null;
@@ -269,18 +271,10 @@ class Page extends Component {
 
 		return [
 			<MenuSeparator key="separator" />,
-			this.props.isPostsPage && (
-				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
-					<Gridicon icon="undo" size={ 18 } />
-					{ translate( 'Set as Regular Page' ) }
-				</PopoverMenuItem>
-			),
-			! this.props.isPostsPage && (
-				<PopoverMenuItem key="item" onClick={ this.setPostsPage( page.ID ) }>
-					<Gridicon icon="posts" size={ 18 } />
-					{ translate( 'Set as Posts Page' ) }
-				</PopoverMenuItem>
-			),
+			<PopoverMenuItem key="item" onClick={ this.setPostsPage }>
+				<Gridicon icon="posts" size={ 18 } />
+				{ translate( 'Set as Posts Page' ) }
+			</PopoverMenuItem>,
 		];
 	}
 
@@ -312,7 +306,7 @@ class Page extends Component {
 		];
 	}
 
-	getCopyPageItem() {
+	getCopyItem() {
 		const { wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
@@ -324,17 +318,8 @@ class Page extends Component {
 		return (
 			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.props.translate( 'Copy Page' ) }
+				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
-		);
-	}
-
-	getCopyLinkItem() {
-		const { page, translate } = this.props;
-		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
-				{ translate( 'Copy Link' ) }
-			</PopoverMenuItemClipboard>
 		);
 	}
 
@@ -436,8 +421,7 @@ class Page extends Component {
 		const postsPageItem = this.getPostsPageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
-		const copyPageItem = this.getCopyPageItem();
-		const copyLinkItem = this.getCopyLinkItem();
+		const copyItem = this.getCopyItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasMenuItems =
@@ -460,8 +444,7 @@ class Page extends Component {
 				{ publishItem }
 				{ viewItem }
 				{ statsItem }
-				{ copyPageItem }
-				{ copyLinkItem }
+				{ copyItem }
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
@@ -670,13 +653,6 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Copy Page' );
 	};
 
-	copyPageLink = () => {
-		this.props.infoNotice( this.props.translate( 'Link copied to clipboard.' ), {
-			duration: 3000,
-		} );
-		this.props.recordEvent( 'Clicked Copy Page Link' );
-	};
-
 	handleMenuToggle = isVisible => {
 		if ( isVisible ) {
 			// record a GA event when the menu is opened
@@ -712,7 +688,6 @@ const mapState = ( state, props ) => {
 };
 
 const mapDispatch = {
-	infoNotice,
 	savePost: withoutNotice( savePost ),
 	deletePost: withoutNotice( deletePost ),
 	trashPost: withoutNotice( trashPost ),
@@ -728,4 +703,10 @@ const mapDispatch = {
 	updateSiteFrontPage,
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default flow(
+	localize,
+	connect(
+		mapState,
+		mapDispatch
+	)
+)( Page );

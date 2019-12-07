@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -39,9 +41,9 @@ class SearchAutocomplete extends Component {
 		} );
 	};
 
-	searchRef = React.createRef();
+	setSearch = ref => ( this.searchRef = ref );
 
-	suggestionsRef = React.createRef();
+	setSuggestions = ref => ( this.suggestionsRef = ref && ref.getWrappedInstance() );
 
 	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
 
@@ -52,11 +54,11 @@ class SearchAutocomplete extends Component {
 			event.preventDefault();
 		}
 
-		this.suggestionsRef.current && this.suggestionsRef.current.handleKeyEvent( event );
+		this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
 	};
 
 	handleSelect = item => {
-		this.searchRef.current.clear();
+		this.searchRef.clear();
 		this.props.onSelect( item );
 	};
 
@@ -78,7 +80,7 @@ class SearchAutocomplete extends Component {
 						fitsContainer
 						delaySearch
 						disableAutocorrect
-						ref={ this.searchRef }
+						ref={ this.setSearch }
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
@@ -87,7 +89,7 @@ class SearchAutocomplete extends Component {
 					/>
 					{ this.state.search && (
 						<PostSuggestions
-							ref={ this.suggestionsRef }
+							ref={ this.setSuggestions }
 							search={ this.state.search }
 							exclude={ exclude }
 							suggest={ this.handleSelect }

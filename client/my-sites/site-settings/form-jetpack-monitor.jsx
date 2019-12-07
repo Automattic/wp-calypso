@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -32,7 +34,7 @@ import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-moni
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
 			this.setState( nextProps.monitorSettings );
 		}

@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -9,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import React from 'react';
 import { identity, noop } from 'lodash';
 import { shallow } from 'enzyme';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -126,27 +128,22 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
-	describe( 'isWooRedirect', () => {
-		const isWooRedirect = new JetpackAuthorize().isWooRedirect;
+	describe( 'isWoo', () => {
+		const isWoo = new JetpackAuthorize().isWoo;
 
 		test( 'should return true for woo services', () => {
 			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
-			expect( isWooRedirect( props ) ).toBe( true );
+			expect( isWoo( props ) ).toBe( true );
 		} );
 
-		test( 'should return true for old woo setup wizard', () => {
+		test( 'should return true for woo wizard', () => {
 			const props = { authQuery: { from: 'woocommerce-setup-wizard' } };
-			expect( isWooRedirect( props ) ).toBe( true );
-		} );
-
-		test( 'should return true for new woo onboarding', () => {
-			const props = { authQuery: { from: 'woocommerce-onboarding' } };
-			expect( isWooRedirect( props ) ).toBe( true );
+			expect( isWoo( props ) ).toBe( true );
 		} );
 
 		test( 'returns false with non-woo from', () => {
 			const props = { authQuery: { from: 'elsewhere' } };
-			expect( isWooRedirect( props ) ).toBe( false );
+			expect( isWoo( props ) ).toBe( false );
 		} );
 	} );
 
@@ -180,7 +177,7 @@ describe( 'JetpackAuthorize', () => {
 			component.setProps( {
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
-					from: 'woocommerce-onboarding',
+					from: 'woocommerce-setup-wizard',
 				},
 			} );
 			const result = component.instance().shouldAutoAuthorize();
@@ -188,7 +185,15 @@ describe( 'JetpackAuthorize', () => {
 			expect( result ).toBe( false );
 		} );
 
-		test( 'should return true for the old woocommerc setup wizard', () => {
+		test( 'should return true for woocommerce onboarding when the feature flag is disabled', () => {
+			isEnabled.mockImplementation( flag => {
+				if ( flag === 'jetpack/connect/woocommerce' ) {
+					return false;
+				}
+
+				return true;
+			} );
+
 			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 			const component = shallow( renderableComponent );
 			component.setProps( {

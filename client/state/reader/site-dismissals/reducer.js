@@ -1,27 +1,28 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_DISMISS_SITE: {
+export const items = createReducer(
+	{},
+	{
+		[ READER_DISMISS_SITE ]: ( state, action ) => {
 			return {
 				...state,
 				[ action.payload.siteId ]: true,
 			};
-		}
-		case READER_DISMISS_POST: {
+		},
+		[ READER_DISMISS_POST ]: ( state, action ) => {
 			return {
 				...state,
 				[ action.payload.siteId ]: true,
 			};
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	items,

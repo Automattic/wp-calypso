@@ -219,4 +219,7 @@ const mapDispatchToProps = {
 	hideChecklistPrompt,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelp ) );

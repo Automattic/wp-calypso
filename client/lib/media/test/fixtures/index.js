@@ -1,3 +1,4 @@
+/** @format */
 export const DUMMY_SITE_ID = 1;
 
 export const DUMMY_ITEM = { ID: 100, title: 'Sunset' };

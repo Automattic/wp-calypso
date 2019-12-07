@@ -8,7 +8,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * WordPress.com, or null if the site is unknown.
  *
  * @param  {Object}   state  Global state tree
- * @param  {?Number}   siteId Site ID
+ * @param  {Number}   siteId Site ID
  * @return {?Boolean}        Whether site is a Jetpack site
  */
 export default function isJetpackSite( state, siteId ) {

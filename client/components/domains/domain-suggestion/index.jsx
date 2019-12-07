@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -37,17 +39,7 @@ class DomainSuggestion extends React.Component {
 	};
 
 	render() {
-		const {
-			children,
-			extraClasses,
-			hidePrice,
-			isAdded,
-			price,
-			priceRule,
-			salePrice,
-			showTestCopy,
-			isFeatured,
-		} = this.props;
+		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -59,12 +51,7 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
-		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
-		} );
-
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/interactive-supports-focus */
+		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -73,15 +60,10 @@ class DomainSuggestion extends React.Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
-				<div className={ contentClassName }>
+				<div className="domain-suggestion__content">
 					{ children }
 					{ ! hidePrice && (
-						<DomainProductPrice
-							price={ price }
-							salePrice={ salePrice }
-							rule={ priceRule }
-							showTestCopy={ showTestCopy }
-						/>
+						<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
 					) }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
@@ -92,8 +74,7 @@ class DomainSuggestion extends React.Component {
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events */
-		/* eslint-enable jsx-a11y/interactive-supports-focus */
+		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
 	}
 }
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -26,10 +28,7 @@ import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import {
-	getKeyringConnectionsByName,
-	getBrokenKeyringConnectionsByName,
-} from 'state/sharing/keyring/selectors';
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
 	getRemovableConnections,
@@ -264,29 +263,20 @@ export class SharingService extends Component {
 	 *                            Default: All broken connections for this service.
 	 */
 	refresh = ( connections = this.props.brokenConnections ) => {
+		this.setState( { isRefreshing: true } );
+
 		this.getConnections( connections ).map( connection => {
-			const keyringConnection = find( this.props.keyringConnections, token => {
-				// Publicize connections store the token id as `keyring_connection_ID`
-				const tokenID =
-					'publicize' === token.type ? connection.keyring_connection_ID : connection.ID;
-				return token.ID === tokenID;
+			const keyringConnection = find( this.props.keyringConnections, {
+				ID: connection.keyring_connection_ID,
 			} );
 
 			if ( keyringConnection ) {
-				this.setState( { isRefreshing: true } );
-
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
 				requestExternalAccess( connection.refresh_URL, () => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
-					const reFetchConnections = [
-						this.fetchConnection( connection ),
-						this.props.requestKeyringConnections(),
-					];
-					Promise.all( reFetchConnections ).then( () => {
-						this.setState( { isRefreshing: false } );
-					} );
+					this.fetchConnection( connection );
 				} );
 			} else {
 				this.props.errorNotice(
@@ -304,9 +294,10 @@ export class SharingService extends Component {
 	 * Fetch connections
 	 *
 	 * @param {Object} connection Connection to update.
-	 * @return {Function} Action thunk
 	 */
-	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
+	fetchConnection = connection => {
+		this.props.fetchConnection( this.props.siteId, connection.ID );
+	};
 
 	/**
 	 * Checks whether any connection can be removed.
@@ -613,16 +604,14 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 		( state, { service } ) => {
 			const siteId = getSelectedSiteId( state );
 			const userId = getCurrentUserId( state );
-			const brokenPublicizeConnections = getBrokenSiteUserConnectionsForService(
-				state,
-				siteId,
-				userId,
-				service.ID
-			);
-			const brokenKeyringConnections = getBrokenKeyringConnectionsByName( state, service.ID );
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
-				brokenConnections: brokenPublicizeConnections.concat( brokenKeyringConnections ),
+				brokenConnections: getBrokenSiteUserConnectionsForService(
+					state,
+					siteId,
+					userId,
+					service.ID
+				),
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
@@ -632,6 +621,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
 			};
+
 			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
 		},
 		{

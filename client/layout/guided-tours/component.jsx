@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +14,7 @@ import { defer } from 'lodash';
 import { tracks } from 'lib/analytics';
 import AllTours from './all-tours';
 import QueryPreferences from 'components/data/query-preferences';
-import { RootChild } from '@automattic/components';
+import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';

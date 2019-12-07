@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,8 +18,6 @@ import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
-import { startImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -43,7 +42,9 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 		appStates.UPLOADING,
 	];
 
-class FileImporter extends React.PureComponent {
+export default class extends React.PureComponent {
+	static displayName = 'FileImporter';
+
 	static propTypes = {
 		importerData: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
@@ -59,25 +60,7 @@ class FileImporter extends React.PureComponent {
 			importerState: PropTypes.string.isRequired,
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
-			type: PropTypes.string.isRequired,
 		} ),
-		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired,
-		} ),
-	};
-
-	handleClick = () => {
-		const {
-			importerStatus: { type },
-			site: { ID: siteId },
-		} = this.props;
-
-		startImport( siteId, type );
-
-		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
-			blog_id: siteId,
-			importer_id: type,
-		} );
 	};
 
 	render() {
@@ -85,19 +68,13 @@ class FileImporter extends React.PureComponent {
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
-		const showStart = includes( compactStates, importerState );
 		const cardClasses = classNames( 'importer__file-importer-card', {
-			'is-compact': showStart,
+			'is-compact': includes( compactStates, importerState ),
 			'is-disabled': ! isEnabled,
 		} );
-		const cardProps = {
-			displayAsLink: true,
-			onClick: this.handleClick,
-			tagName: 'button',
-		};
 
 		return (
-			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
+			<Card className={ cardClasses }>
 				<ImporterHeader
 					importerStatus={ importerStatus }
 					{ ...{ icon, title, description, isEnabled, site } }
@@ -118,5 +95,3 @@ class FileImporter extends React.PureComponent {
 		);
 	}
 }
-
-export default connect( null, { recordTracksEvent } )( FileImporter );

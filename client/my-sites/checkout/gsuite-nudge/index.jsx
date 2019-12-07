@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -18,7 +20,7 @@ import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { addItems, removeItem } from 'lib/cart/actions';
+import { addItems, removeItem } from 'lib/upgrades/actions';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -36,7 +38,12 @@ export class GSuiteNudge extends React.Component {
 	};
 
 	handleSkipClick = () => {
-		this.props.handleCheckoutCompleteRedirect();
+		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
+		page(
+			isEligibleForChecklist
+				? `/checklist/${ siteSlug }`
+				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+		);
 	};
 
 	handleAddEmailClick = cartItems => {
@@ -56,7 +63,9 @@ export class GSuiteNudge extends React.Component {
 
 	removePlanFromCart() {
 		const items = getAllCartItems( this.props.cart );
-		items.filter( isDotComPlan ).forEach( item => removeItem( item, false ) );
+		items.filter( isDotComPlan ).forEach( function( item ) {
+			removeItem( item, false );
+		} );
 	}
 
 	render() {
@@ -81,7 +90,7 @@ export class GSuiteNudge extends React.Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					productSlug={ 'gapps' }
+					gSuiteProductSlug={ 'gapps' }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,11 +19,11 @@ export class QueryAutomatedTransferEligibility extends Component {
 		siteId: PropTypes.number,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}
@@ -40,4 +42,7 @@ export const mapDispatchToProps = {
 	requestEligibility,
 };
 
-export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );
+export default connect(
+	null,
+	mapDispatchToProps
+)( QueryAutomatedTransferEligibility );

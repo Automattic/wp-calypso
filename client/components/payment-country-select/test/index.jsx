@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -17,7 +18,7 @@ import { PaymentCountrySelect } from '../';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'lib/cart/actions', () => ( {
+jest.mock( 'lib/upgrades/actions/cart', () => ( {
 	setTaxCountryCode: () => {},
 } ) );
 

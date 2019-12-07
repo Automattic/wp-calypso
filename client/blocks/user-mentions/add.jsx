@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -49,7 +50,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		UNSAFE_componentWillUpdate( nextProps, nextState ) {
+		componentWillUpdate( nextProps, nextState ) {
 			// Update position of popover if going from invisible to visible state.
 			if ( ! this.state.showPopover && nextState.showPopover ) {
 				this.updatePosition( nextState );

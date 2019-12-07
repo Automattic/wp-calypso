@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,13 +11,13 @@ import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { concat, first, last, mean, throttle, uniq } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import D3Base from 'components/d3-base';
 import Tooltip from 'components/tooltip';
-import { withLocalizedMoment } from 'components/localized-moment';
 import LineChartLegend from './legend';
 
 /**
@@ -33,6 +35,27 @@ const X_AXIS_TICKS_SPACE = 70;
 const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
 const APPROXIMATELY_A_MONTH_IN_MS = 31 * 24 * 60 * 60 * 1000;
+
+const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
+	const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
+	// this can only be figured out here, becuase D3 will decide how many ticks there should be
+	const isFirstMonthTick =
+		index ===
+		Math.round(
+			mean(
+				tickRefs
+					.map( ( tickRef, tickRefIndex ) =>
+						tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
+					)
+					.filter( e => e !== null )
+			)
+		);
+	return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
+		( everyOtherTickOnly && index % 2 === 0 ) ||
+		( displayMonthTicksOnly && isFirstMonthTick )
+		? moment( date ).format( displayMonthTicksOnly ? 'MMM' : 'MMM D' )
+		: '';
+};
 
 const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
 // number of different colors this component can display
@@ -84,27 +107,6 @@ class LineChart extends Component {
 		return null;
 	}
 
-	dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
-		const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
-		// this can only be figured out here, because D3 will decide how many ticks there should be
-		const isFirstMonthTick =
-			index ===
-			Math.round(
-				mean(
-					tickRefs
-						.map( ( tickRef, tickRefIndex ) =>
-							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
-						)
-						.filter( e => e !== null )
-				)
-			);
-		return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
-			( everyOtherTickOnly && index % 2 === 0 ) ||
-			( displayMonthTicksOnly && isFirstMonthTick )
-			? this.props.moment( date ).format( displayMonthTicksOnly ? 'MMM' : 'MMM D' )
-			: '';
-	};
-
 	drawAxes = ( svg, params ) => {
 		this.drawXAxis( svg, params );
 		this.drawYAxis( svg, params );
@@ -116,7 +118,7 @@ class LineChart extends Component {
 
 		const axis = d3AxisBottom( xScale );
 		axis.ticks( xTicks );
-		axis.tickFormat( this.dateFormatFunction( displayMonthOnly ) );
+		axis.tickFormat( dateFormatFunction( displayMonthOnly ) );
 		axis.tickSizeOuter( 0 );
 
 		svg
@@ -533,4 +535,4 @@ class LineChart extends Component {
 	}
 }
 
-export default withLocalizedMoment( LineChart );
+export default LineChart;

@@ -115,10 +115,6 @@
 	.is-business & {
 		border-bottom: 2px solid var( --color-plan-business );
 	}
-
-	.is-jetpack-product & {
-		border-bottom: 2px solid var( --studio-jetpack-green-30 );
-	}
 }
 
 .manage-purchase__plan-icon {
@@ -138,10 +134,6 @@
 	.gridicons-themes {
 		border-radius: 8px;
 	}
-
-	.gridicons-cloud-upload {
-		background: var( --studio-jetpack-green-30 );
-	}
 }
 
 .manage-purchase__title {
@@ -159,11 +151,6 @@
 
 .manage-purchase__price .plan-price {
 	clear: none;
-}
-
-.manage-purchase__contact-partner {
-	font-weight: bold;
-	display: block;
 }
 
 .manage-purchase__description {
@@ -214,7 +201,7 @@
 			}
 			&:first-child:nth-last-child( 4 ),
 			&:first-child:nth-last-child( 4 ) ~ li {
-				max-width: 25%;
+				  max-width: 25%;
 			}
 		}
 

@@ -12,6 +12,7 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
+	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -125,5 +126,13 @@ export function invalidateStep( step, errors ) {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 		step: { ...step, lastUpdated },
 		errors,
+	};
+}
+
+export function setResumeAfterLogin( step ) {
+	const lastUpdated = Date.now();
+	return {
+		type: SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
+		resumeStep: { ...step, lastUpdated },
 	};
 }

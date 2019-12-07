@@ -1,8 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,18 +14,32 @@ import { useDispatch } from 'react-redux';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { requestActivePromotions } from 'state/active-promotions/actions';
 
-const request = () => ( dispatch, getState ) => {
-	if ( ! isRequestingActivePromotions( getState() ) ) {
-		dispatch( requestActivePromotions() );
+class QueryActivePromotions extends Component {
+	componentWillMount() {
+		if ( ! this.props.requestingActivePromotions ) {
+			this.props.requestActivePromotions();
+		}
 	}
+
+	render() {
+		return null;
+	}
+}
+
+QueryActivePromotions.propTypes = {
+	requestingActivePromotions: PropTypes.bool,
+	requestActivePromotions: PropTypes.func,
 };
 
-export default function QueryActivePromotions() {
-	const dispatch = useDispatch();
+QueryActivePromotions.defaultProps = {
+	requestPlans: () => {},
+};
 
-	useEffect( () => {
-		dispatch( request() );
-	}, [ dispatch ] );
-
-	return null;
-}
+export default connect(
+	state => {
+		return {
+			requestingPlans: isRequestingActivePromotions( state ),
+		};
+	},
+	{ requestActivePromotions }
+)( QueryActivePromotions );

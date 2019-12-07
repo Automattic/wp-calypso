@@ -3,7 +3,7 @@
 exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks are provided 1`] = `
 <div>
   <div
-    class="template-selector-preview"
+    class="template-selector-preview editor-styles-wrapper"
   >
     <div
       class="components-disabled"
@@ -20,9 +20,10 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
           >
             <div
               class="editor-post-title"
+              style="transform: none;"
             >
               <div
-                class="wp-block editor-post-title__block"
+                class="editor-post-title__block"
               >
                 <textarea
                   class="editor-post-title__input"
@@ -30,13 +31,9 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
               </div>
             </div>
             <div
-              class="template-selector-preview__offset-correction"
+              data-testid="block-template-preview"
             >
-              <div
-                data-testid="block-template-preview"
-              >
-                MockedBlockPreview
-              </div>
+              MockedBlockPreview
             </div>
           </div>
         </div>

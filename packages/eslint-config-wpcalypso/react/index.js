@@ -1,3 +1,5 @@
+/** @format */
+
 module.exports = {
 	extends: '../index.js',
 	parserOptions: {

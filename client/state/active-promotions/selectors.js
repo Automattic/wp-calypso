@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Return WordPress activePromotions getting from state object
  *

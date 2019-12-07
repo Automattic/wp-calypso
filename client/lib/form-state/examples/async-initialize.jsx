@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,7 +30,7 @@ function loadFromServer( onComplete ) {
 }
 
 class AsyncInitialize extends React.Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.formStore = createFormStore( {
 			asyncInitialize: {
 				fieldNames: [ 'firstName', 'lastName' ],

@@ -1,3 +1,11 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+
+import { get } from 'lodash';
+
 const uninitialized = {
 	state: 'uninitialized',
 };
@@ -5,10 +13,10 @@ const uninitialized = {
 /**
  * Get the entire Rewind state object.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number|string} siteId the site ID
- * @returns {object} Rewind state object
+ * @return {Object} Rewind state object
  */
 export default function getRewindState( state, siteId ) {
-	return state.rewind?.[ siteId ]?.state ?? uninitialized;
+	return get( state.rewind, siteId, uninitialized );
 }

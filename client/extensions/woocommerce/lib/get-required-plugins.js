@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Get the list of plugins required to use Store on WP.com
  * @return {Array} List of plugin slugs

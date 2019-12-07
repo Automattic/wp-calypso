@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormTextInput from 'components/forms/form-text-input';
 import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -50,7 +52,7 @@ export class EmbedDialog extends React.Component {
 		previewMarkup: [],
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		/**
 		 * Reset the state to the default state
 		 */
@@ -79,7 +81,7 @@ export class EmbedDialog extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	componentWillReceiveProps = newProps => {
 		if ( this.state.embedUrl !== newProps.embedUrl ) {
 			this.setState( {
 				embedUrl: newProps.embedUrl,

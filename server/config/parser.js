@@ -1,3 +1,4 @@
+/** @format */
 /*
  * WARNING: ES5 code only here. Used by un-transpiled script!
  */

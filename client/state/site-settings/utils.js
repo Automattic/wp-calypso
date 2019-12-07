@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import { isPlainObject, values } from 'lodash';
 /**
  * Normalize API Settings
  *
+ * @format
  * @param {Object} settings Raw API settings
  * @return {Object}          Normalized settings
  */

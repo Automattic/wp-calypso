@@ -1,3 +1,5 @@
+/** @format */
+
 // Returns a function that returns a translated text when applied
 const translate = text => tr => tr( text );
 
@@ -21,18 +23,10 @@ const KEY_BINDINGS = {
 		},
 		{
 			eventName: 'open-selection',
-			keys: [ [ 'enter' ] ],
+			keys: [ [ 'enter' ], [ 'v' ] ],
 			description: {
-				keys: [ [ 'enter' ] ],
+				keys: [ [ 'enter' ], [ 'v' ] ],
 				text: translate( 'Open selection' ),
-			},
-		},
-		{
-			eventName: 'open-selection-new-tab',
-			keys: [ [ 'v' ] ],
-			description: {
-				keys: [ [ 'v' ] ],
-				text: translate( 'Open selection in a new tab' ),
 			},
 		},
 		{
@@ -48,10 +42,7 @@ const KEY_BINDINGS = {
 	siteNavigation: [
 		{
 			eventName: 'open-keyboard-shortcuts-menu',
-			keys: [
-				[ 'shift', '/' ],
-				[ 'shift', ',' ],
-			],
+			keys: [ [ 'shift', '/' ], [ 'shift', ',' ] ],
 			// On Win/Webkit `?` is incorrectly identified as upside-down
 			// question mark. https://bugs.webkit.org/show_bug.cgi?id=19906
 			checkKeys: [ '?', '\u00BF', '\u00BC' ],

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,7 +24,7 @@ const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	<div>
 		{ site && (
 			<p>
-				Site:{ ' ' }
+				Site:{' '}
 				<strong>
 					{ site.name } ({ siteId })
 				</strong>

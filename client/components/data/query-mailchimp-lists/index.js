@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,4 +30,7 @@ class QueryMailchimpLists extends Component {
 	}
 }
 
-export default connect( null, { requestList } )( QueryMailchimpLists );
+export default connect(
+	null,
+	{ requestList }
+)( QueryMailchimpLists );

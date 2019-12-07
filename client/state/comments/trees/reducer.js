@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,16 +16,13 @@ import {
 import { keyedReducer } from 'state/utils';
 
 const convertToTree = comments =>
-	map(
-		reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ),
-		comment => ( {
-			commentId: get( comment, 'ID' ),
-			commentParentId: get( comment, 'parent.ID', 0 ),
-			postId: get( comment, 'post.ID' ),
-			status: get( comment, 'status' ),
-			type: get( comment, 'type', 'comment' ),
-		} )
-	);
+	map( reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ), comment => ( {
+		commentId: get( comment, 'ID' ),
+		commentParentId: get( comment, 'parent.ID', 0 ),
+		postId: get( comment, 'post.ID' ),
+		status: get( comment, 'status' ),
+		type: get( comment, 'type', 'comment' ),
+	} ) );
 
 const siteTree = ( state = [], action ) => {
 	switch ( action.type ) {

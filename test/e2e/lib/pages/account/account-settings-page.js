@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,18 +18,9 @@ export default class AccountSettingsPage extends AsyncBaseContainer {
 	}
 
 	async chooseCloseYourAccount() {
-		const closeAccountSelector = by.css( '.account__settings-close' );
-		await driverHelper.scrollIntoView( this.driver, closeAccountSelector, 'end' );
-		return await driverHelper.clickWhenClickable( this.driver, closeAccountSelector );
-	}
-
-	async getUsername() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.profile-gravatar__user-display-name' )
+			by.css( '.account__settings-close' )
 		);
-		return await this.driver
-			.findElement( by.css( '.profile-gravatar__user-display-name' ) )
-			.getText();
 	}
 }

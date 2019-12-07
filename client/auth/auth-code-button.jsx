@@ -1,8 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import request from 'superagent';
 import { identity } from 'lodash';
 
 /**
@@ -11,8 +14,6 @@ import { identity } from 'lodash';
 import Notice from 'components/notice';
 
 const initialState = { status: 'ready', errorLevel: false, errorMessage: false };
-
-const SMS_URL = '/sms';
 
 export class AuthCodeButton extends React.Component {
 	static defaultProps = {
@@ -39,11 +40,9 @@ export class AuthCodeButton extends React.Component {
 	requestSMSCode = async () => {
 		this.setState( { status: 'requesting' } );
 
-		this.request = fetch( SMS_URL, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify( { username: this.props.username, password: this.props.password } ),
-		} ).then( response => response.json() );
+		this.request = request
+			.post( '/sms' )
+			.send( { username: this.props.username, password: this.props.password } );
 
 		try {
 			this.handleSMSResponse( null, await this.request );
@@ -54,20 +53,20 @@ export class AuthCodeButton extends React.Component {
 		}
 	};
 
-	handleSMSResponse( error, json ) {
+	handleSMSResponse( error, response ) {
 		this.timeout = setTimeout( this.resetSMSCode, 1000 * 30 );
 
 		// if it's 2fa error then we actually successfully requested an sms code
-		if ( json && json.error === 'needs_2fa' ) {
+		if ( response && response.body && response.body.error === 'needs_2fa' ) {
 			this.setState( { status: 'complete' } );
 			return;
 		}
 
 		let errorMessage = null;
 
-		// assign the error message from the response json, otherwise take it from the error object
-		if ( json && json.error_description ) {
-			errorMessage = json.error_description;
+		// assign the error message from the response body, otherwise take it from the error object
+		if ( response && response.body && response.body.error_description ) {
+			errorMessage = response.body.error_description;
 		} else if ( error ) {
 			errorMessage = error.message;
 		}

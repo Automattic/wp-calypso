@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,7 +24,7 @@ class QueryReaderPost extends Component {
 		this.maybeFetch();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.maybeFetch( nextProps );
 	}
 

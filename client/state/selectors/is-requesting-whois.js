@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,5 +14,5 @@ import { get } from 'lodash';
  * @return {Boolean} If the request is in progress
  */
 export default function isRequestingWhois( state, domain ) {
-	return get( state, [ 'domains', 'management', 'isRequestingWhois', domain ], false );
+	return get( state, [ 'domains.management.isRequestingWhois', domain ], false );
 }

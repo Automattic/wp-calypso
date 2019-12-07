@@ -29,15 +29,8 @@ export function currentPlan( context, next ) {
 	}
 
 	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
-	const requestProduct = context.query.hasOwnProperty( 'product' );
 
-	context.primary = (
-		<CurrentPlan
-			path={ context.path }
-			requestThankYou={ requestThankYou }
-			requestProduct={ requestProduct }
-		/>
-	);
+	context.primary = <CurrentPlan path={ context.path } requestThankYou={ requestThankYou } />;
 
 	next();
 }

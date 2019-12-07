@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -120,4 +122,9 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( PromotionsList ) );
+export default localize(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( PromotionsList )
+);

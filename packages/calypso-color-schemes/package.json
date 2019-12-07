@@ -1,8 +1,8 @@
 {
 	"name": "@automattic/calypso-color-schemes",
-	"version": "2.1.0",
+	"version": "2.0.2",
 	"description": "Calypso Shared Style Bits",
-	"author": "Automattic Inc.",
+	"author": "Automattic",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"calypso",

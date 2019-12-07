@@ -14,17 +14,15 @@ import edit from './edit';
 import './style.scss';
 import './site-logo';
 
-if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
+if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
-		title: __( 'Template Part' ),
-		__experimentalDisplayName: 'label',
-		description: __( 'Display a Template Part.' ),
+		title: __( 'Template' ),
+		description: __( 'Display a template.' ),
 		icon: 'layout',
 		category: 'layout',
 		attributes: {
 			templateId: { type: 'number' },
 			className: { type: 'string' },
-			label: { type: 'string' },
 		},
 		supports: {
 			anchor: false,

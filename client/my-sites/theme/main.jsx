@@ -120,7 +120,7 @@ class ThemeSheet extends React.Component {
 		this.scrollToTop();
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
 		}

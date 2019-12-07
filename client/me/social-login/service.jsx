@@ -12,14 +12,7 @@ import CompactCard from 'components/card/compact';
 import { getCurrentUser } from 'state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 
-const SocialLoginService = ( {
-	service,
-	icon,
-	isConnected,
-	redirectUri,
-	socialConnectionEmail,
-	socialServiceResponse,
-} ) => (
+const SocialLoginService = ( { service, icon, isConnected, socialConnectionEmail } ) => (
 	<CompactCard>
 		<div className="social-login__header">
 			<div className="social-login__header-info">
@@ -29,12 +22,7 @@ const SocialLoginService = ( {
 			</div>
 
 			<div className="social-login__header-action">
-				<SocialLoginActionButton
-					redirectUri={ redirectUri }
-					service={ service }
-					isConnected={ isConnected }
-					socialServiceResponse={ socialServiceResponse }
-				/>
+				<SocialLoginActionButton service={ service } isConnected={ isConnected } />
 			</div>
 		</div>
 	</CompactCard>

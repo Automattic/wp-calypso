@@ -23,7 +23,7 @@ import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
+import { requestRewindState } from 'state/rewind/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
@@ -341,7 +341,7 @@ export class ThreatAlert extends Component {
 										{ this.renderTitle() }
 										<TimeSince
 											className="activity-log__threat-alert-time-since"
-											date={ threat.first_detected }
+											date={ threat.firstDetected }
 											dateFormat="ll"
 										/>
 									</span>
@@ -393,16 +393,19 @@ const mapStateToProps = state => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } );
 
-export default connect( mapStateToProps, {
-	fixThreat: ( siteId, threatId ) =>
-		withAnalytics(
-			recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
-			fixThreatAlert( siteId, threatId )
-		),
-	ignoreThreat: ( siteId, threatId ) =>
-		withAnalytics(
-			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
-			ignoreThreatAlert( siteId, threatId )
-		),
-	requestRewindState,
-} )( localize( ThreatAlert ) );
+export default connect(
+	mapStateToProps,
+	{
+		fixThreat: ( siteId, threatId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
+				fixThreatAlert( siteId, threatId )
+			),
+		ignoreThreat: ( siteId, threatId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
+				ignoreThreatAlert( siteId, threatId )
+			),
+		requestRewindState,
+	}
+)( localize( ThreatAlert ) );

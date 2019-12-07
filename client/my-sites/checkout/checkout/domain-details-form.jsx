@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,6 +15,7 @@ import emailValidator from 'email-validator';
  */
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
+import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import FormButton from 'components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
@@ -23,8 +25,12 @@ import ContactDetailsFormFields from 'components/domains/contact-details-form-fi
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
-import { setDomainDetails } from 'lib/transaction/actions';
-import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
+import {
+	addPrivacyToAllDomains,
+	removePrivacyFromAllDomains,
+	setDomainDetails,
+	addGoogleAppsRegistrationData,
+} from 'lib/upgrades/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
@@ -35,13 +41,13 @@ import {
 	hasTransferProduct,
 	getTlds,
 	hasTld,
-	hasSomeDomainProductsWithPrivacySupport,
-	hasAllDomainProductsWithPrivacySupport,
+	hasOnlyDomainProductsWithPrivacySupport,
+	getDomainRegistrationsWithoutPrivacy,
+	getDomainTransfersWithoutPrivacy,
 } from 'lib/cart-values/cart-items';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -162,6 +168,17 @@ export class DomainDetailsForm extends PureComponent {
 		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
 	}
 
+	allDomainProductsSupportPrivacy() {
+		return hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
+	}
+
+	allDomainItemsHavePrivacy() {
+		return (
+			getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
+			getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
+		);
+	}
+
 	renderSubmitButton() {
 		return (
 			<FormButton
@@ -170,6 +187,17 @@ export class DomainDetailsForm extends PureComponent {
 			>
 				{ this.props.translate( 'Continue' ) }
 			</FormButton>
+		);
+	}
+
+	renderPrivacySection() {
+		return (
+			<PrivacyProtection
+				checkPrivacyRadio={ this.allDomainItemsHavePrivacy() }
+				cart={ this.props.cart }
+				onRadioSelect={ this.handleRadioChange }
+				productsList={ this.props.productsList }
+			/>
 		);
 	}
 
@@ -217,6 +245,10 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
+	handleRadioChange = enable => {
+		this.setPrivacyProtectionSubscriptions( enable );
+	};
+
 	handleSubmitButtonClick = event => {
 		if ( event && event.preventDefault ) {
 			event.preventDefault();
@@ -234,6 +266,14 @@ export class DomainDetailsForm extends PureComponent {
 		addGoogleAppsRegistrationData( allFieldValues );
 	}
 
+	setPrivacyProtectionSubscriptions( enable ) {
+		if ( enable ) {
+			addPrivacyToAllDomains();
+		} else {
+			removePrivacyFromAllDomains();
+		}
+	}
+
 	renderCurrentForm() {
 		const { currentStep } = this.state;
 		return includes( tldsWithAdditionalDetailsForms, currentStep )
@@ -247,13 +287,6 @@ export class DomainDetailsForm extends PureComponent {
 			selected: true,
 		} );
 
-		const hasDomainProduct =
-			hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart );
-		const hasSomeDomainsWithPrivacy =
-			hasDomainProduct && hasSomeDomainProductsWithPrivacySupport( this.props.cart );
-		const hasAllDomainsWithPrivacy =
-			hasDomainProduct && hasAllDomainProductsWithPrivacySupport( this.props.cart );
-
 		let title;
 		let message;
 		// TODO: gather up tld specific stuff
@@ -263,41 +296,20 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
-			if ( hasDomainProduct ) {
-				if ( hasSomeDomainsWithPrivacy ) {
-					if ( hasAllDomainsWithPrivacy ) {
-						message = this.props.translate(
-							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-								'Protection is included to help protect your personal information. {{a}}Learn more{{/a}}',
-							{
-								components: {
-									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
-								},
-							}
-						);
-					} else {
-						message = this.props.translate(
-							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-								'Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}',
-							{
-								components: {
-									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
-								},
-							}
-						);
-					}
-				} else {
-					message = this.props.translate(
-						'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
-							'Protection is unavailable for domains in your cart.'
-					);
-				}
-			}
+			message = this.props.translate(
+				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
+					"review this to be sure it's the correct information you want to use for this domain."
+			);
 		}
+
+		const renderPrivacy =
+			( hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart ) ) &&
+			this.allDomainProductsSupportPrivacy();
 
 		return (
 			<div>
 				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
+				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ message && <p>{ message }</p> }
 					{ this.renderCurrentForm() }
@@ -322,7 +334,10 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
-	recordTracksEvent,
-	updateContactDetailsCache,
-} )( localize( DomainDetailsFormContainer ) );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{
+		recordTracksEvent,
+		updateContactDetailsCache,
+	}
+)( localize( DomainDetailsFormContainer ) );

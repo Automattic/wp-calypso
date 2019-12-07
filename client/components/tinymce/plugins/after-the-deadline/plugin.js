@@ -15,6 +15,7 @@
  *
  * 	Moxiecode Spell Checker plugin released under the LGPL with TinyMCE
  *
+ * @format
  */
 
 /**

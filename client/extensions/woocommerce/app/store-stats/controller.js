@@ -1,11 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
-import { translate } from 'i18n-calypso';
-import moment from 'moment';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ export default function StatsController( context, next ) {
 				/>
 			);
 			break;
-		case 'referrers': {
+		case 'referrers':
 			const { referrerQuery } = getQueries( props.unit, props.queryDate );
 			asyncComponent = (
 				<AsyncLoad
@@ -101,7 +101,6 @@ export default function StatsController( context, next ) {
 				/>
 			);
 			break;
-		}
 		default:
 			asyncComponent = (
 				<AsyncLoad

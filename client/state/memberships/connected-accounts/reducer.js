@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -5,29 +7,21 @@ import {
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { createReducer, combineReducers } from 'state/utils';
 
-const accounts = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE:
-			return {
-				...state,
-				...action.accounts,
-			};
+const accounts = createReducer(
+	{},
+	{
+		[ MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE ]: ( state, data ) => ( {
+			...state,
+			...data.accounts,
+		} ),
 	}
+);
 
-	return state;
-} );
-
-const isFetching = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE:
-			return false;
-		case MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST:
-			return true;
-	}
-
-	return state;
+const isFetching = createReducer( false, {
+	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE ]: () => false,
+	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST ]: () => true,
 } );
 
 export default combineReducers( {

@@ -86,13 +86,10 @@ const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFor
 // Format JavaScript and TypeScript files with prettier, then re-stage them. Swallow the output.
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
-	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
-	_.forEach( _.chunk( toPrettify, 500 ), chunk => {
-		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ chunk.join( ' ' ) }`
-		);
-		execSync( `git add ${ chunk.join( ' ' ) }` );
-	} );
+	execSync(
+		`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ toPrettify.join( ' ' ) }`
+	);
+	execSync( `git add ${ toPrettify.join( ' ' ) }` );
 }
 
 // Format the sass files with stylelint and then re-stage them. Swallow the output.

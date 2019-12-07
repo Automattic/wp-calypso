@@ -44,7 +44,7 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
 			fetchInvite( this.props.siteId, this.props.inviteKey );

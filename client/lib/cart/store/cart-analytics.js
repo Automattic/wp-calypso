@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,14 +13,14 @@ import analytics from 'lib/analytics';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 
 export function recordEvents( previousCart, nextCart ) {
-	const previousItems = getAllCartItems( previousCart );
-	const nextItems = getAllCartItems( nextCart );
+	const previousItems = getAllCartItems( previousCart ),
+		nextItems = getAllCartItems( nextCart );
 
 	each( differenceWith( nextItems, previousItems, isEqual ), recordAddEvent );
 	each( differenceWith( previousItems, nextItems, isEqual ), recordRemoveEvent );
 }
 
-function removeNestedProperties( cartItem ) {
+export function removeNestedProperties( cartItem ) {
 	return omit( cartItem, [ 'extra' ] );
 }
 

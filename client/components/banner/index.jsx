@@ -270,4 +270,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } );
 
-export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( Banner );

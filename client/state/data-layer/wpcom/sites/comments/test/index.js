@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,10 +46,7 @@ describe( '#addComments', () => {
 	} );
 
 	test( 'should dispatch to add received comments into state', () => {
-		const comments = [
-			{ ID: 5, post: { ID: 1 } },
-			{ ID: 6, post: { ID: 1 } },
-		];
+		const comments = [ { ID: 5, post: { ID: 1 } }, { ID: 6, post: { ID: 1 } } ];
 
 		const result = addComments( { query }, { comments } );
 

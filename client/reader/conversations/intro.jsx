@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,11 +15,6 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
-
-/**
- * Image dependencies
- */
-import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
 
 /**
  * Style dependencies
@@ -100,7 +96,7 @@ class ConversationsIntro extends React.Component {
 								  ) }
 						</span>
 					</div>
-					<img className="conversations__intro-character" src={ charactersImage } alt="" />
+					<div className="conversations__intro-character" />
 
 					<button
 						className="conversations__intro-close"

@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -71,7 +72,7 @@ describe( 'Cart Store', () => {
 	test( 'Store should ignore update actions that arrive after disable', () => {
 		let disableCart, removeCoupon;
 		jest.isolateModules( () => {
-			const cartActions = jest.requireActual( 'lib/cart/actions' );
+			const cartActions = jest.requireActual( 'lib/upgrades/actions/cart' );
 			disableCart = cartActions.disableCart;
 			removeCoupon = cartActions.removeCoupon;
 		} );

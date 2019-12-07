@@ -1,3 +1,4 @@
+/** @format */
 export const STORED_CARDS_FROM_API = [
 	{
 		user_id: '12345678',

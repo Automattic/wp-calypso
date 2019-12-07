@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -61,7 +63,7 @@ class ProductCategoryCreate extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -120,8 +122,7 @@ class ProductCategoryCreate extends React.Component {
 		const saveEnabled =
 			hasEdits &&
 			category &&
-			category.name &&
-			category.name.length &&
+			( category.name && category.name.length ) &&
 			! isNull( category.parent ) &&
 			! isUploading;
 
@@ -175,4 +176,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategoryCreate ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductCategoryCreate ) );

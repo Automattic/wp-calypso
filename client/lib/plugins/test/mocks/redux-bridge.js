@@ -1,4 +1,5 @@
 /**
+ * @format
  *
  * Needed for store test
  */

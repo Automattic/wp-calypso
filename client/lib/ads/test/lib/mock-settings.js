@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	settings: {
 		paypal: 'foo@bar.com',

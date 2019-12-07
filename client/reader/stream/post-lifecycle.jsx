@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -13,6 +14,7 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
 import CrossPost from './x-post';
+import { shallowEquals } from 'reader/utils';
 import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
@@ -22,7 +24,6 @@ import CombinedCard from 'blocks/reader-combined-card';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import QueryReaderPost from 'components/data/query-reader-post';
-import compareProps from 'lib/compare-props';
 
 class PostLifecycle extends React.Component {
 	static propTypes = {
@@ -31,6 +32,13 @@ class PostLifecycle extends React.Component {
 		handleClick: PropTypes.func,
 		recStreamKey: PropTypes.string,
 	};
+
+	shouldComponentUpdate( nextProps ) {
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
+
+		return ! shallowEquals( currentPropsToCompare, nextPropsToCompare );
+	}
 
 	render() {
 		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
@@ -97,11 +105,6 @@ class PostLifecycle extends React.Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		post: getPostByKey( state, ownProps.postKey ),
-	} ),
-	null,
-	null,
-	{ areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ) }
-)( PostLifecycle );
+export default connect( ( state, ownProps ) => ( {
+	post: getPostByKey( state, ownProps.postKey ),
+} ) )( PostLifecycle );

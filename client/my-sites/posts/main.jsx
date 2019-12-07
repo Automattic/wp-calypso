@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,8 +11,6 @@ import { localize } from 'i18n-calypso';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
@@ -58,7 +55,7 @@ class PostsMain extends React.Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
+		const { author, category, search, siteId, statusSlug, tag } = this.props;
 		const status = mapPostStatus( statusSlug );
 		const query = {
 			author,
@@ -82,13 +79,7 @@ class PostsMain extends React.Component {
 		return (
 			<Main wideLayout className="posts">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
-				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="posts__page-heading"
-					headerText={ translate( 'Posts' ) }
-					align="left"
-				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				{ siteId && <PostTypeBulkEditBar /> }
 				<PostTypeList
@@ -103,4 +94,4 @@ class PostsMain extends React.Component {
 
 export default connect( state => ( {
 	siteId: getSelectedSiteId( state ),
-} ) )( localize( PostsMain ) );
+} ) )( PostsMain );

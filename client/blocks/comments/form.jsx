@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,7 +43,7 @@ class PostCommentForm extends React.Component {
 			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );

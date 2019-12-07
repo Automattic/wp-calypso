@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -68,7 +70,7 @@ class DisconnectJetpackDialogExample extends Component {
 
 				<p>
 					<Button onClick={ this.toggleVisibilityProfessional }>
-						Disconnect Professional Jetpack{ ' ' }
+						Disconnect Professional Jetpack{' '}
 					</Button>
 				</p>
 				<DisconnectJetpackDialog
@@ -79,7 +81,7 @@ class DisconnectJetpackDialogExample extends Component {
 
 				<p>
 					<Button onClick={ this.toggleVisibilityBroken }>
-						Disconnect Probably Broken Jetpack{ ' ' }
+						Disconnect Probably Broken Jetpack{' '}
 					</Button>
 				</p>
 				<DisconnectJetpackDialog

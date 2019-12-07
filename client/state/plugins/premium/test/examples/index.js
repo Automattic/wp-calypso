@@ -1,3 +1,4 @@
+/** @format */
 export const initSite = [
 	{
 		slug: 'vaultpress',

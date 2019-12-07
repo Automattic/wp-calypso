@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,23 +14,31 @@ import CartItems from 'my-sites/checkout/cart/cart-items';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import CartTotal from 'my-sites/checkout/cart/cart-total';
 
-const CartBody = React.forwardRef( ( props, ref ) => {
-	const { cart, selectedSite, collapse = false, showCoupon = false } = props;
+class CartBody extends React.PureComponent {
+	constructor( props ) {
+		super( props );
+	}
 
-	return (
-		<div className="cart-body" ref={ ref }>
-			<CartItems collapse={ collapse } cart={ cart } selectedSite={ selectedSite } />
-			<CartTotal cart={ cart } />
-			{ showCoupon && <CartCoupon cart={ cart } /> }
-		</div>
-	);
-} );
+	render() {
+		const { cart, collapse, selectedSite, showCoupon } = this.props;
+
+		return (
+			<div className="cart-body">
+				<CartItems collapse={ collapse } cart={ cart } selectedSite={ selectedSite } />
+				<CartTotal cart={ cart } />
+				{ showCoupon && <CartCoupon cart={ cart } /> }
+			</div>
+		);
+	}
+}
 
 CartBody.propTypes = {
-	cart: PropTypes.object,
-	selectedSite: PropTypes.object,
 	collapse: PropTypes.bool,
-	showCoupon: PropTypes.bool,
+};
+
+CartBody.defaultProps = {
+	collapse: false,
+	showCoupon: false,
 };
 
 export default CartBody;

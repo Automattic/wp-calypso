@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -43,7 +45,10 @@ function promiseForImage( image ) {
 	} );
 }
 
-const promiseForURL = flow( imageForURL, promiseForImage );
+const promiseForURL = flow(
+	imageForURL,
+	promiseForImage
+);
 
 export default function waitForImagesToLoad( post ) {
 	return new Promise( resolve => {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Utility for retrieving callee identifier node from a CallExpression
  * @author Automattic

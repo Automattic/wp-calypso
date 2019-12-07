@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 import { noop } from 'lodash';
 

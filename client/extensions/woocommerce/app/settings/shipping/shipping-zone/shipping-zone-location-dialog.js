@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import ShippingZoneLocationDialogCountries from './shipping-zone-location-dialog-countries';
 import ShippingZoneLocationDialogSettings from './shipping-zone-location-dialog-settings';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';

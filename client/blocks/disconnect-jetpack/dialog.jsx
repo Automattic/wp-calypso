@@ -1,4 +1,5 @@
 /**
+ * @format
  *
  * External dependencies
  */
@@ -8,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import DisconnectJetpack from './';
 
 const DisconnectJetpackDialog = ( {

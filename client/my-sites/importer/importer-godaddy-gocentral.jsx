@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,15 +24,12 @@ class ImporterGoDaddyGoCentral extends React.PureComponent {
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
 			} ),
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
 	};
 
 	render() {
-		const importerData = importerConfig( {
-			siteTitle: this.props.siteTitle,
-		} )[ 'godaddy-gocentral' ];
+		const importerData = importerConfig()[ 'godaddy-gocentral' ];
 
 		return <SiteImporter importerData={ importerData } { ...this.props } />;
 	}

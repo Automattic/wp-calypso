@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -219,28 +221,13 @@ describe( 'index', () => {
 			expect( afterClearResult ).not.toBe( firstResult );
 		} );
 
-		test( 'should memoize a nullish value returned by getDependents', () => {
-			const memoizedSelector = treeSelect(
-				() => [ null, undefined ],
-				() => []
-			);
+		test( 'should memoize a falsy value returned by getDependents', () => {
+			const memoizedSelector = treeSelect( () => [ null ], () => [] );
 			const state = {};
 
 			const firstResult = memoizedSelector( state );
 			const secondResult = memoizedSelector( state );
 			expect( firstResult ).toBe( secondResult );
-		} );
-
-		test( 'throws on a non-nullish primitive value returned by getDependents', () => {
-			[ true, 1, 'a', false, '', 0 ].forEach( primitive => {
-				const memoizedSelector = treeSelect(
-					() => [ primitive ],
-					() => []
-				);
-				const state = {};
-
-				expect( () => memoizedSelector( state ) ).toThrow();
-			} );
 		} );
 
 		test( 'accepts a getCacheKey option that enables object arguments', () => {

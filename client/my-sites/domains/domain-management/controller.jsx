@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -104,6 +106,7 @@ export default {
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
+				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -136,6 +139,7 @@ export default {
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				needsDomains
+				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -159,6 +163,8 @@ export default {
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				context={ pageContext }
+				needsDns
+				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -207,6 +213,7 @@ export default {
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
+				needsSiteRedirect
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);

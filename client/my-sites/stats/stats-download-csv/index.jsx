@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -80,7 +82,7 @@ class StatsDownloadCsv extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				<Gridicon icon="cloud-download" />{ ' ' }
+				<Gridicon icon="cloud-download" />{' '}
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }
@@ -113,4 +115,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-export default flowRight( connectComponent, localize )( StatsDownloadCsv );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsDownloadCsv );

@@ -2,6 +2,7 @@
  * Returns media for a specified site ID and query.
  *
  *
+ * @format
  * @param {Object}  query  Query object
  * @return {?Array}         Media
  */

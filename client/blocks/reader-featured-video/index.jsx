@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -16,11 +17,6 @@ import EmbedHelper from 'reader/embed-helper';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
-
-/**
- * Image dependencies
- */
-import playIconImage from 'assets/images/reader/play-icon.png';
 
 /**
  * Style dependencies
@@ -93,7 +89,7 @@ class ReaderFeaturedVideo extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps() {
+	componentWillReceiveProps() {
 		this.throttledUpdateVideoSize();
 	}
 
@@ -120,7 +116,7 @@ class ReaderFeaturedVideo extends React.Component {
 					{ allowPlaying && (
 						<img
 							className="reader-featured-video__play-icon"
-							src={ playIconImage }
+							src="/calypso/images/reader/play-icon.png"
 							title={ translate( 'Play Video' ) }
 							alt={ translate( 'Play button' ) }
 						/>

@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -21,10 +22,7 @@ describe( '<Select />', () => {
 		label: 'Select label',
 		name: 'select',
 		onChange: jest.fn(),
-		options: [
-			{ label: 'uno', value: 1 },
-			{ label: 'due', value: 2 },
-		],
+		options: [ { label: 'uno', value: 1 }, { label: 'due', value: 2 } ],
 		value: '',
 		additionalClasses: 'mega-selectzilla',
 		errorMessage: null,

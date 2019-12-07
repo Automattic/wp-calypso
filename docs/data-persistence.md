@@ -39,42 +39,22 @@ Because browser storage is only capable of storing simple JavaScript objects, th
 type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
 similar to:
 ```javascript
-export function items( state = defaultState, action ) {
-	switch ( action.type ) {
-		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
-			return // ...
-		case SERIALIZE:
-			return state.toJS();
-		default:
-			return state;
-	}
-}
-items.hasCustomPersistence = true;
+export const items = createReducer( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+	[SERIALIZE]: state => state.toJS()
+} );
 ```
-
-Be sure to set `hasCustomPersistence` to true, in order to indicate that you have special handling for these actions.
 
 In turn, when the store instance is initialized with the browser storage copy of state, you can convert
 your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
 instead of returning a plain object, we create an Immutable.js instance:
 ```javascript
-export function items( state = defaultState, action ) {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-			return // ...
-		case DESERIALIZE:
-			return fromJS( state );
-		default:
-			return state;
-	}
-}
-items.hasCustomPersistence = true;
+export const items = createReducer( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+	[DESERIALIZE]: state => fromJS( state )
+} );
 ```
-
-Once again, be sure to set `hasCustomPersistence` to true, in order to indicate that you have special handling for
-these actions.
-
-If your reducer state can be serialized by the browser without additional work (e.g. a plain object, string or boolean),
+If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean),
 the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors
 from changing data shapes, as described below.
 
@@ -123,17 +103,12 @@ export const itemsSchema = {
 A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
 match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
 
-You can use `withSchemaValidation` to wrap a plain reducer, passing the schema as the first param, and all
+You can use `createReducerWithValidation` similarly to `createReducer`, passing the schema as the third param, and all
 that will be handled for you.
 ```javascript
-export const items = withSchemaValidation( itemsSchema, ( state = defaultState, action ) => {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-			return // ...
-		default:
-			return state;
-	}
-} );
+export const items = createReducerWithValidation( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+}, itemsSchema );
 ```
 
 If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
@@ -170,17 +145,15 @@ and another one for `reader` key. Both objects will be stored as two distinct ro
 When booting Calypso, we initially load only the `root` stored state. The `reader` key is loaded and deserialized only
 when the `reader` reducer is being added dynamically.
 
-### Opt-in to Persistence
+### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
-Note that we opt-in to persistence simply by wrapping the reducer with `withSchemaValidation`.
-`withSchemaValidation` returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and returns
-initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
-
-In Calypso, we combine all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
+If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer.
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
 of the default implementation of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`.
-The custom `combineReducers` handles persistence for the reducers it's combining.
+Each reducer is then wrapped with `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE`
+if a schema is present and returns initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
 
-To opt-out of persistence we simply combine reducers without any attached schema.
+To opt-out of persistence we combine the reducers without any attached schema.
 ```javascript
 return combineReducers( {
     age,
@@ -188,10 +161,10 @@ return combineReducers( {
 } );
 ```
 
-To persist, we add the schema by wrapping the reducer with the `withSchemaValidation` util:
+To persist, we add the schema by wrapping the reducer with the `withValidation` util:
 ```javascript
 return combineReducers( {
-    age: withSchemaValidation( ageSchema, age ),
+    age: withValidation( ageSchema, age ),
     height,
 } );
 ```

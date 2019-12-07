@@ -1,3 +1,4 @@
+/** @format */
 /**
  * A wrapper for loadjQueryDependentScript that handles the desktop app
  * It is not possible to expose jQuery globally in Electron App: https://github.com/atom/electron/issues/254.

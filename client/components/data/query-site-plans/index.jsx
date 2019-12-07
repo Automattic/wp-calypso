@@ -1,9 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -11,20 +15,60 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-const request = siteId => ( dispatch, getState ) => {
-	if ( siteId && ! isRequestingSitePlans( getState(), siteId ) ) {
-		dispatch( fetchSitePlans( siteId ) );
+class QuerySitePlans extends Component {
+	constructor( props ) {
+		super( props );
+		this.requestPlans = this.requestPlans.bind( this );
 	}
-};
 
-export default function QuerySitePlans( { siteId } ) {
-	const dispatch = useDispatch();
+	requestPlans( props = this.props ) {
+		if ( ! props.requestingSitePlans && props.siteId ) {
+			props.fetchSitePlans( props.siteId );
+		}
+	}
 
-	useEffect( () => {
-		dispatch( request( siteId ) );
-	}, [ dispatch, siteId ] );
+	componentWillMount() {
+		this.requestPlans();
+	}
 
-	return null;
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.requestingSitePlans ||
+			! nextProps.siteId ||
+			this.props.siteId === nextProps.siteId
+		) {
+			return;
+		}
+		this.requestPlans( nextProps );
+	}
+
+	render() {
+		return null;
+	}
 }
 
-QuerySitePlans.propTypes = { siteId: PropTypes.number };
+QuerySitePlans.propTypes = {
+	siteId: PropTypes.number,
+	requestingPlans: PropTypes.bool,
+	fetchSitePlans: PropTypes.func,
+};
+
+QuerySitePlans.defaultProps = {
+	fetchSitePlans: () => {},
+};
+
+export default connect(
+	( state, ownProps ) => {
+		return {
+			requestingSitePlans: isRequestingSitePlans( state, ownProps.siteId ),
+		};
+	},
+	dispatch => {
+		return bindActionCreators(
+			{
+				fetchSitePlans,
+			},
+			dispatch
+		);
+	}
+)( QuerySitePlans );

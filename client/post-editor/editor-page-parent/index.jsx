@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -41,7 +43,7 @@ class EditorPageParent extends Component {
 		isTopLevel: ! this.props.parentId,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.parentId !== nextProps.parentId ) {
 			this.setState( { isTopLevel: ! nextProps.parentId } );
 		}

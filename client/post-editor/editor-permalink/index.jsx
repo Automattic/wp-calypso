@@ -1,9 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -116,19 +118,17 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<Fragment>
-				<div
-					className="editor-permalink"
-					onMouseEnter={ this.showTooltip }
-					onMouseLeave={ this.hideTooltip }
-				>
-					<Gridicon
-						className="editor-permalink__toggle"
-						icon="link"
-						onClick={ this.showPopover }
-						ref={ this.permalinkToggleReference }
-					/>
-				</div>
+			<div
+				className="editor-permalink"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
+			>
+				<Gridicon
+					className="editor-permalink__toggle"
+					icon="link"
+					onClick={ this.showPopover }
+					ref={ this.permalinkToggleReference }
+				/>
 				<Popover
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
@@ -150,7 +150,7 @@ class EditorPermalink extends Component {
 				>
 					{ tooltipMessage }
 				</Tooltip>
-			</Fragment>
+			</div>
 		);
 	}
 }

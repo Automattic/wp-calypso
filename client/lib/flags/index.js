@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Given a country code, return a flag SVG file path
  *

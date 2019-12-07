@@ -1,7 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, {
+	Component,
+	ComponentProps,
+	CSSProperties,
+	MouseEventHandler,
+	TouchEventHandler,
+} from 'react';
 
 interface Props {
 	onDrag: ( x: number, y: number ) => void;
@@ -53,10 +59,7 @@ function isEventWithTouches( event: HasTouches | HasPageCoords ): event is HasTo
 	);
 }
 
-type DivProps = Omit<
-	React.ComponentPropsWithoutRef< 'div' >,
-	'style' | 'onMouseDown' | 'onTouchStart'
->;
+type DivProps = Omit< ComponentProps< 'div' >, 'style' | 'onMouseDown' | 'onTouchStart' >;
 
 export default class Draggable extends Component< Props & DivProps, State > {
 	static defaultProps = {
@@ -138,7 +141,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		this.props.onStop();
 	};
 
-	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = event => {
+	onTouchStartHandler: TouchEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
@@ -147,7 +150,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
 	};
 
-	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = event => {
+	onMouseDownHandler: MouseEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
@@ -192,7 +195,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 	render() {
 		// Discard "our" props and leave divProps for the div
 		const { onDrag, onStop, width, height, x, y, controlled, bounds, ...divProps } = this.props;
-		const style: React.CSSProperties = {
+		const style: CSSProperties = {
 			transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)',
 		};
 

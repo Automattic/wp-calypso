@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -132,4 +133,7 @@ class EmailVerificationCard extends React.Component {
 	}
 }
 
-export default connect( null, { errorNotice } )( localize( EmailVerificationCard ) );
+export default connect(
+	null,
+	{ errorNotice }
+)( localize( EmailVerificationCard ) );

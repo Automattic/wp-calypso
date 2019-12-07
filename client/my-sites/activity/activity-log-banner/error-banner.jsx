@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -71,8 +72,8 @@ class ErrorBanner extends PureComponent {
 		} = this.props;
 		const strings = isUndefined( downloadId )
 			? {
-					title: translate( 'Problem restoring your site' ),
-					details: translate( 'We came across a problem while trying to restore your site.' ),
+					title: translate( 'Problem rewinding your site' ),
+					details: translate( 'We came across a problem while trying to rewind your site.' ),
 			  }
 			: {
 					title: translate( 'Problem preparing your file' ),
@@ -118,8 +119,11 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
-} )( localize( ErrorBanner ) );
+export default connect(
+	null,
+	{
+		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+		trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+		trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
+	}
+)( localize( ErrorBanner ) );

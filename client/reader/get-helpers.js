@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -63,7 +64,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = feed.name || feed.title;
 	} else if ( ! isDefaultSiteTitle && post && post.site_name ) {
 		siteName = post.site_name;
-	} else if ( site && site.is_error && feed && feed.is_error && ! post ) {
+	} else if ( site && site.is_error && ( feed && feed.is_error && ! post ) ) {
 		siteName = translate( 'Error fetching feed' );
 	} else if ( site && site.domain ) {
 		siteName = site.domain;

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -279,10 +281,10 @@ class DisconnectJetpack extends PureComponent {
 					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
 				>
 					<p className="disconnect-jetpack__highlight">
-						{ translate( 'Experiencing connection issues? Try to go back and restore your site.' ) }
+						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
-						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
+						<Button onClick={ this.handleTryRewind }>{ translate( 'Rewind site' ) }</Button>
 						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
 							<Gridicon icon="chat" size={ 18 } />
 							{ translate( 'Get help' ) }

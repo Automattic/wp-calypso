@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,7 +37,7 @@ export default class AsyncLoad extends Component {
 		this.require();
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.mounted && this.props.require !== nextProps.require ) {
 			this.setState( { component: null } );
 		}

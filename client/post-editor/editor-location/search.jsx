@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -117,4 +119,7 @@ class EditorLocationSearch extends React.Component {
 	}
 }
 
-export default connect( null, { recordEditorStat, recordEditorEvent } )( EditorLocationSearch );
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( EditorLocationSearch );

@@ -1,6 +1,7 @@
 /**
  * /* eslint-disable
  *
+ * @format
  */
 
 export default {

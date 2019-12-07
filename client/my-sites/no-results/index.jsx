@@ -4,22 +4,26 @@
 import React from 'react';
 
 /**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-
-/**
  * Style dependencies
  */
 import './style.scss';
 
-export default function NoResults( props ) {
-	const translate = useTranslate();
-	const { image, text = translate( 'No results.' ) } = props;
-	return (
-		<div className="no-results">
-			{ image && <img className="no-results__img" src={ image } alt="" /> }
-			<span>{ text }</span>
-		</div>
-	);
+class NoResults extends React.Component {
+	static defaultProps = {
+		text: 'No results',
+		image: false,
+	};
+
+	render() {
+		return (
+			<div className="no-results">
+				{ this.props.image ? (
+					<img className="no-results__img" src={ this.props.image } alt="" />
+				) : null }
+				<span>{ this.props.text }</span>
+			</div>
+		);
+	}
 }
+
+export default NoResults;

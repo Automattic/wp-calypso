@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -69,7 +70,5 @@ export default connect(
 			iLike: isLikedPost( state, siteId, postId ),
 		};
 	},
-	{ like, unlike },
-	null,
-	{ forwardRef: true }
+	{ like, unlike }
 )( LikeButtonContainer );

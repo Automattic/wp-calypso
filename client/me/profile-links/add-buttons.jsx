@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -72,6 +74,9 @@ class AddProfileLinksButtons extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( AddProfileLinksButtons ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( AddProfileLinksButtons ) );

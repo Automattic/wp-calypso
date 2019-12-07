@@ -30,6 +30,9 @@ class QueryJetpackProductInstallStatus extends Component {
 	}
 }
 
-export default connect( null, {
-	requestJetpackProductInstallStatus,
-} )( QueryJetpackProductInstallStatus );
+export default connect(
+	null,
+	{
+		requestJetpackProductInstallStatus,
+	}
+)( QueryJetpackProductInstallStatus );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,8 +22,7 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/cart/actions';
-import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
+import { addItems } from 'lib/upgrades/actions';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -68,20 +69,6 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
-}
-
-function getDisplayName( purchase ) {
-	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
-		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
-	}
-	return getName( purchase );
-}
-
-function getPartnerName( purchase ) {
-	if ( isPartnerPurchase( purchase ) ) {
-		return purchase.partnerName;
-	}
-	return null;
 }
 
 function getSubscriptionEndDate( purchase ) {
@@ -286,10 +273,6 @@ function isRemovable( purchase ) {
 	);
 }
 
-function isPartnerPurchase( purchase ) {
-	return !! purchase.partnerName;
-}
-
 /**
  * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
  * manually checks all kinds of stuff
@@ -402,10 +385,6 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
-	if ( isPartnerPurchase( purchase ) ) {
-		return i18n.translate( 'Host Managed Plan' );
-	}
-
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -444,8 +423,6 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
-	getDisplayName,
-	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
@@ -456,7 +433,6 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
-	isPartnerPurchase,
 	hasPaymentMethod,
 	isExpired,
 	isExpiring,

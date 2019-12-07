@@ -6,9 +6,11 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { reject } from 'lodash';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -16,7 +18,6 @@ import { localize, translate } from 'i18n-calypso';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessages from './cart-messages';
-import HeaderButton from 'components/header-button';
 import CartButtons from './cart-buttons';
 import Count from 'components/count';
 import Popover from 'components/popover';
@@ -29,55 +30,39 @@ import TrackComponentView from 'lib/analytics/track-component-view';
  */
 import './style.scss';
 
-class PopoverCart extends React.Component {
-	static propTypes = {
+// eslint-disable-next-line react/prefer-es6-class
+const PopoverCart = createReactClass( {
+	displayName: 'PopoverCart',
+
+	propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
 		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
-	};
+	},
 
-	toggleButtonRef = React.createRef();
-	hasUnmounted = false;
+	toggleButton: React.createRef(),
+	hasUnmounted: false,
 
-	componentWillUnmount() {
+	componentWillUnmount: function() {
 		this.hasUnmounted = true;
-	}
+	},
 
-	itemCount() {
+	itemCount: function() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return;
 		}
 
 		return reject( this.props.cart.products, isCredits ).length;
-	}
+	},
 
-	onToggle = () => {
-		this.props.closeSectionNavMobilePanel();
-		this.props.onToggle();
-	};
-
-	onClose = () => {
-		// Since this callback can fire after the user navigates off the page, we
-		// we need to check if it's mounted to prevent errors.
-		if ( this.hasUnmounted ) {
-			return;
-		}
-
-		// if the cart became pinned, ignore close event from Popover
-		if ( this.props.pinned ) {
-			return;
-		}
-
-		this.onToggle();
-	};
-
-	render() {
+	render: function() {
 		const { cart, selectedSite } = this.props;
 		let countBadge;
-		const classes = classNames( 'popover-cart', {
+		const classes = classNames( {
+			'popover-cart': true,
 			pinned: this.props.pinned,
 		} );
 
@@ -94,21 +79,23 @@ class PopoverCart extends React.Component {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
-					<HeaderButton
-						icon="cart"
-						label={ translate( 'Cart' ) }
-						ref={ this.toggleButtonRef }
+					<button
+						className="cart-toggle-button"
+						ref={ this.toggleButton }
 						onClick={ this.onToggle }
-					/>
-					{ countBadge }
+					>
+						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
+						<Gridicon icon="cart" size={ 24 } />
+						{ countBadge }
+					</button>
 				</div>
 
-				{ this.renderCartContent() }
+				{ this.cartContent() }
 			</div>
 		);
-	}
+	},
 
-	renderCartContent() {
+	cartContent: function() {
 		if ( ! this.props.pinned ) {
 			return (
 				<Popover
@@ -116,9 +103,9 @@ class PopoverCart extends React.Component {
 					isVisible={ this.props.visible }
 					position="bottom left"
 					onClose={ this.onClose }
-					context={ this.toggleButtonRef.current }
+					context={ this.toggleButton.current }
 				>
-					{ this.renderCartBody() }
+					{ this.cartBody() }
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
 						eventProperties={ { style: 'popover' } }
@@ -126,12 +113,11 @@ class PopoverCart extends React.Component {
 				</Popover>
 			);
 		}
-
 		if ( this.props.visible ) {
 			return (
 				<div className="popover-cart__mobile-cart">
 					<div className="top-arrow" />
-					{ this.renderCartBody() }
+					{ this.cartBody() }
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
 						eventProperties={ { style: 'mobile-cart' } }
@@ -139,9 +125,14 @@ class PopoverCart extends React.Component {
 				</div>
 			);
 		}
-	}
+	},
 
-	renderCartBody() {
+	onToggle: function( event ) {
+		this.props.closeSectionNavMobilePanel();
+		this.props.onToggle( event );
+	},
+
+	cartBody: function() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return <CartBodyLoadingPlaceholder />;
 		}
@@ -152,11 +143,31 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartBody collapse cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
+				<CartBody
+					collapse={ true }
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite }
+				/>
+
 				<CartButtons selectedSite={ this.props.selectedSite } />
 			</div>
 		);
-	}
-}
+	},
+
+	onClose: function() {
+		// Since this callback can fire after the user navigates off the page, we
+		// we need to check if it's mounted to prevent errors.
+		if ( this.hasUnmounted ) {
+			return;
+		}
+
+		// if the cart became pinned, ignore close event from Popover
+		if ( this.props.pinned ) {
+			return;
+		}
+
+		this.onToggle();
+	},
+} );
 
 export default localize( PopoverCart );

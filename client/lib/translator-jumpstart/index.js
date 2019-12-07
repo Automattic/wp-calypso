@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import { find, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { languages } from 'languages';
+import config from 'config';
 import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import User from 'lib/user';
 import { isMobile } from 'lib/viewport';
@@ -176,6 +178,8 @@ const communityTranslatorJumpstart = {
 	},
 
 	updateTranslationData( localeCode, languageJson, localeVariant = null ) {
+		const languages = config( 'languages' );
+
 		if ( translationDataFromPage.localeCode === localeCode ) {
 			// if the locale code has already been assigned then assume it is up to date
 			debug( 'skipping updating translation data with same localeCode' );
@@ -336,5 +340,6 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 // re-initialize when new locale data is loaded
 i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
+user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
 export default communityTranslatorJumpstart;

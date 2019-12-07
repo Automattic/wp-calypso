@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ import isRequestingContactDetailsCache from 'state/selectors/is-requesting-conta
 import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.isRequesting || ! isEmpty( this.props.contactDetailsCache ) ) {
 			return;
 		}

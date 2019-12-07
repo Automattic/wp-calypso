@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,6 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
 import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 import getSiteUrl from 'state/selectors/get-site-url';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
@@ -35,13 +38,13 @@ export const fromApi = response => {
 
 const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
-const receiveJetpackSettings = ( { siteId }, settings ) =>
+const receiveJetpackOnboardingSettings = ( { siteId }, settings ) =>
 	updateJetpackSettings( siteId, settings );
 /**
  * Dispatches a request to fetch settings for a given site
  *
- * @param   {object}   action         Redux action
- * @returns {object}   Dispatched http action
+ * @param   {Object}   action         Redux action
+ * @returns {Object}   Dispatched http action
  */
 export const requestJetpackSettings = action => {
 	const { siteId, query } = action;
@@ -63,9 +66,9 @@ export const requestJetpackSettings = action => {
 
 export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
 	const state = getState();
-	const url = getSiteUrl( state, siteId );
+	const url = getSiteUrl( state, siteId ) || getUnconnectedSiteUrl( state, siteId );
 	const noticeOptions = {
-		id: `jps-communication-error-${ siteId }`,
+		id: `jpo-communication-error-${ siteId }`,
 	};
 
 	if ( url ) {
@@ -79,14 +82,14 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
 /**
  * Dispatches a request to save particular settings on a site
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const saveJetpackSettings = action => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getJetpackSettings( getState(), siteId );
 
-	// We don't want any legacy Jetpack Onboarding credentials in our Jetpack Settings Redux state.
+	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
 	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 	dispatch(
@@ -119,7 +122,7 @@ export const handleSaveSuccess = ( { siteId }, { data: { code, message, ...updat
 export const handleSaveFailure = ( { siteId }, { meta: { settings: previousSettings } } ) => [
 	updateJetpackSettings( siteId, previousSettings ),
 	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `jps-notice-error-${ siteId }`,
+		id: `jpo-notice-error-${ siteId }`,
 		duration: 5000,
 	} ),
 ];
@@ -164,7 +167,7 @@ registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestJetpackSettings,
-			onSuccess: receiveJetpackSettings,
+			onSuccess: receiveJetpackOnboardingSettings,
 			onError: announceRequestFailure,
 			fromApi,
 		} ),

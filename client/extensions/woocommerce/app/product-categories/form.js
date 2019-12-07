@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -55,7 +56,7 @@ class ProductCategoryForm extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {
@@ -270,7 +271,7 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{ ' ' }
+										} ) }{' '}
 									</span>
 								</FormLabel>
 

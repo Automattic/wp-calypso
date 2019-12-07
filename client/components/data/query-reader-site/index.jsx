@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,13 +16,13 @@ import { shouldSiteBeFetched } from 'state/reader/sites/selectors';
 import { requestSite } from 'state/reader/sites/actions';
 
 class QueryReaderSite extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.shouldSiteBeFetched ) {
 			this.props.requestSite( this.props.siteId );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldSiteBeFetched || this.props.siteId === nextProps.siteId ) {
 			return;
 		}

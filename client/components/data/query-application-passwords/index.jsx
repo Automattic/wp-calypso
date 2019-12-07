@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,4 +26,7 @@ class QueryApplicationPasswords extends Component {
 	}
 }
 
-export default connect( null, { requestApplicationPasswords } )( QueryApplicationPasswords );
+export default connect(
+	null,
+	{ requestApplicationPasswords }
+)( QueryApplicationPasswords );

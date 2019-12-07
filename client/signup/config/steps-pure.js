@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -47,8 +49,25 @@ export function generateSteps( {
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			optionalDependencies: [ 'useThemeHeadstart' ],
+			providesDependencies: [ 'themeSlugWithRepo' ],
+		},
+
+		'blog-themes': {
+			stepName: 'blog-themes',
+			props: {
+				designType: 'blog',
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo' ],
+		},
+
+		'website-themes': {
+			stepName: 'website-themes',
+			props: {
+				designType: 'page',
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
 		'portfolio-themes': {
@@ -60,33 +79,13 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
-		'template-first-themes': {
-			stepName: 'template-first-themes',
-			props: {
-				designType: 'template-first',
-				quantity: 18,
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-		},
-
-		'fse-themes': {
-			stepName: 'fse-themes',
-			props: {
-				designType: 'fse-compatible',
-				quantity: 6,
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-		},
-
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
 		'themes-site-selected': {
 			stepName: 'themes-site-selected',
 			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+			providesDependencies: [ 'themeSlugWithRepo' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
@@ -101,7 +100,6 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
-				shouldShowDomainTestCopy: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
@@ -229,10 +227,8 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
-				fallbackHeaderText: i18n.translate(
-					"Almost there, pick a plan that's right for you. Upgrade as you grow."
-				),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
+				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
 				isLaunchPage: true,
 			},
 		},
@@ -247,17 +243,11 @@ export function generateSteps( {
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
 				isDomainOnly: false,
 			},
+			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -266,7 +256,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
-				shouldShowDomainTestCopy: false,
 			},
 		},
 
@@ -284,14 +273,7 @@ export function generateSteps( {
 		'domains-theme-preselected': {
 			stepName: 'domains-theme-preselected',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -399,6 +381,11 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
+		'rewind-add-creds': {
+			stepName: 'rewind-add-creds',
+			providesDependencies: [],
+		},
+
 		'rewind-form-creds': {
 			stepName: 'rewind-form-creds',
 			providesDependencies: [ 'rewindconfig' ],
@@ -482,20 +469,7 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
-		'site-type-with-theme': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
 		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-topic-with-theme': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
@@ -521,8 +495,7 @@ export function generateSteps( {
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,
@@ -540,14 +513,7 @@ export function generateSteps( {
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,

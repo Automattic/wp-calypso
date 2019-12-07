@@ -66,8 +66,19 @@ export class SummaryInList extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	selectNote: compose( dispatch, actions.ui.selectNote ),
-	unselectNote: compose( dispatch, actions.ui.unselectNote ),
+	selectNote: compose(
+		dispatch,
+		actions.ui.selectNote
+	),
+	unselectNote: compose(
+		dispatch,
+		actions.ui.unselectNote
+	),
 } );
 
-export default connect( null, mapDispatchToProps, null, { pure: false } )( SummaryInList );
+export default connect(
+	null,
+	mapDispatchToProps,
+	null,
+	{ pure: false }
+)( SummaryInList );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,11 +14,11 @@ import { isRequestingZones } from '../../../state/zones/selectors';
 import { requestZones } from '../../../state/zones/actions';
 
 class QueryZones extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.requestZones( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}

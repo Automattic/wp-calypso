@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -30,14 +32,14 @@ class PromotionAppliesToField extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { selectionTypes, value } = this.props;
 		const initialType = this.getInitialType( selectionTypes, value );
 
 		this.setState( () => ( { appliesToType: initialType } ) );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { selectionTypes, value } = nextProps;
 		const initialType = this.getInitialType( selectionTypes, value );
 

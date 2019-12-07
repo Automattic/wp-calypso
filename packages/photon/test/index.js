@@ -1,5 +1,3 @@
-/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "expectPathname", "expectQuery", "expectHostedOnPhoton", "expectHostedOnPhotonInsecurely" ] } ] */
-
 /**
  * External dependencies
  */

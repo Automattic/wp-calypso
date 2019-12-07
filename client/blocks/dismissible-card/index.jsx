@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -51,7 +53,10 @@ class DismissibleCard extends Component {
 				<Gridicon
 					icon="cross"
 					className="dismissible-card__close-icon"
-					onClick={ flow( onClick, dismissCard ) }
+					onClick={ flow(
+						onClick,
+						dismissCard
+					) }
 				/>
 				{ this.props.children }
 			</Card>

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,10 +29,7 @@ const STREAK_RESPONSE = {
 };
 const STREAK_QUERY = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const VIDEO_RESPONSE = {
-	data: [
-		[ '2016-11-12', 1 ],
-		[ '2016-11-13', 0 ],
-	],
+	data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
 };
 
 describe( 'actions', () => {
@@ -83,11 +81,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch a SITE_STATS_RECEIVE event on success', () => {
-			return requestSiteStats(
-				SITE_ID,
-				STAT_TYPE,
-				STREAK_QUERY
-			)( spy ).then( () => {
+			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_RECEIVE,
 					siteId: SITE_ID,
@@ -111,11 +105,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch SITE_STATS_REQUEST_FAILURE action when request fails', () => {
-			return requestSiteStats(
-				SITE_ID,
-				'statsCountryViews',
-				{}
-			)( spy ).then( () => {
+			return requestSiteStats( SITE_ID, 'statsCountryViews', {} )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_STATS_REQUEST_FAILURE,
 					siteId: SITE_ID,

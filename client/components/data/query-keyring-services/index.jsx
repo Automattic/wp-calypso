@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,7 @@ import { isKeyringServicesFetching } from 'state/sharing/services/selectors';
 import { requestKeyringServices } from 'state/sharing/services/actions';
 
 class QueryKeyringServices extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.requestKeyringServices();
 		}

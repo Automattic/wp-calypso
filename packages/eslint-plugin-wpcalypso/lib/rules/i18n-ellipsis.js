@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow using three dots in translate strings
  * @author Automattic

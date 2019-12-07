@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * sections-helper
  *

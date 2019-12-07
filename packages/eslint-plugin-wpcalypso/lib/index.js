@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview ESLint rules for the WordPress.com Calypso project
  * @author Automattic

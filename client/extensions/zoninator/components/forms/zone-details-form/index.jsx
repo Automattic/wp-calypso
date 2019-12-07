@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -79,4 +81,7 @@ const createReduxForm = reduxForm( {
 	},
 } );
 
-export default flowRight( localize, createReduxForm )( ZoneDetailsForm );
+export default flowRight(
+	localize,
+	createReduxForm
+)( ZoneDetailsForm );

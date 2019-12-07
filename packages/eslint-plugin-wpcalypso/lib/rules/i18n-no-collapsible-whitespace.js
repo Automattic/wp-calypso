@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow collapsible whitespace in translatable strings.
  * @author Automattic
@@ -31,7 +32,7 @@ const rule = ( module.exports = function( context ) {
 					return;
 				}
 
-				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?: {2}))/ );
+				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ );
 
 				if ( collapsibleWhitespace ) {
 					problemsByCharCode = {

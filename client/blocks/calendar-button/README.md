@@ -63,6 +63,7 @@ This property defines to this component as a `button`. You shouldn't change this
 * `events`
 * `ignoreContext`
 * `isVisible`
+* `rootClassName`
 * `selectedDay`
 * `showDelay`
 * `siteId`

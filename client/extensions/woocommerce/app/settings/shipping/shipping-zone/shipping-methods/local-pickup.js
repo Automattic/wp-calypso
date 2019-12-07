@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -34,12 +36,15 @@ LocalPickupMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect( null, ( dispatch, ownProps ) => ( {
-	actions: bindActionCreatorsWithSiteId(
-		{
-			setShippingCost,
-		},
-		dispatch,
-		ownProps.siteId
-	),
-} ) )( localize( LocalPickupMethod ) );
+export default connect(
+	null,
+	( dispatch, ownProps ) => ( {
+		actions: bindActionCreatorsWithSiteId(
+			{
+				setShippingCost,
+			},
+			dispatch,
+			ownProps.siteId
+		),
+	} )
+)( localize( LocalPickupMethod ) );

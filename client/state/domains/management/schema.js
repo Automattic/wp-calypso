@@ -1,3 +1,4 @@
+/** @format */
 export const domainWhoisSchema = {
 	type: 'object',
 	additionalProperties: true,

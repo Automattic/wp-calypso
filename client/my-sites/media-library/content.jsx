@@ -1,12 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,7 +26,6 @@ import {
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
-import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
@@ -406,12 +407,8 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	render() {
-		const classNames = classnames( 'media-library__content', {
-			'has-no-upload-button': ! this.props.displayUploadMediaButton,
-		} );
-
 		return (
-			<div className={ classNames }>
+			<div className="media-library__content">
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
@@ -431,7 +428,6 @@ export default connect(
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
-			displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one

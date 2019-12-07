@@ -205,6 +205,9 @@ const mapDispatchToProps = {
 	undoAction: actions.ui.undoAction,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, null, { pure: false } )(
-	localize( UndoListItem )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	null,
+	{ pure: false }
+)( localize( UndoListItem ) );

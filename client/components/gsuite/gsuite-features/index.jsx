@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -77,11 +79,15 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 				compact={ compact }
 			/>
 			<GSuiteSingleFeature
-				title={ compact ? translate( 'Video calls' ) : translate( 'Connect with your team' ) }
+				title={
+					compact ? translate( 'Video and voice calls' ) : translate( 'Connect with your team' )
+				}
 				description={
 					compact
 						? undefined
-						: translate( 'Use text chats or video calls, with built in screen sharing.' )
+						: translate(
+								'Use text chats, voice calls, or video calls, with built in screen sharing.'
+						  )
 				}
 				imagePath={ '/calypso/images/g-suite/logo_hangouts_48dp.svg' }
 				imageAlt={ 'Google Hangouts Logo' }

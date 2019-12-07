@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -48,11 +50,11 @@ class Referrers extends Component {
 		selectedReferrer: {},
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setData( nextProps, this.state.filter );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.setData( this.props, this.state.filter );
 	}
 

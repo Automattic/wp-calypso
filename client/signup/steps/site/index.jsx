@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -51,7 +53,7 @@ class Site extends React.Component {
 		submitting: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
@@ -303,4 +305,7 @@ class Site extends React.Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( Site ) );
+export default connect(
+	null,
+	{ saveSignupStep, submitSignupStep }
+)( localize( Site ) );

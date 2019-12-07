@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Source: https://github.com/Automattic/wp-calypso/blob/master/client/components/spinner/index.jsx
  */

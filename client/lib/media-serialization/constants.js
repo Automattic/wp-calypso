@@ -1,3 +1,4 @@
+/** @format */
 export const Formats = {
 	DOM: 'DOM',
 	STRING: 'STRING',

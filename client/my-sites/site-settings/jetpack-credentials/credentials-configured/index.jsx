@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +47,7 @@ class CredentialsConfigured extends Component {
 					<p>
 						{ translate(
 							"Your site's server was automatically connected to Jetpack to " +
-								'perform backups, restores, and security scans. You do not have to ' +
+								'perform backups, rewinds, and security scans. You do not have to ' +
 								'configure anything further, but you may revoke the credentials if necessary.'
 						) }
 					</p>
@@ -132,6 +133,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { deleteCredentials } )(
-	localize( CredentialsConfigured )
-);
+export default connect(
+	mapStateToProps,
+	{ deleteCredentials }
+)( localize( CredentialsConfigured ) );

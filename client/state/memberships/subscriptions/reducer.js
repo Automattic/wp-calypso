@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -8,7 +10,7 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -18,50 +20,25 @@ import { combineReducers, withoutPersistence } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = withoutPersistence( ( state = [], action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE: {
-			const { subscriptions } = action;
-			return subscriptions;
-		}
-		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
-			const { subscriptionId } = action;
-			return state.filter( sub => sub.ID !== subscriptionId );
-		}
-	}
-
-	return state;
+export const items = createReducer( [], {
+	[ MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE ]: ( state, { subscriptions } ) => subscriptions,
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS ]: ( state, { subscriptionId } ) =>
+		state.filter( sub => sub.ID !== subscriptionId ),
 } );
 
-export const stoppingSubscription = withoutPersistence( ( state = [], action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_SUBSCRIPTION_STOP: {
-			const { subscriptionId } = action;
-
-			return {
-				...state,
-				[ subscriptionId ]: 'start',
-			};
-		}
-		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
-			const { subscriptionId } = action;
-
-			return {
-				...state,
-				[ subscriptionId ]: 'success',
-			};
-		}
-		case MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE: {
-			const { subscriptionId } = action;
-
-			return {
-				...state,
-				[ subscriptionId ]: 'fail',
-			};
-		}
-	}
-
-	return state;
+export const stoppingSubscription = createReducer( [], {
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'start',
+	} ),
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'success',
+	} ),
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'fail',
+	} ),
 } );
 
 export default combineReducers( {

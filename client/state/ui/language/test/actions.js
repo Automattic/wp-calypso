@@ -1,3 +1,10 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
@@ -7,7 +14,7 @@ import { LOCALE_SET } from 'state/action-types';
 describe( 'actions', () => {
 	describe( 'setLocale', () => {
 		test( 'returns an appropriate action', () => {
-			expect( setLocale( 'he' ) ).toEqual( {
+			expect( setLocale( 'he' ) ).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
 				localeVariant: null,
@@ -15,7 +22,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'returns an action with localeVariant set', () => {
-			expect( setLocale( 'he', 'he_formal' ) ).toEqual( {
+			expect( setLocale( 'he', 'he_formal' ) ).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
 				localeVariant: 'he_formal',
@@ -31,7 +38,7 @@ describe( 'actions', () => {
 						localeSlug: 'he',
 					},
 				} )
-			).toEqual( {
+			).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
 				localeVariant: null,
@@ -46,7 +53,7 @@ describe( 'actions', () => {
 						localeVariant: 'he_formal',
 					},
 				} )
-			).toEqual( {
+			).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
 				localeVariant: 'he_formal',

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ import Gridicon from 'components/gridicon';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import Notice from 'components/notice';
 import ScreenReaderText from 'components/screen-reader-text';
 import {

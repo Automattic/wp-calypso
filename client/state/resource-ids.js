@@ -1,3 +1,5 @@
+/** @format */
+
 export const readerTags = () => 'reader-tags';
 
 // for example…

@@ -1,17 +1,16 @@
 .importer__mapping-header {
-	border-bottom: 1px solid var( --color-border );
-	margin-bottom: 0;
-	padding-bottom: 0.5em;
+	border-bottom: 1px solid var( --color-neutral-light );
+	margin-bottom: 16px;
+	padding-bottom: 8px;
 
-	font-size: 12px;
-	color: var( --color-text-subtle );
+	font-size: 11px;
+	color: var( --color-neutral-light );
 
 	@include clear-fix;
 }
 
 .importer__mapping-description {
-	font-size: 14px;
-	margin-bottom: 1.5em;
+	margin-bottom: 16px;
 
 	strong {
 		white-space: nowrap;

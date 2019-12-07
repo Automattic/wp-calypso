@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import productListSchema from './schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
@@ -38,36 +38,24 @@ function addOrEditProduct( list = [], newProduct ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEMBERSHIPS_PRODUCTS_RECEIVE: {
-			const { siteId, products } = action;
-
-			return {
-				...state,
-				[ siteId ]: products,
-			};
-		}
-		case MEMBERSHIPS_PRODUCT_RECEIVE: {
-			const { siteId, product } = action;
-
-			return {
-				...state,
-				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
-			};
-		}
-		case MEMBERSHIPS_PRODUCT_DELETE: {
-			const { siteId, product } = action;
-
-			return {
-				...state,
-				[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
-			};
-		}
-	}
-
-	return state;
-} );
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ MEMBERSHIPS_PRODUCTS_RECEIVE ]: ( state, { siteId, products } ) => ( {
+			...state,
+			[ siteId ]: products,
+		} ),
+		[ MEMBERSHIPS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
+			...state,
+			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+		} ),
+		[ MEMBERSHIPS_PRODUCT_DELETE ]: ( state, { siteId, product } ) => ( {
+			...state,
+			[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
+		} ),
+	},
+	productListSchema
+);
 
 export default combineReducers( {
 	items,

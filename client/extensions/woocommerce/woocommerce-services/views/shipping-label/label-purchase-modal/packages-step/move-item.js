@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
@@ -178,4 +180,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( MoveItemDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( MoveItemDialog ) );

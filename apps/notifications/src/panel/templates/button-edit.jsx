@@ -37,4 +37,7 @@ EditButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { editComment } )( localize( EditButton ) );
+export default connect(
+	null,
+	{ editComment }
+)( localize( EditButton ) );

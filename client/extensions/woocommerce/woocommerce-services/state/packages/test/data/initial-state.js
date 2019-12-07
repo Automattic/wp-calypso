@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	showModal: false,
 	packageData: null,

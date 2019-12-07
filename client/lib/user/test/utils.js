@@ -1,54 +1,76 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import sinon from 'sinon';
+
+/**
  * Internal dependencies
  */
 import UserUtils from '../utils';
-import config from 'config';
-import User from 'lib/user';
-
-const user = User();
+import configMock from 'config';
 
 jest.mock( 'config', () => {
-	const mock = jest.fn();
-	mock.isEnabled = jest.fn();
+	const { stub } = require( 'sinon' );
+
+	const mock = stub();
+	mock.isEnabled = stub();
 
 	return mock;
 } );
 
-const configMock = values => key => values[ key ];
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: async () => ( {} ),
+	} ),
+} ) );
 
 describe( 'UserUtils', () => {
+	let user;
+
+	beforeAll( () => {
+		user = require( 'lib/user' )();
+	} );
+
+	beforeEach( () => {
+		configMock.returns( '/url-with-|subdomain|' );
+	} );
+
 	describe( 'without logout url', () => {
 		beforeAll( () => {
-			config.isEnabled.mockImplementation( configMock( { always_use_logout_url: false } ) );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( false );
 		} );
 
 		test( 'uses userData.logout_URL when available', () => {
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( '/userdata' );
+			sinon.stub( user, 'get' ).returns( { logout_URL: '/userdata' } );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/userdata' );
+			user.get.restore();
 		} );
 	} );
 
 	describe( 'with logout url', () => {
 		beforeAll( () => {
-			config.isEnabled.mockImplementation( configMock( { always_use_logout_url: true } ) );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( true );
 		} );
 
 		test( 'works when |subdomain| is not present', () => {
-			config.mockImplementation( configMock( { logout_url: 'wp.com/without-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata', localeSlug: 'es' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'wp.com/without-domain' );
+			configMock.returns( '/url-without-domain' );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-without-domain' );
 		} );
 
-		test( 'replaces |subdomain| when present and have non-default locale', () => {
-			config.mockImplementation( configMock( { logout_url: '|subdomain|wp.com/with-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata', localeSlug: 'es' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'es.wp.com/with-domain' );
+		test( 'replaces |subdomain| when present and have domain', () => {
+			sinon.stub( user, 'get' ).returns( { localeSlug: 'es' } );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-with-es.' );
+			user.get.restore();
 		} );
 
-		test( 'replaces |subdomain| when present but no locale', () => {
-			config.mockImplementation( configMock( { logout_url: '|subdomain|wp.com/with-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'wp.com/with-domain' );
+		test( 'replaces |subdomain| when present but no domain', () => {
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-with-' );
 		} );
 	} );
 } );

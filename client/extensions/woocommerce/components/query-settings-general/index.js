@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -39,7 +41,7 @@ class QuerySettingsGeneral extends Component {
 		);
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { siteId, loaded, error } = this.props;
 
 		if ( siteId ) {
@@ -51,7 +53,7 @@ class QuerySettingsGeneral extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( { siteId, loaded, error } ) {
+	componentWillReceiveProps( { siteId, loaded, error } ) {
 		if ( ! siteId ) {
 			return;
 		}

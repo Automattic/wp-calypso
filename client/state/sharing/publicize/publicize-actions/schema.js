@@ -1,3 +1,4 @@
+/** @format */
 export const publicizeActionsSchema = {
 	type: 'object',
 	patternProperties: {

@@ -1,3 +1,5 @@
+/** @format **/
+
 /**
  * Returns whether user is using a WordPress mobile app.
  *

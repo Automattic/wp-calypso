@@ -1,14 +1,12 @@
 /**
- * External dependencies
+ * @module templates/index
  */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { find, findIndex, matchesProperty } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import BackButton from './button-back';
 import NavButton from './nav-button';
 import NoteList from './note-list';
@@ -78,12 +76,12 @@ class Layout extends React.Component {
 		selectedNote: null,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
 
-		if ( 'undefined' === typeof this.props.global.navigation ) {
+		if ( 'undefined' == typeof this.props.global.navigation ) {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
@@ -104,7 +102,7 @@ class Layout extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
 				previousDetailScrollTop: this.detailView ? this.detailView.scrollTop : 0,
@@ -129,7 +127,7 @@ class Layout extends React.Component {
 		} );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
 		const noteList = ReactDOM.findDOMNode( this.noteList );
@@ -436,12 +434,12 @@ class Layout extends React.Component {
 		this.noteList = ref;
 	};
 
-	storeDetailViewRef = ref => {
-		this.detailView = ref;
-	};
-
 	storeNoteListVisibilityUpdater = updater => {
 		this.noteListVisibilityUpdater = updater;
+	};
+
+	storeDetailViewRef = ref => {
+		this.detailView = ref;
 	};
 
 	render() {
@@ -484,7 +482,7 @@ class Layout extends React.Component {
 										className="wpnc__prev"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ 0 ].id !== this.props.selectedNoteId ) ||
+												filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
 											false
 										}
 										navigate={ this.navigateToPrevNote }
@@ -494,7 +492,7 @@ class Layout extends React.Component {
 										className="wpnc__next"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ filteredNotes.length - 1 ].id !==
+												filteredNotes[ filteredNotes.length - 1 ].id !=
 													this.props.selectedNoteId ) ||
 											false
 										}
@@ -537,4 +535,7 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( Layout );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( Layout );

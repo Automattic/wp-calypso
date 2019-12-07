@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,4 +46,7 @@ class QueryMembershipsSettings extends Component {
 	}
 }
 
-export default connect( null, { requestSettings } )( QueryMembershipsSettings );
+export default connect(
+	null,
+	{ requestSettings }
+)( QueryMembershipsSettings );

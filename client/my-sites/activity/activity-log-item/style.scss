@@ -312,7 +312,6 @@
 
 .activity-log-item__action {
 	display: flex;
-	justify-content: flex-end;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 16px;
@@ -332,10 +331,6 @@
 			transform: translateY( -50% );
 		}
 	}
-}
-
-.activity-log-item__clone-action {
-	flex-shrink: 0;
 }
 
 .activity-log-item__help-action {

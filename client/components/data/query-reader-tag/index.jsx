@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,4 +24,7 @@ QueryReaderTag.propTypes = {
 	tag: PropTypes.string.isRequired,
 };
 
-export default connect( null, { requestTags } )( QueryReaderTag );
+export default connect(
+	null,
+	{ requestTags }
+)( QueryReaderTag );

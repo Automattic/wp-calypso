@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -234,10 +235,13 @@ const mapState = state => {
 	};
 };
 
-export default connect( mapState, {
-	recordTracksEvent,
-	setLayoutFocus,
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
-} )( localize( PreviewMain ) );
+export default connect(
+	mapState,
+	{
+		recordTracksEvent,
+		setLayoutFocus,
+		showInlineHelpPopover,
+		showChecklistPrompt,
+		showOnboardingWelcomePrompt,
+	}
+)( localize( PreviewMain ) );

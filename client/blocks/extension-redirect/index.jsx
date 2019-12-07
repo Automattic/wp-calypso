@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -29,7 +31,7 @@ class ExtensionRedirect extends Component {
 		siteSlug: PropTypes.string,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// Check for the following:
 		// Is the plugin active? (That implicitly also checks if the plugin is installed)
 		// Do we require a minimum version? Have we received the plugin's version? Is it sufficient?

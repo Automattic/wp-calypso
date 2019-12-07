@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,6 +18,7 @@ import Image from 'components/image';
  */
 import './account-dialog-account.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {
 	const classes = classNames( 'account-dialog-account', {
 		'is-connected': account.isConnected,
@@ -53,6 +56,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 		</li>
 	);
 };
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 AccountDialogAccount.propTypes = {
 	account: PropTypes.shape( {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -51,7 +53,7 @@ export class CommentTree extends Component {
 		selectedComments: [],
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
@@ -277,4 +279,7 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentTree ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentTree ) );

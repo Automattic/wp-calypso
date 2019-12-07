@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -47,7 +49,6 @@ class ThemesSelection extends Component {
 		// connected props
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
-		recommendedThemes: PropTypes.array,
 		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
@@ -63,12 +64,9 @@ class ThemesSelection extends Component {
 	};
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		// TODO do we need different query if from RecommendedThemes?
-		const { query, filterString } = this.props;
-		const themes = this.props.recommendedThemes || this.props.themes;
+		const { query, themes, filterString } = this.props;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
-
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
@@ -108,9 +106,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
-			this.props.incrementPage();
-		}
+		this.props.incrementPage();
 	};
 
 	//intercept preview and add primary and secondary
@@ -150,15 +146,11 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				{ ! this.props.recommendedThemes && (
-					<>
-						<QueryThemes query={ query } siteId={ source } />
-						<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
-					</>
-				) }
+				<QueryThemes query={ query } siteId={ source } />
+				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
+					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -189,9 +181,7 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	themeId => getPremiumThemePrice( state, themeId, siteId );
 }
 
-// Exporting this for use in recommended-themes.jsx
-// We do not want pagination triggered in that use of the component.
-export const ConnectedThemesSelection = connect(
+const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -247,7 +237,7 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||

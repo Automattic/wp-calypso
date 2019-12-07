@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -48,7 +50,7 @@ class SiteVerification extends Component {
 		invalidatedSiteObject: this.props.site,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
 		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
 		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
@@ -59,7 +61,7 @@ class SiteVerification extends Component {
 		this.refreshSite();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId: prevSiteId, translate } = this.props;
 		const { site: nextSite, siteId: nextSiteId } = nextProps;
 		const { dirtyFields } = this.state;

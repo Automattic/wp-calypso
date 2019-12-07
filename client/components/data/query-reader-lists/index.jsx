@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ import { isRequestingSubscribedLists } from 'state/reader/lists/selectors';
 import { requestSubscribedLists } from 'state/reader/lists/actions';
 
 class QueryReaderLists extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.isRequestingSubscribedLists ) {
 			return;
 		}

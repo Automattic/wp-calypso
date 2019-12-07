@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -6,7 +7,7 @@ import { assign, map, partial } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
@@ -15,9 +16,10 @@ import {
 } from 'state/action-types';
 import { key } from './utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_RELATED_POSTS_RECEIVE: {
+export const items = createReducer(
+	{},
+	{
+		[ READER_RELATED_POSTS_RECEIVE ]: ( state, action ) => {
 			state = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId, action.payload.scope ) ]: map(
 					action.payload.posts,
@@ -25,11 +27,9 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 				),
 			} );
 			return state;
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 function setRequestFlag( val, state, action ) {
 	const { siteId, postId, scope } = action.payload;
@@ -38,18 +38,14 @@ function setRequestFlag( val, state, action ) {
 	} );
 }
 
-export const queuedRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_RELATED_POSTS_REQUEST:
-			return partial( setRequestFlag, true )( state, action );
-		case READER_RELATED_POSTS_REQUEST_SUCCESS:
-			return partial( setRequestFlag, false )( state, action );
-		case READER_RELATED_POSTS_REQUEST_FAILURE:
-			return partial( setRequestFlag, false )( state, action );
+export const queuedRequests = createReducer(
+	{},
+	{
+		[ READER_RELATED_POSTS_REQUEST ]: partial( setRequestFlag, true ),
+		[ READER_RELATED_POSTS_REQUEST_SUCCESS ]: partial( setRequestFlag, false ),
+		[ READER_RELATED_POSTS_REQUEST_FAILURE ]: partial( setRequestFlag, false ),
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	items,

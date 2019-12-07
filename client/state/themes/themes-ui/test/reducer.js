@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import reducer, { backPath, themesBannerVisible, themesShowcaseOpen } from '../reducer';
-import { SERIALIZE, DESERIALIZE, THEMES_SHOWCASE_OPEN } from 'state/action-types';
+import reducer, { backPath, themesBannerVisible } from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -66,17 +68,5 @@ describe( '#themesBannerVisible', () => {
 		} );
 
 		expect( state ).toBe( true ); // Falls back to `initialState`, which is `true`.
-	} );
-} );
-
-describe( '#themesShowcaseOpen', () => {
-	test( 'initializes to false', () => {
-		const state = themesShowcaseOpen( undefined, {} );
-		expect( state ).toBe( false );
-	} );
-
-	test( 'action type THEMES_SHOWCASE_OPEN sets value to true', () => {
-		const state = themesShowcaseOpen( false, { type: THEMES_SHOWCASE_OPEN } );
-		expect( state ).toBe( true );
 	} );
 } );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -32,7 +34,7 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 		<div className="blog-stickers">
 			<QueryBlogStickers blogId={ blogId } />
 			{ isTeamMember && stickers && stickers.length > 0 && (
-				<InfoPopover>
+				<InfoPopover rootClassName="blog-stickers__popover">
 					<BlogStickersList stickers={ stickers } />
 				</InfoPopover>
 			) }

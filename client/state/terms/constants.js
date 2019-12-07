@@ -1,3 +1,4 @@
+/** @format */
 export const DEFAULT_TERMS_QUERY = {
 	context: 'display',
 	http_envelope: false,

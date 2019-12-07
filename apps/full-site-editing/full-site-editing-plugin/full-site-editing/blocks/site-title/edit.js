@@ -1,107 +1,73 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	AlignmentToolbar,
-	BlockControls,
-	FontSizePicker,
-	InspectorControls,
-	PanelColorSettings,
-	RichText,
-	withColors,
-	withFontSizes,
-} from '@wordpress/block-editor';
+import { PlainText } from '@wordpress/editor';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { Fragment } from '@wordpress/element';
-import { PanelBody } from '@wordpress/components';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
  */
-import { withSiteOptions } from '../../lib';
+import useSiteOptions from '../useSiteOptions';
 
 function SiteTitleEdit( {
-	attributes,
 	className,
-	fontSize,
-	insertDefaultBlock,
+	createErrorNotice,
+	shouldUpdateSiteOption,
+	isSelected,
 	setAttributes,
-	setFontSize,
-	setTextColor,
-	siteTitle,
-	textColor,
+	isLocked,
+	insertDefaultBlock,
 } ) {
-	const { customFontSize, textAlign } = attributes;
+	const inititalTitle = __( 'Site title loading…' );
+	const { siteOptions, handleChange } = useSiteOptions(
+		'title',
+		inititalTitle,
+		createErrorNotice,
+		isSelected,
+		shouldUpdateSiteOption,
+		setAttributes
+	);
 
-	const actualFontSize = customFontSize || fontSize.size;
+	const { option } = siteOptions;
 
-	const { value, updateValue } = siteTitle;
+	const onKeyDown = event => {
+		if ( event.keyCode !== ENTER ) {
+			return;
+		}
+		event.preventDefault();
+		if ( ! isLocked ) {
+			insertDefaultBlock();
+		}
+	};
 
 	return (
 		<Fragment>
-			<BlockControls>
-				<AlignmentToolbar
-					value={ textAlign }
-					onChange={ nextAlign => {
-						setAttributes( { textAlign: nextAlign } );
-					} }
-				/>
-			</BlockControls>
-			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
-				</PanelBody>
-				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
-					initialOpen={ false }
-					colorSettings={ [
-						{
-							value: textColor.color,
-							onChange: setTextColor,
-							label: __( 'Text Color' ),
-						},
-					] }
-				/>
-			</InspectorControls>
-			<RichText
-				allowedFormats={ [] }
-				aria-label={ __( 'Site Title' ) }
-				className={ classNames( 'site-title', className, {
-					'has-text-color': textColor.color,
-					[ `has-text-align-${ textAlign }` ]: textAlign,
-					[ textColor.class ]: textColor.class,
-					[ fontSize.class ]: ! customFontSize && fontSize.class,
-				} ) }
-				identifier="content"
-				onChange={ updateValue }
-				onReplace={ insertDefaultBlock }
-				onSplit={ noop }
+			<PlainText
+				className={ classNames( 'site-title', className ) }
+				value={ option }
+				onChange={ value => handleChange( value ) }
+				onKeyDown={ onKeyDown }
 				placeholder={ __( 'Add a Site Title' ) }
-				style={ {
-					color: textColor.color,
-					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
-				} }
-				tagName="h1"
-				value={ value }
+				aria-label={ __( 'Site Title' ) }
 			/>
 		</Fragment>
 	);
 }
 
 export default compose( [
-	withColors( { textColor: 'color' } ),
-	withFontSizes( 'fontSize' ),
 	withSelect( ( select, { clientId } ) => {
+		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
+			'core/editor'
+		);
 		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
 		const rootClientId = getBlockRootClientId( clientId );
 
@@ -109,13 +75,14 @@ export default compose( [
 			blockIndex: getBlockIndex( clientId, rootClientId ),
 			isLocked: !! getTemplateLock( rootClientId ),
 			rootClientId,
+			shouldUpdateSiteOption:
+				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
+				! isAutosavingPost(),
 		};
 	} ),
 	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
+		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
 		insertDefaultBlock: () =>
 			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
-	withSiteOptions( {
-		siteTitle: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
-	} ),
 ] )( SiteTitleEdit );

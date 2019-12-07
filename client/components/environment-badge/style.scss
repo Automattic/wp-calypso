@@ -54,26 +54,22 @@
 				transform: scale( 1.1 );
 			}
 		}
-
-		@mixin env-bug-style( $color-name ) {
-			background-color: var( --studio-#{ $color-name }-20 );
-			color: var( --studio-#{ $color-name }-90 );
-		}
-
 		&.is-staging {
-			@include env-bug-style( 'orange' );
+			background-color: var( --color-warning-20 );
+			color: var( --color-warning-80 );
 		}
 		&.is-wpcalypso {
-			@include env-bug-style( 'celadon' );
+			background-color: var( --color-green-5 );
+			color: var( --color-green-80 );
 		}
 		&.is-dev {
-			@include env-bug-style( 'purple' );
+			background-color: var( --color-error );
+			color: var( --color-text-inverted );
 		}
 		&.is-horizon,
 		&.is-feedback {
-			@include env-bug-style( 'blue' );
+			background-color: var( --color-primary-light );
 		}
-
 		&.branch-name {
 			text-transform: inherit;
 			background-color: var( --color-neutral-70 );

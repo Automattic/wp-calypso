@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -45,7 +47,7 @@ class AccountSettingsClose extends Component {
 		showConfirmDialog: false,
 	};
 
-	UNSAFE_componentWillReceiveProps = nextProps => {
+	componentWillReceiveProps = nextProps => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();

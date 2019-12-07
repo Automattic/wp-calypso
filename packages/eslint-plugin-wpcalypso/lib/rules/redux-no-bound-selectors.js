@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow creation of selectors bound to Redux state
  * @author Automattic

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,11 +13,11 @@ import { requestSiteInvites } from 'state/invites/actions';
 import { isRequestingInvitesForSite } from 'state/invites/selectors';
 
 class QuerySiteInvites extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}

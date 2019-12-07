@@ -1,3 +1,5 @@
+/** @format */
+
 const invitesArraySchema = {
 	type: 'array',
 	items: {

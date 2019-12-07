@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -38,8 +40,8 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
-	isWpComEcommercePlan,
 	getPlanClass,
+	planHasFeature,
 } from 'lib/plans';
 import {
 	getCurrentPlan,
@@ -60,6 +62,8 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -74,7 +78,7 @@ import PlanFeaturesScroller from './scroller';
  * Style dependencies
  */
 import './style.scss';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 
 const defaultState = {
 	checkoutUrl: '/checkout',
@@ -89,7 +93,7 @@ export class PlanFeatures extends Component {
 		this.setState( defaultState );
 	};
 
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
+	componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setDefaultState();
 		}
@@ -544,7 +548,7 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 
 		const {
 			availableForPurchase,
@@ -563,22 +567,20 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
-
 		if ( siteIsPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
 				return;
 			}
 			this.setState( {
-				checkoutUrl: checkoutUrlWithArgs,
+				checkoutUrl,
 				choosingPlanSlug: productSlug,
 				showingSiteLaunchDialog: true,
 			} );
 			return;
 		}
 
-		page( checkoutUrlWithArgs );
+		page( checkoutUrl );
 	}
 
 	renderTopButtons() {
@@ -941,7 +943,10 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const siteIsPrivateAndGoingAtomic =
+					siteIsPrivate &&
+					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
+						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
 
 				return {
 					availableForPurchase,

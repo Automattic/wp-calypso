@@ -18,7 +18,7 @@ export default class Image extends Component {
 		isError: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// reset the error state if we switch images
 		// TODO: support srcsets?
 		if ( nextProps.src !== this.props.src ) {

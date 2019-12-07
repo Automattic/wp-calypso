@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +14,7 @@ import {
 	NAMESERVERS_FETCH_COMPLETED,
 	NAMESERVERS_FETCH_FAILED,
 	NAMESERVERS_UPDATE_COMPLETED,
-} from './action-types';
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	isFetching: false,

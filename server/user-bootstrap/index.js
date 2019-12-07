@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,6 @@ import config from 'config';
 const debug = debugFactory( 'calypso:bootstrap' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
-	SUPPORT_SESSION_COOKIE_NAME = 'support_session_id',
 	/**
 	 * WordPress.com REST API /me endpoint.
 	 */
@@ -38,19 +38,10 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 module.exports = async function( request ) {
 	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
 	const geoCountry = request.get( 'x-geoip-country-code' ) || '';
-	const supportSessionHeader = request.get( 'x-support-session' );
-	const supportSessionCookie = request.cookies[ SUPPORT_SESSION_COOKIE_NAME ];
+	const supportSession = request.get( 'x-support-session' );
 
 	if ( ! authCookieValue ) {
 		throw new Error( 'Cannot bootstrap without an auth cookie' );
-	}
-
-	if ( supportSessionHeader && supportSessionCookie ) {
-		// We don't expect to see a support session header and cookie at the same time.
-		// They are separate support session auth options.
-		throw new Error(
-			'Cannot bootstrap with both a support session header and support session cookie.'
-		);
 	}
 
 	const decodedAuthCookieValue = decodeURIComponent( authCookieValue );
@@ -59,14 +50,9 @@ module.exports = async function( request ) {
 	const req = superagent.get( url );
 	req.set( 'User-Agent', 'WordPress.com Calypso' );
 	req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
+	req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + decodedAuthCookieValue );
 
-	const cookies = [ `${ AUTH_COOKIE_NAME }=${ decodedAuthCookieValue }` ];
-	if ( supportSessionCookie ) {
-		cookies.push( `${ SUPPORT_SESSION_COOKIE_NAME }=${ supportSessionCookie }` );
-	}
-	req.set( 'Cookie', cookies.join( '; ' ) );
-
-	if ( supportSessionHeader ) {
+	if ( supportSession ) {
 		if ( typeof SUPPORT_SESSION_API_KEY !== 'string' ) {
 			throw new Error(
 				'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
@@ -74,11 +60,11 @@ module.exports = async function( request ) {
 		}
 
 		const hmac = crypto.createHmac( 'md5', SUPPORT_SESSION_API_KEY );
-		hmac.update( supportSessionHeader );
+		hmac.update( supportSession );
 		const hash = hmac.digest( 'hex' );
 
 		req.set( 'Authorization', `X-WPCALYPSO-SUPPORT-SESSION ${ hash }` );
-		req.set( 'x-support-session', supportSessionHeader );
+		req.set( 'x-support-session', supportSession );
 	} else {
 		if ( typeof API_KEY !== 'string' ) {
 			throw new Error( 'Unable to boostrap user because of invalid API key in secrets.json' );

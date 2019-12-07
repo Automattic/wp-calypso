@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,13 +14,13 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.popover-cart .header-button' ) );
+		super( driver, by.css( '.cart-toggle-button' ) );
 	}
 
 	async open() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.popover-cart .header-button' ),
+			by.css( '.cart-toggle-button' ),
 			this.explicitWaitMS
 		);
 	}

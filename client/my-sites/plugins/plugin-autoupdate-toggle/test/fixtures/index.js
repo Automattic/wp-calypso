@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	site: {
 		slug: 'test',

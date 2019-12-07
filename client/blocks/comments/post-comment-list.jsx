@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -161,7 +162,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 	}
@@ -170,7 +171,7 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
 			this.props.siteId !== nextProps.siteId ||

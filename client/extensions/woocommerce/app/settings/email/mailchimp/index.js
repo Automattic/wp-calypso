@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 
 import { connect } from 'react-redux';
@@ -57,9 +58,9 @@ class MailChimp extends React.Component {
 		} = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = isRequestingMailChimpSettings || isRequestingPlugins;
-		const mailChimpIsReady = ! isRequestingData && settings && settings.active_tab === 'sync';
+		const mailChimpIsReady = ! isRequestingData && ( settings && settings.active_tab === 'sync' );
 		const gettingStarted =
-			! setupWizardStarted && ! isRequestingData && settings && settings.active_tab !== 'sync';
+			! setupWizardStarted && ! isRequestingData && ( settings && settings.active_tab !== 'sync' );
 
 		// TODO Eventually re-implement a new dashboard widget for extension
 		// that accomodates sites without the plugin installed

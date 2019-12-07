@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS,
@@ -9,26 +12,32 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED } from 'woocommerce/state/action-types';
 
-export default withoutPersistence( function( state = {}, action ) {
-	switch ( action.type ) {
-		case WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST:
-			return {
-				...state,
-				[ action.instanceId ]: LOADING,
-			};
+const reducers = {};
 
-		case WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS:
-			return {
-				...state,
-				[ action.instanceId ]: true,
-			};
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST ] = (
+	state,
+	{ instanceId }
+) => {
+	return {
+		...state,
+		[ instanceId ]: LOADING,
+	};
+};
 
-		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED:
-			return {
-				...state,
-				[ action.data.id ]: true,
-			};
-	}
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ] = (
+	state,
+	{ instanceId }
+) => {
+	return {
+		...state,
+		[ instanceId ]: true,
+	};
+};
 
-	return state;
-} );
+reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data } ) => {
+	return reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ]( state, {
+		instanceId: data.id,
+	} );
+};
+
+export default createReducer( {}, reducers );

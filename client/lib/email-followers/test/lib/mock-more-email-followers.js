@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	page: 2,
 	pages: 2,

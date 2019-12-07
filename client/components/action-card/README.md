@@ -1,3 +1,5 @@
+<!-- @format -->
+
 # Action Card
 
 This is a [`Card` component](../../components/card) that has a call-to-action button.

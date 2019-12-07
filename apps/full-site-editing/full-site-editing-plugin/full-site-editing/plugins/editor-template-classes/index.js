@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global fullSiteEditing */
 /**
  * External dependencies
@@ -15,17 +14,13 @@ import { registerPlugin } from '@wordpress/plugins';
 const EditorTemplateClasses = withSelect( select => {
 	const { getEntityRecord } = select( 'core' );
 	const { getEditedPostAttribute } = select( 'core/editor' );
-	const templateClasses = map( getEditedPostAttribute( 'template_part_types' ), typeId => {
-		const typeName = get(
-			getEntityRecord( 'taxonomy', 'wp_template_part_type', typeId ),
-			'name',
-			''
-		);
+	const templateClasses = map( getEditedPostAttribute( 'template_types' ), typeId => {
+		const typeName = get( getEntityRecord( 'taxonomy', 'wp_template_type', typeId ), 'name', '' );
 		if ( endsWith( typeName, '-header' ) ) {
-			return 'fse-header';
+			return 'site-header site-branding';
 		}
 		if ( endsWith( typeName, '-footer' ) ) {
-			return 'fse-footer';
+			return 'site-footer';
 		}
 	} );
 	return { templateClasses };
@@ -40,13 +35,13 @@ const EditorTemplateClasses = withSelect( select => {
 		}
 		clearInterval( blockListInception );
 
-		blockList.className = classNames( 'a8c-template-editor fse-template-part', ...templateClasses );
+		blockList.className = classNames( 'a8c-template-editor', ...templateClasses );
 	} );
 
 	return null;
 } );
 
-if ( 'wp_template_part' === fullSiteEditing.editorPostType ) {
+if ( 'wp_template' === fullSiteEditing.editorPostType ) {
 	registerPlugin( 'fse-editor-template-classes', {
 		render: EditorTemplateClasses,
 	} );

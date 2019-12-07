@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -67,12 +69,7 @@ export class ImageSelectorPreview extends Component {
 		// already have the data for the media item, so first update the state
 		this.updateImageState( () => {
 			const { itemIds, siteId } = this.props;
-			if (
-				isEqual(
-					this.state.images.map( image => image.ID ),
-					itemIds
-				)
-			) {
+			if ( isEqual( this.state.images.map( image => image.ID ), itemIds ) ) {
 				return;
 			}
 

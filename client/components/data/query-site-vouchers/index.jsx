@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -18,11 +20,11 @@ class QuerySiteVouchers extends Component {
 		this.requestVouchers = this.requestVouchers.bind( this );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.requestVouchers();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.requestingSiteVouchers ||
 			! nextProps.siteId ||

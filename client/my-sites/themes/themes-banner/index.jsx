@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -123,7 +125,10 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	recordTracksEvent: recordTracksEventAction,
-	hideThemesBanner: hideThemesBannerAction,
-} )( localize( ThemesBanner ) );
+export default connect(
+	mapStateToProps,
+	{
+		recordTracksEvent: recordTracksEventAction,
+		hideThemesBanner: hideThemesBannerAction,
+	}
+)( localize( ThemesBanner ) );

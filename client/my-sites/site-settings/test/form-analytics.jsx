@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -11,6 +12,18 @@ jest.mock( 'components/banner', () => 'Banner' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
+jest.mock( 'i18n-calypso', () => ( {
+	localize: Comp => props => (
+		<Comp
+			{ ...props }
+			translate={ function( x ) {
+				return x;
+			} }
+		/>
+	),
+	numberFormat: x => x,
+} ) );
+
 /**
  * External dependencies
  */
@@ -18,6 +31,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -64,7 +79,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		showUpgradeNudge: true,
 	};
 
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
@@ -75,12 +90,12 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 			);
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
-				PLAN_PREMIUM
+				PLAN_BUSINESS
 			);
 		} );
 	} );
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
@@ -91,7 +106,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 			);
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
-				PLAN_PREMIUM_2_YEARS
+				PLAN_BUSINESS_2_YEARS
 			);
 		} );
 	} );

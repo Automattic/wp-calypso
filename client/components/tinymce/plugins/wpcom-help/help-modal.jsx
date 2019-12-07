@@ -1,6 +1,7 @@
 /**
  * /* eslint-disable no-multi-spaces
  *
+ * @format
  */
 
 /**
@@ -14,7 +15,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class HelpModal extends React.Component {

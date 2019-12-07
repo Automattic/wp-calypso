@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -338,10 +340,7 @@ describe( 'handlers', () => {
 		test( 'should dispatch a success action on a good response', () => {
 			const dispatch = spy();
 
-			const products = [
-				{ id: 1, name: 'Mittens' },
-				{ id: 2, name: 'Scarf' },
-			];
+			const products = [ { id: 1, name: 'Mittens' }, { id: 2, name: 'Scarf' } ];
 			const data = {
 				status: 200,
 				body: products,

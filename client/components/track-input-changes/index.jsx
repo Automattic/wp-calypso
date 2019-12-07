@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,7 +19,7 @@ export default class TrackInputChanges extends Component {
 		onNewValue: noop,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.inputEdited = false;
 	}
 

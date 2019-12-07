@@ -3,6 +3,7 @@
  *
  *
  *
+ * @format
  * @see ./constants.js (MediaView)
  * @param {Object}    state Global state tree
  * @return {MediaView}       Current media view

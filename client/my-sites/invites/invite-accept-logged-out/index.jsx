@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -50,7 +52,12 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( form, userData ) => {
+	submitForm = ( form, userData, analyticsData, callback ) => {
+		if ( form.username.value === '' ) {
+			// If user hasn't entered anything, don't try to submit
+			callback();
+			return;
+		}
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
@@ -171,6 +178,7 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+export default connect(
+	null,
+	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( localize( InviteAcceptLoggedOut ) );

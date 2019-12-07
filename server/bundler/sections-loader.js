@@ -1,3 +1,4 @@
+/** @format */
 const config = require( 'config' );
 const { getOptions } = require( 'loader-utils' );
 

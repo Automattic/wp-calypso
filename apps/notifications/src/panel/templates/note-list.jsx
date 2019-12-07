@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import ReactDOM from 'react-dom';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,9 +5,6 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { findIndex, groupBy, reduce, zip } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import getIsLoading from '../state/selectors/get-is-loading';
@@ -27,10 +21,18 @@ import Spinner from './spinner';
 import StatusBar from './status-bar';
 import UndoListItem from './undo-list-item';
 
-const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+var DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 // from $wpnc__title-bar-height in boot/sizes.scss
-const TITLE_OFFSET = 38;
+var TITLE_OFFSET = 38;
+
+const getDOMNodeOrElse = ref => {
+	try {
+		return ReactDOM.findDOMNode( ref );
+	} catch ( e ) {
+		return undefined;
+	}
+};
 
 export class NoteList extends React.Component {
 	static defaultProps = {
@@ -45,9 +47,7 @@ export class NoteList extends React.Component {
 		statusMessage: '',
 	};
 
-	noteElements = {};
-
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
@@ -66,7 +66,7 @@ export class NoteList extends React.Component {
 		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame
 			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );
@@ -153,11 +153,11 @@ export class NoteList extends React.Component {
 	};
 
 	ensureSelectedNoteVisibility = () => {
-		let scrollTarget = null;
-		const selectedNote = this.props.selectedNote;
-		const noteElement = this.noteElements[ selectedNote ];
-		let listElement = null;
-		let topPadding;
+		var scrollTarget = null,
+			selectedNote = this.props.selectedNote,
+			noteElement = getDOMNodeOrElse( ( this.notes || {} )[ selectedNote ] ),
+			listElement = null,
+			topPadding;
 
 		if ( null === selectedNote || ! noteElement ) {
 			scrollTarget = this.state.scrollY + 1;
@@ -166,7 +166,7 @@ export class NoteList extends React.Component {
 			listElement = this.noteList;
 			topPadding = listElement.offsetTop + TITLE_OFFSET;
 
-			const yOffset = listElement.parentNode.scrollTop;
+			var yOffset = listElement.parentNode.scrollTop;
 
 			if ( noteElement.offsetTop - yOffset <= topPadding ) {
 				/* Scroll up if note is above viewport */
@@ -182,12 +182,15 @@ export class NoteList extends React.Component {
 		}
 	};
 
-	storeNote = noteId => ref => {
-		if ( ref ) {
-			this.noteElements[ noteId ] = ref;
-		} else {
-			delete this.noteElements[ noteId ];
+	storeNote = ref => {
+		if ( ! ref ) {
+			return;
 		}
+
+		this.notes = {
+			...this.notes,
+			[ ref.props[ 'data-note-id' ] ]: ref,
+		};
 	};
 
 	storeNoteList = ref => {
@@ -242,7 +245,7 @@ export class NoteList extends React.Component {
 		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
 
 		const createNoteComponent = note => {
-			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
+			if ( this.state.undoNote && note.id == this.state.undoNote.id ) {
 				return (
 					<UndoListItem
 						ref={ this.storeUndoBar }
@@ -261,8 +264,9 @@ export class NoteList extends React.Component {
 				return (
 					<Note
 						note={ note }
-						ref={ this.storeNote( note.id ) }
+						ref={ this.storeNote }
 						key={ 'note-' + note.id }
+						data-note-id={ note.id }
 						detailView={ false }
 						client={ this.props.client }
 						global={ this.props.global }
@@ -372,6 +376,9 @@ const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(
-	localize( NoteList )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	null,
+	{ pure: false }
+)( localize( NoteList ) );

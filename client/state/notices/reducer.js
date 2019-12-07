@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,26 +10,27 @@ import { omit, reduce } from 'lodash';
  * Internal dependencies
  */
 import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case NOTICE_CREATE: {
+export const items = createReducer(
+	{},
+	{
+		[ NOTICE_CREATE ]: ( state, action ) => {
 			const { notice } = action;
 			return {
 				...state,
 				[ notice.noticeId ]: notice,
 			};
-		}
-		case NOTICE_REMOVE: {
+		},
+		[ NOTICE_REMOVE ]: ( state, action ) => {
 			const { noticeId } = action;
 			if ( ! state.hasOwnProperty( noticeId ) ) {
 				return state;
 			}
 
 			return omit( state, noticeId );
-		}
-		case ROUTE_SET: {
+		},
+		[ ROUTE_SET ]: state => {
 			return reduce(
 				state,
 				( memo, notice, noticeId ) => {
@@ -48,25 +51,22 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 				},
 				{}
 			);
-		}
+		},
 	}
+);
 
-	return state;
-} );
-
-export const lastTimeShown = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case NOTICE_CREATE: {
+export const lastTimeShown = createReducer(
+	{},
+	{
+		[ NOTICE_CREATE ]: ( state, action ) => {
 			const { notice } = action;
 			return {
 				...state,
 				[ notice.noticeId ]: Date.now(),
 			};
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 export default combineReducers( {
 	items,

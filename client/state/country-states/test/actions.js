@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,20 +25,14 @@ describe( 'actions', () => {
 	describe( '#receiveCountryStates()', () => {
 		test( 'should return an action object', () => {
 			const action = receiveCountryStates(
-				[
-					{ code: 'AK', name: 'Alaska' },
-					{ code: 'AS', name: 'American Samoa' },
-				],
+				[ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
 				'US'
 			);
 
 			expect( action ).to.eql( {
 				type: COUNTRY_STATES_RECEIVE,
 				countryCode: 'us',
-				countryStates: [
-					{ code: 'AK', name: 'Alaska' },
-					{ code: 'AS', name: 'American Samoa' },
-				],
+				countryStates: [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
 			} );
 		} );
 	} );
@@ -47,10 +42,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/domains/supported-states/us' )
-				.reply( 200, [
-					{ code: 'AK', name: 'Alaska' },
-					{ code: 'AS', name: 'American Samoa' },
-				] )
+				.reply( 200, [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ] )
 				.get( '/rest/v1.1/domains/supported-states/ca' )
 				.reply( 500, {
 					error: 'server_error',
@@ -72,10 +64,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: COUNTRY_STATES_RECEIVE,
 					countryCode: 'us',
-					countryStates: [
-						{ code: 'AK', name: 'Alaska' },
-						{ code: 'AS', name: 'American Samoa' },
-					],
+					countryStates: [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
 				} );
 			} );
 		} );

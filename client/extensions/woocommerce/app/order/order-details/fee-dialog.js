@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { trim, uniqueId } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -41,7 +42,7 @@ class OrderFeeDialog extends Component {
 		total: 0,
 	};
 
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -71,7 +73,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 								className="gmb-location__verified-icon"
 								icon="checkmark-circle"
 								size={ 18 }
-							/>{ ' ' }
+							/>{' '}
 							{ translate( 'Verified' ) }
 						</div>
 					) }

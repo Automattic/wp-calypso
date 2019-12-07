@@ -1,7 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { createReducer, combineReducers } from 'state/utils';
 import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_COMPLETED,
@@ -9,45 +10,24 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
 
-const inProgress = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case IMPORTS_UPLOAD_COMPLETED:
-			return false;
-		case IMPORTS_UPLOAD_FAILED:
-			return false;
-		case IMPORTS_UPLOAD_START:
-			return true;
-	}
-
-	return state;
+const inProgress = createReducer( false, {
+	[ IMPORTS_UPLOAD_COMPLETED ]: () => false,
+	[ IMPORTS_UPLOAD_FAILED ]: () => false,
+	[ IMPORTS_UPLOAD_START ]: () => true,
 } );
 
-const percentComplete = withoutPersistence( ( state = 0, action ) => {
-	switch ( action.type ) {
-		case IMPORTS_UPLOAD_SET_PROGRESS:
-			return ( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100;
-		case IMPORTS_UPLOAD_COMPLETED:
-			return 0;
-		case IMPORTS_UPLOAD_FAILED:
-			return 0;
-		case IMPORTS_UPLOAD_START:
-			return 0;
-	}
-
-	return state;
+const percentComplete = createReducer( 0, {
+	[ IMPORTS_UPLOAD_SET_PROGRESS ]: ( state, action ) =>
+		( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100,
+	[ IMPORTS_UPLOAD_COMPLETED ]: () => 0,
+	[ IMPORTS_UPLOAD_FAILED ]: () => 0,
+	[ IMPORTS_UPLOAD_START ]: () => 0,
 } );
 
-const filename = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case IMPORTS_UPLOAD_COMPLETED:
-			return '';
-		case IMPORTS_UPLOAD_FAILED:
-			return '';
-		case IMPORTS_UPLOAD_START:
-			return action.filename;
-	}
-
-	return state;
+const filename = createReducer( '', {
+	[ IMPORTS_UPLOAD_COMPLETED ]: () => '',
+	[ IMPORTS_UPLOAD_FAILED ]: () => '',
+	[ IMPORTS_UPLOAD_START ]: ( state, action ) => action.filename,
 } );
 
 export default combineReducers( {

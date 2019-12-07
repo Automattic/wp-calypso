@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,7 +37,7 @@ export default class extends React.Component {
 
 	state = getStateData( this.props.siteId );
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		MediaListStore.on( 'change', this.updateStateData );
 		this.updateStateData();
@@ -45,7 +47,7 @@ export default class extends React.Component {
 		MediaListStore.off( 'change', this.updateStateData );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {

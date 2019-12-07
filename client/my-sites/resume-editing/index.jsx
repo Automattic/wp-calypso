@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -42,7 +44,7 @@ class ResumeEditing extends React.Component {
 		translate: PropTypes.func,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed.
 		if ( get( nextProps.draft, 'status', 'draft' ) !== 'draft' ) {

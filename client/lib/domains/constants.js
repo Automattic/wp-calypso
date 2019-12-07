@@ -1,3 +1,5 @@
+/** @format */
+
 export const type = {
 	MAPPED: 'MAPPED',
 	REGISTERED: 'REGISTERED',

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,11 +15,11 @@ import { isCountryStatesFetching } from 'state/country-states/selectors';
 import { requestCountryStates } from 'state/country-states/actions';
 
 class QueryCountryStates extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.countryCode !== nextProps.countryCode ) {
 			this.request( nextProps );
 		}

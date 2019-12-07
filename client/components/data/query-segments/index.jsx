@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -18,7 +20,7 @@ export class QuerySegments extends Component {
 		segments: PropTypes.array,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.segments ) {
 			this.props.requestSegments();
 		}

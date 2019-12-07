@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* global fullSiteEditing */
 /**
@@ -11,7 +10,7 @@ import { get, noop } from 'lodash';
  * WordPress dependencies
  */
 import { parse, createBlock } from '@wordpress/blocks';
-import { BlockEdit } from '@wordpress/block-editor';
+import { BlockEdit } from '@wordpress/editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -33,7 +32,7 @@ const TemplateEdit = compose(
 		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
-		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
+		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
 		const editTemplateUrl = addQueryArgs( fullSiteEditing.editTemplateBaseUrl, {
 			post: templateId,
 			fse_parent_post: currentPostId,
@@ -63,7 +62,7 @@ const TemplateEdit = compose(
 				}
 
 				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
-				const templateBlock = createBlock( 'core/group', {}, templateBlocks );
+				const templateBlock = createBlock( 'core/template', {}, templateBlocks );
 
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
@@ -124,34 +123,13 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
-			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
-			/**
-			 * This must be after setNavigateToTemplate so that local navigation
-			 * (without wpcom overrides) still works correctly.
-			 */
 			event.preventDefault();
 			savePost();
 		};
-
-		/**
-		 * IMPORTANT: Be careful about changes to the overlay button. There is code in
-		 * iframe-bridge-server.js (setupEditTemplateLinks) which looks for two
-		 * elements matching '.template__block-container .template-block__overlay a'.
-		 * This code updates the href of the button to match the calypso URL (which is
-		 * sent through the iFrame port) since editTemplateUrl here will be the wpadmin URL.
-		 *
-		 * If you make changes to the button, navigation to the template editor MAY BREAK.
-		 *
-		 * For example, if the button does not exist in the DOM as the editor is loaded,
-		 * the links may not be updated in time, or an interval will continuously try to
-		 * find them (which is bad for performance).
-		 *
-		 * This has already broken several times, so be careful!
-		 */
 
 		return (
 			<div
@@ -174,10 +152,10 @@ const TemplateEdit = compose(
 								/>
 							</div>
 						</Disabled>
-						<Placeholder className="template-block__overlay" onClick={ save }>
+						<Placeholder className="template-block__overlay">
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
-									<Spinner /> { sprintf( __( 'Loading editor for: %s' ), templateTitle ) }
+									<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
 								</div>
 							) }
 							<Button

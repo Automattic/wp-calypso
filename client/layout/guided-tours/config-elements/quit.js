@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -35,7 +37,7 @@ export default class Quit extends Component {
 		this.removeTargetListener();
 	}
 
-	UNSAFE_componentWillUpdate() {
+	componentWillUpdate() {
 		this.removeTargetListener();
 	}
 

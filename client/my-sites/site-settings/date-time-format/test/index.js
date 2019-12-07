@@ -1,8 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import chai from 'chai';
-import moment from 'moment';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies

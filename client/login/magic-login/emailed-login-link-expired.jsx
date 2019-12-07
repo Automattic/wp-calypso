@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -82,4 +83,7 @@ const mapDispatchToProps = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect( null, mapDispatchToProps )( localize( EmailedLoginLinkExpired ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( EmailedLoginLinkExpired ) );

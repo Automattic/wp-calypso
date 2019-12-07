@@ -1,11 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import page from 'page';
 import { findIndex, find } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +17,6 @@ import { findIndex, find } from 'lodash';
 import Card from 'components/card';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
@@ -71,7 +74,7 @@ class StoreStatsChart extends Component {
 	};
 
 	createTooltipDate = item => {
-		const { unit, moment } = this.props;
+		const { unit } = this.props;
 		const dateFormat = UNITS[ unit ].shortFormat;
 		const date = moment( item.period );
 		if ( unit === 'week' ) {
@@ -161,4 +164,4 @@ class StoreStatsChart extends Component {
 		);
 	}
 }
-export default withLocalizedMoment( StoreStatsChart );
+export default StoreStatsChart;

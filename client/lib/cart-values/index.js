@@ -1,10 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import url from 'url';
 import { extend, get, isArray, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
-import { translate } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 import config from 'config';
 
 /**
@@ -232,7 +234,7 @@ export function getNewMessages( previousCartValue, nextCartValue ) {
 
 	const previousDate = previousCartValue.client_metadata.last_server_response_date;
 	const nextDate = nextCartValue.client_metadata.last_server_response_date;
-	const hasNewServerData = new Date( nextDate ) > new Date( previousDate );
+	const hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
 
 	return hasNewServerData ? nextCartMessages : [];
 }
@@ -342,7 +344,7 @@ export function paymentMethodName( method ) {
 	const paymentMethodsNames = {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
-		'credit-card': translate( 'Credit or debit card' ),
+		'credit-card': i18n.translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
@@ -357,7 +359,7 @@ export function paymentMethodName( method ) {
 		// user), so it's fine to just hardcode this to "Apple Pay" in the
 		// meantime.
 		'web-payment': 'Apple Pay',
-		wechat: translate( 'WeChat Pay', {
+		wechat: i18n.translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
 		sofort: 'Sofort',

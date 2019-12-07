@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -45,11 +47,11 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.setState( { expanded: this.isExpanded( this.props ) } );
 	}
 
-	UNSAFE_componentWillReceiveProps( props ) {
+	componentWillReceiveProps( props ) {
 		if ( props.selectedPaymentMethod !== this.props.selectedPaymentMethod ) {
 			this.setState( { expanded: this.isExpanded( props ) } );
 		}

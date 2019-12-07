@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	found: 7,
 	users: [

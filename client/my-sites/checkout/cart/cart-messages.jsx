@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,7 +30,7 @@ class CartMessages extends PureComponent {
 		this.displayCartMessages( this.props.cart );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.cart.hasLoadedFromServer ) {
 			return;
 		}

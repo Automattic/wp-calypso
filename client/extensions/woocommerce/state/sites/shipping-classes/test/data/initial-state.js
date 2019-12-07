@@ -1,3 +1,4 @@
+/** @format */
 export default [
 	{
 		id: 1,

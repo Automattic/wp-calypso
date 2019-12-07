@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -45,7 +46,7 @@ class OrderRefundTable extends Component {
 		this.initializeState( props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.order.id !== this.props.order.id ) {
 			this.initializeState( nextProps );
 		}

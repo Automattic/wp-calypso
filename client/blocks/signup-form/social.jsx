@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,9 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import GoogleLoginButton from 'components/social-buttons/google';
-import { localizeUrl } from 'lib/i18n-utils';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -62,26 +62,16 @@ class SocialSignupForm extends Component {
 	};
 
 	shouldUseRedirectFlow() {
-		const { currentRoute } = this.props;
-
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
 		// let's use the redirect flow instead in that case
-		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-
-		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social signup.
-		// See p1HpG7-7nj-p2 for more information.
-		if ( isPopup && '/jetpack/connect/authorize' === currentRoute ) {
-			isPopup = false;
-		}
+		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
 
 		return isPopup;
 	}
 
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
+		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
 			<div className="signup-form__social">
@@ -93,23 +83,14 @@ class SocialSignupForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
 						redirectUri={ redirectUri }
+						uxMode={ uxMode }
 						onClick={ () => this.trackSocialLogin( 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
 					/>
 
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
 					/>
 
 					<p className="signup-form__social-buttons-tos">
@@ -119,13 +100,7 @@ class SocialSignupForm extends Component {
 								' {{a}}Terms of Service{{/a}}.',
 							{
 								components: {
-									a: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
+									a: <a href="https://wordpress.com/tos" />,
 								},
 							}
 						) }
@@ -137,8 +112,6 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	state => ( {
-		currentRoute: getCurrentRoute( state ),
-	} ),
+	null,
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

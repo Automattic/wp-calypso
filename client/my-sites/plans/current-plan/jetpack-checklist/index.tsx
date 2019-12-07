@@ -200,9 +200,9 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
-							title={ translate( "We're automatically turning on Anti-spam." ) }
+							title={ translate( "We're automatically turning on spam filtering." ) }
 							completedButtonText={ translate( 'View spam stats' ) }
-							completedTitle={ translate( "We've automatically turned on Anti-spam." ) }
+							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
 							completed={ akismetFinished }
 							href={ `//${ siteSlug.replace(
 								'::',

@@ -5,29 +5,22 @@
 	position: relative;
 }
 
-// Override some very specific theme styles.
-.post-type-page .editor-styles-wrapper .template-block .fse-template-part {
-	padding: 0;
-}
-
 .template__block-container {
 	&.is-hovered {
 		cursor: pointer;
 	}
 
-	&.is-hovered,
-	&.is-selected,
-	.is-navigating-to-template {
+	&.is-hovered, &.is-selected, .is-navigating-to-template {
 		.components-disabled {
 			filter: blur( 2px );
-			transition: filter 0.2s linear;
+			transition: filter 0.2s linear 0.7s;
 		}
 		.template-block__overlay {
 			opacity: 1;
 			transition: opacity 0.2s linear;
 			.components-button {
 				opacity: 1;
-				transition: opacity 0.2s linear;
+				transition: opacity 0.2s linear 0.7s;
 			}
 		}
 	}
@@ -92,10 +85,9 @@
 }
 
 // Hide the site logo description and buttons when not editing the Template
-.block-editor-page:not( .post-type-wp_template_part ) {
+.block-editor-page:not( .post-type-wp_template ) {
 	.fse-site-logo {
-		.components-placeholder__fieldset,
-		.components-placeholder__instructions {
+		.components-placeholder__fieldset, .components-placeholder__instructions {
 			display: none;
 		}
 	}

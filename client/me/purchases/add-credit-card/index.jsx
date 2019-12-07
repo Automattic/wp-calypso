@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,9 @@ import Main from 'components/main';
 import titles from 'me/purchases/titles';
 import { billingHistory } from 'me/purchases/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { StripeHookProvider } from 'lib/stripe';
+import { withStripe } from 'lib/stripe';
+
+const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
@@ -34,15 +37,13 @@ function AddCreditCard( props ) {
 			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
 			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
-				<CreditCardForm
-					createCardToken={ createAddCardToken }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					saveStoredCard={ props.addStoredCard }
-					successCallback={ goToBillingHistory }
-					showUsedForExistingPurchasesInfo={ true }
-				/>
-			</StripeHookProvider>
+			<CreditCardFormWithStripe
+				createCardToken={ createAddCardToken }
+				recordFormSubmitEvent={ recordFormSubmitEvent }
+				saveStoredCard={ props.addStoredCard }
+				successCallback={ goToBillingHistory }
+				showUsedForExistingPurchasesInfo={ true }
+			/>
 		</Main>
 	);
 }
@@ -55,4 +56,7 @@ const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(
+	null,
+	mapDispatchToProps
+)( AddCreditCard );

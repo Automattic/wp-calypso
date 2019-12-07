@@ -1,10 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
-import { useRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,6 +14,7 @@ import { useRtl } from 'i18n-calypso';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
@@ -159,7 +162,7 @@ const inlineComponents = [ Emojify ];
  * It will set directionality only to the leaf components - because it does so according
  * to text content and only leaf components have those.
  *
- * @param {React.Element} child element to transform
+ * @param {React.Element} child
  * @param {boolean}       isRtl whether current language is RTL
  * @returns {React.Element} transformed child
  */
@@ -207,7 +210,11 @@ const setChildDirection = ( child, isRtl ) => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-export default function AutoDirection( { children } ) {
-	const isRtl = useRtl();
-	return setChildDirection( children, isRtl );
-}
+export const AutoDirection = props => {
+	const { children, isRtl } = props;
+	const directionedChild = setChildDirection( children, isRtl );
+
+	return directionedChild;
+};
+
+export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( AutoDirection );

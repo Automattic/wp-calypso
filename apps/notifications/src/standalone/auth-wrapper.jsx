@@ -52,7 +52,7 @@ export const AuthWrapper = Wrapped =>
 	class extends Component {
 		state = {};
 
-		UNSAFE_componentWillMount() {
+		componentWillMount() {
 			if ( 'production' !== process.env.NODE_ENV ) {
 				return this.setState( { oAuthToken: getStoredToken() }, this.maybeRedirectToOAuthLogin );
 			}

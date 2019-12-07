@@ -14,7 +14,7 @@ import {
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, createReducerWithValidation, withSchemaValidation } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
@@ -32,23 +32,22 @@ import emailVerification from './email-verification/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return action.user.ID;
-	}
+export const id = createReducerWithValidation(
+	null,
+	{
+		[ CURRENT_USER_RECEIVE ]: ( state, action ) => action.user.ID,
+	},
+	idSchema
+);
 
-	return state;
-} );
-
-export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return get( action.user, 'meta.data.flags.active_flags', [] );
-	}
-
-	return state;
-} );
+export const flags = createReducerWithValidation(
+	[],
+	{
+		[ CURRENT_USER_RECEIVE ]: ( state, action ) =>
+			get( action.user, 'meta.data.flags.active_flags', [] ),
+	},
+	flagsSchema
+);
 
 /**
  * Tracks the currency code of the current user
@@ -58,25 +57,25 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
  * @return {Object}        Updated state
  *
  */
-export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case PRODUCTS_LIST_RECEIVE: {
+export const currencyCode = createReducerWithValidation(
+	null,
+	{
+		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => {
 			return get(
 				action.productsList,
 				[ first( keys( action.productsList ) ), 'currency_code' ],
 				state
 			);
-		}
-		case PLANS_RECEIVE: {
+		},
+		[ PLANS_RECEIVE ]: ( state, action ) => {
 			return get( action.plans, [ 0, 'currency_code' ], state );
-		}
-		case SITE_PLANS_FETCH_COMPLETED: {
+		},
+		[ SITE_PLANS_FETCH_COMPLETED ]: ( state, action ) => {
 			return get( action.plans, [ 0, 'currencyCode' ], state );
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	currencyCodeSchema
+);
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.

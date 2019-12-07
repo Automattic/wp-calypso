@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -130,7 +131,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 	};
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
+	componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
 		if ( ! nextState.hasSubmitted || isFetching ) {
@@ -235,4 +236,7 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( HandleEmailedLinkForm ) );

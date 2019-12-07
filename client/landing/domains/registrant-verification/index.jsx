@@ -35,7 +35,7 @@ class RegistrantVerificationPage extends Component {
 		this.state = this.getLoadingState();
 	}
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { domain, email, token } = this.props;
 		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
 			response => {

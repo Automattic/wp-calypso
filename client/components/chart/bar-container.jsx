@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -37,6 +39,7 @@ export default class ChartBarContainer extends React.PureComponent {
 							count={ this.props.data.length }
 							chartWidth={ this.props.chartWidth }
 							setTooltip={ this.props.setTooltip }
+							isRtl={ this.props.isRtl }
 						/>
 					) ) }
 				</div>

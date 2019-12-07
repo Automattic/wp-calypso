@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Build a key for feed search queries
  *

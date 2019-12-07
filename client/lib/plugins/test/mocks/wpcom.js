@@ -1,3 +1,4 @@
+/** @format */
 var pluginsInstallCalls = 0,
 	pluginsAutoupdateCalls = 0,
 	pluginsActivateCalls = 0,

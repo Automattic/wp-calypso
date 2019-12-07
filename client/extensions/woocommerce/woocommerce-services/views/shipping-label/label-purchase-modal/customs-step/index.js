@@ -91,4 +91,7 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	confirmCustoms: () => dispatch( confirmCustoms( orderId, siteId ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CustomsStep ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CustomsStep ) );

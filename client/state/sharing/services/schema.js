@@ -1,3 +1,4 @@
+/** @format */
 export const itemSchema = {
 	type: 'object',
 	additionalProperties: false,

@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import moment from 'moment';
+import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import { linkProps } from './functions';
+
 import FollowLink from './follow-link';
 
 function getDisplayURL( url ) {
@@ -45,8 +39,7 @@ export class UserBlock extends React.Component {
 			return '';
 		}
 
-		const localeSlug = getLocaleSlug();
-		momentTime = moment( timestamp ).locale( localeSlug );
+		momentTime = this.props.moment( timestamp );
 
 		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
 			// 30 Apr 2015

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Shared notice types
  *

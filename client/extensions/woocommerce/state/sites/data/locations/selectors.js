@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -65,15 +67,18 @@ const _getSelectorDependants = numArgs => ( state, ...args ) => {
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of continents, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getContinents = createSelector( ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsLoaded( state, siteId ) ) {
-		return [];
-	}
-	const continents = getRawLocations( state, siteId ).map( continent =>
-		omit( continent, 'countries' )
-	);
-	return sortBy( continents, 'name' );
-}, _getSelectorDependants( 0 ) );
+export const getContinents = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsLoaded( state, siteId ) ) {
+			return [];
+		}
+		const continents = getRawLocations( state, siteId ).map( continent =>
+			omit( continent, 'countries' )
+		);
+		return sortBy( continents, 'name' );
+	},
+	_getSelectorDependants( 0 )
+);
 
 /**
  * @param {Object} state Whole Redux state tree

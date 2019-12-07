@@ -42,6 +42,10 @@
 	&.is-selected {
 		background-color: var( --color-sidebar-menu-selected-background );
 
+		.site__badge {
+			color: var( --color-sidebar-menu-selected-text );
+		}
+
 		.site__title,
 		.site__domain {
 			color: var( --color-sidebar-menu-selected-text );
@@ -72,7 +76,7 @@
 	cursor: pointer;
 
 	.site__badge {
-		color: var( --color-sidebar-text );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 
 	.site__title,

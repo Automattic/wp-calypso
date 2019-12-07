@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -31,10 +33,7 @@ describe( 'reducer', () => {
 			const state = items( undefined, {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
-				types: [
-					{ name: 'post', label: 'Posts' },
-					{ name: 'page', label: 'Pages' },
-				],
+				types: [ { name: 'post', label: 'Posts' }, { name: 'page', label: 'Pages' } ],
 			} );
 
 			expect( state ).to.eql( {

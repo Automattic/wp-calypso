@@ -1,3 +1,5 @@
+/** @format */
+
 // This is the site view shown after clicking on the site name from side bar
 
 /**

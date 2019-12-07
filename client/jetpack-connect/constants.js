@@ -1,3 +1,4 @@
+/** @format */
 export const JETPACK_MINIMUM_WORDPRESS_VERSION = '4.7';
 export const JPC_PATH_PLANS = '/jetpack/connect/plans';
 export const JPC_PATH_SITE_TYPE = '/jetpack/connect/site-type';

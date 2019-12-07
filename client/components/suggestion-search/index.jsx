@@ -1,18 +1,19 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { escapeRegExp, noop } from 'lodash';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
+import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
-import { Suggestions } from '@automattic/components';
-import { tracks } from 'lib/analytics';
 
 /**
  * Style dependencies
@@ -25,12 +26,7 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		onSelect: PropTypes.func,
-		suggestions: PropTypes.arrayOf(
-			PropTypes.shape( {
-				label: PropTypes.string.isRequired,
-				category: PropTypes.string,
-			} )
-		),
+		suggestions: PropTypes.array,
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
@@ -80,18 +76,10 @@ class SuggestionSearch extends Component {
 		this.suggestionsRef.handleKeyEvent( event );
 	};
 
-	handleSuggestionMouseDown = ( suggestion, suggestionIndex ) => {
-		this.updateInputValue( suggestion.label );
+	handleSuggestionMouseDown = position => {
+		this.updateInputValue( position.label );
 		this.hideSuggestions();
-		this.props.onChange( suggestion.label, true );
-		const { railcar } = this.props;
-		if ( railcar ) {
-			const { action, id } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_interact', {
-				action,
-				railcar: `${ id }-${ suggestionIndex }`,
-			} );
-		}
+		this.props.onChange( position.label, true );
 	};
 
 	getSuggestions() {
@@ -99,7 +87,7 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		return this.props.suggestions;
+		return this.props.suggestions.map( hint => ( { label: hint } ) );
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
@@ -110,20 +98,6 @@ class SuggestionSearch extends Component {
 		this.updateInputValue( newValue );
 		this.props.onChange( newValue, true );
 	}
-
-	onSuggestionItemMount = ( { index, suggestionIndex } ) => {
-		const { railcar } = this.props;
-		if ( railcar ) {
-			const { fetch_algo, id, ui_algo } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_render', {
-				fetch_algo,
-				ui_algo,
-				railcar: `${ id }-${ suggestionIndex }`,
-				fetch_position: suggestionIndex,
-				ui_position: index,
-			} );
-		}
-	};
 
 	render() {
 		const { id, placeholder, autoFocus, isSearching } = this.props;
@@ -148,7 +122,6 @@ class SuggestionSearch extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
-					onSuggestionItemMount={ this.onSuggestionItemMount }
 				/>
 			</div>
 		);

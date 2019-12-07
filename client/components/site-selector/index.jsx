@@ -536,5 +536,8 @@ const mapState = state => {
 export default flow(
 	localize,
 	searchSites,
-	connect( mapState, { navigateToSite } )
+	connect(
+		mapState,
+		{ navigateToSite }
+	)
 )( SiteSelector );

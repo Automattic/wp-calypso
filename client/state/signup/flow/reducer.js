@@ -1,14 +1,13 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { SIGNUP_CURRENT_FLOW_NAME_SET } from 'state/action-types';
-import { currentFlowNameSchema } from './schema';
 
-export const currentFlowName = withSchemaValidation(
-	currentFlowNameSchema,
-	( state = '', { flowName, type } ) => ( type === SIGNUP_CURRENT_FLOW_NAME_SET ? flowName : state )
-);
+export const currentFlowName = ( state = '', { type, flowName } ) =>
+	type === SIGNUP_CURRENT_FLOW_NAME_SET ? flowName : state;
 
 export default combineReducers( {
 	currentFlowName,

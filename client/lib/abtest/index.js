@@ -1,10 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
 import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
-import { getLocaleSlug } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -67,22 +70,13 @@ export const getAllTests = () => keys( activeTests ).map( ABTest );
 const isUserSignedIn = () => user && user.get() !== false;
 
 const parseDateStamp = datestamp => {
-	const format = 'YYYYMMDD';
+	const date = moment( datestamp, 'YYYYMMDD' );
 
-	if ( datestamp.length === format.length ) {
-		const year = datestamp.substr( 0, 4 );
-		const month = datestamp.substr( 4, 2 );
-		const day = datestamp.substr( 6, 2 );
-		const toParse = `${ year }-${ month }-${ day }`;
-
-		const date = Date.parse( toParse );
-
-		if ( ! isNaN( date ) ) {
-			return date;
-		}
+	if ( ! date.isValid() ) {
+		throw new Error( 'The date ' + datestamp + ' should be in the YYYYMMDD format' );
 	}
 
-	throw new Error( `The date ${ datestamp } should be in the ${ format } format` );
+	return date;
 };
 
 const languageSlugs = getLanguageSlugs();
@@ -207,7 +201,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
-	const localeFromSession = getLocaleSlug() || 'en';
+	const localeFromSession = i18n.getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
 	const userLocale = user.get().localeSlug || 'en';
 
@@ -280,7 +274,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 };
 
 ABTest.prototype.hasTestStartedYet = function() {
-	return new Date() > new Date( this.startDate );
+	return moment().isAfter( this.startDate );
 };
 
 ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
@@ -300,7 +294,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
-	return user && user.get() && new Date( user.get().date ) < new Date( this.startDate );
+	return user && user.get() && moment( user.get().date ).isBefore( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function() {

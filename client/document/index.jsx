@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 
 import React, { Fragment } from 'react';
@@ -77,7 +78,7 @@ class Document extends React.Component {
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
-			'woocommerce-onboarding' === requestFrom;
+			'woocommerce-setup-wizard' === requestFrom;
 
 		return (
 			<html

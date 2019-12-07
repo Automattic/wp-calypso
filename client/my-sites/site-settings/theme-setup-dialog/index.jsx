@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
@@ -127,4 +129,7 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );
+export default connect(
+	mapStateToProps,
+	{ toggleDialog, runThemeSetup }
+)( ThemeSetupDialog );

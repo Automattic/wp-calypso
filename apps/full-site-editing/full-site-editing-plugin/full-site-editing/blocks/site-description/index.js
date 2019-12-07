@@ -32,29 +32,6 @@ registerBlockType( 'a8c/site-description', {
 			type: 'string',
 			default: 'wide',
 		},
-		textAlign: {
-			type: 'string',
-			default: 'center',
-		},
-		textColor: {
-			type: 'string',
-		},
-		customTextColor: {
-			type: 'string',
-		},
-		backgroundColor: {
-			type: 'string',
-		},
-		customBackgroundColor: {
-			type: 'string',
-		},
-		fontSize: {
-			type: 'string',
-			default: 'small',
-		},
-		customFontSize: {
-			type: 'number',
-		},
 	},
 	edit,
 	save: () => null,

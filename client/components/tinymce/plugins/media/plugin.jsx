@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,6 +24,7 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
+import advanced from './advanced';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -900,6 +902,7 @@ function mediaButton( editor ) {
 	} );
 
 	restrictSize( editor );
+	advanced( editor );
 }
 
 export default function() {

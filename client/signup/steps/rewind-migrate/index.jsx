@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +40,7 @@ class RewindMigrate extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentWillUpdate( nextProps ) {
 		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
 			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();

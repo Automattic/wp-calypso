@@ -1,3 +1,4 @@
+/** @format */
 let storeData = {};
 
 export default {

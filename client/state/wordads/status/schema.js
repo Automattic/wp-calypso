@@ -1,3 +1,4 @@
+/** @format */
 export const wordadsUnsafeValues = [ false, 'mature', 'private', 'spam', 'other' ];
 export const wordadsStatusSchema = {
 	type: 'object',

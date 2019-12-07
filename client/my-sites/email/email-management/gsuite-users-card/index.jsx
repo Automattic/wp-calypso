@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,7 +25,6 @@ import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -201,4 +202,4 @@ export default connect(
 		user: getCurrentUser( state ),
 	} ),
 	{ addGoogleAppsUserClick, manageClick }
-)( localize( withLocalizedMoment( GSuiteUsersCard ) ) );
+)( localize( GSuiteUsersCard ) );

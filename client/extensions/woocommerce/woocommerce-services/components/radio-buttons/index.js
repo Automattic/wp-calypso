@@ -1,3 +1,5 @@
+/** @format */
+
 /* eslint-disable react/no-danger */
 /**
  * External dependencies

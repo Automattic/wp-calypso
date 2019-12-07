@@ -1,3 +1,4 @@
+/** @format */
 export const States = {
 	READY: 'READY',
 	STARTING: 'STARTING',

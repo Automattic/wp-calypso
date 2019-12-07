@@ -6,7 +6,7 @@ import { bumpStat } from '../rest-client/bump-stat';
 const TITLE_OFFSET = 38;
 
 export class EmptyMessage extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.showing ) {
 			bumpStat( 'notes-empty-message', this.props.name + '_shown' );
 		}

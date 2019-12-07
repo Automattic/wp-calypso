@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,6 @@ import { translate } from 'i18n-calypso';
  */
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isEnabled } from 'config';
 
 /**
  * Module variables
@@ -906,32 +906,6 @@ const contextLinksForSection = {
 			),
 		},
 	],
-	hosting: [
-		isEnabled( 'hosting/sftp-phpmyadmin' ) && {
-			link: localizeUrl( 'https://en.support.wordpress.com/sftp/' ),
-			post_id: 159771,
-			title: translate( 'SFTP on WordPress.com' ),
-			description: translate(
-				"Access and edit your website's files directly by using an SFTP client."
-			),
-		},
-		isEnabled( 'hosting/sftp-phpmyadmin' ) && {
-			link: localizeUrl( 'https://en.support.wordpress.com/phpmyadmin-and-mysql/' ),
-			post_id: 159822,
-			title: translate( 'phpMyAdmin and MySQL' ),
-			description: translate(
-				'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-			),
-		},
-		{
-			link: localizeUrl( 'https://en.support.wordpress.com/php-version-switching/' ),
-			post_id: 160597,
-			title: translate( 'PHP Version Switching' ),
-			description: translate(
-				'Sites on the Business Plan using custom plugins and/or custom themes and any site on the eCommerce Plan, now have the option to switch PHP versions.'
-			),
-		},
-	],
 };
 
 /*
@@ -1347,11 +1321,6 @@ const toursForSection = {
 };
 
 export function getContextResults( section ) {
-	// Posts and Pages have a common help section
-	if ( section === 'posts' || section === 'pages' ) {
-		section = 'posts-pages';
-	}
-
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = first( get( videosForSection, section ) );

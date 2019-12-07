@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,6 @@ import { invoke } from 'lodash';
  */
 import * as constants from './constants';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -24,14 +25,10 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
 					a: (
-						<ExternalLinkWithTracking
+						<a
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
-							} }
+							rel="noopener noreferrer"
 						/>
 					),
 				},
@@ -52,14 +49,10 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
 					a: (
-						<ExternalLinkWithTracking
+						<a
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-							} }
+							rel="noopener noreferrer"
 						/>
 					),
 				},
@@ -83,14 +76,10 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
 					a: (
-						<ExternalLinkWithTracking
+						<a
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-							} }
+							rel="noopener noreferrer"
 						/>
 					),
 				},
@@ -243,7 +232,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_VIDEO_CDN_LIMITED ]: {
 		getSlug: () => constants.FEATURE_VIDEO_CDN_LIMITED,
-		getTitle: () => i18n.translate( '13 GB Video Storage' ),
+		getTitle: () => i18n.translate( '13GB Video Storage' ),
 		getDescription: () =>
 			i18n.translate(
 				'High-speed video hosting on our CDN, free of ads and watermarks, fully optimized for WordPress.'
@@ -558,7 +547,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_3GB_STORAGE ]: {
 		getSlug: () => constants.FEATURE_3GB_STORAGE,
-		getTitle: () => i18n.translate( '3 GB Storage Space' ),
+		getTitle: () => i18n.translate( '3GB Storage Space' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -566,7 +555,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_6GB_STORAGE ]: {
 		getSlug: () => constants.FEATURE_6GB_STORAGE,
 		getTitle: () =>
-			i18n.translate( '{{strong}}6 GB{{/strong}} Storage Space', {
+			i18n.translate( '{{strong}}6GB{{/strong}} Storage Space', {
 				components: {
 					strong: <strong />,
 				},
@@ -581,7 +570,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_13GB_STORAGE ]: {
 		getSlug: () => constants.FEATURE_13GB_STORAGE,
 		getTitle: () =>
-			i18n.translate( '{{strong}}13 GB{{/strong}} Storage Space', {
+			i18n.translate( '{{strong}}13GB{{/strong}} Storage Space', {
 				components: {
 					strong: <strong />,
 				},
@@ -806,7 +795,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_SPEED_ADVANCED_JETPACK,
 		getTitle: () => i18n.translate( 'Speed and Storage' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes 13 GB of high-speed, ad-free video hosting.' ),
+			i18n.translate( 'Also includes 13Gb of high-speed, ad-free video hosting.' ),
 		hideInfoPopover: true,
 	},
 
@@ -846,7 +835,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_VIDEO_HOSTING_JETPACK ]: {
 		getSlug: () => constants.FEATURE_VIDEO_HOSTING_JETPACK,
 		getTitle: () => i18n.translate( 'Video Hosting' ),
-		getDescription: () => i18n.translate( '13 GB of high-speed, HD, and ad-free video hosting.' ),
+		getDescription: () => i18n.translate( '13Gb of high-speed, HD, and ad-free video hosting.' ),
 		hideInfoPopover: true,
 	},
 

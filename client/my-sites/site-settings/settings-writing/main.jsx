@@ -12,7 +12,6 @@ import DocumentHead from 'components/data/document-head';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import WritingForm from 'my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -22,11 +21,6 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
-		<FormattedHeader
-			className="settings-writing__page-heading"
-			headerText={ translate( 'Settings' ) }
-			align="left"
-		/>
 		<SiteSettingsNavigation site={ site } section="writing" />
 		<WritingForm />
 	</Main>

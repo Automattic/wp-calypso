@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -74,7 +76,7 @@ class PaymentMethodStripe extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId;
 
@@ -222,4 +224,9 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripe ) );
+export default localize(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( PaymentMethodStripe )
+);

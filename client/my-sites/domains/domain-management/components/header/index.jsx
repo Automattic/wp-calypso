@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,12 +18,13 @@ import DocumentHead from 'components/data/document-head';
 import './style.scss';
 
 export default function DomainManagementHeader( props ) {
-	const { onClick, backHref, children } = props;
+	const { onClick, backHref, selectedDomainName, children } = props;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<HeaderCake className="domain-management-header" onClick={ onClick } backHref={ backHref }>
 			<div className="domain-management-header__children">
+				{ selectedDomainName && <span>{ selectedDomainName }: </span> }
 				<span className="domain-management-header__title">{ children }</span>
 			</div>
 			<DocumentHead title={ children } />

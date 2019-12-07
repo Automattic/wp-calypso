@@ -1,3 +1,5 @@
+/** @format */
+
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -19,7 +21,6 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
-	translate: x => x,
 } ) );
 
 /**
@@ -66,11 +67,11 @@ describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 	} );
 
 	test( 'hide when user cannot upgrade', () => {
-		const localProps = {
+		const props = {
 			translate: x => x,
 			canUserUpgrade: false,
 		};
-		const comp = shallow( <UpgradeToPremiumNudgePure { ...localProps } /> );
+		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
 		expect( comp.find( 'Banner' ).length ).toBe( 0 );
 	} );
 } );

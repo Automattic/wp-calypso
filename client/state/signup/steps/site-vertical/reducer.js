@@ -11,7 +11,7 @@ import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_STEPS_SITE_VERTICAL_SET,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { siteVerticalSchema } from './schema';
 
 const initialState = {
@@ -26,20 +26,21 @@ const initialState = {
 // TODO:
 // This reducer can be further simplify since the verticals data can be
 // found in `signup.verticals`, so it only needs to store the site vertical name.
-export default withSchemaValidation( siteVerticalSchema, ( state = initialState, action ) => {
-	switch ( action.type ) {
-		case SIGNUP_STEPS_SITE_VERTICAL_SET:
+export default createReducerWithValidation(
+	initialState,
+	{
+		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
 			return {
 				...state,
-				...omit( action, 'type' ),
+				...omit( siteVerticalData, 'type' ),
 			};
-		case SIGNUP_COMPLETE_RESET: {
+		},
+		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return {};
-		}
-		case JETPACK_CONNECT_AUTHORIZE: {
+		},
+		[ JETPACK_CONNECT_AUTHORIZE ]: () => {
 			return {};
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	siteVerticalSchema
+);

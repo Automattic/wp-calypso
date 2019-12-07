@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
 import Gridicon from 'components/gridicon';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import debugFactory from 'debug';
 import analytics from 'lib/analytics';
 import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';
-import { setTaxPostalCode } from 'lib/cart/actions';
+import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';
@@ -28,8 +29,6 @@ import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 
 const wpcom = wp.undocumented();
-
-const debug = debugFactory( 'calypso:paypal-payment-box' );
 
 export class PaypalPaymentBox extends React.Component {
 	static displayName = 'PaypalPaymentBox';
@@ -93,42 +92,32 @@ export class PaypalPaymentBox extends React.Component {
 		} );
 
 		// get PayPal Express URL from rest endpoint
-		debug( 'submitting paypalExpress request', dataForApi );
 		wpcom.paypalExpressUrl(
 			dataForApi,
 			function( error, paypalExpressURL ) {
-				debug( 'paypalExpress request complete' );
+				let errorMessage;
 				if ( error ) {
-					debug( 'paypalExpress request had an error', error );
-					const errorMessage =
-						error.message || this.props.translate( 'Please specify a country and postal code' );
+					if ( error.message ) {
+						errorMessage = error.message;
+					} else {
+						errorMessage = this.props.translate( 'Please specify a country and postal code.' );
+					}
+
 					this.setSubmitState( {
 						error: errorMessage,
 						disabled: false,
 					} );
-					return;
 				}
 
-				if ( ! paypalExpressURL ) {
-					debug( 'paypalExpress request returned no url' );
-					const errorMessage = this.props.translate(
-						'An error occurred connecting to PayPal; please check your information and try again'
-					);
+				if ( paypalExpressURL ) {
 					this.setSubmitState( {
-						error: errorMessage,
-						disabled: false,
+						info: this.props.translate( 'Redirecting you to PayPal' ),
+						disabled: true,
 					} );
-					return;
+					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
+					analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
+					window.location = paypalExpressURL;
 				}
-
-				debug( 'paypalExpress request successfully got a url', paypalExpressURL );
-				this.setSubmitState( {
-					info: this.props.translate( 'Redirecting you to PayPal' ),
-					disabled: true,
-				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-				window.location = paypalExpressURL;
 			}.bind( this )
 		);
 	};

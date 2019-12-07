@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,11 +15,11 @@ import { isRequestingStatus } from '../../../state/status/selectors';
 import { requestStatus } from '../../../state/status/actions';
 
 class QueryStatus extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.requestStatus( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {

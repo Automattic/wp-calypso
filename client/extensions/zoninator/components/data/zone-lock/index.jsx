@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -26,11 +28,11 @@ class ZoneLock extends PureComponent {
 		zoneId: PropTypes.number.isRequired,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.resetLock( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
 			this.scheduleRefresh( nextProps );
 			return;

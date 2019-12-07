@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,10 +19,7 @@ describe( 'reducer', () => {
 			const state = items( null, {
 				type: FOLLOWERS_RECEIVE,
 				data: {
-					subscribers: [
-						{ ID: 1, avatar: 'url' },
-						{ ID: 2, avatar: 'url' },
-					],
+					subscribers: [ { ID: 1, avatar: 'url' }, { ID: 2, avatar: 'url' } ],
 				},
 			} );
 			expect( state ).to.eql( {
@@ -71,10 +70,7 @@ describe( 'reducer', () => {
 				type: FOLLOWERS_RECEIVE,
 				query: query,
 				data: {
-					subscribers: [
-						{ ID: 1, avatar: 'url' },
-						{ ID: 2, avatar: 'url' },
-					],
+					subscribers: [ { ID: 1, avatar: 'url' }, { ID: 2, avatar: 'url' } ],
 					total: 1,
 					pages: 1,
 				},

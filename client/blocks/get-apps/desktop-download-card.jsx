@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -205,4 +207,7 @@ const mapDispatchToProps = {
 	trackLinuxDebClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
 };
 
-export default connect( null, mapDispatchToProps )( localize( DesktopDownloadCard ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( DesktopDownloadCard ) );

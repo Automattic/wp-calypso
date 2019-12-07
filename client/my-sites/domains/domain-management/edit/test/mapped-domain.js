@@ -1,7 +1,8 @@
-/** @jest-environment jsdom */
+/** @format */
 /**
  * External dependencies
  */
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { identity } from 'lodash';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
@@ -28,18 +29,18 @@ describe( 'mapped-domain', () => {
 			},
 			domain: {
 				name: 'neverexpires.com',
-				expiry: null,
+				expirationMoment: null,
 			},
 			translate: identity,
 		};
 	} );
 
-	test( 'should render when props.domain.expiry is null', () => {
+	test( 'should render when props.domain.expirationMoment is null', () => {
 		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		const out = renderer.getRenderOutput();
 
-		expect( out ).toBeTruthy();
+		assert( out );
 	} );
 
 	test( 'should use selectedSite.slug for URLs', () => {
@@ -52,8 +53,8 @@ describe( 'mapped-domain', () => {
 		renderer.render( <MappedDomain { ...props } /> );
 		renderer.getRenderOutput();
 
-		expect( dnsStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) ).toBeTruthy();
-		expect( emailStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) ).toBeTruthy();
+		assert( dnsStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
+		assert( emailStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
 
 		dnsStub.restore();
 		emailStub.restore();

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,7 +25,7 @@ class EmailForwardingDetails extends React.Component {
 			<p className="email-forwarding__explanation">
 				{ this.props.translate(
 					'Create an email address that uses your custom domain and have it automatically forward to the email account of your choice. Now your email address can be as memorable as your website!'
-				) }{ ' ' }
+				) }{' '}
 				<a
 					href={ EMAIL_FORWARDING }
 					target="_blank"
@@ -54,6 +56,9 @@ const trackLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
-	trackLearnMoreClick,
-} )( localize( EmailForwardingDetails ) );
+export default connect(
+	null,
+	{
+		trackLearnMoreClick,
+	}
+)( localize( EmailForwardingDetails ) );

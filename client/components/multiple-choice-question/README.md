@@ -1,3 +1,5 @@
+<!-- @format -->
+
 # Multiple Choice Question
 
 This is a component for presenting a question and a list of answers to a user. They may pick one and optionally add additional text.

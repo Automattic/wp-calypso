@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,7 +26,7 @@ export default class ImportPage extends AsyncBaseContainer {
 
 		const isSitePreviewShowing = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( '.site-importer__site-preview-column-container' )
+			By.css( '.mini-site-preview__favicon' )
 		);
 
 		assert( isSitePreviewShowing, 'Site preview should be shown' );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,7 @@ const debug = debugFactory( 'phone-input:metadata' );
 
 export const DIGIT_PLACEHOLDER = '\u7003';
 const STANDALONE_DIGIT_PATTERN = /\d(?=[^,}][^,}])/g;
-const CHARACTER_CLASS_PATTERN = /\[([^[\]])*]/g;
+const CHARACTER_CLASS_PATTERN = /\[([^\[\]])*\]/g;
 const LONGEST_NUMBER = '999999999999999';
 const LONGEST_NUMBER_MATCH = /9/g;
 export const MIN_LENGTH_TO_FORMAT = 3;
@@ -40,7 +42,7 @@ export function findCountryFromNumber( inputNumber ) {
 		const query = stripNonDigits( inputNumber )
 			.replace( /^0+/, '' )
 			.substr( 0, i );
-		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
+		if ( dialCodeMap.hasOwnProperty( query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {
 				return countries[ exactMatch[ 0 ] ];
@@ -161,14 +163,10 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  */
 export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
-	let nationalNumber = stripNonDigits( inputNumber ).replace(
-		new RegExp( '^(0*' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
+	const nationalNumber = stripNonDigits( inputNumber ).replace(
+		new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
 		''
 	);
-
-	if ( numberRegion.nationalPrefix === '0' ) {
-		nationalNumber = nationalNumber.replace( /^0+/, '' );
-	}
 
 	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 

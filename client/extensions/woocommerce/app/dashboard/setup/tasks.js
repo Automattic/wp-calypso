@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -47,7 +49,7 @@ class SetupTasks extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	componentWillReceiveProps = newProps => {
 		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -190,4 +192,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SetupTasks ) );

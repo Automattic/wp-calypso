@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -78,6 +79,7 @@ class ActivityLogExample extends Component {
 							activity={ log }
 							disableRestore={ true }
 							disableBackup={ true }
+							hideRestore={ true }
 							siteId={ siteId }
 						/>
 					) ) }

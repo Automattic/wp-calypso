@@ -1,3 +1,5 @@
+/** @format */
+
 export const coupon1 = {
 	id: 11,
 	code: '10percentoff',

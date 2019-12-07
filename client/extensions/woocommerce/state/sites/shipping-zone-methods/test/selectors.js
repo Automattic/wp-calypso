@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -71,10 +73,7 @@ describe( 'selectors', () => {
 					woocommerce: {
 						sites: {
 							123: {
-								shippingZones: [
-									{ id: 1, methodIds: LOADING },
-									{ id: 2, methodIds: [ 7, 42 ] },
-								],
+								shippingZones: [ { id: 1, methodIds: LOADING }, { id: 2, methodIds: [ 7, 42 ] } ],
 							},
 						},
 					},
@@ -99,10 +98,7 @@ describe( 'selectors', () => {
 									8: { id: 8, methodType: 'wc_services_usps' },
 									9: { id: 9, methodType: 'wc_services_usps' },
 								},
-								shippingZones: [
-									{ id: 1, methodIds: [ 7, 8 ] },
-									{ id: 2, methodIds: [ 9 ] },
-								],
+								shippingZones: [ { id: 1, methodIds: [ 7, 8 ] }, { id: 2, methodIds: [ 9 ] } ],
 							},
 						},
 						woocommerceServices: {

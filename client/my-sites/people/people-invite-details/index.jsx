@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,7 +22,6 @@ import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import EmptyContent from 'components/empty-content';
-import { withLocalizedMoment } from 'components/localized-moment';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
 	isRequestingInvitesForSite,
@@ -43,7 +44,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
 			this.goBack();
 		}
@@ -220,4 +221,4 @@ export default connect(
 		};
 	},
 	{ deleteInvite }
-)( localize( withLocalizedMoment( PeopleInviteDetails ) ) );
+)( localize( PeopleInviteDetails ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -91,7 +93,7 @@ class SharingButtons extends Component {
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		// Save request has been performed
 		if ( this.props.isSaving && ! nextProps.isSaving ) {
 			if (
@@ -134,7 +136,7 @@ class SharingButtons extends Component {
 			<form
 				onSubmit={ this.saveChanges }
 				id="sharing-buttons"
-				className="buttons__sharing-settings buttons__sharing-buttons"
+				className="sharing-settings sharing-buttons"
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"
@@ -197,4 +199,8 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, protectForm, localize )( SharingButtons );
+export default flowRight(
+	connectComponent,
+	protectForm,
+	localize
+)( SharingButtons );

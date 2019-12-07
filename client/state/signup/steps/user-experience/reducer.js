@@ -3,18 +3,18 @@
  */
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { userExperienceSchema } from './schema';
 
-export default withSchemaValidation( userExperienceSchema, ( state = '', action ) => {
-	switch ( action.type ) {
-		case SIGNUP_STEPS_USER_EXPERIENCE_SET: {
+export default createReducerWithValidation(
+	'',
+	{
+		[ SIGNUP_STEPS_USER_EXPERIENCE_SET ]: ( state, action ) => {
 			return action.userExperience;
-		}
-		case SIGNUP_COMPLETE_RESET: {
+		},
+		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return '';
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	userExperienceSchema
+);

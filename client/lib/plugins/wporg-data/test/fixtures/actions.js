@@ -1,3 +1,4 @@
+/** @format */
 const dummyPluginList = [
 	{
 		name: 'Jetpack',

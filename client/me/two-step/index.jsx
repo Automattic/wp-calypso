@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,10 +22,8 @@ import Security2faBackupCodes from 'me/security-2fa-backup-codes';
 import Security2faDisable from 'me/security-2fa-disable';
 import Security2faSetup from 'me/security-2fa-setup';
 import SecuritySectionNav from 'me/security-section-nav';
-import Security2faKey from 'me/security-2fa-key';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -106,8 +106,8 @@ class TwoStep extends Component {
 		for ( let i = 0; i < 5; i++ ) {
 			placeholders.push(
 				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
-					{ ' ' }
-					&nbsp;{ ' ' }
+					{' '}
+					&nbsp;{' '}
 				</p>
 			);
 		}
@@ -145,14 +145,6 @@ class TwoStep extends Component {
 		return <AppPasswords />;
 	};
 
-	render2faKey = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
-			return null;
-		}
-
-		return <Security2faKey />;
-	};
-
 	renderBackupCodes = () => {
 		if ( ! this.state.initialized || this.state.doingSetup ) {
 			return null;
@@ -175,7 +167,6 @@ class TwoStep extends Component {
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 
-				{ config.isEnabled( '2fa/keys-support' ) && this.render2faKey() }
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }
 			</Main>

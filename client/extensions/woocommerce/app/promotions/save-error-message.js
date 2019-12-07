@@ -1,3 +1,5 @@
+/** @format */
+
 export function getSaveErrorMessage( slug, promotionName, translate ) {
 	switch ( slug ) {
 		case 'woocommerce_rest_coupon_code_already_exists':

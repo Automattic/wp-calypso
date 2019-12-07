@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,7 +17,6 @@ import { localize } from 'i18n-calypso';
  */
 import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -85,10 +86,6 @@ class MediaModalSecondaryActions extends Component {
 	}
 
 	render() {
-		if ( this.props.hideButton ) {
-			return null;
-		}
-
 		return (
 			<div>
 				{ this.getButtons().map( button => (
@@ -112,7 +109,6 @@ export default connect(
 		view: getMediaModalView( state ),
 		user: getCurrentUser( state ),
 		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
-		hideButton: ! canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 	} ),
 	{
 		onViewDetails: flow(

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +38,7 @@ class SitePreview extends Component {
 
 	previewCounter = 0;
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
 			this.previewCounter = 0;
 		}
@@ -108,4 +109,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { closePreview } )( SitePreview );
+export default connect(
+	mapStateToProps,
+	{ closePreview }
+)( SitePreview );

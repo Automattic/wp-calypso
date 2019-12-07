@@ -23,12 +23,7 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
-import {
-	createStripeSetupIntent,
-	StripeSetupIntentError,
-	StripeValidationError,
-	useStripe,
-} from 'lib/stripe';
+import { createStripeSetupIntent, StripeSetupIntentError, StripeValidationError } from 'lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -62,8 +57,12 @@ export function CreditCardForm( {
 	heading,
 	onCancel,
 	translate,
+	stripe,
+	stripeConfiguration,
+	isStripeLoading,
+	stripeLoadingError,
+	setStripeError,
 } ) {
-	const { stripe, stripeConfiguration, setStripeError } = useStripe();
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
@@ -159,6 +158,9 @@ export function CreditCardForm( {
 				<CreditCardFormFields
 					card={ kebabCaseFormFields( formFieldValues ) }
 					countriesList={ countriesList }
+					stripe={ stripe }
+					isStripeLoading={ isStripeLoading }
+					stripeLoadingError={ stripeLoadingError }
 					eventFormName="Edit Card Details Form"
 					onFieldChange={ onFieldChange }
 					getErrorMessage={ getErrorMessage }
@@ -202,6 +204,10 @@ CreditCardForm.propTypes = {
 	autoFocus: PropTypes.bool,
 	heading: PropTypes.string,
 	onCancel: PropTypes.func,
+	stripe: PropTypes.object,
+	isStripeLoading: PropTypes.bool,
+	stripeLoadingError: PropTypes.object,
+	setStripeError: PropTypes.func,
 	translate: PropTypes.func.isRequired,
 };
 

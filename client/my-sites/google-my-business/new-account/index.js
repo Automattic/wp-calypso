@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -73,7 +75,6 @@ class GoogleMyBusinessNewAccount extends Component {
 	render() {
 		const { siteSlug, translate } = this.props;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
@@ -122,10 +123,7 @@ class GoogleMyBusinessNewAccount extends Component {
 								{ translate( 'Use another Google Account' ) }
 							</KeyringConnectButton>
 
-							<Button
-								href={ `/marketing/tools/${ siteSlug }` }
-								onClick={ this.handleNoThanksClick }
-							>
+							<Button href={ `/stats/${ siteSlug }` } onClick={ this.handleNoThanksClick }>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>

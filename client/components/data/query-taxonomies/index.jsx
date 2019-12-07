@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,11 +15,11 @@ import { requestPostTypeTaxonomies } from 'state/post-types/taxonomies/actions';
 import { isRequestingPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 
 class QueryTaxonomies extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType ) {
 			return;
 		}

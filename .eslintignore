@@ -6,7 +6,6 @@
 node_modules/
 !.eslintrc.js
 /server/devdocs/search-index.js
-/packages/calypso-codemods/tests
 
 # Built packages
 /packages/*/dist/

@@ -7,7 +7,7 @@ import {
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -18,24 +18,20 @@ import { itemsSchema } from './schema';
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case USER_SUGGESTIONS_REQUEST: {
-			const { siteId } = action;
+export const requesting = createReducer(
+	{},
+	{
+		[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
 			return { ...state, [ siteId ]: true };
-		}
-		case USER_SUGGESTIONS_REQUEST_FAILURE: {
-			const { siteId } = action;
+		},
+		[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
 			return { ...state, [ siteId ]: false };
-		}
-		case USER_SUGGESTIONS_REQUEST_SUCCESS: {
-			const { siteId } = action;
+		},
+		[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
 			return { ...state, [ siteId ]: false };
-		}
+		},
 	}
-
-	return state;
-} );
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -46,16 +42,15 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case USER_SUGGESTIONS_RECEIVE: {
-			const { siteId, suggestions } = action;
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
 			return { ...state, [ siteId ]: suggestions };
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	itemsSchema
+);
 
 export default combineReducers( {
 	requesting,

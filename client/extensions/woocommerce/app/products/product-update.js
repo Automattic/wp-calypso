@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -87,7 +89,7 @@ class ProductUpdate extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
 		const productId = Number( params.product_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -276,4 +278,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductUpdate ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductUpdate ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,7 +17,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Count from 'components/count';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';

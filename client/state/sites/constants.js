@@ -1,3 +1,5 @@
+/** @format */
+
 export const SITE_REQUEST_FIELDS = [
 	'ID',
 	'URL',
@@ -15,9 +17,7 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
-	'migration_status',
 	'is_fse_active',
-	'is_fse_eligible',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

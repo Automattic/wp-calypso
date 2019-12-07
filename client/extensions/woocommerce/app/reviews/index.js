@@ -1,6 +1,7 @@
 /**
  * External depedencies
  *
+ * @format
  */
 
 import React, { Component } from 'react';

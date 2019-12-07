@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -49,4 +51,8 @@ function mergeProps( stateProps, dispatchProps, ownProps ) {
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, overrides );
 }
 
-export default connect( mapStateToProps, null, mergeProps )( PluginSite );
+export default connect(
+	mapStateToProps,
+	null,
+	mergeProps
+)( PluginSite );

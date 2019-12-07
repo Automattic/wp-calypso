@@ -1,6 +1,7 @@
 /**
  * External dependencies
  *
+ * @format
  */
 import i18n from 'i18n-calypso';
 import { isUndefined, isEmpty, pick } from 'lodash';

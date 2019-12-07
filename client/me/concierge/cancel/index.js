@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,6 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
 import QuerySites from 'components/data/query-sites';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
@@ -72,7 +73,7 @@ class ConciergeCancel extends Component {
 					</Confirmation>
 				);
 
-			default: {
+			default:
 				const disabledCancelling =
 					includes(
 						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
@@ -93,9 +94,6 @@ class ConciergeCancel extends Component {
 							/>
 						) }
 
-						<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
-							{ translate( 'Reschedule or cancel' ) }
-						</HeaderCake>
 						<Confirmation
 							description={ translate(
 								'You can also reschedule your session. What would you like to do?'
@@ -122,7 +120,6 @@ class ConciergeCancel extends Component {
 						</Confirmation>
 					</div>
 				);
-			}
 		}
 	};
 

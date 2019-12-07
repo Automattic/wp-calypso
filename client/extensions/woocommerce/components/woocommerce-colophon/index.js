@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,4 +36,7 @@ class WooCommerceColophon extends React.Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( WooCommerceColophon ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( WooCommerceColophon ) );

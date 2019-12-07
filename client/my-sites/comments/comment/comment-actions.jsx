@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -337,4 +338,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentActions ) );

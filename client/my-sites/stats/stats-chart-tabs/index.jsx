@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -177,4 +179,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(
+	localize,
+	connectComponent
+)( StatModuleChartTabs );

@@ -23,22 +23,22 @@ enum DataState {
 
 interface ResourceData {
 	state: DataState;
-	data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-	error: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	data: any;
+	error: any;
 	lastUpdated: TimestampMS;
 	pendingSince: TimestampMS | undefined;
 }
 
 type Resource =
-	| ( ResourceData & {
+	| ResourceData & {
 			state: DataState.Uninitialized;
 			data: undefined;
 			error: undefined;
 			pendingSince: undefined;
-	  } )
-	| ( ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS } )
-	| ( ResourceData & { state: DataState.Failure; pendingSince: undefined } )
-	| ( ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined } );
+	  }
+	| ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS }
+	| ResourceData & { state: DataState.Failure; pendingSince: undefined }
+	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined };
 
 type DataId = string;
 
@@ -103,8 +103,6 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ): typeo
 	}
 };
 
-export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
-
 export const update = ( id: DataId, state: DataState, data?: unknown ) => {
 	const updated = updateData( id, state, data );
 
@@ -143,7 +141,7 @@ type ParseResult = SuccessfulParse | FailedParse;
  *
  * [ error?, [ [ id, data ], [ id, data ], … ] ]
  *
- * @example
+ * @example:
  *   --input--
  *   { data: { sites: {
  *     14: { is_active: true, name: 'foo' },
@@ -155,9 +153,8 @@ type ParseResult = SuccessfulParse | FailedParse;
  *
  * @param data - input data from API response
  * @param fromApi - transforms API response data
- * @returns output data to store
+ * @return output data to store
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
 	try {
 		return [ undefined, fromApi( data ) ];
@@ -222,8 +219,8 @@ export const enhancer = ( next: StoreEnhancerStoreCreator ) => (
 	return store;
 };
 
-type ResourcePair = [ DataId, any ]; // eslint-disable-line @typescript-eslint/no-explicit-any
-type ResponseParser = ( apiData: any ) => ResourcePair[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+type ResourcePair = [ DataId, any ];
+type ResponseParser = ( apiData: any ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
 	fromApi?: Lazy< ResponseParser >;
@@ -235,10 +232,9 @@ interface RequestHttpDataOptions {
  *
  * @param requestId - uniquely identifies the request or request type
  * @param fetchAction - action that when dispatched will request the data (may be wrapped in a lazy thunk)
- * @param options - object with options for the http request. Following options are allowed:
- *     - fromAPI: when called produces a function that validates and transforms API data into Calypso data
- *     - freshness - indicates how many ms stale data is allowed to be before refetching
- * @returns stored data container for request
+ * @param fromApi - when called produces a function that validates and transforms API data into Calypso data
+ * @param freshness - indicates how many ms stale data is allowed to be before refetching
+ * @return stored data container for request
  */
 export const requestHttpData = (
 	requestId: DataId,
@@ -260,7 +256,6 @@ export const requestHttpData = (
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			fromApi: 'function' === typeof fromApi ? fromApi : () => ( a: any ) => a,
 		};
 
@@ -286,7 +281,7 @@ type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
  *  - _DO NOT USE_ when normal synchronous/data interactions suffice such
  *    as is the case in 99.999% of React component contexts
  *
- * @example
+ * @example:
  * waitForData( {
  *     geo: () => requestGeoLocation(),
  *     splines: () => requestSplines( siteId ),
@@ -298,7 +293,7 @@ type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
  *
  * @param query - key/value pairs of data name and request
  * @param timeout - how many ms to wait until giving up on requests
- * @returns fulfilled data of request (or partial if could not fulfill)
+ * @return fulfilled data of request (or partial if could not fulfill)
  */
 export const waitForData = < T extends Query >(
 	query: T,

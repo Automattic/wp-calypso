@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,13 +30,14 @@ import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility'
 
 /**
  * User component
- *
  * @class
  */
 function User() {
 	if ( ! ( this instanceof User ) ) {
 		return new User();
 	}
+
+	this.initialize();
 }
 
 /**
@@ -50,51 +53,63 @@ Emitter( User.prototype );
 /**
  * Initialize the user data depending on the configuration
  **/
-User.prototype.initialize = async function() {
+User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
-	this.data = false;
+	this.initialized = false;
 
 	this.on( 'change', this.checkVerification.bind( this ) );
 
-	let skipBootstrap = false;
-
 	if ( isSupportUserSession() ) {
-		// boot the support session and skip the user bootstrap: the server sent the unwanted
-		// user info there (me) instead of the target SU user.
+		this.data = false;
+
 		supportUserBoot();
-		skipBootstrap = true;
-	}
+		this.fetch();
 
-	if ( isSupportNextSession() ) {
-		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession,
-		// the initial GET request includes the right cookies and header and returns a server-generated
-		// page with the right window.currentUser value)
-		supportNextBoot();
-	}
-
-	if ( ! skipBootstrap && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		debug( 'Bootstrapping user data:', this.data );
-		if ( window.currentUser ) {
-			this.handleFetchSuccess( window.currentUser );
-		}
+		// We're booting into support user mode, skip initialization of the main user.
 		return;
 	}
 
-	// fetch the user from the /me endpoint if it wasn't bootstrapped
-	await this.fetch();
+	if ( isSupportNextSession() ) {
+		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession)
+		supportNextBoot();
+	}
+
+	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+		this.data = window.currentUser || false;
+		debug( 'Bootstrapping user data:', this.data );
+
+		// Store the current user in localStorage so that we can use it to determine
+		// if the logged in user has changed when initializing in the future
+		if ( this.data ) {
+			this.handleFetchSuccess( this.data );
+		}
+		this.initialized = true;
+		return;
+	}
+
+	this.data = store.get( 'wpcom_user' ) || false;
+	debug( 'User bootstrap disabled, checking localStorage:', this.data );
+
+	if ( this.data ) {
+		this.initialized = true;
+		this.emit( 'change' );
+	}
+
+	// Make sure that the user stored in localStorage matches the logged-in user
+	this.fetch();
 };
 
 /**
  * Clear localStorage when we detect that there is a mismatch between the ID
  * of the user stored in localStorage and the current user ID
  *
- * @param {number} userId The new user ID.
+ * @param {Number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
-	const storedUserId = store.get( 'wpcom_user_id' );
+	const storedUser = store.get( 'wpcom_user' );
 
-	if ( storedUserId != null && storedUserId !== userId ) {
+	if ( storedUser && storedUser.ID !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
 		store.clearAll();
 	}
@@ -103,9 +118,12 @@ User.prototype.clearStoreIfChanged = function( userId ) {
 /**
  * Get user data
  *
- * @returns {object} The user data.
+ * @returns {Object} The user data.
  */
 User.prototype.get = function() {
+	if ( ! this.data ) {
+		this.fetch();
+	}
 	return this.data;
 };
 
@@ -113,36 +131,28 @@ User.prototype.get = function() {
  * Fetch the current user from WordPress.com via the REST API
  * and stores it in local cache.
  *
- * @returns {Promise<void>} Promise that resolves (with no value) when fetching is finished
+ * @uses `wpcom`
  */
 User.prototype.fetch = function() {
 	if ( this.fetching ) {
-		// if already fetching, return the in-flight promise
-		return this.fetching;
+		return;
 	}
 
+	const me = wpcom.me();
+
 	// Request current user info
+	this.fetching = true;
 	debug( 'Getting user from api' );
-	this.fetching = wpcom
-		.me()
-		.get( {
-			meta: 'flags',
-			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-		} )
+
+	me.get( { meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) } )
 		.then( data => {
-			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
+			debug( 'User successfully retrieved' );
 		} )
 		.catch( error => {
-			debug( 'Failed to retrieve user from api:', error );
 			this.handleFetchFailure( error );
-		} )
-		.finally( () => {
-			this.fetching = false;
 		} );
-
-	return this.fetching;
 };
 
 /**
@@ -152,9 +162,14 @@ User.prototype.fetch = function() {
  * @param {Error} error network response error
  */
 User.prototype.handleFetchFailure = function( error ) {
-	if ( error.error === 'authorization_required' ) {
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
+		/**
+		 * if the user bootstrap is disabled (in development), we need to rely on a request to
+		 * /me to determine if the user is logged in.
+		 */
 		debug( 'The user is not logged in.' );
-		this.data = false;
+
+		this.initialized = true;
 		this.emit( 'change' );
 	} else {
 		// eslint-disable-next-line no-console
@@ -167,14 +182,15 @@ User.prototype.handleFetchFailure = function( error ) {
  * in the browser's localStorage. It also changes the User's fetching and initialized states
  * and emits a change event.
  *
- * @param {object} userData an object containing the user's information.
+ * @param {Object} userData an object containing the user's information.
  */
 User.prototype.handleFetchSuccess = function( userData ) {
+	// Release lock from subsequent fetches
+	this.fetching = false;
 	this.clearStoreIfChanged( userData.ID );
 
-	// Store user ID in local storage so that we can detect a change and clear the storage
-	store.set( 'wpcom_user_id', userData.ID );
-
+	// Store user info in `this.data` and localstorage as `wpcom_user`
+	store.set( 'wpcom_user', userData );
 	if ( userData.abtests ) {
 		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
 			// This section will preserve the existing localStorage A/B variation values,
@@ -191,6 +207,11 @@ User.prototype.handleFetchSuccess = function( userData ) {
 		}
 	}
 	this.data = userData;
+	if ( this.settings ) {
+		debug( 'Retaining fetched settings data in new user data' );
+		this.data.settings = this.settings;
+	}
+	this.initialized = true;
 	this.emit( 'change' );
 };
 
@@ -203,9 +224,9 @@ User.prototype.getLanguage = function() {
  * the short-form query string parameters as options,
  * sets some sane defaults.
  *
- * @param {object} options Options per https://secure.gravatar.com/site/implement/images/
+ * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
  *
- * @returns {string} The user's avatar URL based on the options parameter.
+ * @returns {String} The user's avatar URL based on the options parameter.
  */
 User.prototype.getAvatarUrl = function( options ) {
 	const default_options = {
@@ -230,7 +251,8 @@ User.prototype.clear = async function() {
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
 	 */
-	this.data = false;
+	this.data = [];
+	delete this.settings;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		await clearStorage();
@@ -243,7 +265,7 @@ User.prototype.clear = async function() {
  *
  * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
  *
- * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
+ * @returns {(Promise|Object)} If a callback is provided, this is an object representing an XMLHttpRequest.
  *                             If no callback is provided, this is a Promise.
  */
 User.prototype.sendVerificationEmail = function( fn ) {
@@ -265,6 +287,7 @@ User.prototype.set = function( attributes ) {
 
 	if ( changed ) {
 		Object.assign( this.data, getComputedAttributes( this.data ) );
+		store.set( 'wpcom_user', this.data );
 		this.emit( 'change' );
 	}
 

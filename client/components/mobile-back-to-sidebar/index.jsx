@@ -25,6 +25,7 @@ function MobileBackToSidebar( { children, toggleSidebar } ) {
 	);
 }
 
-export default connect( null, { toggleSidebar: () => setLayoutFocus( 'sidebar' ) } )(
-	MobileBackToSidebar
-);
+export default connect(
+	null,
+	{ toggleSidebar: () => setLayoutFocus( 'sidebar' ) }
+)( MobileBackToSidebar );

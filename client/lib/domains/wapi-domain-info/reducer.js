@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ import {
 	WAPI_DOMAIN_INFO_FETCH,
 	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
 	WAPI_DOMAIN_INFO_FETCH_FAILED,
-} from './action-types';
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
@@ -70,9 +72,9 @@ function reducer( state, payload ) {
 				} ),
 			} );
 
-		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED: {
-			const { data } = state[ action.domainName ];
-			const locked = ! action.unlock && data.locked;
+		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
+			const { data } = state[ action.domainName ],
+				locked = ! action.unlock && data.locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
@@ -80,7 +82,6 @@ function reducer( state, payload ) {
 				} ),
 				needsUpdate: true,
 			} );
-		}
 
 		case DOMAIN_TRANSFER_ACCEPT_COMPLETED:
 		case DOMAIN_TRANSFER_DECLINE_COMPLETED:

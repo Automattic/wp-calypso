@@ -1,4 +1,5 @@
 /**
+ * @format
  * @jest-environment jsdom
  */
 
@@ -13,8 +14,6 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { CreditsPaymentBox } from '../credits-payment-box';
-import PaymentChatButton from '../payment-chat-button';
-import CheckoutTerms from '../checkout-terms';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -46,6 +45,23 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
+jest.mock( 'i18n-calypso', () => ( {
+	localize: x => x,
+	translate: x => x,
+} ) );
+
+jest.mock( '../terms-of-service', () => {
+	const react = require( 'react' );
+	return class TermsOfService extends react.Component {};
+} );
+jest.mock( '../payment-chat-button', () => {
+	const react = require( 'react' );
+	return class PaymentChatButton extends react.Component {};
+} );
+
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const defaultProps = {
 	cart: {},
 	translate: identity,
@@ -56,7 +72,7 @@ describe( 'CreditsPaymentBox', () => {
 		const wrapper = shallow( <CreditsPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.payment-box-section' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( CheckoutTerms ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
 	} );
 
 	const eligiblePlans = [
@@ -77,7 +93,7 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -91,7 +107,7 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
+			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -121,7 +137,7 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
+			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

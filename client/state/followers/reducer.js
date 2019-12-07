@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,10 +42,7 @@ export function queries( state = {}, action ) {
 			const ids = state[ serializedQuery ] ? state[ serializedQuery ].ids : [];
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: {
-					ids: union(
-						ids,
-						action.data.subscribers.map( follower => follower.ID )
-					),
+					ids: union( ids, action.data.subscribers.map( follower => follower.ID ) ),
 					total: action.data.total,
 					lastPage: action.data.pages,
 				},

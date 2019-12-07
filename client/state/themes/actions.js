@@ -18,9 +18,6 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	RECOMMENDED_THEMES_FAIL,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -94,9 +91,9 @@ export function setBackPath( path ) {
  * Returns an action object to be used in signalling that a theme object has
  * been received.
  *
- * @param  {object} theme  Theme received
- * @param  {number} siteId ID of site for which themes have been received
- * @returns {object}        Action object
+ * @param  {Object} theme  Theme received
+ * @param  {Number} siteId ID of site for which themes have been received
+ * @return {Object}        Action object
  */
 export function receiveTheme( theme, siteId ) {
 	return receiveThemes( [ theme ], siteId );
@@ -108,9 +105,9 @@ export function receiveTheme( theme, siteId ) {
  *
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
- * @param {?object} query Theme query used in the API request
+ * @param {?Object} query Theme query used in the API request
  * @param {?number} foundCount Number of themes returned by the query
- * @returns {object} Action object
+ * @return {Object} Action object
  */
 export function receiveThemes( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
@@ -146,15 +143,15 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
- * @param  {object}        query         Theme query
- * @param  {string}        query.search  Search string
- * @param  {string}        query.tier    Theme tier: 'free', 'premium', or '' (either)
- * @param  {string}        query.filter  Filter
- * @param  {number}        query.number  How many themes to return per page
- * @param  {number}        query.offset  At which item to start the set of returned themes
- * @param  {number}        query.page    Which page of matching themes to return
- * @returns {Function}                    Action thunk
+ * @param  {Number|String} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {Object}        query         Theme query
+ * @param  {String}        query.search  Search string
+ * @param  {String}        query.tier    Theme tier: 'free', 'premium', or '' (either)
+ * @param  {String}        query.filter  Filter
+ * @param  {Number}        query.number  How many themes to return per page
+ * @param  {Number}        query.offset  At which item to start the set of returned themes
+ * @param  {Number}        query.page    Which page of matching themes to return
+ * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch, getState ) => {
@@ -231,9 +228,9 @@ export function themeRequestFailure( siteId, themeId, error ) {
 /**
  * Triggers a network request to fetch a specific theme from a site.
  *
- * @param  {string}   themeId Theme ID
- * @param  {number}   siteId  Site ID
- * @returns {Function}         Action thunk
+ * @param  {String}   themeId Theme ID
+ * @param  {Number}   siteId  Site ID
+ * @return {Function}         Action thunk
  */
 export function requestTheme( themeId, siteId ) {
 	return dispatch => {
@@ -314,8 +311,8 @@ export function requestTheme( themeId, siteId ) {
  * If request success information about active theme is stored in Redux themes subtree.
  * In case of error, error is stored in Redux themes subtree.
  *
- * @param  {number}   siteId Site for which to check active theme
- * @returns {Function}        Redux thunk with request action
+ * @param  {Number}   siteId Site for which to check active theme
+ * @return {Function}        Redux thunk with request action
  */
 export function requestActiveTheme( siteId ) {
 	return ( dispatch, getState ) => {
@@ -353,11 +350,11 @@ export function requestActiveTheme( siteId ) {
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
  */
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
@@ -375,11 +372,11 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 /**
  * Triggers a network request to activate a specific theme on a given site.
  *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
  */
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
@@ -413,11 +410,11 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
  * on a given site. Careful, this action is different from most others here in that
  * expects a theme stylesheet string (not just a theme ID).
  *
- * @param  {string}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
- * @param  {number}   siteId          Site ID
- * @param  {string}   source          The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
- * @returns {Function}                 Action thunk
+ * @param  {String}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
+ * @param  {Number}   siteId          Site ID
+ * @param  {String}   source          The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased       Whether the theme has been purchased prior to activation
+ * @return {Function}                 Action thunk
  */
 export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
@@ -451,9 +448,9 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
  * requires Jetpack 4.4
  *
- * @param  {string}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
- * @param  {string}   siteId  Jetpack Site ID
- * @returns {Function}         Action thunk
+ * @param  {String}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
+ * @param  {String}   siteId  Jetpack Site ID
+ * @return {Function}         Action thunk
  */
 export function installTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
@@ -500,8 +497,8 @@ export function installTheme( themeId, siteId ) {
  * Returns an action object to be used in signalling that theme activated status
  * for site should be cleared
  *
- * @param  {number}   siteId    Site ID
- * @returns {object}        Action object
+ * @param  {Number}   siteId    Site ID
+ * @return {Object}        Action object
  */
 export function clearActivated( siteId ) {
 	return {
@@ -514,9 +511,9 @@ export function clearActivated( siteId ) {
  * Switches to the customizer to preview a given theme.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @returns {Function}           Action thunk
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @return {Function}           Action thunk
  */
 export function tryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
@@ -537,9 +534,9 @@ export function tryAndCustomize( themeId, siteId ) {
  * See installTheme doc for install options.
  * Requires Jetpack 4.4
  *
- * @param  {string}   themeId      WP.com Theme ID
- * @param  {string}   siteId       Jetpack Site ID
- * @returns {Function}              Action thunk
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
  */
 export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 	return dispatch => {
@@ -554,9 +551,9 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  * When theme is not available dispatches FAILURE action
  * that trigers displaying error notice by notices middlewaere
  *
- * @param  {string}   themeId      WP.com Theme ID
- * @param  {string}   siteId       Jetpack Site ID
- * @returns {Function}              Action thunk
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
@@ -574,11 +571,11 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
  * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
  * theme from WordPress.com. Otherwise, install from WordPress.org.
  *
- * @param  {string}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @returns {Function}           Action thunk
+ * @param  {String}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
  */
 export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
@@ -593,10 +590,10 @@ export function installAndActivateTheme( themeId, siteId, source = 'unknown', pu
 /**
  * Triggers a theme upload to the given site.
  *
- * @param {number} siteId -- Site to upload to
+ * @param {Number} siteId -- Site to upload to
  * @param {File} file -- the theme zip to upload
  *
- * @returns {Function} the action function
+ * @return {Function} the action function
  */
 export function uploadTheme( siteId, file ) {
 	return dispatch => {
@@ -636,9 +633,9 @@ export function uploadTheme( siteId, file ) {
  * Clears any state remaining from a previous
  * theme upload to the given site.
  *
- * @param {number} siteId -- site to clear state for
+ * @param {Number} siteId -- site to clear state for
  *
- * @returns {object} the action object to dispatch
+ * @return {Object} the action object to dispatch
  */
 export function clearThemeUpload( siteId ) {
 	return {
@@ -650,18 +647,14 @@ export function clearThemeUpload( siteId ) {
 /**
  * Start an Automated Transfer with an uploaded theme.
  *
- * @param {number} siteId -- the site to transfer
+ * @param {Number} siteId -- the site to transfer
  * @param {File} file -- theme zip to upload
- * @param {string} plugin -- plugin slug
+ * @param {String} plugin -- plugin slug
  *
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
-	let context = plugin ? 'plugins' : 'themes';
-	if ( ! plugin && ! file ) {
-		context = 'hosting';
-	}
-
+	const context = plugin ? 'plugins' : 'themes';
 	return dispatch => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -687,7 +680,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			.then( ( { transfer_id } ) => {
 				if ( ! transfer_id ) {
 					return dispatch(
-						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin, context )
+						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin )
 					);
 				}
 				const themeInitiateSuccessAction = {
@@ -701,10 +694,10 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id, context ) );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
-				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
+				dispatch( transferInitiateFailure( siteId, error, plugin ) );
 			} );
 	};
 }
@@ -732,7 +725,8 @@ function transferStatusFailure( siteId, transferId, error ) {
 }
 
 // receive a transfer initiation failure
-function transferInitiateFailure( siteId, error, plugin, context ) {
+function transferInitiateFailure( siteId, error, plugin ) {
+	const context = plugin ? 'plugin' : 'theme';
 	return dispatch => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
@@ -754,21 +748,14 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * The returned promise is only for testing purposes, and therefore is never rejected,
  * to avoid unhandled rejections in production.
  *
- * @param {number} siteId -- the site being transferred
- * @param {number} transferId -- the specific transfer
- * @param {string} context -- from which the transfer was initiated
- * @param {number} [interval] -- time between poll attempts
- * @param {number} [timeout] -- time to wait for 'complete' status before bailing
+ * @param {Number} siteId -- the site being transferred
+ * @param {Number} transferId -- the specific transfer
+ * @param {Number} [interval] -- time between poll attemps
+ * @param {Number} [timeout] -- time to wait for 'complete' status before bailing
  *
- * @returns {Promise} for testing purposes only
+ * @return {Promise} for testing purposes only
  */
-export function pollThemeTransferStatus(
-	siteId,
-	transferId,
-	context,
-	interval = 3000,
-	timeout = 180000
-) {
+export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return dispatch => {
 		const pollStatus = ( resolve, reject ) => {
@@ -784,6 +771,7 @@ export function pollThemeTransferStatus(
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
+						const context = uploaded_theme_slug ? 'themes' : 'plugins';
 						dispatch(
 							recordTracksEvent( 'calypso_automated_transfer_complete', {
 								transfer_id: transferId,
@@ -808,10 +796,10 @@ export function pollThemeTransferStatus(
 /**
  * Deletes a theme from the given Jetpack site.
  *
- * @param {string} themeId -- Theme to delete
- * @param {number} siteId -- Site to delete theme from
+ * @param {String} themeId -- Theme to delete
+ * @param {Number} siteId -- Site to delete theme from
  *
- * @returns {Function} Action thunk
+ * @return {Function} Action thunk
  */
 export function deleteTheme( themeId, siteId ) {
 	return dispatch => {
@@ -846,10 +834,10 @@ export function deleteTheme( themeId, siteId ) {
  * Shows dialog asking user to confirm delete of theme
  * from jetpack site. Deletes theme if user confirms.
  *
- * @param {string} themeId -- Theme to delete
- * @param {number} siteId -- Site to delete theme from
+ * @param {String} themeId -- Theme to delete
+ * @param {Number} siteId -- Site to delete theme from
  *
- * @returns {Function} Action thunk
+ * @return {Function} Action thunk
  */
 export function confirmDelete( themeId, siteId ) {
 	return ( dispatch, getState ) => {
@@ -897,7 +885,7 @@ export function hideThemePreview() {
 /**
  * Triggers a network request to fetch all available theme filters.
  *
- * @returns {object} A nested list of theme filters, keyed by filter slug
+ * @return {Object} A nested list of theme filters, keyed by filter slug
  */
 export function requestThemeFilters() {
 	return {
@@ -910,10 +898,10 @@ export function requestThemeFilters() {
  * be suffixed with -wpcom. Themes on AT sites are not
  * installed via downloaded zip.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @param {string} themeId Theme ID
- * @returns {string} the theme id to use when installing the theme
+ * @return {string} the theme id to use when installing the theme
  */
 function suffixThemeIdForInstall( state, siteId, themeId ) {
 	// AT sites do not use the -wpcom suffix
@@ -924,41 +912,4 @@ function suffixThemeIdForInstall( state, siteId, themeId ) {
 		return themeId;
 	}
 	return themeId + '-wpcom';
-}
-
-/**
- * Receives themes and dispatches them with recommended themes success signal.
- *
- * @param {Array} themes array of received theme objects
- * @returns {Function} Action thunk
- */
-export function receiveRecommendedThemes( themes ) {
-	return dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes } );
-	};
-}
-
-/**
- * Initiates network request for recommended themes.
- * Recommended themes are template first themes and are denoted by the 'auto-loading-homepage' tag.
- *
- * @returns {Function} Action thunk
- */
-export function getRecommendedThemes() {
-	return async dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_FETCH } );
-		const query = {
-			search: '',
-			number: 50,
-			tier: '',
-			filter: 'auto-loading-homepage',
-			apiVersion: '1.2',
-		};
-		try {
-			const res = await wpcom.undocumented().themes( null, query );
-			dispatch( receiveRecommendedThemes( res ) );
-		} catch ( error ) {
-			dispatch( { type: RECOMMENDED_THEMES_FAIL } );
-		}
-	};
 }

@@ -116,7 +116,7 @@ class Search extends Component {
 
 	setOverlayRef = overlay => ( this.overlay = overlay );
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch

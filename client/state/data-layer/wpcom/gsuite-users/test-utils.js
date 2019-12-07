@@ -1,3 +1,5 @@
+/** @format */
+
 export const isSuccessNotice = action => {
 	return action && action.notice && 'is-success' === action.notice.status;
 };

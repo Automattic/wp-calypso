@@ -127,4 +127,7 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( null, mapDispatchToProps )( GdprBanner );
+export default connect(
+	null,
+	mapDispatchToProps
+)( GdprBanner );

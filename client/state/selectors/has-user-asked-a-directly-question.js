@@ -3,6 +3,7 @@
  *
  *
  *
+ * @format
  * @see lib/directly for more about Directly
  * @param {Object}  state  Global state tree
  * @return {Boolean}        Whether a question has been asked

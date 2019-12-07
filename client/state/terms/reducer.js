@@ -16,7 +16,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -53,9 +53,10 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case TERMS_RECEIVE: {
+export const queries = createReducerWithValidation(
+	{},
+	{
+		[ TERMS_RECEIVE ]: ( state, action ) => {
 			const { siteId, query, taxonomy, terms, found } = action;
 			const hasManager = state[ siteId ] && state[ siteId ][ taxonomy ];
 			const manager = hasManager ? state[ siteId ][ taxonomy ] : new TermQueryManager();
@@ -72,8 +73,8 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 					[ taxonomy ]: nextManager,
 				},
 			};
-		}
-		case TERM_REMOVE: {
+		},
+		[ TERM_REMOVE ]: ( state, action ) => {
 			const { siteId, taxonomy, termId } = action;
 			if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
 				return state;
@@ -91,25 +92,24 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 					[ taxonomy ]: nextManager,
 				},
 			};
-		}
-		case SERIALIZE: {
+		},
+		[ SERIALIZE ]: state => {
 			return mapValues( state, taxonomies => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return { data, options };
 				} );
 			} );
-		}
-		case DESERIALIZE: {
+		},
+		[ DESERIALIZE ]: state => {
 			return mapValues( state, taxonomies => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return new TermQueryManager( data, options );
 				} );
 			} );
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	queriesSchema
+);
 
 export default combineReducers( {
 	queries,

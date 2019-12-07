@@ -1,7 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:network-connection' );
+import Emitter from 'lib/mixins/emitter';
+import request from 'superagent';
 import i18n from 'i18n-calypso';
 
 /**
@@ -9,31 +16,16 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import PollerPool from 'lib/data-poller';
-import Emitter from 'lib/mixins/emitter';
+
 import { connectionLost, connectionRestored } from 'state/application/actions';
 
-const debug = debugFactory( 'calypso:network-connection' );
+let STATUS_CHECK_INTERVAL = 20000,
+	connected = true,
+	NetworkConnectionApp;
 
-const STATUS_CHECK_INTERVAL = 20000;
-let connected = true;
-
-function fetchWithTimeout( url, init, timeout = 0 ) {
-	if ( ! timeout ) {
-		return fetch( url, init );
-	}
-
-	return Promise.race( [
-		fetch( url, init ),
-		new Promise( ( resolve, reject ) => {
-			setTimeout( () => reject( new Error() ), timeout );
-		} ),
-	] );
-}
-
-const NetworkConnectionApp = {
+NetworkConnectionApp = {
 	/**
-	 * Returns whether the network connection is enabled in config.
-	 * @returns {boolean} whether the network connection is enabled in config
+	 * @returns {boolean}
 	 */
 	isEnabled: function() {
 		return config.isEnabled( 'network-connection' );
@@ -41,14 +33,15 @@ const NetworkConnectionApp = {
 
 	/**
 	 * Bootstraps network connection status change handler.
-	 * @param {Store} reduxStore The Redux store.
 	 */
 	init: function( reduxStore ) {
+		let changeCallback;
+
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
 
-		const changeCallback = () => {
+		changeCallback = function() {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
 				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
@@ -89,16 +82,18 @@ const NetworkConnectionApp = {
 	checkNetworkStatus: function() {
 		debug( 'Checking network status.' );
 
-		fetchWithTimeout(
-			'/version?' + new Date().getTime(),
-			{ method: 'HEAD' },
-			STATUS_CHECK_INTERVAL / 2
-		).then(
-			// Success
-			() => this.emitConnected(),
-			// Failure
-			() => this.emitDisconnected()
-		);
+		request
+			.head( '/version?' + new Date().getTime() )
+			.timeout( STATUS_CHECK_INTERVAL / 2 )
+			.end(
+				function( error ) {
+					if ( error ) {
+						this.emitDisconnected();
+					} else {
+						this.emitConnected();
+					}
+				}.bind( this )
+			);
 	},
 
 	/**
@@ -130,8 +125,7 @@ const NetworkConnectionApp = {
 	},
 
 	/**
-	 * Returns whether the connections is currently active.
-	 * @returns {boolean} whether the connections is currently active.
+	 * @returns {boolean}
 	 */
 	isConnected: function() {
 		return connected;

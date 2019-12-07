@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -219,23 +221,19 @@ export function startImporting( importerStatus ) {
 	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
 }
 
-export const setUploadStartState = ( importerId, filenameOrUrl ) => {
-	const startUploadAction = {
-		type: IMPORTS_UPLOAD_START,
-		filename: filenameOrUrl,
-		importerId,
-	};
-	Dispatcher.handleViewAction( startUploadAction );
-	reduxDispatch( startUploadAction );
-};
-
 export const startUpload = ( importerStatus, file ) => {
 	const {
 		importerId,
 		site: { ID: siteId },
 	} = importerStatus;
 
-	setUploadStartState( importerId, file.name );
+	const startUploadAction = {
+		type: IMPORTS_UPLOAD_START,
+		filename: file.name,
+		importerId,
+	};
+	Dispatcher.handleViewAction( startUploadAction );
+	reduxDispatch( startUploadAction );
 
 	wpcom
 		.uploadExportFile( siteId, {

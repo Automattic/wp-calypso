@@ -1,3 +1,5 @@
+/** @format */
+
 export const LOCALIZED_LANGUAGE_NAMES_DATA_DE = {
 	it: {
 		localized: 'Italienisch',

@@ -1,6 +1,7 @@
 /**
  * /* Notices use different action constants
  *
+ * @format
  */
 
 export const INSTALL_PLUGIN = 'INSTALL_PLUGIN';

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,7 +22,7 @@ import {
 import TranslatableString from 'components/translatable/proptype';
 
 class DocumentHead extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		const { title, unreadCount } = this.props;
 
 		if ( this.props.title !== undefined ) {
@@ -44,7 +46,7 @@ class DocumentHead extends Component {
 		this.setFormattedTitle( this.props.formattedTitle );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
 			this.props.setTitle( nextProps.title );
 		}

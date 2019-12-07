@@ -1,6 +1,7 @@
 /**
  *  External Dependencies
  *
+ * @format
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';

@@ -1,9 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import _debug from 'debug';
+import moment from 'moment';
 import { intersection, map, every, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -14,7 +16,6 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
@@ -59,7 +60,6 @@ export class DomainWarnings extends React.PureComponent {
 		ruleWhiteList: PropTypes.array,
 		domain: PropTypes.object,
 		isCompact: PropTypes.bool,
-		siteIsUnlaunched: PropTypes.bool,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
@@ -230,7 +230,7 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			children = (
 				<span>
-					{ text }{ ' ' }
+					{ text }{' '}
 					<a href={ learnMoreUrl } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Learn more' ) }
 					</a>
@@ -256,13 +256,13 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 		let text;
 		if ( expiredDomains.length === 1 ) {
 			text = translate( '{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.', {
 				components: { strong: <strong /> },
 				args: {
-					timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+					timeSince: expiredDomains[ 0 ].expirationMoment.fromNow(),
 					domainName: expiredDomains[ 0 ].name,
 				},
 				context: 'Expired domain notice',
@@ -298,7 +298,7 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 		let text;
 		if ( expiredDomains.length === 1 ) {
 			text = translate(
@@ -307,7 +307,7 @@ export class DomainWarnings extends React.PureComponent {
 				{
 					components: { strong: <strong /> },
 					args: {
-						timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+						timeSince: expiredDomains[ 0 ].expirationMoment.fromNow(),
 						domainName: expiredDomains[ 0 ].name,
 						owner: expiredDomains[ 0 ].owner,
 					},
@@ -350,14 +350,14 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 
 		let text;
 		if ( expiringDomains.length === 1 ) {
 			text = translate( '{{strong}}%(domainName)s{{/strong}} is expiring %(timeUntil)s.', {
 				components: { strong: <strong /> },
 				args: {
-					timeUntil: moment( expiringDomains[ 0 ].expiry ).fromNow(),
+					timeUntil: expiringDomains[ 0 ].expirationMoment.fromNow(),
 					domainName: expiringDomains[ 0 ].name,
 				},
 				context: 'Expiring soon domain notice',
@@ -393,7 +393,7 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 		let text;
 		if ( expiringDomains.length === 1 ) {
 			text = translate(
@@ -402,7 +402,7 @@ export class DomainWarnings extends React.PureComponent {
 				{
 					components: { strong: <strong /> },
 					args: {
-						timeUntil: moment( expiringDomains[ 0 ].expiry ).fromNow(),
+						timeUntil: expiringDomains[ 0 ].expirationMoment.fromNow(),
 						domainName: expiringDomains[ 0 ].name,
 						owner: expiringDomains[ 0 ].owner,
 					},
@@ -436,11 +436,10 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	newTransfersWrongNS = () => {
-		const { translate, isCompact, moment } = this.props;
 		const newTransfers = this.getDomains().filter(
 			domain =>
-				domain.registrationDate &&
-				moment( domain.registrationDate )
+				domain.registrationMoment &&
+				moment( domain.registrationMoment )
 					.add( 3, 'days' )
 					.isAfter( moment() ) &&
 				domain.transferStatus === transferStatus.COMPLETED &&
@@ -451,6 +450,7 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
+		const { translate, isCompact } = this.props;
 		let compactMessage;
 		let actionLink;
 		let actionText;
@@ -521,12 +521,10 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
-
 		const newDomains = this.getDomains().filter(
 			domain =>
-				domain.registrationDate &&
-				moment( domain.registrationDate )
+				domain.registrationMoment &&
+				moment( domain.registrationMoment )
 					.add( 3, 'days' )
 					.isAfter( moment() ) &&
 				domain.type === domainTypes.REGISTERED
@@ -536,6 +534,7 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
+		const { translate } = this.props;
 		const hasNewPrimaryDomain = newDomains.some(
 			domain => this.props.selectedSite.domain === domain.name
 		);
@@ -626,22 +625,15 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate, moment } = this.props;
-
 		const isWithinTwoDays = domains.some(
-			( { registrationDate } ) =>
-				registrationDate &&
-				moment( registrationDate )
+			( { registrationMoment } ) =>
+				registrationMoment &&
+				moment( registrationMoment )
 					.add( 2, 'days' )
 					.isAfter()
 		);
-		if ( this.props.isSiteEligibleForFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
-			// Customer Home nudges this on unlaunched sites.
-			// After two days let's re-display the nudge
-			return;
-		}
-
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
+		const { translate } = this.props;
 		const action = translate( 'Fix' );
 
 		if ( domains.length === 1 ) {
@@ -880,7 +872,7 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { isCompact, translate, moment } = this.props;
+		const { isCompact, translate } = this.props;
 
 		let status = 'is-warning';
 		let compactMessage = null;
@@ -943,7 +935,7 @@ export class DomainWarnings extends React.PureComponent {
 					}
 				);
 
-				if ( domainInTransfer.transferEndDate ) {
+				if ( domainInTransfer.transferEndDateMoment ) {
 					message = translate(
 						'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. ' +
 							'It should complete by %(transferFinishDate)s. We are waiting ' +
@@ -961,7 +953,7 @@ export class DomainWarnings extends React.PureComponent {
 							},
 							args: {
 								domain: domainInTransfer.name,
-								transferFinishDate: moment( domainInTransfer.transferEndDate ).format( 'LL' ),
+								transferFinishDate: domainInTransfer.transferEndDateMoment.format( 'LL' ),
 							},
 						}
 					);
@@ -1086,7 +1078,7 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}
@@ -1107,4 +1099,4 @@ const mapDispatchToProps = { recordTracksEvent };
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( withLocalizedMoment( DomainWarnings ) ) );
+)( localize( DomainWarnings ) );

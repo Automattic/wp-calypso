@@ -1,19 +1,15 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { isEmpty, isArray, noop, map } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
@@ -30,9 +26,8 @@ export const TemplateSelectorControl = ( {
 	blocksByTemplates = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
+	onTemplateFocus = noop,
 	siteInformation = {},
-	selectedTemplate,
-	handleTemplateConfirmation = noop,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
 		return null;
@@ -63,12 +58,11 @@ export const TemplateSelectorControl = ( {
 							label={ replacePlaceholders( title, siteInformation ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
+							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
 							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
-							isSelected={ slug === selectedTemplate }
-							handleTemplateConfirmation={ handleTemplateConfirmation }
 						/>
 					</li>
 				) ) }
@@ -77,4 +71,7 @@ export const TemplateSelectorControl = ( {
 	);
 };
 
-export default compose( memo, withInstanceId )( TemplateSelectorControl );
+export default compose(
+	memo,
+	withInstanceId
+)( TemplateSelectorControl );

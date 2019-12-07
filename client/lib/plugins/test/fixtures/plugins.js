@@ -1,3 +1,4 @@
+/** @format */
 export default [
 	{
 		active: true,

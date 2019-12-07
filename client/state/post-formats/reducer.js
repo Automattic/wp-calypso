@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
@@ -18,24 +18,14 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case POST_FORMATS_REQUEST: {
-			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
-		}
-		case POST_FORMATS_REQUEST_SUCCESS: {
-			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
-		}
-		case POST_FORMATS_REQUEST_FAILURE: {
-			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
-		}
+export const requesting = createReducer(
+	{},
+	{
+		[ POST_FORMATS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+		[ POST_FORMATS_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+		[ POST_FORMATS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 	}
-
-	return state;
-} );
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -45,16 +35,15 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case POST_FORMATS_RECEIVE: {
-			const { siteId, formats } = action;
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ POST_FORMATS_RECEIVE ]: ( state, { siteId, formats } ) => {
 			return { ...state, [ siteId ]: formats };
-		}
-	}
-
-	return state;
-} );
+		},
+	},
+	postFormatsItemsSchema
+);
 
 export default combineReducers( {
 	requesting,

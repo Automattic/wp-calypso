@@ -1,3 +1,5 @@
+/** @format */
+
 export const purchasesRoot = '/me/purchases';
 
 export const addCreditCard = purchasesRoot + '/add-credit-card';

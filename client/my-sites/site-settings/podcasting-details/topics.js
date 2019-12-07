@@ -1,3 +1,5 @@
+/** @format */
+
 // List from https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12
 
 export default {

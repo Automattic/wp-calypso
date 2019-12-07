@@ -1,3 +1,4 @@
+/** @format **/
 /**
  * Exernal dependencies
  */
@@ -8,10 +9,13 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+// Default value for `siteTypeIds` argument in `getAllSiteTypes()`.
+// Allows for overriding to ensure we don't return site type definitions for segments we don't wish to render in the UI, e.g., when rendering the list on the site type step.
+const allowedSiteTypeIds = [ 1, 2, 3, 4, 6 ];
+
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
 		{
-			theme: 'pub/maywood',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
@@ -23,7 +27,7 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			siteTitleSubheader: i18n.translate(
 				'This will appear at the top of your site and can be changed at anytime.'
 			),
-			siteTitlePlaceholder: i18n.translate( "E.g., Vail Renovations or Stevie's blog" ),
+			siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
 			// Site topic step
 			siteTopicHeader: i18n.translate( 'What is your site about?' ),
 			siteTopicLabel: i18n.translate( 'What is your site about?' ),
@@ -36,9 +40,6 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			domainsStepSubheader: i18n.translate(
 				'Enter a keyword that describes your site to get started.'
 			),
-			domainsStepHeaderTestCopy: "Let's get your site a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your site's name or a few keywords, and we'll come up with some suggestions.",
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
 				'This will help you get started with a theme you might like. You can change it later.'
@@ -58,8 +59,8 @@ const getSiteTypePropertyDefaults = propertyKey =>
  * @param {string} key A property name of a site types item
  * @param {string|number} value The value of `key` with which to filter items
  * @param {string} property The name of the property whose value you wish to return
- * @param {Array} siteTypes (optional) A site type collection
- * @returns {(string|number)?} value of `property` or `null` if none is found
+ * @param {array} siteTypes (optional) A site type collection
+ * @return {(string|int)?} value of `property` or `null` if none is found
  */
 export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
 	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
@@ -75,9 +76,10 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @returns {Array} current list of site types
+ * @param  {Array} siteTypeIds Optional array of segment ids so that we can return all, some or no site type definitions.
+ * @return {Array}             current list of site types
  */
-export function getAllSiteTypes() {
+export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -88,7 +90,7 @@ export function getAllSiteTypes() {
 			theme: 'pub/maywood',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
-			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog" ),
+			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
 			siteTitleSubheader: i18n.translate(
 				'This will appear at the top of your blog and can be changed at anytime.'
 			),
@@ -105,9 +107,6 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: "Let's get your blog a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions.",
 		},
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results
@@ -124,9 +123,6 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your business's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: "Let's get your business a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your business's name or a few keywords, and we'll come up with some suggestions.",
 			customerType: 'business',
 		},
 		{
@@ -138,9 +134,7 @@ export function getAllSiteTypes() {
 			theme: 'pub/maywood',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed', {
-				comment: "An example of a person's name, use something appropriate for the locale",
-			} ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
@@ -163,12 +157,13 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 			purchaseRequired: true,
 			forcePublicSite: true,
-			domainsStepSubheader: i18n.translate(
-				"Enter your site's name or some keywords that describe it to get started."
-			),
-			domainsStepHeaderTestCopy: "Let's get your store a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your store's name or a few keywords, and we'll come up with some suggestions.",
 		},
-	];
+		{
+			id: 6, // This value must correspond with its sibling in the /segments API results
+			slug: 'blank-canvas',
+			label: i18n.translate( 'Start from scratch' ),
+			description: i18n.translate( 'Skip setup and start with a blank website.' ),
+			theme: 'pub/refresh-2019',
+		},
+	].filter( siteType => siteTypeIds.indexOf( siteType.id ) >= 0 );
 }

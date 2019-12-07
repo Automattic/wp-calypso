@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,7 @@ import { get, find, noop, assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
@@ -184,7 +186,7 @@ class TermFormDialog extends Component {
 		);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		if (
 			this.props.term !== newProps.term ||
 			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )

@@ -43,7 +43,7 @@ class NavTabs extends Component {
 	};
 
 	navGroupRef = React.createRef();
-	tabRefMap = new Map();
+	tabWidthMap = new Map();
 
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
@@ -62,20 +62,21 @@ class NavTabs extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
-	/* Ref that stores the given tab element */
-	storeTabRefs( index ) {
+	/* Ref that stores the width of given tab element */
+	storeTabWidth( index ) {
 		return tabElement => {
 			if ( tabElement === null ) {
-				this.tabRefMap.delete( index );
+				this.tabWidthMap.delete( index );
 			} else {
-				this.tabRefMap.set( index, tabElement );
+				const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
+				this.tabWidthMap.set( index, tabWidth );
 			}
 		};
 	}
 
 	render() {
 		const tabs = React.Children.map( this.props.children, ( child, index ) => {
-			return child && React.cloneElement( child, { ref: this.storeTabRefs( index ) } );
+			return child && React.cloneElement( child, { ref: this.storeTabWidth( index ) } );
 		} );
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
@@ -105,8 +106,7 @@ class NavTabs extends Component {
 	getTabWidths() {
 		let totalWidth = 0;
 
-		this.tabRefMap.forEach( tabElement => {
-			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
+		this.tabWidthMap.forEach( tabWidth => {
 			totalWidth += tabWidth;
 		} );
 

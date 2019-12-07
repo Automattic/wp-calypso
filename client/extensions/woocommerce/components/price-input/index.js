@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,7 +42,7 @@ class PriceInput extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( { value } ) {
+	componentWillReceiveProps( { value } ) {
 		this.setState( { value } );
 	}
 

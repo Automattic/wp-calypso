@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,88 +8,44 @@ import moment from 'moment-timezone';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
 
-export const message = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.message;
-	}
-
-	return state;
+export const message = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.message,
 } );
 
-export const timezone = withoutPersistence( ( state = moment.tz.guess(), action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.timezone;
-	}
-
-	return state;
+export const timezone = createReducer( moment.tz.guess(), {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.timezone,
 } );
 
-export const isRebrandCitiesSite = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.isRebrandCitiesSite;
-	}
-
-	return state;
+export const isRebrandCitiesSite = createReducer( false, {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.isRebrandCitiesSite,
 } );
 
-export const firstname = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.firstname;
-	}
-
-	return state;
+export const firstname = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.firstname,
 } );
 
-export const lastname = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.lastname;
-	}
-
-	return state;
+export const lastname = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.lastname,
 } );
 
-export const phoneNumber = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.phoneNumber;
-	}
-
-	return state;
+export const phoneNumber = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.phoneNumber,
 } );
 
-export const countryCode = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.countryCode;
-	}
-
-	return state;
+export const countryCode = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.countryCode,
 } );
 
-export const phoneNumberWithoutCountryCode = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.phoneNumberWithoutCountryCode;
-	}
-
-	return state;
+export const phoneNumberWithoutCountryCode = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) =>
+		action.signupForm.phoneNumberWithoutCountryCode,
 } );
 
-export const status = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_UPDATE_BOOKING_STATUS:
-			return action.status;
-	}
-
-	return state;
+export const status = createReducer( null, {
+	[ CONCIERGE_UPDATE_BOOKING_STATUS ]: ( state, action ) => action.status,
 } );
 
 export default combineReducers( {

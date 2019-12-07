@@ -1,3 +1,4 @@
+/** @format */
 export const forwardsSchema = {
 	type: 'array',
 	items: {

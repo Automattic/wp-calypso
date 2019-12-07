@@ -9,6 +9,7 @@ const EMPTY_SITES = Object.freeze( {} );
  * Returns site items object or empty object.
  *
  *
+ * @format
  * @param {Object} state  Global state tree
  * @return {Object}        Site items object or empty object
  */

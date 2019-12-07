@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { createReducerWithValidation, combineReducers } from 'state/utils';
 import { domainTransferSchema } from './schema';
 import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
 
@@ -13,20 +13,16 @@ import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = withSchemaValidation( domainTransferSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case DOMAIN_TRANSFER_UPDATE: {
-			const { domain, options } = action;
-
-			return {
-				...state,
-				[ domain ]: options,
-			};
-		}
-	}
-
-	return state;
-} );
+export const items = createReducerWithValidation(
+	{},
+	{
+		[ DOMAIN_TRANSFER_UPDATE ]: ( state, { domain, options } ) => ( {
+			...state,
+			[ domain ]: options,
+		} ),
+	},
+	domainTransferSchema
+);
 
 export default combineReducers( {
 	items,

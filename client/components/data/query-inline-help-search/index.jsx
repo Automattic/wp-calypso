@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,11 +13,11 @@ import { requestInlineHelpSearchResults } from 'state/inline-help/actions';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
 
 class QueryInlineHelpSearch extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.query === nextProps.query ) {
 			return;
 		}

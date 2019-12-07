@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,7 +23,7 @@ export default class extends React.PureComponent {
 					src="/calypso/images/illustrations/illustration-nosites.svg"
 				/>
 				<p>
-					This is your local running copy of Calypso. If you want a quick start,{ ' ' }
+					This is your local running copy of Calypso. If you want a quick start,{' '}
 					<a href="/devdocs/docs/guide/index.md">check the Guide</a>. To access the documentation at
 					any time, use the small badge in the bottom right corner.
 				</p>

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -5,15 +7,10 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-/**
- * Image dependencies
- */
-import getAppsImage from 'assets/images/illustrations/get-apps-banner.svg';
-
 const GetAppsIllustration = ( { translate } ) => (
 	<div className="get-apps__illustration">
 		<img
-			src={ getAppsImage }
+			src={ '/calypso/images/illustrations/get-apps-banner.svg' }
 			alt={ translate( 'Groups of people looking at WordPress mobile apps.' ) }
 		/>
 		<h2 className="get-apps__illustration-heading">

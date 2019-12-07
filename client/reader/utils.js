@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External Dependencies
  */
 import page from 'page';
+import { every } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -40,7 +42,7 @@ export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 
 	// normal
 	let mappedPost;
-	if ( postKey.feedId ) {
+	if ( !! postKey.feedId ) {
 		mappedPost = {
 			feed_ID: postKey.feedId,
 			feed_item_ID: postKey.postId,
@@ -91,6 +93,9 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
+
+export const shallowEquals = ( o1, o2 ) =>
+	every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );
 
 export function getStreamType( streamKey ) {
 	const indexOfColon = streamKey.indexOf( ':' );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -39,7 +41,7 @@ class SettingsPaymentsMethodList extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -110,5 +112,8 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsMethodList )
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( SettingsPaymentsMethodList )
 );

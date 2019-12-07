@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,7 +19,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypes, getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import Dialog from 'components/dialog';
 
 /**
  * Style dependencies

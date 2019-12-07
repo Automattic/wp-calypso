@@ -1,13 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { parse, stringify } from 'qs';
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import { getCurrentUserLocale, getCurrentUserLocaleVariant } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -17,7 +20,7 @@ let locale;
 /**
  * Setter function for internal locale value
  *
- * @param {string} localeToSet Locale to set
+ * @param {String} localeToSet Locale to set
  */
 export function setLocale( localeToSet ) {
 	locale = localeToSet;
@@ -26,7 +29,7 @@ export function setLocale( localeToSet ) {
 /**
  * Getter function for internal locale value
  *
- * @returns {string} Locale
+ * @return {String} Locale
  */
 export function getLocale() {
 	return locale;
@@ -36,8 +39,8 @@ export function getLocale() {
  * Given a WPCOM parameter set, modifies the query such that a non-default
  * locale is added to the query parameter.
  *
- * @param  {object} params Original parameters
- * @returns {object}        Revised parameters, if non-default locale
+ * @param  {Object} params Original parameters
+ * @return {Object}        Revised parameters, if non-default locale
  */
 export function addLocaleQueryParam( params ) {
 	if ( ! locale || 'en' === locale ) {
@@ -64,8 +67,8 @@ export function addLocaleQueryParam( params ) {
  * localization helpers. Specifically, this adds a locale query parameter
  * by default.
  *
- * @param {object} wpcom Original WPCOM instance
- * @returns {object} Modified WPCOM instance with localization helpers
+ * @param  {Object} wpcom Original WPCOM instance
+ * @return {Object}       Modified WPCOM instance with localization helpers
  */
 export function injectLocalization( wpcom ) {
 	const originalRequest = wpcom.request.bind( wpcom );
@@ -82,14 +85,15 @@ export function injectLocalization( wpcom ) {
  * Subscribes to the provided Redux store instance, updating the known locale
  * value to the latest value when state changes.
  *
- * @param {object} store Redux store instance
+ * @param {Object} store Redux store instance
  */
 export function bindState( store ) {
 	function setLocaleFromState() {
-		const state = store.getState();
-		const localeVariant = getCurrentLocaleVariant( state );
-		const localeSlug = getCurrentLocaleSlug( state );
-		setLocale( localeVariant || localeSlug );
+		setLocale(
+			getCurrentUserLocaleVariant( store.getState() ) ||
+				getCurrentUserLocale( store.getState() ) ||
+				getLocaleSlug()
+		);
 	}
 
 	store.subscribe( setLocaleFromState );

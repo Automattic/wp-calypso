@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ export const ItemEditor = class extends Component {
 		this.editor = undefined;
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		if ( newProps.shouldFocus && ! this.props.shouldFocus ) {
 			window.requestAnimationFrame( () => {
 				this.editor.focus();

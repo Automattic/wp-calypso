@@ -1,3 +1,4 @@
+/** @format */
 export const billingTransactionsSchema = {
 	type: 'object',
 	additionalProperties: false,

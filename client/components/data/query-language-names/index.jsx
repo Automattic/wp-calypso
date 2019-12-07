@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,7 +23,7 @@ class QueryLanguageNames extends Component {
 		requestLanguageNames: () => {},
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( ! this.props.languageNames ) {
 			this.props.requestLanguageNames();
 		}

@@ -1,3 +1,5 @@
+/** @format */
+
 /* eslint-disable no-console */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**

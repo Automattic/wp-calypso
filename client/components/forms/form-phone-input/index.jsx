@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,7 +46,7 @@ export class FormPhoneInput extends React.Component {
 		phoneNumber: this.props.initialPhoneNumber || '',
 	};
 
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.maybeSetCountryStateFromList();
 	}
 

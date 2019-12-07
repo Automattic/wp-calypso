@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -47,9 +49,6 @@ function createPurchaseObject( purchase ) {
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
-		partnerName: purchase.partner_name,
-		partnerSlug: purchase.partner_slug,
-		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
@@ -61,7 +60,6 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
-		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,

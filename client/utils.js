@@ -1,3 +1,5 @@
+/** @format */
+
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
 export function pathToRegExp( path ) {

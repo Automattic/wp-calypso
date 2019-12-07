@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -31,7 +33,7 @@ class PrimaryHeader extends Component {
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }
+						headerText={ translate( 'WordPress.com Support Scheduler' ) }
 						subHeaderText={ translate(
 							'Use the tool below to book your in-depth support session.'
 						) }

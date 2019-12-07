@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Disallow strings which include only placeholders
  * @author Automattic

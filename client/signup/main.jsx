@@ -38,11 +38,12 @@ import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 // Libraries
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart } from 'lib/cart/actions';
+import { disableCart } from 'lib/upgrades/actions';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -164,6 +165,12 @@ class Signup extends React.Component {
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
 
+		if ( 'remove' === abtest( 'removeBlogFlow' ) && 'blog' === this.props.flowName ) {
+			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
+			this.setState( { resumingStep: destinationStep } );
+			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
+		}
+
 		this.recordStep();
 	}
 
@@ -202,6 +209,25 @@ class Signup extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName } = this.props;
+		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
+
+		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
+		if (
+			prevProps.flowName &&
+			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
+			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
+			this.getPositionInFlow() > 0 &&
+			this.props.progress.length === 0
+		) {
+			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
+				flow: flowName,
+				step: stepName,
+				previous_flow: prevProps.flowName,
+				previous_step: prevProps.stepName,
+			} );
+		}
+
 		if (
 			get( this.props.signupDependencies, 'siteType' ) !==
 			get( prevProps.signupDependencies, 'siteType' )
@@ -410,23 +436,14 @@ class Signup extends React.Component {
 		const scrollPromise = new Promise( resolve => {
 			this.setState( { scrolling: true } );
 
-			const ANIMATION_LENGTH_MS = 200;
-			const startTime = window.performance.now();
-			const scrollHeight = window.pageYOffset;
-
-			const scrollToTop = timestamp => {
-				const progress = timestamp - startTime;
-
-				if ( progress < ANIMATION_LENGTH_MS ) {
-					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
-					window.requestAnimationFrame( scrollToTop );
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
 				} else {
 					this.setState( { scrolling: false } );
-					resolve();
+					resolve( clearInterval( scrollIntervalId ) );
 				}
-			};
-
-			window.requestAnimationFrame( scrollToTop );
+			}, 1 );
 		} );
 
 		// redirect the user to the next step
@@ -502,9 +519,7 @@ class Signup extends React.Component {
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
-		// Hide the free option as part of 'domainStepCopyUpdates' a/b test
-		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (

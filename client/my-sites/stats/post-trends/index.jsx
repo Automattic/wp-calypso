@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -217,6 +219,11 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, null, null, {
-	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
-} )( localize( PostTrends ) );
+export default connect(
+	mapStateToProps,
+	null,
+	null,
+	{
+		areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
+	}
+)( localize( PostTrends ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -27,10 +29,7 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 
 						return a;
 					} )
-					.then(
-						a => [ true, a, key ],
-						a => [ false, a, key ]
-					)
+					.then( a => [ true, a, key ], a => [ false, a, key ] )
 			);
 
 			Promise.all( runners ).then( resolutions => {

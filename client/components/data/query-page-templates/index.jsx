@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,11 +16,11 @@ import { getSiteOption } from 'state/sites/selectors';
 import { requestPageTemplates } from 'state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		this.request( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const { siteId, themeSlug } = this.props;
 		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
 		const hasSiteOrThemeChanged =

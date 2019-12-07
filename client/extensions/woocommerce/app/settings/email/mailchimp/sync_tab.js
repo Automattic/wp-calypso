@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -31,15 +32,13 @@ class Tooltip extends React.Component {
 
 	render() {
 		return (
-			<Fragment>
-				<div
-					className="mailchimp__sync-notice-list"
-					onMouseEnter={ this.open }
-					onMouseLeave={ this.close }
-					ref={ this.tooltipRef }
-				>
-					{ this.props.children }
-				</div>
+			<div
+				className="mailchimp__sync-notice-list"
+				onMouseEnter={ this.open }
+				onMouseLeave={ this.close }
+				ref={ this.tooltipRef }
+			>
+				{ this.props.children }
 				<TooltipComponent
 					isVisible={ this.state.show }
 					onClose={ this.close }
@@ -48,7 +47,7 @@ class Tooltip extends React.Component {
 				>
 					<div>{ this.props.listName }</div>
 				</TooltipComponent>
-			</Fragment>
+			</div>
 		);
 	}
 }

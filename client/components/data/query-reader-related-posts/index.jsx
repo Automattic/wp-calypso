@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,13 +18,13 @@ import { requestRelatedPosts } from 'state/reader/related-posts/actions';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {
-	UNSAFE_componentWillMount() {
+	componentWillMount() {
 		if ( this.props.shouldFetch ) {
 			this.props.requestRelatedPosts( this.props.siteId, this.props.postId, this.props.scope );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.shouldFetch ||
 			( this.props.siteId === nextProps.siteId &&

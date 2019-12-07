@@ -1,8 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { endsWith, omit } from 'lodash';
-import deterministicStringify from 'fast-json-stable-stringify';
+import deterministicStringify from 'json-stable-stringify';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-followers-store' );
 
@@ -12,13 +15,13 @@ const debug = debugFactory( 'calypso:wpcom-followers-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-const _fetchingFollowersByNamespace = {}; // store fetching state (boolean)
-const _followersBySite = {}; // store user objects
-const _totalFollowersByNamespace = {}; // store total found for params
-const _followersFetchedByNamespace = {}; // store fetch progress
-const _pageByNamespace = {}; // store fetch progress
-const _followerIDsByNamespace = {}; // store user order
-const _removingFromSite = {};
+let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
+	_followersBySite = {}, // store user objects
+	_totalFollowersByNamespace = {}, // store total found for params
+	_followersFetchedByNamespace = {}, // store fetch progress
+	_pageByNamespace = {}, // store fetch progress
+	_followerIDsByNamespace = {}, // store user order
+	_removingFromSite = {};
 
 const FollowersStore = {
 	// This data may help with infinite scrolling
@@ -40,8 +43,8 @@ const FollowersStore = {
 	},
 
 	getFollowers: function( fetchOptions ) {
-		const namespace = getNamespace( fetchOptions );
-		const siteId = fetchOptions.siteId;
+		let namespace = getNamespace( fetchOptions ),
+			siteId = fetchOptions.siteId;
 
 		debug( 'getFollowers:', namespace );
 
@@ -83,8 +86,8 @@ function updateFollower( siteId, id, follower ) {
 }
 
 function updateFollowers( fetchOptions, followers, total ) {
-	const namespace = getNamespace( fetchOptions );
-	const page = fetchOptions.page;
+	let namespace = getNamespace( fetchOptions ),
+		page = fetchOptions.page;
 
 	debug( 'updateFollowers:', namespace );
 
@@ -153,8 +156,8 @@ function removeFollowerFromNamespaces( siteId, followerId ) {
 }
 
 FollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	const action = payload.action;
-	let namespace;
+	let action = payload.action,
+		namespace;
 	debug( 'register event Type', action.type, payload );
 
 	switch ( action.type ) {
