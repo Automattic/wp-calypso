@@ -460,7 +460,7 @@ function createMockMethod() {
 		id: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
-		submitButton: props => <button { ...props }>Pay Please</button>,
+		submitButton: <button>Pay Please</button>,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
