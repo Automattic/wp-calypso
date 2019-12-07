@@ -81,10 +81,7 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 		id: 'paypal',
 		label: <PaypalLabel />,
 		SubmitButtonComponent: PaypalSubmitButton,
-		SummaryComponent: () => {
-			const localize = useLocalize();
-			return localize( 'PayPal' );
-		},
+		inactiveContent: <PaypalSummary />,
 		getAriaLabel: localize => localize( 'PayPal' ),
 	};
 }
@@ -152,9 +149,9 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 	transform: translateY( 2px );
 `;
 
-export function PaypalSummary() {
+function PaypalSummary() {
 	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Paypal' ) }</React.Fragment>;
+	return localize( 'Paypal' );
 }
 
 function PaypalLogo( { className } ) {

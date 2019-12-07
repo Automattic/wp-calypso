@@ -215,7 +215,7 @@ export function createStripeMethod( {
 		PaymentMethodComponent: StripeCreditCardFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,
-		SummaryComponent: StripeSummary,
+		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
 			const cardholderName = selectors.getCardholderName( store.getState() );

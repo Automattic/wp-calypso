@@ -18,7 +18,7 @@ export function validatePaymentMethod( {
 	id,
 	label,
 	SubmitButtonComponent,
-	SummaryComponent,
+	inactiveContent,
 	getAriaLabel,
 } ) {
 	validateArg( id, 'Invalid payment method; missing id property' );
@@ -27,7 +27,7 @@ export function validatePaymentMethod( {
 		SubmitButtonComponent,
 		`Invalid payment method '${ id }'; missing SubmitButtonComponent`
 	);
-	validateArg( SummaryComponent, `Invalid payment method '${ id }'; missing SummaryComponent` );
+	validateArg( inactiveContent, `Invalid payment method '${ id }'; missing inactiveContent` );
 	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
 }
 

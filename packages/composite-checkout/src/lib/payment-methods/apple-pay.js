@@ -64,7 +64,7 @@ export function createApplePayMethod( { registerStore, fetchStripeConfiguration 
 		id: 'apple-pay',
 		label: <ApplePayLabel />,
 		SubmitButtonComponent: ApplePaySubmitButton,
-		SummaryComponent: ApplePaySummary,
+		inactiveContent: <ApplePaySummary />,
 		CheckoutWrapper: StripeHookProvider,
 		getAriaLabel: localize => localize( 'Apple Pay' ),
 	};

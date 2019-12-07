@@ -86,14 +86,14 @@ function PaymentMethod( {
 	id,
 	label,
 	PaymentMethodComponent,
-	SummaryComponent,
+	inactiveContent,
 	checked,
 	onClick,
 	ariaLabel,
 	summary,
 } ) {
 	if ( summary ) {
-		return <SummaryComponent id={ id } />;
+		return inactiveContent;
 	}
 
 	return (
@@ -120,7 +120,7 @@ PaymentMethod.propTypes = {
 	ariaLabel: PropTypes.string.isRequired,
 	PaymentMethodComponent: PropTypes.elementType,
 	label: PropTypes.node,
-	SummaryComponent: PropTypes.elementType,
+	inactiveContent: PropTypes.node,
 	summary: PropTypes.bool,
 };
 

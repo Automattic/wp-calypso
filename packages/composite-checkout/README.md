@@ -103,7 +103,7 @@ Each payment method is an object with the following properties:
 - `label: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
 - `PaymentMethodComponent: React.Component`. A component that displays that payment method (this can return null or something like a credit card form). It will receive the props of the `CheckoutStep`.
 - `SubmitButtonComponent: React.Component`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
-- `SummaryComponent: React.Component`. A component that renders a summary of the selected payment method when the step is inactive.
+- `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `CheckoutWrapper?: React.Component`. A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
 - `isCompleteCallback?: ({paymentData: object, activeStep: object}) => boolean`. Used to determine if a step is complete for purposes of validation. Default is a function returning true.

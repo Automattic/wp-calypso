@@ -21,7 +21,7 @@ export function createCreditCardMethod() {
 		label: <CreditCardLabel />,
 		PaymentMethodComponent: CreditCardFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
-		SummaryComponent: CreditCardSummary,
+		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }
@@ -55,13 +55,13 @@ export function CreditCardSubmitButton( { disabled } ) {
 	);
 }
 
-export function CreditCardSummary( { id } ) {
+export function CreditCardSummary() {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 
 	let PaymentLogo = null;
 
-	if ( paymentData.creditCard && id === 'card' ) {
+	if ( paymentData.creditCard ) {
 		//TODO: Update this with all credit card types we support
 		switch ( Number( paymentData.creditCard.cardNumber[ 0 ] ) ) {
 			case 3:
