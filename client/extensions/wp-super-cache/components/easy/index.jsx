@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,7 @@ class EasyTab extends Component {
 		isDeletingAll: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
 			this.setState( {
 				isDeleting: false,
@@ -244,7 +242,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( EasyTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( EasyTab );

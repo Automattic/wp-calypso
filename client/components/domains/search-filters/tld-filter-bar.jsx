@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -204,9 +202,6 @@ export class TldFilterBar extends Component {
 		);
 	}
 }
-export default connect(
-	null,
-	{
-		recordTldFilterSelected,
-	}
-)( localize( TldFilterBar ) );
+export default connect( null, {
+	recordTldFilterSelected,
+} )( localize( TldFilterBar ) );

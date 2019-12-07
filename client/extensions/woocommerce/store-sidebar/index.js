@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -308,7 +306,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( StoreSidebar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );

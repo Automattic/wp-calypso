@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { getSite } from 'state/sites/selectors';
@@ -237,4 +237,4 @@ class AutoRenewDisablingDialog extends Component {
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 	selectedSite: getSite( state, purchase.siteId ),
-} ) )( localize( AutoRenewDisablingDialog ) );
+} ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

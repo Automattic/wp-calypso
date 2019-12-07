@@ -10,7 +10,6 @@
 
 // Following intro
 .following__intro {
-	background: url( '/calypso/images/reader/reader-intro-background.svg' ) var( --color-surface ) no-repeat 100% 20px;
 	border: 1px solid var( --color-neutral-0 );
 
 	.following__intro-copy {
@@ -26,13 +25,11 @@
 			}
 		}
 	}
-
-	.following__intro-character {
-		background: url( '/calypso/images/reader/reader-intro-character.svg' ) no-repeat 8px bottom;
-	}
 }
 
 .following__intro {
+	background-position: 100% 20px;
+	background-repeat: no-repeat;
 	background-size: 450px;
 	min-height: 140px;
 
@@ -47,23 +44,16 @@
 	.following__intro-copy-hidden {
 		@include breakpoint( '<660px' ) {
 			display: none;
-			visibility: hidden;
 		}
 	}
 
 	.following__intro-character {
-		background-size: 106px;
-		flex: 0 0 110px;
-		min-height: 140px;
+		height: 140px;
 		margin-right: -2px; // prevent right cropping of illustration
 
 		// Hides the character when main content column gets too narrow
 		@media ( min-width: 661px ) and ( max-width: 773px ) {
 			display: none;
-		}
-
-		@include breakpoint( '<660px' ) {
-			background-size: 106px;
 		}
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,7 +50,7 @@ class AdsFormSettings extends Component {
 		this.state = store;
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		SettingsStore.on( 'change', this.updateSettings );
 		this.fetchIfEmpty();
 	}
@@ -62,7 +60,7 @@ class AdsFormSettings extends Component {
 		SettingsStore.clearNotices();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { site } = this.props;
 		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
 			return;
@@ -211,6 +209,12 @@ class AdsFormSettings extends Component {
 		setTimeout( function() {
 			WordadsActions.fetchSettings( site );
 		}, 0 );
+	}
+
+	jetpackPlacementControls() {
+		const linkHref = '/marketing/traffic/' + this.props.site.slug;
+
+		return <Card href={ linkHref }>Manage ad placements</Card>;
 	}
 
 	showAdsToOptions() {
@@ -501,12 +505,20 @@ class AdsFormSettings extends Component {
 					/>
 					<span>
 						{ translate(
-							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.',
+							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}. {{br/}}I agree to post only {{b}}family-friendly content{{/b}} and will not purchase non-human traffic.',
 							{
 								components: {
 									a: (
 										<a
 											href="https://wordpress.com/automattic-ads-tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									br: <br />,
+									b: (
+										<a
+											href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -523,11 +535,19 @@ class AdsFormSettings extends Component {
 	render() {
 		const { translate } = this.props;
 		const isPending = this.state.isLoading || this.state.isSubmitting;
+		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<Fragment>
+				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
+
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
-					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
+					<Button
+						compact
+						primary
+						onClick={ this.handleSubmit }
+						disabled={ isPending || ! isWordAds }
+					>
 						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>

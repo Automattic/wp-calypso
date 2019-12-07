@@ -302,15 +302,7 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.copyCodesButtonRef }
 						>
 							<Gridicon icon="clipboard" />
-							<Tooltip
-								context={ this.copyCodesButtonRef.current }
-								isVisible={ this.state.copyCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Copy Codes' ) }
-							</Tooltip>
 						</Button>
-
 						<Button
 							className="security-2fa-backup-codes-list__print"
 							disabled={ ! this.props.backupCodes.length }
@@ -320,15 +312,7 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.printCodesButtonRef }
 						>
 							<Gridicon icon="print" />
-							<Tooltip
-								context={ this.printCodesButtonRef.current }
-								isVisible={ this.state.printCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Print Codes' ) }
-							</Tooltip>
 						</Button>
-
 						<Button
 							className="security-2fa-backup-codes-list__download"
 							disabled={ ! this.props.backupCodes.length }
@@ -338,15 +322,29 @@ class Security2faBackupCodesList extends React.Component {
 							ref={ this.downloadCodesButtonRef }
 						>
 							<Gridicon icon="cloud-download" />
-							<Tooltip
-								context={ this.downloadCodesButtonRef.current }
-								isVisible={ this.state.downloadCodesTooltip }
-								position="top"
-							>
-								{ this.props.translate( 'Download Codes' ) }
-							</Tooltip>
 						</Button>
 					</ButtonGroup>
+					<Tooltip
+						context={ this.copyCodesButtonRef.current }
+						isVisible={ this.state.copyCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Copy Codes' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.printCodesButtonRef.current }
+						isVisible={ this.state.printCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Print Codes' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.downloadCodesButtonRef.current }
+						isVisible={ this.state.downloadCodesTooltip }
+						position="top"
+					>
+						{ this.props.translate( 'Download Codes' ) }
+					</Tooltip>
 				</FormButtonBar>
 			</div>
 		);
@@ -376,10 +374,7 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect(
-		state => ( { username: getCurrentUserName( state ) } ),
-		{ recordGoogleEvent }
-	),
+	connect( state => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );

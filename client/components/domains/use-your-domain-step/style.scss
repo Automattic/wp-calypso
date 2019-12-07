@@ -39,6 +39,10 @@
 		justify-content: center;
 		margin: 1em 0;
 		max-height: 150px;
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
 	}
 
 	.use-your-domain-step__option-illustration img {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -76,7 +74,6 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ setSiteTitle, submitSignupStep }
-)( localize( RebrandCitiesWelcomeStep ) );
+export default connect( null, { setSiteTitle, submitSignupStep } )(
+	localize( RebrandCitiesWelcomeStep )
+);

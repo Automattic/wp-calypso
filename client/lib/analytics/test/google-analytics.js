@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
@@ -32,6 +31,7 @@ jest.mock( 'lib/analytics/utils', () => ( {
 	doNotTrack: () => false,
 	isPiiUrl: () => false,
 	mayWeTrackCurrentUserGdpr: () => true,
+	getCurrentUser: () => undefined,
 } ) );
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 

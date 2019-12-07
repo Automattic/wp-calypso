@@ -2,7 +2,6 @@
  * Returns the poster upload progress.
  *
  *
- * @format
  * @param {Object}  state  Global state tree
  * @return {Number}  Poster upload progress percentage.
  */

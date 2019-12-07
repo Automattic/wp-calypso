@@ -23,11 +23,6 @@ $autobar-height: 20px;
 		background: var( --studio-orange );
 		border-bottom: 1px solid var( --studio-orange-60 );
 	}
-
-	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
-		border: none;
-	}
 }
 
 .pride .masterbar {
@@ -407,6 +402,8 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-out;
 
 	&:hover {
+		background-color: var( --color-neutral-0 );
+		
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
@@ -497,7 +494,7 @@ $autobar-height: 20px;
 	}
 }
 
-.masterbar__quick-language-switcher a {
+a.masterbar__quick-language-switcher {
 	cursor: pointer;
 }
 
@@ -521,4 +518,20 @@ $autobar-height: 20px;
 .has-no-masterbar .masterbar {
 	opacity: 0;
 	pointer-events: none;
+}
+
+.masterbar__secure-checkout {
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
+
+	.masterbar__wpcom-wordmark {
+		margin-right: 5px;
+	}
+
+	.masterbar__secure-checkout-text {
+		font-weight: 300;
+		color: var( --color-primary-5 );
+		transform: translateY( 1px );
+	}
 }

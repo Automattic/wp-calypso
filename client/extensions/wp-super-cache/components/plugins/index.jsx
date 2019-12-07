@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -133,7 +131,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'plugin_list' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PluginsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PluginsTab );

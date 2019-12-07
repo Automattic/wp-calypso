@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ import PlanBillingPeriod from './billing-period';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isDataLoading } from 'me/purchases/utils';
-import { getName, isExpired } from 'lib/purchases';
+import { getName, isExpired, isPartnerPurchase } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
@@ -95,7 +93,7 @@ class PurchasePlanDetails extends Component {
 				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
-					<PlanBillingPeriod purchase={ purchase } />
+					{ ! isPartnerPurchase( purchase ) && <PlanBillingPeriod purchase={ purchase } /> }
 
 					{ pluginList.map( ( plugin, i ) => {
 						return (

@@ -35,11 +35,15 @@ class SocialLogin extends Component {
 	static propTypes = {
 		errorUpdatingSocialConnection: PropTypes.object,
 		path: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
 
 	renderContent() {
-		const { translate, errorUpdatingSocialConnection } = this.props;
+		const { translate, errorUpdatingSocialConnection, path } = this.props;
+
+		const redirectUri = typeof window !== 'undefined' ? window.location.origin + path : null;
 
 		return (
 			<div>
@@ -59,7 +63,14 @@ class SocialLogin extends Component {
 				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
 
 				{ config.isEnabled( 'sign-in-with-apple' ) && (
-					<SocialLoginService service="apple" icon={ <AppleIcon /> } />
+					<SocialLoginService
+						service="apple"
+						icon={ <AppleIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
 				) }
 			</div>
 		);

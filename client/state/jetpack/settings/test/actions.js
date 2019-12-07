@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -58,7 +56,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveJetpackSettingsSuccess()', () => {
-		test( 'should return a jetpack onboarding settings save action success object', () => {
+		test( 'should return a settings save action success object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',

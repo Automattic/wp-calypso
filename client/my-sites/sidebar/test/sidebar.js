@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -63,7 +62,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return store menu item if user can use store on this site', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserManageOptions: true,
+				canUserUseStore: true,
 				...defaultProps,
 				site: {
 					plan: {
@@ -79,7 +78,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return Calypsoified store menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserManageOptions: true,
+				canUserUseStore: true,
 				...defaultProps,
 				site: {
 					options: {

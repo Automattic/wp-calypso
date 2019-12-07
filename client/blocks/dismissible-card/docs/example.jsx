@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,12 +31,9 @@ function DismissibleCardExample( { clearPreference } ) {
 	);
 }
 
-const ConnectedDismissibleCardExample = connect(
-	null,
-	{
-		clearPreference: partial( savePreference, 'dismissible-card-example', null ),
-	}
-)( DismissibleCardExample );
+const ConnectedDismissibleCardExample = connect( null, {
+	clearPreference: partial( savePreference, 'dismissible-card-example', null ),
+} )( DismissibleCardExample );
 
 ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
 

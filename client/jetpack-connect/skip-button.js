@@ -53,9 +53,6 @@ class SkipButton extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( SkipButton ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( SkipButton ) );

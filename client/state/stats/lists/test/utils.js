@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -27,7 +25,10 @@ describe( 'utils', () => {
 		unit: 'year',
 		quantity: '10',
 		fields: [ 'period', 'orders', 'currency' ],
-		data: [ [ 2016, 0, 'NZD' ], [ 2017, 14, 'NZD' ] ],
+		data: [
+			[ 2016, 0, 'NZD' ],
+			[ 2017, 14, 'NZD' ],
+		],
 		delta_fields: [
 			'period',
 			'delta',
@@ -1063,7 +1064,10 @@ describe( 'utils', () => {
 			test( 'should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
-						data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
+						data: [
+							[ '2016-11-12', 1 ],
+							[ '2016-11-13', 0 ],
+						],
 						pages: [
 							'https://vip.wordpress.com/category/themes/',
 							'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
@@ -1738,7 +1742,10 @@ describe( 'utils', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
-						data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
+						data: [
+							[ '2016-12-22', 0, 0 ],
+							[ '2016-12-23', 10, 6 ],
+						],
 						unit: 'week',
 					} )
 				).toEqual( [
@@ -1771,7 +1778,10 @@ describe( 'utils', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
-						data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
+						data: [
+							[ '2016W11W07', 0, 0 ],
+							[ '2016W10W31', 10, 6 ],
+						],
 						unit: 'day',
 					} )
 				).toEqual( [
@@ -1854,8 +1864,20 @@ describe( 'utils', () => {
 		describe( 'parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
-					{ date: '2018-04-10', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
-					{ date: '2018-04-09', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
+					{
+						date: '2018-04-10',
+						data: [
+							[ 'green', 4 ],
+							[ 'red', 8 ],
+						],
+					},
+					{
+						date: '2018-04-09',
+						data: [
+							[ 'orange', 12 ],
+							[ 'blue', 16 ],
+						],
+					},
 				],
 				fields: [ 'color', 'age' ],
 			};

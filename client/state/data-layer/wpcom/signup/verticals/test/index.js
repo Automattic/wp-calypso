@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -27,6 +25,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 						site_type: mockAction.siteTypeId,
 						limit: mockAction.limit,
 						include_preview: true,
+						allow_synonyms: true,
 					},
 				},
 				mockAction

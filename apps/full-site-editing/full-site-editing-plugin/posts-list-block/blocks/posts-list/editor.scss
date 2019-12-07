@@ -1,0 +1,16 @@
+div.posts-list__notice {
+	margin: 0 0 5px;
+
+	p {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+		margin: 1em 0;
+		padding: 2px;
+
+		.posts-list__message {
+			margin-right: 1em;
+		}
+	}
+}

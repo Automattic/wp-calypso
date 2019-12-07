@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'state/sites/selectors';
@@ -50,5 +49,6 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		return false;
 	};
 
-	return siteChecklist.tasks.every( isTaskComplete );
+	const taskList = getSiteTaskList( state, siteId );
+	return taskList.getAll().every( isTaskComplete );
 }

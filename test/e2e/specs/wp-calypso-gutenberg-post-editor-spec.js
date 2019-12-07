@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -1108,8 +1106,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can publish the post', async function() {
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
-				await gHeaderComponent.publish();
-				return await gHeaderComponent.closePublishedPanel();
+				return await gHeaderComponent.publish();
 			} );
 		} );
 

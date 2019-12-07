@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,8 +38,8 @@ const ShippingZoneHeader = ( {
 	const breadcrumbs = [
 		<a href={ getLink( '/store/settings/:site/', site ) }> { translate( 'Settings' ) } </a>,
 		<a href={ getLink( '/store/settings/shipping/:site/', site ) }>
-			{' '}
-			{ translate( 'Shipping' ) }{' '}
+			{ ' ' }
+			{ translate( 'Shipping' ) }{ ' ' }
 		</a>,
 		currentCrumb,
 	];

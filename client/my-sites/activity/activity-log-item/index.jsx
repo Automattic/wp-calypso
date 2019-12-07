@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -241,12 +240,11 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableRestore,
 			disableBackup,
-			hideRestore,
 			activity,
 			translate,
 		} = this.props;
 
-		if ( hideRestore || ! activity.activityIsRewindable ) {
+		if ( ! activity.activityIsRewindable ) {
 			return null;
 		}
 
@@ -254,7 +252,7 @@ class ActivityLogItem extends Component {
 			<div className="activity-log-item__action">
 				<EllipsisMenu>
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
-						{ translate( 'Rewind to this point' ) }
+						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
 
 					<PopoverMenuSeparator />
@@ -274,7 +272,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button for users to get help. Tracks button click.
 	 *
-	 * @returns {Object} Get help button.
+	 * @returns {object} Get help button.
 	 */
 	renderHelpAction = () => (
 		<HappychatButton
@@ -292,7 +290,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button to take users to enter credentials.
 	 *
-	 * @returns {Object} Get button to fix credentials.
+	 * @returns {object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
 		if ( this.props.rewindIsActive ) {
@@ -338,20 +336,20 @@ class ActivityLogItem extends Component {
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
-						confirmTitle={ translate( 'Confirm Rewind' ) }
+						confirmTitle={ translate( 'Confirm Restore' ) }
 						notice={
 							this.state.disableRestoreButton
-								? translate( 'Please select at least one item to rewind.' )
+								? translate( 'Please select at least one item to restore.' )
 								: translate( 'This will override and remove all content created after this point.' )
 						}
 						onClose={ this.cancelRewindIntent }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
-						title={ translate( 'Rewind Site' ) }
+						title={ translate( 'Restore Site' ) }
 						disableButton={ this.state.disableRestoreButton }
 					>
-						{ translate( '{{time/}} is the selected point for your site Rewind.', {
+						{ translate( '{{time/}} is the selected point for your site restore.', {
 							components: {
 								time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
 							},
@@ -365,7 +363,7 @@ class ActivityLogItem extends Component {
 						onClose={ this.cancelBackupIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
-						supportLink="https://jetpack.com/support/backups"
+						supportLink="https://jetpack.com/support/backup"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
 						icon={ 'cloud-download' }
@@ -477,10 +475,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 } );
 
 export default compose(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	withDesktopBreakpoint,
 	withLocalizedMoment,
 	localize

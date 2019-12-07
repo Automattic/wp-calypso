@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,13 +17,13 @@ import QueryPublicizeConnections from 'components/data/query-publicize-connectio
 import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate } ) => (
-	<div className="sharing-settings sharing-connections">
+	<div className="connections__sharing-settings connections__sharing-connections">
 		<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 		<QueryKeyringConnections />
 		<QueryKeyringServices />
 		<QueryPublicizeConnections selectedSite />
 		<SharingServicesGroup type="publicize" title={ translate( 'Publicize Your Posts' ) } />
-		<SharingServicesGroup type="other" title={ translate( 'Other Connections' ) } />
+		<SharingServicesGroup type="other" title={ translate( 'Manage Connections' ) } />
 	</div>
 );
 

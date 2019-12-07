@@ -11,6 +11,7 @@ const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -21,7 +22,10 @@ const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constan
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
+const {
+	cssNameFromFilename,
+	IncrementalProgressPlugin,
+} = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 
 /**
@@ -42,6 +46,7 @@ const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
@@ -55,66 +60,30 @@ if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
 }
 
-/*
- * Create reporter for ProgressPlugin (used with EMIT_STATS)
- */
-function createProgressHandler() {
-	const startTime = Date.now();
-	let lastShownBuildingMessageTime = null;
-	let lastUnshownBuildingMessage = null;
-
-	return ( percentage, msg, ...details ) => {
-		const nowTime = Date.now();
-		const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
-		const percentageString = `${ Math.floor( percentage * 100 ) }%`;
-		const detailsString = details
-			.map( detail => {
-				if ( ! detail ) {
-					return '';
-				}
-				if ( detail.length > 40 ) {
-					return `…${ detail.substr( detail.length - 39 ) }`;
-				}
-				return detail;
-			} )
-			.join( ' ' );
-		const message = `${ timeString } ${ percentageString } ${ msg } ${ detailsString }`;
-
-		// There are plenty of 'building' messages that make the log too long for CircleCI web UI.
-		// Let's throttle the 'building' messages to one per second, while always showing the last one.
-		if ( msg === 'building' ) {
-			if ( lastShownBuildingMessageTime && nowTime - lastShownBuildingMessageTime < 1000 ) {
-				// less than 1000ms since last message: ignore, but store for case it's the last one
-				lastUnshownBuildingMessage = message;
-				return;
-			}
-
-			// the message will be shown and its time recorded
-			lastShownBuildingMessageTime = nowTime;
-			lastUnshownBuildingMessage = null;
-		} else if ( lastUnshownBuildingMessage ) {
-			// The last 'building' message should always be shown, no matter the timing.
-			// We do that on the first non-'building' message.
-			console.log( lastUnshownBuildingMessage ); // eslint-disable-line no-console
-			lastUnshownBuildingMessage = null;
-		}
-
-		console.log( message ); // eslint-disable-line no-console
-	};
-}
-
 const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'@github/webauthn-json/',
+	'acorn-jsx/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'escape-string-regexp/',
+	'filesize/',
+	'prismjs/',
+	'react-spring/',
+	'regenerate-unicode-properties/',
+	'regexpu-core/',
+	'striptags',
+	'unicode-match-property-ecmascript/',
+	'unicode-match-property-value-ecmascript/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
- * @param {String} filepath the path of the file to check
- * @returns {Boolean} True if we should transpile it, false if not
+ *
+ * @param {string} filepath the path of the file to check
+ * @returns {boolean} True if we should transpile it, false if not
  *
  * We had a thought to try to find the package.json and use the engines property
  * to determine what we should transpile, but not all libraries set engines properly
@@ -154,12 +123,31 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const fileLoader = FileConfig.loader(
+	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
+	// This is required so that running calypso via `npm start` doesn't break.
+	isDevelopment
+		? {
+				outputPath: 'images',
+				publicPath: '/calypso/evergreen/images/',
+		  }
+		: {
+				// File-loader does not understand absolute paths so __dirname won't work.
+				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+				outputPath: path.join( '..', 'images' ),
+				publicPath: '/calypso/images/',
+				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+		  }
+);
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
+		'entry-gutenboarding': [ path.join( __dirname, 'client', 'landing', 'gutenboarding' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -210,7 +198,6 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
 				prelude: `@import '${ path.join(
 					__dirname,
@@ -228,7 +215,7 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			FileConfig.loader(),
+			fileLoader,
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
@@ -258,6 +245,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
@@ -300,7 +288,7 @@ const webpackConfig = {
 					chunkGroups: true,
 				},
 			} ),
-		shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+		shouldShowProgress && new IncrementalProgressPlugin(),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
 			cacheDir: path.join(
@@ -310,17 +298,14 @@ const webpackConfig = {
 				extraPath
 			),
 		} ),
+		new ConfigFlagPlugin( {
+			flags: { desktop: config.isEnabled( 'desktop' ) },
+		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };
-
-if ( isDevelopment ) {
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	for ( const entrypoint of Object.keys( webpackConfig.entry ) ) {
-		webpackConfig.entry[ entrypoint ].unshift( 'webpack-hot-middleware/client' );
-	}
-}
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
@@ -331,6 +316,15 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 // Replace `lodash` with `lodash-es`.
 if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
+}
+
+// Don't bundle `wpcom-xhr-request` for the browser.
+// Even though it's requested, we don't need it on the browser, because we're using
+// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
+if ( isCalypsoClient && ! isDesktop ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
+	);
 }
 
 // List of polyfills that we skip including in the evergreen bundle.

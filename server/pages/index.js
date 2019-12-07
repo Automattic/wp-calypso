@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,6 +33,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
@@ -46,6 +46,7 @@ import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -227,7 +228,7 @@ function getAcceptedLanguagesFromHeader( header ) {
  * all following handlers (including the locale and redirect ones) can rely on the context values.
  */
 function setupLoggedInContext( req, res, next ) {
-	const isSupportSession = !! req.get( 'x-support-session' );
+	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
@@ -239,7 +240,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request ) {
+function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
@@ -294,7 +295,7 @@ function getDefaultContext( request ) {
 		isWCComConnect,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),
+		entrypoint: getFilesForEntrypoint( target, entrypoint ),
 		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -554,7 +555,6 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
@@ -737,7 +737,7 @@ module.exports = function() {
 
 	// Landing pages for domains-related emails
 	app.get( '/domain-services/:action', function( req, res ) {
-		const ctx = getDefaultContext( req );
+		const ctx = getDefaultContext( req, 'entry-domains-landing' );
 		attachBuildTimestamp( ctx );
 		attachHead( ctx );
 		attachI18n( ctx );
@@ -748,45 +748,45 @@ module.exports = function() {
 			query: get( req, 'query', {} ),
 		};
 
-		const target = getBuildTargetFromRequest( req );
-
-		const pageHtml = renderJsx( 'domains-landing', {
-			...ctx,
-			entrypoint: getFilesForEntrypoint( target, 'entry-domains-landing' ),
-		} );
+		const pageHtml = renderJsx( 'domains-landing', ctx );
 		res.send( pageHtml );
 	} );
+
+	function handleSectionPath( section, sectionPath, entrypoint ) {
+		const pathRegex = pathToRegExp( sectionPath );
+
+		app.get( pathRegex, function( req, res, next ) {
+			req.context = {
+				...getDefaultContext( req, entrypoint ),
+				sectionName: section.name,
+			};
+
+			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+				req.context.chunkFiles = getFilesForChunk( section.name, req );
+			} else {
+				req.context.chunkFiles = EMPTY_ASSETS;
+			}
+
+			if ( section.secondary && req.context ) {
+				req.context.hasSecondary = true;
+			}
+
+			if ( section.group && req.context ) {
+				req.context.sectionGroup = section.group;
+			}
+
+			next();
+		} );
+
+		if ( ! section.isomorphic ) {
+			app.get( pathRegex, setUpRoute, serverRender );
+		}
+	}
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( sectionPath => {
-				const pathRegex = pathToRegExp( sectionPath );
-
-				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
-
-					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name, req );
-					} else {
-						req.context.chunkFiles = EMPTY_ASSETS;
-					}
-
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
-					}
-
-					if ( section.group && req.context ) {
-						req.context.sectionGroup = section.group;
-					}
-
-					next();
-				} );
-
-				if ( ! section.isomorphic ) {
-					app.get( pathRegex, setUpRoute, serverRender );
-				}
-			} );
+			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -797,6 +797,12 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	// Set up login routing.
+	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

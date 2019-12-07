@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -38,10 +37,7 @@ EditorSidebarHeader.propTypes = {
 
 export default flow(
 	localize,
-	connect(
-		null,
-		{
-			closeSidebar: closeEditorSidebar,
-		}
-	)
+	connect( null, {
+		closeSidebar: closeEditorSidebar,
+	} )
 )( EditorSidebarHeader );

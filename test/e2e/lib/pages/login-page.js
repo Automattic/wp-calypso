@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		const passwordSelector = By.css( '#password' );
 
 		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
-		await driverHelper.waitTillFocused( driver, userNameSelector );
+		// await driverHelper.waitTillFocused( driver, userNameSelector );
 		await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );

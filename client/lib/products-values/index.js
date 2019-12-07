@@ -1,13 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { assign, difference, get, isEmpty, pick } from 'lodash';
+import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_PRODUCT_DISPLAY_NAMES,
+	JETPACK_PRODUCT_TAGLINES,
+} from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -169,11 +173,15 @@ export function isEnterprise( product ) {
 	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
 }
 
+export function isJetpackPlanSlug( productSlug ) {
+	return planMatches( productSlug, { group: GROUP_JETPACK } );
+}
+
 export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return planMatches( product.product_slug, { group: GROUP_JETPACK } );
+	return isJetpackPlanSlug( product.product_slug );
 }
 
 export function isJetpackBusiness( product ) {
@@ -199,6 +207,28 @@ export function isVipPlan( product ) {
 
 export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
+}
+
+export function isJetpackBackupSlug( productSlug ) {
+	return includes( JETPACK_BACKUP_PRODUCTS, productSlug );
+}
+
+export function isJetpackBackup( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackBackupSlug( product.product_slug );
+}
+
+export function isJetpackProductSlug( productSlug ) {
+	return includes( JETPACK_PRODUCTS_LIST, productSlug );
+}
+
+export function isJetpackProduct( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackProductSlug( product.product_slug );
 }
 
 export function isMonthly( rawProduct ) {
@@ -343,6 +373,44 @@ export function getDomain( product ) {
 	}
 
 	return product.meta;
+}
+
+export function getProductsSlugs() {
+	return JETPACK_PRODUCTS_LIST;
+}
+
+export function getProductClass( productSlug ) {
+	if ( isJetpackBackupSlug( productSlug ) ) {
+		return 'is-jetpack-backup';
+	}
+
+	return '';
+}
+
+/**
+ * Get Jetpack product display name based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|HTMLElement} Product display name
+ */
+export function getJetpackProductDisplayName( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product.productSlug ];
+}
+
+/**
+ * Get Jetpack product tagline based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|HTMLElement} Product tagline
+ */
+export function getJetpackProductTagline( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return JETPACK_PRODUCT_TAGLINES?.[ product.productSlug ];
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {

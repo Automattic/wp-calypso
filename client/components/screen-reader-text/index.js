@@ -1,1 +1,1 @@
-export { ScreenReaderText as default } from '@automattic/calypso-ui';
+export { ScreenReaderText as default } from '@automattic/components';

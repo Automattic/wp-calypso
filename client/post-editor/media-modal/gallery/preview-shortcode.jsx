@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ export default createReactClass( {
 		};
 	},
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const shortcode = generateGalleryShortcode( nextProps.settings );
 		if ( this.state.shortcode === shortcode ) {
 			return;

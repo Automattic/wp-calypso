@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,6 +25,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * in the code directly dealing with the API.
  */
 const statusMapping = {
+	blocked_atomic_transfer: eligibilityHolds.BLOCKED_ATOMIC_TRANSFER,
 	transfer_already_exists: eligibilityHolds.TRANSFER_ALREADY_EXISTS,
 	no_business_plan: eligibilityHolds.NO_BUSINESS_PLAN,
 	no_jetpack_sites: eligibilityHolds.NO_JETPACK_SITES,
@@ -34,9 +33,6 @@ const statusMapping = {
 	site_private: eligibilityHolds.SITE_PRIVATE,
 	site_graylisted: eligibilityHolds.SITE_GRAYLISTED,
 	non_admin_user: eligibilityHolds.NON_ADMIN_USER,
-	not_using_custom_domain: eligibilityHolds.NOT_USING_CUSTOM_DOMAIN,
-	not_domain_owner: eligibilityHolds.NOT_DOMAIN_OWNER,
-	no_wpcom_nameservers: eligibilityHolds.NO_WPCOM_NAMESERVERS,
 	not_resolving_to_wpcom: eligibilityHolds.NOT_RESOLVING_TO_WPCOM,
 	no_ssl_certificate: eligibilityHolds.NO_SSL_CERTIFICATE,
 	email_unverified: eligibilityHolds.EMAIL_UNVERIFIED,
@@ -46,7 +42,7 @@ const statusMapping = {
 /**
  * Maps from API response the issues which prevent automated transfer
  *
- * @param {Object} response API response data
+ * @param {object} response API response data
  * @param {Array} response.errors List of { code, message } pairs describing issues
  * @returns {Array} list of hold constants associated with issues listed in API response
  */
@@ -56,8 +52,8 @@ const eligibilityHoldsFromApi = ( { errors = [] } ) =>
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
  *
- * @param {Object} response API response data
- * @param {Object} response.warnings Lists of warnings by type, { plugins, themes }
+ * @param {object} response API response data
+ * @param {object} response.warnings Lists of warnings by type, { plugins, themes }
  * @returns {Array} flat list of warnings with { name, description, supportUrl }
  */
 const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
@@ -72,8 +68,8 @@ const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
 /**
  * Maps from API response to internal representation of automated transfer eligibility data
  *
- * @param {Object} data API response data
- * @returns {Object} Calypso eligibility information
+ * @param {object} data API response data
+ * @returns {object} Calypso eligibility information
  */
 const fromApi = data => ( {
 	lastUpdate: Date.now(),
@@ -84,8 +80,8 @@ const fromApi = data => ( {
 /**
  * Build track events for eligibility status
  *
- * @param {Object} data eligibility data from the api
- * @returns {Object} An analytics event object
+ * @param {object} data eligibility data from the api
+ * @returns {object} An analytics event object
  */
 const trackEligibility = data => {
 	const isEligible = get( data, 'is_eligible', false );
@@ -111,9 +107,9 @@ const trackEligibility = data => {
 /**
  * Issues an API request to fetch eligibility information for a site
  *
- * @param {Function} store.dispatch action dispatcher
- * @param {action} action Action object
- * @return {Object} action
+ * @param {Function} action dispatcher
+ *
+ * @returns {object} action
  */
 export const requestAutomatedTransferEligibility = action =>
 	http(

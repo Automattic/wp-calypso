@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,9 +25,6 @@ export const isActive = status => ( status ? status === transferStates.START : n
  * @param {Number} siteId site of interest
  * @returns {?boolean} whether or not transfer is active, or null if not known
  */
-export const isAutomatedTransferActive = compose(
-	isActive,
-	getAutomatedTransferStatus
-);
+export const isAutomatedTransferActive = compose( isActive, getAutomatedTransferStatus );
 
 export default isAutomatedTransferActive;

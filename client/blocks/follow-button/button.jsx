@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ class FollowButton extends React.Component {
 		disabled: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.strings = {
 			FOLLOW: this.props.translate( 'Follow' ),
 			FOLLOWING: this.props.translate( 'Following' ),

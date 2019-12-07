@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,19 +14,20 @@ import { fetchSitePurchases } from 'state/purchases/actions';
 
 class QuerySitePurchases extends Component {
 	requestSitePurchases( props = this.props ) {
-		if ( props.siteId ) {
+		if ( props.siteId && ! props.requesting ) {
 			this.props.fetchSitePurchases( props.siteId );
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestSitePurchases();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requesting || ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}
+
 		this.requestSitePurchases( nextProps );
 	}
 

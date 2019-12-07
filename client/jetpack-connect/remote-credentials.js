@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Component which handle remote credentials for installing Jetpack
  */
@@ -72,7 +71,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { installError } = nextProps;
 
 		if ( installError ) {
@@ -80,7 +79,7 @@ export class OrgCredentialsForm extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {

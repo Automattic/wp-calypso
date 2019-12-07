@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,9 +15,14 @@ import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
+
+/**
+ * Image dependencies
+ */
+import wordpressLogoImage from 'assets/images/illustrations/logo-jpc.svg';
 
 /**
  * Style dependencies
@@ -151,7 +154,7 @@ export class AppPromo extends React.Component {
 				>
 					<img
 						className="app-promo__icon"
-						src="/calypso/images/reader/promo-app-icon.png"
+						src={ wordpressLogoImage }
 						width="32"
 						height="32"
 						alt="WordPress Desktop Icon"
@@ -183,10 +186,10 @@ export class AppPromo extends React.Component {
 				>
 					<img
 						className="app-promo__icon"
-						src="/calypso/images/reader/promo-app-icon.png"
+						src={ wordpressLogoImage }
 						width="32"
 						height="32"
-						alt="WordPress Desktop Icon"
+						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
 				</button>

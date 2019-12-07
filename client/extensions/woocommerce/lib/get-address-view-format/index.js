@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * This function maps the API address to the view address format. The AddressView
  * component expects the address in a slightly different format than the WC API

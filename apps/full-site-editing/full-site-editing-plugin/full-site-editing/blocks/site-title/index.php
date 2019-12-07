@@ -16,6 +16,8 @@ namespace A8C\FSE;
 function render_site_title_block( $attributes ) {
 	ob_start();
 
+	$styles = '';
+
 	$class = 'site-title wp-block-a8c-site-title';
 	if ( isset( $attributes['className'] ) ) {
 		$class .= ' ' . $attributes['className'];
@@ -27,8 +29,30 @@ function render_site_title_block( $attributes ) {
 	}
 	$class .= $align;
 
+	if ( isset( $attributes['textAlign'] ) ) {
+		$class .= ' has-text-align-' . $attributes['textAlign'];
+	} else {
+		$class .= ' has-text-align-center';
+	}
+
+	if ( isset( $attributes['textColor'] ) ) {
+		$class .= ' has-text-color';
+		$class .= ' has-' . $attributes['textColor'] . '-color';
+	} elseif ( isset( $attributes['customTextColor'] ) ) {
+		$class  .= ' has-text-color';
+		$styles .= ' color: ' . $attributes['customTextColor'] . ';';
+	}
+
+	if ( isset( $attributes['fontSize'] ) ) {
+		$class .= ' has-' . $attributes['fontSize'] . '-font-size';
+	} elseif ( isset( $attributes['customFontSize'] ) ) {
+		$styles .= ' font-size: ' . $attributes['customFontSize'] . 'px;';
+	} else {
+		$class .= ' has-normal-font-size';
+	}
+
 	?>
-	<h1 class="<?php echo esc_attr( $class ); ?>">
+	<h1 class="<?php echo esc_attr( $class ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
 	</h1>
 	<!-- a8c:site-title -->

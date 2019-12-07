@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -189,7 +187,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
 				) }
 				<NoticeAction href={ addSiteFragment( '/sharing', siteSlug ) }>
-					{ this.props.translate( 'Go to Sharing settings' ) }{' '}
+					{ this.props.translate( 'Go to Sharing settings' ) }{ ' ' }
 					<Gridicon icon="external" size={ 18 } />
 				</NoticeAction>
 			</Notice>

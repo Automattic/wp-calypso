@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -133,7 +131,10 @@ class UseYourDomainStep extends React.Component {
 		buildTransferDomainUrl = `${ basePathForTransfer }/transfer`;
 
 		if ( selectedSite ) {
-			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			const query = stringify( {
+				initialQuery: this.state.searchQuery.trim(),
+				useStandardBack: true,
+			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 

@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	type: 'array',
 	items: {

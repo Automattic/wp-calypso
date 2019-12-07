@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -132,7 +130,7 @@ export class NpsSurvey extends PureComponent {
 		}, 0 );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
@@ -237,7 +235,7 @@ export class NpsSurvey extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
+								'{{booking}}Reserve a 1:1 Quick Start Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
 										booking: (
@@ -329,13 +327,10 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		submitNpsSurvey,
-		submitNpsSurveyWithNoScore,
-		sendNpsSurveyFeedback,
-		successNotice,
-		recordTracksEvent,
-	}
-)( localize( NpsSurvey ) );
+export default connect( mapStateToProps, {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+	successNotice,
+	recordTracksEvent,
+} )( localize( NpsSurvey ) );

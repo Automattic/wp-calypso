@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -98,7 +97,4 @@ export class RecommendedSites extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ dismissSite }
-)( localize( RecommendedSites ) );
+export default connect( null, { dismissSite } )( localize( RecommendedSites ) );

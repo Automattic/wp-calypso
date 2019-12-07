@@ -1,11 +1,19 @@
-
+// Content group
 .plans-features-main__group {
-	@include breakpoint( '>1040px' ) {
+	& + & {
 		padding-top: 19px; // popular banner height adjustment
 	}
 
 	+ .faq {
 		margin-top: 20px;
+	}
+
+	&.is-narrow {
+		@include breakpoint( '>960px' ) {
+			max-width: 520px;
+			margin-left: auto;
+			margin-right: auto;
+		}
 	}
 }
 
@@ -40,4 +48,43 @@
 		vertical-align: baseline;
 		margin-left: 0.5em;
 	}
+}
+
+// Header sub-component
+.plans-features-main__header {
+	margin: 0 0 16px;
+	padding: 0 16px;
+
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 28px;
+		padding: 0 24px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		margin-left: auto;
+		margin-right: auto;
+		padding: 0;
+		text-align: center;
+	}
+}
+
+.plans-features-main__heading {
+	margin: 0 0 12px;
+	font-size: 17px;
+	line-height: 1;
+	font-weight: 700;
+	color: var( --color-text );
+
+	@include breakpoint( '>480px' ) {
+		font-size: 24px;
+		font-weight: 400;
+	}
+
+}
+
+.plans-features-main__subhead {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.35;
+	color: var( --color-text-subtle );
 }

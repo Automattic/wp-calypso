@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,6 +23,7 @@ import Gridicon from 'components/gridicon';
 import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -138,4 +138,4 @@ export default connect(
 	{
 		requestSubscriptionStop,
 	}
-)( localize( Subscription ) );
+)( localize( withLocalizedMoment( Subscription ) ) );

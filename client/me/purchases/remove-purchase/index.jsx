@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import config from 'config';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
@@ -202,7 +201,7 @@ class RemovePurchase extends Component {
 						// ^ is the internal WPcom domain i.e. example.wordpress.com
 						// if we want to use the purchased domain we can swap with the below line
 						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					} ) }{' '}
+					} ) }{ ' ' }
 					{ isGoogleApps( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +

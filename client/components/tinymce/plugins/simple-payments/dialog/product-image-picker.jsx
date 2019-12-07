@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -142,7 +140,6 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect(
-	state => ( { siteId: getSelectedSiteId( state ) } ),
-	{ requestMediaItem }
-)( localize( ProductImagePicker ) );
+export default connect( state => ( { siteId: getSelectedSiteId( state ) } ), { requestMediaItem } )(
+	localize( ProductImagePicker )
+);

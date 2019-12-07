@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import { find, includes, intersection, isEqual, omit, some, get, uniq, flatMap } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
@@ -28,6 +26,7 @@ import {
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getSerializedThemesQueryWithoutPage,
+	getThemeTaxonomySlugs,
 	isPremium,
 	oldShowcaseUrl,
 } from './utils';
@@ -243,9 +242,20 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
 		if ( ! themesForQueryIgnoringPage ) {
 			return null;
+		}
+
+		// if query is default, filter out recommended themes
+		if ( ! query.search && ! query.filter ) {
+			const recommendedThemes = state.themes.recommendedThemes.themes;
+			const themeIds = flatMap( recommendedThemes, theme => {
+				return theme.id;
+			} );
+			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
+				return ! themeIds.includes( theme.id );
+			} );
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
@@ -740,4 +750,23 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
 
 	const theme = getTheme( state, 'wpcom', themeId );
 	return get( theme, 'price' );
+}
+
+/**
+ * Checks if a theme should be customized primarily with Gutenberg.
+ *
+ * Examples include Template First Themes, which can be determined by the feature
+ * global-styles or auto-loading-homepage.
+ *
+ * @param {Object} state   Global state tree
+ * @param {String} themeId An identifier for the theme - like
+ *                         `independent-publisher-2` or `maywood`.
+ * @return {Boolean} True if the theme should be edited with gutenberg.
+ */
+export function isThemeGutenbergFirst( state, themeId ) {
+	const theme = getTheme( state, 'wpcom', themeId );
+	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
+	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
+	// The theme should have a positive number of matching features to qualify.
+	return !! intersection( themeFeatures, neededFeatures ).length;
 }

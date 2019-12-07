@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import { debounce } from 'lodash';
 import tracksRecordEvent from './track-record-event';
 
 const trackSearchTerm = ( event, target ) => {
-	const search_term = target.value;
+	const search_term = ( target.value || '' ).trim().toLowerCase();
 
 	if ( search_term.length < 3 ) {
 		return;

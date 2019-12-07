@@ -74,9 +74,6 @@ class UserTypeForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( UserTypeForm ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( UserTypeForm ) );

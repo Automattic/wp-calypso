@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,16 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import CreditCardForm from 'blocks/credit-card-form';
 import { addStoredCard } from 'state/stored-cards/actions';
 import { createCardToken } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import { withStripe } from 'lib/stripe';
-
-const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
+import { StripeHookProvider } from 'lib/stripe';
 
 function AddCardDialog( {
 	siteId,
@@ -41,15 +37,17 @@ function AddCardDialog( {
 			isVisible={ isVisible }
 			onClose={ onClose }
 		>
-			<CreditCardFormWithStripe
-				createCardToken={ createCardAddToken }
-				recordFormSubmitEvent={ recordFormSubmitEvent }
-				saveStoredCard={ saveStoredCard }
-				successCallback={ onClose }
-				showUsedForExistingPurchasesInfo={ true }
-				heading={ translate( 'Add credit card' ) }
-				onCancel={ onClose }
-			/>
+			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+				<CreditCardForm
+					createCardToken={ createCardAddToken }
+					recordFormSubmitEvent={ recordFormSubmitEvent }
+					saveStoredCard={ saveStoredCard }
+					successCallback={ onClose }
+					showUsedForExistingPurchasesInfo={ true }
+					heading={ translate( 'Add credit card' ) }
+					onCancel={ onClose }
+				/>
+			</StripeHookProvider>
 		</Dialog>
 	);
 }
@@ -73,7 +71,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddCardDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );

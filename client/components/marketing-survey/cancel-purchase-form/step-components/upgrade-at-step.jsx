@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -69,7 +67,4 @@ const mapStateToProps = state => ( {
 } );
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeATStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeATStep ) );

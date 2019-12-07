@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_CURRENCIES_REQUEST,
 	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
@@ -13,12 +11,16 @@ import { LOADING } from 'woocommerce/state/constants';
 
 // TODO: Handle error
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_CURRENCIES_REQUEST ]: () => {
-		return LOADING;
-	},
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_CURRENCIES_REQUEST: {
+			return LOADING;
+		}
+		case WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS: {
+			const { data } = action;
+			return data;
+		}
+	}
 
-	[ WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
+	return state;
 } );

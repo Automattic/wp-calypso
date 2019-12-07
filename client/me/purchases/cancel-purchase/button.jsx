@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
@@ -29,6 +28,7 @@ import notices from 'notices';
 import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
+import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -181,6 +181,41 @@ class CancelPurchaseButton extends Component {
 		);
 	};
 
+	downgradeClick = () => {
+		const { purchase } = this.props;
+		const downgradePlan = getDowngradePlanFromPurchase( purchase );
+
+		this.setDisabled( true );
+
+		cancelAndRefundPurchase(
+			purchase.id,
+			{
+				product_id: purchase.productId,
+				type: 'downgrade',
+				to_product_id: downgradePlan.getProductId(),
+			},
+			( error, response ) => {
+				this.setDisabled( false );
+
+				if ( error ) {
+					notices.error( error.message );
+
+					this.cancellationFailed();
+
+					return;
+				}
+
+				notices.success( response.message, { persistent: true } );
+
+				this.props.refreshSitePlans( purchase.siteId );
+
+				this.props.clearPurchases();
+
+				page.redirect( purchasesRoot );
+			}
+		);
+	};
+
 	submitCancelAndRefundPurchase = () => {
 		const refundable = isRefundable( this.props.purchase );
 
@@ -267,6 +302,7 @@ class CancelPurchaseButton extends Component {
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
+					downgradeClick={ this.downgradeClick }
 					flowType={ this.getCancellationFlowType() }
 				/>
 			</div>
@@ -274,10 +310,7 @@ class CancelPurchaseButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		clearPurchases,
-		refreshSitePlans,
-	}
-)( localize( CancelPurchaseButton ) );
+export default connect( null, {
+	clearPurchases,
+	refreshSitePlans,
+} )( localize( CancelPurchaseButton ) );

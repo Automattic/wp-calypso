@@ -4,8 +4,8 @@
 import {
 	combineReducers,
 	keyedReducer,
-	createReducer,
-	createReducerWithValidation,
+	withSchemaValidation,
+	withoutPersistence,
 } from 'state/utils';
 import { atomicTransfer as schema } from './schema';
 import {
@@ -15,18 +15,28 @@ import {
 	ATOMIC_TRANSFER_COMPLETE,
 } from 'state/action-types';
 
-export const atomicTransfer = createReducerWithValidation(
-	{},
-	{
-		[ ATOMIC_TRANSFER_SET ]: ( state, { transfer } ) => ( { ...state, ...transfer } ),
-	},
-	schema
-);
+export const atomicTransfer = withSchemaValidation( schema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ATOMIC_TRANSFER_SET: {
+			const { transfer } = action;
+			return { ...state, ...transfer };
+		}
+	}
 
-export const fetchingTransfer = createReducer( false, {
-	[ ATOMIC_TRANSFER_REQUEST ]: () => true,
-	[ ATOMIC_TRANSFER_REQUEST_FAILURE ]: () => false,
-	[ ATOMIC_TRANSFER_COMPLETE ]: () => false,
+	return state;
+} );
+
+export const fetchingTransfer = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ATOMIC_TRANSFER_REQUEST:
+			return true;
+		case ATOMIC_TRANSFER_REQUEST_FAILURE:
+			return false;
+		case ATOMIC_TRANSFER_COMPLETE:
+			return false;
+	}
+
+	return state;
 } );
 
 export const atomicTransferReducers = combineReducers( {

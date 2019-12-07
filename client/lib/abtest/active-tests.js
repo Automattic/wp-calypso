@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -19,15 +18,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -59,14 +49,6 @@ export default {
 		variations: {
 			builderReferralBanner: 25,
 			original: 75,
-		},
-		defaultVariation: 'original',
-	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
 		},
 		defaultVariation: 'original',
 	},
@@ -106,8 +88,16 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellGSuite: {
-		datestamp: '20190805',
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191106',
 		variations: {
 			variantShowPlanBump: 50,
 			control: 50,
@@ -115,48 +105,31 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellConcierge: {
-		datestamp: '20190805',
-		variations: {
-			variantShowPlanBump: 100,
-			control: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	customerHomePage: {
-		datestamp: '20190903',
+	userStepRecaptcha: {
+		datestamp: '20191111',
 		variations: {
 			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		assignmentMethod: 'userId',
-	},
-	signupEscapeHatch: {
-		datestamp: '20190826',
-		variations: {
-			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	placesApiInCheckout: {
-		datestamp: '20190923',
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
 		variations: {
-			original: 50,
-			placesApi: 50,
+			variantShowUpdates: 90,
+			control: 10,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	gsuitePrice: {
+		datestamp: '20191125',
+		variations: {
+			discount: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

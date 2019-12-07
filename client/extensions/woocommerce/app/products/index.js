@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,7 +50,7 @@ class Products extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -153,7 +151,4 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Products ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -111,7 +109,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( ReviewActionsBar ) );
+export default connect( null, mapDispatchToProps )( localize( ReviewActionsBar ) );

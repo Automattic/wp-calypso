@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,4 @@ export class SubmitStepButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( SubmitStepButton );
+export default connect( null, { submitSignupStep } )( SubmitStepButton );

@@ -80,7 +80,8 @@
 		}
 	}
 
-	audio, video {
+	audio,
+	video {
 		display: block;
 		width: 100%;
 		margin: 24px auto;
@@ -246,6 +247,11 @@
 
 	.wp-block-cover-image {
 		display: none;
+	}
+
+	// iCloud embeds - force a min height because they're a bit slender by default
+	.wp-block-embed__wrapper iframe[src*='icloud.com'] {
+		min-height: 300px;
 	}
 }
 

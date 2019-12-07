@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -427,8 +425,4 @@ const mapState = ( state, { query, siteId } ) => ( {
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 } );
 
-const ConnectedPages = flowRight(
-	connect( mapState ),
-	localize,
-	withLocalizedMoment
-)( Pages );
+const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );

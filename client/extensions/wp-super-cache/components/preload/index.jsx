@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -51,7 +49,7 @@ class PreloadTab extends Component {
 		preloadRefresh: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) !== 0 } );
 	}
 
@@ -325,7 +323,4 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PreloadTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PreloadTab );

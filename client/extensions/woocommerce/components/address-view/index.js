@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -66,7 +64,7 @@ class AddressView extends Component {
 		};
 	}
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		// We allow address line 2 to unhide -- but once shown, we don't hide it
 		// because that's visually disturbing
 		if ( ! isEmpty( trim( newProps.address.street2 ) ) ) {

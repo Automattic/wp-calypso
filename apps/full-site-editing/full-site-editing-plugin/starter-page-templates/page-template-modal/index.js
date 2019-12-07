@@ -1,15 +1,16 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
-import { isEmpty, reduce } from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, partition, reject, sortBy } from 'lodash';
+import classnames from 'classnames';
+import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Button, Modal, Spinner } from '@wordpress/components';
-import { registerPlugin } from '@wordpress/plugins';
+import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import ensureAssets from './utils/ensure-assets';
-import '@wordpress/nux';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -17,32 +18,33 @@ import '@wordpress/nux';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
-import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
-import { parse as parseBlocks } from '@wordpress/blocks';
+import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
+import ensureAssets from './utils/ensure-assets';
+/* eslint-enable import/no-extraneous-dependencies */
 
-// Load config passed from backend.
-const {
-	templates = [],
-	vertical,
-	segment,
-	tracksUserData,
-	siteInformation = {},
-} = window.starterPageTemplatesConfig;
+const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		slug: '',
-		title: '',
-		blocks: {},
+		previewedTemplate: null,
+		blocksByTemplateSlug: {},
+		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
 
 	constructor( props ) {
 		super();
-		this.state.isOpen = ! isEmpty( props.templates );
+		const hasTemplates = ! isEmpty( props.templates );
+		this.state.isOpen = hasTemplates;
+		if ( hasTemplates ) {
+			// Select the first template automatically.
+			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
+			// Extract titles for faster lookup.
+			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
+		}
 	}
 
 	componentDidMount() {
@@ -51,11 +53,11 @@ class PageTemplateModal extends Component {
 		}
 
 		// Parse templates blocks and store them into the state.
-		const blocks = reduce(
-			templates,
+		const blocksByTemplateSlug = reduce(
+			this.props.templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, siteInformation ) )
+					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
 					: [];
 				return prev;
 			},
@@ -63,34 +65,56 @@ class PageTemplateModal extends Component {
 		);
 
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocks } );
+		this.setState( { blocksByTemplateSlug } );
 	}
 
-	setBeforeInsertTemplate = ( slug, title, blocks ) => {
-		this.props.saveTemplateChoice( slug );
-		this.props.insertTemplate( title, blocks );
-		this.setState( { isOpen: false } );
+	getDefaultSelectedTemplate = props => {
+		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
+		let previouslyChosenTemplate = props._starter_page_template;
+
+		// Usally the "new page" case.
+		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
+			return blankTemplate;
+		}
+
+		// Normalize "home" slug into the current theme.
+		if ( previouslyChosenTemplate === 'home' ) {
+			previouslyChosenTemplate = props.theme;
+		}
+
+		const slug = previouslyChosenTemplate || props.theme;
+
+		if ( find( props.templates, { slug } ) ) {
+			return slug;
+		} else if ( find( props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } ) ) {
+			return DEFAULT_HOMEPAGE_TEMPLATE;
+		}
+		return blankTemplate;
 	};
 
-	setTemplate = ( slug, title ) => {
+	setTemplate = slug => {
+		// Track selection and mark post as using a template in its postmeta.
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
+		this.props.saveTemplateChoice( slug );
+
+		const isHomepageTemplate = find( this.props.templates, { slug, category: 'home' } );
+
+		// Load content.
+		const blocks = this.getBlocksByTemplateSlug( slug );
+		// Only overwrite the page title if the template is not one of the Homepage Layouts
+		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( slug );
+
+		// Skip inserting if there's nothing to insert.
+		if ( ! blocks || ! blocks.length ) {
+			this.setState( { isOpen: false } );
+			return;
+		}
+
+		// Show loading state.
 		this.setState( {
 			error: null,
 			isLoading: true,
 		} );
-
-		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
-
-		const blocks = this.state.blocks[ slug ];
-
-		// Do not prefetch for `blank` template.
-		if ( 'blank' === slug ) {
-			return this.setBeforeInsertTemplate( slug, title, blocks );
-		}
-
-		// Skip inserting if there's nothing to insert.
-		if ( ! blocks || ! blocks.length ) {
-			return;
-		}
 
 		// Make sure all blocks use local assets before inserting.
 		this.maybePrefetchAssets( blocks )
@@ -101,7 +125,8 @@ class PageTemplateModal extends Component {
 					return;
 				}
 
-				this.setBeforeInsertTemplate( slug, title, blocksWithAssets );
+				this.props.insertTemplate( title, blocksWithAssets );
+				this.setState( { isOpen: false } );
 			} )
 			.catch( error => {
 				this.setState( {
@@ -115,14 +140,20 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
+	handleConfirmation = slug => {
+		if ( typeof slug !== 'string' ) {
+			slug = this.state.previewedTemplate;
+		}
 
-	previewTemplate = ( slug, title ) => {
-		this.setState( { slug, title } );
-		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title );
+		this.setTemplate( slug );
+
+		// Turn off sidebar's instance of modal
+		if ( this.props.isPromptedFromSidebar ) {
+			this.props.toggleTemplateModal();
 		}
 	};
+
+	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
 	closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
@@ -130,73 +161,153 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
+
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
+
+		// Try if we have specific URL to go back to, otherwise go to the page list.
+		const calypsoifyCloseUrl = get( window, [ 'calypsoifyGutenberg', 'closeUrl' ] );
+		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
-	getBlocksByTemplateSlug( slug = this.state.slug ) {
-		if ( ! slug ) {
-			return [];
-		}
-
-		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
-			return [];
-		}
-
-		return this.state.blocks[ slug ];
+	getBlocksByTemplateSlug( slug ) {
+		return get( this.state.blocksByTemplateSlug, [ slug ], [] );
 	}
 
+	getTitleByTemplateSlug( slug ) {
+		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
+	}
+
+	getTemplateGroups = () => {
+		const [ homepageTemplates, defaultTemplates ] = partition( this.props.templates, {
+			category: 'home',
+		} );
+
+		const currentThemeTemplate =
+			find( this.props.templates, { slug: this.props.theme } ) ||
+			find( this.props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } );
+
+		if ( ! this.props.isFrontPage || ! currentThemeTemplate ) {
+			return { homepageTemplates: sortBy( homepageTemplates, 'title' ), defaultTemplates };
+		}
+
+		const otherHomepageTemplates = reject( homepageTemplates, { slug: currentThemeTemplate.slug } );
+
+		const sortedHomepageTemplates = [
+			currentThemeTemplate,
+			...sortBy( otherHomepageTemplates, 'title' ),
+		];
+
+		return { homepageTemplates: sortedHomepageTemplates, defaultTemplates };
+	};
+
+	renderTemplatesList = ( templatesList, legendLabel ) => (
+		<fieldset className="page-template-modal__list">
+			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
+			<TemplateSelectorControl
+				label={ __( 'Layout', 'full-site-editing' ) }
+				templates={ templatesList }
+				blocksByTemplates={ this.state.blocksByTemplateSlug }
+				onTemplateSelect={ this.previewTemplate }
+				useDynamicPreview={ false }
+				siteInformation={ this.props.siteInformation }
+				selectedTemplate={ this.state.previewedTemplate }
+				handleTemplateConfirmation={ this.handleConfirmation }
+			/>
+		</fieldset>
+	);
+
 	render() {
-		if ( ! this.state.isOpen ) {
+		const { previewedTemplate, isOpen, isLoading } = this.state;
+		const { isPromptedFromSidebar } = this.props;
+
+		if ( ! isOpen ) {
 			return null;
 		}
 
+		const { homepageTemplates, defaultTemplates } = this.getTemplateGroups();
+
 		return (
 			<Modal
-				title={ __( 'Select Page Template', 'full-site-editing' ) }
-				onRequestClose={ this.closeModal }
+				title={ __( 'Select Page Layout', 'full-site-editing' ) }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
+				shouldCloseOnClickOutside={ false }
+				// Using both variants here to be compatible with new Gutenberg and old (older than 6.6).
+				isDismissable={ false }
+				isDismissible={ false }
 			>
+				{ isPromptedFromSidebar ? (
+					<IconButton
+						className="page-template-modal__close-button components-icon-button"
+						onClick={ this.props.toggleTemplateModal }
+						icon="no-alt"
+						label={ __( 'Close Layout Selector' ) }
+					/>
+				) : (
+					<IconButton
+						className="page-template-modal__close-button components-icon-button"
+						onClick={ this.closeModal }
+						icon="arrow-left-alt2"
+						label={ __( 'Go back' ) }
+					/>
+				) }
+
 				<div className="page-template-modal__inner">
-					{ this.state.isLoading ? (
+					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
-							{ __( 'Inserting template…', 'full-site-editing' ) }
+							{ __( 'Adding layout…', 'full-site-editing' ) }
 						</div>
 					) : (
 						<>
 							<form className="page-template-modal__form">
-								<fieldset className="page-template-modal__list">
-									<TemplateSelectorControl
-										label={ __( 'Template', 'full-site-editing' ) }
-										templates={ this.props.templates }
-										blocksByTemplates={ this.state.blocks }
-										onTemplateSelect={ this.previewTemplate }
-										useDynamicPreview={ false }
-										siteInformation={ siteInformation }
-									/>
-								</fieldset>
+								{ this.props.isFrontPage ? (
+									<>
+										{ this.renderTemplatesList(
+											homepageTemplates,
+											__( 'Recommended Layouts', 'full-site-editing' )
+										) }
+										{ this.renderTemplatesList(
+											defaultTemplates,
+											__( 'Other Page Layouts', 'full-site-editing' )
+										) }
+									</>
+								) : (
+									<>
+										{ this.renderTemplatesList(
+											defaultTemplates,
+											__( 'Recommended Layouts', 'full-site-editing' )
+										) }
+										{ this.renderTemplatesList(
+											homepageTemplates,
+											__( 'Homepage Layouts', 'full-site-editing' )
+										) }
+									</>
+								) }
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksByTemplateSlug() }
+								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
 								viewportWidth={ 960 }
-								title={ this.state.title }
+								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>
 					) }
 				</div>
-				<div className="page-template-modal__buttons">
-					<Button isDefault isLarge onClick={ this.closeModal }>
-						{ __( 'Cancel', 'full-site-editing' ) }
-					</Button>
+				<div
+					className={ classnames( 'page-template-modal__buttons', {
+						'is-visually-hidden': isEmpty( previewedTemplate ) || isLoading,
+					} ) }
+				>
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( this.state.slug ) || this.state.isLoading }
+						disabled={ isEmpty( previewedTemplate ) || isLoading }
 						onClick={ this.handleConfirmation }
 					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
+						{ sprintf(
+							__( 'Use %s layout', 'full-site-editing' ),
+							this.getTitleByTemplateSlug( previewedTemplate )
+						) }
 					</Button>
 				</div>
 			</Modal>
@@ -204,13 +315,18 @@ class PageTemplateModal extends Component {
 	}
 }
 
-const PageTemplatesPlugin = compose(
-	withSelect( select => ( {
-		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
-		postContentBlock: select( 'core/editor' )
-			.getBlocks()
-			.find( block => block.name === 'a8c/post-content' ),
-	} ) ),
+export const PageTemplatesPlugin = compose(
+	withSelect( select => {
+		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const { _starter_page_template } = getMeta();
+		return {
+			getMeta,
+			_starter_page_template,
+			postContentBlock: select( 'core/editor' )
+				.getBlocks()
+				.find( block => block.name === 'a8c/post-content' ),
+		};
+	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		// Disable tips right away as the collide with the modal window.
 		dispatch( 'core/nux' ).disableTips();
@@ -229,34 +345,18 @@ const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				editorDispatcher.editPost( { title } );
+				if ( title ) {
+					editorDispatcher.editPost( { title } );
+				}
 
-				// Insert blocks.
+				// Replace blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				editorDispatcher.insertBlocks(
-					blocks,
-					0,
+				dispatch( 'core/block-editor' ).replaceInnerBlocks(
 					postContentBlock ? postContentBlock.clientId : '',
+					blocks,
 					false
 				);
 			},
 		};
 	} )
 )( PageTemplateModal );
-
-if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
-}
-
-registerPlugin( 'page-templates', {
-	render: () => {
-		return (
-			<PageTemplatesPlugin
-				shouldPrefetchAssets={ false }
-				templates={ templates }
-				vertical={ vertical }
-				segment={ segment }
-			/>
-		);
-	},
-} );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Module dependencies
  */
@@ -54,6 +53,20 @@ function setup() {
 					)
 				);
 			}
+
+			// Use try/catch because config() will throw for missing keys in development mode,
+			// and we don't want an exception if `support_session_id_cookie` is undefined.
+			try {
+				const supportSessionIdCookie = config( 'support_session_id_cookie' );
+				if ( supportSessionIdCookie ) {
+					app.use( function( req, res, next ) {
+						if ( ! req.cookies.support_session_id ) {
+							req.cookies.support_session_id = supportSessionIdCookie;
+						}
+						next();
+					} );
+				}
+			} catch ( e ) {}
 		}
 	} else {
 		// setup logger

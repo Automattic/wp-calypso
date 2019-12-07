@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -65,6 +64,11 @@ import { getFirstConflictingPlugin } from 'lib/seo';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
+
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
@@ -106,7 +110,7 @@ export class SeoForm extends React.Component {
 		this.refreshCustomTitles();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
@@ -379,7 +383,7 @@ export class SeoForm extends React.Component {
 							<Card compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
-									src="/calypso/images/seo/page-title.svg"
+									src={ pageTitleImage }
 									alt=""
 								/>
 								<p className="seo-settings__page-title-header-text">

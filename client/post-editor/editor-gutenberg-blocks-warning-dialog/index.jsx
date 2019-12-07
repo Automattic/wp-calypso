@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
@@ -181,21 +179,18 @@ const mapDispatchToProps = dispatch => ( {
 	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 } );
 
-export default connect(
-	state => {
-		const postContent = getEditorRawContent( state );
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const optInEnabled = isGutenbergOptInEnabled( state, siteId );
+export default connect( state => {
+	const postContent = getEditorRawContent( state );
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 
-		return {
-			postContent,
-			siteId,
-			gutenbergUrl,
-			optInEnabled,
-		};
-	},
-	mapDispatchToProps
-)( localize( EditorGutenbergBlocksWarningDialog ) );
+	return {
+		postContent,
+		siteId,
+		gutenbergUrl,
+		optInEnabled,
+	};
+}, mapDispatchToProps )( localize( EditorGutenbergBlocksWarningDialog ) );

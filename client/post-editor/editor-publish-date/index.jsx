@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -17,6 +14,7 @@ import { intersection } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { withLocalizedMoment } from 'components/localized-moment';
 import PostScheduler from './post-scheduler';
 import * as utils from 'state/posts/utils';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -200,4 +198,4 @@ export default connect( state => {
 	return {
 		site: getSelectedSite( state ),
 	};
-} )( localize( EditorPublishDate ) );
+} )( localize( withLocalizedMoment( EditorPublishDate ) ) );

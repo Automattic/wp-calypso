@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -47,7 +46,7 @@ class ProductFormImages extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.images !== this.props.images ) {
 			this.setState( { images: nextProps.images } );
 		}

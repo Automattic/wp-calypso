@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,7 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -270,14 +269,27 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButtonText = () => {
-		const { translate, hasFailedPurchases, primaryPurchase, displayMode } = this.props;
-		const site = this.props.selectedSite.slug;
+		const {
+			displayMode,
+			hasFailedPurchases,
+			primaryPurchase,
+			selectedSite,
+			translate,
+			upgradeIntent,
+		} = this.props;
+
+		switch ( upgradeIntent ) {
+			case 'plugins':
+				return translate( 'Continue Installing Plugin' );
+			case 'themes':
+				return translate( 'Continue Installing Theme' );
+		}
 
 		if ( 'concierge' === displayMode ) {
 			return translate( 'Schedule my session' );
 		}
 
-		if ( ! site && hasFailedPurchases ) {
+		if ( ! selectedSite?.slug && hasFailedPurchases ) {
 			return translate( 'Register domain' );
 		}
 
@@ -376,7 +388,9 @@ class CheckoutThankYouHeader extends PureComponent {
 }
 
 export default connect(
-	null,
+	state => ( {
+		upgradeIntent: getCheckoutUpgradeIntent( state ),
+	} ),
 	{
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,

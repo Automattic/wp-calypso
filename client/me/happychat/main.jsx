@@ -144,7 +144,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HappychatPage ) );
+export default connect( mapState, mapDispatch )( localize( HappychatPage ) );

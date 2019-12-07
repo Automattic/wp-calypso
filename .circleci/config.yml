@@ -49,13 +49,13 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
@@ -115,7 +115,7 @@ references:
   restore-npm-cache: &restore-npm-cache
     name: 'Restore npm cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
@@ -124,7 +124,7 @@ references:
 
   save-npm-cache: &save-npm-cache
     name: 'Save node_modules cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
     paths:
       - ~/.npm
   npm-e2e-install: &npm-e2e-install
@@ -152,7 +152,8 @@ references:
     name: Set e2e environment variables
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
+      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
@@ -212,7 +213,7 @@ jobs:
       - run:
           name: TypeScript typecheck
           # Report but don't fail the build (`|| exit 0`)
-          command: ./node_modules/.bin/tsc --noEmit || exit 0
+          command: npm run typecheck || exit 0
 
 
   lint-and-translate:
@@ -323,7 +324,20 @@ jobs:
             npx lerna run build --scope='@automattic/full-site-editing'
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
-
+  test-full-site-editing:
+    <<: *defaults
+    parallelism: 1
+    working_directory: ~/wp-calypso/apps/full-site-editing
+    steps:
+      - prepare
+      - run:
+          name: Install Full Site Editing specific test deps
+          command: |
+            npm ci
+      - run:
+          name: Run Full Site Editing client tests
+          command: |
+            npm run test:unit
   test-client:
     <<: *defaults
     parallelism: 6
@@ -343,7 +357,8 @@ jobs:
             # Run jest on the CircleCI split for parallelization across containers
             # Avoid using `--split-by=timings` here so that per-node Jest caches
             # receive a stable sub-set of tests for optimal cache usage.
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/client" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
@@ -366,7 +381,8 @@ jobs:
       - run:
           name: Run Integration Tests
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/integration" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                     \
                 --cacheDirectory="$HOME/jest-cache"        \
                 --ci                                       \
@@ -388,7 +404,8 @@ jobs:
           name: Run Package Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/packages" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                    \
                 --cacheDirectory="$HOME/jest-cache"                       \
                 --ci                                                      \
@@ -410,7 +427,8 @@ jobs:
           name: Run Server Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/server" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
@@ -531,7 +549,9 @@ jobs:
               echo 'PRs from external authors cannot run on calypso.live'
               exit 1
             fi
-      - prepare
+      - restore_cache: *restore-git-cache
+      - checkout
+      # Don't bother updating the git cache here, it would be the second time in the workflow
       - run:
           name: Wait for calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh
@@ -623,12 +643,13 @@ workflows:
     jobs:
       - setup
       - prime-calypso-live:
-          requires:
-            - setup
           filters:
             branches:
               ignore: master
       - build-full-site-editing:
+          requires:
+            - setup
+      - test-full-site-editing:
           requires:
             - setup
       - build-notifications:
@@ -669,10 +690,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-      - test-e2e-canary:
-          requires:
-            - wait-calypso-live
-          test-flags: '-C -S $CIRCLE_SHA1'
+#      - test-e2e-canary:
+#          requires:
+#            - wait-calypso-live
+#          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:

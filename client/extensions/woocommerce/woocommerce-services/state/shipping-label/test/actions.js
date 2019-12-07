@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -340,10 +338,11 @@ describe( 'Shipping label Actions', () => {
 			// Mock a successful response
 			mockNormalizationRequest( true );
 
-			return submitAddressForNormalization( orderId, siteId, 'destination' )(
-				dispatchSpy,
-				getState
-			).then( () => {
+			return submitAddressForNormalization(
+				orderId,
+				siteId,
+				'destination'
+			)( dispatchSpy, getState ).then( () => {
 				expect(
 					dispatchSpy.calledWith( {
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
@@ -360,9 +359,11 @@ describe( 'Shipping label Actions', () => {
 			mockNormalizationRequest( false );
 
 			return new Promise( resolve => {
-				submitAddressForNormalization( orderId, siteId, 'destination' )( () => {}, getState ).catch(
-					resolve
-				);
+				submitAddressForNormalization(
+					orderId,
+					siteId,
+					'destination'
+				)( () => {}, getState ).catch( resolve );
 			} );
 		} );
 	} );

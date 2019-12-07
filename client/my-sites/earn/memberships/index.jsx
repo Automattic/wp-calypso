@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -37,6 +34,7 @@ import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -144,7 +142,10 @@ class MembershipsSection extends Component {
 				'renewal_price',
 				'currency',
 				'renew_interval',
-			].join( ',' ),
+				'All time total',
+			]
+				.map( field => '"' + field + '"' )
+				.join( ',' ),
 		]
 			.concat(
 				Object.values( this.props.subscribers ).map( row =>
@@ -160,7 +161,10 @@ class MembershipsSection extends Component {
 						row.plan.renewal_price,
 						row.plan.currency,
 						row.renew_interval,
-					].join( ',' )
+						row.all_time_total,
+					]
+						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.join( ',' )
 				)
 			)
 			.join( '\n' );
@@ -196,9 +200,11 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
-									sub => this.renderSubscriber( sub )
-								) }
+								{ orderBy(
+									Object.values( this.props.subscribers ),
+									[ 'id' ],
+									[ 'desc' ]
+								).map( sub => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ triggeredByInteraction =>
@@ -246,19 +252,27 @@ class MembershipsSection extends Component {
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
-			return this.props.translate( 'Paying %(amount)s/year since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
-			return this.props.translate( 'Paying %(amount)s/month since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		}
 	}
 	renderSubscriberActions( subscriber ) {
@@ -346,7 +360,7 @@ class MembershipsSection extends Component {
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{' '}
+						) }{ ' ' }
 						<ExternalLink
 							href="https://support.wordpress.com/recurring-payments-button/"
 							icon={ true }
@@ -394,7 +408,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderOnboarding(
 					<Button primary={ true } href={ this.props.connectUrl }>
-						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
+						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
 				) }
@@ -482,7 +496,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ requestSubscribers }
-)( localize( MembershipsSection ) );
+export default connect( mapStateToProps, { requestSubscribers } )(
+	localize( withLocalizedMoment( MembershipsSection ) )
+);

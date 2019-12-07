@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ import classnames from 'classnames';
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import GlobalNotices from 'components/global-notices';
+import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
 import config from 'config';
 import OfflineStatus from 'layout/offline-status';
@@ -131,6 +130,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
+				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
@@ -141,7 +141,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.sectionGroup }
-					compact={ this.props.sectionName === 'checkout' }
+					isCheckout={ this.props.sectionName === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
@@ -171,6 +171,7 @@ class Layout extends Component {
 				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
 					this.props.currentRoute !== '/log-in/jetpack' &&
+					this.props.currentRoute !== '/me/account/closed' &&
 					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 					) }
@@ -187,15 +188,14 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForCheckout = startsWith( currentRoute, '/checkout' );
-	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
+	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 

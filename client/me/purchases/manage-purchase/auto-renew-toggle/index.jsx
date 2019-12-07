@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isExpiring } from 'lib/purchases';
-import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
+import { disableAutoRenew, enableAutoRenew } from 'lib/purchases/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -131,10 +130,7 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 } );
 
 const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
-	? connect(
-			null,
-			mapDispatchToProps
-	  )( EnhancedDetails )
+	? connect( null, mapDispatchToProps )( EnhancedDetails )
 	: BasicDetails;
 
 export default localize( JetpackPlanDetails );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -82,7 +80,7 @@ class SiteTitleStep extends Component {
 							/>
 							<Button primary type="submit" onClick={ this.handleSubmit }>
 								{ this.props.translate( 'Continue' ) }
-							</Button>{' '}
+							</Button>{ ' ' }
 						</FormFieldset>
 					</div>
 				</form>

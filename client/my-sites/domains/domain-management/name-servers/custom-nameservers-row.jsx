@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -98,10 +96,7 @@ const removeNameserversClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameserverInputFocus,
-		removeNameserversClick,
-	}
-)( CustomNameserversRow );
+export default connect( null, {
+	customNameserverInputFocus,
+	removeNameserversClick,
+} )( CustomNameserversRow );

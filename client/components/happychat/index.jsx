@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -186,7 +184,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( Happychat ) );
+export default connect( mapState, mapDispatch )( localize( Happychat ) );

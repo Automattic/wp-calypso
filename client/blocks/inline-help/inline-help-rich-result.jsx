@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -131,7 +130,4 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpRichResult ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );

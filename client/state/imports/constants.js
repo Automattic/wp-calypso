@@ -1,4 +1,3 @@
-/** @format */
 export const appStates = Object.freeze( {
 	CANCEL_PENDING: 'importer-canceling',
 	DEFUNCT: 'importer-defunct',

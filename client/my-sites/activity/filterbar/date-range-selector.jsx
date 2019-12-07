@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -321,10 +320,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default compose(
-	connect(
-		null,
-		mapDispatchToProps
-	),
+	connect( null, mapDispatchToProps ),
 	localize,
 	withLocalizedMoment
 )( DateRangeSelector );

@@ -97,6 +97,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         enableStickyCountry={false}
         errorMessage=""
         eventFormName="Domain contact details form"
+        inputRef={[Function]}
         isError={false}
         label="Phone"
         labelClass="contact-details-form-fields__label"
@@ -143,7 +144,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       countryCode="IT"
       getFieldProps={[Function]}
       hasCountryStates={false}
-      manualLocationInput={false}
       shouldAutoFocusAddressField={false}
       translate={[Function]}
     />

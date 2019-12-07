@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,7 +46,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
-					'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
+					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }

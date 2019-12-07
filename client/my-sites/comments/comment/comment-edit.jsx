@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,6 +21,7 @@ import InfoPopover from 'components/info-popover';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -286,4 +286,4 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( CommentEdit ) );
+)( localize( withLocalizedMoment( CommentEdit ) ) );

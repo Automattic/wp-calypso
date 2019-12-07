@@ -77,7 +77,7 @@ body.is-section-signup .layout.gravatar {
 		top: 42px;
 		left: 0;
 		right: 0;
-		max-height: 300px;
+		max-height: 350px;
 		overflow: auto;
 		@include elevation ( 2dp );
 	}
@@ -155,6 +155,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 // Skip button
 .step-wrapper__buttons {
 	text-align: center;
+	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
@@ -185,18 +186,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 	}
 
-	.login__form-footer {
-		text-align: center;
-		.button {
-			max-width: 310px;
-			height: 48px;
-
-			&.is-primary {
-				border: 0;
-			}
-		}
-	}
-
 	.layout__content {
 		padding-top: 48px;
 	}
@@ -205,11 +194,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		display: none;
 	}
 
-	.wp-login__footer-links {
-		display: none;
-	}
-
-	.login__woocommerce-logo {
+	.signup-form__woocommerce-wrapper {
 		text-align: center;
 		border-bottom: 1px solid var( --color-neutral-50 );
 		position: absolute;
@@ -223,7 +208,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 	}
 
-	.connect-header {
+	.signup-form__woocommerce-logo {
 		margin: 0;
 		text-align: center;
 		margin-right: auto;
@@ -239,7 +224,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 	}
 
-	.login__form-header {
+	.signup-form__woocommerce-heading {
 		margin-top: 32px;
 	}
 
@@ -249,7 +234,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		margin-left: auto;
 
 		.formatted-header__subtitle {
-			color: var( --color-primary-100 );
+			color: var( --color-primary-10 );
 			margin-top: 1em;
 			font-size: 16px;
 			line-height: 24px;
@@ -264,14 +249,19 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	.logged-out-form__link-item {
 		text-align: center;
 		text-decoration: underline;
-		color: var( --color-gray-600 );
+		color: var( --studio-gray-60 );
 		font-size: 14px;
 	}
 
-	.signup-form__terms-of-service-link,
-	.signup-form__terms-of-service-link a {
+	.signup-form__terms-of-service-link {
 		text-align: left;
-		color: var( --color-gray-600 );
+		color: var( --studio-gray-60 );
+	}
+
+	.signup-form__terms-of-service-link a,
+	.signup-form__social-buttons-tos a {
+		color: var( --studio-gray-60 );
+		text-decoration: underline;
 	}
 
 	.signup-form__social {
@@ -279,7 +269,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		margin-top: 16px;
 		p {
 			font-size: 12px;
-			color: var( --color-gray-600 );
+			color: var( --studio-gray-60 );
 		}
 
 		.social-buttons__button {

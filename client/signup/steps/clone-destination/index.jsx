@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -234,7 +233,4 @@ class CloneDestinationStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( CloneDestinationStep ) );
+export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );

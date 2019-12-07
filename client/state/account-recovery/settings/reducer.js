@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -24,31 +22,42 @@ const setTargetState = value => ( state, { target } ) => ( {
 	[ target ]: value,
 } );
 
-const isUpdating = createReducer(
-	{},
-	{
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ]: setTargetState( true ),
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: setTargetState( false ),
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: setTargetState( false ),
+const isUpdating = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
+			return setTargetState( true )( state, action );
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS:
+			return setTargetState( false )( state, action );
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED:
+			return setTargetState( false )( state, action );
 	}
-);
 
-const isDeleting = createReducer(
-	{},
-	{
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ]: setTargetState( true ),
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: setTargetState( false ),
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: setTargetState( false ),
-	}
-);
+	return state;
+} );
 
-const hasSentValidation = createReducer(
-	{},
-	{
-		[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION ]: setTargetState( true ),
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: setTargetState( true ),
+const isDeleting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE:
+			return setTargetState( true )( state, action );
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS:
+			return setTargetState( false )( state, action );
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED:
+			return setTargetState( false )( state, action );
 	}
-);
+
+	return state;
+} );
+
+const hasSentValidation = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION:
+			return setTargetState( true )( state, action );
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS:
+			return setTargetState( true )( state, action );
+	}
+
+	return state;
+} );
 
 const convertPhoneResponse = phoneResponse => {
 	if ( ! phoneResponse ) {
@@ -65,61 +74,104 @@ const convertPhoneResponse = phoneResponse => {
 	};
 };
 
-const phone = createReducer( null, {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) =>
-		convertPhoneResponse( settings.phone ),
+const phone = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
+			const { settings } = action;
+			return convertPhoneResponse( settings.phone );
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS: {
+			const { target, value } = action;
+			return 'phone' === target ? value : state;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS: {
+			const { target } = action;
+			return 'phone' === target ? null : state;
+		}
+	}
 
-	// There is no calling of convertPhoneResponse here, because the endpoint for updating
-	// recovery settings doesn't return the updated value in the response body. Thus,
-	// the `value` encapsulated here is actually passed down from the action creator and
-	// in the exactly the same form, hence no need of converting.
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
-		'phone' === target ? value : state,
-
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
-		'phone' === target ? null : state,
+	return state;
 } );
 
-const email = createReducer( '', {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) => settings.email,
+const email = withoutPersistence( ( state = '', action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
+			const { settings } = action;
+			return settings.email;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS: {
+			const { target, value } = action;
+			return 'email' === target ? value : state;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS: {
+			const { target } = action;
+			return 'email' === target ? '' : state;
+		}
+	}
 
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
-		'email' === target ? value : state,
-
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
-		'email' === target ? '' : state,
+	return state;
 } );
 
-const phoneValidated = createReducer( false, {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) => settings.phone_validated,
+const phoneValidated = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
+			const { settings } = action;
+			return settings.phone_validated;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS: {
+			const { target } = action;
+			return 'phone' === target ? false : state;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS: {
+			const { target } = action;
+			return 'phone' === target ? false : state;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS:
+			return true;
+	}
 
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target } ) =>
-		'phone' === target ? false : state,
-
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
-		'phone' === target ? false : state,
-
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: () => true,
+	return state;
 } );
 
-const isValidatingPhone = createReducer( false, {
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE ]: () => true,
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: () => false,
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: () => false,
+const isValidatingPhone = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE:
+			return true;
+		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS:
+			return false;
+		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED:
+			return false;
+	}
+
+	return state;
 } );
 
-const emailValidated = createReducer( false, {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) => settings.email_validated,
+const emailValidated = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
+			const { settings } = action;
+			return settings.email_validated;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS: {
+			const { target } = action;
+			return 'email' === target ? false : state;
+		}
+		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS: {
+			const { target } = action;
+			return 'email' === target ? false : state;
+		}
+	}
 
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target } ) =>
-		'email' === target ? false : state,
-
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
-		'email' === target ? false : state,
+	return state;
 } );
 
-const isReady = createReducer( false, {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: () => true,
+const isReady = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS:
+			return true;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

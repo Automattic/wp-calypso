@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -179,7 +177,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsPayments ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsPayments ) );

@@ -17,7 +17,6 @@
  * The config files are loaded in sequence: _shared.json, {env}.json, {env}.local.json
  *
  *
- * @format
  * @see server/config/parser.js
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
  * @param {String} key name of the property defined in the config files

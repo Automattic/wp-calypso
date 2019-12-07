@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,7 @@ import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -94,7 +93,7 @@ class Upload extends React.Component {
 		! inProgress && this.props.clearThemeUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
@@ -263,6 +262,7 @@ class Upload extends React.Component {
 
 		return (
 			<Main>
+				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
@@ -330,10 +330,7 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-	),
+	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
 	localize,
 ];
 

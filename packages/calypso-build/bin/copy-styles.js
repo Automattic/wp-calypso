@@ -14,7 +14,7 @@ const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 
 const copyOptions = {
 	overwrite: true,
-	filter: '**/*.scss',
+	filter: [ '**/*.scss', '!**/test/**' ],
 	concurrency: 127,
 };
 

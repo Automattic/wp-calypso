@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -40,8 +38,7 @@ export function canAccessAds( site ) {
 
 export function isWordadsInstantActivationEligible( site ) {
 	if (
-		! site.jetpack &&
-		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
+		( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) ) &&
 		userCan( 'activate_wordads', site )
 	) {
 		return true;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ import PlansGrid from './plans-grid';
 import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { addQueryArgs } from 'lib/route';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import { completeFlow } from 'state/jetpack-connect/actions';
@@ -265,8 +264,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( Plans );
+export default flowRight( connectComponent, localize, withTrackingTool( 'HotJar' ) )( Plans );

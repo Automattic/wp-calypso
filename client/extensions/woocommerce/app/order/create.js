@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -49,7 +48,7 @@ class Order extends Component {
 		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}

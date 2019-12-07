@@ -57,7 +57,23 @@ describe( 'TemplateSelectorControl', () => {
 			expect( document.querySelectorAll( 'button.template-selector-item__label' ) ).toHaveLength(
 				4
 			);
+			expect( document.querySelectorAll( 'button.is-selected' ) ).toHaveLength( 0 );
 			expect( container ).toMatchSnapshot();
+		} );
+
+		it( 'highlights the selected template', () => {
+			render(
+				<TemplateSelectorControl
+					label="Select a Template..."
+					instanceId={ testUniqueId }
+					templates={ templatesFixture }
+					blocksByTemplates={ blocksByTemplatesFixture }
+					siteInformation={ siteInformation }
+					selectedTemplate={ templatesFixture[ 0 ].slug }
+				/>
+			);
+
+			expect( document.querySelectorAll( 'button.is-selected' ) ).toHaveLength( 1 );
 		} );
 
 		it( 'does not render when missing templates prop', () => {
@@ -90,25 +106,6 @@ describe( 'TemplateSelectorControl', () => {
 	} );
 
 	describe( 'Event handlers', () => {
-		it( 'calls onTemplateFocus prop on mouseEnter over template', () => {
-			const onFocusSpy = jest.fn();
-
-			const { getByText } = render(
-				<TemplateSelectorControl
-					label="Select a Template..."
-					instanceId={ testUniqueId }
-					templates={ templatesFixture }
-					blocksByTemplates={ blocksByTemplatesFixture }
-					siteInformation={ siteInformation }
-					onTemplateFocus={ onFocusSpy }
-				/>
-			);
-
-			fireEvent.mouseEnter( getByText( 'Template 2' ) );
-
-			expect( onFocusSpy ).toHaveBeenCalled();
-		} );
-
 		it( 'calls onTemplateSelect prop when template is clicked', () => {
 			const onSelectSpy = jest.fn();
 

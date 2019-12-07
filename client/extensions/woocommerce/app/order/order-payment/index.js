@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -141,7 +140,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { saveOrder }, dispatch )
-)( localize( OrderPaymentCard ) );
+export default connect( null, dispatch => bindActionCreators( { saveOrder }, dispatch ) )(
+	localize( OrderPaymentCard )
+);

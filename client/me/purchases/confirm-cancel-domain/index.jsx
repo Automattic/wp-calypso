@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase } from 'lib/purchases/actions';
 import Card from 'components/card';
 import { clearPurchases } from 'state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
@@ -72,7 +71,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -33,7 +30,6 @@ import './style.scss';
 
 export class EditPostStatus extends Component {
 	static propTypes = {
-		moment: PropTypes.func,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
 		post: PropTypes.object,

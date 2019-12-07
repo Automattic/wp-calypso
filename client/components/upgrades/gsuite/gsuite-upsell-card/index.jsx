@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,12 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
-import { getProductCost } from 'state/products-list/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
@@ -28,10 +23,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import './style.scss';
 
 const GSuiteUpsellCard = ( {
-	currencyCode,
 	domain,
-	gSuiteCost,
-	gSuiteProductSlug,
+	productSlug,
 	onAddEmailClick,
 	onSkipClick,
 	recordTracksEvent,
@@ -62,12 +55,13 @@ const GSuiteUpsellCard = ( {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_add_email_button_click` );
 
 		if ( canContinue ) {
-			onAddEmailClick( getItemsForCart( [ domain ], gSuiteProductSlug, users ) );
+			onAddEmailClick( getItemsForCart( [ domain ], productSlug, users ) );
 		}
 	};
 
 	const handleSkipClick = () => {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_skip_button_click` );
+
 		onSkipClick();
 	};
 
@@ -80,17 +74,14 @@ const GSuiteUpsellCard = ( {
 
 	const handleUsersChange = changedUsers => {
 		recordUsersChangedEvent( users, changedUsers );
+
 		setUsers( changedUsers );
 	};
-
-	const renderAddEmailButtonText = () =>
-		abtest( 'gSuiteContinueButtonCopy' ) === 'purchase'
-			? translate( 'Purchase G Suite' )
-			: translate( 'Yes, Add Email \u00BB' );
 
 	return (
 		<div className="gsuite-upsell-card__form">
 			<QueryProducts />
+
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
@@ -100,18 +91,19 @@ const GSuiteUpsellCard = ( {
 							},
 						} ) }
 					</h2>
+
 					<h5 className="gsuite-upsell-card__no-setup-required">
 						{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 					</h5>
 				</header>
 			</CompactCard>
+
 			<CompactCard>
 				<GSuiteUpsellProductDetails
 					domain={ domain }
-					cost={ gSuiteCost }
-					currencyCode={ currencyCode }
-					plan={ gSuiteProductSlug }
+					productSlug={ productSlug }
 				/>
+
 				<GSuiteNewUserList
 					extraValidation={ user => user }
 					selectedDomainName={ domain }
@@ -121,7 +113,7 @@ const GSuiteUpsellCard = ( {
 				>
 					<div className="gsuite-upsell-card__buttons">
 						<Button className="gsuite-upsell-card__skip-button" onClick={ handleSkipClick }>
-							{ translate( 'Skip' ) }
+							{ translate( 'Skip for now' ) }
 						</Button>
 
 						<Button
@@ -130,7 +122,7 @@ const GSuiteUpsellCard = ( {
 							disabled={ ! canContinue }
 							onClick={ handleAddEmailClick }
 						>
-							{ renderAddEmailButtonText() }
+							{ translate( 'Purchase G Suite' ) }
 						</Button>
 					</div>
 				</GSuiteNewUserList>
@@ -140,18 +132,12 @@ const GSuiteUpsellCard = ( {
 };
 
 GSuiteUpsellCard.propTypes = {
-	currencyCode: PropTypes.string,
 	domain: PropTypes.string.isRequired,
-	gSuiteCost: PropTypes.number,
-	gSuiteProductSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
+	productSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
 	onAddEmailClick: PropTypes.func.isRequired,
 	onSkipClick: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, { gSuiteProductSlug } ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		gSuiteCost: getProductCost( state, gSuiteProductSlug ),
-	} ),
-	{ recordTracksEvent: recordTracksEventAction }
-)( GSuiteUpsellCard );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction
+} )( GSuiteUpsellCard );

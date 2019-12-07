@@ -1,7 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
@@ -50,6 +48,8 @@ import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -65,6 +65,7 @@ export class List extends React.Component {
 	};
 
 	state = {
+		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
 		notice: null,
@@ -170,12 +171,17 @@ export class List extends React.Component {
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="domain-management__page-heading"
+					headerText={ this.props.translate( 'Domains' ) }
+					align="left"
+				/>
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
 
 				{ this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
@@ -195,11 +201,11 @@ export class List extends React.Component {
 
 		return (
 			domain &&
-			domain.registrationMoment &&
+			domain.registrationDate &&
 			this.props
 				.moment()
 				.subtract( 1, 'day' )
-				.isBefore( domain.registrationMoment )
+				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
 
@@ -312,10 +318,10 @@ export class List extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 
@@ -425,7 +431,9 @@ export class List extends React.Component {
 		}
 
 		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.filter( domain => domain.type !== type.WPCOM )
+			? this.props.domains.filter(
+					domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+			  )
 			: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
@@ -531,4 +539,4 @@ export default connect(
 			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
 		};
 	}
-)( localize( List ) );
+)( localize( withLocalizedMoment( List ) ) );

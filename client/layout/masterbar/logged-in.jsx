@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,6 +30,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
+import WordPressWordmark from 'components/wordpress-wordmark';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -40,7 +40,7 @@ class MasterbarLoggedIn extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
-		compact: PropTypes.bool,
+		isCheckout: PropTypes.bool,
 	};
 
 	clickMySites = () => {
@@ -113,10 +113,19 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, compact } = this.props;
+		const { domainOnlySite, translate, isCheckout } = this.props;
 
-		if ( compact === true ) {
-			return <Masterbar>{ this.renderMySites() }</Masterbar>;
+		if ( isCheckout === true ) {
+			return (
+				<Masterbar>
+					<div className="masterbar__secure-checkout">
+						<WordPressWordmark className="masterbar__wpcom-wordmark" />
+						<span className="masterbar__secure-checkout-text">
+							{ translate( 'Secure checkout' ) }
+						</span>
+					</div>
+				</Masterbar>
+			);
 		}
 
 		return (

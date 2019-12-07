@@ -1,5 +1,3 @@
-/** @format */
-
 export const BEFORE_SUBMIT = 'before-submit';
 export const INPUT_VALIDATION = 'input-validation';
 export const RECEIVED_PAYMENT_KEY_RESPONSE = 'received-payment-key-response';

@@ -17,7 +17,10 @@ import MultiCheckbox from '../';
 let container;
 
 describe( 'index', () => {
-	const options = [ { value: 1, label: 'One' }, { value: 2, label: 'Two' } ];
+	const options = [
+		{ value: 1, label: 'One' },
+		{ value: 2, label: 'Two' },
+	];
 
 	beforeEach( () => {
 		container = document.createElement( 'div' );

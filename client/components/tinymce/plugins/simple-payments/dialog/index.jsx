@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -19,7 +18,7 @@ import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';

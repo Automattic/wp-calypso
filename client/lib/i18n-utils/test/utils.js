@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -73,70 +72,6 @@ jest.mock( 'config', () => key => {
 			'tr',
 			'zh-cn',
 			'zh-tw',
-		];
-	}
-
-	if ( 'languages' === key ) {
-		return [
-			{ value: 420, langSlug: 'ast', name: 'Asturianu', wpLocale: 'ast', territories: [ '039' ] },
-			{
-				value: 1,
-				langSlug: 'en',
-				name: 'English',
-				wpLocale: 'en_US',
-				popular: 1,
-				territories: [ '019' ],
-			},
-			{
-				value: 19,
-				langSlug: 'es',
-				name: 'Español',
-				wpLocale: 'es_ES',
-				popular: 2,
-				territories: [ '019', '039' ],
-			},
-			{
-				value: 24,
-				langSlug: 'fr',
-				name: 'Français',
-				wpLocale: 'fr_FR',
-				popular: 5,
-				territories: [ '155' ],
-			},
-			{
-				value: 36,
-				langSlug: 'ja',
-				name: '日本語',
-				wpLocale: 'ja',
-				popular: 7,
-				territories: [ '030' ],
-			},
-			{
-				value: 438,
-				langSlug: 'pt-br',
-				name: 'Português do Brasil',
-				wpLocale: 'pt_BR',
-				popular: 3,
-				territories: [ '019' ],
-			},
-			{
-				value: 15,
-				langSlug: 'de',
-				name: 'Deutsch',
-				wpLocale: 'de_DE',
-				popular: 4,
-				territories: [ '155' ],
-			},
-			{
-				value: 900,
-				langSlug: 'de_formal',
-				name: 'Deutsch',
-				wpLocale: 'de_DE_formal',
-				parentLangSlug: 'de',
-				popular: 4,
-				territories: [ '155' ],
-			},
-			{ value: 58, langSlug: 'pl', name: 'Polski', wpLocale: 'pl_PL', territories: [ '151' ] },
 		];
 	}
 } );

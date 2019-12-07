@@ -19,6 +19,12 @@
 	p {
 		margin-bottom: 0;
 	}
+
+	@include breakpoint( '<960px' ) {
+		p {
+			display: none;
+		}
+	}
 }
 .social-login__header-icon {
 	height: 30px;

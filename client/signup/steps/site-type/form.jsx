@@ -44,12 +44,11 @@ class SiteTypeForm extends Component {
 
 	render() {
 		const { showDescriptions, showPurchaseRequired, translate } = this.props;
-		// Specify which site types we'd like to render in the UI
-		const siteTypeDefinitions = getAllSiteTypes( [ 1, 2, 3, 4 ] );
+
 		return (
 			<>
 				<Card className="site-type__wrapper">
-					{ siteTypeDefinitions.map( siteTypeProperties => (
+					{ getAllSiteTypes().map( siteTypeProperties => (
 						<Card
 							className="site-type__option"
 							key={ siteTypeProperties.id }
@@ -77,9 +76,6 @@ class SiteTypeForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( SiteTypeForm ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( SiteTypeForm ) );

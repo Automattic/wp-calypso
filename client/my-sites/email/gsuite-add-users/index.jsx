@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -23,7 +22,7 @@ import {
 	emailManagement,
 } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
 import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
 import {
@@ -261,7 +260,7 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDecoratedSiteDomains( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 		return {
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),

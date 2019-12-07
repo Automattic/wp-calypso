@@ -27,6 +27,7 @@ Name | Type | Default | Description
 `compact` | `bool` | `false` | Decreases the size of the UpgradeNudge.
 `event` | `string` | `null` | An event to distinguish the nudge in tracks. Will be set as the `cta_name` event property.
 `feature` | `string` from `FEATURES_LIST` keys | `null` | The slug of the feature that will be provided as part of the proposed upgrade.
+`forceDisplay` | `bool` | `false` | Used to display the update nudge in devdocs.
 `href` | `string` | `null` | The URL/path that the UpgradeNudge redirects to if clicked.
 `icon` | `string` | `'star'` | The slug of the icon used on the UpgradeNudge.
 `jetpack` | `bool` | `false` | Indicates whether the proposed upgrade feature is a Jetpack feature.

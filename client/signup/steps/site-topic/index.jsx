@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -39,9 +37,9 @@ class SiteTopicStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	submitSiteTopic = ( { isUserInput, name, slug } ) => {
+	submitSiteTopic = ( { isUserInput, name, slug, suggestedTheme } ) => {
 		const { flowName, stepName } = this.props;
-		this.props.submitSiteVertical( { isUserInput, name, slug }, stepName );
+		this.props.submitSiteVertical( { isUserInput, name, slug }, stepName, suggestedTheme );
 		this.props.goToNextStep( flowName );
 	};
 

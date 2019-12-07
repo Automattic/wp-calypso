@@ -1,14 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
-
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { defer } from 'lodash';
 
 /**
@@ -28,7 +24,7 @@ class QuerySiteStats extends Component {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.statType === prevProps.statType &&
-			shallowEqual( this.props.query, prevProps.query )
+			isShallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -172,7 +170,10 @@ describe( 'actions', () => {
 			const { voucher } = wpcomAssignResponse;
 			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes, voucher );
 
-			return assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy ).then( () => {
+			return assignSiteVoucher(
+				siteId,
+				oneOfOurServiceTypes
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( action );
 			} );
 		} );

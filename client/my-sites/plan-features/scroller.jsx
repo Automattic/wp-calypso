@@ -186,7 +186,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 			do {
 				visibleCount--;
 				cellWidth = ( vpw * ( 1 - SIDE_PANE_RATIO * 2 ) ) / visibleCount - borderSpacing;
-			} while ( cellWidth < MIN_CELL_WIDTH );
+			} while ( cellWidth < MIN_CELL_WIDTH && visibleCount > 1 );
 
 			paneWidth = SIDE_PANE_RATIO * vpw;
 			scrollerWidth = ( cellWidth + borderSpacing ) * planCount + borderSpacing;

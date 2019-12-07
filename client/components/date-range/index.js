@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,9 @@ import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import { withLocalizedMoment } from 'components/localized-moment';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -696,4 +696,4 @@ export class DateRange extends Component {
 	}
 }
 
-export default localize( DateRange );
+export default localize( withLocalizedMoment( DateRange ) );

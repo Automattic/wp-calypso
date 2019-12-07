@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -70,7 +68,7 @@ const siteSelector = ( context, next ) => {
 	context.store.dispatch( recordTracksEvent( 'calypso_concierge_site_selection_step' ) );
 
 	context.getSiteSelectionHeaderText = () =>
-		i18n.translate( 'Select a site for your {{strong}}Support Session{{/strong}}', {
+		i18n.translate( 'Select a site for your {{strong}}Quick Start Session{{/strong}}', {
 			components: { strong: <strong /> },
 		} );
 	next();
