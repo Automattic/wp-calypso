@@ -40,7 +40,7 @@ export class TldFilterBar extends Component {
 	};
 
 	static defaultProps = {
-		numberOfTldsShown: 8,
+		numberOfTldsShown: 6,
 	};
 
 	state = {

@@ -119,11 +119,6 @@
 		}
 	}
 
-	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 8 ) {
-		display: none;
-	}
-
 	@include breakpoint( '<960px' ) {
 		&.is-compact {
 			padding-bottom: 0.5em;
