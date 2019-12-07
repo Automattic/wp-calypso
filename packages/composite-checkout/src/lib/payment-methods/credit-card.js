@@ -19,7 +19,7 @@ export function createCreditCardMethod() {
 	return {
 		id: 'card',
 		label: <CreditCardLabel />,
-		PaymentMethodComponent: CreditCardFields,
+		activeContent: <CreditCardFields />,
 		SubmitButtonComponent: CreditCardSubmitButton,
 		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),

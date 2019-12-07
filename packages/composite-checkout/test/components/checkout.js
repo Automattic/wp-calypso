@@ -75,7 +75,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
 
-			it( 'renders the payment method PaymentMethodComponent', () => {
+			it( 'renders the payment method activeContent', () => {
 				const { getByTestId } = render( <MyCheckout /> );
 				const activeComponent = getByTestId( 'mock-payment-form' );
 				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
@@ -141,7 +141,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
 
-			it( 'renders the payment method PaymentMethodComponent', () => {
+			it( 'renders the payment method activeContent', () => {
 				const { getByTestId } = render( <MyCheckout /> );
 				const activeComponent = getByTestId( 'mock-payment-form' );
 				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
@@ -459,7 +459,7 @@ function createMockMethod() {
 	return {
 		id: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
-		PaymentMethodComponent: MockPaymentForm,
+		activeContent: <MockPaymentForm />,
 		SubmitButtonComponent: props => <button { ...props }>Pay Please</button>,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
