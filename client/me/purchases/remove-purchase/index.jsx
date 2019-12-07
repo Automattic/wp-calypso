@@ -19,7 +19,13 @@ import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import {
+	getIncludedDomain,
+	getName,
+	hasIncludedDomain,
+	isRefundable,
+	isRemovable,
+} from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
 import notices from 'notices';
@@ -294,7 +300,10 @@ class RemovePurchase extends Component {
 		const { purchase, translate } = this.props;
 		const productName = getName( purchase );
 
-		if ( ! isRemovable( purchase ) ) {
+		if (
+			! isRemovable( purchase ) &&
+			( ! isDomainRegistration( purchase ) || isRefundable( purchase ) )
+		) {
 			return null;
 		}
 
