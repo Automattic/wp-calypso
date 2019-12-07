@@ -33,7 +33,6 @@ import {
 	isPartnerPurchase,
 	isRefundable,
 	isRenewable,
-	isRenewal,
 	isRenewing,
 	isSubscription,
 	purchaseType,
@@ -251,12 +250,7 @@ class ManagePurchase extends Component {
 			link = CALYPSO_CONTACT;
 		} else if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				if ( isRenewal( purchase ) ) {
-					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = CALYPSO_CONTACT;
-				} else {
-					text = translate( 'Cancel Domain and Refund' );
-				}
+				text = translate( 'Cancel Domain and Refund' );
 			}
 
 			if ( isSubscription( purchase ) ) {
