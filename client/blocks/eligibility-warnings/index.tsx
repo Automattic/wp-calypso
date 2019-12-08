@@ -198,11 +198,11 @@ const mapDispatchToProps = {
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
 };
 
-const mergeProps = (
+function mergeProps(
 	stateProps: ReturnType< typeof mapStateToProps >,
 	dispatchProps: typeof mapDispatchToProps,
 	ownProps: ExternalProps
-) => {
+) {
 	let context: string | null = null;
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
@@ -226,7 +226,7 @@ const mergeProps = (
 		onProceed,
 		context,
 	};
-};
+}
 
 export default connect(
 	mapStateToProps,
