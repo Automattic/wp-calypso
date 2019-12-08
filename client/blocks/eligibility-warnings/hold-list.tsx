@@ -31,6 +31,13 @@ function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
 			),
 			supportUrl: null,
 		},
+		NO_BUSINESS_PLAN: {
+			title: translate( 'Upgrade to a Business plan' ),
+			description: translate(
+				"You'll also get to install custom themes, have more storage, and access live support."
+			),
+			supportUrl: null,
+		},
 		NO_JETPACK_SITES: {
 			title: translate( 'Not available for Jetpack sites' ),
 			description: translate( 'Try using a different site.' ),
