@@ -105,7 +105,7 @@ export const EligibilityWarnings = ( {
 			{ businessUpsellBanner }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
-				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } />
+				<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 			) }
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 

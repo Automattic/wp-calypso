@@ -1,5 +1,3 @@
-
-
 .eligibility-warnings {
 	margin-top: 16px;
 	font-size: 14px;
@@ -57,7 +55,11 @@
 	}
 }
 
-.eligibility-warnings__hold .gridicon,
+.eligibility-warnings__hold .gridicon {
+	color: var( --color-neutral-10 );
+	flex-shrink: 0;
+}
+
 .eligibility-warnings__warning > .gridicon {
 	color: var( --color-error );
 	flex-shrink: 0;
@@ -77,13 +79,18 @@
 	}
 }
 
-.eligibility-warnings__action a {
+.eligibility-warnings__action a,
+.eligibility-warnings__hold-action a {
 	.gridicons-help-outline {
 		color: var( --color-neutral-light );
 	}
 	&:hover .gridicons-help-outline {
 		color: var( --color-primary );
 	}
+}
+
+.eligibility-warnings__hold-action {
+	align-self: center;
 }
 
 .eligibility-warnings__no-conflicts.card {
