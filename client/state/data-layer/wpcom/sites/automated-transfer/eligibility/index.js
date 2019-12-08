@@ -31,6 +31,7 @@ const statusMapping = {
 	no_jetpack_sites: eligibilityHolds.NO_JETPACK_SITES,
 	no_vip_sites: eligibilityHolds.NO_VIP_SITES,
 	site_private: eligibilityHolds.SITE_PRIVATE,
+	site_unlaunched: eligibilityHolds.SITE_UNLAUNCHED,
 	site_graylisted: eligibilityHolds.SITE_GRAYLISTED,
 	non_admin_user: eligibilityHolds.NON_ADMIN_USER,
 	not_resolving_to_wpcom: eligibilityHolds.NOT_RESOLVING_TO_WPCOM,

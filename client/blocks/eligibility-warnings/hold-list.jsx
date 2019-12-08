@@ -46,6 +46,13 @@ function getHoldMessages( siteSlug, translate ) {
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
 		},
+		SITE_UNLAUNCHED: {
+			title: translate( 'Public site needed' ),
+			description: translate(
+				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
+			),
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+		},
 		SITE_GRAYLISTED: {
 			title: translate( 'Ongoing site dispute' ),
 			description: translate(
