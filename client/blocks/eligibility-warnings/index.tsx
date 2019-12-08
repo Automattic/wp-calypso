@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { filter, get, includes, noop } from 'lodash';
+import { get, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 
@@ -53,12 +53,8 @@ export const EligibilityWarnings = ( {
 	siteSlug,
 	translate,
 }: Props ) => {
-	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
-
-	const listHolds = filter(
-		get( eligibilityData, 'eligibilityHolds', [] ),
-		hold => ! includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
-	);
+	const warnings = eligibilityData.eligibilityWarnings || [];
+	const listHolds = eligibilityData.eligibilityHolds || [];
 
 	const classes = classNames( 'eligibility-warnings', {
 		'eligibility-warnings__placeholder': isPlaceholder,
