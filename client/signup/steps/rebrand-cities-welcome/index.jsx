@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
@@ -19,6 +20,11 @@ import { submitSignupStep } from 'state/signup/progress/actions';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import rebrandCitiesImage from 'assets/images/illustrations/rebrand-cities-welcome.svg';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {
@@ -54,9 +60,9 @@ class RebrandCitiesWelcomeStep extends Component {
 
 		return (
 			<div className="rebrand-cities-welcome">
-				<div className="rebrand-cities-welcome__illustration-wrapper">
-					<div className="rebrand-cities-welcome__illustration" />
-				</div>
+				<Card className="rebrand-cities-welcome__illustration-wrapper">
+					<img className="rebrand-cities-welcome__illustration" src={ rebrandCitiesImage } alt="" />
+				</Card>
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
