@@ -3,9 +3,8 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
-import { includes, noop } from 'lodash';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { get, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import page from 'page';

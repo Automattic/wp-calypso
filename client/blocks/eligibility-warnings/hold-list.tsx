@@ -20,33 +20,35 @@ import { localizeUrl } from 'lib/i18n-utils';
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
+		BLOCKED_ATOMIC_TRANSFER: {
+			title: translate( 'Blocked' ),
+			description: translate(
+				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+			),
+			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
+		},
+		TRANSFER_ALREADY_EXISTS: {
+			title: translate( 'Installation in progress' ),
+			description: translate(
+				'Just a minute! Please wait until the installation is finished, then try again.'
+			),
+			supportUrl: null,
+		},
 		NO_BUSINESS_PLAN: {
-			title: hasTranslation( 'Upgrade to a Business plan' )
-				? translate( 'Upgrade to a Business plan' )
-				: translate( 'Upgrade to Business' ),
-			description: ( function() {
-				if ( context === 'themes' ) {
-					return hasTranslation(
-						"You'll also get to install custom plugins, have more storage, and access live support."
-					)
-						? translate(
-								"You'll also get to install custom plugins, have more storage, and access live support."
-						  )
-						: translate(
-								'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-						  );
-				}
-
-				return hasTranslation(
-					"You'll also get to install custom themes, have more storage, and access live support."
-				)
-					? translate(
-							"You'll also get to install custom themes, have more storage, and access live support."
-					  )
-					: translate(
-							'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-					  );
-			} )(),
+			title: translate( 'Upgrade to a Business plan' ),
+			description: translate(
+				"You'll also get to install custom themes, have more storage, and access live support."
+			),
+			supportUrl: null,
+		},
+		NO_JETPACK_SITES: {
+			title: translate( 'Not available for Jetpack sites' ),
+			description: translate( 'Try using a different site.' ),
+			supportUrl: null,
+		},
+		NO_VIP_SITES: {
+			title: translate( 'Not available for VIP sites' ),
+			description: translate( 'Try using a different site.' ),
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
