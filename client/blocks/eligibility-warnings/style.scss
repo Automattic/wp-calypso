@@ -60,8 +60,13 @@
 	}
 }
 
-.eligibility-warnings__hold .gridicon,
-.eligibility-warnings__warning .gridicon {
+.eligibility-warnings__hold .gridicon {
+	color: var( --color-neutral-10 );
+	flex-shrink: 0;
+}
+
+.eligibility-warnings__warning > .gridicon {
+	color: var( --color-error );
 	flex-shrink: 0;
 }
 
@@ -101,7 +106,7 @@
 	align-self: center;
 }
 
-.eligibility-warnings__no-conflicts {
+.eligibility-warnings__no-conflicts.card {
 	align-items: center;
 	display: flex;
 

@@ -76,9 +76,7 @@ export const EligibilityWarnings = ( {
 			/>
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
-				<CompactCard>
-					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
-				</CompactCard>
+				<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 			) }
 
 			{ showThisSiteIsEligibleMessage && (

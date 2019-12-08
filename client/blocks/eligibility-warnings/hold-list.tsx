@@ -10,11 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
@@ -165,39 +162,12 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( context, translate );
-	const blockingMessages = getBlockingMessages( translate );
-
-	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
+	const holdMessages = getHoldMessages( translate );
 
 	return (
-		<>
-			{ ! isPlaceholder &&
-				blockingHold &&
-				isHardBlockingHoldType( blockingHold, blockingMessages ) && (
-					<Notice
-						status={ blockingMessages[ blockingHold ].status }
-						text={ blockingMessages[ blockingHold ].message }
-						showDismiss={ false }
-					>
-						{ blockingMessages[ blockingHold ].contactUrl && (
-							<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
-								{ translate( 'Contact us' ) }
-							</NoticeAction>
-						) }
-					</Notice>
-				) }
-			<div
-				className={ classNames( {
-					'eligibility-warnings__hold-list-dim': blockingHold,
-				} ) }
-				data-testid="HoldList-Card"
-			>
-				<CardHeading>
-					<span className="eligibility-warnings__hold-heading">
-						{ getCardHeading( context, translate ) }
-					</span>
-				</CardHeading>
+		<div>
+			<Card className="eligibility-warnings__hold-list">
+				<CardHeading>{ getCardHeading( context, translate ) }</CardHeading>
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
@@ -214,6 +184,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 					map( holds, hold =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
+								<Gridicon icon="checkmark-circle" size={ 24 } />
 								<div className="eligibility-warnings__message">
 									<div className="eligibility-warnings__message-title">
 										{ holdMessages[ hold ].title }
@@ -243,24 +214,13 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 };
 
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
-	const defaultCopy = translate( 'Please clear all issues above to proceed.' );
 	switch ( context ) {
 		case 'plugins':
-			return hasTranslation( "To install plugins you'll need to:" )
-				? translate( "To install plugins you'll need to:" )
-				: defaultCopy;
+			return translate( "To install plugins, you'll need a couple things:" );
 		case 'themes':
-			return hasTranslation( "To install themes you'll need to:" )
-				? translate( "To install plugins you'll need to:" )
-				: defaultCopy;
-		case 'hosting':
-			return hasTranslation( "To activate hosting access you'll need to:" )
-				? translate( "To activate hosting access you'll need to:" )
-				: defaultCopy;
+			return translate( "To install themes, you'll need a couple things:" );
 		default:
-			return hasTranslation( "To continue you'll need to:" )
-				? translate( "To continue you'll need to:" )
-				: defaultCopy;
+			return translate( "To continue, you'll need a couple things:" );
 	}
 }
 
