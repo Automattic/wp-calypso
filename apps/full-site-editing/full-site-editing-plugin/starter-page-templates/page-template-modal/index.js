@@ -69,6 +69,8 @@ class PageTemplateModal extends Component {
 		// `this.getDefaultSelectedTemplate`. Afterwards, the user can select a
 		// different template, but can never un-select it.
 		// This makes it a reliable indicator for whether the modal has just been launched.
+		// It's also possible that `templates` are present during initial mount, in which
+		// case this will be called before `componentDidMount`, which is also fine.
 		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
 			// Show the modal, and select the first template automatically.
 			return {
@@ -79,8 +81,15 @@ class PageTemplateModal extends Component {
 		return null;
 	}
 
+	componentDidMount() {
+		if ( this.state.isOpen ) {
+			trackView( this.props.segment.id, this.props.vertical.id );
+		}
+	}
+
 	componentDidUpdate( prevProps, prevState ) {
-		// Only track when the modal is first displayed.
+		// Only track when the modal is first displayed
+		// and if it didn't already happen during componentDidMount.
 		if ( ! prevState.isOpen && this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
