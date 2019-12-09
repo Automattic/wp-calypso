@@ -79,7 +79,11 @@ type CacheStatus = 'valid' | 'invalid';
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
  * @returns ShoppingCartManager
  */
-export function useShoppingCart( cartKey, setCart, getCart ): ShoppingCartManager {
+export function useShoppingCart(
+	cartKey: string,
+	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
+	getCart: ( string ) => Promise< ResponseCart >
+): ShoppingCartManager {
 	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
 		cartKey,
 		setCart,

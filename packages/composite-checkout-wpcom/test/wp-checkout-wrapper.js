@@ -14,7 +14,8 @@ import { createRegistry, createPayPalMethod } from '@automattic/composite-checko
 import {
 	WPCheckoutWrapper,
 	makeShoppingCartHook,
-	mockCartEndpoint,
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
 	mockPayPalExpressRequest,
 } from '../src/index';
 
@@ -37,6 +38,7 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 	const initialCart = {
 		coupon: '',
 		currency: 'BRL',
+		locale: 'br-pt',
 		is_coupon_applied: false,
 		products: [
 			{
@@ -88,17 +90,12 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 
 	const registry = createRegistry();
 	const { registerStore } = registry;
-
-	// Using a mocked server responses
-	const useShoppingCart = makeShoppingCartHook( mockCartEndpoint, async () => {
-		return initialCart;
-	} );
-
-	const noop = () => {};
-
+    
 	const MyCheckout = () => (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCart }
+			siteSlug={ 'foo.com' }
+			setCart={ mockSetCartEndpoint }
+			getCart={ mockGetCartEndpointWith( initialCart ) }
 			availablePaymentMethods={ [
 				createPayPalMethod( {
 					registerStore: registerStore,
