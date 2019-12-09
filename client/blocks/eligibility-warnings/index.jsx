@@ -15,6 +15,7 @@ import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
@@ -79,7 +80,8 @@ export const EligibilityWarnings = ( {
 			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
 
-		const bannerURL = `/checkout/${ siteSlug }/business`;
+		const bannerURL = addQueryArgs( { intent: context }, `/checkout/${ siteSlug }/business` );
+
 		businessUpsellBanner = (
 			<Banner
 				description={ description }
