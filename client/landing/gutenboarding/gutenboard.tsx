@@ -36,6 +36,7 @@ import './stores/domain-suggestions';
 import './stores/onboard';
 import './stores/verticals-templates';
 import './style.scss';
+import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
 // to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
@@ -63,16 +64,20 @@ const DesignSelector = () => {
 
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
-		<TemplateSelectorControl
-			label={ __( 'Layout', 'full-site-editing' ) }
-			templates={ homepageTemplates }
-			blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
-			onTemplateSelect={ setPreviewedTemplate }
-			useDynamicPreview={ false }
-			siteInformation={ undefined }
-			selectedTemplate={ previewedTemplate }
-			// handleTemplateConfirmation={ this.handleConfirmation }
-		/>
+		<div
+			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
+		>
+			<TemplateSelectorControl
+				label={ __( 'Layout', 'full-site-editing' ) }
+				templates={ homepageTemplates }
+				blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
+				onTemplateSelect={ setPreviewedTemplate }
+				useDynamicPreview={ false }
+				siteInformation={ undefined }
+				selectedTemplate={ previewedTemplate }
+				// handleTemplateConfirmation={ this.handleConfirmation }
+			/>
+		</div>
 	);
 };
 
