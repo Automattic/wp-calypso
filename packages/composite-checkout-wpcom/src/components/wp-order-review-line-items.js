@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import { renderDisplayValueMarkdown, CheckoutModal } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,6 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import Button from './button';
 import RadioButton from './radio-button';
-import CheckoutModal from '../components/checkout-modal'; // TODO: remove this
 import { useHasDomainsInCart } from '../hooks/has-domains';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -32,7 +31,7 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
+function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
@@ -46,7 +45,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
-			{ hasDeleteButtons && (
+			{ hasDeleteButtons && item.type !== 'tax' && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
@@ -63,7 +62,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeProduct } ) {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProduct( item.id );
+							removeItem( item );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
@@ -81,7 +80,7 @@ WPLineItem.propTypes = {
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,
-	removeProduct: PropTypes.func,
+	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
 		amount: PropTypes.shape( {
@@ -102,6 +101,13 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
+	:first-of-type {
+		padding-top: 10px;
+	}
+
+	:first-of-type button {
+		top: -3px;
+	}
 `;
 
 const ProductTitle = styled.span`
@@ -193,7 +199,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	hasDeleteButtons,
-	removeProduct,
+	removeItem,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -203,7 +209,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButtons={ hasDeleteButtons }
-						removeProduct={ removeProduct }
+						removeItem={ removeItem }
 					/>
 				</WPOrderReviewListItems>
 			) ) }
@@ -215,7 +221,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	hasDeleteButtons: PropTypes.bool,
-	removeProduct: PropTypes.func,
+	removeItem: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,

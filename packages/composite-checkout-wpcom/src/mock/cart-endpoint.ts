@@ -1,19 +1,31 @@
 require( '@babel/polyfill' );
 
 /**
+ * Internal dependencies
+ */
+import { RequestCart, ResponseCart } from '../types';
+
+/**
  * A fake WPCOM shopping cart endpoint.
  *
- * @param {string} cartKey ID string of the cart, used by the backend
- * @param {object} products Product object as accepted by the cart endpoint
- * @returns {{products, currency: *, allowed_payment_methods: [string,string,string,string], total_tax_display: string, total_tax_integer, total_cost_display: string, total_cost_integer}}
- *   Fake response from the cart endpoint
+ * This is awful.
+ *
+ * @param siteSlug Cart key for the 'backend'
+ * @param Cart object
+ * @returns Promise
  */
-export async function mockCartEndpoint( cartKey, {
-	products: requestProducts,
-	currency: requestCurrency,
-	// TODO: coupon: requestCoupon,
-} ) {
+export async function mockSetCartEndpoint(
+	siteSlug: string,
+	{
+		products: requestProducts,
+		currency: requestCurrency,
+		coupon: requestCoupon,
+		locale: requestLocale,
+	}: RequestCart
+): Promise< ResponseCart > {
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
+
+	console.log( siteSlug ); // eslint-disable-line no-console
 
 	const taxInteger = products.reduce( ( accum, current ) => {
 		return accum + current.item_tax;
@@ -25,17 +37,20 @@ export async function mockCartEndpoint( cartKey, {
 
 	return {
 		products: products,
+		locale: requestLocale,
 		currency: requestCurrency,
 		allowed_payment_methods: [
 			'WPCOM_Billing_Stripe_Payment_Method',
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
-		total_tax_display: 'R$5',
+		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
-		total_cost_display: 'R$149',
+		total_cost_display: 'R$156',
 		total_cost_integer: totalInteger,
-	};
+		coupon: requestCoupon,
+		is_coupon_applied: true,
+	} as ResponseCart;
 }
 
 function convertRequestProductToResponseProduct( currency ) {
@@ -53,6 +68,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
+					meta: '',
 				};
 		}
 
@@ -66,5 +82,14 @@ function convertRequestProductToResponseProduct( currency ) {
 			item_subtotal_display: '$0',
 			item_tax: 0,
 		};
+	};
+}
+
+export function mockGetCartEndpointWith(
+	initialCart: ResponseCart
+): ( string ) => Promise< ResponseCart > {
+	return async ( siteSlug: string ) => {
+		console.log( siteSlug ); // eslint-disable-line no-console
+		return initialCart;
 	};
 }

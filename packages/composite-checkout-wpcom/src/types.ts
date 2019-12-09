@@ -6,13 +6,22 @@ import {
 	WPCOMPaymentMethodClass,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from './types/wpcom-payment-method-class';
-import { ServerCart, ServerCartItem } from './types/server-cart';
+} from './types/backend/payment-method';
+import {
+	RequestCart,
+	RequestCartProduct,
+	ResponseCart,
+	ResponseCartProduct,
+	emptyResponseCart,
+	prepareRequestCart,
+} from './types/backend/shopping-cart-endpoint';
 import {
 	WPCOMCart,
 	WPCOMCartItem,
+	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
+	CheckoutCartTotal,
 } from './types/checkout-cart';
 
 export {
@@ -20,10 +29,16 @@ export {
 	WPCOMPaymentMethodClass,
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	ServerCart,
-	ServerCartItem,
+	RequestCart,
+	RequestCartProduct,
+	ResponseCart,
+	ResponseCartProduct,
+	emptyResponseCart,
+	prepareRequestCart,
 	WPCOMCart,
 	WPCOMCartItem,
+	emptyWPCOMCart,
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
+	CheckoutCartTotal,
 };
