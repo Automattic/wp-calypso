@@ -18,10 +18,12 @@ export default function QuerySiteChecklist( { siteId } ) {
 	);
 
 	useEffect( () => {
-		dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
+		if ( siteId ) {
+			dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
+		}
 	}, [ dispatch, siteId, isSiteEligibleForFSE ] );
 
 	return null;
 }
 
-QuerySiteChecklist.propTypes = { siteId: PropTypes.number.isRequired };
+QuerySiteChecklist.propTypes = { siteId: PropTypes.number };

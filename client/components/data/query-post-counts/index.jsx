@@ -21,13 +21,15 @@ export default function QueryPostCounts( { siteId, type } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( request( siteId, type ) );
+		if ( siteId && type ) {
+			dispatch( request( siteId, type ) );
+		}
 	}, [ dispatch, siteId, type ] );
 
 	return null;
 }
 
 QueryPostCounts.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	type: PropTypes.string.isRequired,
+	siteId: PropTypes.number,
+	type: PropTypes.string,
 };
