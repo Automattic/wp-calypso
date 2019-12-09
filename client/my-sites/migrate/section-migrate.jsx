@@ -88,7 +88,10 @@ class SectionMigrate extends Component {
 		wpcom
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
-				const { status: migrationStatus, percent } = response;
+				const { status: migrationStatus, percent, source_blog_id: sourceSiteId } = response;
+				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
+					this.setSourceSiteId( sourceSiteId );
+				}
 				if ( migrationStatus ) {
 					this.setState( {
 						migrationStatus,
