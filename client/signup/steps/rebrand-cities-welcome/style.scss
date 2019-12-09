@@ -27,6 +27,11 @@
 }
 
 .rebrand-cities-welcome__illustration-wrapper {
+	@include elevation( 3dp );
+	background: var( --color-surface );
+	border-radius: 6px;
+	padding: 16px;
+	margin: 0 auto 24px;
 	max-width: 800px;
 	width: 100%;
 }
