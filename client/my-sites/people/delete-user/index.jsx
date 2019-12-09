@@ -263,11 +263,11 @@ class DeleteUser extends React.Component {
 							/>
 
 							<span>{ this.getTranslatedAssignLabel() }</span>
-
-							{ this.state.authorSelectorToggled ? (
-								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
-							) : null }
 						</FormLabel>
+
+						{ this.state.authorSelectorToggled ? (
+							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+						) : null }
 
 						<FormLabel>
 							<FormRadio
