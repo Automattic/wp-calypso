@@ -46,7 +46,7 @@
 		"@babel/cli": "7.7.5",
 		"@babel/core": "7.7.5",
 		"@babel/polyfill": "7.7.0",
-		"@babel/runtime": "7.7.5",
+		"@babel/runtime": "7.7.6",
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
 		"@github/webauthn-json": "0.4.1",
