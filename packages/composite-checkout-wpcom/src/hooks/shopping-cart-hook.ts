@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useState, useEffect, useCallback } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -16,6 +17,8 @@ import {
 	CheckoutCartTotal,
 } from '../types';
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
+
+const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
 
 /**
  * This module provides a hook for manipulating the shopping cart state,
@@ -103,29 +106,34 @@ export function useShoppingCart(
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
+		debug( 'initializing the cart' );
 		const initializeResponseCart = async () => {
 			const response = await getServerCart();
+			debug( 'initialized cart is', response );
 			setResponseCart( response );
 			setCacheStatus( 'valid' );
 		};
 		initializeResponseCart().catch( error => {
 			// TODO: figure out what to do here
-			alert( error ); // eslint-disable-line no-undef
+			debug( 'error while initializing cart', error ); // eslint-disable-line no-undef
 		} );
 	}, [ getServerCart ] );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
+		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
 		const fetchAndUpdate = async () => {
 			if ( cacheStatus === 'invalid' ) {
+				debug( 'sending cart with responseCart', responseCart );
 				const response = await setServerCart( prepareRequestCart( responseCart ) );
+				debug( 'cart sent; new responseCart is', response );
 				setResponseCart( response );
 				setCacheStatus( 'valid' );
 			}
 		};
 		fetchAndUpdate().catch( error => {
 			// TODO: figure out what to do here
-			alert( error ); // eslint-disable-line no-undef
+			debug( 'error while fetching cart', error );
 		} );
 	}, [ setServerCart, cacheStatus, responseCart ] );
 
@@ -133,7 +141,7 @@ export function useShoppingCart(
 	const cart: WPCOMCart = translateWpcomCartToCheckoutCart( responseCart );
 
 	const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
-		alert( 'addItem: ' + itemToAdd ); // eslint-disable-line no-undef
+		debug( 'adding item to cart', itemToAdd );
 		setCacheStatus( 'invalid' );
 		setResponseCart( responseCart );
 	};
@@ -142,19 +150,20 @@ export function useShoppingCart(
 		const filteredProducts = responseCart.products.filter( ( _, index ) => {
 			return index !== itemToRemove.wpcom_meta.uuid;
 		} );
+		debug( 'removing item from cart' );
 		setCacheStatus( 'invalid' );
 		setResponseCart( { ...responseCart, products: filteredProducts } );
 	};
 
 	const changePlanLength = ( planItem, planLength ) => {
 		// TODO
-		alert( 'changePlanLength: ' + planLength + planItem ); // eslint-disable-line no-undef
+		debug( 'changing plan length in cart', planItem, planLength );
 		setResponseCart( responseCart );
 	};
 
 	const updatePricesForAddress = address => {
 		// TODO
-		alert( 'updatePricesForAddress: ' + address ); // eslint-disable-line no-undef
+		debug( 'updating prices for address in cart', address );
 		setResponseCart( responseCart );
 	};
 
