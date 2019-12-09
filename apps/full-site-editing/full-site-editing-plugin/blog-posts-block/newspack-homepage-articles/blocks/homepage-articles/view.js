@@ -4,11 +4,6 @@
  */
 
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Style dependencies
  */
 import './view.scss';
@@ -44,61 +39,41 @@ function attachLoadMoreHandler( btnEl ) {
  * @param {DOMElement} btnEl the button that was clicked
  */
 function buildLoadMoreHandler( btnEl ) {
-	/**
-	 * Set elements from scope determined by the clicked "Load more" button.
-	 */
+	// Set elements from scope determined by the clicked "Load more" button.
 	const blockWrapperEl = btnEl.parentElement; // scope root element
 	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
 	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
 	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
-	/**
-	 * Set initial state flags.
-	 */
+	// Set initial state flags.
 	let isFetching = false;
 	let isEndOfData = false;
 
 	return () => {
-		/**
-		 * Early return if still fetching or no more posts to render.
-		 */
+		// Early return if still fetching or no more posts to render.
 		if ( isFetching || isEndOfData ) {
 			return false;
 		}
 
 		isFetching = true;
 
-		/**
-		 * Set elements visibility for fetching state.
-		 */
+		// Set elements visibility for fetching state.
 		hideEl( btnEl );
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		apiFetchWithRetry( { url: btnEl.getAttribute( btnURLAttr ) }, fetchRetryCount )
-			.then( data => {
-				/**
-				 * Validate received data.
-				 */
-				if ( ! isPostsDataValid( data ) ) {
-					throw new Error( 'Invalid response data' );
-				}
-
-				/**
-				 * Render posts' HTML from string.
-				 */
+		const onSuccess = data => {
+			// Validate received data.
+			if ( isPostsDataValid( data ) ) {
+				// Render posts' HTML from string.
 				const postsHTML = data.items.map( item => item.html ).join( '' );
 				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
 
 				if ( data.next ) {
-					/**
-					 * Save next URL as button's attribute.
-					 */
+					// Save next URL as button's attribute.
 					btnEl.setAttribute( btnURLAttr, data.next );
 
-					/**
-					 * Unhide button since there are more posts available.
-					 */
+					// Unhide button since there are more posts available.
 					showEl( btnEl );
 				} else {
 					isEndOfData = true;
@@ -107,35 +82,59 @@ function buildLoadMoreHandler( btnEl ) {
 				isFetching = false;
 
 				hideEl( loadingEl );
-			} )
-			.catch( () => {
-				isFetching = false;
+			}
+		};
 
-				/**
-				 * Display error message and keep the button visible to enable retrying.
-				 */
-				hideEl( loadingEl );
-				showEl( errorEl );
-				showEl( btnEl );
-			} );
+		const onError = () => {
+			isFetching = false;
+
+			// Display error message and keep the button visible to enable retrying.
+			hideEl( loadingEl );
+			showEl( errorEl );
+			showEl( btnEl );
+		};
+
+		fetchWithRetry(
+			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
+			fetchRetryCount
+		);
 	};
 }
 
 /**
- * Wrapper for api-fetch that performs given number of retries when error
+ * Wrapper for XMLHttpRequest that performs given number of retries when error
  * occurs.
  *
- * @param {Object} options api-fetch options
+ * @param {Object} options XMLHttpRequest options
  * @param {Number} n retry count before throwing
  */
-function apiFetchWithRetry( options, n ) {
-	return apiFetch( options ).catch( error => {
-		if ( n === 1 ) {
-			throw error;
+function fetchWithRetry( options, n ) {
+	const xhr = new XMLHttpRequest();
+
+	xhr.onreadystatechange = () => {
+		// Return if the request is completed.
+		if ( xhr.readyState !== 4 ) {
+			return;
 		}
 
-		return apiFetchWithRetry( options, n - 1 );
-	} );
+		// Call onSuccess with parsed JSON if the request is successful.
+		if ( xhr.status >= 200 && xhr.status < 300 ) {
+			const data = JSON.parse( xhr.responseText );
+
+			return options.onSuccess( data );
+		}
+
+		// Call onError if the request has failed n + 1 times (or if n is undefined).
+		if ( ! n ) {
+			return options.onError();
+		}
+
+		// Retry fetching if request has failed and n > 0.
+		return fetchWithRetry( options, n - 1 );
+	};
+
+	xhr.open( 'GET', options.url );
+	xhr.send();
 }
 
 /**
