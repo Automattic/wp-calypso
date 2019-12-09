@@ -28,6 +28,8 @@ export function WPCheckoutWrapper( {
 	getCart,
 	availablePaymentMethods,
 	registry,
+	onSuccess,
+	onFailure,
 } ) {
 	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart(
 		siteSlug,

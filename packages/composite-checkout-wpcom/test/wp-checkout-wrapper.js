@@ -13,7 +13,6 @@ import { createRegistry, createPayPalMethod } from '@automattic/composite-checko
  */
 import {
 	WPCheckoutWrapper,
-	makeShoppingCartHook,
 	mockSetCartEndpoint,
 	mockGetCartEndpointWith,
 	mockPayPalExpressRequest,
@@ -33,6 +32,8 @@ afterEach( () => {
 	container.remove();
 	container = null;
 } );
+
+const noop = () => {};
 
 test( 'When we enter checkout, the line items and total are rendered', async () => {
 	const initialCart = {
@@ -90,7 +91,7 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 
 	const registry = createRegistry();
 	const { registerStore } = registry;
-    
+
 	const MyCheckout = () => (
 		<WPCheckoutWrapper
 			siteSlug={ 'foo.com' }
