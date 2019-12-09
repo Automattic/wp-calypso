@@ -60,7 +60,9 @@ const DesignSelector = () => {
 			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
 		) ?? [];
 
-	const blocksByTemplateSlug = templates.reduce( ( prev, { slug, content } ) => {
+	const homepageTemplates = templates.filter( template => template.category === 'home' );
+
+	const blocksByTemplateSlug = homepageTemplates.reduce( ( prev, { slug, content } ) => {
 		prev[ slug ] = content ? parseBlocks( replacePlaceholders( content ) ) : [];
 		return prev;
 	}, {} );
@@ -69,7 +71,7 @@ const DesignSelector = () => {
 	return (
 		<TemplateSelectorControl
 			label={ __( 'Layout', 'full-site-editing' ) }
-			templates={ templates }
+			templates={ homepageTemplates }
 			blocksByTemplates={ blocksByTemplateSlug }
 			onTemplateSelect={ setPreviewedTemplate }
 			useDynamicPreview={ false }
