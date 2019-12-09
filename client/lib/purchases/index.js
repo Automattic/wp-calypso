@@ -13,6 +13,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
+	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
@@ -260,7 +261,6 @@ function isRefundable( purchase ) {
 
 /**
  * Checks whether the specified purchase can be removed from a user account.
- * Purchases included with a plan can't be removed.
  *
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
@@ -278,6 +278,9 @@ function isRemovable( purchase ) {
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return true;
+		}
 		return false;
 	}
 
