@@ -19,7 +19,7 @@ class TimelineExample extends PureComponent {
 			<Timeline>
 				<TimelineEvent
 					date={ new Date( 'March 14, 2017' ) }
-					detail="Domain registered and activated by Jane Doe"
+					detail="Domain registered and activated by Jane Doe."
 					icon="checkmark"
 					iconHighlight="success"
 					actionLabel="Delete domain"
@@ -27,7 +27,7 @@ class TimelineExample extends PureComponent {
 				/>
 				<TimelineEvent
 					date={ new Date( 'February 11, 2021' ) }
-					detail="You have Auto-renew enabled which means your domain will automatically be newed for you every year."
+					detail="You have Auto-renew enabled which means your domain will automatically be renewed for you every year."
 					icon="sync"
 					actionLabel="Disable Auto-renew"
 					onActionClick={ noop }
