@@ -201,6 +201,9 @@ function mergeProps(
 		feature = FEATURE_SFTP;
 	}
 
+	const onCancel = () => {
+		dispatchProps.trackCancel( { context } );
+	};
 	const onProceed = () => {
 		ownProps.onProceed();
 		dispatchProps.trackProceed( { context } );

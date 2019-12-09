@@ -2,9 +2,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
-import { identity, map } from 'lodash';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { map } from 'lodash';
 import React from 'react';
 
 /**
@@ -12,6 +11,7 @@ import React from 'react';
  */
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -138,8 +138,17 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 						) }
 					</Notice>
 				) }
-			<Card className="eligibility-warnings__hold-list">
-				<CardHeading>{ getCardHeading( context, translate ) }</CardHeading>
+			<Card
+				className={ classNames( 'eligibility-warnings__hold-list', {
+					'eligibility-warnings__hold-list-dim': blockingHold,
+				} ) }
+				data-testid="HoldList-Card"
+			>
+				<CardHeading>
+					<span className="eligibility-warnings__hold-heading">
+						{ getCardHeading( context, translate ) }
+					</span>
+				</CardHeading>
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
