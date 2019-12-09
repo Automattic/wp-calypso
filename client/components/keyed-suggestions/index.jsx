@@ -222,14 +222,35 @@ class KeyedSuggestions extends React.Component {
 
 			//check if we have showAll key match. If we have then don't filter, use all and reorder.
 			if ( showAll === key ) {
-				// console.log( terms[key] );
 				// split to terms matching an non matching to the input
 				// const parts = partition( terms[ key ], term => term.indexOf( filterTerm ) !== -1 );
+				let multiRegex = filterTerm;
+				for ( let i = filterTerm.length; i > 1; i-- ) {
+					multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+				}
+				const regex = new RegExp( multiRegex, 'iu' );
+
+				const ourTerms = terms[ key ];
+				const keys = Object.keys( ourTerms );
+
+				let matching = [];
+				let notMatching = [];
+
+				for ( const i in keys ) {
+					if (
+						ourTerms[ keys[ i ] ].name.match( regex ) ||
+						ourTerms[ keys[ i ] ].description.match( regex )
+					) {
+						matching.push( keys[ i ] );
+					} else {
+						notMatching.push( keys[ i ] );
+					}
+				}
 				// sort matching so that the best hit is first
 				// const matchingSorted = sortBy( parts[ 0 ], term => term.indexOf( filterTerm ) );
 				// concatenate mathing and non matchin - this is full set of filters just reordered.
-				// filtered[ key ] = [ ...matchingSorted, ...parts[ 1 ] ];
-				filtered[ key ] = Object.keys( terms[ key ] );
+				filtered[ key ] = [ ...matching, ...notMatching ];
+				// filtered[ key ] = Object.keys( terms[ key ] );
 			} else {
 				// Try a full match first and try substring matches
 				let multiRegex = filterTerm;
@@ -247,7 +268,6 @@ class KeyedSuggestions extends React.Component {
 				);
 			}
 		}
-		console.log( filtered );
 		return this.removeEmptySuggestions( filtered );
 	};
 
