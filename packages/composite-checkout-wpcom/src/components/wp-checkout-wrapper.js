@@ -10,7 +10,7 @@ import { CheckoutProvider } from '@automattic/composite-checkout';
  */
 import WPCheckout from './wp-checkout';
 import { useWpcomStore } from '../hooks/wpcom-store';
-import { useShoppingCart } from '../hooks/shopping-cart-hook';
+import { useShoppingCart } from '../hooks/use-shopping-cart';
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;

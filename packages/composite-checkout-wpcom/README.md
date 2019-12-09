@@ -14,6 +14,6 @@ There are several slightly different kinds of "cart" floating around in checkout
 
 Inside the checkout component users are able to edit the state of their shopping cart -- and it's important to be very clear about exactly what is being edited.
 
-This package exposes a custom hook, in `hooks/shopping-cart-hook.ts`, which handles all cart edits. This hook carries a cached `ResponseCart` as state representing the most recent response from the backend. This state is converted to a `WPCOMCart` on the fly, and after being edited is converted to a `RequestCart` for revalidation on the fly. **Only** the cached `ResponseCart` is directly manipulated by edit operations; it is crucial to maintain this invariant so that we don't end up with sync issues.
+This package exposes a custom hook, in `hooks/use-shopping-cart.ts`, which handles all cart edits. This hook carries a cached `ResponseCart` as state representing the most recent response from the backend. This state is converted to a `WPCOMCart` on the fly, and after being edited is converted to a `RequestCart` for revalidation on the fly. **Only** the cached `ResponseCart` is directly manipulated by edit operations; it is crucial to maintain this invariant so that we don't end up with sync issues.
 
 ![Diagram of cart types](doc/cart-types.png)
