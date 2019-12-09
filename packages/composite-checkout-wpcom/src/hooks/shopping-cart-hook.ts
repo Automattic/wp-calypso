@@ -43,11 +43,15 @@ export interface ShoppingCartManager {
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
- * "boolean" representing whether the cache has been invalidated. We set this
- * to 'invalid' when the cache is edited and back to 'valid' after reloading
- * the cart from the server.
+ * cache status.
+ *
+ *   - 'fresh': Page has loaded and no requests have been sent.
+ *   - 'invalid': Local cart data has been edited.
+ *   - 'valid': Local cart has been reloaded from the server.
+ *   - 'pending': Request has been sent, awaiting response.
+ *   - 'error': Something went wrong.
  */
-type CacheStatus = 'valid' | 'invalid';
+type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
 
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -102,39 +106,48 @@ export function useShoppingCart(
 	// Used to determine whether we need to re-validate the cart on
 	// the backend. We can't use responseCart directly to decide this
 	// in e.g. useEffect because this causes an infinite loop.
-	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'invalid' );
+	const [ cacheStatus, setCacheStatus ] = useState< CacheStatus >( 'fresh' );
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
-		debug( 'initializing the cart' );
-		const initializeResponseCart = async () => {
-			const response = await getServerCart();
-			debug( 'initialized cart is', response );
-			setResponseCart( response );
-			setCacheStatus( 'valid' );
-		};
-		initializeResponseCart().catch( error => {
-			// TODO: figure out what to do here
-			debug( 'error while initializing cart', error ); // eslint-disable-line no-undef
-		} );
+        const initializeResponseCart = async () => {
+            const response = await getServerCart();
+            debug( 'initialized cart is', response );
+            setResponseCart(response);
+            setCacheStatus('valid');
+        };
+
+        debug( 'considering initializing cart to server; cacheStatus is', cacheStatus );
+	    if ( cacheStatus === 'fresh' ) {
+            debug( 'initializing the cart' );
+            initializeResponseCart().catch(error => {
+                // TODO: figure out what to do here
+                setCacheStatus( 'error' );
+                debug( 'error while initializing cart', error );
+            });
+        }
 	}, [ getServerCart ] );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
-		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
 		const fetchAndUpdate = async () => {
-			if ( cacheStatus === 'invalid' ) {
-				debug( 'sending cart with responseCart', responseCart );
-				const response = await setServerCart( prepareRequestCart( responseCart ) );
-				debug( 'cart sent; new responseCart is', response );
-				setResponseCart( response );
-				setCacheStatus( 'valid' );
-			}
+            debug( 'sending cart with responseCart', responseCart );
+            const response = await setServerCart( prepareRequestCart( responseCart ) );
+            debug( 'cart sent; new responseCart is', response );
+            setResponseCart( response );
+            setCacheStatus( 'valid' );
 		};
-		fetchAndUpdate().catch( error => {
-			// TODO: figure out what to do here
-			debug( 'error while fetching cart', error );
-		} );
+
+        debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
+        if ( cacheStatus === 'invalid' ) {
+            debug( 'updating the cart' );
+            setCacheStatus( 'pending' );
+            fetchAndUpdate().catch(error => {
+                // TODO: figure out what to do here
+                setCacheStatus( 'error' );
+                debug('error while fetching cart', error);
+            })
+        }
 	}, [ setServerCart, cacheStatus, responseCart ] );
 
 	// Translate the responseCart into the format needed in checkout.
