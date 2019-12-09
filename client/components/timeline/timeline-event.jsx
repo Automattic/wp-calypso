@@ -13,7 +13,7 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 
-export default class TimelineItem extends PureComponent {
+export default class TimelineEvent extends PureComponent {
 	static propTypes = {
 		actionIsBusy: PropTypes.bool,
 		actionIsDisabled: PropTypes.bool,
@@ -51,25 +51,25 @@ export default class TimelineItem extends PureComponent {
 			iconBackground,
 			onActionClick,
 		} = this.props;
-		const cardClasses = classNames( 'timeline-item', { 'is-disabled': disabled } );
-		const iconClasses = classNames( 'timeline-item__icon', iconBackground );
+		const cardClasses = classNames( 'timeline-event', { 'is-disabled': disabled } );
+		const iconClasses = classNames( 'timeline-event__icon', iconBackground );
 
 		return (
 			<CompactCard className={ cardClasses }>
-				<div className="timeline-item__icon-wrapper timeline-item__column">
+				<div className="timeline-event__icon-wrapper timeline-event__column">
 					<div className={ iconClasses }>
 						<Gridicon icon={ icon } size={ 18 } iconsThatNeedOffset={ false } />
 					</div>
 				</div>
-				<div className="timeline-item__main-message timeline-item__column">
-					<div className="timeline-item__title">{ moment( date ).format( dateFormat ) }</div>
-					<div className="timeline-item__detail">{ detail }</div>
+				<div className="timeline-event__main-message timeline-event__column">
+					<div className="timeline-event__title">{ moment( date ).format( dateFormat ) }</div>
+					<div className="timeline-event__detail">{ detail }</div>
 				</div>
-				<div className="timeline-item__action-button-wrapper timeline-item__column">
+				<div className="timeline-event__action-button-wrapper timeline-event__column">
 					{ actionLabel && onActionClick && (
 						<Button
 							busy={ actionIsBusy }
-							className="timeline-item__action-button"
+							className="timeline-event__action-button"
 							disabled={ actionIsDisabled || disabled }
 							primary={ actionIsPrimary }
 							compact
