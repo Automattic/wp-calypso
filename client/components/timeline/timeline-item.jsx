@@ -25,15 +25,15 @@ export default class TimelineItem extends PureComponent {
 		detail: PropTypes.string,
 		disabled: PropTypes.bool,
 		icon: PropTypes.string.isRequired,
-		iconHighlight: PropTypes.string,
+		iconBackground: PropTypes.string,
 		onActionClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		actionIsPrimary: false,
-		dateFormat: 'LL',
+		dateFormat: 'DD MMMM YYYY',
 		disabled: false,
-		iconHighlight: 'info',
+		iconBackground: 'info',
 	};
 
 	render() {
@@ -48,17 +48,17 @@ export default class TimelineItem extends PureComponent {
 			detail,
 			disabled,
 			icon,
-			iconHighlight,
+			iconBackground,
 			onActionClick,
 		} = this.props;
 		const cardClasses = classNames( 'timeline-item', { 'is-disabled': disabled } );
-		const iconClasses = classNames( 'timeline-item__icon', iconHighlight );
+		const iconClasses = classNames( 'timeline-item__icon', iconBackground );
 
 		return (
 			<CompactCard className={ cardClasses }>
 				<div className="timeline-item__icon-wrapper timeline-item__column">
 					<div className={ iconClasses }>
-						<Gridicon icon={ icon } size={ 18 } />
+						<Gridicon icon={ icon } size={ 18 } iconsThatNeedOffset={ false } />
 					</div>
 				</div>
 				<div className="timeline-item__main-message timeline-item__column">

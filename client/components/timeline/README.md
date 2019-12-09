@@ -25,7 +25,7 @@ Show the icon as disabled and disable the actionButton.
 
 The name of the gridicon to show in the TimelineItem.
 
-### `iconHighlight { string }`
+### `iconBackground { string }`
 
 One of the following strings to indicate the highlight color of the icon: `success`, `info`, `warning`, `error`
 
@@ -69,7 +69,7 @@ export default class extends React.Component {
 					date={ new Date( "March 14, 2017" ) }
 					detail="Domain registered and activated by John Doe"
 					icon="checkmark"
-					iconHighlight="success"
+					iconBackground="success"
 					actionLabel="Delete domain"
 					onActionClick={ noop }
 				/>
@@ -84,7 +84,7 @@ export default class extends React.Component {
 					date={ new Date( "March 14, 2021" ) }
 					detail="Your domain will expire and your site will not be accessible from this URL any longer. You can renew any time or turn on auto-renew."
 					icon="notice-outline"
-					iconHighlight="warning"
+					iconBackground="warning"
 					actionLabel="Enable Auto-renew"
 					actionIsPrimary
 					onActionClick={ noop }
@@ -111,7 +111,7 @@ export default class extends React.Component {
 					date={ new Date( "May 28, 2021" ) }
 					detail="Just an example of a timeline item with an error highlight."
 					icon="cross"
-					iconHighlight="error"
+					iconBackground="error"
 					actionLabel="Watch out!"
 					actionIsScary
 					actionIsPrimary
