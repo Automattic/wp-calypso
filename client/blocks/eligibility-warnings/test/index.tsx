@@ -35,8 +35,6 @@ function createState( { holds = [], siteId = 1 }: { holds?: string[]; siteId?: n
 				},
 			},
 		},
-		currentUser: { capabilities: { [ siteId ]: {} } },
-		sites: { items: { [ siteId ]: {} } },
 		ui: { selectedSiteId: siteId },
 	};
 }
