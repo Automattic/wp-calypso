@@ -15,7 +15,7 @@ import {
 	DropZoneProvider,
 	KeyboardShortcuts,
 } from '@wordpress/components';
-import { createBlock, parse as parseBlocks, registerBlockType } from '@wordpress/blocks';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
@@ -32,7 +32,6 @@ import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { SiteVertical } from './stores/onboard/types';
 import { TemplateSelectorControl } from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
-import replacePlaceholders from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/utils/replace-placeholders';
 import './stores/domain-suggestions';
 import './stores/onboard';
 import './stores/verticals-templates';
@@ -62,17 +61,12 @@ const DesignSelector = () => {
 
 	const homepageTemplates = templates.filter( template => template.category === 'home' );
 
-	const blocksByTemplateSlug = homepageTemplates.reduce( ( prev, { slug, content } ) => {
-		prev[ slug ] = content ? parseBlocks( replacePlaceholders( content ) ) : [];
-		return prev;
-	}, {} );
-
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
 		<TemplateSelectorControl
 			label={ __( 'Layout', 'full-site-editing' ) }
 			templates={ homepageTemplates }
-			blocksByTemplates={ blocksByTemplateSlug }
+			blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
 			onTemplateSelect={ setPreviewedTemplate }
 			useDynamicPreview={ false }
 			siteInformation={ undefined }
