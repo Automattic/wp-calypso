@@ -220,44 +220,36 @@ class KeyedSuggestions extends React.Component {
 				continue;
 			}
 
+			// Try a full match first and try substring matches
+			let multiRegex = filterTerm;
+			for ( let i = filterTerm.length; i > 1; i-- ) {
+				multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+			}
+			const regex = new RegExp( multiRegex, 'iu' );
+
 			//check if we have showAll key match. If we have then don't filter, use all and reorder.
 			if ( showAll === key ) {
-				// split to terms matching an non matching to the input
-				// const parts = partition( terms[ key ], term => term.indexOf( filterTerm ) !== -1 );
-				let multiRegex = filterTerm;
-				for ( let i = filterTerm.length; i > 1; i-- ) {
-					multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
-				}
-				const regex = new RegExp( multiRegex, 'iu' );
-
 				const ourTerms = terms[ key ];
 				const keys = Object.keys( ourTerms );
-
-				let matching = [];
-				let notMatching = [];
-
-				for ( const i in keys ) {
-					if (
-						ourTerms[ keys[ i ] ].name.match( regex ) ||
-						ourTerms[ keys[ i ] ].description.match( regex )
-					) {
-						matching.push( keys[ i ] );
-					} else {
-						notMatching.push( keys[ i ] );
-					}
-				}
-				// sort matching so that the best hit is first
-				// const matchingSorted = sortBy( parts[ 0 ], term => term.indexOf( filterTerm ) );
+				// split to terms matching an non matching to the input
+				const [ matching, notMatching ] = partition( keys, term => {
+					return (
+						ourTerms[ term ].name.match( regex ) || ourTerms[ term ].description.match( regex )
+					);
+				} );
+				// Sort matching so that the best hit is first.
+				const sortedMatching = sortBy( matching, match => {
+					const term = ourTerms[ match ];
+					const hits = [ 100000 ];
+					const nameHit = term.name.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					nameHit >= 0 && hits.push( nameHit );
+					const descriptionHit = term.description.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					descriptionHit >= 0 && hits.push( descriptionHit );
+					return Math.min( ...hits );
+				} );
 				// concatenate mathing and non matchin - this is full set of filters just reordered.
-				filtered[ key ] = [ ...matching, ...notMatching ];
-				// filtered[ key ] = Object.keys( terms[ key ] );
+				filtered[ key ] = [ ...sortedMatching, ...notMatching ];
 			} else {
-				// Try a full match first and try substring matches
-				let multiRegex = filterTerm;
-				for ( let i = filterTerm.length; i > 1; i-- ) {
-					multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
-				}
-				const regex = new RegExp( multiRegex, 'iu' );
 				filtered[ key ] = take(
 					filter(
 						map( terms[ key ], ( term, k ) =>
