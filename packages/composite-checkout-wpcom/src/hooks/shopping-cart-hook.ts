@@ -161,7 +161,7 @@ export function useShoppingCart(
 
 	const removeItem: ( WPCOMCartItem ) => void = itemToRemove => {
 		const filteredProducts = responseCart.products.filter( ( _, index ) => {
-			return index !== itemToRemove.wpcom_meta.uuid;
+			return index.toString() !== itemToRemove.wpcom_meta.uuid;
 		} );
 		debug( 'removing item from cart' );
 		setCacheStatus( 'invalid' );
