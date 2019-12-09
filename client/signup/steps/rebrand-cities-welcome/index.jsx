@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
@@ -60,9 +59,9 @@ class RebrandCitiesWelcomeStep extends Component {
 
 		return (
 			<div className="rebrand-cities-welcome">
-				<Card className="rebrand-cities-welcome__illustration-wrapper">
+				<div className="rebrand-cities-welcome__illustration-wrapper">
 					<img className="rebrand-cities-welcome__illustration" src={ rebrandCitiesImage } alt="" />
-				</Card>
+				</div>
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
