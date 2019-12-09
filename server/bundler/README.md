@@ -5,7 +5,7 @@ This module contains the code for generating the JavaScript files that are sent 
 
 ### Glossary
 
-__Code Splitting__ - [Code splitting](https://webpack.js.org/guides/code-splitting/#root) is the term that Webpack uses to describe the process of splitting the dependency graph for the application into chunks. Assets (javascript files) are then created for the chunks and loaded as part of the initial HTML request via `<script />` tags if the chunk is created as a section and asynchronously via `require.ensure` calls.
+__Code Splitting__ - [Code splitting](https://webpack.js.org/guides/code-splitting) is the term that Webpack uses to describe the process of splitting the dependency graph for the application into chunks. Assets (javascript files) are then created for the chunks and loaded as part of the initial HTML request via `<script />` tags if the chunk is created as a section and asynchronously via `require.ensure` calls.
 
 __File Watching__ - File watching is the process by which files are monitered for changes. If a file changes, the javascript assets are regenerated.
 
