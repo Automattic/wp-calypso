@@ -16,6 +16,12 @@ then
     URL=https://github.com/Automattic/newspack-blocks/archive/$NAME.zip
 fi
 
+# try whether user passed --path
+if [ -n "$npm_config_path" ]
+then
+    MODE=path
+fi
+
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
@@ -30,45 +36,51 @@ then
     exit 1
 fi
 
-# make a temp directory
-TEMP_DIR=`mktemp -d`
-CODE=$TEMP_DIR/code
 TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
 ENTRY=./full-site-editing-plugin/blog-posts-block/index.php
 
-# download zip file
-echo Downloading $MODE $NAME
-(cd $TEMP_DIR && curl -L --fail -s -O $URL)
+if [ "$MODE" != "path" ];
+then
+	# make a temp directory
+	TEMP_DIR=`mktemp -d`
+	CODE=$TEMP_DIR/code
 
-# handle download error
-ZIPS=( $TEMP_DIR/*.zip )
-ZIP=${ZIPS[0]}
-if [ ! -f "$ZIP" ]; then
-    echo "Tried to download $URL"
-    echo
-    echo "Error: Could not download the zip file."
-    if [ "$MODE" = 'release' ]; then
-        echo Is the release ID correct? Does the release contain artifact newspack-blocks.zip?
-    else
-        echo Is the branch name correct?
-    fi
-    exit 1
-fi
+	# download zip file
+	echo Downloading $MODE $NAME
+	(cd $TEMP_DIR && curl -L --fail -s -O $URL)
 
-# extract zip
-echo Extracting…
-mkdir -p $CODE
-unzip -q $ZIP -d $CODE
+	# handle download error
+	ZIPS=( $TEMP_DIR/*.zip )
+	ZIP=${ZIPS[0]}
+	if [ ! -f "$ZIP" ]; then
+		echo "Tried to download $URL"
+		echo
+		echo "Error: Could not download the zip file."
+		if [ "$MODE" = 'release' ]; then
+			echo Is the release ID correct? Does the release contain artifact newspack-blocks.zip?
+		else
+			echo Is the branch name correct?
+		fi
+		exit 1
+	fi
 
-# find the main file and use its directory as the root of our source dir
-MAIN_FILE=`find $CODE -name "newspack-blocks.php"`
-CODE=`dirname $MAIN_FILE`
+	# extract zip
+	echo Extracting…
+	mkdir -p $CODE
+	unzip -q $ZIP -d $CODE
 
-# handle unzip error
-if [ ! -f "$CODE/newspack-blocks.php" ]; then
-    echo
-    echo "Error: Could not extract files from newspack-blocks.zip"
-    exit 1
+	# find the main file and use its directory as the root of our source dir
+	MAIN_FILE=`find $CODE -name "newspack-blocks.php"`
+	CODE=`dirname $MAIN_FILE`
+
+	# handle unzip error
+	if [ ! -f "$CODE/newspack-blocks.php" ]; then
+		echo
+		echo "Error: Could not extract files from newspack-blocks.zip"
+		exit 1
+	fi
+else
+	CODE="${npm_config_path}"
 fi
 
 echo Syncing files to FSE…
