@@ -58,7 +58,7 @@ export default class TimelineEvent extends PureComponent {
 			<CompactCard className={ cardClasses }>
 				<div className="timeline-event__icon-wrapper timeline-event__column">
 					<div className={ iconClasses }>
-						<Gridicon icon={ icon } size={ 18 } iconsThatNeedOffset={ false } />
+						<Gridicon icon={ icon } size={ 18 } />
 					</div>
 				</div>
 				<div className="timeline-event__main-message timeline-event__column">
