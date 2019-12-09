@@ -30,6 +30,6 @@ export default function QueryPostCounts( { siteId, type } ) {
 }
 
 QueryPostCounts.propTypes = {
-	siteId: PropTypes.number,
-	type: PropTypes.string,
+	siteId: PropTypes.number.isRequired,
+	type: PropTypes.string.isRequired,
 };
