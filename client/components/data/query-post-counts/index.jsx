@@ -21,7 +21,7 @@ export default function QueryPostCounts( { siteId, type } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( siteId ) {
+		if ( siteId && type ) {
 			dispatch( request( siteId, type ) );
 		}
 	}, [ dispatch, siteId, type ] );
@@ -30,6 +30,6 @@ export default function QueryPostCounts( { siteId, type } ) {
 }
 
 QueryPostCounts.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	type: PropTypes.string.isRequired,
+	siteId: PropTypes.number,
+	type: PropTypes.string,
 };
