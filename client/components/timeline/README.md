@@ -109,7 +109,7 @@ export default class extends React.Component {
 				/>
 				<TimelineEvent
 					date={ new Date( '28 May 2021' ) }
-					detail="Just an example of a timeline item with an error icon highlight and a scary action."
+					detail="Just an example of a timeline event with an error icon highlight and a scary action."
 					icon="cross"
 					iconBackground="error"
 					actionLabel="Watch out!"
