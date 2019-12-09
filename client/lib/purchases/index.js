@@ -266,6 +266,13 @@ function isRefundable( purchase ) {
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
+	if (
+		isDomainRegistration( purchase ) &&
+		( ! isRefundable( purchase ) || purchase.refundAmount === 0 )
+	) {
+		return true;
+	}
+
 	if ( isRefundable( purchase ) ) {
 		return false;
 	}

@@ -36,6 +36,7 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
+	isRemovable,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -234,7 +235,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( isDomainRegistration( purchase ) && ! isRefundable( purchase ) ) {
+		if ( isDomainRegistration( purchase ) && isRemovable( purchase ) ) {
 			return null;
 		}
 
