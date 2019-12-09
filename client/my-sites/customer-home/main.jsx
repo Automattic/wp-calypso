@@ -281,7 +281,7 @@ class Home extends Component {
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				{ //Only show upgrade nudges to sites > 2 days old
 				isEstablishedSite && (
-					<div class="customer-home__upsells">
+					<div className="customer-home__upsells">
 						<StatsBanners
 							siteId={ siteId }
 							slug={ siteSlug }
