@@ -21,11 +21,7 @@
 	}
 }
 
-.purchases-list {
-	& .action-card {
-		align-items: center;
-	}
-
+.concierge-banner {
 	& .action-card__button-container {
 		text-align: left;
 
@@ -40,13 +36,13 @@
 		}
 	}
 
-	& .purchase-concierge .action-card__illustration {
+	&.purchase-concierge .action-card__illustration {
 		@include breakpoint( '>960px' ) {
 			margin-right: 20px;
 		}
 	}
 
-	& .card {
+	&.card {
 		@include breakpoint( '>480px' ) {
 			padding: 10px;
 		}
