@@ -15,7 +15,7 @@ import {
 	DropZoneProvider,
 	KeyboardShortcuts,
 } from '@wordpress/components';
-import { createBlock, registerBlockType } from '@wordpress/blocks';
+import { createBlock, parse as parseBlocks, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
@@ -31,12 +31,12 @@ import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { SiteVertical } from './stores/onboard/types';
+import { TemplateSelectorControl } from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
+import replacePlaceholders from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/utils/replace-placeholders';
 import './stores/domain-suggestions';
 import './stores/onboard';
 import './stores/verticals-templates';
 import './style.scss';
-
-import { PageTemplateModal } from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
 // to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
@@ -54,14 +54,28 @@ const DesignSelector = () => {
 	const siteVertical = useSelect(
 		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
 	);
-	const templates = useSelect( select =>
-		select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
-	);
+
+	const templates =
+		useSelect( select =>
+			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
+		) ?? [];
+
+	const blocksByTemplateSlug = templates.reduce( ( prev, { slug, content } ) => {
+		prev[ slug ] = content ? parseBlocks( replacePlaceholders( content ) ) : [];
+		return prev;
+	}, {} );
+
+	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
-		<PageTemplateModal
-			segment="m1" // FIXME: Replace with actual segment!
+		<TemplateSelectorControl
+			label={ __( 'Layout', 'full-site-editing' ) }
 			templates={ templates }
-			vertical={ siteVertical }
+			blocksByTemplates={ blocksByTemplateSlug }
+			onTemplateSelect={ setPreviewedTemplate }
+			useDynamicPreview={ false }
+			siteInformation={ undefined }
+			selectedTemplate={ previewedTemplate }
+			// handleTemplateConfirmation={ this.handleConfirmation }
 		/>
 	);
 };

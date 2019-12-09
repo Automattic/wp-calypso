@@ -36,7 +36,7 @@ import ensureAssets from './utils/ensure-assets';
 
 const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 
-export class PageTemplateModal extends Component {
+class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
