@@ -12,40 +12,18 @@ import React from 'react';
  */
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
-		BLOCKED_ATOMIC_TRANSFER: {
-			title: translate( 'Blocked' ),
-			description: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-			),
-			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
-		},
-		TRANSFER_ALREADY_EXISTS: {
-			title: translate( 'Installation in progress' ),
-			description: translate(
-				'Just a minute! Please wait until the installation is finished, then try again.'
-			),
-			supportUrl: null,
-		},
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Upgrade to a Business plan' ),
 			description: translate(
 				"You'll also get to install custom themes, have more storage, and access live support."
 			),
-			supportUrl: null,
-		},
-		NO_JETPACK_SITES: {
-			title: translate( 'Not available for Jetpack sites' ),
-			description: translate( 'Try using a different site.' ),
-			supportUrl: null,
-		},
-		NO_VIP_SITES: {
-			title: translate( 'Not available for VIP sites' ),
-			description: translate( 'Try using a different site.' ),
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
@@ -86,32 +64,18 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 	};
 }
 
-/**
- * This function defines how we should communicate each type of blocking hold the public-api returns.
- * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
- * should short-circuit any eligibility checks and just communicate the problem.
- *
- * @param {Function} translate Translate fn
- * @returns {object} Dictionary of blocking holds and their corresponding messages
- */
 function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			message: hasTranslation(
-				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
-			)
-				? translate(
-						'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
-				  )
-				: translate(
-						'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-				  ),
+			message: translate(
+				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 		TRANSFER_ALREADY_EXISTS: {
 			message: translate(
-				'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+				'Installation in progress. Just a minute! Please wait until the installation is finisehd, then try again.'
 			),
 			status: null,
 			contactUrl: null,
@@ -127,26 +91,16 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			contactUrl: null,
 		},
 		SITE_GRAYLISTED: {
-			message: hasTranslation(
+			message: translate(
 				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
-			)
-				? hasTranslation(
-						"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
-				  )
-				: translate( "Contact us to review your site's standing and resolve the dispute." ),
+			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
-			message: hasTranslation(
-				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
-			)
-				? hasTranslation(
-						'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
-				  )
-				: translate(
-						'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.\''
-				  ),
+			message: translate(
+				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browing on your site using "HTTPS".'
+			),
 			status: null,
 			contactUrl: null,
 		},
@@ -163,9 +117,27 @@ type Props = ExternalProps & LocalizeProps;
 
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( translate );
+	const blockingMessages = getBlockingMessages( translate );
+
+	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
 
 	return (
-		<div>
+		<>
+			{ ! isPlaceholder &&
+				blockingHold &&
+				isHardBlockingHoldType( blockingHold, blockingMessages ) && (
+					<Notice
+						status={ blockingMessages[ blockingHold ].status }
+						text={ blockingMessages[ blockingHold ].message }
+						showDismiss={ false }
+					>
+						{ blockingMessages[ blockingHold ].contactUrl && (
+							<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+								{ translate( 'Contact us' ) }
+							</NoticeAction>
+						) }
+					</Notice>
+				) }
 			<Card className="eligibility-warnings__hold-list">
 				<CardHeading>{ getCardHeading( context, translate ) }</CardHeading>
 				{ isPlaceholder && (
@@ -208,7 +180,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 							</div>
 						)
 					) }
-			</div>
+			</Card>
 		</>
 	);
 };
@@ -231,23 +203,11 @@ function isKnownHoldType(
 	return holdMessages.hasOwnProperty( hold );
 }
 
-/**
- * This checks if hold coming from API is blocking (@see getBlockingMessages);
- * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
- * to our support.
- *
- * @param {string} hold Specific hold we want to check
- * @param {object} blockingMessages List of all holds we consider blocking
- * @returns {boolean} Is {hold} blocking or not
- */
 function isHardBlockingHoldType(
 	hold: string,
 	blockingMessages: ReturnType< typeof getBlockingMessages >
 ): hold is keyof ReturnType< typeof getBlockingMessages > {
 	return blockingMessages.hasOwnProperty( hold );
 }
-
-export const hasBlockingHold = ( holds: string[] ) =>
-	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
 export default localize( HoldList );
