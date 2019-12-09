@@ -89,7 +89,6 @@
 		"nps-survey/dev-trigger": false,
 		"perfmon": true,
 		"persist-redux": true,
-		"plans/jetpack-backup": true,
 		"plans/jetpack-scan": false,
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,

@@ -99,11 +99,6 @@ export class PlansFeaturesMain extends Component {
 	isJetpackBackupAvailable() {
 		const { displayJetpackPlans, isMultisite, jetpackSupportsBackupProducts, siteId } = this.props;
 
-		// Jetpack Backup products are currently under a feature flag
-		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
-			return false;
-		}
-
 		// Jetpack Backup does not support Multisite yet.
 		if ( isMultisite ) {
 			return false;
