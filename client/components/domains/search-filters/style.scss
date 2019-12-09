@@ -93,6 +93,7 @@
 	display: flex;
 	flex-flow: row;
 	justify-content: space-between;
+	overflow: hidden;
 
 	.button {
 		flex: 1 0 auto;
