@@ -43,63 +43,63 @@ class ConciergeBanner extends Component {
 	}
 
 	getBannerContent() {
-		const { bannerType } = this.props;
+		const { bannerType, translate } = this.props;
 
 		let headerText, mainText, buttonText, buttonHref, illustrationUrl;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
-				headerText = this.props.translate( 'Your appointment is coming up!' );
-				mainText = this.props.translate(
+				headerText = translate( 'Your appointment is coming up!' );
+				mainText = translate(
 					'Get ready with your questions for your upcoming Quick Start session appointment.',
 					{
 						comment:
 							"Please extend the translation so that it's clear that these sessions are only available in English.",
 					}
 				);
-				buttonText = this.props.translate( 'Session dashboard' );
+				buttonText = translate( 'Session dashboard' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
-				headerText = this.props.translate( 'Looking for Expert Help?' );
-				mainText = this.props.translate(
+				headerText = translate( 'Looking for Expert Help?' );
+				mainText = translate(
 					'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
 							"Please extend the translation so that it's clear that these sessions are only available in English.",
 					}
 				);
-				buttonText = this.props.translate( 'Schedule Now' );
+				buttonText = translate( 'Schedule Now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
-				headerText = this.props.translate( 'Our experts are waiting to help you' );
-				mainText = this.props.translate(
+				headerText = translate( 'Our experts are waiting to help you' );
+				mainText = translate(
 					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
 							"Please extend the translation so that it's clear that these sessions are only available in English.",
 					}
 				);
-				buttonText = this.props.translate( 'Schedule Now' );
+				buttonText = translate( 'Schedule Now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
-				headerText = this.props.translate( 'Need an expert by your side?' );
-				mainText = this.props.translate(
+				headerText = translate( 'Need an expert by your side?' );
+				mainText = translate(
 					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
 					{
 						comment:
 							"Please extend the translation so that it's clear that these sessions are only available in English.",
 					}
 				);
-				buttonText = this.props.translate( 'Learn More' );
+				buttonText = translate( 'Learn More' );
 				buttonHref = '/checkout/offer-quickstart-session';
 				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
 				break;
