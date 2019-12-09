@@ -79,6 +79,8 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
+// Aliasing getCart and setCart explicitly bound to wpcom is
+// required here; otherwise we get `this is not defined` errors.
 const getCart = ( ...args ) => wpcom.getCart( ...args );
 const setCart = ( ...args ) => wpcom.setCart( ...args );
 
