@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useCallback, useContext, createContext } from 'react';
+import React, {
+	useEffect,
+	useReducer,
+	useState,
+	useCallback,
+	useContext,
+	createContext,
+} from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
@@ -145,6 +152,28 @@ function getValidationErrorsFromStripeError( error ) {
 	return null;
 }
 
+const initialStripeJsState = {
+	stripeJs: null,
+	isStripeLoading: true,
+	stripeLoadingError: null,
+};
+
+function stripeJsReducer( state, action ) {
+	switch ( action.type ) {
+		case 'STRIPE_LOADING_ERROR':
+			return { ...state, isStripeLoading: false, stripeLoadingError: action.payload };
+		case 'STRIPE_JS_SET':
+			return {
+				...state,
+				stripeJs: action.payload,
+				isStripeLoading: false,
+				stripeLoadingError: null,
+			};
+		default:
+			return state;
+	}
+}
+
 /**
  * React custom Hook for loading stripeJs
  *
@@ -156,36 +185,32 @@ function getValidationErrorsFromStripeError( error ) {
  * @returns {object} { stripeJs, isStripeLoading }
  */
 function useStripeJs( stripeConfiguration ) {
-	const [ stripeJs, setStripeJs ] = useState( null );
-	const [ isStripeLoading, setStripeLoading ] = useState( true );
-	const [ stripeLoadingError, setStripeLoadingError ] = useState();
+	const [ state, dispatch ] = useReducer( stripeJsReducer, initialStripeJsState );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = state;
+	const setStripeLoadingError = payload => dispatch( { type: 'STRIPE_LOADING_ERROR', payload } );
+	const setStripeJs = payload => dispatch( { type: 'STRIPE_JS_SET', payload } );
+
 	useEffect( () => {
 		let isSubscribed = true;
+
 		async function loadAndInitStripe() {
-			if ( ! stripeConfiguration ) {
-				return;
-			}
 			if ( window.Stripe ) {
-				setStripeLoading( false );
-				if ( ! stripeJs ) {
-					setStripeLoadingError();
-					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-				}
+				isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
 			await loadScriptAsync( stripeConfiguration.js_url );
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError();
 			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
 
-		loadAndInitStripe().catch( error => {
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError( error );
-		} );
+		if ( stripeConfiguration ) {
+			loadAndInitStripe().catch( error => {
+				isSubscribed && setStripeLoadingError( error );
+			} );
+		}
 
 		return () => ( isSubscribed = false );
-	}, [ stripeConfiguration, stripeJs ] );
+	}, [ stripeConfiguration ] );
+
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
