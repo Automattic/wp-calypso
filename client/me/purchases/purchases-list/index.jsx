@@ -32,12 +32,18 @@ import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appo
 import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id.js';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
+import {
+	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
+	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
+	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+} from 'me/constants';
+import {
+	CONCIERGE_WPCOM_BUSINESS_ID,
+	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
+} from 'me/concierge/constants';
 
 class PurchasesList extends Component {
-	constructor() {
-		super();
-	}
-
 	isDataLoading() {
 		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return true;
@@ -56,15 +62,22 @@ class PurchasesList extends Component {
 		let bannerType;
 
 		if ( nextAppointment ) {
-			bannerType = 'upcomingAppointment';
+			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
 		} else if ( hasAvailableConciergeSessions ) {
-			if ( 1 === scheduleId ) {
-				bannerType = 'availableIncludedSession';
-			} else if ( 2 === scheduleId ) {
-				bannerType = 'availablePurchasedSession';
+			switch ( scheduleId ) {
+				case CONCIERGE_WPCOM_BUSINESS_ID:
+					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
+					break;
+
+				case CONCIERGE_WPCOM_SESSION_PRODUCT_ID:
+					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
+					break;
+
+				default:
+					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
 			}
 		} else {
-			bannerType = 'canPurchaseConcierge';
+			bannerType = CONCIERGE_SUGGEST_PURCHASE_CONCIERGE;
 		}
 
 		return (
@@ -73,7 +86,6 @@ class PurchasesList extends Component {
 				recordTracksEvent={ this.props.recordTracksEvent }
 			/>
 		);
-		// return <ConciergeBanner bannerType="placeholder" />
 	}
 
 	render() {

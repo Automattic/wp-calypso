@@ -12,6 +12,12 @@ import Card from 'components/card';
 import ActionCard from 'components/action-card';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+import {
+	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
+	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
+	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+} from 'me/constants';
 
 /**
  * Style dependencies
@@ -36,13 +42,13 @@ class ConciergeBanner extends Component {
 		);
 	}
 
-	getText() {
+	getBannerContent() {
 		const { bannerType } = this.props;
 
 		let headerText, mainText, buttonText, buttonHref, illustrationUrl;
 
 		switch ( bannerType ) {
-			case 'upcomingAppointment':
+			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
 				headerText = this.props.translate( 'Your appointment is coming up!' );
 				mainText = this.props.translate(
 					'Get ready with your questions for your upcoming Quick Start session appointment.',
@@ -56,7 +62,7 @@ class ConciergeBanner extends Component {
 				illustrationUrl = conciergeImage;
 				break;
 
-			case 'availableIncludedSession':
+			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
 				headerText = this.props.translate( 'Looking for Expert Help?' );
 				mainText = this.props.translate(
 					'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
@@ -70,7 +76,7 @@ class ConciergeBanner extends Component {
 				illustrationUrl = conciergeImage;
 				break;
 
-			case 'availablePurchasedSession':
+			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 				headerText = this.props.translate( 'Our experts are waiting to help you' );
 				mainText = this.props.translate(
 					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
@@ -84,7 +90,7 @@ class ConciergeBanner extends Component {
 				illustrationUrl = conciergeImage;
 				break;
 
-			case 'canPurchaseConcierge':
+			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
 				headerText = this.props.translate( 'Need an expert by your side?' );
 				mainText = this.props.translate(
 					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
@@ -109,7 +115,13 @@ class ConciergeBanner extends Component {
 			return this.placeholder();
 		}
 
-		const { headerText, mainText, buttonText, buttonHref, illustrationUrl } = this.getText();
+		const {
+			headerText,
+			mainText,
+			buttonText,
+			buttonHref,
+			illustrationUrl,
+		} = this.getBannerContent();
 
 		const className = classnames( {
 			'purchase-concierge': 'canPurchaseConcierge' === bannerType,
