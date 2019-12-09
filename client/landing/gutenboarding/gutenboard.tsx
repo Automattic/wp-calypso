@@ -17,10 +17,10 @@ import {
 } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
-import { useSelect } from '@wordpress/data';
+
 import '@wordpress/format-library';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import '@wordpress/components/build-style/style.css';
 
 /**
@@ -30,8 +30,6 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
-import { SiteVertical } from './stores/onboard/types';
-import { TemplateSelectorControl } from '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
 import './stores/domain-suggestions';
 import './stores/onboard';
 import './stores/verticals-templates';
@@ -48,52 +46,6 @@ const toggleSidebarShortcut = {
 
 registerBlockType( name, settings );
 
-const onboardingBlock = createBlock( name, {} );
-
-const DesignSelector = () => {
-	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
-	);
-
-	const templates =
-		useSelect( select =>
-			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
-		) ?? [];
-
-	const homepageTemplates = templates.filter( template => template.category === 'home' );
-
-	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
-	return (
-		<div
-			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
-		>
-			<TemplateSelectorControl
-				label={ __( 'Layout', 'full-site-editing' ) }
-				templates={ homepageTemplates }
-				blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
-				onTemplateSelect={ setPreviewedTemplate }
-				useDynamicPreview={ false }
-				siteInformation={ undefined }
-				selectedTemplate={ previewedTemplate }
-				// handleTemplateConfirmation={ this.handleConfirmation }
-			/>
-		</div>
-	);
-};
-
-// Makeshift block so we can drop the modal into the block editor. Might want to change that later.
-registerBlockType( 'automattic/page-templates', {
-	title: 'Page Templates',
-	icon: 'universal-access-alt',
-	category: 'layout',
-	attributes: {},
-	edit() {
-		return <DesignSelector />;
-	},
-} );
-
-const templateBlock = createBlock( 'automattic/page-templates', {} );
-
 export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
@@ -101,6 +53,10 @@ export function Gutenboard() {
 	// FIXME: Quick'n'dirty step state, replace with router
 	const [ currentStep, setStep ] = useState( 0 );
 	const goToNextStep = () => setStep( step => step + 1 );
+
+	const onboardingBlock = useMemo( () => createBlock( name, { step: currentStep } ), [
+		currentStep,
+	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -124,10 +80,7 @@ export function Gutenboard() {
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 							toggleSidebarShortcut={ toggleSidebarShortcut }
 						/>
-						<BlockEditorProvider
-							value={ [ currentStep === 0 ? onboardingBlock : templateBlock ] }
-							settings={ { templateLock: 'all' } }
-						>
+						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 							<div className="edit-post-layout__content">
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"

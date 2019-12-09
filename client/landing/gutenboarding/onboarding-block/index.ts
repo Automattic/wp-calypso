@@ -13,6 +13,7 @@ export const name = 'automattic/onboarding';
 
 export interface Attributes {
 	align: 'full';
+	step: 0;
 }
 
 export const settings: BlockConfiguration< Attributes > = {
@@ -23,6 +24,10 @@ export const settings: BlockConfiguration< Attributes > = {
 		align: {
 			type: 'string',
 			default: 'full',
+		},
+		step: {
+			type: 'number',
+			default: 0,
 		},
 	},
 	supports: {
