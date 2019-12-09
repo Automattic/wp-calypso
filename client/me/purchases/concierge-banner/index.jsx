@@ -124,7 +124,7 @@ class ConciergeBanner extends Component {
 		} = this.getBannerContent();
 
 		const className = classnames( {
-			'purchase-concierge': 'canPurchaseConcierge' === bannerType,
+			'purchase-concierge': CONCIERGE_SUGGEST_PURCHASE_CONCIERGE === bannerType,
 		} );
 
 		return (
