@@ -17,7 +17,7 @@ import {
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
 	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
-} from 'me/constants';
+} from 'me/concierge/constants';
 
 /**
  * Style dependencies
@@ -123,7 +123,7 @@ class ConciergeBanner extends Component {
 			illustrationUrl,
 		} = this.getBannerContent();
 
-		const className = classnames( {
+		const className = classnames( 'concierge-banner', {
 			'purchase-concierge': CONCIERGE_SUGGEST_PURCHASE_CONCIERGE === bannerType,
 		} );
 
