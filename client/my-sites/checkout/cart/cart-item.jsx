@@ -70,9 +70,10 @@ export class CartItem extends React.Component {
 				cost_before_coupon: costBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
 			} = cartItem;
-			const { is_coupon_applied: isCouponApplied } = cart;
 
 			if ( isSaleCouponApplied ) {
+				const { is_coupon_applied: isCouponApplied } = cart;
+
 				return (
 					<div className="cart__gsuite-discount">
 						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
@@ -83,7 +84,7 @@ export class CartItem extends React.Component {
 
 						<span className="cart__gsuite-discount-text">
 							{ isCouponApplied
-								? translate( 'Multiple discounts' )
+								? translate( 'Discounts applied' )
 								: translate( 'Discount for first year' ) }
 						</span>
 					</div>
