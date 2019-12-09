@@ -592,8 +592,7 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			// For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information
-			displayChecklist: ! isAtomic && hasChecklistData && ! isChecklistComplete,
+			displayChecklist: !! ( hasChecklistData && ! isChecklistComplete ),
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
