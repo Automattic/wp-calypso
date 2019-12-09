@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'components/gridicon';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -138,8 +139,17 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 						) }
 					</Notice>
 				) }
-			<Card className="eligibility-warnings__hold-list">
-				<CardHeading>{ getCardHeading( context, translate ) }</CardHeading>
+			<Card
+				className={ classNames( 'eligibility-warnings__hold-list', {
+					'eligibility-warnings__hold-list-dim': blockingHold,
+				} ) }
+				data-testid="HoldList-Card"
+			>
+				<CardHeading>
+					<span className="eligibility-warnings__hold-heading">
+						{ getCardHeading( context, translate ) }
+					</span>
+				</CardHeading>
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
@@ -169,6 +179,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 									<div className="eligibility-warnings__hold-action">
 										<Button
 											compact
+											disabled={ !! blockingHold }
 											href={ holdMessages[ hold ].supportUrl }
 											rel="noopener noreferrer"
 										>

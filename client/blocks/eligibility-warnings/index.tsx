@@ -208,7 +208,9 @@ function mergeProps(
 		context = 'hosting';
 	}
 
-	const onCancel = () => dispatchProps.trackCancel( { context } );
+	const onCancel = () => {
+		dispatchProps.trackCancel( { context } );
+	};
 	const onProceed = () => {
 		ownProps.onProceed();
 		dispatchProps.trackProceed( { context } );
