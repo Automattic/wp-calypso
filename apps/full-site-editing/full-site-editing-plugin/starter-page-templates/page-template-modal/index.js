@@ -2,7 +2,18 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, partition, reject, sortBy } from 'lodash';
+import {
+	find,
+	isEmpty,
+	reduce,
+	get,
+	keyBy,
+	mapValues,
+	memoize,
+	partition,
+	reject,
+	sortBy,
+} from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -29,32 +40,19 @@ class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
-		blocksByTemplateSlug: {},
-		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
 
-	constructor( props ) {
-		super();
-		const hasTemplates = ! isEmpty( props.templates );
-		this.state.isOpen = hasTemplates;
-		if ( hasTemplates ) {
-			// Select the first template automatically.
-			this.state.previewedTemplate = this.getDefaultSelectedTemplate( props );
-			// Extract titles for faster lookup.
-			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
-		}
-	}
+	// Extract titles for faster lookup.
+	getTitlesByTemplateSlugs = memoize( templates =>
+		mapValues( keyBy( templates, 'slug' ), 'title' )
+	);
 
-	componentDidMount() {
-		if ( this.state.isOpen ) {
-			trackView( this.props.segment.id, this.props.vertical.id );
-		}
-
-		// Parse templates blocks and store them into the state.
-		const blocksByTemplateSlug = reduce(
-			this.props.templates,
+	// Parse templates blocks and memoize them.
+	getBlocksByTemplateSlugs = memoize( templates =>
+		reduce(
+			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
 					? parseBlocks( replacePlaceholders( content, this.props.siteInformation ) )
@@ -62,13 +60,42 @@ class PageTemplateModal extends Component {
 				return prev;
 			},
 			{}
-		);
+		)
+	);
 
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocksByTemplateSlug } );
+	static getDerivedStateFromProps( props, state ) {
+		// The only time `state.previewedTemplate` isn't set is before `templates`
+		// are loaded. As soon as we have our `templates`, we set it using
+		// `this.getDefaultSelectedTemplate`. Afterwards, the user can select a
+		// different template, but can never un-select it.
+		// This makes it a reliable indicator for whether the modal has just been launched.
+		// It's also possible that `templates` are present during initial mount, in which
+		// case this will be called before `componentDidMount`, which is also fine.
+		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
+			// Show the modal, and select the first template automatically.
+			return {
+				isOpen: true,
+				previewedTemplate: PageTemplateModal.getDefaultSelectedTemplate( props ),
+			};
+		}
+		return null;
 	}
 
-	getDefaultSelectedTemplate = props => {
+	componentDidMount() {
+		if ( this.state.isOpen ) {
+			trackView( this.props.segment.id, this.props.vertical.id );
+		}
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		// Only track when the modal is first displayed
+		// and if it didn't already happen during componentDidMount.
+		if ( ! prevState.isOpen && this.state.isOpen ) {
+			trackView( this.props.segment.id, this.props.vertical.id );
+		}
+	}
+
+	static getDefaultSelectedTemplate = props => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
 
@@ -170,11 +197,11 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( slug ) {
-		return get( this.state.blocksByTemplateSlug, [ slug ], [] );
+		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
 	}
 
 	getTitleByTemplateSlug( slug ) {
-		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
+		return get( this.getTitlesByTemplateSlugs( this.props.templates ), [ slug ], '' );
 	}
 
 	getTemplateGroups = () => {
@@ -206,7 +233,7 @@ class PageTemplateModal extends Component {
 			<TemplateSelectorControl
 				label={ __( 'Layout', 'full-site-editing' ) }
 				templates={ templatesList }
-				blocksByTemplates={ this.state.blocksByTemplateSlug }
+				blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }
 				onTemplateSelect={ this.previewTemplate }
 				useDynamicPreview={ false }
 				siteInformation={ this.props.siteInformation }
