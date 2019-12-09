@@ -16,15 +16,14 @@ import paths from './paths';
 import './style.scss';
 
 function ProductIcon( { className, slug } ) {
+	if ( ! slug || ! paths[ slug ] ) {
+		return null;
+	}
+
 	return (
 		<img
 			src={ paths[ slug ] }
-			className={ classNames(
-				'product-icon',
-				`product-icon__${ slug }`,
-				`is-${ slug }`,
-				className
-			) }
+			className={ classNames( 'product-icon', `is-${ slug }`, className ) }
 			role="presentation"
 			alt=""
 		/>
