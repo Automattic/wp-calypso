@@ -110,44 +110,44 @@ export function useShoppingCart(
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useEffect( () => {
-        const initializeResponseCart = async () => {
-            const response = await getServerCart();
-            debug( 'initialized cart is', response );
-            setResponseCart(response);
-            setCacheStatus('valid');
-        };
+		const initializeResponseCart = async () => {
+			const response = await getServerCart();
+			debug( 'initialized cart is', response );
+			setResponseCart( response );
+			setCacheStatus( 'valid' );
+		};
 
-        debug( 'considering initializing cart to server; cacheStatus is', cacheStatus );
-	    if ( cacheStatus === 'fresh' ) {
-            debug( 'initializing the cart' );
-            initializeResponseCart().catch(error => {
-                // TODO: figure out what to do here
-                setCacheStatus( 'error' );
-                debug( 'error while initializing cart', error );
-            });
-        }
-	}, [ getServerCart ] );
+		debug( 'considering initializing cart to server; cacheStatus is', cacheStatus );
+		if ( cacheStatus === 'fresh' ) {
+			debug( 'initializing the cart' );
+			initializeResponseCart().catch( error => {
+				// TODO: figure out what to do here
+				setCacheStatus( 'error' );
+				debug( 'error while initializing cart', error );
+			} );
+		}
+	}, [ getServerCart, cacheStatus ] );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useEffect( () => {
 		const fetchAndUpdate = async () => {
-            debug( 'sending cart with responseCart', responseCart );
-            const response = await setServerCart( prepareRequestCart( responseCart ) );
-            debug( 'cart sent; new responseCart is', response );
-            setResponseCart( response );
-            setCacheStatus( 'valid' );
+			debug( 'sending cart with responseCart', responseCart );
+			const response = await setServerCart( prepareRequestCart( responseCart ) );
+			debug( 'cart sent; new responseCart is', response );
+			setResponseCart( response );
+			setCacheStatus( 'valid' );
 		};
 
-        debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
-        if ( cacheStatus === 'invalid' ) {
-            debug( 'updating the cart' );
-            setCacheStatus( 'pending' );
-            fetchAndUpdate().catch(error => {
-                // TODO: figure out what to do here
-                setCacheStatus( 'error' );
-                debug('error while fetching cart', error);
-            })
-        }
+		debug( 'considering sending cart to server; cacheStatus is', cacheStatus );
+		if ( cacheStatus === 'invalid' ) {
+			debug( 'updating the cart' );
+			setCacheStatus( 'pending' );
+			fetchAndUpdate().catch( error => {
+				// TODO: figure out what to do here
+				setCacheStatus( 'error' );
+				debug( 'error while fetching cart', error );
+			} );
+		}
 	}, [ setServerCart, cacheStatus, responseCart ] );
 
 	// Translate the responseCart into the format needed in checkout.
