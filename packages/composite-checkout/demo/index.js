@@ -21,7 +21,8 @@ import {
 	getDefaultOrderSummaryStep,
 	getDefaultOrderReviewStep,
 } from '../src/public-api';
-import { stripeKey } from './private';
+
+const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
 const initialItems = [
 	{
