@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { get, includes, noop } from 'lodash';
+import { includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 
@@ -12,14 +12,9 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Banner from 'components/banner';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { Button, Card } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
@@ -41,16 +36,11 @@ export const EligibilityWarnings = ( {
 	backUrl,
 	context,
 	eligibilityData,
-	hasBusinessPlan,
 	isEligible,
-	isJetpack,
-	isVip,
 	isPlaceholder,
 	onProceed,
 	onCancel,
 	siteId,
-	sitePlan,
-	siteSlug,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
@@ -60,41 +50,6 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings__placeholder': isPlaceholder,
 	} );
 
-	let businessUpsellBanner = null;
-	if ( ! hasBusinessPlan && ! isJetpack && ! isVip ) {
-		const description = translate(
-			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
-		);
-		const title = translate( 'Business plan required' ) as string;
-		const plan =
-			sitePlan &&
-			findFirstSimilarPlanKey( sitePlan.product_slug, {
-				type: TYPE_BUSINESS,
-			} );
-		let feature = null;
-		let event = null;
-
-		if ( 'plugins' === context ) {
-			feature = FEATURE_UPLOAD_PLUGINS;
-			event = 'calypso-plugin-eligibility-upgrade-nudge';
-		} else {
-			feature = FEATURE_UPLOAD_THEMES;
-			event = 'calypso-theme-eligibility-upgrade-nudge';
-		}
-
-		const bannerURL = `/checkout/${ siteSlug }/business`;
-		businessUpsellBanner = (
-			<Banner
-				description={ description }
-				feature={ feature }
-				event={ event }
-				plan={ plan }
-				title={ title }
-				href={ bannerURL }
-			/>
-		);
-	}
-
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -102,8 +57,6 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ businessUpsellBanner }
-
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 			) }
@@ -164,26 +117,15 @@ EligibilityWarnings.defaultProps = {
 
 const mapStateToProps = ( state: object ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
-	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isVip = siteId !== null && isVipSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
-	const sitePlan = siteId !== null ? getSitePlan( state, siteId ) : null;
 
 	return {
 		eligibilityData,
-		hasBusinessPlan,
 		isEligible,
-		isJetpack,
-		isVip,
 		isPlaceholder: ! dataLoaded,
 		siteId,
-		siteSlug,
-		sitePlan,
 	};
 };
 
