@@ -14,10 +14,13 @@ export default function CheckoutSubmitButton( { className, disabled } ) {
 	if ( ! paymentMethod ) {
 		return null;
 	}
-	const { SubmitButtonComponent } = paymentMethod;
+	const { submitButton } = paymentMethod;
+
+	// We clone the element to add the disabled prop
+	const clonedSubmitButton = React.cloneElement( submitButton, { disabled } );
 	return (
 		<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
-			<SubmitButtonComponent disabled={ disabled } />
+			{ clonedSubmitButton }
 		</div>
 	);
 }

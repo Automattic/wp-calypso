@@ -70,12 +70,12 @@ describe( 'Checkout', () => {
 				);
 			} );
 
-			it( 'renders the payment method LabelComponent', () => {
+			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
 
-			it( 'renders the payment method PaymentMethodComponent', () => {
+			it( 'renders the payment method activeContent', () => {
 				const { getByTestId } = render( <MyCheckout /> );
 				const activeComponent = getByTestId( 'mock-payment-form' );
 				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
@@ -89,7 +89,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 			} );
 
-			it( 'renders the payment method SubmitButtonComponent', () => {
+			it( 'renders the payment method submitButton', () => {
 				const { getByText } = render( <MyCheckout /> );
 				expect( getByText( 'Pay Please' ) ).toBeTruthy();
 			} );
@@ -136,12 +136,12 @@ describe( 'Checkout', () => {
 				);
 			} );
 
-			it( 'renders the payment method LabelComponent', () => {
+			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
 			} );
 
-			it( 'renders the payment method PaymentMethodComponent', () => {
+			it( 'renders the payment method activeContent', () => {
 				const { getByTestId } = render( <MyCheckout /> );
 				const activeComponent = getByTestId( 'mock-payment-form' );
 				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
@@ -155,7 +155,7 @@ describe( 'Checkout', () => {
 				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 			} );
 
-			it( 'renders the payment method SubmitButtonComponent', () => {
+			it( 'renders the payment method submitButton', () => {
 				const { getByText } = render( <MyCheckout /> );
 				expect( getByText( 'Pay Please' ) ).toBeTruthy();
 			} );
@@ -424,31 +424,31 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent', () => {
+		it( 'renders the payment method submitButton', () => {
 			const { getByText } = render( <MyCheckout /> );
 			expect( getByText( 'Pay Please' ) ).toBeTruthy();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if any steps are incomplete and the last step is not active', () => {
+		it( 'renders the payment method submitButton disabled if any steps are incomplete and the last step is not active', () => {
 			const { getByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if any steps are incomplete and the last step is active', () => {
+		it( 'renders the payment method submitButton disabled if any steps are incomplete and the last step is active', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 3 ] ] } /> );
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent disabled if all steps are complete but the last step is not active', () => {
+		it( 'renders the payment method submitButton disabled if all steps are complete but the last step is not active', () => {
 			const { getByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			expect( getByText( 'Pay Please' ) ).toBeDisabled();
 		} );
 
-		it( 'renders the payment method SubmitButtonComponent active if all steps are complete and the last step is active', () => {
+		it( 'renders the payment method submitButton active if all steps are complete and the last step is active', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
 			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
@@ -458,10 +458,10 @@ describe( 'Checkout', () => {
 function createMockMethod() {
 	return {
 		id: 'mock',
-		LabelComponent: () => <span data-testid="mock-label">Mock Label</span>,
-		PaymentMethodComponent: MockPaymentForm,
-		SubmitButtonComponent: props => <button { ...props }>Pay Please</button>,
-		SummaryComponent: () => 'Mock Method',
+		label: <span data-testid="mock-label">Mock Label</span>,
+		activeContent: <MockPaymentForm />,
+		submitButton: <button>Pay Please</button>,
+		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
 }

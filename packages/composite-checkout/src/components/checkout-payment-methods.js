@@ -84,16 +84,16 @@ export function CheckoutPaymentMethodsTitle() {
 
 function PaymentMethod( {
 	id,
-	LabelComponent,
-	PaymentMethodComponent,
-	SummaryComponent,
+	label,
+	activeContent,
+	inactiveContent,
 	checked,
 	onClick,
 	ariaLabel,
 	summary,
 } ) {
 	if ( summary ) {
-		return <SummaryComponent id={ id } />;
+		return inactiveContent;
 	}
 
 	return (
@@ -104,11 +104,9 @@ function PaymentMethod( {
 			checked={ checked }
 			onChange={ onClick ? () => onClick( id ) : null }
 			ariaLabel={ ariaLabel }
-			label={ <LabelComponent /> }
+			label={ label }
 		>
-			{ PaymentMethodComponent && (
-				<PaymentMethodComponent isActive={ checked } summary={ summary } />
-			) }
+			{ activeContent && activeContent }
 		</RadioButton>
 	);
 }
@@ -118,9 +116,9 @@ PaymentMethod.propTypes = {
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
 	ariaLabel: PropTypes.string.isRequired,
-	PaymentMethodComponent: PropTypes.elementType,
-	LabelComponent: PropTypes.elementType,
-	SummaryComponent: PropTypes.elementType,
+	activeContent: PropTypes.node,
+	label: PropTypes.node,
+	inactiveContent: PropTypes.node,
 	summary: PropTypes.bool,
 };
 

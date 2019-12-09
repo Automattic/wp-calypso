@@ -16,18 +16,15 @@ export function validatePaymentMethods( paymentMethods ) {
 
 export function validatePaymentMethod( {
 	id,
-	LabelComponent,
-	SubmitButtonComponent,
-	SummaryComponent,
+	label,
+	submitButton,
+	inactiveContent,
 	getAriaLabel,
 } ) {
 	validateArg( id, 'Invalid payment method; missing id property' );
-	validateArg( LabelComponent, `Invalid payment method '${ id }'; missing LabelComponent` );
-	validateArg(
-		SubmitButtonComponent,
-		`Invalid payment method '${ id }'; missing SubmitButtonComponent`
-	);
-	validateArg( SummaryComponent, `Invalid payment method '${ id }'; missing SummaryComponent` );
+	validateArg( label, `Invalid payment method '${ id }'; missing label` );
+	validateArg( submitButton, `Invalid payment method '${ id }'; missing submitButton` );
+	validateArg( inactiveContent, `Invalid payment method '${ id }'; missing inactiveContent` );
 	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
 }
 
