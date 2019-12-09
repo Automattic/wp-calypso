@@ -2,7 +2,7 @@
 	margin-top: 1em;
 	margin-bottom: 1em;
 
-	.timeline-item {
+	.timeline-event {
 		position: relative;
 		display: flex;
 		flex-direction: row;
@@ -14,39 +14,39 @@
 			align-items: stretch;
 		}
 
-		.timeline-item__column {
+		.timeline-event__column {
 			margin-left: 1em;
 		}
 
-		&:first-child .timeline-item__icon-wrapper::before {
+		&:first-child .timeline-event__icon-wrapper::before {
 			margin-top: 26px;
 		}
 
-		&:last-child .timeline-item__icon-wrapper::before {
+		&:last-child .timeline-event__icon-wrapper::before {
 			height: 65%;
 		}
 
-		.timeline-item__main-message {
+		.timeline-event__main-message {
 			order: 3;
 			flex: 7;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 
-			.timeline-item__detail {
+			.timeline-event__detail {
 				font-size: 0.8em;
 				opacity: 0.8;
 			}
 		}
 
-		.timeline-item__action-button-wrapper {
+		.timeline-event__action-button-wrapper {
 			flex: 2;
 			order: 3;
 			align-self: center;
 			text-align: right;
 		}
 
-		.timeline-item__icon-wrapper {
+		.timeline-event__icon-wrapper {
 			order: 1;
 			position: relative;
 			display: flex;
@@ -64,7 +64,7 @@
 				margin: -16px 0;
 			}
 
-			.timeline-item__icon {
+			.timeline-event__icon {
 				z-index: 100;
 				position: relative;
 				background-color: var( --color-primary );
@@ -106,13 +106,13 @@
 			}
 		}
 
-		.timeline-item__date-detail {
+		.timeline-event__date-detail {
 			width: 100%;
 			font-size: 0.8em;
 			opacity: 0.8;
 		}
 
-		.timeline-item__date-wrapper {
+		.timeline-event__date-wrapper {
 			order: 2;
 			position: relative;
 			display: flex;
@@ -120,11 +120,11 @@
 			justify-content: center;
 			flex: 3;
 
-			.timeline-item__date {
+			.timeline-event__date {
 				width: 100%;
 			}
 
-			.timeline-item__date-detail {
+			.timeline-event__date-detail {
 				width: 100%;
 				font-size: 0.8em;
 				opacity: 0.8;
@@ -132,7 +132,7 @@
 		}
 
 		&.is-disabled {
-			.timeline-item__icon-wrapper .timeline-item__icon {
+			.timeline-event__icon-wrapper .timeline-event__icon {
 				background-color: var( --color-neutral-5 );
 			}
 		}
