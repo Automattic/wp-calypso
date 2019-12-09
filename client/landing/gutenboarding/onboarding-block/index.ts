@@ -8,12 +8,13 @@ import { BlockConfiguration } from '@wordpress/blocks';
  * Internal dependencies
  */
 import edit from './edit';
+import { Steps } from '../types';
 
 export const name = 'automattic/onboarding';
 
 export interface Attributes {
 	align: 'full';
-	step: 0;
+	step: Steps.IntentGathering;
 }
 
 export const settings: BlockConfiguration< Attributes > = {
@@ -27,7 +28,7 @@ export const settings: BlockConfiguration< Attributes > = {
 		},
 		step: {
 			type: 'number',
-			default: 0,
+			default: Steps.IntentGathering,
 		},
 	},
 	supports: {

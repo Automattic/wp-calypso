@@ -18,7 +18,7 @@ import { selectorDebounce } from '../../constants';
 
 interface Props {
 	isEditorSidebarOpened: boolean;
-	next: () => void;
+	next?: () => void;
 	toggleGeneralSidebar: () => void;
 	toggleSidebarShortcut: KeyboardShortcut;
 }
@@ -98,7 +98,7 @@ const Header: FunctionComponent< Props > = ( {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button isPrimary isLarge disabled={ ! siteTitle } onClick={ next }>
+					<Button isPrimary isLarge disabled={ ! next } onClick={ next }>
 						{ NO__( 'Next' ) }
 					</Button>
 				</div>

@@ -14,13 +14,14 @@ import DesignSelector from './design-selector';
 import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
+import { Steps } from '../types';
 import './style.scss';
 
 export default function OnboardingEdit( { attributes: { step = 0 } } ) {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 
 	switch ( step ) {
-		case 0:
+		case Steps.IntentGathering:
 			return (
 				<div className="onboarding-block__acquire-intent">
 					<div className="onboarding-block__questions">
@@ -43,7 +44,7 @@ export default function OnboardingEdit( { attributes: { step = 0 } } ) {
 					</div>
 				</div>
 			);
-		case 1:
+		case Steps.DesignSelection:
 			return <DesignSelector />;
 	}
 

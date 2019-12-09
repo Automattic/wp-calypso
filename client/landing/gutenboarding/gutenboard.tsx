@@ -17,7 +17,7 @@ import {
 } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
-
+import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useMemo, useState } from 'react';
@@ -30,11 +30,18 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
+import { State as OnboardingState } from './stores/onboard/reducer';
+import { STORE_KEY } from './stores/onboard';
+import { Steps } from './types';
 import './stores/domain-suggestions';
-import './stores/onboard';
 import './stores/verticals-templates';
 import './style.scss';
 import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
+
+const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {
+	[ Steps.IntentGathering ]: ( { siteTitle } ) => !! siteTitle,
+	[ Steps.DesignSelection ]: () => false, // ( { design } ) => !! design, // TODO: Enable once we have `design` in onboarding state
+};
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
 // to be consistent with Gutenberg's shortcuts, and in order to avoid pulling in all of `@wordpress/edit-post`.
@@ -50,9 +57,13 @@ export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
+	const onboardingState = useSelect( select => select( STORE_KEY ).getState() );
+
 	// FIXME: Quick'n'dirty step state, replace with router
-	const [ currentStep, setStep ] = useState( 0 );
-	const goToNextStep = () => setStep( step => step + 1 );
+	const [ currentStep, setStep ] = useState( Steps.IntentGathering );
+	const goToNextStep = stepCompleted[ currentStep ]( onboardingState )
+		? () => setStep( step => step + 1 )
+		: undefined;
 
 	const onboardingBlock = useMemo( () => createBlock( name, { step: currentStep } ), [
 		currentStep,
