@@ -110,6 +110,14 @@ describe( 'reducer', () => {
 			expect( state ).toBe( 'themes' );
 		} );
 
+		test( 'should return hosting for hosting', () => {
+			const state = upgradeIntent( 'blastendedskrewt', {
+				type: SECTION_SET,
+				section: { name: 'hosting' },
+			} );
+			expect( state ).toBe( 'hosting' );
+		} );
+
 		test( 'should return empty string for other section', () => {
 			const state = upgradeIntent( 'plugins', {
 				type: SECTION_SET,
