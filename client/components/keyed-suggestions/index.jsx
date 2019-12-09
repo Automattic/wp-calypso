@@ -227,11 +227,11 @@ class KeyedSuggestions extends React.Component {
 			}
 			const regex = new RegExp( multiRegex, 'iu' );
 
-			//check if we have showAll key match. If we have then don't filter, use all and reorder.
+			// Check if we have showAll key match. If we have then don't filter, use all and reorder.
 			if ( showAll === key ) {
 				const ourTerms = terms[ key ];
 				const keys = Object.keys( ourTerms );
-				// split to terms matching an non matching to the input
+				// Split to terms matching an non matching to the input.
 				const [ matching, notMatching ] = partition( keys, term => {
 					return (
 						ourTerms[ term ].name.match( regex ) || ourTerms[ term ].description.match( regex )
@@ -247,7 +247,7 @@ class KeyedSuggestions extends React.Component {
 					descriptionHit >= 0 && hits.push( descriptionHit );
 					return Math.min( ...hits );
 				} );
-				// concatenate mathing and non matchin - this is full set of filters just reordered.
+				// Concatenate mathing and non matchin - this is full set of filters just reordered.
 				filtered[ key ] = [ ...sortedMatching, ...notMatching ];
 			} else {
 				filtered[ key ] = take(
