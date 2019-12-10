@@ -13,7 +13,7 @@ import { get, includes } from 'lodash';
 import Button from '@automattic/components/button';
 import Card from '@automattic/components/card';
 import CardHeading from 'components/card-heading';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';

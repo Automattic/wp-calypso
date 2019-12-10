@@ -20,7 +20,7 @@ import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
 import { withLocalizedMoment } from 'components/localized-moment';

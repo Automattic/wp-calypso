@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 import Card from '@automattic/components/card';
 import Button from '@automattic/components/button';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';

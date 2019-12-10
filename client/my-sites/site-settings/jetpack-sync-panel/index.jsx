@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';

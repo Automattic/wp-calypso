@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import Site from 'blocks/site';

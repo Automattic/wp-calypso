@@ -15,7 +15,7 @@ import { addQueryArgs } from 'lib/route';
 import analytics from 'lib/analytics';
 import Button from '@automattic/components/button';
 import Card from '@automattic/components/card';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import config from 'config';
 import { Dialog } from '@automattic/components';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';

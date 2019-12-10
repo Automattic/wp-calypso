@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import Notice from 'components/notice';

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Confirmation from './confirmation';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Site from 'blocks/site';
 import FormattedHeader from 'components/formatted-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

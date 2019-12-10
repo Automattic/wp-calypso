@@ -13,7 +13,7 @@ import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {

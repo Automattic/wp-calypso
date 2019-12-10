@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import Banner from 'components/banner';
 import Card from '@automattic/components/card';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';

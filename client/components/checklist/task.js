@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Notice from 'components/notice';
 import ScreenReaderText from '@automattic/components/screen-reader-text';
 import Spinner from 'components/spinner';

@@ -13,7 +13,7 @@ import moment from 'moment-timezone';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import Card from '@automattic/components/card';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Button from '@automattic/components/button';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import Notice from 'components/notice';

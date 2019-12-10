@@ -5,7 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 
 /**
  * Style dependencies

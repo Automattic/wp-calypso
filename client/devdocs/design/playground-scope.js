@@ -21,7 +21,7 @@ export { Checklist, Task as ChecklistTask } from 'components/checklist';
 export { default as ClipboardButtonInput } from 'components/clipboard-button-input';
 export { default as ClipboardButton } from 'components/forms/clipboard-button';
 export { default as Collection } from 'devdocs/design/search-collection';
-export { default as CompactCard } from 'components/card/compact';
+export { default as CompactCard } from '@automattic/components/card/compact';
 export { default as Count } from 'components/count';
 export { default as CountedTextarea } from 'components/forms/counted-textarea';
 export { default as CreditCard } from 'components/credit-card';

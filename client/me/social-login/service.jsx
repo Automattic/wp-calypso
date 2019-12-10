@@ -8,7 +8,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { getCurrentUser } from 'state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 

@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import Card from '@automattic/components/card/compact';
 import { emailManagement } from 'my-sites/email/paths';
 
 const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {

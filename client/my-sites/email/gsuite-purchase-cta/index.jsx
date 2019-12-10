@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from '@automattic/components/button';
 import config from 'config';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';

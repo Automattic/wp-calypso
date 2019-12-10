@@ -13,7 +13,7 @@ import { noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
 import * as utils from 'state/posts/utils';

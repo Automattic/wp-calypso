@@ -11,7 +11,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

@@ -14,7 +14,7 @@ import classnames from 'classnames';
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import SegmentedControl from 'components/segmented-control';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';

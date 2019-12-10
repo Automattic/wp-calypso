@@ -10,7 +10,7 @@ import React from 'react';
  */
 import Button from '@automattic/components/button';
 import Card from '@automattic/components/card';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';

@@ -12,7 +12,7 @@ import { some } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import Button from '@automattic/components/button';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import HappinessEngineers from 'me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';

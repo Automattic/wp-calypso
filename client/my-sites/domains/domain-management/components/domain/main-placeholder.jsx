@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';

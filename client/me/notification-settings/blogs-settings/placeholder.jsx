@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 
 export default class extends React.Component {
 	static displayName = 'NotificationsBlogSettingsPlaceholder';

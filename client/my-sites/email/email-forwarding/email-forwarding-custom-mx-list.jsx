@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import Card from '@automattic/components/card/compact';
 import { domainManagementDns } from 'my-sites/domains/paths';
 import getEmailForwardingMXServers from 'state/selectors/get-email-forwarding-mx-servers';
 

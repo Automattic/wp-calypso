@@ -12,7 +12,7 @@ import React from 'react';
  */
 import Button from '@automattic/components/button';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import CompactCard from 'components/card/compact';
+import CompactCard from '@automattic/components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
