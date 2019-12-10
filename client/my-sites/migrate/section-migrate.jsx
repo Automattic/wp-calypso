@@ -10,16 +10,13 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 import CardHeading from 'components/card-heading';
-import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import { ProgressBar } from '@automattic/components';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';

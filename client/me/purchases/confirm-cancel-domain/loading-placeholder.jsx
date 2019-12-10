@@ -8,10 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import { cancelPurchase } from 'me/purchases/paths';
-import { Card } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 

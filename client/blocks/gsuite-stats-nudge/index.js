@@ -10,8 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { emailManagement } from 'my-sites/email/paths';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';

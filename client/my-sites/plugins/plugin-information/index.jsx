@@ -12,8 +12,7 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';

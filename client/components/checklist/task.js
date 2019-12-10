@@ -10,10 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
-import { ScreenReaderText } from '@automattic/components';
 import Spinner from 'components/spinner';
 
 class Task extends PureComponent {

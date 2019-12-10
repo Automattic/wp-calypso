@@ -12,10 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
+import { Card, CompactCard, Button } from '@automattic/components';
 import FeatureExample from 'components/feature-example';
-import { Button } from '@automattic/components';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';

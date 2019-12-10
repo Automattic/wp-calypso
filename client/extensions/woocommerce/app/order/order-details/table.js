@@ -12,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
@@ -32,7 +32,6 @@ import {
 import OrderAddItems from './add-items';
 import OrderLineItem from './line-item';
 import OrderTotalRow from './row-total';
-import { ScreenReaderText } from '@automattic/components';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';

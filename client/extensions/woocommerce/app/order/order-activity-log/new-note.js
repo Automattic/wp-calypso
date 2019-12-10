@@ -10,14 +10,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSelect from 'components/forms/form-select';
 import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
-import { ScreenReaderText } from '@automattic/components';
 
 class CreateOrderNote extends Component {
 	static propTypes = {

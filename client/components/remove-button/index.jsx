@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependences

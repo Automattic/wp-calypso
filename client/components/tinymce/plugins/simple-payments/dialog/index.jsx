@@ -18,8 +18,7 @@ import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { Dialog } from '@automattic/components';
-import { Button } from '@automattic/components';
+import { Dialog, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import Navigation from './navigation';
 import ProductForm, {

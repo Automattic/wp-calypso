@@ -13,8 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { errorNotice } from 'state/notices/actions';
 
 /**

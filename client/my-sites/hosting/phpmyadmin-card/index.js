@@ -10,10 +10,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
-import { Button } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';

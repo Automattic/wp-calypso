@@ -9,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import TextareaAutosize from 'components/textarea-autosize';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';

@@ -17,7 +17,7 @@ import {
 	clearError,
 	oauthConnect,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import { Dialog } from '@automattic/components';
+import { Dialog, ProgressBar } from '@automattic/components';
 import {
 	getError,
 	getIsOAuthConnecting,
@@ -27,7 +27,6 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
-import { ProgressBar } from '@automattic/components';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {

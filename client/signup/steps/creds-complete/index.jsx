@@ -11,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import { Card } from '@automattic/components';
-import { Button } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies

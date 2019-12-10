@@ -11,10 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
+import { Dialog, Button, CompactCard } from '@automattic/components';
 import config from 'config';
-import { Button } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';

@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { Card } from '@automattic/components';
+import { Card, Dialog } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
@@ -24,7 +24,6 @@ import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import SectionHeader from 'components/section-header';
-import { Dialog } from '@automattic/components';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';

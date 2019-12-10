@@ -13,9 +13,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
-import { Button } from '@automattic/components';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';

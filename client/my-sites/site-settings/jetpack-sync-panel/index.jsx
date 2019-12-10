@@ -11,9 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { CompactCard, ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
-import { ProgressBar } from '@automattic/components';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';

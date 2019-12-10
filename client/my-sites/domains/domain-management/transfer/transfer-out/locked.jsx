@@ -7,10 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
-import { Button } from '@automattic/components';
 import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';

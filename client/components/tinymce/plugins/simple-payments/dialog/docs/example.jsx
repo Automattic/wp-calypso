@@ -9,8 +9,7 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 

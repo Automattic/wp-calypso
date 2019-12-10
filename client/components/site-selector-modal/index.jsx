@@ -12,8 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
-import { Button } from '@automattic/components';
+import { Dialog, Button } from '@automattic/components';
 import SitesDropdown from 'components/sites-dropdown';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getVisibleSites from 'state/selectors/get-visible-sites';

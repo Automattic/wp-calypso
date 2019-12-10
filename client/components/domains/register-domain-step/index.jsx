@@ -33,7 +33,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import StickyPanel from 'components/sticky-panel';
 import {
@@ -88,7 +88,6 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
-import { Button } from '@automattic/components';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';

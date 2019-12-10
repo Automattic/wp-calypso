@@ -8,8 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import { Button } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies

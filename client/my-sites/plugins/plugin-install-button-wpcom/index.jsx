@@ -12,9 +12,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { getAutomatedTransferStatus, getEligibility } from 'state/automated-transfer/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { transferStates } from 'state/automated-transfer/constants';

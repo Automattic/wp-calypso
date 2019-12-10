@@ -11,8 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import { Card } from '@automattic/components';
-import { Button } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 /**

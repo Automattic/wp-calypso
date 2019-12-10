@@ -10,12 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card, ProgressBar } from '@automattic/components';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
-import { ProgressBar } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';

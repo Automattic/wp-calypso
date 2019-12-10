@@ -12,8 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import Emojify from 'components/emojify';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';

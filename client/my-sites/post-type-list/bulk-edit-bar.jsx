@@ -8,8 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Count from 'components/count';
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';

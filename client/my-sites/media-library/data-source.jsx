@@ -13,8 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';

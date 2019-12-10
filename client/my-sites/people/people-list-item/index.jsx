@@ -12,8 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import {
