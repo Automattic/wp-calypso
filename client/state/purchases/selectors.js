@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,7 @@ import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
+	isJetpackBackup,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { TYPE_PERSONAL } from 'lib/plans/constants';
@@ -65,6 +66,13 @@ export const getByPurchaseId = ( state, purchaseId ) =>
  */
 export const getSitePurchases = ( state, siteId ) =>
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId );
+
+export const siteHasBackupProductPurchase = ( state, siteId ) => {
+	return some(
+		getSitePurchases( state, siteId ),
+		purchase => purchase.active && isJetpackBackup( purchase )
+	);
+};
 
 /***
  * Returns a purchase object that corresponds to that subscription's included domain
