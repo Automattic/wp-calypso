@@ -7,7 +7,8 @@ import { BlockConfiguration } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import { Attributes, Steps } from './types';
+import { Attributes } from './types';
+import { Steps } from '../types';
 import edit from './edit';
 
 export const name = 'automattic/onboarding';
