@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, includes } from 'lodash';
+import { get, empty, includes } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -24,8 +24,13 @@ import SiteSelector from 'components/site-selector';
 import Spinner from 'components/spinner';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'state/ui/selectors';
+import isSiteAutomatedTransfer
+	from 'state/selectors/is-site-automated-transfer';
 import wpLib from 'lib/wp';
 
 /**
@@ -39,6 +44,7 @@ class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
+		startTime: '',
 	};
 
 	componentDidMount() {
@@ -70,32 +76,6 @@ class SectionMigrate extends Component {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
-	getStartTime = () => {
-		if ( ! window.localStorage ) {
-			return;
-		}
-
-		return window.localStorage.getItem( 'siteMigrationStartTime' );
-	};
-
-	setStartTime = () => {
-		if ( ! window.localStorage ) {
-			return;
-		}
-		const localeSlug = getLocaleSlug();
-		const startTime = moment()
-			.locale( localeSlug )
-			.format( 'LT D MMMM' );
-		window.localStorage.setItem( 'siteMigrationStartTime', startTime );
-	};
-
-	clearStartTime = () => {
-		if ( ! window.localStorage ) {
-			return;
-		}
-		window.localStorage.removeItem( 'siteMigrationStartTime' );
-	};
-
 	startMigration = () => {
 		const { sourceSiteId, targetSiteId } = this.props;
 
@@ -104,7 +84,6 @@ class SectionMigrate extends Component {
 		}
 
 		this.setState( { migrationStatus: 'backing-up' } );
-		this.setStartTime();
 
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
@@ -114,11 +93,27 @@ class SectionMigrate extends Component {
 		wpcom
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
-				const { status: migrationStatus, percent, source_blog_id: sourceSiteId } = response;
+				const {
+					status: migrationStatus,
+					percent,
+					source_blog_id: sourceSiteId,
+					created: startTime,
+				} = response;
 				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
 					this.setSourceSiteId( sourceSiteId );
 				}
 				if ( migrationStatus ) {
+					if ( empty( this.state.startTime ) ) {
+						const localizedStartTime = moment( startTime, 'YYYY-MM-DD HH:mm:ss' )
+							.locale( getLocaleSlug() )
+							.format( 'lll' );
+						this.setState( {
+							migrationStatus,
+							percent,
+							startTime: localizedStartTime,
+						} );
+						return;
+					}
 					this.setState( {
 						migrationStatus,
 						percent,
@@ -131,11 +126,11 @@ class SectionMigrate extends Component {
 	};
 
 	isInProgress = () => {
-		return includes( [ 'backing-up', 'restoring' ], this.state.migrationStatus );
+		return includes( ['backing-up', 'restoring'], this.state.migrationStatus );
 	};
 
 	isFinished = () => {
-		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
+		return includes( ['done', 'error', 'unknown'], this.state.migrationStatus );
 	};
 
 	renderCardBusinessFooter() {
@@ -281,12 +276,11 @@ class SectionMigrate extends Component {
 	}
 
 	renderStartTime() {
-		const startTime = this.getStartTime();
-		if ( ! startTime ) {
+		if ( ! empty( this.state.startTime ) ) {
 			return;
 		}
 
-		return <div className="migrate__start-time">Migration started { startTime }</div>;
+		return <div className="migrate__start-time">Migration started { this.state.startTime }</div>;
 	}
 
 	renderProgressBar() {
@@ -345,7 +339,7 @@ class SectionMigrate extends Component {
 	}
 
 	renderProgressList() {
-		const steps = [ 'backing-up', 'restoring' ];
+		const steps = ['backing-up', 'restoring'];
 
 		return (
 			<ul className="migrate__progress-list">
@@ -402,12 +396,10 @@ class SectionMigrate extends Component {
 
 			case 'done':
 				migrationElement = this.renderMigrationComplete();
-				this.clearStartTime();
 				break;
 
 			case 'error':
 				migrationElement = this.renderMigrationError();
-				this.clearStartTime();
 				break;
 
 			case 'unknown':
@@ -448,5 +440,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite }
+	{ navigateToSelectedSourceSite },
 )( localize( SectionMigrate ) );
