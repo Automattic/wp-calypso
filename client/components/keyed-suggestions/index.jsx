@@ -240,12 +240,9 @@ class KeyedSuggestions extends React.Component {
 				// Sort matching so that the best hit is first.
 				const sortedMatching = sortBy( matching, match => {
 					const term = ourTerms[ match ];
-					const hits = [ 100000 ];
-					const nameHit = term.name.toLowerCase().indexOf( filterTerm.toLowerCase() );
-					nameHit >= 0 && hits.push( nameHit );
-					const descriptionHit = term.description.toLowerCase().indexOf( filterTerm.toLowerCase() );
-					descriptionHit >= 0 && hits.push( descriptionHit );
-					return Math.min( ...hits );
+					const termString = term.name + ' ' + term.description;
+					const hitIndex = termString.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					return hitIndex >= 0 && hitIndex;
 				} );
 				// Concatenate mathing and non matchin - this is full set of filters just reordered.
 				filtered[ key ] = [ ...sortedMatching, ...notMatching ];
