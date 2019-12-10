@@ -12,8 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import importerConfig from 'lib/importer/importer-config';
-import Button from '../../../components/button';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 import StepWrapper from '../../step-wrapper';
 
