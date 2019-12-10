@@ -44,8 +44,8 @@
 	align-items: flex-start;
 	margin-bottom: 16px;
 
-	&:last-child {
-		margin-bottom: 0;
+	&:first-of-type {
+		padding-top: 6px;
 	}
 }
 
