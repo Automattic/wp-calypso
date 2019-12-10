@@ -25,5 +25,5 @@ call_user_func(
 		}
 		wp_reset_postdata();
 	},
-	$data
+	$data // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 );

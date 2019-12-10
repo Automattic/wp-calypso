@@ -60,11 +60,14 @@ class Newspack_Blocks_API {
 	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
-	 * @param Array $object  The object info.
+	 * @param array $object The object info.
+	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
+		$featured_image_set = [];
+
 		if ( 0 === $object['featured_media'] ) {
-			return;
+			return false;
 		}
 
 		// Landscape image.
@@ -113,7 +116,8 @@ class Newspack_Blocks_API {
 	/**
 	 * Get thumbnail featured image captions for the rest field.
 	 *
-	 * @param Array $object  The object info.
+	 * @param array $object The object info.
+	 * @return string|null Image caption on success, null on failure.
 	 */
 	public static function newspack_blocks_get_image_caption( $object ) {
 		return (int) $object['featured_media'] > 0 ? trim( wp_get_attachment_caption( $object['featured_media'] ) ) : null;
@@ -122,9 +126,11 @@ class Newspack_Blocks_API {
 	/**
 	 * Get author info for the rest field.
 	 *
-	 * @param Array $object  The object info.
+	 * @param array $object The object info.
+	 * @return array Author data.
 	 */
 	public static function newspack_blocks_get_author_info( $object ) {
+		$author_data = [];
 
 		if ( function_exists( 'coauthors_posts_links' ) ) :
 			$authors = get_coauthors();
@@ -165,7 +171,8 @@ class Newspack_Blocks_API {
 	/**
 	 * Get primary category for the rest field.
 	 *
-	 * @param Array $object  The object info.
+	 * @param array $object The object info.
+	 * @return string Category name.
 	 */
 	public static function newspack_blocks_get_primary_category( $object ) {
 		$category = false;
@@ -173,7 +180,7 @@ class Newspack_Blocks_API {
 		// Use Yoast primary category if set.
 		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
 			$primary_term = new WPSEO_Primary_Term( 'category', $object['id'] );
-			$category_id = $primary_term->get_primary_term();
+			$category_id  = $primary_term->get_primary_term();
 			if ( $category_id ) {
 				$category = get_term( $category_id );
 			}
