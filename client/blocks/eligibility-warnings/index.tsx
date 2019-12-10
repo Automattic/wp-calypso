@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { Button, CompactCard } from '@automattic/components';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
@@ -39,6 +40,7 @@ export const EligibilityWarnings = ( {
 	eligibilityData,
 	isEligible,
 	isPlaceholder,
+	isUnlaunched,
 	onProceed,
 	recordCtaClick,
 	siteId,
@@ -70,10 +72,9 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<CompactCard>
-					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } isUnlaunched={ isUnlaunched } />
 				</CompactCard>
 			) }
 
@@ -145,12 +146,14 @@ const mapStateToProps = ( state: object ) => {
 	const siteId = getSelectedSiteId( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const isUnlaunched = siteId !== null && isUnlaunchedSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
 
 	return {
 		eligibilityData,
 		isEligible,
 		isPlaceholder: ! dataLoaded,
+		isUnlaunched,
 		siteId,
 	};
 };

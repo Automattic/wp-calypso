@@ -18,7 +18,11 @@ import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+function getHoldMessages(
+	context: string | null,
+	isUnlaunched: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Upgrade to a Business plan' ),
@@ -33,11 +37,17 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
-			title: translate( 'Public site needed' ),
-			description: translate(
-				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
-			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+			title: isUnlaunched ? translate( 'Launch your site' ) : translate( 'Public site needed' ),
+			description: isUnlaunched
+				? translate(
+						"This creates the basic layer the fancier stuff is built on. Don't worry, you can share this with everyone only when you're ready."
+				  )
+				: translate(
+						'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
+				  ),
+			supportUrl: isUnlaunched
+				? null
+				: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
@@ -117,12 +127,13 @@ interface ExternalProps {
 	context: string | null;
 	holds: string[];
 	isPlaceholder: boolean;
+	isUnlaunched: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( context, translate );
+export const HoldList = ( { context, holds, isPlaceholder, isUnlaunched, translate }: Props ) => {
+	const holdMessages = getHoldMessages( context, isUnlaunched, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );

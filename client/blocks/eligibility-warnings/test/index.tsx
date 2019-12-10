@@ -40,6 +40,7 @@ function createState( {
 				},
 			},
 		},
+		sites: { items: { [ siteId ]: {} } },
 		ui: { selectedSiteId: siteId },
 	};
 }
