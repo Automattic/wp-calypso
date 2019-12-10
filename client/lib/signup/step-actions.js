@@ -15,7 +15,7 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
-import { recordRegistration, recordSocialRegistration } from 'lib/signup/analytics';
+import { recordRegistration, recordSocialRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,

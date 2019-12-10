@@ -16,7 +16,7 @@ import {
 	RECEIVED_AUTHORIZATION_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
 	RECEIVED_WPCOM_RESPONSE,
-} from './step-types';
+} from 'lib/store-transactions/step-types';
 
 const debug = debugFactory( 'calypso:checkout:payment' );
 

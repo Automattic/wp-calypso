@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { recordPasswordlessRegistration } from 'lib/signup/analytics';
+import { recordPasswordlessRegistration } from 'lib/analytics/signup';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';

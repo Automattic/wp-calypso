@@ -49,7 +49,7 @@ import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transaction
 import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
-import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
+import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
 
 /**
  * Module variables
