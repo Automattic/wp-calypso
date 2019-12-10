@@ -4,13 +4,11 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
-import { assign } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -44,23 +42,20 @@ function getEventHandlers( props, dispatch ) {
 		handlers.trackImpression = () => (
 			<TrackComponentView
 				eventName={ tracks.display.name || 'calypso_jitm_nudge_impression' }
-				eventProperties={ assign( {}, tracks.display.props, eventProps ) }
+				eventProperties={ { ...tracks.display.props, ...eventProps } }
 			/>
 		);
 	}
 
 	handlers.onDismiss = () => {
 		tracks.dismiss &&
-			props.recordTracksEvent(
-				tracks.dismiss.name,
-				assign( {}, tracks.dismiss.props, eventProps )
-			);
+			props.recordTracksEvent( tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps } );
 		dispatch( dismissJITM( currentSite.ID, messagePath, jitm.featureClass ) );
 	};
 
 	handlers.onClick = () => {
 		tracks.click &&
-			props.recordTracksEvent( tracks.click.name, assign( {}, tracks.click.props, eventProps ) );
+			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
 
 		jitm.action && dispatch( jitm.action );
 	};
@@ -71,7 +66,7 @@ function getEventHandlers( props, dispatch ) {
 function useDevTool( { currentSite }, dispatch ) {
 	useEffect( () => {
 		// Do not setup the tool in production
-		if ( process.env.NODE_ENV === 'production' || ! config.isEnabled( 'jitms' ) || ! currentSite ) {
+		if ( process.env.NODE_ENV === 'production' || ! currentSite ) {
 			return;
 		}
 
