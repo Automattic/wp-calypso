@@ -61,17 +61,20 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
+				<WarningList warnings={ warnings } />
+			) }
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 			) }
 
-			{ showThisSiteIsEligibleMessage && (
-				<CompactCard>
-					<div className="eligibility-warnings__no-conflicts">
-						<Gridicon icon="thumbs-up" size={ 24 } />
-						<span>{ getSiteIsEligibleMessage( context, translate ) }</span>
-					</div>
-				</CompactCard>
+			{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
+				<Card className="eligibility-warnings__no-conflicts">
+					<Gridicon icon="thumbs-up" size={ 24 } />
+					<span>
+						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
+					</span>
+				</Card>
 			) }
 
 			{ showWarnings && (
