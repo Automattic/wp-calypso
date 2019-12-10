@@ -7,14 +7,13 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import getSiteOptions from 'state/selectors/get-site-options';
-import { isJetpackSite } from 'state/sites/selectors';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 /**
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {Object} cart object
- * @return {Boolean} True if current user is able to see the checklist
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {boolean} True if current user is able to see the checklist
  */
 export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
