@@ -21,7 +21,7 @@ You can see that `newspack-homepage-articles` is being synced with the Newspack 
 
 Once your changes land on the Newspack side, coordinate with the team (over issues/PRs) to [make a new release](https://github.com/Automattic/newspack-blocks/releases) and once you have the release ID, you can pull the code into here.
 
-While being in `apps/full-site-editing/` directory, you can run:
+While being in `apps/wpcom-editing-experience/` directory, you can run:
 
 ```
 npm run sync:blog-posts-block --release=1.0.0-alpha.17

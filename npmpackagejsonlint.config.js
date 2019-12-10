@@ -13,7 +13,7 @@ module.exports = {
 	overrides: [
 		{
 			patterns: [
-				'./apps/full-site-editing/package.json',
+				'./apps/wpcom-editing-experience/package.json',
 				'./apps/wpcom-block-editor/package.json',
 				'./package.json',
 			],

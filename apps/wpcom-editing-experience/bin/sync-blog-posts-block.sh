@@ -33,8 +33,8 @@ fi
 # make a temp directory
 TEMP_DIR=`mktemp -d`
 CODE=$TEMP_DIR/code
-TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
-ENTRY=./full-site-editing-plugin/blog-posts-block/index.php
+TARGET=./plugin/blog-posts-block/newspack-homepage-articles
+ENTRY=./plugin/blog-posts-block/index.php
 
 # download zip file
 echo Downloading $MODE $NAME

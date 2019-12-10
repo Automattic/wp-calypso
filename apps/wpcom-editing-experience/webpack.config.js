@@ -42,10 +42,10 @@ function getWebpackConfig( env = {}, argv = {} ) {
 	// object provides ability to name the entry point
 	// which enables dynamic file names
 	const entry = {
-		[ scriptName ]: path.join( __dirname, 'full-site-editing-plugin', source ),
+		[ scriptName ]: path.join( __dirname, 'plugin', source ),
 	};
 
-	const outputPath = path.join( __dirname, 'full-site-editing-plugin', packageName, 'dist' );
+	const outputPath = path.join( __dirname, 'plugin', packageName, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 

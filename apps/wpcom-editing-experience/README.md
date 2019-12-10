@@ -2,7 +2,7 @@
 
 This app contains:
 
-* `full-site-editing-plugin` - this is a master Plugin containing:
+* `plugin` - this is a master Plugin containing:
   - `blog-posts-block` Plugin
   - `full-site-editing` Plugin
   - `posts-list-block` Plugin
@@ -12,7 +12,7 @@ This app contains:
 ## File Architecture
 
 ```
-/full-site-editing-plugin
+/full-site-editing
   /dist
     full-site-editing-plugin.css
     full-site-editing-plugin.asset.php
@@ -47,21 +47,21 @@ This app contains:
 
 Note: these scripts must be run from the Calypso _root_ directory.
 
-- `npx lerna run dev --scope='@automattic/full-site-editing'`<br>
+- `npx lerna run dev --scope='@automattic/wpcom-editing-experience'`<br>
 Compiles the plugins and watches for changes.
 
-- `npx lerna run build --scope='@automattic/full-site-editing'`<br>
+- `npx lerna run build --scope='@automattic/wpcom-editing-experience'`<br>
 Compiles and minifies the plugins for production.
 
 Both these scripts will also move all source and PHP files into `/dist` in their respective folders.
 
 The entry point is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
+- __Plugin__: `/plugin/{{plugin-directory}}/index.js`
 
 The output is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/dist`
+- __Plugin__: `/plugin/{{plugin-directory}}/dist`
 
 ### Building Individual _Plugins_
 
@@ -69,7 +69,7 @@ You can also build one of the Plugins separately by appending the plugin slug on
 
 ```
 // Builds the `posts-list-block` Plugin only
-npx lerna run build:posts-list-block --scope='@automattic/full-site-editing'`
+npx lerna run build:posts-list-block --scope='@automattic/wpcom-editing-experience'`
 ```
 
 ## Local Development
@@ -79,9 +79,9 @@ Build (or `run dev`) and symlink the plugin into a local WordPress install.
 E.g.
 
 ```
-npx lerna run build --scope='@automattic/full-site-editing'
+npx lerna run build --scope='@automattic/wpcom-editing-experience'
 
-ln -s ~/Dev/wp-calypso/apps/full-site-editing/full-site-editing-plugin/ ~/Dev/wordpress/wp-content/plugins/full-site-editing-plugin
+ln -s ~/Dev/wp-calypso/apps/wpcom-editing-experience/plugin/ ~/Dev/wordpress/wp-content/plugins/full-site-editing-plugin
 ```
 
 Note that if you are using Docker symlinks will not work. Instead you will need to mount the Plugin as a volume.

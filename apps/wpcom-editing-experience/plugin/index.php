@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Full Site Editing
+ * Plugin Name: WordPress.com Editing Experience
  * Description: Enhances your page creation workflow within the Block Editor.
  * Version: 0.17
  * Author: Automattic

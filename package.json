@@ -292,7 +292,7 @@
 		"test-server": "jest -c=test/server/jest.config.js",
 		"test-server:coverage": "npm run -s test-server -- --coverage",
 		"test-server:watch": "npm run -s test-server -- --watch",
-		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!apps/full-site-editing/**' '!**/node_modules/**'",
+		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!apps/wpcom-editing-experience/**' '!**/node_modules/**'",
 		"typecheck": "tsc --noEmit",
 		"update-deps": "npx rimraf package-lock.json && npm run -s distclean && npm i && replace --silent 'http://' 'https://' . --recursive --include='package-lock.json' && touch -m node_modules",
 		"validate-fallback-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./public/fallback/*.js",

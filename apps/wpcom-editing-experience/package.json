@@ -1,12 +1,12 @@
 {
-	"name": "@automattic/full-site-editing",
+	"name": "@automattic/wpcom-editing-experience",
 	"version": "0.17.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
-		"directory": "apps/full-site-editing"
+		"directory": "apps/wpcom-editing-experience"
 	},
 	"private": true,
 	"author": "Automattic Inc.",
@@ -38,7 +38,7 @@
 		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
 		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
 		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
-		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"clean": "npx rimraf dist plugin/*/dist",
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"

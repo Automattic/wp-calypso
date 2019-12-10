@@ -12,7 +12,7 @@ const babelConfig = {
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 	overrides: [
 		{
-			test: './apps/full-site-editing',
+			test: './apps/wpcom-editing-experience',
 			presets: [ require.resolve( '@automattic/calypso-build/babel/wordpress-element' ) ],
 		},
 	],

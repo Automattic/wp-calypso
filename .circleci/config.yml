@@ -19,7 +19,7 @@ references:
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
-        "$CIRCLE_ARTIFACTS/full-site-editing"   \
+        "$CIRCLE_ARTIFACTS/wpcom-editing-experience" \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -313,29 +313,29 @@ jobs:
             npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
       - store-artifacts-and-test-results
 
-  build-full-site-editing:
+  build-wpcom-editing-experience:
     <<: *defaults
     parallelism: 1
     steps:
       - prepare
       - run:
-          name: Build the Full Site Editing plugin and theme
+          name: Build the WordPress.com editing experience plugin
           command: |
-            npx lerna run build --scope='@automattic/full-site-editing'
-            cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
+            npx lerna run build --scope='@automattic/wpcom-editing-experience'
+            cp -R apps/wpcom-editing-experience/plugin $CIRCLE_ARTIFACTS/wpcom-editing-experience/
       - store-artifacts-and-test-results
-  test-full-site-editing:
+  test-wpcom-editing-experience:
     <<: *defaults
     parallelism: 1
-    working_directory: ~/wp-calypso/apps/full-site-editing
+    working_directory: ~/wp-calypso/apps/wpcom-editing-experience
     steps:
       - prepare
       - run:
-          name: Install Full Site Editing specific test deps
+          name: Install WordPress.com Editing Experience specific test deps
           command: |
             npm ci
       - run:
-          name: Run Full Site Editing client tests
+          name: Run WordPress.com Editing Experience client tests
           command: |
             npm run test:unit
   test-client:
@@ -646,10 +646,10 @@ workflows:
           filters:
             branches:
               ignore: master
-      - build-full-site-editing:
+      - build-wpcom-editing-experience:
           requires:
             - setup
-      - test-full-site-editing:
+      - test-wpcom-editing-experience:
           requires:
             - setup
       - build-notifications:

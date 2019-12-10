@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="full-site-editing">
-	<description>Full Site Editing</description>
+<ruleset name="wpcom-editing-experience">
+	<description>WordPress.com Editing Experience Plugin</description>
 
 	<rule ref="WordPress"/>
 	<rule ref="WordPress-Core"/>
