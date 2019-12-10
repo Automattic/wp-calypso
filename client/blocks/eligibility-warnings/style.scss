@@ -44,14 +44,13 @@
 }
 
 .eligibility-warnings__hold,
-.eligibility-warnings__warning {
+.eligibility-warnings__confirm-box.card {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
 }
 
-.eligibility-warnings__hold,
-.eligibility-warnings__warning {
+.eligibility-warnings__hold {
 	align-items: flex-start;
 	margin-bottom: 16px;
 
@@ -63,19 +62,6 @@
 .eligibility-warnings__hold .gridicon {
 	color: var( --color-neutral-10 );
 	flex-shrink: 0;
-}
-
-.eligibility-warnings__warning > .gridicon {
-	color: var( --color-error );
-	flex-shrink: 0;
-}
-
-.eligibility-warnings__hold .gridicon {
-	color: var( --color-neutral-10 );
-}
-
-.eligibility-warnings__warning .gridicon {
-	color: var( --color-warning-10 );
 }
 
 .eligibility-warnings__message {
