@@ -28,8 +28,8 @@ export default {
 				// Each Menu Items should become a Nav Link Block
 				const navItems = menuItems.map( item => {
 					return createBlock( CORE_NAVIGATION_ITEM_BLOCK_TYPE, {
-						label: item.post_title,
-						title: item.post_title,
+						label: item.post_title || item.title,
+						title: item.post_title || item.title,
 						url: item.url,
 					} );
 				} );
