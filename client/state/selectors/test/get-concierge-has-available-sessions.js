@@ -3,7 +3,7 @@
  */
 import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions';
 
-describe( 'getConciergeHasAvailableSessions()', () => {
+describe( 'getHasAvailableConciergeSessions()', () => {
 	test( 'should be defaulted to null.', () => {
 		expect( getHasAvailableConciergeSessions( {} ) ).toBeNull();
 	} );
