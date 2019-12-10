@@ -105,7 +105,7 @@ class PlansFeaturesMainHeader extends Component {
 
 PlansFeaturesMainHeader.propTypes = {
 	purchases: PropTypes.array,
-	siteId: PropTypes.number,
+	selectedSiteId: PropTypes.number,
 	sitePlanSlug: PropTypes.string,
 	siteSlug: PropTypes.string,
 };
