@@ -10,7 +10,7 @@ const fetch = require( 'jest-fetch-mock' );
 /**
  * Internal dependencies
  */
-import { httpHandler } from '../';
+import { encodeQueryParameters, httpHandler } from '../';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 import { extendAction } from 'state/utils';
 
@@ -188,5 +188,41 @@ describe( '#httpHandler', () => {
 		);
 
 		expect( fetch.mock.calls[ fetch.mock.calls.length - 1 ][ 0 ] ).not.toContain( '?' );
+	} );
+} );
+
+describe( 'encodeQueryParameters()', () => {
+	test( 'empty array to return empty string', () => {
+		expect( encodeQueryParameters( [] ) ).toBe( '' );
+	} );
+
+	test( 'should cast undefined second pair to "undefined" in result', () => {
+		expect( encodeQueryParameters( [ [ 'oat-milk' ] ] ) ).toBe( 'oat-milk=undefined' );
+	} );
+
+	test( 'should combine one string pair to equal left=right', () => {
+		expect( encodeQueryParameters( [ [ 'large', '20oz' ] ] ) ).toBe( 'large=20oz' );
+	} );
+
+	test( 'should join string pairs with a &', () => {
+		expect(
+			encodeQueryParameters( [
+				[ 'small', '12oz' ],
+				[ 'medium', '16oz' ],
+				[ 'large', '20oz' ],
+			] )
+		).toBe( 'small=12oz&medium=16oz&large=20oz' );
+	} );
+
+	test( 'should URI encode strings', () => {
+		expect(
+			encodeQueryParameters( [
+				[ '@home', 'Rest & Relaxation' ],
+				[ '@work', 'Focus & Determination' ],
+				[ '@thebeach', 'Chillin՚ & Grillin՚' ],
+			] )
+		).toBe(
+			'%40home=Rest%20%26%20Relaxation&%40work=Focus%20%26%20Determination&%40thebeach=Chillin%D5%9A%20%26%20Grillin%D5%9A'
+		);
 	} );
 } );
