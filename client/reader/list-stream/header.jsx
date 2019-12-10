@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { isExternal } from 'lib/url';
 import FollowButton from 'blocks/follow-button/button';
 

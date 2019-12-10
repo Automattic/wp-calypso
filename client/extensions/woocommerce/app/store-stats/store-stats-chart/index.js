@@ -10,7 +10,7 @@ import { findIndex, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import { withLocalizedMoment } from 'components/localized-moment';

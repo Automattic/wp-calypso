@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';

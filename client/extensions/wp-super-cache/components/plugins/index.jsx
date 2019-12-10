@@ -10,7 +10,7 @@ import { flowRight, map, mapValues, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

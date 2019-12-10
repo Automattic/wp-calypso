@@ -13,7 +13,7 @@ import { saveAs } from 'browser-filesaver';
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';

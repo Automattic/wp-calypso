@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';

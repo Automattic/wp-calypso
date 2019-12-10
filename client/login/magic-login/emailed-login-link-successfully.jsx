@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { login } from 'lib/paths';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';

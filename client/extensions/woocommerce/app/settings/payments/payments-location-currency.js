@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormLabel from 'components/forms/form-label';

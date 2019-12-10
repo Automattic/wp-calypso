@@ -9,7 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 

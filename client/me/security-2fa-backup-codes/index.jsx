@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';

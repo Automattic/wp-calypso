@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Ribbon from '@automattic/components/ribbon';
 
 /**

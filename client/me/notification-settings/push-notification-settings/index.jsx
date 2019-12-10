@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import Notice from 'components/notice';

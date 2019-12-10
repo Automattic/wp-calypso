@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';

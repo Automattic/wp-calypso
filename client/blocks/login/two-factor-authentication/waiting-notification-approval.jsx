@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 import Divider from '../divider';

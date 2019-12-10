@@ -11,7 +11,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import config from 'config';
 import CreditCard from 'components/credit-card';
 import CreditCardDelete from './credit-card-delete';

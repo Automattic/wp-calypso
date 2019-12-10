@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';

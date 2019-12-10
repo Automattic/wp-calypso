@@ -14,7 +14,7 @@ import React, { Fragment } from 'react';
 import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,

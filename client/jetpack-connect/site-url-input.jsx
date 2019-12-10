@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';

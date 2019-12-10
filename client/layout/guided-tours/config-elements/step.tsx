@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import {

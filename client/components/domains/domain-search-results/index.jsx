@@ -17,7 +17,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ScreenReaderText from '@automattic/components/screen-reader-text';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';

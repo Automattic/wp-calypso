@@ -24,7 +24,7 @@ import {
 	getStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';

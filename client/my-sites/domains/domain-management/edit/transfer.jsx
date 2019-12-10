@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';

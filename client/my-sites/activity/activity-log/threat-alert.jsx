@@ -13,7 +13,7 @@ import classNames from 'classnames';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';
 import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';

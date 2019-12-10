@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';

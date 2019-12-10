@@ -13,7 +13,7 @@ import { get, identity, includes, noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';

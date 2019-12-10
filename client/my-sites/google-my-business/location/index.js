@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies

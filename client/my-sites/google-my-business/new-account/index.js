@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';

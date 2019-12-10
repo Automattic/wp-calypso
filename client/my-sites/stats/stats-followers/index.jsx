@@ -16,7 +16,7 @@ import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsList from '../stats-list';
 import ErrorPanel from '../stats-error';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';

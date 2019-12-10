@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import PostEditButton from 'blocks/post-edit-button';
 
 export default class PostEditButtonExample extends React.PureComponent {

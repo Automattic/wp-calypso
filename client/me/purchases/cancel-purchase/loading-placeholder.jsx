@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';

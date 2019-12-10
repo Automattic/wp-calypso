@@ -14,7 +14,7 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
 import Ribbon from '@automattic/components/ribbon';

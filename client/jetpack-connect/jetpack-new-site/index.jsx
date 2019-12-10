@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import JetpackLogo from 'components/jetpack-logo';

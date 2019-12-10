@@ -7,7 +7,7 @@ Cards are used as containers to group similar information and tasks together to 
 ## Usage
 
 ```jsx
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 
 render: function() {

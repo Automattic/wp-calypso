@@ -12,7 +12,7 @@ import { isFunction } from 'lodash';
  */
 import DocService from './service';
 import DocumentHead from 'components/data/document-head';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
 

@@ -11,7 +11,7 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import CompactCard from '@automattic/components/card/compact';
 import DocumentHead from 'components/data/document-head';

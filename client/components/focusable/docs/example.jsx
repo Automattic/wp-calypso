@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';

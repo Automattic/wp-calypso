@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 
 export default class extends React.PureComponent {
 	static displayName = 'DevWelcome';

@@ -10,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';

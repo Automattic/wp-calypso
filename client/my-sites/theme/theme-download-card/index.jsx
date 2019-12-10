@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 /**

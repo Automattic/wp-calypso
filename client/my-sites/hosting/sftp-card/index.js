@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import { Button } from '@automattic/components';

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

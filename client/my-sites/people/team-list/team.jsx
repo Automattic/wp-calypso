@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';

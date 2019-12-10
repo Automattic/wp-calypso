@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';

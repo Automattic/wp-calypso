@@ -12,7 +12,7 @@ import page from 'page';
  */
 
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';

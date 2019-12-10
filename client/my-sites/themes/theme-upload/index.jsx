@@ -12,7 +12,7 @@ import { includes, find, isEmpty, flowRight } from 'lodash';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import EmptyContent from 'components/empty-content';
 import ProgressBar from '@automattic/components/progress-bar';

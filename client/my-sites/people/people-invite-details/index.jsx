@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import HeaderCake from 'components/header-cake';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
 import { Button } from '@automattic/components';

@@ -13,7 +13,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 import { Button } from '@automattic/components';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';

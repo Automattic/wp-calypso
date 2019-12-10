@@ -11,7 +11,7 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';

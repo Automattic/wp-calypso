@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Dialog, Suggestions } from '@automattic/components';
 import SearchCard from 'components/search-card';
 import SectionHeader from 'components/section-header';

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 
 class Checklist extends PureComponent {
 	static propTypes = {

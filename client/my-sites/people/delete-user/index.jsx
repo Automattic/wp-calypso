@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import Gridicon from 'components/gridicon';

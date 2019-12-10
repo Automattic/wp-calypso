@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ActivityLogRewindToggle from 'my-sites/activity/activity-log/activity-log-rewind-toggle';
 import getRewindState from 'state/selectors/get-rewind-state';
 import { submitSignupStep } from 'state/signup/progress/actions';

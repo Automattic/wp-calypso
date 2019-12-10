@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import CreditCardFormFieldsLoadingPlaceholder from 'components/credit-card-form-fields/loading-placeholder';
 import FormButton from 'components/forms/form-button';

@@ -10,7 +10,7 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import EmbedDialog from '../dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 

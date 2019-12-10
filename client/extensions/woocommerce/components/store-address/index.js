@@ -14,7 +14,7 @@ import { find, isEmpty } from 'lodash';
  */
 import AddressView from 'woocommerce/components/address-view';
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import {

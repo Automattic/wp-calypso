@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
 import ActionCard from 'components/action-card';
 import { Button } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';

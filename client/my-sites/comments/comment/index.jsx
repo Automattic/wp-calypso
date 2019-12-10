@@ -12,7 +12,7 @@ import { debounce, get, isEqual, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentEdit from 'my-sites/comments/comment/comment-edit';

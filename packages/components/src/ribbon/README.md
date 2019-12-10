@@ -10,7 +10,7 @@ place in our hearts.
 #### How to use:
 
 ```js
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Ribbon from '@automattic/components/ribbon';
 
 function MyCard() {

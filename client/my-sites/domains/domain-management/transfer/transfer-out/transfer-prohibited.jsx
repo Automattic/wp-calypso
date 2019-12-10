@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 

@@ -13,7 +13,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
  */
 import { isHttps } from 'lib/url';
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';

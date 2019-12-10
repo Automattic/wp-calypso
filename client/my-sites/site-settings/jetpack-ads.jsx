@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';

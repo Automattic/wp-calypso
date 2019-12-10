@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,

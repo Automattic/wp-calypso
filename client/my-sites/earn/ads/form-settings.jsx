@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSectionHeading from 'components/forms/form-section-heading';

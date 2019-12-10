@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';

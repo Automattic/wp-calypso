@@ -14,7 +14,7 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import compareProps from 'lib/compare-props';
 import Month from './month';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteOption } from 'state/sites/selectors';

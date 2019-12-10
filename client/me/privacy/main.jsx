@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';

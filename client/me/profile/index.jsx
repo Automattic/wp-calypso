@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import EditGravatar from 'blocks/edit-gravatar';
 import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';

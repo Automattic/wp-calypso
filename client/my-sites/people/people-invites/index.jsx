@@ -18,7 +18,7 @@ import FormattedHeader from 'components/formatted-header';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { Dialog } from '@automattic/components';

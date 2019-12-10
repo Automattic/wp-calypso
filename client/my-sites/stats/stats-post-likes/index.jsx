@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Count from 'components/count';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostLikes from 'components/data/query-post-likes';

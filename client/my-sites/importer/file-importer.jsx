@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';

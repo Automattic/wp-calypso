@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import { Button } from '@automattic/components';

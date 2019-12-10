@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import Search from 'components/search';
 import PostSuggestions from './post-suggestions';
 

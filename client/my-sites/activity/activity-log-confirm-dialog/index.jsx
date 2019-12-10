@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button } from '@automattic/components';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormCheckbox from 'components/forms/form-checkbox';
 import Gridicon from 'components/gridicon';

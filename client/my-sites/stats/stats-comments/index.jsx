@@ -12,7 +12,7 @@ import { get, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';

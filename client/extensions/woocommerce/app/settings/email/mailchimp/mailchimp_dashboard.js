@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

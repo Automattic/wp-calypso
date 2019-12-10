@@ -36,7 +36,7 @@ import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 //Form components
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';

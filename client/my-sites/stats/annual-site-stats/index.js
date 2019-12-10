@@ -10,7 +10,7 @@ import { find, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
