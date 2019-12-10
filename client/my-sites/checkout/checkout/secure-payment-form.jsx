@@ -70,7 +70,7 @@ export class SecurePaymentForm extends Component {
 		this.setInitialPaymentDetails();
 	}
 
-	componentDidUpdate( prevProps ) {
+	async componentDidUpdate( prevProps ) {
 		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
 			this.setInitialPaymentDetails();
 		}
@@ -226,7 +226,7 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	handleTransactionStep( { cart, selectedSite, transaction } ) {
+	async handleTransactionStep( { cart, selectedSite, transaction } ) {
 		const step = transaction.step;
 
 		debug( 'transaction step: ' + step.name );
