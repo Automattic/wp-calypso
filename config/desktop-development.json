@@ -97,7 +97,6 @@
 		"oauth": true,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans/jetpack-scan": false,
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
