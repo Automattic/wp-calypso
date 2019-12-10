@@ -15,7 +15,7 @@ import Gridicon from 'components/gridicon';
 
 import Button from '@automattic/components/button';
 import Card from '@automattic/components/card';
-import Ribbon from 'components/ribbon';
+import Ribbon from '@automattic/components/ribbon';
 
 /**
  * Style dependencies
