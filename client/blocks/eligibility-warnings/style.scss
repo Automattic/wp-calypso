@@ -25,10 +25,6 @@
 	}
 }
 
-.eligibility-warnings .card {
-	margin: 0;
-}
-
 .eligibility-warnings .banner {
 	margin-bottom: 16px;
 	.banner__icon-circle {
@@ -38,7 +34,7 @@
 }
 
 .eligibility-warnings__hold,
-.eligibility-warnings__confirm-box.card {
+.eligibility-warnings__confirm-box {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
@@ -86,7 +82,7 @@
 	align-self: center;
 }
 
-.eligibility-warnings__no-conflicts.card {
+.eligibility-warnings__no-conflicts {
 	align-items: center;
 	display: flex;
 

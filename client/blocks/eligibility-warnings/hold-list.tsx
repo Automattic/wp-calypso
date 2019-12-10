@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
@@ -139,8 +139,8 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 						) }
 					</Notice>
 				) }
-			<Card
-				className={ classNames( 'eligibility-warnings__hold-list', {
+			<div
+				className={ classNames( {
 					'eligibility-warnings__hold-list-dim': blockingHold,
 				} ) }
 				data-testid="HoldList-Card"
@@ -190,7 +190,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 							</div>
 						)
 					) }
-			</Card>
+			</div>
 		</>
 	);
 };
