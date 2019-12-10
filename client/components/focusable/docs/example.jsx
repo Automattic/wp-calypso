@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 class FocusableExample extends React.PureComponent {
 	static displayName = 'Focusable';

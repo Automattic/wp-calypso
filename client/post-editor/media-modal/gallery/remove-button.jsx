@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 

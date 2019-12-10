@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependencies

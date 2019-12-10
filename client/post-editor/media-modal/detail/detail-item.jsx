@@ -22,7 +22,7 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import { Button } from '@automattic/components';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';

@@ -16,7 +16,7 @@ import { Card } from '@automattic/components';
 import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import Notice from 'components/notice';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import {
 	getStatus,
 	isApiReady,

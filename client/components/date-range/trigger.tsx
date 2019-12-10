@@ -12,7 +12,7 @@ import { Moment } from 'moment';
  */
 import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 interface Props {
 	startDate: Date | Moment | null | undefined;

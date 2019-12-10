@@ -16,7 +16,7 @@ import { isNumber, noop, trim } from 'lodash';
 import { Button } from '@automattic/components';
 import { Card } from '@automattic/components';
 import FormTextArea from 'components/forms/form-textarea';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,

@@ -17,7 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSelect from 'components/forms/form-select';
 import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
-import ScreenReaderText from '@automattic/components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 class CreateOrderNote extends Component {
 	static propTypes = {
