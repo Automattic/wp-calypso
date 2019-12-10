@@ -61,20 +61,20 @@ function render_navigation_menu_block( $attributes ) {
 
 	$container_class .= $class;
 	$toggle_class    .= $class;
+	$menu_location    = 'menu-1';
 
-	$menu       = wp_nav_menu(
+	$menu = wp_nav_menu(
 		array(
 			'echo'           => false,
 			'fallback_cb'    => 'get_fallback_navigation_menu',
 			'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-label="submenu">%3$s</ul>',
 			'menu_class'     => 'main-menu footer-menu',
-			'theme_location' => 'menu-1',
+			'theme_location' => $menu_location,
 			'container'      => '',
 		)
 	);
-	$locations  = get_nav_menu_locations();
-	$menu_obj   = wp_get_nav_menu_object( $locations['menu-1'] );
-	$menu_items = wp_get_nav_menu_items( $menu_obj->term_id );
+
+	$menu_items = get_nav_menu_items_data( $menu_location );
 
 	ob_start();
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -103,6 +103,43 @@ function render_navigation_menu_block( $attributes ) {
 	endif;
 	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	return ob_get_clean();
+}
+
+/**
+ * Gets data about the Nav items for a given menu location.
+ * Aims to mirror usage of calling `wp_nav_menu()` without the
+ * `menu` argument. This is to ensure we're getting the exact same
+ * Menu items to pass to the editor for use in the transform
+ * to the core/navigation Block.
+ *
+ * See:
+ * https://core.trac.wordpress.org/browser/tags/5.3/src/wp-includes/nav-menu-template.php#L120.
+ *
+ * @param string $menu_location the name of the theme location for the menu.
+ * @return bool|array false or an array of nav menu objects.
+ */
+function get_nav_menu_items_data( string $menu_location ) {
+	if ( ! $menu_location ) {
+		return false;
+	}
+
+	// Access all Nav Menu Theme locations.
+	$locations = get_nav_menu_locations();
+
+	if ( empty( $locations ) || empty( $locations[ $menu_location ] ) ) {
+		return false;
+	}
+
+	// Get the full Nav Menu object from the location
+	// https://codex.wordpress.org/Function_Reference/wp_get_nav_menu_object.
+	$menu_obj = wp_get_nav_menu_object( $locations[ $menu_location ] );
+
+	if ( empty( $menu_obj ) || empty( $menu_obj->term_id ) ) {
+		return false;
+	}
+
+	// Retrieve data on the individual Menu items.
+	return wp_get_nav_menu_items( $menu_obj->term_id );
 }
 
 /**
