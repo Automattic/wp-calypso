@@ -28,7 +28,7 @@ import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
