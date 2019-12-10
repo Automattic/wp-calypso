@@ -63,7 +63,7 @@ registerBlockType( metadata.name, {
 					<Notice
 						actions={ [
 							{
-								label: __( 'Upgrade Block', 'full-site-editing' ),
+								label: __( 'Update Block', 'full-site-editing' ),
 								onClick: upgradeBlock,
 							},
 						] }
@@ -71,7 +71,7 @@ registerBlockType( metadata.name, {
 						isDismissible={ false }
 					>
 						{ __(
-							'An improved version of this block is available. Upgrade for a better, more natural way to manage your blog post listings.',
+							'An improved version of this block is available. Update for a better, more natural way to manage your blog post listings.',
 							'full-site-editing'
 						) }
 					</Notice>
