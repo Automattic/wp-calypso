@@ -52,14 +52,14 @@ const NavigationMenuEdit = ( {
 					onRemove={ () => setUpgradeNudgeVisible( false ) }
 					actions={ [
 						{
-							label: __( 'Upgrade Block', 'full-site-editing' ),
+							label: __( 'Update Block', 'full-site-editing' ),
 							onClick: upgradeToCoreNavigationBlock,
 						},
 					] }
 				>
 					<p>
 						{ __(
-							'An improved version of this block is now available. Upgrade and then preview before updating your site.',
+							'An improved version of this block is now available. Update and then preview before updating your site.',
 							'full-site-editing'
 						) }
 					</p>
