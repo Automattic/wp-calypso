@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times } from 'lodash';
+import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
 import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
@@ -144,6 +144,10 @@ export class List extends React.Component {
 		);
 	}
 
+	filterOutWpcomDomains( domains ) {
+		return domains.filter( domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
 			if ( this.props.renderAllSites ) {
@@ -164,17 +168,23 @@ export class List extends React.Component {
 			return null;
 		}
 
-		if ( this.props.isDomainOnly && ! this.props.renderAllSites ) {
-			return (
-				<Main>
-					<DocumentHead title={ this.props.translate( 'Settings' ) } />
-					<SidebarNavigation />
-					<DomainOnly
-						hasNotice={ this.isFreshDomainOnlyRegistration() }
-						siteId={ this.props.selectedSite.ID }
-					/>
-				</Main>
-			);
+		if ( this.props.isDomainOnly ) {
+			if ( ! this.props.renderAllSites ) {
+				return (
+					<Main>
+						<DocumentHead title={ this.props.translate( 'Settings' ) } />
+						<SidebarNavigation />
+						<DomainOnly
+							hasNotice={ this.isFreshDomainOnlyRegistration() }
+							siteId={ this.props.selectedSite.ID }
+						/>
+					</Main>
+				);
+			}
+
+			if ( isEmpty( this.filterOutWpcomDomains( this.props.domains ) ) ) {
+				return null;
+			}
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
@@ -448,11 +458,10 @@ export class List extends React.Component {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.filter(
-					domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
-			  )
-			: this.props.domains;
+		const domains =
+			this.props.selectedSite.jetpack || ( this.props.renderAllSites && this.props.isDomainOnly )
+				? this.filterOutWpcomDomains( this.props.domains )
+				: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
 			return (
