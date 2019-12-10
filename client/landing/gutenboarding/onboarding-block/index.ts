@@ -14,7 +14,7 @@ export const name = 'automattic/onboarding';
 
 export interface Attributes {
 	align: 'full';
-	step: Steps.IntentGathering;
+	step: Steps;
 }
 
 export const settings: BlockConfiguration< Attributes > = {
