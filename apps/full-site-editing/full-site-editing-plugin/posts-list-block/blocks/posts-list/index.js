@@ -71,7 +71,7 @@ registerBlockType( metadata.name, {
 						isDismissible={ false }
 					>
 						{ __(
-							'An improved version of this block is available. Update for a better, more natural way to manage your blog post listings.',
+							'An improved version of this block is available. Update for a better, more natural way to manage your blog post listings. There may be small visual changes.',
 							'full-site-editing'
 						) }
 					</Notice>
