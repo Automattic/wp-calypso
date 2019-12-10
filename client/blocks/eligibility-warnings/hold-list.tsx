@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
+import { identity, map } from 'lodash';
 import React from 'react';
 
 /**
@@ -219,5 +219,8 @@ function isHardBlockingHoldType(
 ): hold is keyof ReturnType< typeof getBlockingMessages > {
 	return blockingMessages.hasOwnProperty( hold );
 }
+
+export const hasBlockingHold = ( holds: string[] ) =>
+	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
 export default localize( HoldList );

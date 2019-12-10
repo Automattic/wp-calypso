@@ -17,7 +17,7 @@ import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { Button, Card } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import HoldList from './hold-list';
+import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
 
 /**
@@ -57,10 +57,12 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
+				<WarningList warnings={ warnings } />
+			) }
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 			) }
-			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
 			{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
 				<Card className="eligibility-warnings__no-conflicts">
