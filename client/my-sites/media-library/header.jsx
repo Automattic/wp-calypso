@@ -20,7 +20,7 @@ import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-action
 import Card from 'components/card';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import StickyPanel from 'components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {

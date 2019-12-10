@@ -32,7 +32,7 @@ import {
 import OrderAddItems from './add-items';
 import OrderLineItem from './line-item';
 import OrderTotalRow from './row-total';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';

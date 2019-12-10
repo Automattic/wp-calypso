@@ -90,7 +90,7 @@ export { default as ProgressBar } from 'components/progress-bar';
 export { default as Ranges } from 'components/forms/range';
 export { default as Rating } from 'components/rating';
 export { default as Ribbon } from 'components/ribbon';
-export { default as ScreenReaderText } from 'components/screen-reader-text';
+export { default as ScreenReaderText } from '@automattic/components/screen-reader-text';
 export { default as Search } from 'components/search';
 export { default as SearchCard } from 'components/search-card';
 export { default as SectionHeader } from 'components/section-header';

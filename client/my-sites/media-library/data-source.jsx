@@ -14,7 +14,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';

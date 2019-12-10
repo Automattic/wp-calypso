@@ -16,7 +16,7 @@ import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importer/url-validation';

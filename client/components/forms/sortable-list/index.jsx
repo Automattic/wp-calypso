@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import { hasTouch } from 'lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );

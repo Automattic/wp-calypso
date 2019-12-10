@@ -11,7 +11,7 @@ This idea was pulled from WordPress core, for more background & technical detail
 ```js
 import Button from 'components/button';
 import Gridicon from 'components/gridicons';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 
 function ScreenReaderTextExample() {
 	return (

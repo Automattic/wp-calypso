@@ -14,7 +14,7 @@ import { noop } from 'lodash';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 
 /**
  * Style dependencies

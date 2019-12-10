@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '@automattic/components/screen-reader-text';
 import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
