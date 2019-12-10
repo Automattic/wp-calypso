@@ -33,13 +33,11 @@ interface ExternalProps {
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
-	backUrl,
 	context,
 	eligibilityData,
 	isEligible,
 	isPlaceholder,
 	onProceed,
-	onCancel,
 	siteId,
 	translate,
 }: Props ) => {
@@ -75,46 +73,35 @@ export const EligibilityWarnings = ( {
 					</div>
 				) }
 
-				<div className="eligibility-warnings__confirm-box">
-					<div className="eligibility-warnings__confirm-text">
-						{ ! isEligible && (
-							<>
-								{ translate( 'Please clear all issues above to proceed.' ) }
-								&nbsp;
-							</>
-						) }
-						{ isEligible && warnings.length > 0 && (
-							<>
-								{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
-								&nbsp;
-							</>
-						) }
-						{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
-							components: {
-								a: (
-									<a
-										href="https://wordpress.com/help/contact"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</div>
-					<div className="eligibility-warnings__confirm-buttons">
-						<Button href={ backUrl } onClick={ onCancel }>
-							{ translate( 'Cancel' ) }
-						</Button>
-
-						<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
-							{ translate( 'Proceed' ) }
-						</Button>
-					</div>
+				<div className="eligibility-warnings__confirm-buttons">
+					<Button
+						primary={ true }
+						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
+						onClick={ onProceed }
+					>
+						{ getProceedButtonText( listHolds, translate ) }
+					</Button>
 				</div>
 			</Card>
 		</div>
 	);
 };
+
+function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
+	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
+		return translate( 'Upgrade and continue' );
+	}
+
+	return translate( 'Continue' );
+}
+
+function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
+	const canHandleHoldsAutomatically =
+		holds.length <= 2 &&
+		holds.every( hold => [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ].includes( hold ) );
+
+	return ! canHandleHoldsAutomatically && ! isEligible;
+}
 
 EligibilityWarnings.defaultProps = {
 	onProceed: noop,
@@ -135,8 +122,6 @@ const mapStateToProps = ( state: object ) => {
 };
 
 const mapDispatchToProps = {
-	trackCancel: ( eventProperties = {} ) =>
-		recordTracksEvent( 'calypso_automated_transfer_eligibility_click_cancel', eventProperties ),
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
 };
@@ -155,9 +140,6 @@ function mergeProps(
 		context = 'hosting';
 	}
 
-	const onCancel = () => {
-		dispatchProps.trackCancel( { context } );
-	};
 	const onProceed = () => {
 		ownProps.onProceed();
 		dispatchProps.trackProceed( { context } );
@@ -167,7 +149,6 @@ function mergeProps(
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
-		onCancel,
 		onProceed,
 		context,
 	};
