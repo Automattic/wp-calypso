@@ -37,13 +37,13 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
-			title: isUnlaunched ? translate( 'Launch your site' ) : translate( 'Public site needed' ),
+			title: isUnlaunched ? translate( 'Launch your site' ) : translate( 'Make site public' ),
 			description: isUnlaunched
 				? translate(
 						"This creates the basic layer the fancier stuff is built on. Don't worry, you can share this with everyone only when you're ready."
 				  )
 				: translate(
-						'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
+						"Change's your site's Privacy settings to \"Hidden\". Don't worry, you can share this with everyone only when you're ready."
 				  ),
 			supportUrl: isUnlaunched
 				? null
