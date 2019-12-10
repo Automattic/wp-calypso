@@ -1,4 +1,4 @@
 export enum Steps {
-	IntentGathering = 0,
+	IntentGathering,
 	DesignSelection,
 }
