@@ -16,7 +16,7 @@ import Gridicon from 'components/gridicon';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 

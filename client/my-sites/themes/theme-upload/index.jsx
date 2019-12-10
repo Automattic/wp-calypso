@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import { Card } from '@automattic/components';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import EmptyContent from 'components/empty-content';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { Button } from '@automattic/components';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';

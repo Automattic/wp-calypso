@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import { useLocalizedMoment } from 'components/localized-moment';

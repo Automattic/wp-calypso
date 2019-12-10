@@ -15,7 +15,7 @@ import { Card } from '@automattic/components';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';

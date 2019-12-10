@@ -19,7 +19,7 @@ import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';

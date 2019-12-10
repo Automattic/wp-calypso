@@ -27,7 +27,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {

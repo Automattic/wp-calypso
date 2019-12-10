@@ -18,7 +18,7 @@ import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import { untrailingslashit } from 'lib/route';
 import { Button } from '@automattic/components';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import ThankYou from './thank-you';
 
 const INSTALL_STATE_COMPLETE = 1;

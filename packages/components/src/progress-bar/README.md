@@ -8,7 +8,7 @@ Once this component is mounted, it will always progress forward, never backward:
 #### How to use:
 
 ```js
-import ProgressBar from '@automattic/components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 
 render() {
 	return <ProgressBar
