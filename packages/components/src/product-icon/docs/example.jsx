@@ -24,22 +24,22 @@ function ProductIconExample() {
 			<h3>Plan Icons</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
-					<ProductIcon slug="free" />
+					<ProductIcon slug="wpcom-free" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="blogger" />
+					<ProductIcon slug="wpcom-blogger" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="personal" />
+					<ProductIcon slug="wpcom-personal" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="premium" />
+					<ProductIcon slug="wpcom-premium" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="business" />
+					<ProductIcon slug="wpcom-business" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="ecommerce" />
+					<ProductIcon slug="wpcom-ecommerce" />
 				</div>
 			</div>
 

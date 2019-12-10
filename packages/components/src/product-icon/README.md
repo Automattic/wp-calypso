@@ -15,7 +15,7 @@ import { ProductIcon } from '@automattic/components';
 export default function MyComponent() {
     return (
         <div className="my-component">
-            <ProductIcon slug="free" />
+            <ProductIcon slug="wpcom-free" />
             <ProductIcon slug="jetpack-professional" />
             <ProductIcon slug="jetpack-backup-daily" />
         </div>
@@ -30,18 +30,18 @@ export default function MyComponent() {
 
 Plan or product slug. Can be one of the following:
 
-- `free`
-- `blogger`
-- `personal`
-- `premium`
-- `business`
-- `ecommerce`
+- `jetpack-backup-daily`
+- `jetpack-backup-realtime`
 - `jetpack-free`
 - `jetpack-personal`
 - `jetpack-premium`
 - `jetpack-professional`
-- `jetpack-backup-daily`
-- `jetpack-backup-realtime`
+- `wpcom-blogger`
+- `wpcom-business`
+- `wpcom-ecommerce`
+- `wpcom-free`
+- `wpcom-personal`
+- `wpcom-premium`
 
 ### `className`
 
