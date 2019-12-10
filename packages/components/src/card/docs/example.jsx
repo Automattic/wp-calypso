@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import Card from '..';
+import CompactCard from '../compact';
 
 Card.displayName = 'Card';
 CompactCard.displayName = 'CompactCard';

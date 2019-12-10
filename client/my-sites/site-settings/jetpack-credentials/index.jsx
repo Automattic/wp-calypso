@@ -9,7 +9,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CredentialsConfigured from './credentials-configured';
 import Notice from 'components/notice';
 import QueryRewindState from 'components/data/query-rewind-state';

@@ -10,10 +10,9 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
-import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';

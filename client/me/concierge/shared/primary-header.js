@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import GMClosureNotice from '../shared/gm-closure-notice';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';

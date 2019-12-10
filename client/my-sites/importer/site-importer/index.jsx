@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 
 import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';

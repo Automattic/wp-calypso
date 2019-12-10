@@ -17,7 +17,7 @@ import { current as currentPage } from 'page';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
 import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';

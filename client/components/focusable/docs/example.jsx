@@ -9,11 +9,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, ScreenReaderText } from '@automattic/components';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';
-import ScreenReaderText from 'components/screen-reader-text';
 
 class FocusableExample extends React.PureComponent {
 	static displayName = 'Focusable';

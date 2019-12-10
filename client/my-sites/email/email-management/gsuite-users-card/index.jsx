@@ -10,9 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, CompactCard } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';

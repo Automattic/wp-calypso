@@ -16,7 +16,7 @@ import moment from 'moment';
  */
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';

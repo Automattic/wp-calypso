@@ -10,9 +10,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, CompactCard } from '@automattic/components';
 import config from 'config';
-import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';

@@ -13,8 +13,7 @@ import { isEmpty, flowRight } from 'lodash';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import ProgressBar from 'components/progress-bar';
+import { Card, ProgressBar } from '@automattic/components';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';

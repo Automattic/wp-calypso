@@ -18,7 +18,7 @@ import {
 import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
 import {

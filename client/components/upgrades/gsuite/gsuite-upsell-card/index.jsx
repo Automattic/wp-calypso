@@ -9,8 +9,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
@@ -99,10 +98,7 @@ const GSuiteUpsellCard = ( {
 			</CompactCard>
 
 			<CompactCard>
-				<GSuiteUpsellProductDetails
-					domain={ domain }
-					productSlug={ productSlug }
-				/>
+				<GSuiteUpsellProductDetails domain={ domain } productSlug={ productSlug } />
 
 				<GSuiteNewUserList
 					extraValidation={ user => user }
@@ -139,5 +135,5 @@ GSuiteUpsellCard.propTypes = {
 };
 
 export default connect( null, {
-	recordTracksEvent: recordTracksEventAction
+	recordTracksEvent: recordTracksEventAction,
 } )( GSuiteUpsellCard );

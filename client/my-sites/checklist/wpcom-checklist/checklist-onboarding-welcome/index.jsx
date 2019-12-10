@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { hideOnboardingWelcomePrompt } from 'state/inline-help/actions';

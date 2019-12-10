@@ -8,8 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import { purchasesRoot } from 'me/purchases/paths';
 
 /**

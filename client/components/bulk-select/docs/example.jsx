@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import BulkSelect from 'components/bulk-select';
 
 export default class extends React.Component {

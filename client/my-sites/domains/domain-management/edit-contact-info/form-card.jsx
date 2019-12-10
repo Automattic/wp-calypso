@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import notices from 'notices';
@@ -21,7 +21,6 @@ import { successNotice } from 'state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import { Dialog } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import { requestWhois, saveWhois } from 'state/domains/management/actions';

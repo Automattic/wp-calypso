@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Popover from 'components/popover';

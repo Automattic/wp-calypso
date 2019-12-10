@@ -12,7 +12,7 @@ import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
  */
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
-import Button from '../../components/button';
+import { Button } from '@automattic/components';
 import {
 	useStripe,
 	createStripePaymentMethod,

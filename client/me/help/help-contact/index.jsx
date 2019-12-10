@@ -14,7 +14,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import Main from 'components/main';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
 import GMClosureNotice from 'me/help/gm-closure-notice';

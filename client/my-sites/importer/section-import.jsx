@@ -10,7 +10,7 @@ import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';

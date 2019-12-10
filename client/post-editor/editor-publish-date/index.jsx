@@ -13,7 +13,7 @@ import { intersection } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import PostScheduler from './post-scheduler';
 import * as utils from 'state/posts/utils';

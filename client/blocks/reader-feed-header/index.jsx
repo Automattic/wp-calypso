@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ReaderFollowButton from 'reader/follow-button';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import HeaderBack from 'reader/header-back';

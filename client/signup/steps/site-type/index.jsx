@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';

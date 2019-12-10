@@ -7,8 +7,8 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from '..';
+import Card from '../../card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 

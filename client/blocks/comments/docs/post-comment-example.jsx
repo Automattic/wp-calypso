@@ -9,7 +9,7 @@ import { repeat } from 'lodash';
  */
 import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 const mockComment = {
 	author: {

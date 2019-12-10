@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
 import WebPreview from 'components/web-preview';

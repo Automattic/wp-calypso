@@ -21,7 +21,7 @@ import {
 	getTotalProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
 import Count from 'components/count';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
 import EmptyContent from 'components/empty-content';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';

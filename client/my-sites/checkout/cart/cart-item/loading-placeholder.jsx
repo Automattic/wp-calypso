@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const CartItemLoadingPlaceholder = () => (
 	<div className="cart-item__loading-placeholder cart-item">

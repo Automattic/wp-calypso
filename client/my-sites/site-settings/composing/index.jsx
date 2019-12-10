@@ -11,8 +11,7 @@ import { connect } from 'react-redux';
  */
 import Latex from './latex';
 import Shortcodes from './shortcodes';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard } from '@automattic/components';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';

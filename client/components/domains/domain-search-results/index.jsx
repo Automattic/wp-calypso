@@ -17,8 +17,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
-import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Card, ScreenReaderText } from '@automattic/components';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -329,7 +328,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ hideSitePreview }
-)( localize( DomainSearchResults ) );
+export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );

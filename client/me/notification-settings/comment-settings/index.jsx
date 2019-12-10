@@ -13,7 +13,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import SettingsForm from 'me/notification-settings/settings-form';
 import QueryUserDevices from 'components/data/query-user-devices';

@@ -11,9 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Card, Button, CompactCard } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';

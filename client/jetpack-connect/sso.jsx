@@ -13,11 +13,8 @@ import { localize } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'lib/route';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard, Dialog } from '@automattic/components';
 import config from 'config';
-import { Dialog } from '@automattic/components';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';

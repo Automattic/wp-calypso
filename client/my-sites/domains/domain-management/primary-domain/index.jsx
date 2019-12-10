@@ -12,9 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
 import Main from 'components/main';
-import Card from 'components/card/compact';
+import { Button, CompactCard as Card } from '@automattic/components';
 import Header from 'my-sites/domains/domain-management/components/header';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import Notice from 'components/notice';

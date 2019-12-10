@@ -21,7 +21,7 @@ import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import EllipsisMenu from 'components/ellipsis-menu';
 import Gridicon from 'components/gridicon';
 import HappychatButton from 'components/happychat/button';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';

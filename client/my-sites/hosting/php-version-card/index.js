@@ -8,8 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';

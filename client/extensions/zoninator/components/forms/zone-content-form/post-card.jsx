@@ -11,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostPreviewUrl } from 'state/posts/selectors';

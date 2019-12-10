@@ -18,7 +18,7 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
