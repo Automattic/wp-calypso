@@ -66,7 +66,7 @@ class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.scrollRef = React.createRef();
-
+		this.bookmarkRef = React.createRef();
 		this.state = {
 			page: 1,
 			showPreview: false,
@@ -107,9 +107,24 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
+		const { search, filter, hasShowcaseOpened, themesBookmark } = this.props;
 		// Open showcase on state if we open here with query override.
-		if ( ( this.props.search || this.props.filter ) && ! this.props.hasShowcaseOpened ) {
+		if ( ( search || filter ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
+		}
+		// Scroll to bookmark if applicable.
+		if ( themesBookmark ) {
+			// Timeout to move this to the end of the event queue or it won't work here.
+			setTimeout( () => {
+				const lastTheme = this.bookmarkRef.current;
+				if ( lastTheme ) {
+					lastTheme.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+						inline: 'center',
+					} );
+				}
+			} );
 		}
 	}
 
@@ -317,6 +332,7 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 								isShowcaseOpen={ isShowcaseOpen }
 								scrollToSearchInput={ this.scrollToSearchInput }
+								bookmarkRef={ this.bookmarkRef }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
@@ -400,6 +416,7 @@ class ThemeShowcase extends React.Component {
 							} }
 							trackScrollPage={ this.props.trackScrollPage }
 							emptyContent={ this.props.emptyContent }
+							bookmarkRef={ this.bookmarkRef }
 						/>
 						<ThemePreview />
 						{ this.props.children }
@@ -420,6 +437,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
+	themesBookmark: state.themes.themesUI.themesBookmark,
 } );
 
 const mapDispatchToProps = {
@@ -428,4 +446,5 @@ const mapDispatchToProps = {
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };
+
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

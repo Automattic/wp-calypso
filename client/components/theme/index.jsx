@@ -20,6 +20,7 @@ import PulsingDot from 'components/pulsing-dot';
 import InfoPopover from 'components/info-popover';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setThemesBookmark } from 'state/themes/themes-ui/actions';
 
 /**
  * Style dependencies
@@ -70,6 +71,12 @@ export class Theme extends Component {
 		actionLabel: PropTypes.string,
 		// Translate function,
 		translate: PropTypes.func,
+		// Themes bookmark items.
+		setThemesBookmark: PropTypes.func,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -136,6 +143,10 @@ export class Theme extends Component {
 		} );
 	};
 
+	setBookmark = () => {
+		this.props.setThemesBookmark( this.props.theme.id );
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -195,14 +206,16 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
+		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
+
 		return (
-			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
+			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
 				{ this.isBeginnerTheme() && (
 					<Ribbon className="theme__ribbon" color="green">
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content">
+				<div className="theme__content" { ...bookmarkRef }>
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
@@ -256,4 +269,4 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( Theme ) );
+export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );

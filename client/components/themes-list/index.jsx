@@ -4,6 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { isEqual, isEmpty, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -37,6 +38,10 @@ export class ThemesList extends React.Component {
 		// i18n function provided by localize()
 		translate: PropTypes.func,
 		placeholderCount: PropTypes.number,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -70,6 +75,9 @@ export class ThemesList extends React.Component {
 		if ( isEmpty( theme ) ) {
 			return null;
 		}
+		// Decide if we should pass ref for bookmark.
+		const { themesBookmark } = this.props;
+		const bookmarkRef = themesBookmark === theme.id ? this.props.bookmarkRef : null;
 
 		return (
 			<Theme
@@ -87,6 +95,7 @@ export class ThemesList extends React.Component {
 				price={ this.props.getPrice( theme.id ) }
 				installing={ this.props.isInstalling( theme.id ) }
 				upsellUrl={ this.props.upsellUrl }
+				bookmarkRef={ bookmarkRef }
 			/>
 		);
 	}
@@ -139,4 +148,8 @@ export class ThemesList extends React.Component {
 	}
 }
 
-export default localize( ThemesList );
+const mapStateToProps = state => ( {
+	themesBookmark: state.themes.themesUI.themesBookmark,
+} );
+
+export default connect( mapStateToProps )( localize( ThemesList ) );

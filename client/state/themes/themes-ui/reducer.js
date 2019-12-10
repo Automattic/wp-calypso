@@ -2,7 +2,12 @@
  * Internal dependencies
  */
 
-import { THEME_BACK_PATH_SET, THEMES_BANNER_HIDE, THEMES_SHOWCASE_OPEN } from 'state/action-types';
+import {
+	THEME_BACK_PATH_SET,
+	THEMES_BANNER_HIDE,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
+} from 'state/action-types';
 import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 
@@ -36,4 +41,16 @@ export function themesShowcaseOpen( state = false, action ) {
 	return state;
 }
 
-export default combineReducers( { backPath, themesBannerVisible, themesShowcaseOpen } );
+export function themesBookmark( state = '', action ) {
+	if ( THEMES_BOOKMARK_SET === action.type ) {
+		return action.payload;
+	}
+	return state;
+}
+
+export default combineReducers( {
+	backPath,
+	themesBannerVisible,
+	themesShowcaseOpen,
+	themesBookmark,
+} );
