@@ -86,6 +86,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( getByTestId( 'HoldList-Card' ) ).toHaveClass( 'eligibility-warnings__hold-list-dim' );
 		expect( getByText( 'Help' ) ).toHaveAttribute( 'disabled' );
+		expect( getByText( 'Upgrade and continue' ) ).toBeDisabled();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -134,5 +135,42 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
+	} );
+
+	it( 'calls onProceed prop when clicking "Upgrade and continue"', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ],
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		fireEvent.click( getByText( 'Upgrade and continue' ) );
+
+		expect( handleProceed ).toHaveBeenCalled();
+	} );
+
+	it( `disables the "Continue" button if holds can't be handled automatically`, () => {
+		const state = createState( {
+			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		const continueButton = getByText( 'Continue' );
+
+		expect( continueButton ).toBeDisabled();
+
+		fireEvent.click( continueButton );
+		expect( handleProceed ).not.toHaveBeenCalled();
 	} );
 } );

@@ -43,8 +43,7 @@
 	}
 }
 
-.eligibility-warnings__hold,
-.eligibility-warnings__confirm-box {
+.eligibility-warnings__hold {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
@@ -112,7 +111,6 @@
 	opacity: 0.2;
 }
 
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
-	opacity: 0.2;
+.eligibility-warnings__confirm-buttons {
+	padding-left: 40px;
 }
