@@ -64,6 +64,7 @@ export function Gutenboard() {
 	const goToNextStep = stepCompleted[ currentStep ]( onboardingState )
 		? () => setStep( step => step + 1 )
 		: undefined;
+	const goToPrevStep = currentStep > 0 ? () => setStep( step => step - 1 ) : undefined;
 
 	const onboardingBlock = useMemo( () => createBlock( name, { step: currentStep } ), [
 		currentStep,
@@ -88,6 +89,7 @@ export function Gutenboard() {
 						<Header
 							isEditorSidebarOpened={ isEditorSidebarOpened }
 							next={ goToNextStep }
+							prev={ goToPrevStep }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 							toggleSidebarShortcut={ toggleSidebarShortcut }
 						/>
