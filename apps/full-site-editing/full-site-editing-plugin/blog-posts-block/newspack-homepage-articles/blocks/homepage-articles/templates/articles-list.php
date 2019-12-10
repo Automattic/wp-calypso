@@ -17,5 +17,5 @@ call_user_func(
 			)
 		);
 	},
-	$data
+	$data // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 );
