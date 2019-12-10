@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -50,6 +50,7 @@ import {
 	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
+	planHasFeature,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
@@ -439,14 +440,36 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
-	getProductsSelectorSubHeader() {
-		const { purchases, siteSlug, translate } = this.props;
-		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
-		const jetpackBackup =
-			purchases && purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) );
+	siteHasJetpackBackup() {
+		const { purchases, sitePlanSlug } = this.props;
 
-		// Don't attach a link to a landing page if a user already has a Jetpack Backup product.
-		if ( jetpackBackup ) {
+		// Search through purchased products.
+		const hasJetpackBackup =
+			! isEmpty( purchases ) &&
+			! isEmpty( purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) ) );
+		if ( hasJetpackBackup ) {
+			return true;
+		}
+
+		// Check if the current site plan has a backup feature.
+		const planHasJetpackBackup =
+			sitePlanSlug &&
+			! isEmpty(
+				JETPACK_BACKUP_PRODUCTS.find( productSlug => planHasFeature( sitePlanSlug, productSlug ) )
+			);
+		if ( planHasJetpackBackup ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	getProductsSelectorSubHeader() {
+		const { siteSlug, translate } = this.props;
+		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
+
+		// Don't render a link if a user already has a Jetpack Backup product or a plan with a backup feature.
+		if ( this.siteHasJetpackBackup() ) {
 			return baseCopy;
 		}
 
