@@ -80,7 +80,12 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button disabled={ ! prev } onClick={ prev }>
+					<Button
+						className="gutenboarding__header-back-button"
+						disabled={ ! prev }
+						onClick={ prev }
+					>
+						<Icon icon="arrow-left-alt" />
 						{ NO__( 'Back' ) }
 					</Button>
 				</div>
