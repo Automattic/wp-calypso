@@ -38,6 +38,7 @@ registerBlockType( metadata.name, {
 		html: false,
 		multiple: false,
 		reusable: false,
+		inserter: false,
 	},
 	attributes: metadata.attributes,
 	edit: ( { attributes, setAttributes, clientId, isSelected } ) => {
