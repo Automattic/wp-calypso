@@ -11,7 +11,7 @@ import { noop } from 'lodash';
  */
 import Button from '@automattic/components/button';
 import CompactCard from '@automattic/components/card/compact';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 
 /**
  * Style dependencies

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from '@automattic/components/card/compact';
 import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';

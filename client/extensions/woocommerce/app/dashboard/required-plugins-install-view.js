@@ -22,7 +22,7 @@ import {
 	getPluginsForStoreSetup,
 } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';

@@ -25,7 +25,7 @@ import {
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';

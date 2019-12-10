@@ -13,7 +13,7 @@ import { defer, get, has, omit } from 'lodash';
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 import { loadTrackingTool } from 'state/analytics/actions';

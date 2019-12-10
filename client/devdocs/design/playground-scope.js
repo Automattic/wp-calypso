@@ -86,7 +86,7 @@ export { default as Pagination } from 'components/pagination';
 export { default as PaymentLogo } from 'components/payment-logo';
 export { default as PieChart } from 'components/pie-chart';
 export { default as Popovers } from 'components/popover';
-export { default as ProgressBar } from 'components/progress-bar';
+export { default as ProgressBar } from '@automattic/components/progress-bar';
 export { default as Ranges } from 'components/forms/range';
 export { default as Rating } from 'components/rating';
 export { default as Ribbon } from 'components/ribbon';

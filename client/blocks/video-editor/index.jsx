@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '@automattic/components/progress-bar';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
