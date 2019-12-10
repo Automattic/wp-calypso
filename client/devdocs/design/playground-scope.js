@@ -1,7 +1,15 @@
 /**
  * External dependencies
  */
-export { Suggestions } from '@automattic/components';
+export {
+	Button,
+	Card,
+	CompactCard,
+	ProgressBar,
+	Ribbon,
+	ScreenReaderText,
+	Suggestions,
+} from '@automattic/components';
 
 /**
  * Docs examples
@@ -14,14 +22,11 @@ export { default as Badge } from 'components/badge';
 export { default as Banner } from 'components/banner';
 export { default as BulkSelect } from 'components/bulk-select';
 export { default as ButtonGroup } from 'components/button-group';
-export { default as Button } from '@automattic/components/button';
-export { default as Card } from '@automattic/components/card';
 export { default as CardHeading } from 'components/card-heading';
 export { Checklist, Task as ChecklistTask } from 'components/checklist';
 export { default as ClipboardButtonInput } from 'components/clipboard-button-input';
 export { default as ClipboardButton } from 'components/forms/clipboard-button';
 export { default as Collection } from 'devdocs/design/search-collection';
-export { default as CompactCard } from '@automattic/components/card/compact';
 export { default as Count } from 'components/count';
 export { default as CountedTextarea } from 'components/forms/counted-textarea';
 export { default as CreditCard } from 'components/credit-card';
@@ -86,11 +91,8 @@ export { default as Pagination } from 'components/pagination';
 export { default as PaymentLogo } from 'components/payment-logo';
 export { default as PieChart } from 'components/pie-chart';
 export { default as Popovers } from 'components/popover';
-export { default as ProgressBar } from '@automattic/components/progress-bar';
 export { default as Ranges } from 'components/forms/range';
 export { default as Rating } from 'components/rating';
-export { default as Ribbon } from '@automattic/components/ribbon';
-export { default as ScreenReaderText } from '@automattic/components/screen-reader-text';
 export { default as Search } from 'components/search';
 export { default as SearchCard } from 'components/search-card';
 export { default as SectionHeader } from 'components/section-header';
