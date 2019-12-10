@@ -28,7 +28,7 @@ export default function DefaultTemplate( {
 				title={ message }
 				description={ description }
 				disableHref
-				dismissPreferenceName={ featureClass + '123' }
+				dismissPreferenceName={ featureClass }
 				dismissTemporary={ true }
 				onDismiss={ onDismiss }
 				onClick={ onClick }
