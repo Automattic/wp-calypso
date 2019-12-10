@@ -11,7 +11,7 @@ import { find } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import { Button } from '@automattic/components';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';

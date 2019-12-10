@@ -17,7 +17,7 @@ import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import { Button } from '@automattic/components';
 import { Card } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import config from 'config';
 import {
 	cardProcessorSupportsUpdates,

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 

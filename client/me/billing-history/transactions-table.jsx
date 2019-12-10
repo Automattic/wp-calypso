@@ -12,7 +12,7 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';

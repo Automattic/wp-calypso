@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';

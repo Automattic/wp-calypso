@@ -9,7 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 /**
  *

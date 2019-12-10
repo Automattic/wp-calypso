@@ -8,7 +8,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 export default class Prediction extends Component {
 	static propTypes = {

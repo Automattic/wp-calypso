@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import Stream from 'reader/stream';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';

@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
 const SettingsGroupCard = ( { heading, children } ) => {

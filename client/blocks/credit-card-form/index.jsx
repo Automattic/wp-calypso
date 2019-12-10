@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import notices from 'notices';

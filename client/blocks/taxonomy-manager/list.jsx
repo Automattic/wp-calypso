@@ -15,7 +15,7 @@ import WindowScroller from 'react-virtualized/WindowScroller';
  */
 import VirtualList from 'components/virtual-list';
 import ListItem from './list-item';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {

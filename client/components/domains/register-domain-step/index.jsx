@@ -33,7 +33,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Notice from 'components/notice';
 import StickyPanel from 'components/sticky-panel';
 import {

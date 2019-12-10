@@ -10,7 +10,7 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';

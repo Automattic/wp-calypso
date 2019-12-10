@@ -11,7 +11,7 @@ import { defer, get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { checkDomainAvailability } from 'lib/domains';

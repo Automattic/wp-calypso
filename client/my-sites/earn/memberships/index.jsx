@@ -28,7 +28,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';

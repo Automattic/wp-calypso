@@ -12,7 +12,7 @@ import { stringify } from 'qs';
 /**
  * Internal Dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import HeaderCake from 'components/header-cake';

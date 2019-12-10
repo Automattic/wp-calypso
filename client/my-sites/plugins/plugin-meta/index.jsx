@@ -15,7 +15,7 @@ import { localize, moment } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { Button } from '@automattic/components';
 import { Card } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';

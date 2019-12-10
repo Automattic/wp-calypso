@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppleIcon from 'components/social-icons/apple';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getRequestError } from 'state/login/selectors';

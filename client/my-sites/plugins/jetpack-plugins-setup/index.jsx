@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FeatureExample from 'components/feature-example';
 import { Button } from '@automattic/components';
 import Notice from 'components/notice';

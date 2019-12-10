@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import ProgressBar from '@automattic/components/progress-bar';
 
 /**

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FormTextInput from 'components/forms/form-text-input';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';

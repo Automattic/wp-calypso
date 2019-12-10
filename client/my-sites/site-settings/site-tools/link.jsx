@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from '@automattic/components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 const SiteToolsLink = ( { description, href, isWarning, onClick, title } ) => {
 	const titleClasses = classNames( 'site-tools__section-title', {
