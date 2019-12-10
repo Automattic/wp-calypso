@@ -12,20 +12,17 @@ import { isEmpty } from 'lodash';
  */
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import FormattedHeader from 'components/formatted-header';
-import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { planHasFeature } from 'lib/plans';
 import { isJetpackBackup } from 'lib/products-values';
-import {
-	JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
-	JETPACK_BACKUP_PRODUCTS,
-} from 'lib/products-values/constants';
+import { JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/route';
+import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 
-class PlansFeaturesMainHeader extends Component {
+class PlansFeaturesMainProductsHeader extends Component {
 	siteHasJetpackBackup() {
 		const { purchases } = this.props;
 
@@ -39,25 +36,12 @@ class PlansFeaturesMainHeader extends Component {
 		);
 	}
 
-	planHasJetpackBackup() {
-		const { sitePlanSlug } = this.props;
-
-		if ( ! sitePlanSlug ) {
-			return false;
-		}
-
-		// Check if the current site plan has a backup feature.
-		return ! isEmpty(
-			JETPACK_BACKUP_PRODUCTS.find( productSlug => planHasFeature( sitePlanSlug, productSlug ) )
-		);
-	}
-
 	getSubHeader() {
 		const { siteSlug, translate } = this.props;
 		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
 
 		// Don't render a link if a user already has a Jetpack Backup product or a plan with a backup feature.
-		if ( this.siteHasJetpackBackup() || this.planHasJetpackBackup() ) {
+		if ( this.siteHasJetpackBackup() ) {
 			return baseCopy;
 		}
 
@@ -90,6 +74,7 @@ class PlansFeaturesMainHeader extends Component {
 
 		return (
 			<Fragment>
+				<QueryPlans />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				<FormattedHeader
@@ -103,10 +88,9 @@ class PlansFeaturesMainHeader extends Component {
 	}
 }
 
-PlansFeaturesMainHeader.propTypes = {
+PlansFeaturesMainProductsHeader.propTypes = {
 	purchases: PropTypes.array,
 	selectedSiteId: PropTypes.number,
-	sitePlanSlug: PropTypes.string,
 	siteSlug: PropTypes.string,
 };
 
@@ -116,7 +100,6 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		purchases: getSitePurchases( state, selectedSiteId ),
 		selectedSiteId,
-		sitePlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
-} )( localize( PlansFeaturesMainHeader ) );
+} )( localize( PlansFeaturesMainProductsHeader ) );
