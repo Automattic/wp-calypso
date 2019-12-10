@@ -225,4 +225,13 @@ describe( 'encodeQueryParameters()', () => {
 			'%40home=Rest%20%26%20Relaxation&%40work=Focus%20%26%20Determination&%40thebeach=Chillin%D5%9A%20%26%20Grillin%D5%9A'
 		);
 	} );
+
+	test( 'should cast true and false to strings', () => {
+		expect(
+			encodeQueryParameters( [
+				[ 'x', true ],
+				[ 'y', false ],
+			] )
+		).toBe( 'x=true&y=false' );
+	} );
 } );
