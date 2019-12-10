@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import Emojify from 'components/emojify';
 import { getLink } from 'woocommerce/lib/nav-utils';

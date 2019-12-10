@@ -13,7 +13,7 @@ import { localize, moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Count from 'components/count';

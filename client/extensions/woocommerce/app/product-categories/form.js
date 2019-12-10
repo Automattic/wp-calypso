@@ -11,7 +11,7 @@ import { isNumber, head, isNull } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';

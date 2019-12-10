@@ -10,7 +10,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
 import Card from 'components/card';

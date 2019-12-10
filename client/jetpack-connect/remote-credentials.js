@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';

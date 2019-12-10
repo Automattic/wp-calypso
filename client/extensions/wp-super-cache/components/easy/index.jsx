@@ -12,7 +12,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
  * Internal dependencies
  */
 import { isHttps } from 'lib/url';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';

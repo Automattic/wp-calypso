@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { Dialog } from '@automattic/components';
 import Notice from 'components/notice';
 import ScreenReaderText from '@automattic/components/screen-reader-text';

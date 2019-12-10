@@ -11,7 +11,7 @@ import { isNumber, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import ImagePreloader from 'components/image-preloader';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';

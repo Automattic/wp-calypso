@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import BackButton from 'components/back-button';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';

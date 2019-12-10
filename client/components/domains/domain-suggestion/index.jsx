@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 /**
  * Style dependencies

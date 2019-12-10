@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CompactCard from 'components/card/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';

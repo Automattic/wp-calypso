@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import HappychatButton from 'components/happychat/button';
 import QueryRewindState from 'components/data/query-rewind-state';

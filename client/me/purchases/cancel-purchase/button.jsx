@@ -11,7 +11,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';

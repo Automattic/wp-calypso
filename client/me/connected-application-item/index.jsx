@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import FoldableCard from 'components/foldable-card';
 import { withLocalizedMoment } from 'components/localized-moment';

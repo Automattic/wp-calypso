@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getStepUrl } from 'signup/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';

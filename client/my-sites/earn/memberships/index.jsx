@@ -20,7 +20,7 @@ import QueryMembershipsSettings from 'components/data/query-memberships-settings
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';

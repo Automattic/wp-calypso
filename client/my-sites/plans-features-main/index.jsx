@@ -51,7 +51,7 @@ import {
 	planMatches,
 	plansLink,
 } from 'lib/plans';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
 import ProductSelector from 'blocks/product-selector';

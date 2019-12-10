@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,

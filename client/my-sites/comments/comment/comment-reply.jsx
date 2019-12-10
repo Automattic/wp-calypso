@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,

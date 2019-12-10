@@ -28,7 +28,7 @@ import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 import hasNavigated from 'state/selectors/has-navigated';

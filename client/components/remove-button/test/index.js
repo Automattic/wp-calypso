@@ -12,7 +12,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { RemoveButton } from '../index';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 describe( 'Remove Button', () => {
 	test( 'should render the button', () => {

@@ -9,7 +9,7 @@ import React, { Component } from 'react';
  */
 import DisconnectJetpackDialog from '../dialog';
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 class DisconnectJetpackDialogExample extends Component {
 	constructor( props ) {

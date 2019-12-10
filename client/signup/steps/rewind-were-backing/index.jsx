@@ -12,7 +12,7 @@ import { get } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 /**

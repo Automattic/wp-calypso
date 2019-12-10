@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';

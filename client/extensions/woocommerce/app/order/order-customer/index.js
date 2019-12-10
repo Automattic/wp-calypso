@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
 import {

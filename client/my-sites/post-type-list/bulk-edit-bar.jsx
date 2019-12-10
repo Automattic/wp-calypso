@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Count from 'components/count';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';

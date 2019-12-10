@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';

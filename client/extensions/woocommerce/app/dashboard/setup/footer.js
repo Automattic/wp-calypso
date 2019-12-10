@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 const SetupFooter = ( { busy, disabled, label, onClick, primary } ) => {
 	return (

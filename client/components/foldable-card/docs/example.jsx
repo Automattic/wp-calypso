@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';

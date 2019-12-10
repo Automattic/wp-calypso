@@ -16,7 +16,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import { untrailingslashit } from 'lib/route';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import ProgressBar from 'components/progress-bar';
 import ThankYou from './thank-you';

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';

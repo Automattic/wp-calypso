@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card/compact';
 import CardHeading from 'components/card-heading';
 import MultipleChoiceQuestion from '../';

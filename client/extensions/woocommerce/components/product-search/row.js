@@ -12,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Count from 'components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';

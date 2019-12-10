@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import Main from 'components/main';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';

@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';

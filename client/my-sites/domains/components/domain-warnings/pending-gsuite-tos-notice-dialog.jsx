@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';

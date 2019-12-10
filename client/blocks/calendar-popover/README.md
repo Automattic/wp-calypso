@@ -9,7 +9,7 @@ Beyond combining Popover and PostSchedule, this component connects with the stat
 ## Usage
 
 ```es6
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CalendarPopover from 'blocks/calendar-popover';
 
 toggle = () => this.setState( { show: ! this.state.show } );

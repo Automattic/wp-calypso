@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppPasswordItem from 'me/application-password-item';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';

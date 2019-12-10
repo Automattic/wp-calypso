@@ -42,7 +42,7 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { isEnabled } from 'config';
 
 /**

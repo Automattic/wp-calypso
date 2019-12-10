@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { addQueryArgs } from 'lib/url';

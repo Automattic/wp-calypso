@@ -7,7 +7,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CalendarPopover from 'blocks/calendar-popover';
 
 const tomorrow = date => date.date( date.date() + 1 );

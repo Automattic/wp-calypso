@@ -14,7 +14,7 @@ import moment from 'moment';
  */
 import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';

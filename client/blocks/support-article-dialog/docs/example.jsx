@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const postId = 143180;

@@ -12,7 +12,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';

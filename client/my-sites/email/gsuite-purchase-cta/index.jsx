@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import config from 'config';
 import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';

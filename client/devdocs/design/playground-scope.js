@@ -14,7 +14,7 @@ export { default as Badge } from 'components/badge';
 export { default as Banner } from 'components/banner';
 export { default as BulkSelect } from 'components/bulk-select';
 export { default as ButtonGroup } from 'components/button-group';
-export { default as Button } from 'components/button';
+export { default as Button } from '@automattic/components/button';
 export { default as Card } from 'components/card';
 export { default as CardHeading } from 'components/card-heading';
 export { Checklist, Task as ChecklistTask } from 'components/checklist';

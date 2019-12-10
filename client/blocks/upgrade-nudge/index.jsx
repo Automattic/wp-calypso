@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
@@ -96,11 +96,14 @@ export class UpgradeNudge extends React.Component {
 		const shouldNotDisplay =
 			isVip ||
 			! canManageSite ||
-			! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ||
+			! site ||
+			typeof site !== 'object' ||
+			typeof site.jetpack !== 'boolean' ||
 			( feature && planHasFeature ) ||
 			( ! feature && ! isFreePlan( site.plan ) ) ||
 			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-			( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack );
+			( ! jetpack && site.jetpack ) ||
+			( jetpack && ! site.jetpack );
 
 		if ( shouldNotDisplay && ! forceDisplay ) {
 			return null;

@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';

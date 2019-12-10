@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';

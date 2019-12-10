@@ -15,7 +15,7 @@ import Count from 'components/count';
 import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 

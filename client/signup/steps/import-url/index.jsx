@@ -9,7 +9,7 @@ import { flow, get, includes, invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';

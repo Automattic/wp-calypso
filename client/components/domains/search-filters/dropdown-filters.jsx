@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 const HANDLED_FILTER_KEYS = [ 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 

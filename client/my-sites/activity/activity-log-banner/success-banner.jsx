@@ -13,7 +13,7 @@ import { flowRight as compose } from 'lodash';
  */
 import ActivityLogBanner from './index';
 import { withLocalizedMoment } from 'components/localized-moment';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import HappychatButton from 'components/happychat/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';

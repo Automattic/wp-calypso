@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';

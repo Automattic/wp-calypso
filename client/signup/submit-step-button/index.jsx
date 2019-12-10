@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 export class SubmitStepButton extends Component {

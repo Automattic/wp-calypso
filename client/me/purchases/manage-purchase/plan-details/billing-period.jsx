@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

@@ -19,7 +19,7 @@ import PeopleListSectionHeader from 'my-sites/people/people-list-section-header'
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { Dialog } from '@automattic/components';
 import InvitesListEnd from './invites-list-end';

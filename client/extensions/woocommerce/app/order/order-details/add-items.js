@@ -9,7 +9,7 @@ import { isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import OrderFeeDialog from './fee-dialog';
 import OrderProductDialog from './product-dialog';
 

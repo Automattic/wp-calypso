@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
 import FormFieldSet from 'components/forms/form-fieldset';

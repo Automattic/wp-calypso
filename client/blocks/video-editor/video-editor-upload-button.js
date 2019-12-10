@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FilePicker from 'components/file-picker';
 
 class VideoEditorUploadButton extends Component {

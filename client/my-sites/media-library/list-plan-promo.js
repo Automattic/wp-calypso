@@ -14,7 +14,7 @@ import { preventWidows } from 'lib/formatting';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';

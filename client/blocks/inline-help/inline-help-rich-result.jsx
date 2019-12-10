@@ -21,7 +21,7 @@ import {
 	RESULT_TYPE,
 	RESULT_VIDEO,
 } from './constants';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';

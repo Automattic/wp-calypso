@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AutomatticLogo from 'components/automattic-logo';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';

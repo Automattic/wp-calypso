@@ -14,7 +14,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';

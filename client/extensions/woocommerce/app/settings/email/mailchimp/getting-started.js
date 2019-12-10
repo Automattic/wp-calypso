@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { localize } from 'i18n-calypso';

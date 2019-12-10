@@ -22,7 +22,7 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 /**
  * Style dependencies

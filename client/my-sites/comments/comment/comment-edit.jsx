@@ -11,7 +11,7 @@ import { get, noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';

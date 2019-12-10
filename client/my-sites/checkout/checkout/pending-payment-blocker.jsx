@@ -8,7 +8,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import PaymentBox from './payment-box.jsx';
 
 export function PendingPaymentBlocker( { translate } ) {

@@ -6,7 +6,7 @@ import React, { Fragment, useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import ProductCard from '../index';
 import ProductCardAction from '../action';
 import ProductCardOptions from '../options';

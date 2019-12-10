@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  */
 import Card from 'components/card';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 export default localize( props => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;

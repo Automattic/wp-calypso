@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';

@@ -11,7 +11,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 
 class HostSelect extends React.Component {
 	static displayName = 'HostSelect';

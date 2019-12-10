@@ -15,7 +15,7 @@ import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { Dialog } from '@automattic/components';
 import {
 	composeAnalytics,

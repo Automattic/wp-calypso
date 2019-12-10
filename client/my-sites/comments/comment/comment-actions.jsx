@@ -12,7 +12,7 @@ import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {

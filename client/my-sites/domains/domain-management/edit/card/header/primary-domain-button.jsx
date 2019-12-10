@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementPrimaryDomain } from 'my-sites/domains/paths';
 import { getDomainTypeText } from 'lib/domains';

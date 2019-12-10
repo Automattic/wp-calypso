@@ -16,7 +16,7 @@ import Card from 'components/card';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import PageViewTracker from 'lib/analytics/page-view-tracker';

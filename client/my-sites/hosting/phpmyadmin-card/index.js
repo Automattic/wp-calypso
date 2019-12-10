@@ -13,7 +13,7 @@ import Accordion from 'components/accordion';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';

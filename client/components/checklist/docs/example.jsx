@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { Checklist, Task } from '../';
 
 export default class ChecklistExample extends PureComponent {

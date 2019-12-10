@@ -9,7 +9,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 

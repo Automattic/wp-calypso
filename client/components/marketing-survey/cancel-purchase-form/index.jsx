@@ -25,7 +25,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';

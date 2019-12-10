@@ -10,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import {
 	confirmPrintLabel,

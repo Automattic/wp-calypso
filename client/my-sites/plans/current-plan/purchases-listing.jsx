@@ -18,7 +18,7 @@ import {
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';

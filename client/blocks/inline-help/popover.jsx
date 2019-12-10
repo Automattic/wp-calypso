@@ -24,7 +24,7 @@ import {
 	hideOnboardingWelcomePrompt,
 	hideChecklistPrompt,
 } from 'state/inline-help/actions';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Popover from 'components/popover';
 import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';

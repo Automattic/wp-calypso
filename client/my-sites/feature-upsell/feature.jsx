@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import TipInfo from 'components/purchase-detail/tip-info';
 
 export default class Feature extends PureComponent {

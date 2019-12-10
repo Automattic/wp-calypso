@@ -13,7 +13,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { dashboardListLimit } from 'woocommerce/app/store-stats/constants';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';

@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { toggleCartOnMobile } from 'state/ui/checkout/actions';
 import { isShowingCartOnMobile } from 'state/ui/checkout/selectors';
 

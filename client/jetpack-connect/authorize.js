@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthFormHeader from './auth-form-header';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
 import config from 'config';

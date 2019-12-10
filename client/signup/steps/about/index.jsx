@@ -37,7 +37,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
 
 //Form components
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
 import FormLabel from 'components/forms/form-label';

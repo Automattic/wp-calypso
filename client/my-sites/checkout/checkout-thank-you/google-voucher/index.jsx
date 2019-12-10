@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PurchaseButton from 'components/purchase-detail/purchase-button';

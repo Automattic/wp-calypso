@@ -25,7 +25,7 @@ import {
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';

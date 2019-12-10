@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { errorNotice } from 'state/notices/actions';

@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import PopoverMenu from 'components/popover/menu';
 
 /**

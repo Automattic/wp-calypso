@@ -88,7 +88,7 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';

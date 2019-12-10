@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getSite, getSiteTitle, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';

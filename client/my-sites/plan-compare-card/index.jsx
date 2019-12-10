@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 
-import Button from 'components/button';
+import Button from '@automattic/components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
