@@ -3,15 +3,12 @@
  */
 import React from 'react';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import SectionHeader from 'components/section-header';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 interface ExternalProps {
 	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
@@ -20,37 +17,20 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const WarningList = ( { translate, warnings }: Props ) => (
-	<div>
-		<SectionHeader
-			label={ translate(
-				"By proceeding you'll lose %d feature:",
-				"By proceeding you'll lose these %d features:",
-				{
-					count: warnings.length,
-					args: warnings.length,
-				}
-			) }
-		/>
-		<Card className="eligibility-warnings__warning-list">
-			{ map( warnings, ( { name, description, supportUrl }, index ) => (
-				<div className="eligibility-warnings__warning" key={ index }>
-					<Gridicon icon="cross-small" size={ 24 } />
-					<div className="eligibility-warnings__message">
-						<span className="eligibility-warnings__message-title">{ name }</span>
-						:&nbsp;
-						<span className="eligibility-warnings__message-description">{ description }</span>
-					</div>
-					{ supportUrl && (
-						<div className="eligibility-warnings__action">
-							<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
-								<Gridicon icon="help-outline" size={ 24 } />
-							</ExternalLink>
-						</div>
-					) }
-				</div>
-			) ) }
-		</Card>
-	</div>
+	<>
+		{ warnings.map( ( { description, supportUrl }, index ) => (
+			<Notice status="is-warning" key={ index } text={ description } showDismiss={ false }>
+				{ supportUrl && (
+					<NoticeAction
+						icon="help-outline"
+						aria-label={ translate( 'Help' ) }
+						href={ supportUrl }
+						external
+					/>
+				) }
+			</Notice>
+		) ) }
+	</>
 );
 
 export default localize( WarningList );
