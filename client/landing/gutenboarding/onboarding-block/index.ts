@@ -7,15 +7,10 @@ import { BlockConfiguration } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import { Attributes, Steps } from './types';
 import edit from './edit';
-import { Steps } from '../types';
 
 export const name = 'automattic/onboarding';
-
-export interface Attributes {
-	align: 'full';
-	step: Steps;
-}
 
 export const settings: BlockConfiguration< Attributes > = {
 	title: NO__( 'Onboarding' ),

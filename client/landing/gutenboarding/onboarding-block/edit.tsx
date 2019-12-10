@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
+import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Button } from '@wordpress/components';
 
 /**
@@ -14,10 +15,13 @@ import DesignSelector from './design-selector';
 import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
+import { Attributes } from './types';
 import { Steps } from '../types';
 import './style.scss';
 
-export default function OnboardingEdit( { attributes: { step = 0 } } ) {
+const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
+	attributes: { step = 0 },
+} ) => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 
 	switch ( step ) {
@@ -49,4 +53,6 @@ export default function OnboardingEdit( { attributes: { step = 0 } } ) {
 	}
 
 	return null;
-}
+};
+
+export default OnboardingEdit;
