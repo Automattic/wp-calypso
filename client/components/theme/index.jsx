@@ -17,7 +17,7 @@ import photon from 'photon';
 import { Card } from '@automattic/components';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
-import Ribbon from '@automattic/components/ribbon';
+import { Ribbon } from '@automattic/components';
 import InfoPopover from 'components/info-popover';
 import { Button } from '@automattic/components';
 import TrackComponentView from 'lib/analytics/track-component-view';
