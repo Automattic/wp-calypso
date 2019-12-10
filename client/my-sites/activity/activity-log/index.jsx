@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual, some } from 'lodash';
+import { find, get, includes, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,6 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
-import { isJetpackBackup } from 'lib/products-values';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -44,7 +43,7 @@ import FormattedHeader from 'components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -565,10 +564,6 @@ class ActivityLog extends Component {
 
 const emptyList = [];
 
-const hasBackupProduct = purchases => {
-	return some( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
-};
-
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -583,8 +578,7 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
-		const purchases = getSitePurchases( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! hasBackupProduct( purchases );
+		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
