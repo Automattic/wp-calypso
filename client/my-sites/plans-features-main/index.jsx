@@ -444,20 +444,20 @@ export class PlansFeaturesMain extends Component {
 		const { purchases, sitePlanSlug } = this.props;
 
 		// Search through purchased products.
-		const hasJetpackBackup =
+		if (
 			! isEmpty( purchases ) &&
-			! isEmpty( purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) ) );
-		if ( hasJetpackBackup ) {
+			! isEmpty( purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) ) )
+		) {
 			return true;
 		}
 
 		// Check if the current site plan has a backup feature.
-		const planHasJetpackBackup =
+		if (
 			sitePlanSlug &&
 			! isEmpty(
 				JETPACK_BACKUP_PRODUCTS.find( productSlug => planHasFeature( sitePlanSlug, productSlug ) )
-			);
-		if ( planHasJetpackBackup ) {
+			)
+		) {
 			return true;
 		}
 
