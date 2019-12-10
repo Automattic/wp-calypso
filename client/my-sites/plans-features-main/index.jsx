@@ -2,9 +2,9 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -30,18 +30,17 @@ import {
 } from 'lib/plans/constants';
 import {
 	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_PRODUCTS,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
+import PlansFeaturesMainHeader from './header';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
 import { isEnabled } from 'config';
 import {
 	chooseDefaultCustomerType,
@@ -50,7 +49,6 @@ import {
 	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
-	planHasFeature,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
@@ -58,7 +56,6 @@ import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
 import ProductSelector from 'blocks/product-selector';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -78,13 +75,11 @@ import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getSitePurchases } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { isJetpackBackup } from 'lib/products-values';
 
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
@@ -440,78 +435,16 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
-	siteHasJetpackBackup() {
-		const { purchases, sitePlanSlug } = this.props;
-
-		// Search through purchased products.
-		if (
-			! isEmpty( purchases ) &&
-			! isEmpty( purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) ) )
-		) {
-			return true;
-		}
-
-		// Check if the current site plan has a backup feature.
-		if (
-			sitePlanSlug &&
-			! isEmpty(
-				JETPACK_BACKUP_PRODUCTS.find( productSlug => planHasFeature( sitePlanSlug, productSlug ) )
-			)
-		) {
-			return true;
-		}
-
-		return false;
-	}
-
-	getProductsSelectorSubHeader() {
-		const { siteSlug, translate } = this.props;
-		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
-
-		// Don't render a link if a user already has a Jetpack Backup product or a plan with a backup feature.
-		if ( this.siteHasJetpackBackup() ) {
-			return baseCopy;
-		}
-
-		// If we have a site in this context, add it to the landing page URL.
-		const linkUrl = siteSlug
-			? addQueryArgs( { site: siteSlug }, JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL )
-			: JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL;
-
-		return (
-			<Fragment>
-				{ baseCopy }
-				<br />
-				<ExternalLinkWithTracking
-					href={ linkUrl }
-					tracksEventName="calypso_plan_link_click"
-					tracksEventProps={ {
-						link_location: 'product_jetpack_backup_description',
-						link_slug: 'which-one-do-i-need',
-					} }
-					icon
-				>
-					{ translate( 'Which backup option is best for me?' ) }
-				</ExternalLinkWithTracking>
-			</Fragment>
-		);
-	}
-
 	renderProductsSelector() {
 		if ( ! this.isJetpackBackupAvailable() ) {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate, redirectTo } = this.props;
+		const { basePlansPath, intervalType, redirectTo } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
-				<FormattedHeader
-					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ this.getProductsSelectorSubHeader() }
-					compactOnMobile
-					isSecondary
-				/>
+				<PlansFeaturesMainHeader />
 				<AsyncLoad
 					require="blocks/product-plan-overlap-notices"
 					placeholder={ null }
@@ -546,7 +479,6 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<QuerySitePurchases siteId={ siteId } />
 				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
 				<CartData>
@@ -590,7 +522,6 @@ PlansFeaturesMain.propTypes = {
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
-	purchases: PropTypes.array,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -635,7 +566,6 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
-			purchases: getSitePurchases( state, siteId ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
