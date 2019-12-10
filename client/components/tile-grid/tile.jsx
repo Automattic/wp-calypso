@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 
 export default class extends React.PureComponent {

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  */
 import MediaLibraryScale from './scale';
 import Card from '@automattic/components/card';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';

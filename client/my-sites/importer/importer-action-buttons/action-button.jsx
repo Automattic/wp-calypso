@@ -7,7 +7,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies

@@ -17,7 +17,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 
 /**

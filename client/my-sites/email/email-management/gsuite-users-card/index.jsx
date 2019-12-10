@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import CompactCard from '@automattic/components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';

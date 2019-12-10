@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getPlan } from 'lib/plans';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';

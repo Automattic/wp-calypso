@@ -25,7 +25,7 @@ import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanIcon from 'components/plans/plan-icon';

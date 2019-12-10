@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';

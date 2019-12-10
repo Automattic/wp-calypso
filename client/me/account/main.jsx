@@ -23,7 +23,7 @@ import config from 'config';
 import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from '@automattic/components/card';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';

@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';

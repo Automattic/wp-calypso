@@ -10,7 +10,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormButton from 'components/forms/form-button';

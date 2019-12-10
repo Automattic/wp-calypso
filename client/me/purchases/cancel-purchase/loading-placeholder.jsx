@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import CompactCard from '@automattic/components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';

@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 const ProductCardAction = ( { intro, label, onClick, primary, href } ) => (
 	<div className="product-card__action">

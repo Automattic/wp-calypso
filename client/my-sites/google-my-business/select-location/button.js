@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';

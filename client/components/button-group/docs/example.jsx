@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ButtonGroup from 'components/button-group';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import Gridicon from 'components/gridicon';
 

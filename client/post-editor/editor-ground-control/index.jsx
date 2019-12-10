@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import Card from '@automattic/components/card';
 import Site from 'blocks/site';
 import EditorPublishButton from 'post-editor/editor-publish-button';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';

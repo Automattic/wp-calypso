@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { changeReviewStatus, deleteReview } from 'woocommerce/state/sites/reviews/actions';
 
 // currentStatus is the status/tab that is currently selected in the UI.

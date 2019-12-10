@@ -11,7 +11,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 import SectionHeader from 'components/section-header';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 const MyHeader = ( { translate } ) => (
 	<SectionHeader label={ translate( 'Team' ) }>

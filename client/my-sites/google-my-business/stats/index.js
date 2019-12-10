@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';

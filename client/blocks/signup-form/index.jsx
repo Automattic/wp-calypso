@@ -33,7 +33,7 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';

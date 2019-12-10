@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 import Card from '@automattic/components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';

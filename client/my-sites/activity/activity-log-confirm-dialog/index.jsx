@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import FormLabel from 'components/forms/form-label';
 import FormCheckbox from 'components/forms/form-checkbox';

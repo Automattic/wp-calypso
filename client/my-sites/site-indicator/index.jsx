@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Animate from 'components/animate';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';

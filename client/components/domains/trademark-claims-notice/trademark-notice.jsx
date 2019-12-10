@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { trademarkNoticeText } from './trademark-constants';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import TrademarkClaim from './trademark-claim';
 

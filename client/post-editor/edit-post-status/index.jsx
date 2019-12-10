@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormToggle from 'components/forms/form-toggle/compact';
 import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';

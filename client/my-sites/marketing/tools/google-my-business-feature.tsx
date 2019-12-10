@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';

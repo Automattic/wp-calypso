@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
 import Card from '@automattic/components/card';
 import CardHeading from 'components/card-heading';

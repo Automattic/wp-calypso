@@ -10,7 +10,7 @@ import React, { Children } from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies

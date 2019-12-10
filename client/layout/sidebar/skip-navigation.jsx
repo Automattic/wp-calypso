@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 class SkipNavigation extends React.Component {
 	static propTypes = {

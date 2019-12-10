@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';

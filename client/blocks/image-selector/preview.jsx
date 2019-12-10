@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ImagePreloader from 'components/image-preloader';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';

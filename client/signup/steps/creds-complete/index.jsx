@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from '@automattic/components/card';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies

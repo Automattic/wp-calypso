@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import { Dialog } from '@automattic/components';

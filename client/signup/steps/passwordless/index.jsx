@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { createPasswordlessUser, verifyPasswordlessUser } from 'lib/signup/step-actions';
 import Notice from 'components/notice';
 import FormStateStore from 'lib/form-state';

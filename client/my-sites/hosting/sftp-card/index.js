@@ -13,7 +13,7 @@ import Accordion from 'components/accordion';
 import Card from '@automattic/components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';

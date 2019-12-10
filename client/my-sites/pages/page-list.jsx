@@ -32,7 +32,7 @@ import {
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 function preloadEditor() {

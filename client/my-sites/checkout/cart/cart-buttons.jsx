@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 export class CartButtons extends React.Component {

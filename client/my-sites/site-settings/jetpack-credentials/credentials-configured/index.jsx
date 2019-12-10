@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
 import CompactCard from '@automattic/components/card/compact';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
 

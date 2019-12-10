@@ -12,7 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from '@automattic/components/card';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';

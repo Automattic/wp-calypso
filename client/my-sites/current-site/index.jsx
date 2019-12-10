@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';

@@ -9,7 +9,7 @@ import { flow, get, includes, invoke, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';

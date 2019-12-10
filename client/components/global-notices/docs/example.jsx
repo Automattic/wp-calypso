@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import FormCheckbox from 'components/forms/form-checkbox';
 import notices from 'notices';

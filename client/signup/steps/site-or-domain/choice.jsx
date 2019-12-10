@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 
 export default class SiteOrDomainChoice extends Component {

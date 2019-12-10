@@ -38,7 +38,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';

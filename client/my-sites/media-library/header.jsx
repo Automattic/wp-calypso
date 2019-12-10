@@ -19,7 +19,7 @@ import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
 import Card from '@automattic/components/card';
 import ButtonGroup from 'components/button-group';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ScreenReaderText from '@automattic/components/screen-reader-text';
 import StickyPanel from 'components/sticky-panel';
 

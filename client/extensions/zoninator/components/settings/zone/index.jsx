@@ -11,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';

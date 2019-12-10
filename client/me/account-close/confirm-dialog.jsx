@@ -12,7 +12,7 @@ import page from 'page';
  */
 import { Dialog } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { closeAccount } from 'state/account/actions';
 

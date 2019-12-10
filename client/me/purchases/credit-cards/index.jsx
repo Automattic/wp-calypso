@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import config from 'config';
 import CreditCard from 'components/credit-card';

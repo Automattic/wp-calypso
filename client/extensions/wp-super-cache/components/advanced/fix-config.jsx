@@ -11,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import SectionHeader from 'components/section-header';
 import { restoreSettings } from '../../state/settings/actions';

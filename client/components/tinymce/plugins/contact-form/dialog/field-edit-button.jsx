@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldEditButton extends PureComponent {

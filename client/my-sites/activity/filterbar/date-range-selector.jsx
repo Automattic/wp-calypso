@@ -12,7 +12,7 @@ import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import DateRangePicker from 'components/date-range';

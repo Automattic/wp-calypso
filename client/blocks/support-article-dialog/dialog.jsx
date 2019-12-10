@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';

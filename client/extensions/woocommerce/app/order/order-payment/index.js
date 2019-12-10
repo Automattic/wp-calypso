@@ -12,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';

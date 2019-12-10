@@ -11,7 +11,7 @@ import { isArray } from 'lodash';
  * Internal Dependencies
  */
 import ActionButtons from './actions';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import SiteIcon from 'blocks/site-icon';

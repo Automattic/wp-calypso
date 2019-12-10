@@ -12,7 +12,7 @@ import { isEmpty, map, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';

@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import getPackageDescriptions from './get-package-descriptions';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {

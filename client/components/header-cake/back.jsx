@@ -12,7 +12,7 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getWindowInnerWidth } from 'lib/viewport';
 
 /**

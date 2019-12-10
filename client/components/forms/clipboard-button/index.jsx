@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
 	const buttonRef = React.useRef();

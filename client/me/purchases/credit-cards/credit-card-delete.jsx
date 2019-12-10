@@ -12,7 +12,7 @@ import React from 'react';
 import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import StoredCard from 'components/credit-card/stored-card';
 
 /**

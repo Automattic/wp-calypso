@@ -13,7 +13,7 @@ import { find, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import { Dialog } from '@automattic/components';
 import { successNotice, errorNotice } from 'state/notices/actions';

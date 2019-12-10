@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { actionType } from './constants';
 
 class DomainConnectAuthorizeFooter extends Component {

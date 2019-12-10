@@ -10,7 +10,7 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import CardHeading from 'components/card-heading';
 import CompactCard from '@automattic/components/card/compact';

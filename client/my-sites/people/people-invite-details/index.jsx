@@ -17,7 +17,7 @@ import HeaderCake from 'components/header-cake';
 import Card from '@automattic/components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import EmptyContent from 'components/empty-content';
 import { withLocalizedMoment } from 'components/localized-moment';

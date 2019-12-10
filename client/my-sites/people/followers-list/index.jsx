@@ -27,7 +27,7 @@ import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 

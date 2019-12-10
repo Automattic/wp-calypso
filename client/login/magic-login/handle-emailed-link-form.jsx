@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';

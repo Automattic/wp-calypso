@@ -15,7 +15,7 @@ import './style.scss';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';

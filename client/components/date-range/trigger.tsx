@@ -10,7 +10,7 @@ import { Moment } from 'moment';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import ScreenReaderText from '@automattic/components/screen-reader-text';
 

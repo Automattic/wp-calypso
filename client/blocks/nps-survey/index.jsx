@@ -13,7 +13,7 @@ import { isNumber, noop, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import FormTextArea from 'components/forms/form-textarea';
 import ScreenReaderText from '@automattic/components/screen-reader-text';

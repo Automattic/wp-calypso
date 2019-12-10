@@ -11,7 +11,7 @@ import GridIcon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 
 class SharingServicePlaceholder extends Component {

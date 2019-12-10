@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
 import { withLocalizedMoment } from 'components/localized-moment';

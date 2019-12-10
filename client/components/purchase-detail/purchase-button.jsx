@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 
 const PurchaseButton = ( {
 	className,

@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import wpcom from 'lib/wp';

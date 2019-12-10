@@ -11,7 +11,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import HappinessEngineers from 'me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';

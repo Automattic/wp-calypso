@@ -16,7 +16,7 @@ import {
 	arePaymentMethodsLoaded,
 	getPaymentMethod,
 } from 'woocommerce/state/sites/payment-methods/selectors';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import FormLabel from 'components/forms/form-label';

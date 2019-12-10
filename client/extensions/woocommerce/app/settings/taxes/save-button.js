@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,

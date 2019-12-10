@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

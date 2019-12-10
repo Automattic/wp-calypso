@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'lib/route';
 import analytics from 'lib/analytics';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import CompactCard from '@automattic/components/card/compact';
 import config from 'config';

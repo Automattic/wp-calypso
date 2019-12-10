@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolsGoogleAdwordsFeature from './google-adwords';
 import MarketingToolsFeature from './feature';

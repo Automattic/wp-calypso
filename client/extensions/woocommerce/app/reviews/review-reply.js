@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { decodeEntities, removep } from 'lib/formatting';
 import {
 	deleteReviewReply,

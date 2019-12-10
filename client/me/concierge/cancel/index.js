@@ -13,7 +13,7 @@ import HeaderCake from 'components/header-cake';
 import QuerySites from 'components/data/query-sites';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Main from 'components/main';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';

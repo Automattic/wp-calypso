@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from '@automattic/components/card';
 import SectionHeader from 'components/section-header';
 import { resendIcannVerification } from 'lib/domains';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import notices from 'notices';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 

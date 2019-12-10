@@ -21,7 +21,7 @@ import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Card from '@automattic/components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';

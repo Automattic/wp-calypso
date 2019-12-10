@@ -11,7 +11,7 @@ import { find, uniqBy, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';

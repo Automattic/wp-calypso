@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Dialog } from '@automattic/components';
 import config from 'config';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import CompactCard from '@automattic/components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';

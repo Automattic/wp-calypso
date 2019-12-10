@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 import ConnectedListItem from 'blocks/reader-list-item/connected';
 

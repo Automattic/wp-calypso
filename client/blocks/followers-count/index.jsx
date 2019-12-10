@@ -10,7 +10,7 @@ import { get, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSite } from 'state/ui/selectors';

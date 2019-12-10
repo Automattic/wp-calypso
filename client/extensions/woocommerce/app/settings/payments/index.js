@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from '@automattic/components/button';
+import { Button } from '@automattic/components';
 import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
