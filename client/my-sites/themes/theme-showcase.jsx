@@ -114,6 +114,7 @@ class ThemeShowcase extends React.Component {
 		}
 		// Scroll to bookmark if applicable.
 		if ( themesBookmark ) {
+			// Timeout to move this to the end of the event queue or it won't work here.
 			setTimeout( () => {
 				const lastTheme = this.bookmarkRef.current;
 				if ( lastTheme ) {
@@ -123,7 +124,7 @@ class ThemeShowcase extends React.Component {
 						inline: 'center',
 					} );
 				}
-			}, 40 );
+			} );
 		}
 	}
 
