@@ -288,7 +288,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			case 'install_plugin':
 				return translate( 'Continue Installing Plugin' );
 			case 'themes':
-			case 'install_themes':
+			case 'install_theme':
 				return translate( 'Continue Installing Theme' );
 		}
 
