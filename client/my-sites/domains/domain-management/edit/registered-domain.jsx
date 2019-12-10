@@ -9,7 +9,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';

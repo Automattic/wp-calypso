@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
-import Card from '@automattic/components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,

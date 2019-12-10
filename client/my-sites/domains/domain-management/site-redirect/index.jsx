@@ -27,7 +27,7 @@ import {
 	fetchSiteRedirect,
 	updateSiteRedirect,
 } from 'state/domains/site-redirect/actions';
-import Card from '@automattic/components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';

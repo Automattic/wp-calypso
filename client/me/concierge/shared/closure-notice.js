@@ -9,7 +9,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import Card from '@automattic/components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'MMMM D h:mma z';
