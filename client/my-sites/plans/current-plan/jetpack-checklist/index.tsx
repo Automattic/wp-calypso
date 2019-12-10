@@ -392,9 +392,6 @@ const connectComponent = connect(
 			isProfessional,
 			isPaidPlan,
 			rewindState,
-			// `phase2: true` is passed to `getTaskList()` in the component and makes it possible to use
-			// the array-based checklist data format
-			phase2: true,
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
