@@ -6,8 +6,14 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+/**
+ * Internal dependencies
+ */
+
+import { Button } from '@automattic/components';
+
 describe( 'ButtonGroup', () => {
-	let sandbox, ButtonGroup, Button;
+	let sandbox, ButtonGroup;
 
 	beforeEach( () => {
 		sandbox = sinon.createSandbox();
@@ -15,7 +21,6 @@ describe( 'ButtonGroup', () => {
 		sandbox.stub( console, 'log' );
 
 		ButtonGroup = require( '../index' );
-		Button = require( 'components/button' );
 	} );
 
 	afterEach( () => {
