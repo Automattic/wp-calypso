@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal Dependencies
@@ -25,6 +26,15 @@ import {
 import './style.scss';
 
 class ConciergeBanner extends Component {
+	static propTypes = {
+		bannerType: PropTypes.oneOf( [
+			CONCIERGE_HAS_UPCOMING_APPOINTMENT,
+			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
+			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+			CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+		] ).isRequired,
+	};
+
 	placeholder() {
 		return (
 			<Card compact={ false }>
