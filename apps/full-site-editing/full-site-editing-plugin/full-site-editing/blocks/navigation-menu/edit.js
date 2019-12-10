@@ -58,12 +58,10 @@ const NavigationMenuEdit = ( {
 					] }
 				>
 					<p>
-						<span className="posts-list__message">
-							{ __(
-								'Upgrade to an improved version of the Navigation block. There may be small visual changes. As such, we recommend you upgrade and preview your changes before updating your site.',
-								'full-site-editing'
-							) }
-						</span>
+						{ __(
+							'An improved version of this block is now available. Upgrade and then preview before updating your site.',
+							'full-site-editing'
+						) }
 					</p>
 				</Notice>
 			) }

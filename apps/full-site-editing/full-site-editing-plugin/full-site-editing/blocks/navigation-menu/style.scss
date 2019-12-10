@@ -1,3 +1,34 @@
+$gutenberg-default-font-size: 13px;
+$gutenberg-default-line-height: 1.4;
+
+[data-type='a8c/navigation-menu'] {
+
+	.components-notice {
+
+		&.is-dismissible {
+			padding-right: 0;
+		}
+
+		.components-notice__content p {
+			margin-top: 0;
+			margin-bottom: 1em;
+			font-size: $gutenberg-default-font-size;
+			line-height: $gutenberg-default-line-height;
+		}
+
+		.components-notice__action {
+			margin-bottom: 0.2em;
+			margin-left: 0;
+		}
+
+		.components-notice__dismiss {
+			position: relative;
+			top: -8px;
+		}
+
+	}
+}
+
 .wp-block-a8c-navigation-menu.main-navigation {
 	pointer-events: none;
 }
