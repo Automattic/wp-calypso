@@ -2,6 +2,10 @@
 /**
  * Helpers for Full Site Editing.
  *
+ * This file is always loaded, so these functions should always exist if the
+ * plugin is activated on the site. (Not to be confused with whether FSE is
+ * active on the site!)
+ *
  * @package A8C\FSE
  */
 
