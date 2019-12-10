@@ -28,6 +28,7 @@ import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
+import Button from 'components/button';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -252,6 +253,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
+	visitSiteHostingSettings = event => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_back_to_hosting' );
+
+		window.location.href = `/hosting-config/${ selectedSite.slug }`;
+	};
+
 	visitScheduler = event => {
 		event.preventDefault();
 		const { selectedSite } = this.props;
@@ -296,7 +307,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Schedule my session' );
 		}
 
-		if ( ! selectedSite?.slug && hasFailedPurchases ) {
+		if ( ! selectedSite.slug && hasFailedPurchases ) {
 			return translate( 'Register domain' );
 		}
 
@@ -319,7 +330,21 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return translate( 'Go to My Site' );
 	};
 
-	getButton() {
+	maybeGetSecondaryButton() {
+		const { upgradeIntent, translate } = this.props;
+
+		if ( upgradeIntent === 'hosting' ) {
+			return (
+				<Button onClick={ this.visitSiteHostingSettings }>
+					{ translate( 'Return to Hosting' ) }
+				</Button>
+			);
+		}
+
+		return null;
+	}
+
+	getButtons() {
 		const {
 			hasFailedPurchases,
 			translate,
@@ -351,6 +376,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		return (
 			<div className="checkout-thank-you__header-button">
+				{ this.maybeGetSecondaryButton() }
 				<button className={ headerButtonClassName } onClick={ clickHandler }>
 					{ this.getButtonText() }
 				</button>
@@ -390,7 +416,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
-						{ this.getButton() }
+						{ this.getButtons() }
 					</div>
 				</div>
 			</div>

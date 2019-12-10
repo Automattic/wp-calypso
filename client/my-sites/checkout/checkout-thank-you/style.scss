@@ -162,6 +162,10 @@
 
 .checkout-thank-you__header-button {
 	margin: 2em 0;
+
+	button:nth-child( 2 ) {
+		margin-left: 10px;
+	}
 }
 
 .checkout-thank-you__header-heading {
