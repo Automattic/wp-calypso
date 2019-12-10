@@ -139,7 +139,13 @@ function get_nav_menu_items_data( string $menu_location ) {
 	}
 
 	// Retrieve data on the individual Menu items.
-	return wp_get_nav_menu_items( $menu_obj->term_id );
+	$nav_items = wp_get_nav_menu_items( $menu_obj->term_id );
+
+	if ( empty( $nav_items ) ) {
+		$nav_items = get_pages();
+	}
+
+	return $nav_items;
 }
 
 /**
