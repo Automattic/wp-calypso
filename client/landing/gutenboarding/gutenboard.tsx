@@ -39,7 +39,7 @@ import './style.scss';
 import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
 
 const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {
-	[ Steps.IntentGathering ]: ( { siteTitle } ) => !! siteTitle,
+	[ Steps.IntentGathering ]: ( { siteVertical } ) => !! siteVertical,
 	[ Steps.DesignSelection ]: () => false, // ( { design } ) => !! design, // TODO: Enable once we have `design` in onboarding state
 };
 
