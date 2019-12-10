@@ -74,6 +74,7 @@ class ThemeShowcase extends React.Component {
 				this.props.loggedOutComponent ||
 				this.props.search ||
 				this.props.filter ||
+				this.props.tier ||
 				this.props.hasShowcaseOpened
 			),
 		};
@@ -107,9 +108,9 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
-		const { search, filter, hasShowcaseOpened, themesBookmark } = this.props;
+		const { search, filter, tier, hasShowcaseOpened, themesBookmark } = this.props;
 		// Open showcase on state if we open here with query override.
-		if ( ( search || filter ) && ! hasShowcaseOpened ) {
+		if ( ( search || filter || tier ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
 		}
 		// Scroll to bookmark if applicable.
@@ -129,7 +130,11 @@ class ThemeShowcase extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
+		if (
+			prevProps.search !== this.props.search ||
+			prevProps.filter !== this.props.filter ||
+			prevProps.tier !== this.props.tier
+		) {
 			this.scrollToSearchInput();
 		}
 	}
@@ -266,7 +271,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-		const isQueried = this.props.search || this.props.filter;
+		const isQueried = this.props.search || this.props.filter || this.props.tier;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
