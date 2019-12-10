@@ -8,7 +8,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 
 export default class SiteOrDomainChoice extends Component {
 	handleClickChoice = event => {

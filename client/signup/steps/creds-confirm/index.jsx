@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Button from '@automattic/components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';

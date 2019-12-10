@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Button from '@automattic/components/button';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormLegend from 'components/forms/form-legend';

@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import SectionHeader from 'components/section-header';
 import Button from '@automattic/components/button';
 

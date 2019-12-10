@@ -11,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
+import CompactCard from '@automattic/components/card';
 import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
 import PostsList from './posts-list';

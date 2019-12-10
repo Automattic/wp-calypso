@@ -17,7 +17,7 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import SectionHeader from 'components/section-header';
-import CompactCard from 'components/card';
+import CompactCard from '@automattic/components/card';
 import EmptyContent from 'components/empty-content';
 import { withLocalizedMoment } from 'components/localized-moment';
 

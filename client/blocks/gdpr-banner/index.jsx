@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { localizeUrl } from 'lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';

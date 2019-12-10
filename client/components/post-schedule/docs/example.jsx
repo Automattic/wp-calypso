@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  */
 import PostSchedule from 'components/post-schedule';
 import Timezone from 'components/timezone';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import EventsTooltip from 'components/date-picker/events-tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 

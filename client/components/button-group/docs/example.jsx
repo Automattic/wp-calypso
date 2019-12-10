@@ -9,7 +9,7 @@ import React from 'react';
  */
 import ButtonGroup from 'components/button-group';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Gridicon from 'components/gridicon';
 
 class Buttons extends React.PureComponent {

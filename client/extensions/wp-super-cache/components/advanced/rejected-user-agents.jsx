@@ -9,7 +9,7 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';

@@ -9,7 +9,7 @@ import { find, flowRight, partialRight, pick, overSome } from 'lodash';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import ExternalLink from 'components/external-link';
 import SupportInfo from 'components/support-info';
 import Banner from 'components/banner';

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ViewersActions from 'lib/viewers/actions';
 import ViewersStore from 'lib/viewers/store';

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import { fetchUser } from 'lib/users/actions';

@@ -29,7 +29,7 @@ import {
 } from 'woocommerce/state/sites/settings/email/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import CustomerNotification from './components/customer-notification';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
 import NotificationsOrigin from './components/notifications-origin';

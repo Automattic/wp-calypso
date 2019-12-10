@@ -16,7 +16,7 @@ import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';

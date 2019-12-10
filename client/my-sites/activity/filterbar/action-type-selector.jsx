@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';

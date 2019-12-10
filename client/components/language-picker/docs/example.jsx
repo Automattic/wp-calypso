@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
  */
 import { languages } from 'languages';
 import LanguagePicker from 'components/language-picker';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Button from '@automattic/components/button';
 
 class LanguagePickerExample extends PureComponent {

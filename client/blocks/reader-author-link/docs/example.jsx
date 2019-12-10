@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ReaderAuthorLink from 'blocks/reader-author-link';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 
 const ReaderAuthorLinkExample = () => {
 	const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };

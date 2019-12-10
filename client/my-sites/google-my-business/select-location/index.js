@@ -12,7 +12,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';

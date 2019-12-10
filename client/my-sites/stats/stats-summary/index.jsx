@@ -16,7 +16,7 @@ import ElementChart from 'components/chart';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSummaryChart extends Component {

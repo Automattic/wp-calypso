@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import importerConfig from 'lib/importer/importer-config';
 import Button from '../../../components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 import StepWrapper from '../../step-wrapper';
 

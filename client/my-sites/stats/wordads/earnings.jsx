@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PropTypes from 'prop-types';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';

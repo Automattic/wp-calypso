@@ -11,7 +11,7 @@ import { flowRight, mapValues, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
+import CompactCard from '@automattic/components/card';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';

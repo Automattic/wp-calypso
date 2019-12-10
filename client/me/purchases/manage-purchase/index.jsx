@@ -16,7 +16,7 @@ import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {

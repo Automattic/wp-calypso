@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  */
 import AutoDirection from 'components/auto-direction';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Emojify from 'components/emojify';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';

@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { MAP_EXISTING_DOMAIN } from 'lib/url/support';

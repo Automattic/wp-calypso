@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 

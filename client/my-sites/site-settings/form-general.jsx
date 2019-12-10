@@ -12,7 +12,7 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import CompactCard from 'components/card/compact';
 import Button from '@automattic/components/button';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';

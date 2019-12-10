@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { applySiteOffset } from 'lib/site/timezone';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';

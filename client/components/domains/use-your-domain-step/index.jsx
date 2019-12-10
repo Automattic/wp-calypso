@@ -20,7 +20,7 @@ import {
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';

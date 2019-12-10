@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import InputChrono from 'components/input-chrono';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 // Date Picker Demo

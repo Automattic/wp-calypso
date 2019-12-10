@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';

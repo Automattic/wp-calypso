@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';

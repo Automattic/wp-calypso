@@ -12,7 +12,7 @@ import classnames from 'classnames';
  */
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 import Pagination from 'components/pagination';

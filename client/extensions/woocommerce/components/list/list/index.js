@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 
 const List = ( { children } ) => {
 	return (

@@ -13,7 +13,7 @@ import ProfileLink from 'me/profile-link';
 import QueryProfileLinks from 'components/data/query-profile-links';
 import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Notice from 'components/notice';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';

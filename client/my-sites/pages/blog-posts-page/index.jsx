@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import { recordTracksEvent } from 'state/analytics/actions';

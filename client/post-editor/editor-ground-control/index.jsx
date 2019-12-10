@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Site from 'blocks/site';
 import EditorPublishButton from 'post-editor/editor-publish-button';
 import Button from '@automattic/components/button';

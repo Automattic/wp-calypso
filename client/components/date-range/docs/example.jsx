@@ -7,7 +7,7 @@ import React, { Fragment, Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import DateRange from '../index.js';
 
 /*

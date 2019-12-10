@@ -12,7 +12,7 @@ import { capitalize } from 'lodash';
  * Internal dependencies
  */
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,

@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import config from 'config';
 import CreditCards from 'me/purchases/credit-cards';

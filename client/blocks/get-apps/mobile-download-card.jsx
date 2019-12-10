@@ -12,7 +12,7 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import AppsBadge from './apps-badge';
 import ReauthRequired from 'me/reauth-required';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Button from '@automattic/components/button';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormPhoneInput from 'components/forms/form-phone-input';

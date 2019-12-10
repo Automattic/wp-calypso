@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { preventWidows } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import JetpackExampleInstall from './example-components/jetpack-install';

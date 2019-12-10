@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import AppPasswordItem from 'me/application-password-item';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';

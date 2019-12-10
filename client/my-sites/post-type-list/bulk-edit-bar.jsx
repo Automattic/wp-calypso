@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import Count from 'components/count';
 import Button from '@automattic/components/button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';

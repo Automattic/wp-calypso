@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CommentButton from 'blocks/comment-button';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 
 export default class CommentButtonExample extends React.Component {
 	static displayName = 'CommentButtonExample';

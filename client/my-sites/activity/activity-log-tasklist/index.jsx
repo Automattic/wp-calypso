@@ -14,7 +14,7 @@ import page from 'page';
  */
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import TrackComponentView from 'lib/analytics/track-component-view';

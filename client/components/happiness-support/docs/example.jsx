@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import HappinessSupport from 'components/happiness-support';
 
 export default class extends React.Component {

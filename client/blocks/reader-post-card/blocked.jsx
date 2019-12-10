@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { unblockSite } from 'state/reader/site-blocks/actions';
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 

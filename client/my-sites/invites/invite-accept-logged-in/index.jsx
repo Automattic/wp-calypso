@@ -13,7 +13,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from '@automattic/components/card';
 import Gravatar from 'components/gravatar';
 import Button from '@automattic/components/button';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
