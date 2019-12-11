@@ -4,7 +4,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -12,8 +11,9 @@ import moment from 'moment';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
+import { withLocalizedMoment } from 'components/localized-moment';
 
-export default class TimelineEvent extends PureComponent {
+class TimelineEvent extends PureComponent {
 	static propTypes = {
 		actionIsBusy: PropTypes.bool,
 		actionIsDisabled: PropTypes.bool,
@@ -49,6 +49,7 @@ export default class TimelineEvent extends PureComponent {
 			disabled,
 			icon,
 			iconBackground,
+			moment,
 			onActionClick,
 		} = this.props;
 		const cardClasses = classNames( 'timeline-event', { 'is-disabled': disabled } );
@@ -84,3 +85,5 @@ export default class TimelineEvent extends PureComponent {
 		);
 	}
 }
+
+export default withLocalizedMoment( TimelineEvent );
