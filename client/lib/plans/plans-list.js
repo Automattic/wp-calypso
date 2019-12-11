@@ -211,6 +211,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
+		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
