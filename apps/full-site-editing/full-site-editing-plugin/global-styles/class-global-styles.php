@@ -78,7 +78,7 @@ class Global_Styles {
 	 */
 	private $plugin_name = 'jetpack-global-styles';
 
-	const VERSION = '1912111747';
+	const VERSION = '1909241817';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
 	const AVAILABLE_FONTS = [
