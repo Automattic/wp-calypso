@@ -62,19 +62,16 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getDiscountByName } from 'lib/discounts';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
-	getSiteOption,
 	getSitePlan,
 	getSiteSlug,
 	isJetpackMinimumVersion,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -136,7 +133,6 @@ export class PlansFeaturesMain extends Component {
 			discountEndDate,
 			redirectTo,
 			siteId,
-			siteType,
 			plansWithScroll,
 			translate,
 		} = this.props;
@@ -188,7 +184,8 @@ export class PlansFeaturesMain extends Component {
 						abtest,
 						customerType,
 						isJetpack,
-						siteType,
+						isInSignup,
+						isLaunchPage,
 					} ) }
 					siteId={ siteId }
 				/>
@@ -541,16 +538,10 @@ export default connect(
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
 
-		const siteType = props.isInSignup
-			? getSignupSiteType( state )
-			: getSiteTypePropertyValue( 'id', getSiteOption( state, siteId, 'site_segment' ), 'slug' );
-
 		const customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
 			currentPlan,
-			siteType,
-			abtest,
 		} );
 
 		return {
@@ -569,7 +560,6 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
-			siteType,
 		};
 	},
 	{
