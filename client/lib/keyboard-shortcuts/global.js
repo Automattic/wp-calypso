@@ -65,7 +65,7 @@ GlobalShortcuts.prototype.openSiteSelector = function() {
 };
 
 GlobalShortcuts.prototype.goToReader = function() {
-	page( '/read' );
+	page.redirect( '/read' );
 };
 
 GlobalShortcuts.prototype.goToMyLikes = function() {
