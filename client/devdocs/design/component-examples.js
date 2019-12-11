@@ -81,7 +81,6 @@ export { default as Suggestions } from '@automattic/components/src/suggestions/d
 export { default as TextareaAutosize } from 'components/textarea-autosize/docs/example';
 export { default as TextDiff } from 'components/text-diff/docs/example';
 export { default as TileGrid } from 'components/tile-grid/docs/example';
-export { default as Timeline } from 'components/timeline/docs/example';
 export { default as TimeSince } from 'components/time-since/docs/example';
 export { default as Timezone } from 'components/timezone/docs/example';
 export { default as TokenFields } from 'components/token-field/docs/example';
