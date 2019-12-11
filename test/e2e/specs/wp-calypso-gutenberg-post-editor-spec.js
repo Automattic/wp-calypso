@@ -1195,7 +1195,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Find a post to share (press this)', async function() {
 			const readerPage = await ReaderPage.Expect( driver );
-			return await readerPage.shareLatestPost();
+			const sharePostError = await readerPage.shareLatestPost();
+			if ( sharePostError instanceof Error ) {
+				throw sharePostError;
+			}
 		} );
 
 		step( 'Block Editor loads with shared content', async function() {

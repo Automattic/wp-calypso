@@ -27,7 +27,14 @@ export default class ReaderPage extends AsyncBaseContainer {
 	}
 
 	async shareLatestPost() {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.reader-share__button' ) );
+		const shareButtonSelector = by.css( '.reader-share__button' );
+		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
+
+		if ( ! hasSharablePost ) {
+			return new Error( 'No sharable posts found in reader' );
+		}
+
+		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.reader-popover .site__content' )
