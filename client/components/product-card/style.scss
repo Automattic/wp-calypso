@@ -1,6 +1,7 @@
 // Header
 .product-card__header {
 	margin: -16px -16px 16px;
+	padding: 16px 0;
 	border-bottom: solid 2px var( --color-jetpack-plan-free );
 
 	@include breakpoint( '>480px' ) {
@@ -25,18 +26,19 @@
 	}
 }
 
+.product-card__header-primary + .product-card__header-secondary {
+	margin-top: 2px;
+}
+
 .product-card__header-primary {
 	display: flex;
-	padding-top: 16px;
-	padding-bottom: 2px;
-
-	@include breakpoint( '>480px' ) {
-		padding-top: 24px;
-	}
 
 	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
-		padding-top: 16px;
+	}
+
+	.product-card:not( .has-secondary-header ) & {
+		justify-content: center;
 	}
 
 	.gridicon {
@@ -53,15 +55,6 @@
 
 .product-card__header-secondary {
 	position: relative;
-	padding-bottom: 14px;
-
-	@include breakpoint( '>480px' ) {
-		padding-bottom: 24px;
-	}
-
-	@include breakpoint( '>660px' ) {
-		padding-bottom: 16px;
-	}
 
 	.is-purchased & {
 		@include breakpoint( '>660px' ) {

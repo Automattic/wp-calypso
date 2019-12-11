@@ -30,9 +30,12 @@ function ProductCard( {
 	subtitle,
 	title,
 } ) {
+	const showPriceGroup = ! subtitle && ! purchase && !! currencyCode && !! billingTimeFrame;
+	const showSecondaryHeader = subtitle || showPriceGroup;
 	const cardClassNames = classNames( 'product-card', {
 		'is-placeholder': isPlaceholder,
 		'is-purchased': !! purchase,
+		'has-secondary-header': showSecondaryHeader,
 	} );
 
 	return (
@@ -44,17 +47,19 @@ function ProductCard( {
 						<h3 className="product-card__title">{ title }</h3>
 					</div>
 				) }
-				<div className="product-card__header-secondary">
-					{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
-					{ ! purchase && (
-						<ProductCardPriceGroup
-							billingTimeFrame={ billingTimeFrame }
-							currencyCode={ currencyCode }
-							discountedPrice={ discountedPrice }
-							fullPrice={ fullPrice }
-						/>
-					) }
-				</div>
+				{ showSecondaryHeader && (
+					<div className="product-card__header-secondary">
+						{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
+						{ showPriceGroup && (
+							<ProductCardPriceGroup
+								billingTimeFrame={ billingTimeFrame }
+								currencyCode={ currencyCode }
+								discountedPrice={ discountedPrice }
+								fullPrice={ fullPrice }
+							/>
+						) }
+					</div>
+				) }
 			</div>
 			{ description && (
 				<div className="product-card__description">
