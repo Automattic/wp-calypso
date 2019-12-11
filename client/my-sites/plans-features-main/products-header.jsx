@@ -14,21 +14,18 @@ import { addQueryArgs } from 'lib/route';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import FormattedHeader from 'components/formatted-header';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackBackup } from 'lib/products-values';
 import { JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL } from 'lib/products-values/constants';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 
 class PlansFeaturesMainProductsHeader extends Component {
 	static propTypes = {
-		siteId: PropTypes.number,
-
 		// Connected props
+		isFetching: PropTypes.bool,
 		purchases: PropTypes.array,
-		selectedSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 
 		// From localize() HoC
@@ -47,11 +44,11 @@ class PlansFeaturesMainProductsHeader extends Component {
 	}
 
 	getSubHeader() {
-		const { siteSlug, translate } = this.props;
+		const { isFetching, siteSlug, translate } = this.props;
 		const baseCopy = translate( "Just looking for a backups? We've got you covered." );
 
 		// Don't render a link if a user already has a Jetpack Backup product or a plan with a backup feature.
-		if ( this.siteHasJetpackBackup() ) {
+		if ( isFetching || this.siteHasJetpackBackup() ) {
 			return baseCopy;
 		}
 
@@ -80,13 +77,11 @@ class PlansFeaturesMainProductsHeader extends Component {
 	}
 
 	render() {
-		const { selectedSiteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		return (
 			<Fragment>
-				<QueryPlans />
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QuerySitePurchases siteId={ siteId } />
 				<FormattedHeader
 					headerText={ translate( 'Solutions' ) }
 					subHeaderText={ this.getSubHeader() }
@@ -98,12 +93,13 @@ class PlansFeaturesMainProductsHeader extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
-	const selectedSiteId = siteId || getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
 	return {
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSiteId,
-		siteSlug: getSiteSlug( state, selectedSiteId ),
+		isFetching: isFetchingSitePurchases( state ),
+		purchases: getSitePurchases( state, siteId ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( localize( PlansFeaturesMainProductsHeader ) );
