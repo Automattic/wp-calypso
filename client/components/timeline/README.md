@@ -13,6 +13,10 @@ A `Timeline` expects its children to be a flat list of `TimelineEvent`:
 
 The date to show for the timeline item.
 
+### `dateFormat { string }`
+
+The format for the dates shown in the timeline.
+
 ### `detail { string }`
 
 The detail message to show below the date.
