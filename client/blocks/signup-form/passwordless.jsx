@@ -90,13 +90,18 @@ class PasswordlessSignupForm extends Component {
 				  )
 				: undefined;
 
+		let recaptchaError = undefined;
+		if ( isRecaptchaABTest && ! isRecaptchaLoaded ) {
+			recaptchaError = 'recaptcha_didnt_load';
+		} else if ( isRecaptchaABTest && isRecaptchaLoaded && ! recaptchaToken ) {
+			recaptchaError = 'recaptcha_failed';
+		}
+
 		try {
 			const response = await wpcom.undocumented().usersNew(
 				{
 					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-					'g-recaptcha-didnt-load': ( isRecaptchaABTest && ! isRecaptchaLoaded ) || undefined,
-					'g-recaptcha-failed':
-						( isRecaptchaABTest && isRecaptchaLoaded && ! recaptchaToken ) || undefined,
+					'g-recaptcha-error': recaptchaError,
 					'g-recaptcha-response': recaptchaToken || undefined,
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,

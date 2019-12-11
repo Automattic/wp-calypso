@@ -454,8 +454,8 @@ export function createAccount(
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
 					: null,
-				recaptchaDidntLoad ? { 'g-recaptcha-didnt-load': true } : null,
-				recaptchaFailed ? { 'g-recaptcha-failed': true } : null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
 				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
