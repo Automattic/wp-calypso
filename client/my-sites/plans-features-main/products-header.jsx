@@ -4,12 +4,13 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/route';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import FormattedHeader from 'components/formatted-header';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -17,12 +18,23 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackBackup } from 'lib/products-values';
 import { JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL } from 'lib/products-values/constants';
-import { addQueryArgs } from 'lib/route';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 
 class PlansFeaturesMainProductsHeader extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+
+		// Connected props
+		purchases: PropTypes.array,
+		selectedSiteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+
+		// From localize() HoC
+		translate: PropTypes.func.isRequired,
+	};
+
 	siteHasJetpackBackup() {
 		const { purchases } = this.props;
 
@@ -31,9 +43,7 @@ class PlansFeaturesMainProductsHeader extends Component {
 		}
 
 		// Search through purchased products for Jetpack Backup.
-		return ! isEmpty(
-			purchases.find( purchase => purchase.active && isJetpackBackup( purchase ) )
-		);
+		return some( purchases, purchase => purchase.active && isJetpackBackup( purchase ) );
 	}
 
 	getSubHeader() {
@@ -87,12 +97,6 @@ class PlansFeaturesMainProductsHeader extends Component {
 		);
 	}
 }
-
-PlansFeaturesMainProductsHeader.propTypes = {
-	purchases: PropTypes.array,
-	selectedSiteId: PropTypes.number,
-	siteSlug: PropTypes.string,
-};
 
 export default connect( ( state, { siteId } ) => {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
