@@ -26,6 +26,14 @@ export default class ReaderPage extends AsyncBaseContainer {
 		return URL.parse( href ).host;
 	}
 
+	async shareLatestPost() {
+		await driverHelper.clickWhenClickable( this.driver, by.css( '.reader-share__button' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.reader-popover .site__content' )
+		);
+	}
+
 	async commentOnLatestPost( comment ) {
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.comment-button' ) );
 		await driverHelper.setWhenSettable(
