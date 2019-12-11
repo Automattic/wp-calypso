@@ -338,7 +338,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	body.is-fullscreen-mode & {
 		top: 111px;
 		@media screen and ( min-width: $breakpoint-tablet ) {
-			left: calc( 30% + #{$preview-right-margin * 2} );
+			left: calc( 30% + #{$preview-right-margin * 2} ) !important;
 		}
 	}
 
