@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { isEmpty, isArray, debounce } from 'lodash';
+import { debounce, get, isArray, isEmpty } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
@@ -30,58 +30,38 @@ import BlockPreview from './block-preview';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
+	const TITLE_DEFAULT_HEIGHT = 120;
 
-	const [ visibility, setVisibility ] = useState( 'hidden' );
-	const [ previewViewport, setPreviewViewport ] = useState( viewportWidth );
 	const ref = useRef( null );
 
+	const [ previewViewport, setPreviewViewport ] = useState( viewportWidth );
+	const [ titleTransform, setTitleTransform ] = useState( {
+		scale: 1,
+		offset: TITLE_DEFAULT_HEIGHT,
+	} );
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
 
-	// TODO: we should remove this approach and use the onReady callback.
-	// There is Gutenberg PR which adds the onReady callback
-	// as a component property.
-	// The following approach can be easily replace calling this callback
-	// once the PR ships (finger-crossed)
-	// https://github.com/WordPress/gutenberg/pull/17242
-
-	const updateTemplateTitle = () => {
-		// Get DOM reference.
+	const updatePreviewTitle = () => {
 		if ( ! ref || ! ref.current ) {
 			return;
 		}
 
-		// Try to get the preview content element.
-		const previewContainerEl = ref.current.querySelector( '.block-editor-block-preview__content' );
-		if ( ! previewContainerEl ) {
-			return;
-		}
-
-		// Try to get the `transform` css rule from the preview container element.
-		const elStyles = window.getComputedStyle( previewContainerEl );
-		if ( elStyles && elStyles.transform ) {
-			const titleElement = ref.current.querySelector( '.editor-post-title' );
-			if ( titleElement ) {
-				// Apply the same transform css rule at template title element.
-				titleElement.style.transform = elStyles.transform;
+		setTimeout( () => {
+			const preview = ref.current.querySelector( '.block-editor-block-preview__content' );
+			if ( ! preview ) {
+				return;
 			}
 
-			// Pick up scale factor from `transform` css.
-			let scale = elStyles.transform.replace( /matrix\((.+)\)$/i, '$1' ).split( ',' );
-			scale = scale && scale.length ? Number( scale[ 0 ] ) : null;
-			scale = isNaN( scale ) ? null : scale;
-
-			// Try to adjust vertical offset of the large preview.
-			const offsetCorrectionEl = previewContainerEl.closest(
-				'.template-selector-preview__offset-correction'
+			const previewScale = parseFloat(
+				get( preview, [ 'style', 'transform' ], '' )
+					.replace( 'scale(', '' )
+					.replace( ')', '' )
 			);
-
-			if ( offsetCorrectionEl && scale ) {
-				const titleHeight = titleElement ? titleElement.offsetHeight : null;
-				offsetCorrectionEl.style.top = `${ titleHeight * scale }px`;
+			if ( previewScale ) {
+				const titleOffset = TITLE_DEFAULT_HEIGHT * previewScale;
+				setTitleTransform( { scale: previewScale, offset: titleOffset } );
 			}
-		}
-
-		setVisibility( 'visible' );
+		}, 500 );
 	};
 
 	const updatePreviewViewport = useCallback( () => {
@@ -97,9 +77,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	}, [ viewportWidth ] );
 
 	useLayoutEffect( () => {
-		setVisibility( 'hidden' );
 		updatePreviewViewport();
-		updateTemplateTitle();
+		updatePreviewTitle();
 	}, [ blocks, updatePreviewViewport ] );
 
 	useEffect( () => {
@@ -108,8 +87,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		}
 
 		const rePreviewTemplate = () => {
-			updateTemplateTitle();
 			updatePreviewViewport();
+			updatePreviewTitle();
 			triggerRecompute();
 		};
 
@@ -136,10 +115,13 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		<div className="template-selector-preview">
 			<Disabled>
 				<div ref={ ref } className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper" style={ { visibility } }>
+					<div className="editor-styles-wrapper">
 						<div className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } />
-							<div className="template-selector-preview__offset-correction">
+							<PreviewTemplateTitle title={ title } scale={ titleTransform.scale } />
+							<div
+								className="template-selector-preview__offset-correction"
+								style={ { top: titleTransform.offset } }
+							>
 								<BlockPreview
 									key={ recompute }
 									blocks={ blocks }

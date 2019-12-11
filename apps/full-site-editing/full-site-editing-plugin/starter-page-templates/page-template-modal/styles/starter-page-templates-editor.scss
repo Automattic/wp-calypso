@@ -274,7 +274,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__buttons {
-	display: none;
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -355,7 +354,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 
 		.editor-post-title {
-			transform-origin: top left;
+			transform-origin: top center;
 			width: 100%;
 			display: block;
 			position: absolute;
@@ -404,6 +403,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 
 		// `core/columns`
+		/* stylelint-disable selector-combinator-space-before */
 		.wp-block-columns
 			> .editor-inner-blocks
 			> .editor-block-list__layout
@@ -412,6 +412,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			> div
 			> .block-core-columns
 			> .editor-inner-blocks {
+			/* stylelint-enable */
 			margin-top: 0;
 			margin-bottom: 0;
 		}
