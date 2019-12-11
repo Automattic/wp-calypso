@@ -95,6 +95,11 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		const refreshPreview = debounce( rePreviewTemplate, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
+		// In wp-admin, listen to the jQuery `wp-collapse-menu` event to refresh the preview on sidebar toggle.
+		if ( window.jQuery ) {
+			window.jQuery( window.document ).on( 'wp-collapse-menu', rePreviewTemplate );
+		}
+
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
 		};
