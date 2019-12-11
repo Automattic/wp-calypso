@@ -168,6 +168,10 @@ export class List extends React.Component {
 			return null;
 		}
 
+		if ( this.props.selectedSite.jetpack && this.props.renderAllSites ) {
+			return null;
+		}
+
 		if ( this.props.isDomainOnly ) {
 			if ( ! this.props.renderAllSites ) {
 				return (
