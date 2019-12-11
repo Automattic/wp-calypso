@@ -31,6 +31,7 @@ import {
 	validateAgainstExistingUsers,
 } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -76,7 +77,7 @@ class GSuiteAddUsers extends React.Component {
 
 		if ( canContinue ) {
 			addItems(
-				getItemsForCart( domains, 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+				getItemsForCart( domains, 'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG, users )
 			);
 			page( '/checkout/' + selectedSite.slug );
 		}

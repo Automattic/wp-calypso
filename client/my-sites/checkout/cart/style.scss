@@ -69,6 +69,21 @@
 			padding-left: 0;
 		}
 
+		.cart__gsuite-discount {
+			.cart__gsuite-discount-regular-price {
+				text-decoration: line-through;
+			}
+
+			.cart__gsuite-discount-discounted-price {
+				padding-left: 4px;
+			}
+
+			.cart__gsuite-discount-text {
+				color: var( --color-success );
+				padding-left: 8px;
+			}
+		}
+
 		.product-monthly-price {
 			color: var( --color-text-subtle );
 			display: block;

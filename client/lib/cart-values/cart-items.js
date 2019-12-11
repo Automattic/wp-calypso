@@ -24,6 +24,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
+import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -673,14 +674,14 @@ export function getGoogleApps( cart ) {
 }
 
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || 'gapps',
+	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG,
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 export function googleAppsExtraLicenses( properties ) {
-	const item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
+	const item = domainItem( GSUITE_EXTRA_LICENSE_SLUG, properties.domain, properties.source );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }

@@ -6,6 +6,7 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
@@ -391,7 +392,7 @@ export function getProductClass( productSlug ) {
  * Get Jetpack product display name based on the product purchase object.
  *
  * @param   product {object}             Product purchase object
- * @returns         {string|HTMLElement} Product display name
+ * @returns         {string|object} Product display name
  */
 export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
@@ -404,7 +405,7 @@ export function getJetpackProductDisplayName( product ) {
  * Get Jetpack product tagline based on the product purchase object.
  *
  * @param   product {object}             Product purchase object
- * @returns         {string|HTMLElement} Product tagline
+ * @returns         {string|object} Product tagline
  */
 export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
@@ -447,11 +448,7 @@ export function isGoogleApps( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return (
-		'gapps' === product.product_slug ||
-		'gapps_unlimited' === product.product_slug ||
-		'gapps_extra_license' === product.product_slug
-	);
+	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGuidedTransfer( product ) {
