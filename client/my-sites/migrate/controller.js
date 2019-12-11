@@ -11,6 +11,13 @@ import SectionMigrate from 'my-sites/migrate/section-migrate';
 import getSiteId from 'state/selectors/get-site-id';
 import { isEnabled } from 'config';
 
+export function ensureFeatureFlag( context, next ) {
+	if ( isEnabled( 'tools/migrate' ) ) {
+		return next();
+	}
+	page.redirect( '/' );
+}
+
 export function migrateSite( context, next ) {
 	if ( isEnabled( 'tools/migrate' ) ) {
 		const sourceSiteId =
@@ -21,4 +28,9 @@ export function migrateSite( context, next ) {
 	}
 
 	page.redirect( '/' );
+}
+
+export function setSiteSelectionHeader( context, next ) {
+	context.getSiteSelectionHeaderText = () => 'Select a site to import into';
+	next();
 }
