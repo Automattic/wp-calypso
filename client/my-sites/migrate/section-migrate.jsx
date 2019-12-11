@@ -259,18 +259,16 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationProgress() {
-		const { sourceSite, targetSite, translate } = this.props;
+		const { sourceSite, targetSite } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
-		const subHeaderText = translate(
-			`We're moving everything from {{span}}%(sourceSiteDomain)s{{/span}} ` +
-				`to {{span}}%(targetSiteDomain)s{{/span}}.`,
-			{
-				args: { sourceSiteDomain: sourceSiteDomain, targetSiteDomain: targetSiteDomain },
-				components: {
-					span: <span className="migrate__domain" />,
-				},
-			}
+		const subHeaderText = (
+			<>
+				{ "We're moving everything from " }
+				<span className="migrate__domain">{ sourceSiteDomain }</span>
+				{ ' to ' }
+				<span className="migrate__domain">{ targetSiteDomain }</span>.
+			</>
 		);
 
 		return (
@@ -344,13 +342,25 @@ class SectionMigrate extends Component {
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				progressItemText = `Backed up from ${ sourceSiteDomain }`;
+				progressItemText = (
+					<span>
+						Backed up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+					</span>
+				);
 				if ( migrationStatus === 'backing-up' ) {
-					progressItemText = `Backing up from ${ sourceSiteDomain }`;
+					progressItemText = (
+						<span>
+							Backing up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+						</span>
+					);
 				}
 				break;
 			case 'restoring':
-				progressItemText = `Restoring to ${ targetSiteDomain }`;
+				progressItemText = (
+					<span>
+						Restoring to <span className="migrate__domain">{ targetSiteDomain }</span>
+					</span>
+				);
 				break;
 		}
 
