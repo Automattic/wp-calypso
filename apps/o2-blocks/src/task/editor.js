@@ -21,7 +21,7 @@ import {
 } from '@wordpress/components';
 
 import './editor.scss';
-const name = 'core/task';
+const name = 'a8c/task';
 
 const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } ) => {
 	const { assignedTo, content, placeholder, status, dueDate, startDate } = attributes;
