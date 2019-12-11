@@ -346,7 +346,8 @@ export class Checkout extends React.Component {
 			redirectTo = getExitCheckoutUrl(
 				this.state.previousCart,
 				selectedSiteSlug,
-				this.props.upgradeIntent
+				this.props.upgradeIntent,
+				this.props.redirectTo
 			);
 		}
 
