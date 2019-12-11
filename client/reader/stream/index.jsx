@@ -365,6 +365,7 @@ class ReaderStream extends React.Component {
 		return (
 			<PostLifecycle
 				key={ itemKey }
+				ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 				isSelected={ isSelected }
 				handleClick={ showPost }
 				postKey={ postKey }

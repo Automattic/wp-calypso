@@ -103,5 +103,8 @@ export default connect(
 	} ),
 	null,
 	null,
-	{ areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ) }
+	{
+		forwardRef: true,
+		areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ),
+	}
 )( PostLifecycle );
