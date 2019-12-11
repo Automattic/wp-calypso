@@ -248,7 +248,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		}
 
 		// if query is default, filter out recommended themes
-		if ( ! query.search && ! query.filter ) {
+		if ( ! ( query.search || query.filter || query.tier ) ) {
 			const recommendedThemes = state.themes.recommendedThemes.themes;
 			const themeIds = flatMap( recommendedThemes, theme => {
 				return theme.id;
