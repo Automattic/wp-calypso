@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useState, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,31 +11,27 @@ import { connect } from 'react-redux';
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
-const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
-	const prevIsRequestingRef = useRef();
-	const [ loaded, setLoaded ] = useState( false );
+const QueryGSuiteUsers = ( { siteId } ) => {
+	const dispatch = useDispatch();
+	const isRequesting = useSelector( state => isRequestingGSuiteUsers( state, siteId ) );
+	const prevIsRequesting = useRef( isRequesting );
+
 	useEffect( () => {
-		prevIsRequestingRef.current = isRequesting;
-		if ( ! isRequesting ) {
-			request( siteId );
+		if ( ! ( isRequesting || prevIsRequesting.current ) ) {
+			dispatch( getGSuiteUsers( siteId ) );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteId, request, loaded ] );
-	if ( prevIsRequestingRef.current && ! isRequesting ) {
-		setLoaded( true );
-	}
+		return () => {
+			if ( isRequesting ) {
+				prevIsRequesting.current = true;
+			}
+		};
+	} );
+
 	return null;
 };
 
 QueryGSuiteUsers.propTypes = {
-	isRequesting: PropTypes.bool.isRequired,
 	siteId: PropTypes.number.isRequired,
-	request: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		isRequesting: isRequestingGSuiteUsers( state, ownProps.siteId ),
-	} ),
-	{ request: getGSuiteUsers }
-)( QueryGSuiteUsers );
+export default QueryGSuiteUsers;
