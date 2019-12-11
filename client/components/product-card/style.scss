@@ -213,11 +213,10 @@
 }
 
 .product-card__options-label {
-	margin: 8px 0;
-	padding: 6px 0;
+	margin: 16px 0 0;
 	font-size: 14px;
+	text-align: center;
 	color: var( --color-text-subtle );
-	border-bottom: 1px solid var( --color-border-subtle );
 
 	@include breakpoint( '>960px' ) {
 		flex: 0 0 100%;
@@ -232,12 +231,17 @@
 
 // We need a higher specificity here to override .form-label styles
 .product-card__option.form-label {
-	margin: 16px 0 0;
-	padding: 8px 0;
+	margin: 24px 0;
 
 	@include breakpoint( '>960px' ) {
-		flex: 0 0 40%;
+		flex: 0 0 50%;
 		align-items: flex-start;
+		margin-bottom: 8px;
+
+		& + & {
+			padding-left: 20px;
+			border-left: 1px solid var( --color-border-subtle );
+		}
 	}
 }
 
@@ -245,6 +249,10 @@
 	margin-left: 8px;
 	flex-grow: 1;
 	flex-wrap: wrap;
+
+	@include breakpoint( '>960px' ) {
+		margin-left: 4px;
+	}
 }
 
 .product-card__option-name {

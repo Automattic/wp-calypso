@@ -131,6 +131,6 @@ export const JETPACK_PRODUCTS = [
 		optionDescriptions: {
 			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
-		optionsLabel: translate( 'Backup Options:' ),
+		optionsLabel: translate( 'Select a backup option:' ),
 	},
 ];
