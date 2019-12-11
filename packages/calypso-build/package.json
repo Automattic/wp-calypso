@@ -28,7 +28,6 @@
 	"bin": {
 		"transpile": "./bin/transpile.js",
 		"calypso-build": "./bin/calypso-build.js",
-		"copy-styles": "./bin/copy-styles.js",
 		"copy-assets": "./bin/copy-assets.js"
 	},
 	"browserslist": [

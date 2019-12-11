@@ -14,7 +14,15 @@ const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 
 const copyOptions = {
 	overwrite: true,
-	filter: [ '**/*.gif', '**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.svg' ],
+	filter: [
+		'**/*.gif',
+		'**/*.jpg',
+		'**/*.jpeg',
+		'**/*.png',
+		'**/*.svg',
+		'**/*.scss',
+		'!**/test/**',
+	],
 	concurrency: 127,
 };
 
