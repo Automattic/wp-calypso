@@ -382,6 +382,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.closeScheduledPanel();
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+				await gSidebarComponent.selectDocumentTab();
 				await gSidebarComponent.trashPost();
 			} );
 
@@ -1182,6 +1183,40 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		after( async function() {
 			await driverHelper.acceptAlertIfPresent( driver );
+		} );
+	} );
+
+	describe( 'Can Share Posts From Reader (PressThis)! @parallel', function() {
+		step( 'Can log in', async function() {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			await this.loginFlow.login();
+			return this.loginFlow.checkForDevDocsAndRedirectToReader();
+		} );
+
+		step( 'Find a post to share (press this)', async function() {
+			const readerPage = await ReaderPage.Expect( driver );
+			const sharePostError = await readerPage.shareLatestPost();
+			if ( sharePostError instanceof Error ) {
+				throw sharePostError;
+			}
+		} );
+
+		step( 'Block Editor loads with shared content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.closeSidebar();
+		} );
+
+		step( 'Can publish and view content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.publish( { visit: true } );
+		} );
+
+		step( 'Can see a post title and post content', async function() {
+			const viewPostPage = await ViewPostPage.Expect( driver );
+			const postTitle = await viewPostPage.postTitle();
+			const postContent = await viewPostPage.postContent();
+			assert.ok( postTitle.length > 0, 'Press This did not copy a post title!' );
+			assert.ok( postContent.length > 0, 'Press This did not copy any post content!' );
 		} );
 	} );
 } );
