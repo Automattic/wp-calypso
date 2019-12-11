@@ -117,7 +117,7 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && history.scrollRestoration !== 'manual' ) {
+		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
 	};
@@ -157,8 +157,8 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
 		window.addEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in history ) {
-			history.scrollRestoration = 'manual';
+		if ( 'scrollRestoration' in window.history ) {
+			window.history.scrollRestoration = 'manual';
 		}
 	}
 
@@ -170,8 +170,8 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
 		window.removeEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in history ) {
-			history.scrollRestoration = 'auto';
+		if ( 'scrollRestoration' in window.history ) {
+			window.history.scrollRestoration = 'auto';
 		}
 	}
 
