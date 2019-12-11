@@ -80,7 +80,6 @@ export const EligibilityWarnings = ( {
 		}
 
 		const bannerURL = `/checkout/${ siteSlug }/business`;
-
 		businessUpsellBanner = (
 			<Banner
 				description={ description }
