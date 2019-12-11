@@ -9,7 +9,7 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { SiteVertical } from '../../stores/onboard/types';
-import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
+import { TemplateSelectorControl } from '../../../../../apps/wpcom-editing-experience/plugin/starter-page-templates/page-template-modal/components/template-selector-control';
 
 export default () => {
 	const siteVertical = useSelect(
