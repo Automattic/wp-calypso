@@ -78,7 +78,7 @@ class Global_Styles {
 	 */
 	private $plugin_name = 'jetpack-global-styles';
 
-	const VERSION = '1909241817';
+	const VERSION = '1912111747';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
 	const AVAILABLE_FONTS = [
@@ -385,8 +385,9 @@ class Global_Styles {
 		 * - only the selected ones for the frontend
 		 */
 		$font_list = [];
-		// We want $font_list to only contain valid Google Font values, not things like 'unset'.
-		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset' ] );
+		// We want $font_list to only contain valid Google Font values,
+		// so we filter out things like 'unset' on the system font.
+		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset', self::SYSTEM_FONT ] );
 		if ( true === $only_selected_fonts ) {
 			foreach ( [ 'font_base', 'font_base_default', 'font_headings', 'font_headings_default' ] as $key ) {
 				if ( in_array( $data[ $key ], $font_values, true ) ) {
@@ -396,13 +397,16 @@ class Global_Styles {
 		} else {
 			$font_list = $font_values;
 		}
-		$font_list_str = '';
-		foreach ( $font_list as $font ) {
-			// Some fonts lack italic variants,
-			// the API will return only the regular and bold CSS for those.
-			$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+
+		if ( count( $font_list ) > 0 ) {
+			$font_list_str = '';
+			foreach ( $font_list as $font ) {
+				// Some fonts lack italic variants,
+				// the API will return only the regular and bold CSS for those.
+				$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+			}
+			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 		}
-		$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 
 		/*
 		 * Add the CSS custom properties.
