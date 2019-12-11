@@ -15,45 +15,61 @@ class Newspack_Blocks_API {
 	 */
 	public static function register_rest_fields() {
 		register_rest_field(
-			array( 'post', 'page' ),
+			[ 'post', 'page' ],
 			'newspack_featured_image_src',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'array',
+				],
+			]
 		);
 
 		register_rest_field(
-			array( 'post', 'page' ),
+			[ 'post', 'page' ],
 			'newspack_featured_image_caption',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'string',
+				],
+			]
 		);
 
 		/* Add author info source */
 		register_rest_field(
 			'post',
 			'newspack_author_info',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'array',
+				],
+			]
 		);
 
 		/* Add first category source */
 		register_rest_field(
 			'post',
 			'newspack_category_info',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'string',
+				],
+			]
 		);
 	}
 
