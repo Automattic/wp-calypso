@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -27,7 +26,7 @@ describe( 'ReaderAuthorLink', () => {
 		const wrapper = shallow(
 			<ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink>
 		);
-		expect( wrapper.contains( 'Barnaby Blogwit' ) ).to.equal( true );
+		expect( wrapper.contains( 'Barnaby Blogwit' ) ).toEqual( true );
 	} );
 
 	test( 'should accept a custom class of `test__ace`', () => {
@@ -36,19 +35,19 @@ describe( 'ReaderAuthorLink', () => {
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.is( '.test__ace' ) ).to.equal( true );
+		expect( wrapper.is( '.test__ace' ) ).toEqual( true );
 	} );
 
 	test( 'should return null with a null author name', () => {
 		author.name = null;
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).to.be.null;
+		expect( wrapper.type() ).toBe( null );
 	} );
 
-	test( 'should return null with a blacklisted author name', () => {
+	test( 'should return null with a blocklisted author name', () => {
 		author.name = 'admin';
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).to.be.null;
+		expect( wrapper.type() ).toBe( null );
 	} );
 
 	test( 'should use siteUrl if provided', () => {
@@ -58,22 +57,18 @@ describe( 'ReaderAuthorLink', () => {
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.find( '.reader-author-link' ) )
-			.to.have.prop( 'href' )
-			.equal( siteUrl );
+		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( siteUrl );
 	} );
 
 	test( 'should use author.URL if site URL is not provided', () => {
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.find( '.reader-author-link' ) )
-			.to.have.prop( 'href' )
-			.equal( author.URL );
+		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( author.URL );
 	} );
 
 	test( 'should not return a link if siteUrl and author.URL are both missing', () => {
 		author.URL = null;
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		// Should just return children
-		expect( wrapper.type() ).to.equal( 'span' );
+		expect( wrapper.type() ).toEqual( 'span' );
 	} );
 } );
