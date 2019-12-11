@@ -41,6 +41,7 @@ $wp-org-admin-bar-mobile: 46px;
 .page-template-modal-screen-overlay {
 	animation: none;
 	background-color: transparent; // hide the overlay visually
+	z-index: 99; // Right below the wp-admin admin bar and sidebar.
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
