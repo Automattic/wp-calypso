@@ -112,7 +112,6 @@ export { default as SplitButton } from 'components/split-button';
 export { default as TextareaAutosize } from 'components/textarea-autosize';
 export { default as TextDiff } from 'components/text-diff';
 export { default as TileGrid } from 'components/tile-grid';
-export { default as Timeline } from 'components/timeline';
 export { default as TimeSince } from 'components/time-since';
 export { default as Timezone } from 'components/timezone';
 export { default as TokenFields } from 'components/token-field';
