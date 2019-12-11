@@ -20,5 +20,8 @@ export const siteVerticalSchema = {
 		slug: {
 			type: 'string',
 		},
+		suggestedTheme: {
+			type: 'string',
+		},
 	},
 };
