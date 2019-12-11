@@ -50,71 +50,44 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 	const annualPrice = getAnnualPrice( cost, currencyCode );
 	const monthlyPrice = getMonthlyPrice( cost, currencyCode );
 
-	if ( abtest( 'gsuitePrice' ) === 'discount' ) {
-		const isDiscounted = hasValidDiscount( product );
-
-		return (
-			<div className="gsuite-price">
-				<h4 className="gsuite-price__monthly-price">
-					{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
-						args: {
-							price: monthlyPrice,
-						},
-						components: {
-							strong: <strong />,
-						},
-						comment: "Monthly price per user formatted with the currency (e.g. '$8.40')",
-					} ) }
-				</h4>
-
-				<h5 className={ classNames( {
-					'gsuite-price__annual-price': true,
-					'discounted': isDiscounted
-				} ) }>
-					{ translate( '%(price)s billed annually', {
-						args: {
-							price: annualPrice,
-						},
-						comment: "Annual price formatted with the currency (e.g. '$99.99')"
-					} ) }
-				</h5>
-
-				{ isDiscounted && (
-					<Badge type="success">
-						{ translate( '%(price)s for your first year', {
-							args: {
-								price: getAnnualPrice( product.sale_cost, currencyCode ),
-							},
-							comment: "Discounted annual price formatted with the currency (e.g. '$80')"
-						} ) }
-					</Badge>
-				) }
-			</div>
-		);
-	}
+	const isDiscounted = hasValidDiscount( product );
 
 	return (
 		<div className="gsuite-price">
-			<h4 className="gsuite-price__price-per-user-per-month">
-				<span>
-					{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							price: monthlyPrice,
-						},
-					} ) }
-				</span>
+			<h4 className="gsuite-price__monthly-price">
+				{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
+					args: {
+						price: monthlyPrice,
+					},
+					components: {
+						strong: <strong />,
+					},
+					comment: "Monthly price per user formatted with the currency (e.g. '$8.40')",
+				} ) }
 			</h4>
 
-			<h5 className="gsuite-price__price-per-user-per-year">
-				{ translate( '%(price)s billed yearly', {
+			<h5 className={ classNames( {
+				'gsuite-price__annual-price': true,
+				'discounted': isDiscounted
+			} ) }>
+				{ translate( '%(price)s billed annually', {
 					args: {
 						price: annualPrice,
 					},
+					comment: "Annual price formatted with the currency (e.g. '$99.99')"
 				} ) }
 			</h5>
+
+			{ isDiscounted && (
+				<Badge type="success">
+					{ translate( '%(price)s for your first year', {
+						args: {
+							price: getAnnualPrice( product.sale_cost, currencyCode ),
+						},
+						comment: "Discounted annual price formatted with the currency (e.g. '$80')"
+					} ) }
+				</Badge>
+			) }
 		</div>
 	);
 };
