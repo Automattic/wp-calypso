@@ -4,27 +4,23 @@
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-
 import { Button } from '@automattic/components';
 
 describe( 'ButtonGroup', () => {
-	let sandbox, ButtonGroup;
+	let ButtonGroup, consoleErrorSpy;
 
 	beforeEach( () => {
-		sandbox = sinon.createSandbox();
-		sandbox.stub( console, 'error' );
-		sandbox.stub( console, 'log' );
+		consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
 
 		ButtonGroup = require( '../index' );
 	} );
 
 	afterEach( () => {
-		sandbox.restore();
+		consoleErrorSpy.mockRestore();
 	} );
 
 	test( 'should have ButtonGroup class', () => {
@@ -54,8 +50,8 @@ describe( 'ButtonGroup', () => {
 			</ButtonGroup>
 		);
 
-		/* eslint-disable no-console */
-		sinon.assert.calledWithMatch( console.error, 'All children elements should be a Button.' );
-		/* eslint-enable no-console */
+		expect( consoleErrorSpy ).toHaveBeenCalledWith(
+			expect.stringContaining( 'All children elements should be a Button.' )
+		);
 	} );
 } );
