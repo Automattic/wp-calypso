@@ -37,6 +37,18 @@ export function registerBlock() {
 			placeholder: {
 				type: 'string',
 			},
+			status: {
+				type: 'string',
+				default: 'new',
+			},
+			dueDate: {
+				type: 'string',
+				default: '',
+			},
+			startDate: {
+				type: 'string',
+				default: '',
+			},
 		},
 
 		edit,

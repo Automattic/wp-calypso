@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import moment from 'moment';
 
 /**
  * WordPress dependencies
@@ -9,34 +10,137 @@ import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { RichText, InspectorControls } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
-import { TextControl, PanelBody } from '@wordpress/components';
+import {
+	BaseControl,
+	Button,
+	CustomSelectControl,
+	DatePicker,
+	Dropdown,
+	TextControl,
+	PanelBody,
+} from '@wordpress/components';
 
 import './editor.scss';
+const name = 'core/task';
 
 const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } ) => {
-	const { assignedTo, checked, content, placeholder } = attributes;
-	const todoClass = classnames( 'wp-block-todo', className, { 'is-checked': checked } );
+	const { assignedTo, content, placeholder, status, dueDate, startDate } = attributes;
+	const todoClass = classnames( 'wp-block-todo', className, { 'is-checked': status === 'done' } );
+
+	const options = [
+		{
+			key: 'new',
+			name: 'New',
+		},
+		{
+			key: 'in-progress',
+			name: 'In Progress',
+		},
+		{
+			key: 'done',
+			name: 'Done',
+		},
+	];
+
+	const dueDateDisplay = dueDate ? moment( dueDate ).format( 'll' ) : '';
+	const startDateDisplay = startDate ? moment( startDate ).format( 'll' ) : '';
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Task Assignment' ) }>
+				<PanelBody title={ __( 'Assignment' ) }>
 					<TextControl
 						label={ __( 'Username' ) }
 						value={ assignedTo || '' }
 						onChange={ value => setAttributes( { assignedTo: value } ) }
 					/>
 				</PanelBody>
+				<PanelBody title={ __( 'Date' ) }>
+					<Dropdown
+						renderToggle={ ( { isOpen, onToggle } ) => (
+							<>
+								{ startDate ? (
+									<BaseControl
+										label="Start Date"
+										id="wp-block-task__start-date-button"
+										className="wp-block-task__date-button"
+									>
+										<Button
+											id="wp-block-task__start-date-button"
+											isLink={ ! startDate }
+											isLarge={ !! startDate }
+											onClick={ onToggle }
+											aria-expanded={ isOpen }
+										>
+											{ startDateDisplay || 'Set start date' }
+										</Button>
+									</BaseControl>
+								) : (
+									<Button
+										id="wp-block-task__start-date-button"
+										isLink={ ! startDate }
+										isLarge={ !! startDate }
+										onClick={ onToggle }
+										aria-expanded={ isOpen }
+										style={ { marginBottom: '20px' } }
+									>
+										{ startDateDisplay || 'Set start date' }
+									</Button>
+								) }
+							</>
+						) }
+						renderContent={ () => (
+							<DatePicker
+								currentDate={ startDate }
+								onChange={ date => setAttributes( { startDate: date } ) }
+							/>
+						) }
+					/>
+					<Button isLink onClick={ () => setAttributes( { startDate: '' } ) }>
+						Clear
+					</Button>
+					<Dropdown
+						renderToggle={ ( { isOpen, onToggle } ) => (
+							<BaseControl
+								label="Due Date"
+								id="wp-block-task__due-date-button"
+								className="wp-block-task__date-button"
+							>
+								<Button
+									id="wp-block-task__due-date-button"
+									isLarge
+									onClick={ onToggle }
+									aria-expanded={ isOpen }
+								>
+									{ dueDateDisplay || 'No due date' }
+								</Button>
+							</BaseControl>
+						) }
+						renderContent={ () => (
+							<DatePicker
+								currentDate={ dueDate }
+								onChange={ date => setAttributes( { dueDate: date } ) }
+							/>
+						) }
+					/>
+					<Button isLink onClick={ () => setAttributes( { dueDate: '' } ) }>
+						Clear
+					</Button>
+				</PanelBody>
+				<PanelBody title={ __( 'Status' ) }>
+					<CustomSelectControl
+						label={ __( 'Status' ) }
+						options={ options }
+						value={ options.find( option => option.key === status ) || options[ 0 ] }
+						onChange={ value => setAttributes( { status: value.selectedItem.key } ) }
+					/>
+				</PanelBody>
 			</InspectorControls>
 			<div className={ todoClass }>
-				<span
-					className="wp-block-todo__status"
-					onClick={ () => setAttributes( { checked: ! checked } ) }
-					onKeyDown={ () => {} }
-					aria-checked={ checked }
-					tabIndex="0"
-					role="checkbox"
-				/>
+				{ ( status === 'done' || status === 'new' ) && <span className="wp-block-todo__status" /> }
+				{ status === 'in-progress' && (
+					<span className="wp-block-todo__is-in-progress">In Progress</span>
+				) }
 				<RichText
 					identifier="content"
 					wrapperClassName="wp-block-todo__text"
@@ -49,10 +153,10 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						}
 
 						if ( ! value ) {
-							return createBlock( 'jetpack/task' );
+							return createBlock( name );
 						}
 
-						return createBlock( 'jetpack/task', {
+						return createBlock( name, {
 							...attributes,
 							content: value,
 						} );
@@ -68,6 +172,7 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						<span className="wp-block-todo__avatar">{ assignedTo[ 0 ] }</span>
 					</div>
 				) }
+				<span className="wp-block-todo__date">{ dueDateDisplay }</span>
 			</div>
 		</>
 	);
