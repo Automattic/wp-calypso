@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, includes } from 'lodash';
+import { get, isEmpty, includes } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -38,6 +39,7 @@ class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
+		startTime: '',
 	};
 
 	componentDidMount() {
@@ -76,7 +78,8 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setState( { migrationStatus: 'backing-up' } );
+		this.setState( { migrationStatus: 'backing-up', startTime: '' } );
+
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
 
@@ -85,11 +88,42 @@ class SectionMigrate extends Component {
 		wpcom
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
-				const { status: migrationStatus, percent, source_blog_id: sourceSiteId } = response;
+				const {
+					status: migrationStatus,
+					percent,
+					source_blog_id: sourceSiteId,
+					created: startTime,
+				} = response;
+
 				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
 					this.setSourceSiteId( sourceSiteId );
 				}
+
 				if ( migrationStatus ) {
+					if ( startTime && isEmpty( this.state.startTime ) ) {
+						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
+
+						if ( ! startMoment.isValid() ) {
+							this.setState( {
+								migrationStatus,
+								percent,
+							} );
+							return;
+						}
+
+						const localizedStartTime = startMoment
+							.local()
+							.locale( getLocaleSlug() )
+							.format( 'lll' );
+
+						this.setState( {
+							migrationStatus,
+							percent,
+							startTime: localizedStartTime,
+						} );
+						return;
+					}
+
 					this.setState( {
 						migrationStatus,
 						percent,
@@ -243,11 +277,20 @@ class SectionMigrate extends Component {
 						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
 						align="center"
 					/>
+					{ this.renderStartTime() }
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
 				</Card>
 			</>
 		);
+	}
+
+	renderStartTime() {
+		if ( isEmpty( this.state.startTime ) ) {
+			return <div className="migrate__start-time">&nbsp;</div>;
+		}
+
+		return <div className="migrate__start-time">Migration started { this.state.startTime }</div>;
 	}
 
 	renderProgressBar() {

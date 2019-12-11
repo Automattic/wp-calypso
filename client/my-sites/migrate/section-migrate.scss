@@ -101,8 +101,15 @@
 }
 
 .migrate__progress {
-	width: 350px;
+	max-width: 350px;
 	margin-bottom: 2rem;
+}
+
+.migrate__start-time {
+	height: 1.5rem;
+	margin-bottom: 8px;
+	color: var( --color-text-subtle );
+	font-size: 14px;
 }
 
 .migrate__progress-item {
