@@ -8,7 +8,6 @@ import isVipSite from 'state/selectors/is-vip-site';
 import getRawSite from 'state/selectors/get-raw-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 
 /**
  * TODO: this selector should be backed by an API response instead
@@ -40,9 +39,5 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	if ( isEnabled( 'hosting/all-sites' ) ) {
-		return true;
-	}
-
-	return isSiteOnAtomicPlan( state, siteId );
+	return true;
 }
