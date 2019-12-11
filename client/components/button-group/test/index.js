@@ -13,10 +13,10 @@ import { Button } from '@automattic/components';
 describe( 'ButtonGroup', () => {
 	let ButtonGroup, consoleErrorSpy;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
 
-		ButtonGroup = require( '../index' );
+		ButtonGroup = ( await import( '../index' ) ).default;
 	} );
 
 	afterAll( () => {
