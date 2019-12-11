@@ -382,7 +382,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.closeScheduledPanel();
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
-				await gSidebarComponent.selectDocumentTab();
 				await gSidebarComponent.trashPost();
 			} );
 
