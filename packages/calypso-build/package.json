@@ -28,7 +28,7 @@
 	"bin": {
 		"transpile": "./bin/transpile.js",
 		"calypso-build": "./bin/calypso-build.js",
-		"copy-assets": "./bin/copy-assets.js"
+		"copy-styles": "./bin/copy-styles.js"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
