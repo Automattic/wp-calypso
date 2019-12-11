@@ -96,7 +96,7 @@ export default withSelect( select => {
 	const tasks = select( 'core/block-editor' )
 		.getBlocks()
 		.filter( block => {
-			return block.name === 'core/task';
+			return block.name === 'a8c/task';
 		} );
 
 	return {
