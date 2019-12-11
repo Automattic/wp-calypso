@@ -26,7 +26,6 @@ import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
-import { addQueryArgs } from 'lib/url';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -557,7 +556,7 @@ export class PluginsBrowser extends Component {
 		}
 
 		const { translate, siteSlug } = this.props;
-		const bannerURL = addQueryArgs( { intent: 'plugins' }, `/checkout/${ siteSlug }/business` );
+		const bannerURL = `/checkout/${ siteSlug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
