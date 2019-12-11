@@ -20,6 +20,11 @@ import { Button, ProgressBar } from '@automattic/components';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import ThankYou from './thank-you';
 
+/**
+ * Image dependencies
+ */
+import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
+
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
 
@@ -65,7 +70,6 @@ export class PaidPlanThankYou extends Component {
 		const { installProgress, installState, site, translate } = this.props;
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
-		const fireworksIllustration = '/calypso/images/illustrations/fireworks.svg';
 
 		// Jetpack is too old
 		if ( ! site.hasMinimumJetpackVersion ) {
