@@ -96,7 +96,7 @@ describe( '<EligibilityWarnings>', () => {
 				{
 					name: 'Warning 2',
 					description: 'Describes warning 2',
-					supportUrl: 'http://example.com/',
+					supportUrl: 'https://helpme.com',
 				},
 			],
 		} );
@@ -113,9 +113,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( notices[ 1 ] ).toBeVisible();
 		expect( notices[ 1 ] ).toHaveTextContent( 'Describes warning 2' );
 
-		fireEvent.click( getByLabelText( 'Help' ) );
-
-		expect( window.location.href ).toBe( 'https://example.com/' );
+		expect( getByLabelText( 'Help' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {
