@@ -45,13 +45,12 @@
 	top: 0;
 	bottom: 0;
 	width: 100%;
-	background-image: url( '/calypso/images/verticals/default.jpg' );
 	background-size: cover;
 	z-index: -1;
 }
 
 .onboarding-block__background::before {
-	background: $light-gray-100;
+	background: $white;
 	content: '';
 	position: absolute;
 	top: 0;
@@ -63,74 +62,47 @@
 }
 .onboarding-block__background-fade-enter {
 	&.onboarding-block__background::before {
-		opacity: 0.9;
+		opacity: 0.8;
 	}
 }
 .onboarding-block__background-fade-enter,
 .onboarding-block__background-fade-exit,
 .onboarding-block__background-fade-exit-done {
-	&.onboarding-block__background {
-		opacity: 0;
-	}
+	opacity: 0;
 }
+
+.onboarding-block__background-fade-enter,
 .onboarding-block__background-fade-exit,
 .onboarding-block__background-fade-enter-done {
 	transition: opacity 1s linear;
 }
 
-.onboarding-block__background[data-vertical^='p1'] {
-	background-image: url( '/calypso/images/verticals/p1.jpg' );
-}
-.onboarding-block__background[data-vertical^='p2'] {
-	background-image: url( '/calypso/images/verticals/p2.jpg' );
-}
-.onboarding-block__background[data-vertical='p2v6'] {
-	background-image: url( '/calypso/images/verticals/p2v6.jpg' );
-}
-.onboarding-block__background[data-vertical^='p13'] {
-	background-image: url( '/calypso/images/verticals/p13.jpg' );
-}
-.onboarding-block__background[data-vertical^='p31'],
-.onboarding-block__background[data-vertical^='p12v30'] {
-	background-image: url( '/calypso/images/verticals/p31.jpg' );
-}
-.onboarding-block__background[data-vertical^='p12v2'] {
-	background-image: url( '/calypso/images/verticals/p12v2.jpg' );
-}
-.onboarding-block__background[data-vertical^='p31v28'] {
-	background-image: url( '/calypso/images/verticals/p31v28.jpg' );
-}
-.onboarding-block__background[data-vertical^='p19'] {
-	background-image: url( '/calypso/images/verticals/p19.jpg' );
-}
-.onboarding-block__background[data-vertical^='p30'] {
-	background-image: url( '/calypso/images/verticals/p30.jpg' );
-}
-
 @media ( prefers-color-scheme: dark ) {
-	.onboarding-block__questions-heading {
-		color: $light-gray-300;
-	}
-	.onboarding-block__question {
-		color: $light-gray-300;
+	.onboarding-block__acquire-intent.has-background {
+		.onboarding-block__questions-heading {
+			color: $light-gray-300;
+		}
+		.onboarding-block__question {
+			color: $light-gray-300;
 
-		.onboarding-block__question-input {
-			&::placeholder {
-				color: $light-gray-900;
+			.onboarding-block__question-input {
+				&::placeholder {
+					color: $light-gray-900;
+				}
+				&:focus,
+				&:active {
+					color: $light-gray-300;
+				}
 			}
-			&:focus,
-			&:active {
-				color: $light-gray-300;
+			.onboarding-block__question-answered {
+				color: $blue-medium-highlight;
 			}
 		}
-		.onboarding-block__question-answered {
-			color: $blue-medium-highlight;
+		.onboarding-block__background::before {
+			background: $dark-gray-900;
 		}
-	}
-	.onboarding-block__background::before {
-		background: $dark-gray-800;
-	}
-	.components-button.is-link.onboarding-block__question-skip {
-		color: $light-gray-500;
+		.components-button.is-link.onboarding-block__question-skip {
+			color: $light-gray-500;
+		}
 	}
 }
