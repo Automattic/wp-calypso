@@ -47,7 +47,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.3.0",
 		"@wordpress/browserslist-config": "2.6.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "2.1.0",
-		"autoprefixer": "9.7.2",
+		"autoprefixer": "9.7.3",
 		"babel-jest": "24.9.0",
 		"babel-loader": "8.0.6",
 		"browserslist": "4.8.2",
