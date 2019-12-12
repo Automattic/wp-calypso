@@ -26,7 +26,7 @@ const TemplateSelectorItem = props => {
 		return null;
 	}
 
-	// Define static or dynamic preview.
+	// Define preview.
 	const innerPreview = (
 		<img
 			className="template-selector__item-media"
