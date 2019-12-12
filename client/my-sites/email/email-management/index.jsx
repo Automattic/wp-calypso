@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import {
 	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
@@ -24,7 +23,8 @@ import {
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
@@ -54,14 +54,15 @@ class EmailManagement extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
-		isRequestingDomains: PropTypes.bool.isRequired,
+		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
+		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		selectedDomainName: PropTypes.string,
 	};
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, selectedDomainName } = this.props;
 
 		return (
 			<Main className="email-management" wideLayout>
@@ -69,6 +70,14 @@ class EmailManagement extends React.Component {
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
+				{ ! selectedDomainName && (
+					<FormattedHeader
+						className="email-management__page-heading"
+						headerText={ this.props.translate( 'Email' ) }
+						align="left"
+					/>
+				) }
+
 				{ this.headerOrPlansNavigation() }
 				{ this.content() }
 			</Main>
@@ -95,9 +104,9 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, gsuiteUsers, isRequestingDomains, selectedDomainName } = this.props;
+		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
-		if ( isRequestingDomains || ! gsuiteUsers ) {
+		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
 		}
 
@@ -165,7 +174,8 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL: 'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL:
+					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};
@@ -209,6 +219,7 @@ class EmailManagement extends React.Component {
 		return (
 			<Fragment>
 				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
+
 				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);
@@ -237,16 +248,14 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		return {
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
-			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
-			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	{}
-)( localize( EmailManagement ) );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		domains: getDomainsBySiteId( state, selectedSiteId ),
+		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		selectedSiteId,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	};
+}, {} )( localize( EmailManagement ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -86,7 +84,4 @@ const connectComponent = connect( ( state, { postId, siteId } ) => ( {
 	previewUrl: getPostPreviewUrl( state, siteId, postId ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import AuthorCompactProfile from 'blocks/author-compact-profile';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 export default class AuthorCompactProfileExample extends React.Component {
 	static displayName = 'AuthorCompactProfileExample';

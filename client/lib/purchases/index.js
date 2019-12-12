@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
+	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
@@ -23,6 +22,7 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/cart/actions';
+import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -69,6 +69,13 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
+}
+
+function getDisplayName( purchase ) {
+	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
+		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
+	}
+	return getName( purchase );
 }
 
 function getPartnerName( purchase ) {
@@ -254,7 +261,6 @@ function isRefundable( purchase ) {
 
 /**
  * Checks whether the specified purchase can be removed from a user account.
- * Purchases included with a plan can't be removed.
  *
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
@@ -265,6 +271,9 @@ function isRemovable( purchase ) {
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return true;
+		}
 		return false;
 	}
 
@@ -438,6 +447,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getDisplayName,
 	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,15 +13,16 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import CartData from 'components/data/cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
+import config from 'config';
+import CompositeCheckoutContainer from './checkout/composite-checkout-container';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -50,6 +50,12 @@ export function checkout( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+
+	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
+		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } />;
+		next();
+		return;
+	}
 
 	context.primary = (
 		<CheckoutContainer
@@ -107,6 +113,9 @@ export function checkoutThankYou( context, next ) {
 			gsuiteReceiptId={ gsuiteReceiptId }
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
+			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
+			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>
@@ -132,13 +141,17 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CartData>
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CartData>
+		</CheckoutContainer>
 	);
 
 	next();
@@ -159,6 +172,7 @@ export function upsellNudge( context, next ) {
 		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
 	}
+
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (

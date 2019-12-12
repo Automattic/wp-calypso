@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { isEnabled } from 'config';
  */
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';

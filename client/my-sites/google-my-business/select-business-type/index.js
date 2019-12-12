@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,8 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
@@ -120,7 +117,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{' '}
+					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);

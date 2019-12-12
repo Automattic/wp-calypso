@@ -2,7 +2,6 @@
  *
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -15,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';
 

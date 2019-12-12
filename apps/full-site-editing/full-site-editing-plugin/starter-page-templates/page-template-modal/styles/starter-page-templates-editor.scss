@@ -24,6 +24,12 @@ $template-large-preview-title-height: 120px;
 $wp-org-sidebar-reduced: 36px;
 $wp-org-sidebar-full: 160px;
 
+// Preview positioning
+$preview-max-width: 960px;
+$preview-right-margin: 24px;
+$preview-left-sidebar-reduced: calc( 30% + #{$wp-org-sidebar-reduced} );
+$preview-left-sidebar-full: calc( 30% + #{$wp-org-sidebar-full} );
+
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
@@ -31,13 +37,23 @@ $wp-org-sidebar-full: 160px;
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
-body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
-	@media screen and ( min-width: 783px ) {
-		left: $wp-org-sidebar-reduced;
-	}
+body:not( .is-fullscreen-mode ) {
+	.page-template-modal-screen-overlay {
+		@media screen and ( min-width: 783px ) {
+			left: $wp-org-sidebar-reduced;
+		}
 
-	@media screen and ( min-width: 961px ) {
-		left: $wp-org-sidebar-full;
+		@media screen and ( min-width: 961px ) {
+			left: $wp-org-sidebar-full;
+		}
+	}
+	@media screen and ( min-width: 783px ) {
+		&.folded .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-reduced;
+		}
+		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
+			left: $wp-org-sidebar-full;
+		}
 	}
 }
 
@@ -71,32 +87,26 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@include screen-reader-text();
 }
 
-// Show close button only in full screen mode.
-.page-template-modal .components-modal__header::after,
+// Show close button in all modes.
+// Removed previous condition to only show in fullscreen with PR #37500.
 .page-template-modal__close-button {
-	display: none;
+	display: block;
+	position: absolute;
+	z-index: 20;
+	top: 9px;
+	width: 36px;
+	height: 36px;
+	left: 10px;
 }
 
-body.is-fullscreen-mode {
-	.page-template-modal__close-button {
+.page-template-modal .components-modal__header {
+	&::after {
 		display: block;
 		position: absolute;
-		z-index: 20;
-		top: 9px;
-		width: 36px;
-		height: 36px;
-		left: 8px;
-	}
-
-	.page-template-modal .components-modal__header {
-		&::after {
-			display: block;
-			position: absolute;
-			content: ' ';
-			border-right: 1px solid #e2e4e7;
-			height: 100%;
-			left: 54px;
-		}
+		content: ' ';
+		border-right: 1px solid #e2e4e7;
+		height: 100%;
+		left: 56px;
 	}
 }
 
@@ -121,16 +131,14 @@ body.is-fullscreen-mode {
 	@media screen and ( min-width: 1200px ) {
 		max-width: 100%;
 	}
-
-	@media screen and ( min-width: 1441px ) {
-		max-width: 1440px;
-		display: flex;
-		align-content: flex-start;
-		justify-content: space-between;
-	}
 }
 
 .page-template-modal__list {
+	margin-bottom: 20px;
+}
+
+.page-template-modal__list,
+.sidebar-modal-opener {
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
@@ -297,10 +305,6 @@ body.is-fullscreen-mode {
 	@media screen and ( min-width: 783px ) {
 		max-width: 30%;
 	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: 30%;
-	}
 }
 
 .page-template-modal__form-title {
@@ -345,16 +349,26 @@ body.is-fullscreen-mode {
 		width: calc( 70% - 50px );
 	}
 
-	@media screen and ( min-width: 1441px ) {
-		position: unset;
-		width: calc( 70% - 84px );
-		height: calc( 100vh - 130px );
+	@media screen and ( min-width: 660px ) {
+		&.is-blank-preview {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+	@media screen and ( min-width: 1648px ) {
+		right: unset;
+		left: calc( #{$preview-left-sidebar-full} + ( 100vw - #{$preview-left-sidebar-full} - #{$preview-max-width} - #{$preview-right-margin} ) / 2 );
+		body.folded & {
+			left: calc( #{$preview-left-sidebar-reduced} + ( 100vw - #{$preview-left-sidebar-reduced} - #{$preview-max-width} - #{$preview-right-margin} ) / 2 );
+		}
 	}
 
 	position: fixed;
 	top: 111px;
 	bottom: 24px;
-	right: 24px;
+	right: $preview-right-margin;
 	width: calc( 80% - 50px );
 	background: $template-selector-empty-background;
 	border-radius: 2px;
@@ -393,48 +407,45 @@ body.is-fullscreen-mode {
 				padding: 0;
 				height: $template-large-preview-title-height;
 				line-height: $template-large-preview-title-height;
+				overflow: hidden;
+				resize: none;
 			}
 		}
 	}
 }
 
-body:not( .is-fullscreen-mode ) .template-selector-preview {
+body:not( .is-fullscreen-mode ) {
+	.template-selector-preview {
+		@media screen and ( min-width: 783px ) {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+
+		@media screen and ( min-width: 961px ) {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
+	}
 	@media screen and ( min-width: 783px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-	}
-
-	@media screen and ( min-width: 961px ) {
-		width: calc( 70% - #{$wp-org-sidebar-full } );
-	}
-
-	@media screen and ( min-width: 1441px ) {
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		&.folded .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		}
+		&:not( .folded ):not( .auto-fold ) .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-full } );
+		}
 	}
 }
 
 .template-selector-preview__placeholder {
-	position: absolute;
-	top: 24%;
-	left: 50%;
-	transform: translateX( -50% );
-	width: 80%;
-	text-align: center;
+	color: var( --color-text-subtle );
 	font-size: 15px;
 	font-weight: 400;
-	color: var( --color-text-subtle );
-
-	@media screen and ( min-width: 1441px ) {
-		left: auto;
-		right: 0;
-		transform: none;
-		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
-	}
 }
 
 // Preview adjustments.
 // Tweak styles which are inside of the preview container.
 .block-editor-block-preview__container,
 .template-selector-preview {
+	max-width: $preview-max-width;
+
 	.editor-styles-wrapper {
 		.wp-block {
 			width: 100%;
@@ -506,4 +517,43 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	.components-spinner {
 		float: none;
 	}
+}
+
+// Sidebar modal opener goo.
+.sidebar-modal-opener {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	.template-selector-item__label {
+		max-width: 300px;
+	}
+
+	.template-selector-item__template-title {
+		font-size: 1.2rem;
+	}
+}
+
+.sidebar-modal-opener__button {
+	margin-top: 20px;
+}
+
+.sidebar-modal-opener__warning-modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidebar-modal-opener__warning-text {
+	max-width: 300px;
+	font-size: 1rem;
+	line-height: 1.5rem;
+}
+
+.sidebar-modal-opener__warning-options {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
 }

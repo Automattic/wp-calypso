@@ -39,8 +39,11 @@
 		"help": true,
 		"help/courses": true,
 		"hosting": true,
-		"hosting/non-atomic-support": false,
+		"hosting/sftp-phpmyadmin": true,
 		"i18n/translation-scanner": true,
+		"ive/me": false,
+		"ive/use-external-defs": false,
+		"ive/use-external-assignment": false,
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
@@ -78,8 +81,6 @@
 		"network-connection": true,
 		"perfmon": true,
 		"persist-redux": true,
-		"plans/jetpack-backup": false,
-		"plans/jetpack-scan": false,
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
@@ -124,5 +125,6 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
 	"google_analytics_key": "UA-10673494-20",
+	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true
 }

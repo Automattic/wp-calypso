@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -327,12 +326,9 @@ const trackMailboxFieldFocus = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		addNewEmailForwardWithAnalytics,
-		trackCancelClick,
-		trackDestinationFieldFocus,
-		trackMailboxFieldFocus,
-	}
-)( localize( EmailForwardingAddNew ) );
+export default connect( null, {
+	addNewEmailForwardWithAnalytics,
+	trackCancelClick,
+	trackDestinationFieldFocus,
+	trackMailboxFieldFocus,
+} )( localize( EmailForwardingAddNew ) );

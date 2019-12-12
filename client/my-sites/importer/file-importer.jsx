@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
@@ -121,7 +119,4 @@ class FileImporter extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( FileImporter );
+export default connect( null, { recordTracksEvent } )( FileImporter );

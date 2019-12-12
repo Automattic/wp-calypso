@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +13,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthFormHeader from './auth-form-header';
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
 import config from 'config';
 import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
@@ -148,7 +146,7 @@ export class JetpackAuthorize extends Component {
 
 		if (
 			this.isSso( nextProps ) ||
-			this.isWoo( nextProps ) ||
+			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
 			this.props.isVip
@@ -212,7 +210,7 @@ export class JetpackAuthorize extends Component {
 
 		if (
 			this.isSso() ||
-			this.isWoo() ||
+			this.isWooRedirect() ||
 			this.isFromJpo() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber'
@@ -242,9 +240,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			( 'woocommerce-services-auto-authorize' === from ||
-				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-					'woocommerce-setup-wizard' === from ) ) ||
+			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -269,9 +265,21 @@ export class JetpackAuthorize extends Component {
 		return 'sso' === from && isSsoApproved( clientId );
 	}
 
-	isWoo( props = this.props ) {
+	isWooRedirect( props = this.props ) {
 		const { from } = props.authQuery;
-		return includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from );
+		return includes(
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				'woocommerce-onboarding',
+			],
+			from
+		);
+	}
+
+	isWooOnboarding( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-onboarding' === from;
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -294,10 +302,7 @@ export class JetpackAuthorize extends Component {
 	handleSignIn = () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		}
 	};
@@ -307,10 +312,7 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
 
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
@@ -364,10 +366,7 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'woocommerce-setup-wizard' === from
-		) {
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 
@@ -625,7 +624,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{' '}
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
 				} ) }
@@ -644,7 +643,7 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						isWoo: this.isWoo(),
+						isWoo: this.isWooOnboarding(),
 					} ) }
 					onClick={ this.handleSignIn }
 				>
@@ -698,14 +697,14 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper isWoo={ this.isWoo() }>
+			<MainWrapper isWoo={ this.isWooOnboarding() }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
+						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWooOnboarding() } />
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>

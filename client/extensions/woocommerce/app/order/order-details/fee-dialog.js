@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { trim, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';

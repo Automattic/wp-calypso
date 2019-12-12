@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +13,7 @@ import Gridicon from 'components/gridicon';
  */
 import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { dismissPost } from 'state/reader/site-dismissals/actions';
 import { keyForPost } from 'reader/post-key';
 import QueryReaderPost from 'components/data/query-reader-post';

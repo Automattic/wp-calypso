@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -153,7 +151,4 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Products ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

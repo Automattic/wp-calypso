@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Tooltip from 'components/tooltip';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 

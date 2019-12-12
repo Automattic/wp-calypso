@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import JetpackLogo from 'components/jetpack-logo';
@@ -87,7 +86,7 @@ class JetpackNewSite extends Component {
 						<div className="jetpack-new-site__header-text">
 							{ this.props.translate(
 								'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
-							) }{' '}
+							) }{ ' ' }
 						</div>
 					</div>
 					<div className="jetpack-new-site__content">
@@ -159,12 +158,9 @@ class JetpackNewSite extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-);
+const connectComponent = connect( null, {
+	recordTracksEvent,
+} );
 
 export default flowRight(
 	connectComponent,

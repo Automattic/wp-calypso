@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { isEmpty, partial } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';

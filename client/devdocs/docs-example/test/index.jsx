@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -15,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 
 describe( 'DocsExample', () => {

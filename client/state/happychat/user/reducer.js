@@ -17,7 +17,6 @@ import {
  * Tracks the current user geo location.
  *
  *
- * @format
  * @param {Object} action Action payload
  * @return {Object}        Updated state
  */

@@ -1,4 +1,4 @@
-@import 'assets/stylesheets/gutenberg-base-styles/style';
+@import 'assets/stylesheets/gutenberg-base-styles';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -23,20 +23,54 @@
 	}
 }
 
-.gutenboarding__header-site {
+.gutenboarding__header-section,
+.gutenboarding__header-back-button {
 	display: flex;
-	flex-direction: row;
-	margin-left: 20px;
-	font-size: 14px;
 	align-items: center;
+}
 
-	span {
-		margin-left: 20px;
+.gutenboarding__header-back-button {
+	.dashicons-arrow-left-alt {
+		margin-right: 5px;
 	}
 }
-.gutenboarding__header-site-heading {
-	font-weight: bold;
 
+.gutenboarding__header-group {
+	display: flex;
+	flex-direction: column;
+	margin: 10px;
+	font-size: 14px;
+	align-items: flex-start;
+}
+
+$padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
+.gutenboarding__header-domain-picker-button {
+	padding: $padding--gutenboarding__header-domain-picker-button;
+	border-radius: $radius-round-rectangle;
+
+	&:focus,
+	&:hover {
+		box-shadow: 0 0 0 2px $blue-medium-focus;
+		outline: 0;
+	}
+
+	.gutenboarding__site-title {
+		padding: 0;
+	}
+
+	> span {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	> .dashicon {
+		align-self: flex-end;
+	}
+}
+
+.gutenboarding__site-title {
+	padding: $padding--gutenboarding__header-domain-picker-button;
+	font-weight: bold;
 }
 
 .gutenboarding__header-actions {

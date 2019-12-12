@@ -45,18 +45,16 @@ describe( 'actions', () => {
 		const unsupportedEmbedUrl = 'not-a-real-url';
 		const thumbnailUrl = 'https://i.vimeocdn.com/video/459553940_640.webp';
 		const successfulEmbedUrl = 'https://vimeo.com/6999927';
-		const vimeoSuccessApiUrl = 'https://vimeo.com/api/v2/video/6999927.json';
 		const failureEmbedUrl = 'https://vimeo.com/6999928';
-		const vimeoFailureApiUrl = 'https://vimeo.com/api/v2/video/6999928.json';
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
 		useNock( nock => {
-			nock( vimeoSuccessApiUrl )
-				.get( '' )
+			nock( 'https://vimeo.com' )
+				.get( '/api/v2/video/6999927.json' )
 				.reply( 200, deepFreeze( sampleVimeoResponse ) );
-			nock( vimeoFailureApiUrl )
-				.get( '' )
+			nock( 'https://vimeo.com' )
+				.get( '/api/v2/video/6999928.json' )
 				.reply( 500, deepFreeze( {} ) );
 		} );
 

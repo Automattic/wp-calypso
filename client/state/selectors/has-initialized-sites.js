@@ -1,7 +1,6 @@
 /**
  * Returns true if site selection has occured, else false
  *
- * @format
  * @param {Object}  state Global state tree
  * @return {Boolean}       Has site selection occurred
  */

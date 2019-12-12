@@ -42,7 +42,7 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { isEnabled } from 'config';
 
 /**
@@ -85,7 +85,10 @@ export class PluginsMain extends Component {
 		const props = nextProps || this.props;
 		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
-			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
+			plugins = PluginsStore.getPlugins(
+				sites.filter( site => site.visible ),
+				props.filter
+			);
 		} else {
 			plugins = PluginsStore.getPlugins( sites, props.filter );
 		}

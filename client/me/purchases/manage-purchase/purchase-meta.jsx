@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -45,6 +42,7 @@ import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
@@ -399,4 +397,4 @@ export default connect( ( state, { purchaseId } ) => {
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 	};
-} )( localize( PurchaseMeta ) );
+} )( localize( withLocalizedMoment( PurchaseMeta ) ) );

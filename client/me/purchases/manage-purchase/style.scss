@@ -115,6 +115,10 @@
 	.is-business & {
 		border-bottom: 2px solid var( --color-plan-business );
 	}
+
+	.is-jetpack-product & {
+		border-bottom: 2px solid var( --studio-jetpack-green-30 );
+	}
 }
 
 .manage-purchase__plan-icon {
@@ -133,6 +137,10 @@
 
 	.gridicons-themes {
 		border-radius: 8px;
+	}
+
+	.gridicons-cloud-upload {
+		background: var( --studio-jetpack-green-30 );
 	}
 }
 

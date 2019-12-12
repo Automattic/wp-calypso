@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ const LineItemUI = styled( LineItem )`
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 
-	:first-child {
+	:first-of-type {
 		padding-top: 0;
 	}
 `;

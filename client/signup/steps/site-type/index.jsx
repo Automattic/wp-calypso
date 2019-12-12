@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
@@ -37,12 +37,20 @@ class SiteType extends Component {
 	};
 
 	submitStep = siteTypeValue => {
-		this.props.submitSiteType( siteTypeValue );
+		const { stepName } = this.props;
+
+		this.props.submitSiteType( siteTypeValue, stepName );
 
 		// Modify the flowname if the site type matches an override.
 		let flowName;
 		if ( 'import-onboarding' === this.props.flowName ) {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else if (
+			( 'design-first' === this.props.flowName ||
+				'ecommerce-design-first' === this.props.flowName ) &&
+			'site-type-with-theme' === stepName
+		) {
+			flowName = 'online-store' === siteTypeValue ? 'ecommerce-design-first' : this.props.flowName;
 		} else {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
 		}

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import { filter, omit, isEmpty, setWith, get, forEach } from 'lodash';

@@ -1,47 +1,55 @@
 /**
  * External dependencies
  */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'emotion-theming';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider } from '../lib/registry';
+import { RegistryProvider, createRegistry } from '../lib/registry';
 import defaultTheme from '../theme';
+import {
+	validateArg,
+	validateTotal,
+	validateLineItems,
+	validatePaymentMethods,
+} from '../lib/validation';
 
-export const CheckoutProvider = ( {
-	locale,
-	total,
-	items,
-	onSuccess,
-	onFailure,
-	successRedirectUrl,
-	failureRedirectUrl,
-	theme,
-	paymentMethods: allPaymentMethods,
-	children,
-} ) => {
+export const CheckoutProvider = props => {
+	const {
+		locale,
+		total,
+		items,
+		onSuccess,
+		onFailure,
+		successRedirectUrl,
+		failureRedirectUrl,
+		theme,
+		paymentMethods,
+		registry,
+		children,
+	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		allPaymentMethods ? allPaymentMethods[ 0 ].id : null
+		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
-	const paymentMethod =
-		allPaymentMethods && allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
-	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
-	validateArg( total, 'CheckoutProvider missing required prop: total' );
-	validateArg( items, 'CheckoutProvider missing required prop: items' );
-	validateArg( allPaymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
-	validatePaymentMethods( allPaymentMethods );
-	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
-	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
-	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
-	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+
+	// Remove undefined and duplicate CheckoutWrapper properties
+	const wrappers = [
+		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+	];
+
+	// Create the registry automatically if it's not a prop
+	const registryRef = useRef( registry );
+	registryRef.current = registryRef.current || createRegistry();
+
 	const value = {
-		allPaymentMethods,
+		allPaymentMethods: paymentMethods,
 		paymentMethodId,
 		setPaymentMethodId,
 		onSuccess,
@@ -49,24 +57,32 @@ export const CheckoutProvider = ( {
 		successRedirectUrl,
 		failureRedirectUrl,
 	};
-	const { CheckoutWrapper = React.Fragment } = paymentMethod || {};
+
+	// This error message cannot be translated because translation hasn't loaded yet.
+	const errorMessage = 'Sorry, there was an error loading this page';
 	return (
-		<ThemeProvider theme={ theme || defaultTheme }>
-			<RegistryProvider>
-				<LocalizeProvider locale={ locale }>
-					<LineItemsProvider items={ items } total={ total }>
-						<CheckoutContext.Provider value={ value }>
-							<CheckoutWrapper>{ children }</CheckoutWrapper>
-						</CheckoutContext.Provider>
-					</LineItemsProvider>
-				</LocalizeProvider>
-			</RegistryProvider>
-		</ThemeProvider>
+		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+			<CheckoutProviderPropValidator propsToValidate={ props } />
+			<ThemeProvider theme={ theme || defaultTheme }>
+				<RegistryProvider value={ registryRef.current }>
+					<LocalizeProvider locale={ locale }>
+						<LineItemsProvider items={ items } total={ total }>
+							<CheckoutContext.Provider value={ value }>
+								<PaymentMethodWrapperProvider wrappers={ wrappers }>
+									{ children }
+								</PaymentMethodWrapperProvider>
+							</CheckoutContext.Provider>
+						</LineItemsProvider>
+					</LocalizeProvider>
+				</RegistryProvider>
+			</ThemeProvider>
+		</CheckoutErrorBoundary>
 	);
 };
 
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
+	registry: PropTypes.object,
 	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -78,41 +94,35 @@ CheckoutProvider.propTypes = {
 	failureRedirectUrl: PropTypes.string.isRequired,
 };
 
-function validateArg( value, errorMessage ) {
-	if ( ! value ) {
-		throw new Error( errorMessage );
-	}
+function CheckoutProviderPropValidator( { propsToValidate } ) {
+	const {
+		locale,
+		total,
+		items,
+		onSuccess,
+		onFailure,
+		successRedirectUrl,
+		failureRedirectUrl,
+		paymentMethods,
+	} = propsToValidate;
+	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
+	validateArg( total, 'CheckoutProvider missing required prop: total' );
+	validateTotal( total );
+	validateArg( items, 'CheckoutProvider missing required prop: items' );
+	validateLineItems( items );
+	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
+	validatePaymentMethods( paymentMethods );
+	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
+	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
+	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
+	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+	return null;
 }
 
-function validatePaymentMethods( paymentMethods ) {
-	paymentMethods.map( validatePaymentMethod );
-}
-
-function validatePaymentMethod( {
-	id,
-	LabelComponent,
-	PaymentMethodComponent,
-	BillingContactComponent,
-	SubmitButtonComponent,
-	SummaryComponent,
-	getAriaLabel,
-} ) {
-	validateArg( id, 'Invalid payment method; missing id property' );
-	validateArg( LabelComponent, `Invalid payment method '${ id }'; missing LabelComponent` );
-	validateArg(
-		BillingContactComponent,
-		`Invalid payment method '${ id }'; missing BillingContactComponent`
-	);
-	validateArg(
-		PaymentMethodComponent,
-		`Invalid payment method '${ id }'; missing PaymentMethodComponent`
-	);
-	validateArg(
-		SubmitButtonComponent,
-		`Invalid payment method '${ id }'; missing SubmitButtonComponent`
-	);
-	validateArg( SummaryComponent, `Invalid payment method '${ id }'; missing SummaryComponent` );
-	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
+function PaymentMethodWrapperProvider( { children, wrappers } ) {
+	return wrappers.reduce( ( whole, Wrapper ) => {
+		return <Wrapper>{ whole }</Wrapper>;
+	}, children );
 }
 
 export const useCheckoutHandlers = () => {

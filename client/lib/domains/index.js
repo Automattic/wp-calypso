@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -165,8 +163,8 @@ function isMappedDomain( domain ) {
 /**
  * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
+ * @param {object} domain - domain object
+ * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
  */
 function isMappedDomainWithWpcomNameservers( domain ) {
 	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
@@ -211,7 +209,7 @@ function hasMappedDomain( domains ) {
  * for our purposes, the approach should be "good enough" for a long time.
  *
  * @param {string}     domainName     The domain name parse the tld from
- * @return {string}                   The TLD or an empty string
+ * @returns {string}                   The TLD or an empty string
  */
 function getTld( domainName ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
@@ -254,11 +252,11 @@ function getUnformattedDomainPrice( slug, productsList ) {
 	return price;
 }
 
-function getDomainPrice( slug, productsList, currencyCode ) {
+function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {
 	let price = getUnformattedDomainPrice( slug, productsList );
 
 	if ( price ) {
-		price = formatCurrency( price, currencyCode );
+		price = formatCurrency( price, currencyCode, { stripZeros } );
 	}
 
 	return price;
@@ -279,11 +277,11 @@ function getUnformattedDomainSalePrice( slug, productsList ) {
 	return saleCost;
 }
 
-function getDomainSalePrice( slug, productsList, currencyCode ) {
+function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {
 	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
 
 	if ( saleCost ) {
-		saleCost = formatCurrency( saleCost, currencyCode );
+		saleCost = formatCurrency( saleCost, currencyCode, { stripZeros } );
 	}
 
 	return saleCost;

@@ -3,7 +3,6 @@
  * false otherwise.
  *
  *
- * @format
  * @param {Number}  siteId Site ID
  * @return {Boolean}        Whether post formats are being requested
  */

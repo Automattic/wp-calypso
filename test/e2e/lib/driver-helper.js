@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -275,9 +273,7 @@ export function setWhenSettable(
 ) {
 	const self = this;
 	const logValue = secureValue === true ? '*********' : value;
-	if ( global.browserName === 'chrome' && pauseBetweenKeysMS === 0 ) {
-		pauseBetweenKeysMS = 1;
-	}
+
 	return driver.wait(
 		async function() {
 			await self.waitForFieldClearable( driver, selector );

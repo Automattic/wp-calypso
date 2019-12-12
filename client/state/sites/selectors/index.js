@@ -10,12 +10,8 @@ export { default as canJetpackSiteManage } from './can-jetpack-site-manage';
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';
 export { default as getCustomizerUrl } from './get-customizer-url';
 export { default as getJetpackComputedAttributes } from './get-jetpack-computed-attributes';
-export {
-	default as getJetpackSiteRemoteManagementUrl,
-} from './get-jetpack-site-remote-management-url';
-export {
-	default as getJetpackSiteUpdateFilesDisabledReasons,
-} from './get-jetpack-site-update-files-disabled-reasons';
+export { default as getJetpackSiteRemoteManagementUrl } from './get-jetpack-site-remote-management-url';
+export { default as getJetpackSiteUpdateFilesDisabledReasons } from './get-jetpack-site-update-files-disabled-reasons';
 export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
@@ -42,9 +38,7 @@ export { default as hasAllSitesList } from './has-all-sites-list';
 export { default as hasDefaultSiteTitle } from './has-default-site-title';
 export { default as hasJetpackSiteCustomDomain } from './has-jetpack-site-custom-domain';
 export { default as hasJetpackSiteJetpackThemes } from './has-jetpack-site-jetpack-themes';
-export {
-	default as hasJetpackSiteJetpackThemesExtendedFeatures,
-} from './has-jetpack-site-jetpack-themes-extended-features';
+export { default as hasJetpackSiteJetpackThemesExtendedFeatures } from './has-jetpack-site-jetpack-themes-extended-features';
 export { default as hasStaticFrontPage } from './has-static-front-page';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
 export { default as isCurrentSitePlan } from './is-current-site-plan';
@@ -53,9 +47,7 @@ export { default as isJetpackModuleActive } from './is-jetpack-module-active';
 export { default as isJetpackSite } from './is-jetpack-site';
 export { default as isJetpackSiteMainNetworkSite } from './is-jetpack-site-main-network-site';
 export { default as isJetpackSiteMultiSite } from './is-jetpack-site-multi-site';
-export {
-	default as isJetpackSiteSecondaryNetworkSite,
-} from './is-jetpack-site-secondary-network-site';
+export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-secondary-network-site';
 export { default as isNewSite } from './is-new-site';
 export { default as isRequestingSite } from './is-requesting-site';
 export { default as isRequestingSites } from './is-requesting-sites';

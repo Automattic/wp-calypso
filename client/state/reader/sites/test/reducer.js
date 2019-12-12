@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -240,7 +239,12 @@ describe( 'reducer', () => {
 			expect(
 				items( startingState, {
 					type: READER_SITE_BLOCKS_RECEIVE,
-					payload: { sites: [ { ID: 1, name: 'first' }, { ID: 2, name: 'second' } ] },
+					payload: {
+						sites: [
+							{ ID: 1, name: 'first' },
+							{ ID: 2, name: 'second' },
+						],
+					},
 				} )
 			).toEqual( {
 				1: { ID: 1, name: 'first' },

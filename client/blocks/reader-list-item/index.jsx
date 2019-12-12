@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -165,7 +164,4 @@ function ReaderListItem( {
 	);
 }
 
-export default compose(
-	localize,
-	withLocalizedMoment
-)( ReaderListItem );
+export default compose( localize, withLocalizedMoment )( ReaderListItem );

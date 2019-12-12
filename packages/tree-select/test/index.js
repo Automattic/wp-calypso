@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -222,7 +220,10 @@ describe( 'index', () => {
 		} );
 
 		test( 'should memoize a nullish value returned by getDependents', () => {
-			const memoizedSelector = treeSelect( () => [ null, undefined ], () => [] );
+			const memoizedSelector = treeSelect(
+				() => [ null, undefined ],
+				() => []
+			);
 			const state = {};
 
 			const firstResult = memoizedSelector( state );
@@ -232,7 +233,10 @@ describe( 'index', () => {
 
 		test( 'throws on a non-nullish primitive value returned by getDependents', () => {
 			[ true, 1, 'a', false, '', 0 ].forEach( primitive => {
-				const memoizedSelector = treeSelect( () => [ primitive ], () => [] );
+				const memoizedSelector = treeSelect(
+					() => [ primitive ],
+					() => []
+				);
 				const state = {};
 
 				expect( () => memoizedSelector( state ) ).toThrow();

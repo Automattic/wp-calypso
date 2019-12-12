@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import TermFormDialog from 'blocks/term-form-dialog';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import { getSelectedSiteId } from 'state/ui/selectors';

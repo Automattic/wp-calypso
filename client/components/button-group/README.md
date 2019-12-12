@@ -7,7 +7,7 @@ Button group displays multiple related actions in a row to help with the display
 
 ```jsx
 import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 render: function() {
 	return (

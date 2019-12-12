@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -101,7 +99,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ReprintDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReprintDialog ) );

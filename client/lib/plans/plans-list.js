@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -68,6 +66,7 @@ const getPlanBloggerDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
@@ -123,6 +122,7 @@ const getPlanPersonalDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -211,7 +211,9 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
+		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -282,6 +284,7 @@ const getPlanPremiumDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -365,6 +368,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -411,6 +415,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_BLOGGER ]: {
@@ -636,10 +642,24 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: () =>
-			i18n.translate(
-				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-			),
+		getTagline: feature => {
+			switch ( feature ) {
+				case constants.FEATURE_JETPACK_BACKUP_DAILY:
+				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, real-time backups, and priority support.'
+					);
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, and priority support.'
+					);
+				default:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+					);
+			}
+		},
 		getDescription: () =>
 			i18n.translate(
 				'The features most needed by WordPress sites' +
@@ -661,6 +681,8 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM ]: {
@@ -725,6 +747,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -787,6 +810,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -832,6 +856,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -876,6 +901,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -940,6 +966,10 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -1002,6 +1032,10 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		],
 	},
 };

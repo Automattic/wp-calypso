@@ -9,9 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import FoldableCard from 'components/foldable-card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { deleteConnectedApplication } from 'state/connected-applications/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -155,6 +156,7 @@ class ConnectedApplicationItem extends React.Component {
 					'{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}',
 					{
 						components: {
+							// eslint-disable-next-line jsx-a11y/heading-has-content
 							detailTitle: <h2 />,
 							detailDescription: (
 								<p className="connected-application-item__connection-detail-description" />
@@ -223,10 +225,7 @@ class ConnectedApplicationItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		deleteConnectedApplication,
-		recordGoogleEvent,
-	}
-)( localize( ConnectedApplicationItem ) );
+export default connect( null, {
+	deleteConnectedApplication,
+	recordGoogleEvent,
+} )( localize( withLocalizedMoment( ConnectedApplicationItem ) ) );

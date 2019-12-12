@@ -91,13 +91,14 @@
 
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row-reverse;
+	flex-flow: row;
 	justify-content: space-between;
+	overflow: hidden;
 
 	.button {
 		flex: 1 0 auto;
 		margin-left: 1em;
-		&:last-child {
+		&:first-child {
 			margin-left: 0;
 		}
 
@@ -117,11 +118,6 @@
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
-	}
-
-	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 6 ) {
-		display: none;
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -217,5 +213,9 @@
 
 	.token-field__suggestion {
 		color: var( --color-neutral-70 );
+		&.is-selected span {
+			color: var( --color-text-inverted );
+		}
 	}
 }
+

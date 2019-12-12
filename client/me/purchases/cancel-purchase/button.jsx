@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
@@ -311,10 +310,7 @@ class CancelPurchaseButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		clearPurchases,
-		refreshSitePlans,
-	}
-)( localize( CancelPurchaseButton ) );
+export default connect( null, {
+	clearPurchases,
+	refreshSitePlans,
+} )( localize( CancelPurchaseButton ) );

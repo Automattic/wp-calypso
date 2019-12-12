@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -157,7 +156,7 @@ class Orders extends Component {
 				<TableItem className="orders__table-total">
 					{ refundValue ? (
 						<span>
-							<span className="orders__table-old-total">{ total }</span>{' '}
+							<span className="orders__table-old-total">{ total }</span>{ ' ' }
 							{ formatCurrency( remainingTotal, order.currency ) }
 						</span>
 					) : (

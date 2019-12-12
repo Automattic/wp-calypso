@@ -7,13 +7,11 @@ import { BlockConfiguration } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import { Attributes } from './types';
+import { Steps } from '../types';
 import edit from './edit';
 
 export const name = 'automattic/onboarding';
-
-export interface Attributes {
-	align: 'full';
-}
 
 export const settings: BlockConfiguration< Attributes > = {
 	title: NO__( 'Onboarding' ),
@@ -23,6 +21,10 @@ export const settings: BlockConfiguration< Attributes > = {
 		align: {
 			type: 'string',
 			default: 'full',
+		},
+		step: {
+			type: 'number',
+			default: Steps.IntentGathering,
 		},
 	},
 	supports: {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import {
-	getName,
+	getDisplayName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -30,11 +29,13 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
+	isJetpackBackup,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanTermLabel } from 'lib/plans';
@@ -172,6 +173,8 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
+		} else if ( isJetpackBackup( purchase ) ) {
+			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {
@@ -220,7 +223,7 @@ class PurchaseItem extends Component {
 				<span className="purchase-item__wrapper">
 					{ this.renderIcon() }
 					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getName( purchase ) }</div>
+						<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
 						{ label && <div className="purchase-item__term-label">{ label }</div> }
 						{ ! isPartnerPurchase( purchase ) && (
@@ -263,4 +266,4 @@ PurchaseItem.propTypes = {
 	isJetpack: PropTypes.bool,
 };
 
-export default localize( PurchaseItem );
+export default localize( withLocalizedMoment( PurchaseItem ) );

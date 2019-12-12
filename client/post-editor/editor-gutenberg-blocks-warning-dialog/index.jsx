@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -181,21 +179,18 @@ const mapDispatchToProps = dispatch => ( {
 	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 } );
 
-export default connect(
-	state => {
-		const postContent = getEditorRawContent( state );
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const optInEnabled = isGutenbergOptInEnabled( state, siteId );
+export default connect( state => {
+	const postContent = getEditorRawContent( state );
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 
-		return {
-			postContent,
-			siteId,
-			gutenbergUrl,
-			optInEnabled,
-		};
-	},
-	mapDispatchToProps
-)( localize( EditorGutenbergBlocksWarningDialog ) );
+	return {
+		postContent,
+		siteId,
+		gutenbergUrl,
+		optInEnabled,
+	};
+}, mapDispatchToProps )( localize( EditorGutenbergBlocksWarningDialog ) );

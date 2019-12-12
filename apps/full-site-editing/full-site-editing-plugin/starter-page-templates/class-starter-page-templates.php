@@ -130,7 +130,7 @@ class Starter_Page_Templates {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
-		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
+		if ( 'page' !== $screen->id ) {
 			return;
 		}
 
@@ -176,6 +176,11 @@ class Starter_Page_Templates {
 				'templates'       => array_merge( $default_templates, $vertical_templates ),
 				'vertical'        => $vertical,
 				'segment'         => $segment,
+				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+				'screenAction'    => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
+				'theme'           => normalize_theme_slug( get_stylesheet() ),
+				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+				'isFrontPage'     => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
@@ -205,10 +210,7 @@ class Starter_Page_Templates {
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
 			$vertical_id = get_option( 'site_vertical', 'default' );
 			$request_url = add_query_arg(
-				[
-					'_locale' => $this->get_iso_639_locale(),
-					'theme'   => get_stylesheet(),
-				],
+				[ '_locale' => $this->get_iso_639_locale() ],
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );

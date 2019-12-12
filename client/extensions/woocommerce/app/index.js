@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
@@ -191,7 +190,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchSetupChoices }
-)( localize( App ) );
+export default connect( mapStateToProps, { fetchSetupChoices } )( localize( App ) );

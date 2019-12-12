@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -20,7 +19,7 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
 import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
 import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';

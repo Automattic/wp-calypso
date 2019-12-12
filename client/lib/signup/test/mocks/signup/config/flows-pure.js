@@ -1,5 +1,3 @@
-/** @format */
-
 const flows = {
 	simple_flow: {
 		steps: [ 'stepA', 'stepB' ],

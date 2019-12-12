@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,9 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
+	JETPACK_PLANS,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -27,9 +28,14 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
-import { JETPACK_PRODUCT_PRICE_MATRIX, JETPACK_PRODUCTS } from 'lib/products-values/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_PRODUCTS,
+} from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
+import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
@@ -46,7 +52,7 @@ import {
 	planMatches,
 	plansLink,
 } from 'lib/plans';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
 import ProductSelector from 'blocks/product-selector';
@@ -54,13 +60,14 @@ import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
 	getSiteOption,
 	getSitePlan,
 	getSiteSlug,
 	isJetpackMinimumVersion,
 	isJetpackSite,
+	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
@@ -81,7 +88,7 @@ export class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
+		 * TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
 		const { siteId: prevSiteId } = prevProps;
@@ -91,10 +98,10 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	isJetpackBackupAvailable() {
-		const { displayJetpackPlans, jetpackSupportsBackupProducts, siteId } = this.props;
+		const { displayJetpackPlans, isMultisite, jetpackSupportsBackupProducts, siteId } = this.props;
 
-		// Jetpack Backup products are currently under a feature flag
-		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+		// Jetpack Backup does not support Multisite yet.
+		if ( isMultisite ) {
 			return false;
 		}
 
@@ -127,6 +134,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			withDiscount,
 			discountEndDate,
+			redirectTo,
 			siteId,
 			siteType,
 			plansWithScroll,
@@ -155,6 +163,7 @@ export class PlansFeaturesMain extends Component {
 							'Get everything your site needs, in one package — so you can focus on your business.'
 						) }
 						compactOnMobile
+						isSecondary
 					/>
 				) }
 				<PlanFeatures
@@ -168,6 +177,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
@@ -364,14 +374,20 @@ export class PlansFeaturesMain extends Component {
 			<SegmentedControl className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ customerType === 'personal' }
-					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
+					path={ addQueryArgs(
+						{ ...queryArgs, customerType: 'personal' },
+						document.location.search
+					) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
 					selected={ customerType === 'business' }
-					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
+					path={ addQueryArgs(
+						{ ...queryArgs, customerType: 'business' },
+						document.location.search
+					) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
 				</SegmentedControl.Item>
@@ -424,20 +440,23 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate } = this.props;
+		const { basePlansPath, intervalType, redirectTo } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
-				<FormattedHeader
-					headerText={ translate( 'Single Products' ) }
-					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
-					compactOnMobile
+				<PlansFeaturesMainProductsHeader />
+				<AsyncLoad
+					require="blocks/product-plan-overlap-notices"
+					placeholder={ null }
+					plans={ JETPACK_PLANS }
+					products={ JETPACK_BACKUP_PRODUCTS }
 				/>
 				<ProductSelector
 					products={ JETPACK_PRODUCTS }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
+					redirectTo={ redirectTo }
 				/>
 			</div>
 		);
@@ -494,6 +513,7 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
+	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
@@ -541,9 +561,10 @@ export default connect(
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
 			customerType,
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),

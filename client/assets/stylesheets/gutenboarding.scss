@@ -5,8 +5,7 @@
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
 
-// @TODO: import from `@wordpress/base-styles` package once it's available November 12 2019
-@import './gutenberg-base-styles/style';
+@import './gutenberg-base-styles';
 
 // Gutenberg resets
 // Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.

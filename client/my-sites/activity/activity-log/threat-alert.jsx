@@ -12,8 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';
 import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
@@ -23,7 +22,7 @@ import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'state/rewind/state/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
@@ -393,19 +392,16 @@ const mapStateToProps = state => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{
-		fixThreat: ( siteId, threatId ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
-				fixThreatAlert( siteId, threatId )
-			),
-		ignoreThreat: ( siteId, threatId ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
-				ignoreThreatAlert( siteId, threatId )
-			),
-		requestRewindState,
-	}
-)( localize( ThreatAlert ) );
+export default connect( mapStateToProps, {
+	fixThreat: ( siteId, threatId ) =>
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
+			fixThreatAlert( siteId, threatId )
+		),
+	ignoreThreat: ( siteId, threatId ) =>
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
+			ignoreThreatAlert( siteId, threatId )
+		),
+	requestRewindState,
+} )( localize( ThreatAlert ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import { flowRight } from 'lodash';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { requestFeed } from '../../../state/feeds/actions';
 import { requestLock, resetLock } from '../../../state/locks/actions';
 import { requestZones } from '../../../state/zones/actions';
@@ -69,5 +68,6 @@ const connectComponent = connect(
 
 export default flowRight(
 	connectComponent,
-	localize
+	localize,
+	withLocalizedMoment
 )( ZoneLockWarningNotice );

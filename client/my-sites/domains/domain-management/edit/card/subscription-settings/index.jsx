@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 

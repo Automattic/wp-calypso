@@ -22,11 +22,11 @@
 		"build": "calypso-build editor='./src/editor.js' --env.WP"
 	},
 	"dependencies": {
-		"@wordpress/blocks": "6.7.2",
-		"@wordpress/components": "8.3.2",
-		"@wordpress/editor": "9.7.3",
-		"@wordpress/element": "2.8.2",
-		"@wordpress/i18n": "3.6.1",
+		"@wordpress/blocks": "6.8.0",
+		"@wordpress/components": "8.4.0",
+		"@wordpress/editor": "9.8.0",
+		"@wordpress/element": "2.9.0",
+		"@wordpress/i18n": "3.7.0",
 		"classnames": "2.2.6"
 	}
 }

@@ -18,7 +18,7 @@ import FeaturedDomainSuggestions from 'components/domains/featured-domain-sugges
 import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -249,6 +249,7 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					showTestCopy={ this.props.showTestCopy }
 				/>
 			);
 
@@ -273,6 +274,7 @@ class DomainSearchResults extends React.Component {
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						showTestCopy={ this.props.showTestCopy }
 					/>
 				);
 			} );
@@ -319,7 +321,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ hideSitePreview }
-)( localize( DomainSearchResults ) );
+export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );

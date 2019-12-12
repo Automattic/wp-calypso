@@ -4,11 +4,6 @@
 import React, { Fragment } from 'react';
 import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import ExternalLink from 'components/external-link';
-
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -29,12 +24,19 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
 
+export const JETPACK_PRODUCTS_LIST = [ ...JETPACK_BACKUP_PRODUCTS ];
+
 export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Daily Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Daily Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Real-Time Backups' ),
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 };
+
+export const PRODUCT_SHORT_NAMES = {
+	...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
+};
+
 export const JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME = (
 	<Fragment>
 		{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
@@ -60,21 +62,33 @@ export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
+export const JETPACK_PRODUCT_DISPLAY_NAMES = {
+	...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+};
+
+export const JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE = translate(
+	'Your data is being securely backed up every day with a 30-day archive.'
+);
+export const JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE = translate(
+	'Your data is being securely backed up as you edit.'
+);
+
+export const JETPACK_BACKUP_PRODUCT_TAGLINES = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: JETPACK_BACKUP_PRODUCT_DAILY_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_TAGLINE,
+};
+
+export const JETPACK_PRODUCT_TAGLINES = {
+	...JETPACK_BACKUP_PRODUCT_TAGLINES,
+};
+
 export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
-	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
-	{
-		components: {
-			a: <ExternalLink href="https://jetpack.com/upgrade/backup/" icon />,
-		},
-	}
+	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 );
 export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
-	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
-	{
-		components: {
-			strong: <strong />,
-		},
-	}
+	'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
 );
 export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
@@ -86,6 +100,8 @@ export const JETPACK_BACKUP_PRODUCT_DESCRIPTIONS = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION,
 };
+
+export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 
 export const JETPACK_PRODUCT_PRICE_MATRIX = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -116,6 +132,6 @@ export const JETPACK_PRODUCTS = [
 		optionDescriptions: {
 			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
-		optionsLabel: translate( 'Backup Options:' ),
+		optionsLabel: translate( 'Select a backup option:' ),
 	},
 ];

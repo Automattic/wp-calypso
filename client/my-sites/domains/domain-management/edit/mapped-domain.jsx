@@ -1,16 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
@@ -23,14 +22,11 @@ import {
 	domainTransferIn,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
+import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
-// eslint-disable-next-line react/prefer-es6-class
-const MappedDomain = createReactClass( {
-	displayName: 'MappedDomain',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
-
+export class MappedDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
@@ -40,13 +36,12 @@ const MappedDomain = createReactClass( {
 							'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
 					} ) }
 				>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
 
-		const expirationMessage = ( domain.expirationMoment &&
-			domain.expirationMoment.format( 'LL' ) ) || (
+		const expirationMessage = ( domain.expiry && moment( domain.expiry ).format( 'LL' ) ) || (
 			<em>
 				{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }
 			</em>
@@ -62,11 +57,11 @@ const MappedDomain = createReactClass( {
 				{ expirationMessage }
 			</Property>
 		);
-	},
+	}
 
-	handlePaymentSettingsClick() {
-		this.recordEvent( 'paymentSettingsClick', this.props.domain );
-	},
+	handlePaymentSettingsClick = () => {
+		this.props.recordPaymentSettingsClick( this.props.domain );
+	};
 
 	domainWarnings() {
 		return (
@@ -77,7 +72,7 @@ const MappedDomain = createReactClass( {
 				ruleWhiteList={ [ 'wrongNSMappedDomains' ] }
 			/>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -87,7 +82,7 @@ const MappedDomain = createReactClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
+	}
 
 	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
@@ -113,7 +108,7 @@ const MappedDomain = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
+	}
 
 	getVerticalNav() {
 		return (
@@ -124,13 +119,13 @@ const MappedDomain = createReactClass( {
 				{ this.transferMappedDomainNavItem() }
 			</VerticalNav>
 		);
-	},
+	}
 
 	emailNavItem() {
 		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	},
+	}
 
 	dnsRecordsNavItem() {
 		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
@@ -138,7 +133,7 @@ const MappedDomain = createReactClass( {
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
 		);
-	},
+	}
 
 	domainConnectMappingNavItem() {
 		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
@@ -156,7 +151,7 @@ const MappedDomain = createReactClass( {
 				{ this.props.translate( 'Connect Your Domain' ) }
 			</VerticalNavItem>
 		);
-	},
+	}
 
 	transferMappedDomainNavItem() {
 		const { domain, selectedSite, translate } = this.props;
@@ -172,8 +167,9 @@ const MappedDomain = createReactClass( {
 				{ translate( 'Transfer Domain to WordPress.com' ) }
 			</VerticalNavItem>
 		);
-	},
-} );
+	}
+}
 
-export { MappedDomain };
-export default localize( MappedDomain );
+export default connect( null, { recordPaymentSettingsClick } )(
+	localize( withLocalizedMoment( MappedDomain ) )
+);

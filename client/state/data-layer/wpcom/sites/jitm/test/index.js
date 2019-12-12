@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,6 +22,11 @@ const createDispatcher = ( dispatch, getState ) => action => {
 
 describe( 'jitms', () => {
 	describe( 'fetchJITM', () => {
+		beforeEach( () => {
+			// To remove the side effect, the section name should be initialized before every test.
+			handleRouteChange( { section: { name: '' } } );
+		} );
+
 		test( 'should not dispatch', () => {
 			const dispatch = jest.fn();
 			const getState = () => ( {} );
@@ -89,7 +92,7 @@ describe( 'jitms', () => {
 			);
 		} );
 
-		test( 'should be not set a jitm if not a jetpack site', () => {
+		test( 'should set a jitm for dotcom sites as well', () => {
 			const dispatch = jest.fn();
 			const state = {
 				sites: {
@@ -111,8 +114,23 @@ describe( 'jitms', () => {
 			};
 
 			const dispatcher = createDispatcher( dispatch, getState );
+
 			dispatcher( handleRouteChange( action_transition ) );
-			expect( dispatch ).not.toHaveBeenCalled();
+			expect( dispatch ).toHaveBeenCalledWith(
+				http(
+					{
+						apiNamespace: 'rest',
+						method: 'GET',
+						path: '/v1.1/jetpack-blogs/100/rest-api/',
+						query: {
+							path: '/jetpack/v4/jitm',
+							query: JSON.stringify( { message_path: 'calypso:test:admin_notices' } ),
+							http_envelope: 1,
+						},
+					},
+					{ ...action_transition, messagePath: 'test' }
+				)
+			);
 		} );
 
 		test( 'should not dispatch for ignored routes', () => {

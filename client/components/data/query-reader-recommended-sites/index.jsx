@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,4 @@ class QueryReaderRecommendedSites extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestRecommendedSites }
-)( QueryReaderRecommendedSites );
+export default connect( null, { requestRecommendedSites } )( QueryReaderRecommendedSites );

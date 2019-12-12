@@ -1,4 +1,3 @@
-/** @format */
 /* global i18n */
 
 // Date/time strings for localisation

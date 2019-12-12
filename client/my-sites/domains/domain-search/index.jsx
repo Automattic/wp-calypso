@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +29,7 @@ import {
 } from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -217,7 +216,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: siteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

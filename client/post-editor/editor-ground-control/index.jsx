@@ -1,11 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop, get, findLast } from 'lodash';
-import moment from 'moment';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
@@ -14,10 +12,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Site from 'blocks/site';
 import EditorPublishButton from 'post-editor/editor-publish-button';
-import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -43,7 +40,6 @@ export class EditorGroundControl extends React.Component {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
-		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
 		onSave: PropTypes.func,
@@ -62,7 +58,6 @@ export class EditorGroundControl extends React.Component {
 		isSaveBlocked: false,
 		isPublishing: false,
 		isSaving: false,
-		moment,
 		onPublish: noop,
 		onSaveDraft: noop,
 		site: {},
@@ -143,7 +138,7 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getCloseButtonPath() {
-		const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
+		const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^/]+))(\/|$)/i;
 		// find the last non-editor path in routeHistory, default to "all posts"
 		const lastNonEditorPath = findLast(
 			this.props.routeHistory,
@@ -196,7 +191,7 @@ export class EditorGroundControl extends React.Component {
 							icon="info"
 							className="editor-ground-control__email-verification-notice-icon"
 						/>
-						{ this.getVerificationNoticeLabel() }{' '}
+						{ this.getVerificationNoticeLabel() }{ ' ' }
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
@@ -235,7 +230,4 @@ const mapDispatchToProps = {
 	pauseEditorTour: () => pauseGuidedTour(),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( EditorGroundControl ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -59,7 +57,10 @@ const AddPackageDialog = props => {
 
 		//get reserved box names:
 		const boxNames = concat(
-			difference( customPackages.map( boxPackage => boxPackage.name ), [ editName ] ), //existing custom boxes
+			difference(
+				customPackages.map( boxPackage => boxPackage.name ),
+				[ editName ]
+			), //existing custom boxes
 			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);

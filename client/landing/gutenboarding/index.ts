@@ -6,9 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
 import { main, redirectIfNotEnabled } from './controller';
-import { render as clientRender } from 'controller';
+import { render as clientRender } from '../../controller/index.web';
 import { wpDataDebugMiddleware } from './devtools';
 
 /**
@@ -17,8 +16,7 @@ import { wpDataDebugMiddleware } from './devtools';
 import 'assets/stylesheets/gutenboarding.scss';
 import 'components/environment-badge/style.scss';
 
-window.AppBoot = async () => {
-	await user().initialize();
+window.AppBoot = () => {
 	page(
 		'/gutenboarding',
 		redirectIfNotEnabled,

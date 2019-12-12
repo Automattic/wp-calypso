@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
 import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';

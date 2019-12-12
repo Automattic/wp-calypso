@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ export class DomainToPaidPlanNotice extends Component {
 	render() {
 		const { eligible, isConflicting, isDomainOnly, isJetpack, site, translate } = this.props;
 
-		if ( ! site || ! eligible || isConflicting ) {
+		if ( ! site || ! eligible || isConflicting || isJetpack ) {
 			return null;
 		}
 
@@ -41,17 +39,13 @@ export class DomainToPaidPlanNotice extends Component {
 			  ) }&siteId=${ encodeURIComponent( site.ID ) }`
 			: `/plans/${ site.slug }`;
 
-		const text = isJetpack
-			? translate( 'Upgrade for full site backups.' )
-			: translate( 'Upgrade your site and save.' );
-
 		return (
 			<SidebarBanner
 				ctaName="domain-to-paid-sidebar"
 				ctaText={ translate( 'Go' ) }
 				href={ href }
 				icon="info-outline"
-				text={ text }
+				text={ translate( 'Upgrade your site and save.' ) }
 			/>
 		);
 	}
@@ -72,7 +66,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( DomainToPaidPlanNotice ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainToPaidPlanNotice ) );

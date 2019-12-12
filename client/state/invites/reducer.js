@@ -183,21 +183,30 @@ export function deleting( state = {}, action ) {
 			const inviteDeletionRequests = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'requesting' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'requesting' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
 		case INVITES_DELETE_REQUEST_FAILURE:
 			const inviteDeletionFailures = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'failure' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'failure' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
 		case INVITES_DELETE_REQUEST_SUCCESS:
 			const inviteDeletionSuccesses = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'success' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'success' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
 	}

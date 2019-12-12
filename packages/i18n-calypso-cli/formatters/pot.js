@@ -1,5 +1,3 @@
-/** @format */
-
 const multiline = require( './multiline' );
 
 function uniqueMatchId( match ) {

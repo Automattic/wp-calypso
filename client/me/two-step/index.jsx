@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppPasswords from 'me/application-passwords';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -108,8 +106,8 @@ class TwoStep extends Component {
 		for ( let i = 0; i < 5; i++ ) {
 			placeholders.push(
 				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
-					{' '}
-					&nbsp;{' '}
+					{ ' ' }
+					&nbsp;{ ' ' }
 				</p>
 			);
 		}

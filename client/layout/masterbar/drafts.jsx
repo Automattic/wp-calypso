@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AsyncLoad from 'components/async-load';
 import QueryPostCounts from 'components/data/query-post-counts';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';

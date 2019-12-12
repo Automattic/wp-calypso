@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,7 +31,7 @@ import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 

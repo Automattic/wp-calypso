@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';

@@ -15,11 +15,10 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
 import Divider from './divider';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
@@ -626,7 +625,7 @@ export default connect(
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
-				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),

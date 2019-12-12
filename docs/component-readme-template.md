@@ -13,7 +13,7 @@ First, display a `jsx` code block to show an example of usage, including import 
 
 ```jsx
 import Gridicon from 'components/gridicons';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
 	return (

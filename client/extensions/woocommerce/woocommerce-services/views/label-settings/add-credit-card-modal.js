@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -73,7 +71,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddCardDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );

@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -89,38 +88,37 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	verticalSuggestedThemes: {
-		datestamp: '20191031',
-		variations: {
-			control: 90,
-			test: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
-		datestamp: '20191029',
+		datestamp: '20291029',
 		variations: {
-			passwordless: 10,
-			default: 90,
+			passwordless: 0,
+			default: 100,
 		},
 		defaultVariation: 'default',
-	},
-	checkoutPaymentTypes: {
-		datestamp: '20191028',
-		variations: {
-			tabs: 50,
-			radios: 50,
-		},
-		defaultVariation: 'tabs',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	showPlanUpsellConcierge: {
 		datestamp: '20191106',
 		variations: {
 			variantShowPlanBump: 50,
 			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	userStepRecaptcha: {
+		datestamp: '20191111',
+		variations: {
+			show: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 90,
+			control: 10,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

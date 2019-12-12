@@ -17,6 +17,7 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
+	text-align: inherit;
 
 	.domain__primary-flag {
 		vertical-align: middle;
@@ -39,6 +40,7 @@
 	white-space: pre;
 	max-width: 70%;
 	font-family: $serif;
+	text-align: inherit;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 18px;

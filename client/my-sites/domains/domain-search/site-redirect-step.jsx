@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
 import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
@@ -185,12 +184,9 @@ const recordFormSubmit = searchBoxValue =>
 		searchBoxValue
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		recordInputFocus,
-		recordGoButtonClick,
-		recordFormSubmit,
-	}
-)( localize( SiteRedirectStep ) );
+export default connect( null, {
+	errorNotice,
+	recordInputFocus,
+	recordGoButtonClick,
+	recordFormSubmit,
+} )( localize( SiteRedirectStep ) );

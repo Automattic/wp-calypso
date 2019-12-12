@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -74,9 +74,6 @@ class UserTypeForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( UserTypeForm ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( UserTypeForm ) );

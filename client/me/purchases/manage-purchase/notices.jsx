@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -34,6 +31,7 @@ import {
 import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -335,7 +333,6 @@ class PurchaseNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )(
+	localize( withLocalizedMoment( PurchaseNotice ) )
+);

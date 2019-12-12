@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
+"/**
+ * Internal dependencies
+ */
+import hello from 'internal/lib';
+
+import { combineReducers } from \\"state/utils\\";
+
+"
+`;

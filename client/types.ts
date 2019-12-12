@@ -47,3 +47,10 @@ export type AppState = __TodoAny__;
  * **Please, use sparingly!**
  */
 export type __TodoAny__ = any;
+
+// Properties added to the `window` object:
+declare global {
+	interface Window {
+		AppBoot: () => void;
+	}
+}

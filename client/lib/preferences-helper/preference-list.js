@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { getAllRemotePreferences } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import Preference from './preference';

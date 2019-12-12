@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -114,9 +112,6 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PlanBillingPeriod ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PlanBillingPeriod ) );

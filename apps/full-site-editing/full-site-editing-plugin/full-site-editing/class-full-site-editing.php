@@ -50,7 +50,6 @@ class Full_Site_Editing {
 		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
 		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
 		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
-		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
 		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
@@ -63,7 +62,7 @@ class Full_Site_Editing {
 		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
 		add_action( 'admin_menu', [ $this, 'remove_wp_admin_menu_items' ] );
 
-		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
+		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
 	}
 
@@ -81,21 +80,6 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Determines whether provided theme supports FSE.
-	 *
-	 * @deprecated being replaced soon by an is_active static method - don't add new usages
-	 * @param string $theme_slug Theme slug to check support for.
-	 *
-	 * @return bool True if passed theme supports FSE, false otherwise.
-	 */
-	// phpcs:disable
-	public function is_supported_theme( $theme_slug = null ) {
-		// phpcs:enable
-		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
-	}
-
-	/**
 	 * Inserts template data for the theme we are currently switching to.
 	 *
 	 * This insertion will only happen if theme supports FSE.
@@ -103,35 +87,12 @@ class Full_Site_Editing {
 	 */
 	public function insert_default_data() {
 		// Bail if current theme doesn't support FSE.
-		if ( ! $this->is_supported_theme() ) {
+		if ( ! is_theme_supported() ) {
 			return;
 		}
 
 		$this->wp_template_inserter->insert_default_template_data();
 		$this->wp_template_inserter->insert_default_pages();
-	}
-
-	/**
-	 * Returns normalized theme slug for the current theme.
-	 *
-	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
-	 * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
-	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
-	 *
-	 * @param string $theme_slug Theme slug to check support for.
-	 *
-	 * @return string Normalized theme slug.
-	 */
-	public function normalize_theme_slug( $theme_slug ) {
-		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-			$theme_slug = substr( $theme_slug, 4 );
-		}
-
-		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
-			$theme_slug = substr( $theme_slug, 0, -6 );
-		}
-
-		return $theme_slug;
 	}
 
 	/**
@@ -297,7 +258,13 @@ class Full_Site_Editing {
 			return null;
 		}
 
-		$parent_post_type        = get_post_type( $parent_post_id );
+		$parent_post_type = get_post_type( $parent_post_id );
+
+		// See https://github.com/Automattic/wp-calypso/issues/38075#issuecomment-559900054.
+		if ( 'page' === $parent_post_type ) {
+			return __( 'Page Layout' );
+		}
+
 		$parent_post_type_object = get_post_type_object( $parent_post_type );
 
 		/* translators: %s: "Back to Post", "Back to Page", "Back to Template", etc. */
@@ -632,5 +599,30 @@ class Full_Site_Editing {
 		if ( isset( $submenu['themes.php'][6] ) ) {
 			unset( $submenu['themes.php'][6] );
 		}
+	}
+
+	/**
+	 * Registers the footer credit option for API use.
+	 */
+	public function register_footer_credit_setting() {
+		/**
+		 * Note: We do not want to create the option if it doesn't exist. This
+		 * way, the default option can theoretically change if the user switches
+		 * site types without changing an option in the list at all. As soon as
+		 * they make a change to the selection, however, it will be persisted.
+		 */
+
+		// Registers the footercredit option for API use.
+		register_setting(
+			'general',
+			'footercredit',
+			[
+				'show_in_rest' => [
+					'name' => 'footer_credit',
+				],
+				'type'         => 'string',
+				'description'  => __( 'WordPress Footer Credit' ),
+			]
+		);
 	}
 }

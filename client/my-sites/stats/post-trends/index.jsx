@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import compareProps from 'lib/compare-props';
 import Month from './month';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteOption } from 'state/sites/selectors';
@@ -219,11 +217,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	null,
-	null,
-	{
-		areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
-	}
-)( localize( PostTrends ) );
+export default connect( mapStateToProps, null, null, {
+	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
+} )( localize( PostTrends ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { emailManagement } from 'my-sites/email/paths';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
@@ -121,7 +118,11 @@ class GSuiteStatsNudge extends Component {
 							</p>
 						}
 						<div className="gsuite-stats-nudge__button-row">
-							<Button href={ url } primary onClick={ this.onStartNowClick }>
+							<Button
+								href={ url }
+								primary={ this.props.primaryButton }
+								onClick={ this.onStartNowClick }
+							>
 								{ translate( 'Get G Suite' ) }
 							</Button>
 						</div>

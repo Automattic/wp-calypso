@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -135,7 +134,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
-					url="/"
+					url="/read"
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }

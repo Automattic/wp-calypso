@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import ConciergeBanner from '../concierge-banner';
 import EmptyContent from 'components/empty-content';
 import isBusinessPlanUser from 'state/selectors/is-business-plan-user';

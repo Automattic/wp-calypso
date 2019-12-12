@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, ScreenReaderText } from '@automattic/components';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';
-import ScreenReaderText from 'components/screen-reader-text';
 
 class FocusableExample extends React.PureComponent {
 	static displayName = 'Focusable';
@@ -39,7 +36,7 @@ class FocusableExample extends React.PureComponent {
 			<Card>
 				<Focusable onClick={ noop }>
 					<p>
-						This keyboard-accessible component can contain other elements as children, including{' '}
+						This keyboard-accessible component can contain other elements as children, including{ ' ' }
 						<code>p</code>
 						s, <code>div</code>
 						s, or other components.

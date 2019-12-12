@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';

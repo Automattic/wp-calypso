@@ -1,5 +1,3 @@
-/** @format */
-
 // Returns a function that returns a translated text when applied
 const translate = text => tr => tr( text );
 
@@ -50,7 +48,10 @@ const KEY_BINDINGS = {
 	siteNavigation: [
 		{
 			eventName: 'open-keyboard-shortcuts-menu',
-			keys: [ [ 'shift', '/' ], [ 'shift', ',' ] ],
+			keys: [
+				[ 'shift', '/' ],
+				[ 'shift', ',' ],
+			],
 			// On Win/Webkit `?` is incorrectly identified as upside-down
 			// question mark. https://bugs.webkit.org/show_bug.cgi?id=19906
 			checkKeys: [ '?', '\u00BF', '\u00BC' ],

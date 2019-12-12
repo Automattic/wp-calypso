@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Confirmation from './confirmation';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Site from 'blocks/site';
 import FormattedHeader from 'components/formatted-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -19,6 +17,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class AppointmentInfo extends Component {
 	static propTypes = {
@@ -29,6 +28,7 @@ class AppointmentInfo extends Component {
 		const {
 			appointment: { beginTimestamp, endTimestamp, id, scheduleId, meta },
 			translate,
+			moment,
 			site,
 		} = this.props;
 
@@ -122,6 +122,7 @@ class AppointmentInfo extends Component {
 		const {
 			appointment: { beginTimestamp, endTimestamp },
 			translate,
+			moment,
 		} = this.props;
 
 		const beginTimeFormat = translate( 'LL [at] LT', {
@@ -152,4 +153,4 @@ class AppointmentInfo extends Component {
 	}
 }
 
-export default localize( AppointmentInfo );
+export default localize( withLocalizedMoment( AppointmentInfo ) );

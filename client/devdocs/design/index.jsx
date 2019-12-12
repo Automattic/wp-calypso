@@ -90,6 +90,7 @@ import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProductCard from 'components/product-card/docs/example';
+import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import PromoSection from 'components/promo-section/docs/example';
 import PromoCard from 'components/promo-section/promo-card/docs/example';
@@ -115,6 +116,7 @@ import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
+import Timeline from 'components/timeline/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
@@ -197,9 +199,12 @@ class DesignAssets extends React.Component {
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Buttons
+						componentUsageStats={ componentsUsageStats.button }
+						readmeFilePath="/packages/components/src/button"
+					/>
 					<SplitButton readmeFilePath="split-button" />
-					<Cards readmeFilePath="card" />
+					<Cards readmeFilePath="/packages/components/src/card" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
@@ -252,13 +257,13 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
-					<ProgressBar readmeFilePath="progress-bar" />
+					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
 					<PromoSection readmeFilePath="promo-section" />
 					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon readmeFilePath="ribbon" />
-					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
+					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
+					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
@@ -266,17 +271,19 @@ class DesignAssets extends React.Component {
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
 					<ProductCard readmeFilePath="product-card" />
+					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions readmeFilePath="suggestions" />
+					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
+					<Timeline readmeFilePath="timeline" />
 					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
@@ -318,10 +325,7 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssetsExport = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	DesignAssetsExport = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default DesignAssetsExport;

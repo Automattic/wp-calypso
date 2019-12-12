@@ -63,7 +63,7 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-
+import Badge from 'components/badge';
 /**
  * Style dependencies
  */
@@ -229,7 +229,9 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackEarnClick }
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
-			/>
+			>
+				<Badge type="info">{ translate( 'New' ) }</Badge>
+			</SidebarItem>
 		);
 	}
 
@@ -361,7 +363,15 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { path, site, translate, canUserManageOptions } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -397,6 +407,9 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! ( isJetpack && ! isAtomicSite && ! isVip );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
@@ -405,7 +418,9 @@ export class MySitesSidebar extends Component {
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
-					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					{ displayPlanName && (
+						<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					) }
 				</a>
 			</li>
 		);
@@ -507,9 +522,9 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'SFTP & MySQL' ) }
-				selected={ itemLinkMatches( '/hosting-admin', path ) }
-				link={ `/hosting-admin${ siteSuffix }` }
+				label={ translate( 'Hosting Configuration' ) }
+				selected={ itemLinkMatches( '/hosting-config', path ) }
+				link={ `/hosting-config${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
 				preloadSectionName="hosting"
 				expandSection={ this.expandManageSection }
@@ -817,14 +832,11 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-		setLayoutFocus,
-		setNextLayoutFocus,
-		expandSection,
-		toggleSection,
-	}
-)( localize( MySitesSidebar ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+	setLayoutFocus,
+	setNextLayoutFocus,
+	expandSection,
+	toggleSection,
+} )( localize( MySitesSidebar ) );

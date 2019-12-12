@@ -39,8 +39,7 @@ import {
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
-import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
 
 /**
@@ -52,7 +51,6 @@ const blockedTracksDebug = debug( 'calypso:analytics:blockedTracks' );
 const pageViewDebug = debug( 'calypso:analytics:pageview' );
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
-const referDebug = debug( 'calypso:analytics:refer' );
 const queueDebug = debug( 'calypso:analytics:queue' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
@@ -577,7 +575,7 @@ const analytics = {
 		/**
 		 * Returns the anoymous id stored in the `tk_ai` cookie
 		 *
-		 * @returns {String} - The Tracks anonymous user id
+		 * @returns {string} - The Tracks anonymous user id
 		 */
 		anonymousUserId: function() {
 			const cookies = cookie.parse( document.cookie );
@@ -710,8 +708,7 @@ const analytics = {
 					page: parsedUrl.host + parsedUrl.pathname,
 				} );
 
-				referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
-				reduxDispatch( trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) );
+				trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } );
 			}
 		},
 	},
@@ -759,7 +756,7 @@ const analytics = {
  * @see isGoogleAnalyticsAllowed
  *
  * @param  {Function} func Google Analytics tracking function
- * @return {Function}      Wrapped function
+ * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function( ...args ) {

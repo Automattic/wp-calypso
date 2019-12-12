@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -264,6 +262,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async trashPost() {
 		const trashSelector = By.css( 'button.editor-post-trash' );
 
+		await this.selectDocumentTab();
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, trashSelector );
 		await driverHelper.clickWhenClickable( this.driver, trashSelector );
 

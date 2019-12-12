@@ -1,0 +1,167 @@
+// My Plan Card
+.my-plan-card.card {
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+	}
+}
+
+.my-plan-card__primary {
+	display: flex;
+	flex-flow: row nowrap;
+	flex-grow: 1;
+}
+
+.my-plan-card__header {
+	flex: 1;
+
+	.is-placeholder &::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 100%;
+		height: calc( 100% - 16px );
+		min-height: 70px;
+		margin-bottom: 16px;
+
+		@include breakpoint( '>960px' ) {
+			height: 100%;
+		}
+	}
+}
+
+.my-plan-card__title {
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 29px;
+	margin: 8px 0;
+	color: var( --color-neutral-100 );
+
+	.is-placeholder & {
+		display: none;
+	}
+}
+
+.my-plan-card__tagline {
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 21px;
+	margin: 0 0 24px;
+
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 8px;
+	}
+
+	.is-placeholder & {
+		display: none;
+	}
+}
+
+.my-plan-card__icon {
+	flex: 0 0 auto;
+	width: 64px;
+	height: 64px;
+	margin: 8px 20px 16px 0;
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+
+	.is-placeholder & {
+		.plan-icon {
+			display: none;
+		}
+
+		&::before {
+			@include placeholder( --color-neutral-10 );
+			content: '\00a0';
+			display: inline-block;
+			width: 64px;
+			height: 64px;
+			border-radius: 99%;
+		}
+	}
+}
+
+.my-plan-card__secondary {
+	position: relative;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 0 0;
+
+	@include breakpoint( '>960px' ) {
+		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: flex-end;
+		padding: 0 0 0 24px;
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -16px;
+		right: -16px;
+		border-top: 1px solid var( --color-border-subtle );
+
+		@include breakpoint( '>480px' ) {
+			left: -24px;
+			right: -24px;
+		}
+
+		@include breakpoint( '>960px' ) {
+			content: none;
+		}
+	}
+
+	.has-action-only & {
+		padding-top: 0;
+		justify-content: center;
+
+		&::before {
+			content: none;
+		}
+	}
+}
+
+.my-plan-card__details {
+	padding-top: 8px;
+	white-space: nowrap;
+	color: var( --color-text-subtle );
+
+	@include breakpoint( '>960px' ) {
+		padding-top: 0;
+	}
+
+	&.is-error {
+		color: var( --color-error );
+	}
+
+	.is-placeholder &::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 180px;
+		height: 18px;
+	}
+}
+
+.my-plan-card__action {
+	padding-top: 8px;
+	white-space: nowrap;
+
+	.has-action-only & {
+		padding-top: 0;
+	}
+
+	.is-placeholder &::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 110px;
+		height: 29px;
+	}
+}

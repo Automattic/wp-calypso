@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,7 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import { Card, CompactCard, Button } from '@automattic/components';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -156,7 +152,7 @@ export class SiteSettingsFormGeneral extends Component {
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			customAddress = (
 				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
-					<Gridicon icon="plus" />{' '}
+					<Gridicon icon="plus" />{ ' ' }
 					{ translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
@@ -371,7 +367,7 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Choose a city in your timezone.' ) }{' '}
+					{ translate( 'Choose a city in your timezone.' ) }{ ' ' }
 					{ translate(
 						'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
 						{

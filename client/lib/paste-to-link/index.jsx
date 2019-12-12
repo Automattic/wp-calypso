@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,7 @@ import { resemblesUrl } from 'lib/url';
  * If the clipboard contains a URL and some text is selected, pasting will wrap the selected text
  * in an <a> element with the href set to the URL in the clipboard.
  *
- * @example: withPasteToLink( Component )
+ * @example withPasteToLink( Component )
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} Enhanced component
  */
@@ -38,7 +37,8 @@ export default WrappedComponent => {
 			const clipboardText = event.clipboardData && event.clipboardData.getData( 'text/plain' );
 			const node = this.textareaRef.current;
 
-			// If we have a URL in the clipboard and a current selection, pass the URL to insertLink to wrap in an <a> element
+			// If we have a URL in the clipboard and a current selection, pass the URL to insertLink
+			// to wrap in an <a> element
 			if (
 				clipboardText &&
 				clipboardText.length > 0 &&

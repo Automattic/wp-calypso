@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -82,7 +80,7 @@ class StatsDownloadCsv extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				<Gridicon icon="cloud-download" />{' '}
+				<Gridicon icon="cloud-download" />{ ' ' }
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }
@@ -115,7 +113,4 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDownloadCsv );
+export default flowRight( connectComponent, localize )( StatsDownloadCsv );

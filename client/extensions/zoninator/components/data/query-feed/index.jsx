@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -38,9 +36,6 @@ class QueryFeed extends PureComponent {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ requestFeed }
-);
+const connectComponent = connect( null, { requestFeed } );
 
 export default connectComponent( QueryFeed );

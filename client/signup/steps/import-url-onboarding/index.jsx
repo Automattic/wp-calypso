@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,13 +9,11 @@ import { flow, get, includes, invoke, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card, ScreenReaderText } from '@automattic/components';
 import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
 import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';

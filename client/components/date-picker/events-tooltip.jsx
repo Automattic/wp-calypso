@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop, map } from 'lodash';
@@ -19,7 +16,6 @@ class EventsTooltip extends Component {
 	static propTypes = {
 		title: PropTypes.string,
 		events: PropTypes.array,
-		moment: PropTypes.func.isRequired,
 		maxEvents: PropTypes.number,
 		moreEvents: PropTypes.string,
 	};

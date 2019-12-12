@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -11,32 +11,34 @@ import styled from 'styled-components';
 import joinClasses from '../lib/join-classes';
 import RadioButton from './radio-button';
 import { useLocalize } from '../lib/localize';
-import { useAllPaymentMethods } from '../public-api';
+import {
+	useAllPaymentMethods,
+	usePaymentMethod,
+	usePaymentMethodId,
+	useIsStepActive,
+} from '../public-api';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
-export default function CheckoutPaymentMethods( {
-	summary,
-	isComplete,
-	className,
-	availablePaymentMethods,
-	paymentMethod,
-	onChange,
-} ) {
+export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
 	const localize = useLocalize();
 
+	const paymentMethod = usePaymentMethod();
+	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const paymentMethods = useAllPaymentMethods();
-	const paymentMethodsToDisplay = availablePaymentMethods
-		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
-		: paymentMethods;
 
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod
-					{ ...paymentMethod }
-					checked={ true }
-					summary
-					ariaLabel={ paymentMethod.getAriaLabel( localize ) }
-				/>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with this payment method.' ) }
+				>
+					<PaymentMethod
+						{ ...paymentMethod }
+						checked={ true }
+						summary
+						ariaLabel={ paymentMethod.getAriaLabel( localize ) }
+					/>
+				</CheckoutErrorBoundary>
 			</div>
 		);
 	}
@@ -48,14 +50,20 @@ export default function CheckoutPaymentMethods( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			<RadioButtons>
-				{ paymentMethodsToDisplay.map( method => (
-					<PaymentMethod
-						{ ...method }
+				{ paymentMethods.map( method => (
+					<CheckoutErrorBoundary
 						key={ method.id }
-						checked={ paymentMethod.id === method.id }
-						onClick={ onChange }
-						ariaLabel={ method.getAriaLabel( localize ) }
-					/>
+						errorMessage={
+							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
+						}
+					>
+						<PaymentMethod
+							{ ...method }
+							checked={ paymentMethod.id === method.id }
+							onClick={ setPaymentMethod }
+							ariaLabel={ method.getAriaLabel( localize ) }
+						/>
+					</CheckoutErrorBoundary>
 				) ) }
 			</RadioButtons>
 		</div>
@@ -65,25 +73,27 @@ export default function CheckoutPaymentMethods( {
 CheckoutPaymentMethods.propTypes = {
 	summary: PropTypes.bool,
 	isComplete: PropTypes.bool.isRequired,
-	isActive: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	paymentMethod: PropTypes.object,
-	onChange: PropTypes.func.isRequired,
 };
+
+export function CheckoutPaymentMethodsTitle() {
+	const localize = useLocalize();
+	const isActive = useIsStepActive();
+	return isActive ? localize( 'Pick a payment method' ) : localize( 'Payment method' );
+}
 
 function PaymentMethod( {
 	id,
-	LabelComponent,
-	PaymentMethodComponent,
-	SummaryComponent,
+	label,
+	activeContent,
+	inactiveContent,
 	checked,
 	onClick,
 	ariaLabel,
 	summary,
 } ) {
 	if ( summary ) {
-		return <SummaryComponent id={ id } />;
+		return inactiveContent;
 	}
 
 	return (
@@ -94,11 +104,9 @@ function PaymentMethod( {
 			checked={ checked }
 			onChange={ onClick ? () => onClick( id ) : null }
 			ariaLabel={ ariaLabel }
-			label={ <LabelComponent /> }
+			label={ label }
 		>
-			{ PaymentMethodComponent && (
-				<PaymentMethodComponent isActive={ checked } summary={ summary } />
-			) }
+			{ activeContent && activeContent }
 		</RadioButton>
 	);
 }
@@ -108,9 +116,9 @@ PaymentMethod.propTypes = {
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
 	ariaLabel: PropTypes.string.isRequired,
-	PaymentMethodComponent: PropTypes.elementType,
-	LabelComponent: PropTypes.elementType,
-	SummaryComponent: PropTypes.elementType,
+	activeContent: PropTypes.node,
+	label: PropTypes.node,
+	inactiveContent: PropTypes.node,
 	summary: PropTypes.bool,
 };
 

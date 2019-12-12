@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
@@ -101,9 +101,6 @@ class ProfileLink extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLink );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLink );

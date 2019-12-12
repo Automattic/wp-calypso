@@ -1,4 +1,5 @@
-/** @format */
+/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "chaiExpect" ] } ] */
+
 /**
  * External dependencies
  */

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -109,9 +108,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	submit: data => dispatch( saveHostDetails( siteId, data ) ),
 } );
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( HostCredentialsPage )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );

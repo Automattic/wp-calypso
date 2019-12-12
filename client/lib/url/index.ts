@@ -22,6 +22,7 @@ export { default as isOutsideCalypso } from './is-outside-calypso';
 export { default as isHttps } from './is-https';
 export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
+export { default as format } from './format';
 
 /**
  * Removes given params from a url.

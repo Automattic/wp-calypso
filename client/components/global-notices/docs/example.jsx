@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import FormCheckbox from 'components/forms/form-checkbox';
 import notices from 'notices';
@@ -66,9 +64,6 @@ GlobalNotices.propTypes = {
 	createNotice: PropTypes.func,
 };
 
-const ConnectedGlobalNotices = connect(
-	null,
-	{ createNotice }
-)( GlobalNotices );
+const ConnectedGlobalNotices = connect( null, { createNotice } )( GlobalNotices );
 ConnectedGlobalNotices.displayName = 'GlobalNotices';
 export default ConnectedGlobalNotices;

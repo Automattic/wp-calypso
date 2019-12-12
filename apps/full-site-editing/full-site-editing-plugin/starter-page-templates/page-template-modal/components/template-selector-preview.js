@@ -4,6 +4,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { isEmpty, isArray, debounce } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -104,9 +105,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 	if ( isEmpty( blocks ) || ! isArray( blocks ) ) {
 		return (
-			<div className="template-selector-preview">
+			<div className={ classnames( 'template-selector-preview', 'is-blank-preview' ) }>
 				<div className="template-selector-preview__placeholder">
-					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
+					{ __( 'Select a layout to preview.', 'full-site-editing' ) }
 				</div>
 			</div>
 		);

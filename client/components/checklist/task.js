@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import Focusable from 'components/focusable';
+import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
@@ -75,16 +71,12 @@ class Task extends PureComponent {
 
 		if ( onDismiss ) {
 			return (
-				<Focusable
-					className="checklist__task-icon"
-					onClick={ onDismiss }
-					aria-pressed={ completed ? 'true' : 'false' }
-				>
+				<div className="checklist__task-icon">
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ this.renderGridicon() }
-				</Focusable>
+				</div>
 			);
 		}
 
@@ -131,6 +123,7 @@ class Task extends PureComponent {
 			buttonText,
 			collapsed,
 			completed,
+			completedDescription,
 			completedButtonText,
 			completedTitle,
 			description,
@@ -190,10 +183,12 @@ class Task extends PureComponent {
 
 					{ ! _collapsed && (
 						<div className="checklist__task-content">
-							<p className="checklist__task-description">{ description }</p>
+							<p className="checklist__task-description">
+								{ completed && completedDescription ? completedDescription : description }
+							</p>
 
 							<div className="checklist__task-action-duration-wrapper">
-								{ duration && (
+								{ ! completed && duration && (
 									<small className="checklist__task-duration">
 										{ translate( 'Estimated time:' ) } { duration }
 									</small>

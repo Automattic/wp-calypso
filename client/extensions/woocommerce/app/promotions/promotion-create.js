@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -226,7 +224,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PromotionCreate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionCreate ) );

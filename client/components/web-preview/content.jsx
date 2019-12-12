@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -394,7 +393,4 @@ const mapState = state => ( {
 	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
 } );
 
-export default connect(
-	mapState,
-	{ recordTracksEvent }
-)( localize( WebPreviewContent ) );
+export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

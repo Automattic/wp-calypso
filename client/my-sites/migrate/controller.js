@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,13 +8,29 @@ import page from 'page';
  * Internal Dependencies
  */
 import SectionMigrate from 'my-sites/migrate/section-migrate';
+import getSiteId from 'state/selectors/get-site-id';
 import { isEnabled } from 'config';
+
+export function ensureFeatureFlag( context, next ) {
+	if ( isEnabled( 'tools/migrate' ) ) {
+		return next();
+	}
+	page.redirect( '/' );
+}
 
 export function migrateSite( context, next ) {
 	if ( isEnabled( 'tools/migrate' ) ) {
-		context.primary = <SectionMigrate />;
+		const sourceSiteId =
+			context.params.sourceSiteId &&
+			getSiteId( context.store.getState(), context.params.sourceSiteId );
+		context.primary = <SectionMigrate sourceSiteId={ sourceSiteId } />;
 		return next();
 	}
 
 	page.redirect( '/' );
+}
+
+export function setSiteSelectionHeader( context, next ) {
+	context.getSiteSelectionHeaderText = () => 'Select a site to import into';
+	next();
 }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +11,7 @@ import qs from 'qs';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import { withLocalizedMoment } from 'components/localized-moment';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import Intervals from 'blocks/stats-navigation/intervals';
 import DatePicker from 'my-sites/stats/stats-date-picker';
@@ -85,4 +85,4 @@ StoreStatsPeriodNav.propTypes = {
 	queryParams: PropTypes.object,
 };
 
-export default localize( StoreStatsPeriodNav );
+export default localize( withLocalizedMoment( StoreStatsPeriodNav ) );

@@ -3,17 +3,47 @@
 /**
  * External dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+/* eslint-disable import/no-extraneous-dependencies */
+
+/**
+ * Internal dependencies
+ */
 import './style.scss';
 
-domReady( () => {
-	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
+function BackButtonOverride( { defaultLabel, defaultUrl } ) {
+	const [ label, updateLabel ] = useState( defaultLabel );
+	const [ url, updateUrl ] = useState( defaultUrl );
+	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', data => {
+		updateLabel( data.label );
+		updateUrl( data.closeUrl );
+	} );
 
-	// Only alter for the page and template part editors.
-	if ( 'wp_template_part' !== editorPostType && 'page' !== editorPostType ) {
+	return (
+		<a href={ url } aria-label={ label }>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Button className="components-button components-icon-button">
+				<Dashicon icon="arrow-left-alt2" />
+				<div className="close-button-override__label">{ label }</div>
+			</Button>
+		</a>
+	);
+}
+
+domReady( () => {
+	const { editorPostType } = fullSiteEditing;
+
+	// Only alter for the page, post, and template part editors.
+	if (
+		'wp_template_part' !== editorPostType &&
+		'page' !== editorPostType &&
+		'post' !== editorPostType
+	) {
 		return;
 	}
 
@@ -32,35 +62,39 @@ domReady( () => {
 			'components-toolbar edit-post-fullscreen-mode-close__toolbar edit-post-fullscreen-mode-close__toolbar__override';
 		toolbar.prepend( componentsToolbar );
 
-		// Create custom close button and append to components toolbar.
-		const newCloseButton = document.createElement( 'a' );
-		// When closing Template CPT (e.g. header) to navigate back to parent page.
-		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
-			newCloseButton.href = closeButtonUrl;
-			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
-			newCloseButton.className = 'components-button components-icon-button is-button is-default';
-			const wideContent = document.createElement( 'div' );
-			wideContent.innerHTML = closeButtonLabel;
-			wideContent.className = 'close-button-override-wide';
-			newCloseButton.prepend( wideContent );
-			const thinContent = document.createElement( 'div' );
-			const abbreviatedContent = __( 'Back' );
-			thinContent.innerHTML = abbreviatedContent;
-			thinContent.className = 'close-button-override-thin';
-			newCloseButton.prepend( thinContent );
-		} else if ( 'page' === editorPostType ) {
-			newCloseButton.href = 'edit.php?post_type=page';
-			const newLabel = __( 'Back to Page List' );
-			newCloseButton.setAttribute( 'aria-label', newLabel );
+		// These should go here so that they have any updates that happened while querying for the selector.
+		let { closeButtonLabel, closeButtonUrl } = fullSiteEditing;
 
-			ReactDOM.render(
-				<Button className="components-button components-icon-button">
-					<Dashicon icon="arrow-left-alt2" />
-				</Button>,
-				newCloseButton
-			);
+		/**
+		 * We have to reference calypsoifyGutenberg off of the window object
+		 * directly to handle the case where it is undefined. Otherwise, the
+		 * variable declariation itself won't exist, causing a runtime error.
+		 */
+		const { calypsoifyGutenberg } = window;
+
+		// Use wpcom close button/url if they exist.
+		if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+			closeButtonUrl = calypsoifyGutenberg.closeUrl;
 		}
 
-		componentsToolbar.prepend( newCloseButton );
+		if ( calypsoifyGutenberg && calypsoifyGutenberg.closeButtonLabel ) {
+			closeButtonLabel = calypsoifyGutenberg.closeButtonLabel;
+		}
+
+		const defaultUrl = closeButtonUrl || `edit.php?post_type=${ editorPostType }`;
+
+		let defaultLabel = closeButtonLabel || 'Back';
+		if ( 'page' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Pages' );
+		} else if ( 'post' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Posts' );
+		} else if ( 'wp_template_part' === editorPostType && ! closeButtonLabel ) {
+			defaultLabel = __( 'Template Parts' );
+		}
+
+		ReactDOM.render(
+			<BackButtonOverride defaultLabel={ defaultLabel } defaultUrl={ defaultUrl } />,
+			componentsToolbar
+		);
 	} );
 } );

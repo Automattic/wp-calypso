@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
@@ -41,7 +42,7 @@ import {
 import isVipSite from 'state/selectors/is-vip-site';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
 import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
@@ -610,6 +611,11 @@ export class PluginsBrowser extends Component {
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
+				<FormattedHeader
+					className="plugins-browser__page-heading"
+					headerText={ this.props.translate( 'Plugin Browser' ) }
+					align="left"
+				/>
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }

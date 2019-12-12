@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -188,10 +186,10 @@ export class AppPromo extends React.Component {
 				>
 					<img
 						className="app-promo__icon"
-						src="/calypso/images/reader/promo-app-icon.png"
+						src={ wordpressLogoImage }
 						width="32"
 						height="32"
-						alt="WordPress Desktop Icon"
+						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
 				</button>

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-onchange */
-/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -337,7 +337,7 @@ export class SiteAddressChanger extends Component {
 										{
 											args: { currentDomainName },
 										}
-									) }{' '}
+									) }{ ' ' }
 									<a href={ ADDRESS_CHANGE_SUPPORT_URL } target="_blank" rel="noopener noreferrer">
 										{ translate(
 											'Before you confirm the change, please read this important information.'

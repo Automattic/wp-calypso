@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -273,7 +271,4 @@ const mapDispatch = {
 	hideDropZone,
 };
 
-export default connect(
-	null,
-	mapDispatch
-)( localize( DropZone ) );
+export default connect( null, mapDispatch )( localize( DropZone ) );

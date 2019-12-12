@@ -1,4 +1,3 @@
-/** @format */
 export const DEFAULT_MEDIA_QUERY = {
 	context: 'display',
 	http_envelope: false,

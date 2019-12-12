@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -14,8 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { errorNotice } from 'state/notices/actions';
 
 /**
@@ -133,7 +131,4 @@ class EmailVerificationCard extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ errorNotice }
-)( localize( EmailVerificationCard ) );
+export default connect( null, { errorNotice } )( localize( EmailVerificationCard ) );

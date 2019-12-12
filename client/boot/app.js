@@ -1,4 +1,3 @@
-/** @format */
 // Initialize polyfills before any dependencies are loaded
 import './polyfills';
 
@@ -11,7 +10,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
+import { configureReduxStore, setupMiddlewares, utils } from './common';
+import { setupLocale } from './locale';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange } from 'state/initial-state';
@@ -32,7 +32,7 @@ const boot = currentUser => {
 	getInitialState( initialReducer ).then( initialState => {
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
-		locales( currentUser, reduxStore );
+		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();

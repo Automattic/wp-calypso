@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,6 +42,8 @@ module.exports = function i18nCalypso( config ) {
 				'objectRestSpread',
 				'trailingFunctionCommas',
 				'typescript',
+				'nullishCoalescingOperator',
+				'optionalChaining',
 			],
 			allowImportExportEverywhere: true,
 		},

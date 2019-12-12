@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,17 +11,16 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getName,
+	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
@@ -56,9 +53,13 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
+import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -310,6 +311,14 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isJetpackBackup( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="cloud-upload" size={ 48 } />
+				</div>
+			);
+		}
+
 		return null;
 	}
 
@@ -395,6 +404,7 @@ class ManagePurchase extends Component {
 			'is-personal': isPersonal( purchase ),
 			'is-premium': isPremium( purchase ),
 			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
@@ -405,7 +415,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
@@ -473,6 +483,13 @@ class ManagePurchase extends Component {
 						selectedSite={ site }
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
+					/>
+					<AsyncLoad
+						require="blocks/product-plan-overlap-notices"
+						placeholder={ null }
+						plans={ JETPACK_PLANS }
+						products={ JETPACK_BACKUP_PRODUCTS }
+						siteId={ siteId }
 					/>
 					{ this.renderPurchaseDetail() }
 				</Main>

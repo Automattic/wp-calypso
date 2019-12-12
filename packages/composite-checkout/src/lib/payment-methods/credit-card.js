@@ -2,26 +2,26 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
  */
-import Button from '../../components/button';
-import { useLocalize } from '../../lib/localize';
-import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
+import { Button } from '@automattic/components';
+import { useLocalize, sprintf } from '../../lib/localize';
+import joinClasses from '../../lib/join-classes';
+import { usePaymentData, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
-import CreditCardFields from '../../components/credit-card-fields';
-import BillingFields from '../../components/billing-fields';
+import CreditCardFields from './credit-card-fields';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createCreditCardMethod() {
 	return {
 		id: 'card',
-		LabelComponent: CreditCardLabel,
-		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
-		BillingContactComponent: BillingFields,
-		SubmitButtonComponent: CreditCardSubmitButton,
-		SummaryComponent: CreditCardSummary,
+		label: <CreditCardLabel />,
+		activeContent: <CreditCardFields />,
+		submitButton: <CreditCardSubmitButton />,
+		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }
@@ -36,27 +36,32 @@ export function CreditCardLabel() {
 	);
 }
 
-export function CreditCardSubmitButton() {
+export function CreditCardSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ , total ] = useLineItems();
-	// TODO: we need to use a placeholder for the value so the localization string can be generic
-	const buttonString = localize(
-		`Pay ${ renderDisplayValueMarkdown( total.amount.displayValue ) }`
+	const buttonString = sprintf(
+		localize( 'Pay %s' ),
+		renderDisplayValueMarkdown( total.amount.displayValue )
 	);
 	return (
-		<Button onClick={ submitCreditCardPayment } buttonState="primary" fullWidth>
+		<Button
+			disabled={ disabled }
+			onClick={ submitCreditCardPayment }
+			buttonState={ disabled ? 'disabled' : 'primary' }
+			fullWidth
+		>
 			{ buttonString }
 		</Button>
 	);
 }
 
-export function CreditCardSummary( { id } ) {
+export function CreditCardSummary() {
 	const localize = useLocalize();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const [ paymentData ] = usePaymentData();
 
 	let PaymentLogo = null;
 
-	if ( paymentData.creditCard && id === 'card' ) {
+	if ( paymentData.creditCard ) {
 		//TODO: Update this with all credit card types we support
 		switch ( Number( paymentData.creditCard.cardNumber[ 0 ] ) ) {
 			case 3:
@@ -98,22 +103,18 @@ const PaymentLogoWrapper = styled( CreditCardDetail )`
 	transform: translateY( 4px );
 `;
 
-function CreditCardLogos() {
+function CreditCardLogos( className ) {
 	//TODO: Determine which logos to show
 
 	return (
-		<LogoWrapper>
+		<PaymentMethodLogos className={ joinClasses( [ className, 'payment-logos' ] ) }>
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
-		</LogoWrapper>
+		</PaymentMethodLogos>
 	);
 }
 
-const LogoWrapper = styled.div`
-	display: flex;
-`;
-
 function submitCreditCardPayment() {
-	alert( 'Thank you!' );
+	window.alert( 'Thank you!' );
 }

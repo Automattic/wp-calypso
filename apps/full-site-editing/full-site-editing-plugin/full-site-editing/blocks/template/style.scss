@@ -5,22 +5,29 @@
 	position: relative;
 }
 
+// Override some very specific theme styles.
+.post-type-page .editor-styles-wrapper .template-block .fse-template-part {
+	padding: 0;
+}
+
 .template__block-container {
 	&.is-hovered {
 		cursor: pointer;
 	}
 
-	&.is-hovered, &.is-selected, .is-navigating-to-template {
+	&.is-hovered,
+	&.is-selected,
+	.is-navigating-to-template {
 		.components-disabled {
 			filter: blur( 2px );
-			transition: filter 0.2s linear 0.7s;
+			transition: filter 0.2s linear;
 		}
 		.template-block__overlay {
 			opacity: 1;
 			transition: opacity 0.2s linear;
 			.components-button {
 				opacity: 1;
-				transition: opacity 0.2s linear 0.7s;
+				transition: opacity 0.2s linear;
 			}
 		}
 	}
@@ -37,13 +44,6 @@
 	.block-editor-block-list__breadcrumb,
 	.block-editor-block-list__block-edit::before {
 		display: none;
-	}
-
-	@media ( min-width: 600px ) {
-		.block-editor-block-list__layout .block-editor-block-list__block[data-align='full'] {
-			margin-left: 14px;
-			margin-right: 14px;
-		}
 	}
 }
 
@@ -94,7 +94,8 @@
 // Hide the site logo description and buttons when not editing the Template
 .block-editor-page:not( .post-type-wp_template_part ) {
 	.fse-site-logo {
-		.components-placeholder__fieldset, .components-placeholder__instructions {
+		.components-placeholder__fieldset,
+		.components-placeholder__instructions {
 			display: none;
 		}
 	}

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +21,7 @@ import {
 	RESULT_TYPE,
 	RESULT_VIDEO,
 } from './constants';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';
@@ -131,7 +130,4 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpRichResult ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );

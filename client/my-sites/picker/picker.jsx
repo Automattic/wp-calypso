@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -111,7 +109,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ setNextLayoutFocus, setLayoutFocus }
-)( wrapWithClickOutside( SitePicker ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	wrapWithClickOutside( SitePicker )
+);

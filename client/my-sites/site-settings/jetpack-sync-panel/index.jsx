@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard, ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import analytics from 'lib/analytics';
 
 /**
@@ -208,4 +208,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
-)( localize( JetpackSyncPanel ) );
+)( localize( withLocalizedMoment( JetpackSyncPanel ) ) );

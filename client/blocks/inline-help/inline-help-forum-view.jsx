@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { identity } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { preventWidows } from 'lib/formatting';
 import analytics from 'lib/analytics';
 import { localizeUrl } from 'lib/i18n-utils';

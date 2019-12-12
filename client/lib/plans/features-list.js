@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import { invoke } from 'lodash';
  */
 import * as constants from './constants';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -25,10 +24,14 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								link_slug: constants.FEATURE_ALL_FREE_FEATURES_JETPACK,
+							} }
 						/>
 					),
 				},
@@ -49,10 +52,14 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								link_slug: constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
+							} }
 						/>
 					),
 				},
@@ -76,10 +83,14 @@ export const FEATURES_LIST = {
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
 					a: (
-						<a
+						<ExternalLinkWithTracking
 							href="https://jetpack.com/features/comparison"
 							target="_blank"
-							rel="noopener noreferrer"
+							tracksEventName="calypso_plan_link_click"
+							tracksEventProps={ {
+								link_location: 'plan_features_list_item',
+								link_slug: constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+							} }
 						/>
 					),
 				},

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
@@ -141,9 +140,9 @@ export class ContactDetailsFormFields extends Component {
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
 			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
-			( nextProps.needsFax !== this.props.needsFax ||
-				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
-				nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails )
+			nextProps.needsFax !== this.props.needsFax ||
+			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
+			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails
 		);
 	}
 

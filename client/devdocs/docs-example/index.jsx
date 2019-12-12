@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 
 const DocsExampleToggle = ( { onClick, text } ) => <Button onClick={ onClick }>{ text }</Button>;

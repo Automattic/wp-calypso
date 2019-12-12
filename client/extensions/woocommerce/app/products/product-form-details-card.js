@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { trim, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';

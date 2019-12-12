@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +20,7 @@ import activityLog from './activity-log/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import automatedTransfer from './automated-transfer/reducer';
+import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
@@ -77,7 +77,7 @@ import purchases from './purchases/reducer';
 import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
-import { rewindReducer as rewind } from './rewind';
+import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
@@ -109,6 +109,7 @@ const reducers = {
 	application,
 	applicationPasswords,
 	automatedTransfer,
+	atomicHosting,
 	atomicTransfer,
 	billingTransactions,
 	checklist,

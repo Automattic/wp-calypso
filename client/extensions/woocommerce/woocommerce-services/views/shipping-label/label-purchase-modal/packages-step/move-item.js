@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -180,7 +178,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( MoveItemDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( MoveItemDialog ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -44,7 +43,7 @@ function getLocation( path ) {
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-	if ( path === '/' ) {
+	if ( path === '/read' ) {
 		return 'following';
 	}
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {
@@ -95,7 +94,7 @@ function getLocation( path ) {
 /**
  * @param {*} eventName track event name
  * @param {*} eventProperties extra event props
- * @param {String} $2.pathnameOverride Overwrites the location for ui_algo Useful for when
+ * @param {{pathnameOverride: string}} [pathnameOverride] Overwrites the location for ui_algo Useful for when
  *   recordTrack() is called after loading the next window.
  *   For example: opening an article (calypso_reader_article_opened) would call
  *   recordTrack after changing windows and would result in a `ui_algo: single_post`

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { abtest } from 'lib/abtest';
 import { isEcommercePlan } from 'lib/plans';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/gsuite';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -65,27 +63,35 @@ class StatsBanners extends Component {
 	}
 
 	renderGoogleMyBusinessBanner() {
-		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
+		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug, primaryButton } = this.props;
 
 		return (
 			<GoogleMyBusinessStatsNudge
 				siteSlug={ slug }
 				siteId={ siteId }
 				visible={ isGoogleMyBusinessStatsNudgeVisible }
+				primaryButton={ primaryButton }
 			/>
 		);
 	}
 
 	renderGSuiteBanner() {
-		const { gsuiteDomainName, siteId, slug } = this.props;
+		const { gsuiteDomainName, siteId, slug, primaryButton } = this.props;
 
-		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } domainSlug={ gsuiteDomainName } />;
+		return (
+			<GSuiteStatsNudge
+				siteSlug={ slug }
+				siteId={ siteId }
+				domainSlug={ gsuiteDomainName }
+				primaryButton={ primaryButton }
+			/>
+		);
 	}
 
 	renderUpworkBanner() {
-		const { siteId, slug } = this.props;
+		const { siteId, slug, primaryButton } = this.props;
 
-		return <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } />;
+		return <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } primaryButton={ primaryButton } />;
 	}
 
 	showGoogleMyBusinessBanner() {
@@ -131,7 +137,7 @@ class StatsBanners extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const domains = getDecoratedSiteDomains( state, ownProps.siteId );
+	const domains = getDomainsBySiteId( state, ownProps.siteId );
 
 	return {
 		domains,

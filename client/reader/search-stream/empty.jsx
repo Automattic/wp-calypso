@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +36,11 @@ class SearchEmptyContent extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read"
+			>
 				{ this.props.translate( 'Back to Following' ) }
 			</a>
 		);

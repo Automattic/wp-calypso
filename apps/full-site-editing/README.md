@@ -3,9 +3,11 @@
 This app contains:
 
 * `full-site-editing-plugin` - this is a master Plugin containing:
+  - `blog-posts-block` Plugin
   - `full-site-editing` Plugin
   - `posts-list-block` Plugin
   - `starter-page-templates` Plugin
+  - `blog-posts-block` Plugin
 
 ## File Architecture
 

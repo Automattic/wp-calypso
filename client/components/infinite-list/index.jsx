@@ -160,11 +160,12 @@ export default class InfiniteList extends React.Component {
 
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
-			setTimeout( () => {
+			this.scrollUpdate = setTimeout( () => {
 				this.cancelAnimationFrame();
 				this.updateScroll( {
 					triggeredByScroll: false,
 				} );
+				this.scrollUpdate = false;
 			} );
 		}
 	}
@@ -199,6 +200,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
+		this.cancelScrollUpdate();
 		this._isMounted = false;
 	}
 
@@ -208,6 +210,13 @@ export default class InfiniteList extends React.Component {
 			this.scrollRAFHandle = null;
 		}
 		this.lastScrollTop = -1;
+	}
+
+	cancelScrollUpdate() {
+		if ( this.scrollUpdate ) {
+			clearTimeout( this.scrollUpdate );
+			this.scrollUpdate = false;
+		}
 	}
 
 	onScroll = () => {
@@ -319,12 +328,14 @@ export default class InfiniteList extends React.Component {
 		this.bottomPlaceholderRef.current && this.bottomPlaceholderRef.current.getBoundingClientRect();
 
 	/**
-	 * Returns a list of visible item indexes. This includes any items that are
-	 * partially visible in the viewport. Instance method that is called externally
-	 * (via a ref) by a parent component.
-	 * @param {Object} options - offset properties
-	 * @param {Integer} options.offsetTop - in pixels, 0 if unspecified
-	 * @param {Integer} options.offsetBottom - in pixels, 0 if unspecified
+	 * Returns a list of visible item indexes.
+	 *
+	 * This includes any items that are partially visible in the viewport.
+	 * Instance method that is called externally (via a ref) by a parent component.
+	 *
+	 * @param {object} options - offset properties
+	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
+	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
@@ -456,7 +467,8 @@ export default class InfiniteList extends React.Component {
 
 	/**
 	 * Determine whether context is available or still being rendered.
-	 * @return {bool} whether context is available
+	 *
+	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {
 		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
