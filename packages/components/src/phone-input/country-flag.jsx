@@ -9,7 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import Spinner from 'components/spinner';
+import Spinner from './spinner';
 import { flagUrl } from 'lib/flags';
 
 export default class extends React.Component {

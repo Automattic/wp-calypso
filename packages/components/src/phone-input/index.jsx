@@ -9,15 +9,15 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormCountrySelect from 'components/forms/form-country-select';
+import FormCountrySelect from '../form-country-select';
 import {
 	formatNumber,
 	findCountryFromNumber,
 	processNumber,
 	MIN_LENGTH_TO_FORMAT,
-} from 'components/phone-input/phone-number';
-import CountryFlag from 'components/phone-input/country-flag';
-import { countries } from 'components/phone-input/data';
+} from './phone-number';
+import CountryFlag from './country-flag';
+import { countries } from './data';
 
 /**
  * Style dependencies
