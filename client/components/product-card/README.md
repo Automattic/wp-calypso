@@ -70,8 +70,8 @@ The following props can be passed to the Product Card component:
 <a name="product-card-promo-nudge"></a>Product Card Promo Nudge
 =======
 
-Product Card Promo Nudge is a Product Card's sub-component for rendering promotion nudge. It consists of a badge label
-(a green star to the left) and a promo text. Both props are optional. 
+Product Card Promo Nudge is a Product Card's sub-component for rendering a promotion nudge. It consists of a badge label
+(a green star sticker to the left) and a promo text. Both props are optional. 
 
 ### How to use the `<ProductCardPromoNudge />`
 
@@ -106,7 +106,7 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Promo Nudge component:
 
-* `badge`: ( string ) Copy shown inside the promo badge (a green star)
+* `badge`: ( string ) Copy shown inside the promo badge (a green star sticker)
 * `text`: ( string | element | node ) Promo text. Looks best if a `<strong>` element is used inside. It can be a string,
   a node or a React element (e.g. `<Fragment>`)
 
