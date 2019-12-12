@@ -8,3 +8,6 @@ export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { default as Suggestions } from './suggestions';
+export { default as PhoneInput } from './phone-input';
+export { default as Spinner } from './spinner';
+export { default as FormCountrySelect } from './form-country-select';
