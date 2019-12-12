@@ -9,7 +9,7 @@ import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 /**
  * Internal Dependencies
  */
-import Spinner from './spinner';
+import Spinner from '../spinner';
 import { flagUrl } from '../flags';
 
 export default class extends React.Component {
