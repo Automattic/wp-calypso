@@ -28,8 +28,9 @@ function renderWithStore( element: ReactChild, initialState: object ) {
 function createState( {
 	holds = [],
 	siteId = 1,
+	siteUrl = 'https://example.wordpress.com',
 	warnings = [],
-}: { holds?: string[]; siteId?: number; warnings?: unknown[] } = {} ) {
+}: { holds?: string[]; siteId?: number; siteUrl?: string; warnings?: unknown[] } = {} ) {
 	return {
 		automatedTransfer: {
 			[ siteId ]: {
@@ -40,6 +41,7 @@ function createState( {
 				},
 			},
 		},
+		sites: { items: { [ siteId ]: { URL: siteUrl } } },
 		ui: { selectedSiteId: siteId },
 	};
 }
@@ -76,7 +78,7 @@ describe( '<EligibilityWarnings>', () => {
 
 	it( 'dimly renders the hold card when AT has been blocked by a sticker', () => {
 		const state = createState( {
-			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ],
+			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'SITE_PRIVATE' ],
 		} );
 
 		const { getByTestId, getByText } = renderWithStore(
@@ -86,7 +88,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( getByTestId( 'HoldList-Card' ) ).toHaveClass( 'eligibility-warnings__hold-list-dim' );
 		expect( getByText( 'Help' ) ).toHaveAttribute( 'disabled' );
-		expect( getByText( 'Upgrade and continue' ) ).toBeDisabled();
+		expect( getByText( 'Continue' ) ).toBeDisabled();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -133,9 +135,10 @@ describe( '<EligibilityWarnings>', () => {
 		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
 	} );
 
-	it( 'calls onProceed prop when clicking "Upgrade and continue"', () => {
+	it( 'goes to checkout when clicking "Upgrade and continue"', () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ],
+			siteUrl: 'https://example.wordpress.com',
 		} );
 
 		const handleProceed = jest.fn();
@@ -145,9 +148,15 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		fireEvent.click( getByText( 'Upgrade and continue' ) );
+		const upgradeAndContinue = getByText( 'Upgrade and continue' );
 
-		expect( handleProceed ).toHaveBeenCalled();
+		fireEvent.click( upgradeAndContinue );
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+		expect( upgradeAndContinue ).toHaveAttribute(
+			'href',
+			'/checkout/example.wordpress.com/business'
+		);
 	} );
 
 	it( `disables the "Continue" button if holds can't be handled automatically`, () => {

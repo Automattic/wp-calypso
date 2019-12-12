@@ -17,7 +17,7 @@ import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
@@ -44,6 +44,7 @@ export const EligibilityWarnings = ( {
 	onProceed,
 	recordCtaClick,
 	siteId,
+	siteSlug,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
@@ -57,6 +58,9 @@ export const EligibilityWarnings = ( {
 
 	const logEventAndProceed = () => {
 		recordCtaClick( feature );
+		if ( siteRequiresUpgrade( listHolds ) ) {
+            page.redirect(`/checkout/${siteSlug}/business`);
+		}
 		onProceed();
 	};
 
@@ -147,12 +151,17 @@ function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
 
+function siteRequiresUpgrade( holds: string[] ) {
+	return holds.includes( 'NO_BUSINESS_PLAN' );
+}
+
 EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
 const mapStateToProps = ( state: object ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
@@ -162,6 +171,7 @@ const mapStateToProps = ( state: object ) => {
 		isEligible,
 		isPlaceholder: ! dataLoaded,
 		siteId,
+		siteSlug,
 	};
 };
 
