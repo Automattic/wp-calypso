@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal Dependencies
