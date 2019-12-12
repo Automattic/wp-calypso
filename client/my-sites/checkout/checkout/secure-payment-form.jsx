@@ -80,7 +80,7 @@ export class SecurePaymentForm extends Component {
 			nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
-			this.handleTransactionStep( this.props );
+			await this.handleTransactionStep( this.props );
 		}
 	}
 
@@ -221,6 +221,7 @@ export class SecurePaymentForm extends Component {
 		const response = await this.props.saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 		} );
+
 		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
 			throw 'Invalid response';
 		}
@@ -234,7 +235,7 @@ export class SecurePaymentForm extends Component {
 		this.displayNotices( cart, step );
 		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
 
-		this.finishIfLastStep( cart, selectedSite, step );
+		await this.finishIfLastStep( cart, selectedSite, step );
 	}
 
 	displayNotices( cart, step ) {
@@ -256,8 +257,14 @@ export class SecurePaymentForm extends Component {
 		try {
 			await this.maybeSetSiteToPublic( { cart } );
 		} catch ( e ) {
+			const errorMessage = {
+				message:
+					'There was a problem completing the checkout. <a href="/help/contact">Contact support</a>',
+			};
+
 			debug( 'Error setting site to public', e );
-			displayError();
+			displayError( errorMessage );
+
 			return;
 		}
 
