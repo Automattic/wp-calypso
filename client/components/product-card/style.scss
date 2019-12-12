@@ -2,7 +2,7 @@
 .product-card__header {
 	margin: -16px -16px 16px;
 	padding: 16px 0;
-	border-bottom: solid 2px var( --color-jetpack-plan-free );
+	border-bottom: solid 2px var( --color-jetpack );
 
 	@include breakpoint( '>480px' ) {
 		margin: -24px -24px 24px;
