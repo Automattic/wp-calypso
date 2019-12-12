@@ -213,11 +213,41 @@
 
 			&-completed-title {
 				margin-top: 24px;
-			}
-		}
 
-		.checklist__task::before {
-			display: none;
+				@include breakpoint( '480px-660px' ) {
+					margin-left: 24px;
+				}
+			}
+
+			.checklist__task-icon {
+				border-radius: 5px;
+				width: 5px;
+				height: 5px;
+				background: var( --color-neutral-5 );
+				top: 21px;
+				left: 16px;
+
+				@include breakpoint( '>480px' ) {
+					left: 24px;
+				}
+			}
+
+			.checklist__task.is-completed .checklist__task-icon {
+				top: 15px;
+				left: 16px;
+
+				@include breakpoint( '>480px' ) {
+					left: 24px;
+				}
+			}
+
+			.checklist__task.is-completed .gridicons-checkmark {
+				display: none;
+			}
+
+			.checklist__task::before {
+				display: none;
+			}
 		}
 	}
 	&__layout-col {
