@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty, omit } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -19,17 +18,16 @@ export class FormCountrySelect extends Component {
 		className: PropTypes.string,
 		disabled: PropTypes.bool,
 		onChange: PropTypes.func,
-		translate: PropTypes.func.isRequired,
 	};
 
 	getOptions() {
-		const { countriesList, translate } = this.props;
+		const { countriesList } = this.props;
 
 		if ( isEmpty( countriesList ) ) {
 			return [
 				{
 					key: '',
-					label: translate( 'Loading…' ),
+					label: 'Loading…',
 				},
 			];
 		}
@@ -47,13 +45,7 @@ export class FormCountrySelect extends Component {
 
 		return (
 			<select
-				{ ...omit( this.props, [
-					'className',
-					'countriesList',
-					'translate',
-					'moment',
-					'numberFormat',
-				] ) }
+				{ ...omit( this.props, [ 'className', 'countriesList', 'moment', 'numberFormat' ] ) }
 				className={ classnames( this.props.className, 'form-country-select' ) }
 				onChange={ this.props.onChange }
 				disabled={ this.props.disabled }
@@ -71,4 +63,4 @@ export class FormCountrySelect extends Component {
 }
 /* eslint-enable jsx-a11y/no-onchange */
 
-export default localize( FormCountrySelect );
+export default FormCountrySelect;

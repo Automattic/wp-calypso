@@ -4,7 +4,6 @@
 import React from 'react';
 import { find, identity } from 'lodash';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
@@ -66,6 +65,7 @@ class PhoneInput extends React.PureComponent {
 
 	/**
 	 * Returns the country meta with default values for countries with missing metadata. Never returns null.
+	 *
 	 * @param {string} [countryCode=this.props.countryCode] - The country code
 	 * @returns {countryMetadata} - Country metadata
 	 */
@@ -155,6 +155,7 @@ class PhoneInput extends React.PureComponent {
 
 	/**
 	 * Decides whether to guess the country from the input value
+	 *
 	 * @param {string} value - The phone number
 	 * @returns {boolean} - Whether to guess the country or not
 	 */
@@ -168,6 +169,7 @@ class PhoneInput extends React.PureComponent {
 
 	/**
 	 * Returns the selected country from dropdown or guesses the country from input
+	 *
 	 * @param {string} value - Input number
 	 * @param {string} [fallbackCountryCode=this.props.countryCode] - Fallback country code in case we can't find a match
 	 * @returns {countryMetadata} - Country Metadata
@@ -203,6 +205,7 @@ class PhoneInput extends React.PureComponent {
 
 	/**
 	 * Calculates the input and country
+	 *
 	 * @param {string} value - Phone number
 	 * @param {string} countryCode - The country code
 	 * @returns {{value: string, countryCode: string}} - Result
@@ -252,7 +255,7 @@ class PhoneInput extends React.PureComponent {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ this.props.translate( 'Phone' ) }
+					placeholder={ 'Phone' }
 					onChange={ this.handleInput }
 					name={ this.props.name }
 					ref={ this.setNumberInputRef }
@@ -280,4 +283,4 @@ class PhoneInput extends React.PureComponent {
 	}
 }
 
-export default localize( PhoneInput );
+export default PhoneInput;
