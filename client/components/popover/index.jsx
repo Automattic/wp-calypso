@@ -207,11 +207,16 @@ class PopoverInner extends Component {
 
 	// --- click outside ---
 	bindClickoutHandler() {
-		document.addEventListener( 'click', this.onClickout );
+		// run the listener in the capture phase, to run before the React click handler that
+		// runs in the bubble phase. Sometimes, the React UI handler for a click closes its
+		// UI element and removes the event target from DOM. Running the clickout handler after
+		// that would fail to evaluate correctly if the `event.target` (already removed from DOM)
+		// is a DOM child of the popover's DOM element.
+		document.addEventListener( 'click', this.onClickout, true );
 	}
 
 	unbindClickoutHandler() {
-		document.removeEventListener( 'click', this.onClickout );
+		document.removeEventListener( 'click', this.onClickout, true );
 	}
 
 	onClickout = event => {
