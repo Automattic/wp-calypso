@@ -90,9 +90,6 @@ const Header: FunctionComponent< Props > = ( {
 					</Button>
 				</div>
 				<div className="gutenboarding__header-group">
-					<Icon icon="wordpress-alt" color="#066188" />
-				</div>
-				<div className="gutenboarding__header-group">
 					{ currentDomain ? (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
