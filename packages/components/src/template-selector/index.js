@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 // import { withInstanceId, compose } from '@wordpress/compose';
-import { BaseControl } from '@wordpress/components';
+// import { BaseControl } from '@wordpress/components';
 // import { memo } from '@wordpress/element';
 
 import './style.scss';
@@ -44,7 +44,7 @@ export const TemplateSelector = ( {
 	const id = `template-selector-${ instanceId }`;
 
 	return (
-		<BaseControl
+		<div
 			label={ label }
 			id={ id }
 			help={ help }
@@ -69,7 +69,7 @@ export const TemplateSelector = ( {
 					</li>
 				) ) }
 			</ul>
-		</BaseControl>
+		</div>
 	);
 };
 
