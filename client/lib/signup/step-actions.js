@@ -35,7 +35,6 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -172,7 +171,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			},
 			site_creation_flow: flowToCheck,
 		},
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		validate: false,
 	};
 
@@ -500,12 +499,11 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
-	const state = reduxStore.getState();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
