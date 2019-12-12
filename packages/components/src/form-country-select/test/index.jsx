@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { expect } from 'chai';
 import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
