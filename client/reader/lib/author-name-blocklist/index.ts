@@ -1,8 +1,8 @@
 /**
- * Is the provided author name blocklisted?
+ * Is the provided author name blocked?
  *
  * @param authorName - Author name
- * @returns True if blocklisted
+ * @returns True if blocked
  */
-export const isAuthorNameBlocklisted = ( authorName: string ) =>
+export const isAuthorNameBlocked = ( authorName: string ) =>
 	!! authorName && 'admin' === authorName.toLowerCase();

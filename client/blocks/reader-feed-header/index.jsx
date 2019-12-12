@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlocklisted } from 'reader/lib/author-name-blocklist';
+import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import HeaderBack from 'reader/header-back';
 import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
 import SiteIcon from 'blocks/site-icon';
@@ -108,7 +108,7 @@ class FeedHeader extends Component {
 					</div>
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && ! isAuthorNameBlocklisted( ownerDisplayName ) && (
+						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
 							<span className="reader-feed-header__byline">
 								{ translate( 'by %(author)s', {
 									args: {

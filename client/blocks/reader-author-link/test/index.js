@@ -44,7 +44,7 @@ describe( 'ReaderAuthorLink', () => {
 		expect( wrapper.type() ).toBe( null );
 	} );
 
-	test( 'should return null with a blocklisted author name', () => {
+	test( 'should return null with a blocked author name', () => {
 		author.name = 'admin';
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		expect( wrapper.type() ).toBe( null );

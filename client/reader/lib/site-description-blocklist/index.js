@@ -8,11 +8,11 @@ const siteDescriptionBlocklist = new Set( [
 ] );
 
 /**
- * Is the provided site description name blocklisted?
+ * Is the provided site description name blocked?
  *
  * @param {string} siteDescription Site description
- * @returns {boolean} True if blocklisted
+ * @returns {boolean} True if blocked
  */
-export const isSiteDescriptionBlocklisted = siteDescription => {
+export const isSiteDescriptionBlocked = siteDescription => {
 	return siteDescriptionBlocklist.has( siteDescription );
 };
