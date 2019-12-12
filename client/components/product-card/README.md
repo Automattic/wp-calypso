@@ -11,7 +11,7 @@ In some cases, e.g. when a lower-tier product has been already purchased, an upg
 [`<ProductCardAction />`](#product-card-action) component. Like the `<ProductCardOptions />` component, it should be
 passed as a child to the `<ProductCard />`.
 
-The Product Card may contain a [`<ProductCardPromoNudge />`](#product-card-promo-nudge) consisting of a green start sticker badge and a promo copy.
+The Product Card may contain a [`<ProductCardPromoNudge />`](#product-card-promo-nudge) consisting of a green star sticker badge and a promo copy.
 
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
