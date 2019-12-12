@@ -9,7 +9,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import * as stats from 'reader/stats';
 import Emojify from 'components/emojify';
 
@@ -19,7 +19,7 @@ import Emojify from 'components/emojify';
 import './style.scss';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
-	const recordAuthorClick = ( {} ) => {
+	const recordAuthorClick = () => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
 		if ( post ) {
@@ -34,8 +34,8 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 
 	const authorName = get( author, 'name', null );
 
-	// If the author name is blacklisted, don't return anything
-	if ( ! authorName || isAuthorNameBlacklisted( authorName ) ) {
+	// If the author name is blocked, don't return anything
+	if ( ! authorName || isAuthorNameBlocked( authorName ) ) {
 		return null;
 	}
 
