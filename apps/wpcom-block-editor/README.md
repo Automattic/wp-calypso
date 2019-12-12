@@ -18,7 +18,6 @@ There are two environments the block editor integration supports:
 
 ### Common utilities
 
-- `disable-nux-tour.js`: Disable the pop-up tooltip tour that is displayed on first use.
 - `rich-text.js`: Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
 - `fix-block-invalidation-errors.js`: (Atomic/Simple) Performs block attempt block recovery on editor load if validation errors are detected.
 - `switch-to-classic.js`: Append a button to the "More tools" menu for switching to the classic editor.
