@@ -223,18 +223,14 @@
 	}
 }
 
-.product-card__option,
-.product-card__option-description {
-	display: flex;
-	align-items: center;
-}
-
 // We need a higher specificity here to override .form-label styles
 .product-card__option.form-label {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
 	margin: 24px 0;
 
 	@include breakpoint( '>960px' ) {
-		flex: 0 0 50%;
 		align-items: flex-start;
 		margin-bottom: 8px;
 
@@ -246,17 +242,20 @@
 }
 
 .product-card__option-description {
-	margin-left: 8px;
+	display: flex;
+	flex-flow: row wrap;
 	flex-grow: 1;
-	flex-wrap: wrap;
+	margin-left: 8px;
 
 	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
+		flex-flow: column nowrap;
 	}
 }
 
 .product-card__option-name {
 	flex-grow: 1;
+	margin-right: 10px;
 	font-size: 16px;
 	font-weight: 700;
 
