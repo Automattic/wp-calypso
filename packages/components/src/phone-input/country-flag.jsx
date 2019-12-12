@@ -26,6 +26,7 @@ export default class extends React.Component {
 
 	componentDidUpdate( oldProps ) {
 		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { ready: false, error: false } );
 		}
 	}
