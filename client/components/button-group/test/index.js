@@ -8,20 +8,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import ButtonGroup from '..';
 
 describe( 'ButtonGroup', () => {
-	let ButtonGroup, consoleErrorSpy;
-
-	beforeAll( async () => {
-		consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
-
-		ButtonGroup = ( await import( '../index' ) ).default;
-	} );
-
-	afterAll( () => {
-		consoleErrorSpy.mockRestore();
-	} );
-
 	test( 'should have ButtonGroup class', () => {
 		const buttonGroup = shallow( <ButtonGroup /> );
 		expect( buttonGroup.find( '.button-group' ) ).toHaveLength( 1 );
@@ -43,6 +32,8 @@ describe( 'ButtonGroup', () => {
 	} );
 
 	test( 'should throw an error if any of the children is not a <Button>', () => {
+		const consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
+
 		shallow(
 			<ButtonGroup>
 				<div id="test">test</div>
@@ -52,5 +43,6 @@ describe( 'ButtonGroup', () => {
 		expect( consoleErrorSpy ).toHaveBeenCalledWith(
 			expect.stringContaining( 'All children elements should be a Button.' )
 		);
+		consoleErrorSpy.mockRestore();
 	} );
 } );
