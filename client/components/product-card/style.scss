@@ -206,7 +206,6 @@
 }
 
 .product-card__options-label {
-	margin: 16px 0 0;
 	font-size: 14px;
 	text-align: center;
 	color: var( --color-text-subtle );
@@ -276,6 +275,59 @@
 .product-card__action-button {
 	width: 100%;
 	max-width: 320px;
+}
+
+// Promo nudge
+.product-card__promo-nudge {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-items: center;
+	margin: 24px auto 8px;
+}
+
+.product-card__promo-nudge-badge {
+	box-sizing: border-box;
+	position: relative;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	width: 92px;
+	height: 92px;
+	padding: 12px 16px 16px;
+	transform: rotate( -10deg );
+	color: var( --studio-white );
+	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
+	background-size: contain;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 17px;
+	text-align: center;
+}
+
+.product-card__promo-nudge-text {
+	width: 100%;
+	padding: 7px 24px;
+	border-radius: 16px;
+	background-color: var( --color-neutral-0 );
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	line-height: 18px;
+	text-align: left;
+	text-transform: uppercase;
+
+	strong {
+		display: block;
+		color: var( --color-text );
+		font-size: 14px;
+		font-weight: 600;
+		text-transform: none;
+	}
+
+	.has-badge & {
+		margin-left: -46px;
+		padding-left: 62px;
+	}
 }
 
 // Loading state
