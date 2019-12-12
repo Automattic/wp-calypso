@@ -48,6 +48,14 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 	return (
 		<>
 			<InspectorControls>
+				<PanelBody title={ __( 'Status' ) }>
+					<CustomSelectControl
+						label={ __( 'Status' ) }
+						options={ options }
+						value={ options.find( option => option.key === status ) || options[ 0 ] }
+						onChange={ value => setAttributes( { status: value.selectedItem.key } ) }
+					/>
+				</PanelBody>
 				<PanelBody title={ __( 'Assignment' ) }>
 					<TextControl
 						label={ __( 'Username' ) }
@@ -127,19 +135,21 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						Clear
 					</Button>
 				</PanelBody>
-				<PanelBody title={ __( 'Status' ) }>
-					<CustomSelectControl
-						label={ __( 'Status' ) }
-						options={ options }
-						value={ options.find( option => option.key === status ) || options[ 0 ] }
-						onChange={ value => setAttributes( { status: value.selectedItem.key } ) }
-					/>
-				</PanelBody>
 			</InspectorControls>
 			<div className={ todoClass }>
-				{ ( status === 'done' || status === 'new' ) && <span className="wp-block-todo__status" /> }
+				{ ( status === 'done' || status === 'new' ) && (
+					<Button
+						className="wp-block-todo__status"
+						onClick={ () => setAttributes( { status: 'in-progress' } ) }
+					/>
+				) }
 				{ status === 'in-progress' && (
-					<span className="wp-block-todo__is-in-progress">In Progress</span>
+					<Button
+						className="wp-block-todo__is-in-progress"
+						onClick={ () => setAttributes( { status: 'done' } ) }
+					>
+						In Progress
+					</Button>
 				) }
 				<RichText
 					identifier="content"
@@ -172,7 +182,23 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						<span className="wp-block-todo__avatar">{ assignedTo[ 0 ] }</span>
 					</div>
 				) }
-				<span className="wp-block-todo__date">{ dueDateDisplay }</span>
+				{ dueDate && (
+					<span className="wp-block-todo__date">
+						<Dropdown
+							renderToggle={ ( { isOpen, onToggle } ) => (
+								<Button onClick={ onToggle } aria-expanded={ isOpen }>
+									{ dueDateDisplay || 'No due date' }
+								</Button>
+							) }
+							renderContent={ () => (
+								<DatePicker
+									currentDate={ dueDate }
+									onChange={ date => setAttributes( { dueDate: date } ) }
+								/>
+							) }
+						/>
+					</span>
+				) }
 			</div>
 		</>
 	);
