@@ -624,6 +624,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-bottom: 8px;
 	}
 
+	.formatted-header a {
+		color: var( --color-neutral-20 );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-primary-20 );
+			text-decoration: underline;
+		}
+	}
+
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}

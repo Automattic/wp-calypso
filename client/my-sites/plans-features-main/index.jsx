@@ -35,6 +35,7 @@ import {
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
+import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
@@ -439,16 +440,11 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, translate, redirectTo } = this.props;
+		const { basePlansPath, intervalType, redirectTo } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
-				<FormattedHeader
-					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ translate( 'Just need backups? Learn about add-on solutions.' ) }
-					compactOnMobile
-					isSecondary
-				/>
+				<PlansFeaturesMainProductsHeader />
 				<AsyncLoad
 					require="blocks/product-plan-overlap-notices"
 					placeholder={ null }
