@@ -181,7 +181,7 @@ exports[`GSuitePurchaseCta renders correctly 1`] = `
         <strong>
           No setup or software required.
         </strong>
-
+         
         <a
           className="gsuite-learn-more__link"
           href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
