@@ -42,7 +42,16 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
+		const {
+			newPlan,
+			bestValue,
+			planType,
+			popular,
+			selectedPlan,
+			isInSignup,
+			title,
+			translate,
+		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		const isCurrent = this.isPlanCurrent();
@@ -57,7 +66,7 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ isCurrent && ! isInSignup && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
 					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 				) }
