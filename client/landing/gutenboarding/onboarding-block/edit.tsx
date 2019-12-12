@@ -6,6 +6,7 @@ import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { Button } from '@wordpress/components';
+import { SwitchTransition, CSSTransition } from 'react-transition-group';
 
 /**
  * Internal dependencies
@@ -28,10 +29,18 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 		case Steps.IntentGathering:
 			return (
 				<div className="onboarding-block__acquire-intent">
-					<div
-						className="onboarding-block__background"
-						data-vertical={ siteVertical && siteVertical.id }
-					/>
+					<SwitchTransition mode="in-out">
+						<CSSTransition
+							key={ siteVertical ? siteVertical.id : 'loading' }
+							timeout={ 1000 }
+							classNames="onboarding-block__background-fade"
+						>
+							<div
+								className="onboarding-block__background"
+								data-vertical={ siteVertical && siteVertical.id }
+							/>
+						</CSSTransition>
+					</SwitchTransition>
 					<div className="onboarding-block__questions">
 						<h2 className="onboarding-block__questions-heading">
 							{ ! siteVertical &&
