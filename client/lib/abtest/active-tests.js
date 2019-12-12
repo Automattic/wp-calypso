@@ -123,13 +123,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	gsuitePrice: {
-		datestamp: '20191125',
-		variations: {
-			discount: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
