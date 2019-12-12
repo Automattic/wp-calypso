@@ -4,14 +4,7 @@
 
 import { flowRight as compose, get } from 'lodash';
 
-/**
- * Returns automated transfer info for site
- *
- * @param {object} state global app state
- * @param {?number} siteId requested site for transfer info
- * @returns {object} automated transfer data if available else empty info
- */
-export const getAutomatedTransfer = ( state, siteId ) =>
+export const getAutomatedTransfer = ( state, siteId: number | null ) =>
 	get( state, [ 'automatedTransfer', siteId ], {} );
 
 /**
@@ -31,34 +24,33 @@ export const getStatusData = state => get( state, 'status', null );
  */
 export const getAutomatedTransferStatus = compose( getStatusData, getAutomatedTransfer );
 
-/**
- * @typedef EligibilityWarning
- * @property {string} description
- * @property {string} name
- * @property {string=} supportUrl
- */
+export interface EligibilityWarning {
+	description: string;
+	name: string;
+	supportUrl?: string;
+}
 
-/**
- * @typedef EligibilityData
- * @property {number} lastUpdate
- * @property {string[]=} eligibilityHolds
- * @property {EligibilityWarning[]=} eligibilityWarnings
- */
+export interface EligibilityData {
+	lastUpdate: number;
+	eligibilityHolds?: string[];
+	eligibilityWarnings?: EligibilityWarning[];
+}
 
 /**
  * Helper to get eligibility state from local transfer state sub-tree
  *
- * @param {object} state automated transfer state sub-tree for a site
- * @returns {EligibilityData} eligibility information for site
+ * @param state automated transfer state sub-tree for a site
+ * @returns eligibility information for site
  */
-export const getEligibilityData = state => get( state, 'eligibility', { lastUpdate: 0 } );
+export const getEligibilityData = ( state ): EligibilityData =>
+	get( state, 'eligibility', { lastUpdate: 0 } );
 
 /**
  * Returns eligibility info for transfer
  *
- * @param {object} state global app state
- * @param {number} siteId requested site for transfer info
- * @returns {object} eligibility data if available else empty info
+ * @param state global app state
+ * @param siteId requested site for transfer info
+ * @returns eligibility data if available else empty info
  */
 export const getEligibility = compose( getEligibilityData, getAutomatedTransfer );
 
