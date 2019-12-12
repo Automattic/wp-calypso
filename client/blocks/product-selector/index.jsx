@@ -154,18 +154,32 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { moment, translate } = this.props;
-		const purchase = this.getPurchaseByProduct( product );
+		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
+		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
-		if ( ! purchase ) {
-			return;
+		if ( currentPlan && currentPlanIncludesProduct ) {
+			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
+				args: {
+					planName: currentPlan.getTitle(),
+				},
+				components: {
+					planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
+				},
+			} );
 		}
 
-		return translate( 'Purchased on %(purchaseDate)s', {
-			args: {
-				purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
-			},
-		} );
+		const purchase = product ? this.getPurchaseByProduct( product ) : null;
+
+		if ( purchase ) {
+			return translate( 'Purchased on %(purchaseDate)s', {
+				args: {
+					purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
+				},
+			} );
+		}
+
+		return null;
 	}
 
 	getDescriptionByProduct( product ) {
@@ -436,16 +450,12 @@ export class ProductSelector extends Component {
 
 	renderProducts() {
 		const {
-			currencyCode,
-			currentPlanSlug,
 			fetchingPlans,
 			fetchingSitePlans,
 			fetchingSitePurchases,
 			intervalType,
 			products,
-			selectedSiteSlug,
 			storeProducts,
-			translate,
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
@@ -461,12 +471,10 @@ export class ProductSelector extends Component {
 			} );
 		}
 
-		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
 		return map( products, product => {
-			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 
 			let purchase, isCurrent;
@@ -480,40 +488,13 @@ export class ProductSelector extends Component {
 
 			const hasProductPurchase = !! purchase;
 
-			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
-			if ( currentPlanIncludesProduct ) {
-				billingTimeFrame = null;
-				fullPrice = null;
-				discountedPrice = null;
-				subtitle = translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
-					args: {
-						planName: currentPlan.getTitle(),
-					},
-					components: {
-						planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
-					},
-				} );
-			} else {
-				subtitle = this.getSubtitleByProduct( product );
-
-				if ( ! hasProductPurchase ) {
-					billingTimeFrame = this.getBillingTimeFrameLabel();
-					fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
-					discountedPrice = this.getProductOptionDiscountedPrice( selectedProductSlug );
-				}
-			}
-
 			return (
 				<ProductCard
 					key={ product.id }
 					title={ this.getProductDisplayName( product ) }
-					billingTimeFrame={ billingTimeFrame }
-					fullPrice={ fullPrice }
-					discountedPrice={ discountedPrice }
 					description={ this.getDescriptionByProduct( product ) }
-					currencyCode={ currencyCode }
 					purchase={ purchase }
-					subtitle={ subtitle }
+					subtitle={ this.getSubtitleByProduct( product ) }
 				>
 					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
