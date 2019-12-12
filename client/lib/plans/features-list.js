@@ -153,7 +153,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
 			),
 	},
 
@@ -383,8 +383,8 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium theme templates, ' +
-					'including templates specifically tailored for businesses.'
+				'Unlimited access to all of our advanced premium themes, ' +
+					'including designs specifically tailored for businesses.'
 			),
 		getStoreSlug: () => 'unlimited_themes',
 	},
@@ -621,6 +621,26 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () =>
 			i18n.translate( 'Live chat support to help you get started with your site.' ),
+	},
+
+	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
+		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
+		getDescription: () =>
+			i18n.translate(
+				'Live chat is available 24 hours a day from Monday through Friday. ' +
+					'You can also email us any day of the week for personalized support for your site.'
+			),
+	},
+
+	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
+		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
+		getDescription: () =>
+			i18n.translate(
+				'Live chat is available 24/7. ' +
+					'You can also email us any day of the week for personalized support for your site.'
+			),
 	},
 
 	[ constants.FEATURE_PREMIUM_SUPPORT ]: {
