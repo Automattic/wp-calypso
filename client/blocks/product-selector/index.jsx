@@ -15,6 +15,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
+import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import ProductCardOptions from 'components/product-card/options';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -456,6 +457,7 @@ export class ProductSelector extends Component {
 			intervalType,
 			products,
 			storeProducts,
+			translate,
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
@@ -499,6 +501,16 @@ export class ProductSelector extends Component {
 					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
+							<ProductCardPromoNudge
+								badge={ translate( 'Up to 70% off!' ) }
+								text={ translate(
+									'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+									{
+										components: { strong: <strong /> },
+									}
+								) }
+							/>
+
 							<ProductCardOptions
 								optionsLabel={ product.optionsLabel }
 								options={ this.getProductOptions( product ) }
