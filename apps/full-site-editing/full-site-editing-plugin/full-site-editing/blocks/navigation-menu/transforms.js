@@ -19,20 +19,27 @@ export default {
 			type: 'block',
 			blocks: [ CORE_NAVIGATION_BLOCK_TYPE ],
 			__experimentalConvert( { attributes, clientId } ) {
-				// Existing Menu items are stored as JSON alongside the ServerSideRendered
-				// block HTML markup.
-				const menuItems = JSON.parse(
-					document.querySelector( `#block-${ clientId } script` ).innerHTML
-				);
+				let menuItems;
+				let navItems;
 
-				// Each Menu Items should become a Nav Link Block
-				const navItems = menuItems.map( item => {
-					return createBlock( CORE_NAVIGATION_ITEM_BLOCK_TYPE, {
-						label: item.post_title || item.title,
-						title: item.post_title || item.title,
-						url: item.url,
+				const menuItemScriptTag = document.querySelector( `#block-${ clientId } script` );
+
+				if ( menuItemScriptTag ) {
+					// Existing Menu items are stored as JSON alongside the ServerSideRendered
+					// block HTML markup.
+					menuItems = JSON.parse( menuItemScriptTag.innerHTML );
+				}
+
+				if ( menuItems ) {
+					// Each Menu Items should become a Nav Link Block
+					navItems = menuItems.map( item => {
+						return createBlock( CORE_NAVIGATION_ITEM_BLOCK_TYPE, {
+							label: item.post_title || item.title,
+							title: item.post_title || item.title,
+							url: item.url,
+						} );
 					} );
-				} );
+				}
 
 				// Create Nav Block mapping attrs and Nav Items
 				return createBlock(
