@@ -2,14 +2,11 @@
  * External dependencies
  */
 import { find, flatten, includes, map, startsWith } from 'lodash';
-import debugFactory from 'debug';
 import { countries, dialCodeMap } from './data';
 
 /**
  * Internal Dependencies
  */
-
-const debug = debugFactory( 'phone-input:metadata' );
 
 export const DIGIT_PLACEHOLDER = '\u7003';
 const STANDALONE_DIGIT_PATTERN = /\d(?=[^,}][^,}])/g;
@@ -96,7 +93,6 @@ export function makeTemplate( phoneNumber, patterns ) {
 		if ( pattern.leadingDigitPattern && phoneNumber.search( pattern.leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
-		debug( 'pattern.match = ', pattern );
 		const match = pattern.match
 			.replace( CHARACTER_CLASS_PATTERN, '\\d' )
 			.replace( STANDALONE_DIGIT_PATTERN, '\\d' );
@@ -174,8 +170,6 @@ export function processNumber( inputNumber, numberRegion ) {
 		nationalNumber = nationalNumber.replace( /^0+/, '' );
 	}
 
-	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
-
 	if ( inputNumber[ 0 ] === '+' ) {
 		prefix = '+' + numberRegion.dialCode + ' ';
 	} else if ( numberRegion.dialCode === '1' ) {
@@ -231,17 +225,12 @@ export function formatNumber( inputNumber, country ) {
 	const pattern = findPattern( nationalNumber, patterns );
 
 	if ( pattern ) {
-		debug(
-			`Will replace "${ nationalNumber }" with "${ pattern.match }" and "${ pattern.replace }" with prefix "${ prefix }"`
-		);
 		return prefix + nationalNumber.replace( new RegExp( pattern.match ), pattern.replace );
 	}
 
-	debug( `Couldn't find a ${ country.isoCode } pattern for ${ inputNumber }` );
 
 	const template = makeTemplate( nationalNumber, patterns );
 	if ( template ) {
-		debug( `Will replace "${ nationalNumber }" with "${ template }" with prefix "${ prefix }"` );
 		return prefix + applyTemplate( nationalNumber, template );
 	}
 	return inputNumber;
