@@ -70,6 +70,13 @@ export const getByPurchaseId = ( state, purchaseId ) =>
 export const getSitePurchases = ( state, siteId ) =>
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId );
 
+/**
+ * Whether a site has an active Jetpack backup purchase.
+ *
+ * @param   {object} state       global state
+ * @param   {number} siteId      the site id
+ * @returns {boolean} True if the site has an active Jetpack Backup purchase, false otherwise.
+ */
 export const siteHasBackupProductPurchase = ( state, siteId ) => {
 	return some(
 		getSitePurchases( state, siteId ),
