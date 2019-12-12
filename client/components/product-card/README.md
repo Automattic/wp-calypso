@@ -11,6 +11,8 @@ In some cases, e.g. when a lower-tier product has been already purchased, an upg
 [`<ProductCardAction />`](#product-card-action) component. Like the `<ProductCardOptions />` component, it should be
 passed as a child to the `<ProductCard />`.
 
+The Product Card may contain a [`<ProductCardPromoNudge />`](#product-card-promo-nudge) consisting of a green start sticker badge and a promo copy.
+
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
 
@@ -89,7 +91,7 @@ export default class extends React.Component {
 				description="Looking for more? With Real-time backups we save as you edit and you’ll get unlimited backup archives"
 			>
 				<ProductCardPromoNudge
-					badge="Up to 70% off!"
+					badgeText="Up to 70% off!"
 					text={
 						<Fragment>
 							Hurry, these are <strong>Limited time introductory prices!</strong>
@@ -106,7 +108,7 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Promo Nudge component:
 
-* `badge`: ( string ) Copy shown inside the promo badge (a green star sticker)
+* `badgeText`: ( string ) Copy shown inside the promo badge (a green star sticker)
 * `text`: ( string | element | node ) Promo text. Looks best if a `<strong>` element is used inside. It can be a string,
   a node or a React element (e.g. `<Fragment>`)
 

@@ -64,7 +64,7 @@ function ProductCardExample() {
 				}
 			>
 				<ProductCardPromoNudge
-					badge="Up to 70% off!"
+					badgeText="Up to 70% off!"
 					text={
 						<Fragment>
 							Hurry, these are <strong>Limited time introductory prices!</strong>
