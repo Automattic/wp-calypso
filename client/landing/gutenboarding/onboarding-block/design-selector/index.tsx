@@ -9,7 +9,7 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { SiteVertical } from '../../stores/onboard/types';
-import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
+import { TemplateSelector } from '@automattic/components';
 
 export default () => {
 	const siteVertical = useSelect(
@@ -28,7 +28,7 @@ export default () => {
 		<div
 			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
 		>
-			<TemplateSelectorControl
+			<TemplateSelector
 				label={ NO__( 'Layout', 'full-site-editing' ) }
 				templates={ homepageTemplates }
 				blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
