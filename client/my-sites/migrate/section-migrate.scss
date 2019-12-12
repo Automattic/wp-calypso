@@ -100,6 +100,10 @@
 	}
 }
 
+.migrate__domain {
+	white-space: nowrap;
+}
+
 .migrate__progress {
 	max-width: 350px;
 	margin-bottom: 2rem;
@@ -123,17 +127,24 @@
 }
 
 .migrate__progress-item-icon {
+	display: flex;
 	width: 24px;
 	margin-right: 6px;
-	display: flex;
-
-	.spinner {
-		margin-left: 1px;
-	}
+	justify-content: center;
 }
 
 .migrate__progress-item-icon-success {
+	width: 22px;
 	color: var( --color-success );
+}
+
+.migrate__progress-item-icon-todo {
+	width: 20px;
+}
+
+.migrate__progress-item-icon-spinner {
+	width: 20px;
+	height: 20px;
 }
 
 .migrate__progress-item-text {

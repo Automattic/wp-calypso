@@ -262,19 +262,27 @@ class SectionMigrate extends Component {
 		const { sourceSite, targetSite } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
+		const subHeaderText = (
+			<>
+				{ "We're moving everything from " }
+				<span className="migrate__domain">{ sourceSiteDomain }</span>
+				{ ' to ' }
+				<span className="migrate__domain">{ targetSiteDomain }</span>.
+			</>
+		);
 
 		return (
 			<>
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime.svg' }
+						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
 						alt=""
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
 						headerText="Migration in progress"
-						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
+						subHeaderText={ subHeaderText }
 						align="center"
 					/>
 					{ this.renderStartTime() }
@@ -316,7 +324,13 @@ class SectionMigrate extends Component {
 			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
 		}
 
-		return <img alt="" src="/calypso/images/importer/circle-gray.svg" />;
+		return (
+			<img
+				alt=""
+				src="/calypso/images/importer/circle-gray.svg"
+				className="migrate__progress-item-icon-todo"
+			/>
+		);
 	}
 
 	renderProgressItem( progressState ) {
@@ -328,13 +342,25 @@ class SectionMigrate extends Component {
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				progressItemText = `Backed up from ${ sourceSiteDomain }`;
+				progressItemText = (
+					<span>
+						Backed up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+					</span>
+				);
 				if ( migrationStatus === 'backing-up' ) {
-					progressItemText = `Backing up from ${ sourceSiteDomain }`;
+					progressItemText = (
+						<span>
+							Backing up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+						</span>
+					);
 				}
 				break;
 			case 'restoring':
-				progressItemText = `Restoring to ${ targetSiteDomain }`;
+				progressItemText = (
+					<span>
+						Restoring to <span className="migrate__domain">{ targetSiteDomain }</span>
+					</span>
+				);
 				break;
 		}
 
