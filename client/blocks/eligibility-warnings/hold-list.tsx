@@ -75,7 +75,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 		},
 		TRANSFER_ALREADY_EXISTS: {
 			message: translate(
-				'Installation in progress. Just a minute! Please wait until the installation is finisehd, then try again.'
+				'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
 			),
 			status: null,
 			contactUrl: null,
@@ -99,7 +99,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 		},
 		NO_SSL_CERTIFICATE: {
 			message: translate(
-				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browing on your site using "HTTPS".'
+				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 			),
 			status: null,
 			contactUrl: null,
