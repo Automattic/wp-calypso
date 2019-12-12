@@ -223,7 +223,7 @@
 				width: 5px;
 				height: 5px;
 				border-color: var( --color-neutral-20 );
-				background: var( --color-neutral-20 );
+				background: var( --color-surface );
 				top: 21px;
 				left: 16px;
 
@@ -232,7 +232,14 @@
 				}
 			}
 
+			.checklist__task.is-collapsed .checklist__task-icon {
+				border-color: var( --color-neutral-20 );
+				background: var( --color-surface );
+			}
+
 			.checklist__task.is-completed .checklist__task-icon {
+				border-color: var( --color-neutral-10 );
+				background: var( --color-neutral-10 );
 				top: 15px;
 				left: 16px;
 
