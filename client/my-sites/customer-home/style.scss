@@ -1,4 +1,44 @@
+
+@mixin display-grid {
+	display: -ms-grid;
+	display: grid;
+}
+@mixin grid-template-columns( $cols, $gap, $fr ) {
+	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr;
+	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
+	grid-column-gap: $gap;
+}
+@mixin grid-row( $row-start, $span ) {
+	-ms-grid-row: $row-start;
+	-ms-grid-row-span: $span;
+		grid-row: $row-start / span $span;
+}
+@mixin grid-column( $col-start, $span ) {
+	-ms-grid-column: $col-start * 2 - 1;
+	-ms-grid-column-span: $span + ($span - 1);
+		grid-column: $col-start / span $span;
+}
+
 .customer-home {
+	&__main {
+		@include breakpoint( '>1040px' ) {
+			@include display-grid;
+			// stylelint-disable-next-line unit-whitelist
+			@include grid-template-columns( 12, 24px, 1fr );
+		}
+	}
+
+	&__upsells {
+		@include grid-column( 1, 12 );
+	}
+
+	&__page-heading {
+		@include grid-row( 1, 1 );
+		@include breakpoint( '>1040px' ) {
+			@include grid-column( 1, 12 );
+			margin: 0;
+		}
+	}
 	&__confetti {
 		display: block;
 		width: 320px;
@@ -79,15 +119,15 @@
 				width: auto;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-two-col;
 		}
 	}
 	&__card-col-left {
-		margin-bottom: 16px;
+		margin-bottom: 24px;
 		width: 100%;
 
 		@mixin card-col-left-two-col {
@@ -98,10 +138,10 @@
 				margin-right: 6px;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-left-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-left-two-col;
 		}
 	}
@@ -115,20 +155,12 @@
 				margin-left: 6px;
 			}
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint( '>1280px' ) {
 			@include card-col-right-two-col;
 		}
-		@include breakpoint( '800px-960px' ) {
+		@include breakpoint( '800px-1040px' ) {
 			@include card-col-right-two-col;
 		}
-	}
-	&__card-mobile {
-		justify-content: space-around;
-	}
-	&__card-subheader {
-		color: var( --color-text-subtle );
-		font-size: 0.85rem;
-		margin: -0.5rem 0 1rem;
 	}
 	&__card-support {
 		display: flex;
@@ -139,7 +171,7 @@
 			width: 137px;
 			height: 119px;
 
-			@include breakpoint( '960px-1040px' ) {
+			@include breakpoint( '>960px' ) {
 				display: none;
 			}
 		}
@@ -147,24 +179,37 @@
 		.vertical-nav {
 			width: 60%;
 
-			@include breakpoint( '960px-1040px' ) {
+			@include breakpoint( '>960px' ) {
 				width: 100%;
 			}
 		}
+	}
+	&__card-mobile {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	&__card-subheader {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin: -0.5rem 0 1rem;
 	}
 	&__go-mobile,
 	&__grow-earn {
 		padding-bottom: 12px;
 	}
 	&__layout {
-		@include breakpoint( '>960px' ) {
-			display: flex;
-			justify-content: space-between;
-			flex-wrap: wrap;
+		@include grid-row( 2, 1 );
+		@include breakpoint( '>1040px' ) {
+			@include grid-column( 1, 12 );
+			@include display-grid;
+			// stylelint-disable-next-line unit-whitelist
+			@include grid-template-columns( 12, 24px, 1fr );
+			grid-gap: 24px;
 		}
 
 		.checklist__tasks {
-			margin-bottom: 8px;
+			margin-bottom: 16px;
 
 			&-completed-title {
 				margin-top: 24px;
@@ -185,13 +230,8 @@
 		}
 	}
 	&__layout-col-left {
-		@include breakpoint( '>960px' ) {
-			width: 60%;
-
-			.card,
-			.checklist__tasks {
-				margin-right: 8px;
-			}
+		@include breakpoint( '>1040px' ) {
+			@include grid-column( 1, 8 );
 		}
 	}
 	&__layout-col-right {
@@ -208,47 +248,13 @@
 				right: 0;
 			}
 		}
-
-		@include breakpoint( '>960px' ) {
-			width: 40%;
-
-			.card {
-				margin-left: 8px;
-			}
-
-			.card.vertical-nav-item {
-				margin-left: 0;
-			}
-		}
-		@include breakpoint( '960px-1040px' ) {
-			.android-app-badge {
-				margin-left: -8px;
-			}
+		@include breakpoint( '>1040px' ) {
+			@include grid-column( 9, 4 );
 		}
 	}
 
 	&__loading-placeholder {
 		@include placeholder();
-	}
-}
-
-.get-apps__app-badge {
-	display: inline-block;
-	img {
-		max-height: 41px;
-		margin: 9px 0;
-		width: auto;
-	}
-
-	&.android-app-badge {
-		img {
-			max-height: 59px;
-			margin-top: 0;
-			margin-bottom: 0;
-			margin-right: 0;
-		}
-		& + .ios-app-badge img {
-			margin-left: 0;
-		}
+		@include grid-column( 1, 12 );
 	}
 }
