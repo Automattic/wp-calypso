@@ -88,7 +88,7 @@
 		"browserslist-useragent": "3.0.2",
 		"caniuse-lite": "1.0.30001015",
 		"chalk": "3.0.0",
-		"chrono-node": "1.3.5",
+		"chrono-node": "1.3.11",
 		"circular-dependency-plugin": "5.2.0",
 		"classnames": "2.2.6",
 		"click-outside": "2.0.2",
