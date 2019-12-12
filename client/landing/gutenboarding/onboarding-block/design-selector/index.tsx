@@ -36,7 +36,6 @@ export default () => {
 				useDynamicPreview={ false }
 				siteInformation={ undefined }
 				selectedTemplate={ previewedTemplate }
-				// handleTemplateConfirmation={ this.handleConfirmation }
 			/>
 		</div>
 	);

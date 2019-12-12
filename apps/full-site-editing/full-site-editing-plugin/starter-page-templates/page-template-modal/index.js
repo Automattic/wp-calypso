@@ -180,7 +180,20 @@ class PageTemplateModal extends Component {
 		}
 	};
 
-	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
+	previewTemplate = slug => {
+		/**
+		 * Determines (based on whether the large preview is able to be visible at the
+		 * current breakpoint) whether or not the Template selection UI interaction model
+		 * should be select _and_ confirm or simply a single "tap to confirm".
+		 */
+		this.setState( { previewedTemplate: slug } );
+
+		const largeTplPreviewVisible = window.matchMedia( '(min-width: 660px)' ).matches;
+		// Confirm the template when large preview isn't visible
+		if ( ! largeTplPreviewVisible ) {
+			this.handleConfirmation( slug );
+		}
+	};
 
 	closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
@@ -238,7 +251,6 @@ class PageTemplateModal extends Component {
 				useDynamicPreview={ false }
 				siteInformation={ this.props.siteInformation }
 				selectedTemplate={ this.state.previewedTemplate }
-				handleTemplateConfirmation={ this.handleConfirmation }
 			/>
 		</fieldset>
 	);
