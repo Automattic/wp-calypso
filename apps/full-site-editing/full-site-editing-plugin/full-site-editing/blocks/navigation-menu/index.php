@@ -101,6 +101,7 @@ function render_navigation_menu_block( $attributes ) {
 	</script>
 		<?php
 	endif;
+
 	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	return ob_get_clean();
 }
@@ -124,25 +125,25 @@ function get_nav_menu_items_data( string $menu_location ) {
 	}
 
 	// Access all Nav Menu Theme locations.
-	$locations = get_nav_menu_locations();
+	$locations = \get_nav_menu_locations();
 
 	if ( empty( $locations ) || empty( $locations[ $menu_location ] ) ) {
-		return false;
+		return \get_pages();
 	}
 
 	// Get the full Nav Menu object from the location
 	// https://codex.wordpress.org/Function_Reference/wp_get_nav_menu_object.
-	$menu_obj = wp_get_nav_menu_object( $locations[ $menu_location ] );
+	$menu_obj = \wp_get_nav_menu_object( $locations[ $menu_location ] );
 
 	if ( empty( $menu_obj ) || empty( $menu_obj->term_id ) ) {
 		return false;
 	}
 
 	// Retrieve data on the individual Menu items.
-	$nav_items = wp_get_nav_menu_items( $menu_obj->term_id );
+	$nav_items = \wp_get_nav_menu_items( $menu_obj->term_id );
 
 	if ( empty( $nav_items ) ) {
-		$nav_items = get_pages();
+		$nav_items = \get_pages();
 	}
 
 	return $nav_items;
