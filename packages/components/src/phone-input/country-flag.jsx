@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
  * Internal Dependencies
  */
 import Spinner from './spinner';
-import { flagUrl } from 'lib/flags';
+import { flagUrl } from '../flags';
 
 export default class extends React.Component {
 	static displayName = 'PhoneInputCountryFlag';
