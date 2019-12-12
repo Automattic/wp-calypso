@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Badge from 'components/badge';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 
@@ -24,7 +23,7 @@ import './style.scss';
  * @param {object} product - G Suite product
  * @returns {boolean} - true if a discount can be applied, false otherwise
  */
-const hasValidDiscount = ( product ) => {
+const hasDiscount = product => {
 	if (
 		! product ||
 		! product.sale_cost ||
@@ -50,7 +49,7 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 	const annualPrice = getAnnualPrice( cost, currencyCode );
 	const monthlyPrice = getMonthlyPrice( cost, currencyCode );
 
-	const isDiscounted = hasValidDiscount( product );
+	const isDiscounted = hasDiscount( product );
 
 	return (
 		<div className="gsuite-price">
@@ -66,15 +65,17 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 				} ) }
 			</h4>
 
-			<h5 className={ classNames( {
-				'gsuite-price__annual-price': true,
-				'discounted': isDiscounted
-			} ) }>
+			<h5
+				className={ classNames( {
+					'gsuite-price__annual-price': true,
+					discounted: isDiscounted,
+				} ) }
+			>
 				{ translate( '%(price)s billed annually', {
 					args: {
 						price: annualPrice,
 					},
-					comment: "Annual price formatted with the currency (e.g. '$99.99')"
+					comment: "Annual price formatted with the currency (e.g. '$99.99')",
 				} ) }
 			</h5>
 
@@ -84,7 +85,7 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 						args: {
 							price: getAnnualPrice( product.sale_cost, currencyCode ),
 						},
-						comment: "Discounted annual price formatted with the currency (e.g. '$80')"
+						comment: "Discounted annual price formatted with the currency (e.g. '$80')",
 					} ) }
 				</Badge>
 			) }
