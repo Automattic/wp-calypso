@@ -23,6 +23,11 @@ import {
 import { withEnhancers } from 'state/utils';
 import Gridicon from 'components/gridicon';
 
+/**
+ * Image dependencies
+ */
+import checkEmailImage from 'assets/images/illustrations/check-email.svg';
+
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
@@ -68,7 +73,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 				<Card className="magic-login__form">
 					<img
-						src="/calypso/images/login/check-email.svg"
+						alt=""
+						src={ checkEmailImage }
 						className="magic-login__check-email-image"
 					/>
 					<p>{ line }</p>
