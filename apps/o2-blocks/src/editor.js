@@ -6,5 +6,5 @@ import './editor-notes/editor';
 import './p2-autocomplete/editor';
 import './prev-next/editor';
 import './todo/editor';
-import './task/index';
-import './project-status/index';
+import './task';
+import './project-status';
