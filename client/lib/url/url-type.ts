@@ -69,6 +69,12 @@ export function determineUrlType( url: URLString | URL ): URL_TYPE {
 		return URL_TYPE.INVALID;
 	}
 
+	// The polyfill sometimes doesn't throw an exception for invalid URLs, instead
+	// leaving the `pathname` blank (which it shouldn't be, at this point).
+	if ( parsed.pathname === '' ) {
+		return URL_TYPE.INVALID;
+	}
+
 	// If we couldn't parse it without a base, but it didn't take the hostname we provided, that means
 	// it's a protocol-relative URL.
 	if ( parsed.hostname !== BASE_HOSTNAME ) {
