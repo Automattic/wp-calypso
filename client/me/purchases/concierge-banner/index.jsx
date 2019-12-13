@@ -64,7 +64,7 @@ class ConciergeBanner extends Component {
 					'Get ready with your questions for your upcoming Quick Start session appointment.',
 					{
 						comment:
-							"Please extend the translation so that it's clear that these sessions are only available in English.",
+							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
@@ -78,7 +78,7 @@ class ConciergeBanner extends Component {
 					'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
-							"Please extend the translation so that it's clear that these sessions are only available in English.",
+							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
 				buttonText = translate( 'Schedule Now' );
@@ -92,7 +92,7 @@ class ConciergeBanner extends Component {
 					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
-							"Please extend the translation so that it's clear that these sessions are only available in English.",
+							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
 				buttonText = translate( 'Schedule Now' );
@@ -106,7 +106,7 @@ class ConciergeBanner extends Component {
 					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
 					{
 						comment:
-							"Please extend the translation so that it's clear that these sessions are only available in English.",
+							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
 				buttonText = translate( 'Learn More' );
