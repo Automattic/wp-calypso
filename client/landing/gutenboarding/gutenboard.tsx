@@ -17,10 +17,10 @@ import {
 } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import '@wordpress/format-library';
 import classnames from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import '@wordpress/components/build-style/style.css';
 
 /**
@@ -66,9 +66,16 @@ export function Gutenboard() {
 		: undefined;
 	const goToPrevStep = currentStep > 0 ? () => setStep( step => step - 1 ) : undefined;
 
-	const onboardingBlock = useMemo( () => createBlock( name, { step: currentStep } ), [
-		currentStep,
-	] );
+	const onboardingBlock = useRef( createBlock( name, { step: currentStep } ) );
+
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	useEffect(
+		() =>
+			void updateBlockAttributes( onboardingBlock.current.clientId, {
+				step: currentStep,
+			} ),
+		[ currentStep, updateBlockAttributes ]
+	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -93,7 +100,11 @@ export function Gutenboard() {
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 							toggleSidebarShortcut={ toggleSidebarShortcut }
 						/>
-						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
+						<BlockEditorProvider
+							useSubRegistry={ false }
+							value={ [ onboardingBlock.current ] }
+							settings={ { templateLock: 'all' } }
+						>
 							<div className="edit-post-layout__content">
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"
