@@ -10,7 +10,7 @@ import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import defaultImageUrl from '../../../../static/images/verticals/default.jpg';
 
 export interface VerticalBackgroundProps {
-	id: string;
+	id?: string;
 	onLoad: () => void;
 }
 

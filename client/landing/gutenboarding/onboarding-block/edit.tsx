@@ -35,8 +35,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 						'has-background': hasBackground && siteVertical,
 					} ) }
 				>
-					{ siteVertical && (
-						<VerticalBackground id={ siteVertical.id } onLoad={ () => setHasBackground( true ) } />
+					{ ( hasBackground || siteVertical ) && (
+						<VerticalBackground id={ siteVertical?.id } onLoad={ () => setHasBackground( true ) } />
 					) }
 					<div className="onboarding-block__questions">
 						<h2 className="onboarding-block__questions-heading">
