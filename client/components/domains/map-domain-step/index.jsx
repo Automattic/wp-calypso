@@ -244,10 +244,10 @@ class MapDomainStep extends React.Component {
 					site = get( this.props, 'selectedSite.slug', null );
 				}
 
-				const noticeStatus = MAPPED === mappableStatus ? mappableStatus : status;
+				const availabilityStatus = MAPPED === mappableStatus ? mappableStatus : status;
 
 				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
-				const { message, severity } = getAvailabilityNotice( domain, noticeStatus, {
+				const { message, severity } = getAvailabilityNotice( domain, availabilityStatus, {
 					site,
 					maintenanceEndTime,
 				} );
