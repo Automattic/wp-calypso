@@ -45,8 +45,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 								NO__( "Let's set up your website – it takes only a moment." ) }
 						</h2>
 						<StepperWizard>
-							<VerticalSelect />
-							{ ( siteVertical || siteTitle ) && <SiteTitle /> }
+							{ React.createElement( VerticalSelect ) }
+							{ ( siteVertical || siteTitle ) && React.createElement( SiteTitle ) }
 						</StepperWizard>
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
