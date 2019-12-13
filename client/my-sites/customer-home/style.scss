@@ -213,11 +213,48 @@
 
 			&-completed-title {
 				margin-top: 24px;
-			}
-		}
 
-		.checklist__task::before {
-			display: none;
+				@include breakpoint( '480px-660px' ) {
+					margin-left: 24px;
+				}
+			}
+
+			.checklist__task-icon {
+				width: 5px;
+				height: 5px;
+				border-color: var( --color-neutral-20 );
+				background: var( --color-surface );
+				top: 21px;
+				left: 16px;
+
+				@include breakpoint( '>480px' ) {
+					left: 24px;
+				}
+			}
+
+			.checklist__task.is-collapsed .checklist__task-icon {
+				border-color: var( --color-neutral-20 );
+				background: var( --color-surface );
+			}
+
+			.checklist__task.is-completed .checklist__task-icon {
+				border-color: var( --color-neutral-10 );
+				background: var( --color-neutral-10 );
+				top: 15px;
+				left: 16px;
+
+				@include breakpoint( '>480px' ) {
+					left: 24px;
+				}
+			}
+
+			.checklist__task.is-completed .gridicons-checkmark {
+				display: none;
+			}
+
+			.checklist__task::before {
+				display: none;
+			}
 		}
 	}
 	&__layout-col {
