@@ -1,6 +1,6 @@
 .gsuite-features__grid {
 	box-sizing: border-box;
-	justify-content: justify-content;
+	justify-content: space-between;
 	margin: 1em 0;
 
 	@include breakpoint( '>960px' ) {
@@ -22,7 +22,7 @@
 }
 .gsuite-features__list {
 	box-sizing: border-box;
-	justify-content: justify-content;
+	justify-content: space-between;
 	margin: 1em 0;
 
 	.gsuite-features__feature {
