@@ -21,17 +21,12 @@ import {
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
 
-const debug = debugFactory( 'composite-checkout-wpcom:wp-checkout-wrapper' );
+const debug = debugFactory( 'calypso:composite-checkout' );
 
 // These are used only for redirect payment methods
 // TODO: determine what these should be
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
-
-// Called when the store is changed.
-const handleCheckoutEvent = () => () => {
-	// TODO: record stats
-};
 
 export function CompositeCheckoutWrapper( {
 	siteSlug,
@@ -59,7 +54,7 @@ export function CompositeCheckoutWrapper( {
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, onFailure );
 
-	useRecordStats( registry );
+	// TODO: record stats
 
 	useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addItem );
 
@@ -113,14 +108,6 @@ function useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addI
 		debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
 		addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
 	}, [ dispatch, planSlug, plan, isJetpackNotAtomic, addItem ] );
-}
-
-function useRecordStats( registry ) {
-	useEffect( () => {
-		const { select, subscribe } = registry;
-		debug( 'subscribing to composite-checkout events' );
-		return subscribe( handleCheckoutEvent( select ) );
-	}, [ registry ] );
 }
 
 function useDisplayErrors( errors, displayError ) {
