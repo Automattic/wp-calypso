@@ -134,7 +134,6 @@ export function useShoppingCart(
 			debug( 'sending cart with responseCart', responseCart );
 			const response = await setServerCart( prepareRequestCart( responseCart ) );
 			debug( 'cart sent; new responseCart is', response );
-			// TODO: handle any errors in response.messages.errors
 			setResponseCart( response );
 			setCacheStatus( 'valid' );
 		};
@@ -201,6 +200,7 @@ export function useShoppingCart(
 		items: cart.items,
 		tax: cart.tax,
 		total: cart.total,
+		errors: responseCart.messages?.errors ?? [],
 		addItem,
 		removeItem,
 		changePlanLength,

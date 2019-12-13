@@ -52,6 +52,12 @@ export interface ResponseCart {
 	coupon: string;
 	is_coupon_applied: boolean;
 	locale: string;
+	messages?: { errors: ResponseCartError[] };
+}
+
+export interface ResponseCartError {
+	code: string;
+	message: string;
 }
 
 export const emptyResponseCart = {
