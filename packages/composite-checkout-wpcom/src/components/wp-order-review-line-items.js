@@ -94,16 +94,13 @@ const LineItemUI = styled( WPLineItem )`
 	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' )};
+	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor )};
 	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
 	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
-	:first-of-type {
-		padding-top: 10px;
-	}
 
 	:first-of-type button {
 		top: -3px;
@@ -154,7 +151,6 @@ function DeleteIcon( { uniqueID, product } ) {
 			width="25"
 			height="24"
 			viewBox="0 0 25 24"
-			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-labelledby={ uniqueID }
 		>
@@ -242,6 +238,10 @@ const WPOrderReviewListItems = styled.li`
 	padding: 0;
 	display: block;
 	list-style: none;
+
+	:first-of-type .checkout-line-item {
+		padding-top: 10px;
+	}
 `;
 
 function PlanTermOptions() {
