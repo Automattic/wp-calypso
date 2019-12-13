@@ -65,9 +65,11 @@ const MailchimpSettings = ( {
 			{
 				memberships_subscribers_list: event.target.value,
 			},
-			translate( 'New Recurring Payments subscribers will be saved to the %s Mailchimp list', {
-				args: list.name,
-			} )
+			parseInt( event.target.value )
+				? translate( 'New Recurring Payments subscribers will be saved to the %s Mailchimp list', {
+						args: list.name,
+				  } )
+				: translate( 'New Recurring Payments subscribers will not be shared with Mailchimp' )
 		);
 	};
 	const common = (
@@ -152,7 +154,11 @@ const MailchimpSettings = ( {
 					showDismiss={ false }
 				/>
 			) }
-			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
+			<select
+				className="sharing-service__mailchimp-select" // eslint-disable-line wpcalypso/jsx-classname-namespace
+				value={ mailchimpListId }
+				onChange={ chooseMailchimpList }
+			>
 				<option key="none" value={ 0 }>
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
@@ -170,10 +176,26 @@ const MailchimpSettings = ( {
 					<div>
 						<p>
 							{ translate(
-								'Your site has also enabled Recurring Payments. Do you want your Recurring Payments subscribers to be added to a Mailchimp list?'
+								'Your site has also enabled {{a}}Recurring Payments{{/a}}.{{br/}}Do you want your Recurring Payments subscribers to be added to a Mailchimp list?',
+								{
+									components: {
+										a: (
+											<a
+												href={ `/earn/payments/${ siteSlug }` }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+										br: <br />,
+									},
+								}
 							) }
 						</p>
-						<select value={ membershipsMailchimpListId } onChange={ chooseMembershipsList }>
+						<select
+							className="sharing-service__mailchimp-select" // eslint-disable-line wpcalypso/jsx-classname-namespace
+							value={ membershipsMailchimpListId }
+							onChange={ chooseMembershipsList }
+						>
 							<option key="none" value={ 0 }>
 								{ translate( 'Do not connect Recurring Payments with Mailchimp' ) }
 							</option>
