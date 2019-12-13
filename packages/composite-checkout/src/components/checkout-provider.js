@@ -4,6 +4,7 @@
 import React, { useContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -20,6 +21,8 @@ import {
 	validateLineItems,
 	validatePaymentMethods,
 } from '../lib/validation';
+
+const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
 export const CheckoutProvider = props => {
 	const {
@@ -43,6 +46,7 @@ export const CheckoutProvider = props => {
 	const wrappers = [
 		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
 	];
+	debug( `applying ${ wrappers.length } CheckoutWrapper wrappers` );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -105,6 +109,8 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		failureRedirectUrl,
 		paymentMethods,
 	} = propsToValidate;
+	debug( 'propsToValidate', propsToValidate );
+
 	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
 	validateArg( total, 'CheckoutProvider missing required prop: total' );
 	validateTotal( total );
