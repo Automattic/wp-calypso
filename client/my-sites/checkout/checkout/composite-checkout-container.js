@@ -11,12 +11,16 @@ import {
 import { WPCheckoutWrapper, mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import wp from 'lib/wp';
 import notices from 'notices';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 const debug = debugFactory( 'calypso:composite-checkout-container' );
 
@@ -30,7 +34,79 @@ async function fetchStripeConfiguration( requestArgs ) {
 }
 
 async function sendStripeTransaction( transactionData ) {
-	return wpcom.transactions( transactionData );
+	return wpcom.transactions( formatDataForTransactionsEndpoint( transactionData ) );
+}
+
+function formatDataForTransactionsEndpoint( {
+	siteId,
+	couponId, // TODO: get this
+	country,
+	postalCode,
+	subdivisionCode,
+	domainDetails,
+	paymentMethodToken,
+	name,
+	items,
+	total,
+	stripeConfiguration,
+	successUrl,
+	cancelUrl,
+} ) {
+	const payment = {
+		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+		payment_key: paymentMethodToken.id,
+		payment_partner: stripeConfiguration.processor_id,
+		name,
+		zip: postalCode,
+		country,
+		successUrl,
+		cancelUrl,
+	};
+	return {
+		cart: createCartFromLineItems( {
+			siteId,
+			couponId,
+			items,
+			total,
+			country,
+			postalCode,
+			subdivisionCode,
+		} ),
+		domainDetails,
+		payment,
+	};
+}
+
+// Create cart object as required by the WPCOM transactions endpoint '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
+export function createCartFromLineItems( {
+	siteId,
+	couponId,
+	items,
+	country,
+	postalCode,
+	subdivisionCode,
+} ) {
+	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
+	return {
+		blog_id: siteId,
+		coupon: couponId || '',
+		currency: currency || '',
+		temporary: false,
+		extra: [],
+		products: items.map( item => ( {
+			product_id: item.product_id,
+			meta: '', // TODO: get this for domains, etc
+			currency: item.amount.currency,
+			volume: 1, // TODO: get this from the item
+		} ) ),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
 }
 
 function getDomainDetails() {
@@ -116,8 +192,20 @@ const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].f
 const getCart = ( ...args ) => wpcom.getCart( ...args );
 const setCart = ( ...args ) => wpcom.setCart( ...args );
 
-export default function CompositeCheckoutContainer( { siteId, siteSlug } ) {
+export default function CompositeCheckoutContainer( {
+	siteId,
+	siteSlug,
+	product,
+	// TODO: handle these also
+	// purchaseId,
+	// couponCode,
+} ) {
 	const translate = useTranslate();
+	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
+	const isJetpackNotAtomic = useSelector(
+		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
 	const onSuccess = () => {
 		debug( 'success' );
 		notices.success( translate( 'Your purchase was successful!' ) );
@@ -139,6 +227,9 @@ export default function CompositeCheckoutContainer( { siteId, siteSlug } ) {
 			siteId={ siteId }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
+			product={ product }
+			planSlug={ planSlug }
+			isJetpackNotAtomic={ isJetpackNotAtomic }
 		/>
 	);
 }
