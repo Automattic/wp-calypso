@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ActionCard from 'components/action-card';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
