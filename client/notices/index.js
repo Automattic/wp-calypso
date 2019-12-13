@@ -177,6 +177,7 @@ const notices = {
 				list[ noticeObject.container ].push( noticeObject );
 			} );
 			delayedNotices = [];
+			changed = true;
 		}
 
 		if ( changed ) {
