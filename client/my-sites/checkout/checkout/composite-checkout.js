@@ -45,9 +45,6 @@ export function CompositeCheckout( {
 		setCart,
 		getCart
 	);
-	const dispatch = useDispatch();
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
-
 	const { registerStore } = registry;
 	useWpcomStore( registerStore );
 
@@ -56,7 +53,7 @@ export function CompositeCheckout( {
 
 	// TODO: record stats
 
-	useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addItem );
+	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
@@ -96,7 +93,10 @@ CompositeCheckout.propTypes = {
 	isJetpackNotAtomic: PropTypes.bool,
 };
 
-function useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addItem ) {
+function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
+	const dispatch = useDispatch();
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+
 	useEffect( () => {
 		if ( ! planSlug ) {
 			return;
