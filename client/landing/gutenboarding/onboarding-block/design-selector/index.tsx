@@ -28,7 +28,7 @@ export default () => {
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
 		<div
-			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
+			className="onboarding-block__design-selector page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
 		>
 			<TemplateSelectorControl
 				label={ NO__( 'Layout', 'full-site-editing' ) }
