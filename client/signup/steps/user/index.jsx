@@ -197,7 +197,7 @@ export class UserStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	submitForm = ( form, userData, analyticsData ) => {
+	submitForm = async ( form, userData, analyticsData ) => {
 		const formWithoutPassword = {
 			...form,
 			password: {
@@ -212,20 +212,32 @@ export class UserStep extends Component {
 		const isRecaptchaABTest =
 			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
-		const recaptchaPromise =
-			isRecaptchaABTest && isRecaptchaLoaded
-				? recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' )
-				: Promise.resolve();
+		let recaptchaToken = undefined;
+		let recaptchaDidntLoad = false;
+		let recaptchaFailed = false;
 
-		recaptchaPromise.then( token => {
-			this.submit( {
-				userData,
-				form: formWithoutPassword,
-				queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-				recaptchaDidntLoad: isRecaptchaABTest && ! isRecaptchaLoaded,
-				recaptchaFailed: isRecaptchaABTest && isRecaptchaLoaded && ! token,
-				recaptchaToken: token || undefined,
-			} );
+		if ( isRecaptchaABTest ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.state.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaFailed = true;
+				}
+			} else {
+				recaptchaDidntLoad = true;
+			}
+		}
+
+		this.submit( {
+			userData,
+			form: formWithoutPassword,
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			recaptchaDidntLoad,
+			recaptchaFailed,
+			recaptchaToken: recaptchaToken || undefined,
 		} );
 	};
 

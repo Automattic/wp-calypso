@@ -82,19 +82,22 @@ class PasswordlessSignupForm extends Component {
 		const isRecaptchaABTest =
 			'onboarding' === this.props.flowName && 'show' === abtest( 'userStepRecaptcha' );
 
-		const recaptchaToken =
-			isRecaptchaABTest && isRecaptchaLoaded
-				? await recordGoogleRecaptchaAction(
-						this.props.recaptchaClientId,
-						'calypso/signup/formSubmit'
-				  )
-				: undefined;
-
+		let recaptchaToken = undefined;
 		let recaptchaError = undefined;
-		if ( isRecaptchaABTest && ! isRecaptchaLoaded ) {
-			recaptchaError = 'recaptcha_didnt_load';
-		} else if ( isRecaptchaABTest && isRecaptchaLoaded && ! recaptchaToken ) {
-			recaptchaError = 'recaptcha_failed';
+
+		if ( isRecaptchaABTest ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.props.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaError = 'recaptcha_failed';
+				}
+			} else {
+				recaptchaError = 'recaptcha_didnt_load';
+			}
 		}
 
 		try {
