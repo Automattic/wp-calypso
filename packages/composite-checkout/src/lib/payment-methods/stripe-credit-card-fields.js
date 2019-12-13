@@ -42,7 +42,6 @@ import { SummaryLine, SummaryDetails } from '../styled-components/summary-detail
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
-import { createCartFromLineItems } from './transactions-endpoint';
 
 export function createStripeMethod( {
 	getSiteId,
@@ -233,7 +232,7 @@ export function createStripeMethod( {
 				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( formatDataForTransactionsEndpoint( action.payload ) );
+				return sendStripeTransaction( action.payload );
 			},
 		},
 	} );
@@ -735,44 +734,4 @@ async function showStripeModalAuth( { stripeConfiguration, response } ) {
 	if ( authenticationResponse ) {
 		// TODO: what do we do here?
 	}
-}
-
-function formatDataForTransactionsEndpoint( {
-	siteId,
-	couponId, // TODO: get this
-	country,
-	postalCode,
-	subdivisionCode,
-	domainDetails,
-	paymentMethodToken,
-	name,
-	items,
-	total,
-	stripeConfiguration,
-	successUrl,
-	cancelUrl,
-} ) {
-	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: paymentMethodToken.id,
-		payment_partner: stripeConfiguration.processor_id,
-		name,
-		zip: postalCode,
-		country,
-		successUrl,
-		cancelUrl,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domainDetails,
-		payment,
-	};
 }
