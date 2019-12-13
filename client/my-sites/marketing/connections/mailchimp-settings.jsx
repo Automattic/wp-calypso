@@ -27,6 +27,7 @@ const MailchimpSettings = ( {
 	mailchimpLists,
 	mailchimpListId,
 	membershipsConnectedAccountId,
+	membershipsMailchimpListId,
 	isJetpack,
 	isJetpackConnectionBroken,
 	isJetpackTooOld,
@@ -162,26 +163,29 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
-			{ membershipsConnectedAccountId && mailchimpLists && mailchimpLists.length && (
-				<div>
-					<p>
-						{ translate(
-							'Your site has also enabled Recurring Payments. Do you want your Recurring Payments subscribers to be added to a Mailchimp list?'
-						) }
-					</p>
-					<select value={ mailchimpListId } onChange={ chooseMembershipsList }>
-						<option key="none" value={ 0 }>
-							{ translate( 'Do not connect Recurring Payments with Mailchimp' ) }
-						</option>
-						{ mailchimpLists &&
-							mailchimpLists.map( list => (
-								<option key={ list.id } value={ list.id }>
-									{ list.name }
-								</option>
-							) ) }
-					</select>
-				</div>
-			) }
+			{ !! membershipsConnectedAccountId &&
+				!! mailchimpListId &&
+				!! mailchimpLists &&
+				mailchimpLists.length > 0 && (
+					<div>
+						<p>
+							{ translate(
+								'Your site has also enabled Recurring Payments. Do you want your Recurring Payments subscribers to be added to a Mailchimp list?'
+							) }
+						</p>
+						<select value={ membershipsMailchimpListId } onChange={ chooseMembershipsList }>
+							<option key="none" value={ 0 }>
+								{ translate( 'Do not connect Recurring Payments with Mailchimp' ) }
+							</option>
+							{ mailchimpLists &&
+								mailchimpLists.map( list => (
+									<option key={ list.id } value={ list.id }>
+										{ list.name }
+									</option>
+								) ) }
+						</select>
+					</div>
+				) }
 			{ common }
 		</div>
 	);
