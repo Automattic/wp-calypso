@@ -59,7 +59,7 @@
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
 		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.3",
-		"file-loader": "4.2.0",
+		"file-loader": "4.3.0",
 		"jest-config": "24.9.0",
 		"jest-emotion": "^10.0.27",
 		"jest-enzyme": "7.1.2",
