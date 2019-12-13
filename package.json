@@ -50,6 +50,7 @@
 		"@emotion/core": "10.0.22",
 		"@emotion/styled": "10.0.23",
 		"@github/webauthn-json": "0.4.1",
+		"@types/react-transition-group": "4.2.3",
 		"@ungap/url-search-params": "0.1.4",
 		"@webcomponents/url": "0.7.4",
 		"@wordpress/api-fetch": "3.7.0",

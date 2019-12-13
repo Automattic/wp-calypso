@@ -4,8 +4,9 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,16 +19,25 @@ import SiteTitle from './site-title';
 import { Attributes } from './types';
 import { Steps } from '../types';
 import './style.scss';
+import VerticalBackground from './vertical-background';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 	attributes: { step = 0 },
 } ) => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const [ hasBackground, setHasBackground ] = useState( false );
 
 	switch ( step ) {
 		case Steps.IntentGathering:
 			return (
-				<div className="onboarding-block__acquire-intent">
+				<div
+					className={ classNames( 'onboarding-block__acquire-intent', {
+						'has-background': hasBackground && siteVertical,
+					} ) }
+				>
+					{ ( hasBackground || siteVertical ) && (
+						<VerticalBackground id={ siteVertical?.id } onLoad={ () => setHasBackground( true ) } />
+					) }
 					<div className="onboarding-block__questions">
 						<h2 className="onboarding-block__questions-heading">
 							{ ! siteVertical &&
