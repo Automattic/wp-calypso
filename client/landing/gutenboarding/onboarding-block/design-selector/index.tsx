@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import React, { useState } from 'react';
 
@@ -23,7 +24,17 @@ export default () => {
 			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
 		) ?? [];
 
-	const homepageTemplates = templates.filter( template => template.category === 'home' );
+	// The templates' preview URLs come with a hard-wired size param (`?w=332`)
+	// that isn't high-res enough for our purposes. Thus, we override it here.
+	// TODO: Maybe add a `srcset` to `TemplateSelectorItem`.
+	const templatesWithResizedThumbnails = templates.map( template => ( {
+		...template,
+		preview: addQueryArgs( template.preview, { w: 960 / 2 } ),
+	} ) );
+
+	const homepageTemplates = templatesWithResizedThumbnails.filter(
+		template => template.category === 'home'
+	);
 
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
