@@ -186,7 +186,7 @@ if ( typeof window !== 'undefined' ) {
 const analytics = {
 	initialize: function( currentUser, superProps ) {
 		// Update super props.
-		if ( 'object' === typeof superProps ) {
+		if ( 'function' === typeof superProps ) {
 			initializeDebug( 'superProps', superProps );
 			_superProps = superProps;
 		}
