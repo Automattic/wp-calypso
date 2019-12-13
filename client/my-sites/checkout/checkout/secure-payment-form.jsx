@@ -11,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
@@ -257,13 +258,17 @@ export class SecurePaymentForm extends Component {
 		try {
 			await this.maybeSetSiteToPublic( { cart } );
 		} catch ( e ) {
-			const errorMessage = {
-				message:
-					'There was a problem completing the checkout. <a href="/help/contact">Contact support</a>',
-			};
+			const message = this.props.translate(
+				'There was a problem completing the checkout. {{a}}Contact support{{/a}}.',
+				{
+					components: { a: <a href="/help/contact" /> },
+					comment:
+						"This is an error message that is shown when a user's purchase has failed at the checkout page",
+				}
+			);
 
 			debug( 'Error setting site to public', e );
-			displayError( errorMessage );
+			notices.error( message );
 
 			return;
 		}
