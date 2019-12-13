@@ -81,7 +81,7 @@ if ( typeof window !== 'undefined' ) {
 function getUrlParameter( name ) {
 	name = name.replace( /[[]/g, '\\[' ).replace( /[\]]/g, '\\]' );
 	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-	const results = regex.exec( location.search );
+	const results = regex.exec( window.location.search );
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
 }
 
@@ -97,7 +97,7 @@ function createRandomId( randomBytesLength = 9 ) {
 		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
 	}
 
-	return btoa( String.fromCharCode.apply( String, randomBytes ) );
+	return window.btoa( String.fromCharCode.apply( String, randomBytes ) );
 }
 
 function checkForBlockedTracks() {
@@ -212,7 +212,7 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystring( group, name );
-				new Image().src =
+				new window.Image().src =
 					document.location.protocol +
 					'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
 					uriComponent +
@@ -231,7 +231,7 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystringNoPrefix( group, name );
-				new Image().src =
+				new window.Image().src =
 					document.location.protocol +
 					'//pixel.wp.com/g.gif?v=wpcom' +
 					uriComponent +
@@ -598,7 +598,7 @@ const analytics = {
 				);
 
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
-				new Image().src = imgUrl;
+				new window.Image().src = imgUrl;
 			}
 		},
 
@@ -611,7 +611,7 @@ const analytics = {
 				);
 
 				const imgUrl = statsdCountingUrl( featureSlug, eventType, increment );
-				new Image().src = imgUrl;
+				new window.Image().src = imgUrl;
 			}
 		},
 	},
