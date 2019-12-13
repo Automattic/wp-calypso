@@ -28,17 +28,25 @@ export default () => {
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
 		<div
-			className="onboarding-block__design-selector page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
+			className="onboarding-block__design-selector" // eslint-disable-line wpcalypso/jsx-classname-namespace
 		>
-			<TemplateSelectorControl
-				label={ NO__( 'Layout', 'full-site-editing' ) }
-				templates={ homepageTemplates }
-				blocksByTemplates={ {} /* Unneeded, since we're setting `useDynamicPreview` to `false` */ }
-				onTemplateSelect={ setPreviewedTemplate }
-				useDynamicPreview={ false }
-				siteInformation={ undefined }
-				selectedTemplate={ previewedTemplate }
-			/>
+			<h1>{ NO__( 'Choose a starting design for your site' ) }</h1>
+			<h2>{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }</h2>
+			<div
+				className=" page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
+			>
+				<TemplateSelectorControl
+					label={ NO__( 'Layout', 'full-site-editing' ) }
+					templates={ homepageTemplates }
+					blocksByTemplates={
+						{} /* Unneeded, since we're setting `useDynamicPreview` to `false` */
+					}
+					onTemplateSelect={ setPreviewedTemplate }
+					useDynamicPreview={ false }
+					siteInformation={ undefined }
+					selectedTemplate={ previewedTemplate }
+				/>
+			</div>
 		</div>
 	);
 };
