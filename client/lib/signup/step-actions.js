@@ -375,7 +375,18 @@ export function launchSiteApi( callback, dependencies ) {
 export function createAccount(
 	callback,
 	dependencies,
-	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup, recaptchaToken },
+	{
+		userData,
+		flowName,
+		queryArgs,
+		service,
+		access_token,
+		id_token,
+		oauth2Signup,
+		recaptchaDidntLoad,
+		recaptchaFailed,
+		recaptchaToken,
+	},
 	reduxStore
 ) {
 	const state = reduxStore.getState();
@@ -443,6 +454,8 @@ export function createAccount(
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
 					: null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
 				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
