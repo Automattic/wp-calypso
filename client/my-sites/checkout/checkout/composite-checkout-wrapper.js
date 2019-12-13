@@ -68,6 +68,7 @@ export function CompositeCheckoutWrapper( {
 			total={ total }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
+			onEvent={ handleCheckoutEvent }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ availablePaymentMethods }
@@ -146,4 +147,9 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
 
 	return cartItem;
+}
+
+function handleCheckoutEvent( action ) {
+	debug( 'checkout event', action );
+	// TODO: record stats
 }
