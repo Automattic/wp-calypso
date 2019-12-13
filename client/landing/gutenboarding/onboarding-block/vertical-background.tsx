@@ -33,7 +33,7 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { id,
 					<div
 						className="onboarding-block__background"
 						style={ {
-							backgroundImage: imageId.length
+							backgroundImage: imageId
 								? `url('/calypso/images/verticals/${ imageId }.jpg')`
 								: 'none',
 						} }
