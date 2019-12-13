@@ -12,7 +12,7 @@ import { flow, get, includes, noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';

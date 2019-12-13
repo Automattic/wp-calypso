@@ -1,4 +1,7 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * External dependencies
  */
 import React from 'react';
@@ -13,8 +16,8 @@ import { createRegistry, createPayPalMethod } from '@automattic/composite-checko
  */
 import {
 	WPCheckoutWrapper,
-	makeShoppingCartHook,
-	mockCartEndpoint,
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
 	mockPayPalExpressRequest,
 } from '../src/index';
 
@@ -33,13 +36,19 @@ afterEach( () => {
 	container = null;
 } );
 
+const noop = () => {};
+
 test( 'When we enter checkout, the line items and total are rendered', async () => {
 	const initialCart = {
 		coupon: '',
 		currency: 'BRL',
+		locale: 'br-pt',
 		is_coupon_applied: false,
 		products: [
 			{
+				product_name: '.cash Domain',
+				product_slug: 'domain',
+				currency: 'BRL',
 				extra: {
 					context: 'signup',
 					domain_registration_agreement_url:
@@ -52,8 +61,13 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 				meta: 'foo.cash',
 				product_id: 106,
 				volume: 1,
+				item_subtotal_integer: 500,
+				item_subtotal_display: 'R$5',
 			},
 			{
+				product_name: 'WordPress.com Personal',
+				product_slug: 'personal_bundle',
+				currency: 'BRL',
 				extra: {
 					context: 'signup',
 					domain_to_bundle: 'foo.cash',
@@ -62,6 +76,8 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 				meta: '',
 				product_id: 1009,
 				volume: 1,
+				item_subtotal_integer: 14400,
+				item_subtotal_display: 'R$144',
 			},
 		],
 		tax: {
@@ -69,19 +85,21 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 			location: {},
 		},
 		temporary: false,
+		allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
+		total_tax_integer: 700,
+		total_tax_display: 'R$7',
+		total_cost_integer: 15600,
+		total_cost_display: 'R$156',
 	};
 
 	const registry = createRegistry();
 	const { registerStore } = registry;
 
-	// Using a mocked server responses
-	const useShoppingCart = makeShoppingCartHook( mockCartEndpoint, initialCart );
-
-	const noop = () => {};
-
 	const MyCheckout = () => (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCart }
+			siteSlug={ 'foo.com' }
+			setCart={ mockSetCartEndpoint }
+			getCart={ mockGetCartEndpointWith( initialCart ) }
 			availablePaymentMethods={ [
 				createPayPalMethod( {
 					registerStore: registerStore,
@@ -108,10 +126,10 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 	// Tax line items show the expected amount
 	renderResult
 		.getAllByLabelText( 'Tax' )
-		.map( element => expect( element ).toHaveTextContent( 'R$5' ) );
+		.map( element => expect( element ).toHaveTextContent( 'R$7' ) );
 
 	// All elements labeled 'Total' show the expected price
 	renderResult
 		.getAllByLabelText( 'Total' )
-		.map( element => expect( element ).toHaveTextContent( 'R$149' ) );
+		.map( element => expect( element ).toHaveTextContent( 'R$156' ) );
 } );

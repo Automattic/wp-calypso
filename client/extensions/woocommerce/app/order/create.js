@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSettingsGeneralLoaded,
 	getPaymentCurrencySettings,

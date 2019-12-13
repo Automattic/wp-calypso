@@ -9,11 +9,11 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
+import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
 import QueryProducts from 'components/data/query-products-list';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -99,10 +99,7 @@ const GSuiteUpsellCard = ( {
 			</CompactCard>
 
 			<CompactCard>
-				<GSuiteUpsellProductDetails
-					domain={ domain }
-					productSlug={ productSlug }
-				/>
+				<GSuiteUpsellProductDetails domain={ domain } productSlug={ productSlug } />
 
 				<GSuiteNewUserList
 					extraValidation={ user => user }
@@ -133,11 +130,11 @@ const GSuiteUpsellCard = ( {
 
 GSuiteUpsellCard.propTypes = {
 	domain: PropTypes.string.isRequired,
-	productSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
+	productSlug: GSUITE_SLUG_PROP_TYPES,
 	onAddEmailClick: PropTypes.func.isRequired,
 	onSkipClick: PropTypes.func.isRequired,
 };
 
 export default connect( null, {
-	recordTracksEvent: recordTracksEventAction
+	recordTracksEvent: recordTracksEventAction,
 } )( GSuiteUpsellCard );

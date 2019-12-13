@@ -28,7 +28,7 @@ export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state =
 		return state;
 	}
 
-	if ( [ 'plugins', 'themes' ].includes( action.section.name ) ) {
+	if ( [ 'plugins', 'themes', 'hosting' ].includes( action.section.name ) ) {
 		return action.section.name;
 	}
 

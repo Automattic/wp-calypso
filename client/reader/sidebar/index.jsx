@@ -151,13 +151,13 @@ export class ReaderSidebar extends React.Component {
 						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/', path, {
+								className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 									'sidebar-streams__following': true,
 								} ) }
 								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link="/"
+								link="/read"
 							/>
 
 							<SidebarItem

@@ -11,12 +11,11 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
@@ -65,7 +64,6 @@ import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
-import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -485,13 +483,13 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
-					{ config.isEnabled( 'plans/jetpack-backup' ) && (
-						<ProductPlanOverlapNotices
-							plans={ JETPACK_PLANS }
-							products={ JETPACK_BACKUP_PRODUCTS }
-							siteId={ siteId }
-						/>
-					) }
+					<AsyncLoad
+						require="blocks/product-plan-overlap-notices"
+						placeholder={ null }
+						plans={ JETPACK_PLANS }
+						products={ JETPACK_BACKUP_PRODUCTS }
+						siteId={ siteId }
+					/>
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</Fragment>

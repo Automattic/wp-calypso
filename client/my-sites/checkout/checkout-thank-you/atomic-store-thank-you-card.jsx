@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';

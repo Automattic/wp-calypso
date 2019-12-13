@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import SetupHeader from './setup/header';
 import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
 

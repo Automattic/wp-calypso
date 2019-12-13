@@ -21,6 +21,7 @@ const initialState = {
 	parentId: '',
 	slug: '',
 	preview: '',
+	suggestedTheme: '',
 };
 
 // TODO:

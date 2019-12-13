@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 
 const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	return (

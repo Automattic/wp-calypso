@@ -18,7 +18,9 @@ export default function QuerySiteChecklist( { siteId } ) {
 	);
 
 	useEffect( () => {
-		dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
+		if ( siteId ) {
+			dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
+		}
 	}, [ dispatch, siteId, isSiteEligibleForFSE ] );
 
 	return null;

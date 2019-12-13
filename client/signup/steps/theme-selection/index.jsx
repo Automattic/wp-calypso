@@ -13,7 +13,7 @@ import { find, identity } from 'lodash';
 import analytics from 'lib/analytics';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';

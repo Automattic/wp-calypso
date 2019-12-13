@@ -26,6 +26,23 @@ export default class ReaderPage extends AsyncBaseContainer {
 		return URL.parse( href ).host;
 	}
 
+	async shareLatestPost() {
+		const shareButtonSelector = by.css( '.reader-share__button' );
+		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
+
+		if ( ! hasSharablePost ) {
+			// no shareable posts on this screen. try moving into a combined card
+			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );
+			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
+		}
+
+		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.reader-popover .site__content' )
+		);
+	}
+
 	async commentOnLatestPost( comment ) {
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.comment-button' ) );
 		await driverHelper.setWhenSettable(

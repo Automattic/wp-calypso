@@ -15,6 +15,8 @@ view.js — assets for the block rendered on frontend
 newspack-homepage-articles/** — source code synced from the Newspack Blocks repository
 ```
 
+`editor.js`, `view.js` and `index.php` are files written in order to bridge the parent plugin with the Blog Posts Block. It changes the block name to `a8c/blog-posts` and does things like registering REST fields or styles and scripts. In these files we are free to do all those changes because they are not shared with Newspack and only live here in this repository.
+
 ### Synchronizing the code
 
 You can see that `newspack-homepage-articles` is being synced with the Newspack Blocks repository. Please make all improvements and additions on the Newspack side. Please don't make any direct changes to files in this directory as the next synchronization will overwrite them.

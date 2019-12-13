@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCard from '..';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const CREDIT_CARD_EXAMPLES = [
 	{

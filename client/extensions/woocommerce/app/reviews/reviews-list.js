@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {

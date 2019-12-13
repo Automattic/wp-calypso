@@ -10,6 +10,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'components/localized-moment';
 import analytics from 'lib/analytics';
 import { canRemoveFromCart } from 'lib/cart-values';
 import { getIncludedDomain } from 'lib/cart-values/cart-items';
@@ -24,8 +25,10 @@ import {
 	isBundled,
 	isDomainProduct,
 } from 'lib/products-values';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
@@ -43,7 +46,7 @@ export class CartItem extends React.Component {
 	};
 
 	price() {
-		const { cartItem, translate } = this.props;
+		const { cart, cartItem, translate } = this.props;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
 			return translate( 'Loading price' );
@@ -61,6 +64,33 @@ export class CartItem extends React.Component {
 
 		if ( 0 === cost ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+		}
+
+		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+			const {
+				cost_before_coupon: costBeforeCoupon,
+				is_sale_coupon_applied: isSaleCouponApplied,
+			} = cartItem;
+
+			if ( isSaleCouponApplied ) {
+				const { is_coupon_applied: isCouponApplied } = cart;
+
+				return (
+					<div className="cart__gsuite-discount">
+						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
+
+						<span className="cart__gsuite-discount-discounted-price">
+							{ cost } { cartItem.currency }
+						</span>
+
+						<span className="cart__gsuite-discount-text">
+							{ isCouponApplied
+								? translate( 'Discounts applied' )
+								: translate( 'Discount for first year' ) }
+						</span>
+					</div>
+				);
+			}
 		}
 
 		return translate( '%(cost)s %(currency)s', {
@@ -274,8 +304,8 @@ export class CartItem extends React.Component {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate( '%(productName)s (1 User)', {
 						args: {
 							productName: cartItem.product_name,
@@ -287,8 +317,8 @@ export class CartItem extends React.Component {
 			}
 		} else {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',
@@ -326,4 +356,4 @@ export class CartItem extends React.Component {
 
 export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-} ) )( localize( CartItem ) );
+} ) )( localize( withLocalizedMoment( CartItem ) ) );

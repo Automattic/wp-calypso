@@ -112,7 +112,7 @@ class Edit extends Component {
 
 		return (
 			<article
-				className={ post.newspack_featured_image_src && 'post-has-image' }
+				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
 				key={ post.id }
 				style={ styles }
 			>

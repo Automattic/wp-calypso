@@ -13,7 +13,7 @@ import { flowRight } from 'lodash';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Navigation from 'me/notification-settings/navigation';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';

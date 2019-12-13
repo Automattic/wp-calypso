@@ -9,8 +9,7 @@ import React, { PureComponent } from 'react';
  */
 import { languages } from 'languages';
 import LanguagePicker from 'components/language-picker';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';

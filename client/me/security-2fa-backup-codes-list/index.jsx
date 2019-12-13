@@ -22,7 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import config from 'config';
 import Notice from 'components/notice';
 import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserName } from 'state/current-user/selectors';

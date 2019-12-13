@@ -14,8 +14,7 @@ import moment from 'moment';
  */
 import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
@@ -242,7 +241,6 @@ class Home extends Component {
 		// Show the standard heading otherwise
 		return (
 			<FormattedHeader
-				className="customer-home__page-heading"
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate(
 					'Your home base for all the posting, editing, and growing of your site'
@@ -280,14 +278,16 @@ class Home extends Component {
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
-				{ this.renderCustomerHomeHeader() }
+				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				{ //Only show upgrade nudges to sites > 2 days old
 				isEstablishedSite && (
-					<StatsBanners
-						siteId={ siteId }
-						slug={ siteSlug }
-						primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
-					/>
+					<div className="customer-home__upsells">
+						<StatsBanners
+							siteId={ siteId }
+							slug={ siteSlug }
+							primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
+						/>
+					</div>
 				) }
 				{ renderChecklistCompleteBanner && (
 					<Banner

@@ -18,7 +18,7 @@ import FoldableCard from 'components/foldable-card';
 import { getSiteSlug } from 'state/sites/selectors';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import Button from '../../../components/button';
+import { Button } from '@automattic/components';
 import { getActivityLogFilter } from 'state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';

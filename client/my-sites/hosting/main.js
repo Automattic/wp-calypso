@@ -16,6 +16,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -26,12 +27,14 @@ import { isEnabled } from 'config';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
+import Banner from 'components/banner';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
 import FeatureExample from 'components/feature-example';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -58,6 +61,7 @@ class Hosting extends Component {
 		const {
 			canViewAtomicHosting,
 			clickActivate,
+			isOnAtomicPlan,
 			isDisabled,
 			isTransferring,
 			requestSiteById,
@@ -71,8 +75,16 @@ class Hosting extends Component {
 			return null;
 		}
 
-		const sftpPhpMyAdminFeaturesEnabled =
-			isEnabled( 'hosting/sftp-phpmyadmin' ) && siteId > 155000000;
+		const sftpPhpMyAdminFeaturesEnabled = isEnabled( 'hosting/sftp-phpmyadmin' );
+
+		const getUpgradeBanner = () => (
+			<Banner
+				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+				event="calypso_hosting_configuration_upgrade_click"
+				href={ `/checkout/${ siteId }/business` }
+				plan={ PLAN_BUSINESS }
+			/>
+		);
 
 		const getAtomicActivationNotice = () => {
 			const { COMPLETE, FAILURE } = transferStates;
@@ -174,7 +186,7 @@ class Hosting extends Component {
 					}
 					align="left"
 				/>
-				{ getAtomicActivationNotice() }
+				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
 			</Main>
 		);
@@ -192,6 +204,7 @@ export default connect(
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,

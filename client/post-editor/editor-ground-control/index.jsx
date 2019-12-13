@@ -12,10 +12,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Site from 'blocks/site';
 import EditorPublishButton from 'post-editor/editor-publish-button';
-import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';

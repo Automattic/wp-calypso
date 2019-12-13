@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { shallow } from '../enzyme-adapter';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies

@@ -15,7 +15,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getSitePosts } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (

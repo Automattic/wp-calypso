@@ -10,6 +10,7 @@ import { CheckoutProvider } from '@automattic/composite-checkout';
  */
 import WPCheckout from './wp-checkout';
 import { useWpcomStore } from '../hooks/wpcom-store';
+import { useShoppingCart } from '../hooks/use-shopping-cart';
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
@@ -22,13 +23,19 @@ const handleCheckoutEvent = () => () => {
 
 // This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( {
-	useShoppingCart,
+	siteSlug,
+	setCart,
+	getCart,
 	availablePaymentMethods,
 	registry,
 	onSuccess,
 	onFailure,
 } ) {
-	const { itemsWithTax, total, deleteItem, changePlanLength } = useShoppingCart();
+	const { items, tax, total, removeItem, changePlanLength } = useShoppingCart(
+		siteSlug,
+		setCart,
+		getCart
+	);
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
@@ -40,7 +47,7 @@ export function WPCheckoutWrapper( {
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
-			items={ itemsWithTax }
+			items={ [ ...items, tax ] }
 			total={ total }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
@@ -49,13 +56,15 @@ export function WPCheckoutWrapper( {
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 		>
-			<WPCheckout deleteItem={ deleteItem } changePlanLength={ changePlanLength } />
+			<WPCheckout removeItem={ removeItem } changePlanLength={ changePlanLength } />
 		</CheckoutProvider>
 	);
 }
 
 WPCheckoutWrapper.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	useShoppingCart: PropTypes.func.isRequired,
 	registry: PropTypes.object.isRequired,
+	siteSlug: PropTypes.string,
+	setCart: PropTypes.func.isRequired,
+	getCart: PropTypes.func.isRequired,
 };

@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import Button from '../../components/button';
+import { Button } from '@automattic/components';
 import { useLocalize, sprintf } from '../../lib/localize';
 import joinClasses from '../../lib/join-classes';
 import { usePaymentData, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
@@ -18,10 +18,10 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 export function createCreditCardMethod() {
 	return {
 		id: 'card',
-		LabelComponent: CreditCardLabel,
-		PaymentMethodComponent: CreditCardFields,
-		SubmitButtonComponent: CreditCardSubmitButton,
-		SummaryComponent: CreditCardSummary,
+		label: <CreditCardLabel />,
+		activeContent: <CreditCardFields />,
+		submitButton: <CreditCardSubmitButton />,
+		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }
@@ -55,13 +55,13 @@ export function CreditCardSubmitButton( { disabled } ) {
 	);
 }
 
-export function CreditCardSummary( { id } ) {
+export function CreditCardSummary() {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 
 	let PaymentLogo = null;
 
-	if ( paymentData.creditCard && id === 'card' ) {
+	if ( paymentData.creditCard ) {
 		//TODO: Update this with all credit card types we support
 		switch ( Number( paymentData.creditCard.cardNumber[ 0 ] ) ) {
 			case 3:
@@ -116,5 +116,5 @@ function CreditCardLogos( className ) {
 }
 
 function submitCreditCardPayment() {
-	alert( 'Thank you!' );
+	window.alert( 'Thank you!' );
 }

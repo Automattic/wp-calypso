@@ -57,7 +57,7 @@ registerPlugin( 'page-templates-sidebar', {
 				name="Template Modal Opener"
 				title={ __( 'Page Layout' ) }
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
-				icon="admin-page"
+				icon="none"
 			>
 				<SidebarTemplatesPlugin
 					isFrontPage={ isFrontPage }

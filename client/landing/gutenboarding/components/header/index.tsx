@@ -18,6 +18,8 @@ import { selectorDebounce } from '../../constants';
 
 interface Props {
 	isEditorSidebarOpened: boolean;
+	next?: () => void;
+	prev?: () => void;
 	toggleGeneralSidebar: () => void;
 	toggleSidebarShortcut: KeyboardShortcut;
 }
@@ -30,6 +32,8 @@ interface KeyboardShortcut {
 
 const Header: FunctionComponent< Props > = ( {
 	isEditorSidebarOpened,
+	next,
+	prev,
 	toggleGeneralSidebar,
 	toggleSidebarShortcut,
 } ) => {
@@ -76,7 +80,14 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Icon icon="wordpress-alt" color="#066188" />
+					<Button
+						className="gutenboarding__header-back-button"
+						disabled={ ! prev }
+						onClick={ prev }
+					>
+						<Icon icon="arrow-left-alt" />
+						{ NO__( 'Back' ) }
+					</Button>
 				</div>
 				<div className="gutenboarding__header-group">
 					{ currentDomain ? (
@@ -96,7 +107,7 @@ const Header: FunctionComponent< Props > = ( {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button isPrimary isLarge disabled={ ! siteTitle }>
+					<Button isPrimary isLarge disabled={ ! next } onClick={ next }>
 						{ NO__( 'Next' ) }
 					</Button>
 				</div>

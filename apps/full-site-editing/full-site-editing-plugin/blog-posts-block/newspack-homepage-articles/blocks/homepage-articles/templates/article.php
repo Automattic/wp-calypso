@@ -98,6 +98,9 @@ call_user_func(
 										'srcset' => true,
 									),
 									'noscript' => array(),
+									'a'        => array(
+										'href' => true,
+									),
 								)
 							);
 						endif;
@@ -136,5 +139,5 @@ call_user_func(
 
 		<?php
 	},
-	$data
+	$data // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 );

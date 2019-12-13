@@ -7,13 +7,14 @@ import { endsWith, get, includes, isNumber, isString, some, sortBy } from 'lodas
 /**
  * Internal dependencies
  */
+import {
+	GSUITE_BASIC_SLUG,
+	GSUITE_BUSINESS_SLUG,
+	GSUITE_EXTRA_LICENSE_SLUG,
+	GSUITE_LINK_PREFIX
+} from 'lib/gsuite/constants';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import userFactory from 'lib/user';
-
-/**
- * Constants
- */
-const GSUITE_LINK_PREFIX = 'https://mail.google.com/a/';
 
 /**
  * Applies a precision to the cost
@@ -215,12 +216,43 @@ function hasPendingGSuiteUsers( domain ) {
 }
 
 /**
+ * Determines whether the specified product slug is for G Suite Basic or Business.
+ *
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to G Suite Basic or Business, false otherwise
+ */
+function isGSuiteProductSlug( productSlug ) {
+	return [ GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG ].includes( productSlug );
+}
+
+/**
+ * Determines whether the specified product slug is for a G Suite extra license.
+ *
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to an extra license, false otherwise
+ */
+function isGSuiteExtraLicenseProductSlug( productSlug ) {
+	return productSlug === GSUITE_EXTRA_LICENSE_SLUG;
+}
+
+/**
+ * Determines whether the specified product slug refers to any type of G Suite product.
+ *
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to any G Suite product, false otherwise
+ */
+function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
+	return isGSuiteProductSlug( productSlug ) || isGSuiteExtraLicenseProductSlug( productSlug );
+}
+
+/**
  * Is the user G Suite restricted
  *
  * @returns {boolean} - Is the user G Suite restricted
  */
 function isGSuiteRestricted() {
 	const user = userFactory();
+
 	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
@@ -236,5 +268,8 @@ export {
 	hasGSuiteWithAnotherProvider,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
+	isGSuiteExtraLicenseProductSlug,
+	isGSuiteOrExtraLicenseProductSlug,
+	isGSuiteProductSlug,
 	isGSuiteRestricted,
 };

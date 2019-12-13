@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.16.2
+Stable tag: 0.17
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -42,8 +42,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
-= 0.16.2 =
+= 0.17 =
+* Introduces Blog Posts block, a better version of Posts List.
 
+= 0.16.2 =
 * Fix for Global Styles. Logged out users weren't getting the fonts properly.
 
 = 0.16.1 =
@@ -51,35 +53,29 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Consistent back button styles.
 
 = 0.16 =
-
 * Delegate FSE support detection to themes by leveraging the theme tags.
 * Enable Global Styles for all template-first themes.
 * Fix back button navigation issues.
 * Keep the sidebar layout selector open by default.
 * Fix editor styles with new Gutenberg version.
-* Clyck anywhere on header/footer block to Navigate to editor.
+* Click anywhere on header/footer block to Navigate to editor.
 
 = 0.15.1 =
-
 * Always open the layout selector if the `?new-homepage` query argument exists.
 
 = 0.15 =
-
 * Add ability to change page layout for existing pages.
 * Expose Homepage layouts from other themes in page layout picker.
 
 = 0.14 =
-
 * Stop using theme classes for template parts to improve support for FSE blocks' style attributes.
 
 = 0.13 =
-
 * Incorporate Global Styles plugin functionality.
 * Side-load images on template insertion.
 * Remove widgets menu from wp-admin.
 
 = 0.12 =
-
 * Change menu order of default pages that FSE creates to 1.
 
 = 0.11 =

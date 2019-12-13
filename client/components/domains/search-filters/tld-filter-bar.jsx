@@ -12,8 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';
@@ -40,7 +39,7 @@ export class TldFilterBar extends Component {
 	};
 
 	static defaultProps = {
-		numberOfTldsShown: 8,
+		numberOfTldsShown: 6,
 	};
 
 	state = {
@@ -106,8 +105,8 @@ export class TldFilterBar extends Component {
 
 		return (
 			<CompactCard className={ className }>
-				{ this.renderSuggestedButtons() }
 				{ this.renderPopoverButton() }
+				{ this.renderSuggestedButtons() }
 				{ this.state.showPopover && this.renderPopover() }
 			</CompactCard>
 		);
@@ -182,10 +181,10 @@ export class TldFilterBar extends Component {
 				</FormFieldset>
 				<FormFieldset className="search-filters__buttons-fieldset">
 					<div className="search-filters__buttons">
-						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 						<Button primary onClick={ this.handleFiltersSubmit }>
 							{ translate( 'Apply' ) }
 						</Button>
+						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 					</div>
 				</FormFieldset>
 			</Popover>

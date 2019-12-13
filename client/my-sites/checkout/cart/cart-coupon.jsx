@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { applyCoupon, removeCoupon } from 'lib/cart/actions';
 

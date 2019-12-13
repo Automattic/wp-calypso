@@ -12,7 +12,7 @@ import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
  */
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
-import Button from '../../components/button';
+import { Button } from '@automattic/components';
 import {
 	useStripe,
 	createStripePaymentMethod,
@@ -211,11 +211,11 @@ export function createStripeMethod( {
 
 	return {
 		id: 'stripe-card',
-		LabelComponent: CreditCardLabel,
-		PaymentMethodComponent: StripeCreditCardFields,
-		SubmitButtonComponent: StripePayButton,
+		label: <CreditCardLabel />,
+		activeContent: <StripeCreditCardFields />,
+		submitButton: <StripePayButton />,
 		CheckoutWrapper: StripeHookProvider,
-		SummaryComponent: StripeSummary,
+		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
 			const cardholderName = selectors.getCardholderName( store.getState() );

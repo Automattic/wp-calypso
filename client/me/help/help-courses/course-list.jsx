@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Course from './course';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 class CourseList extends Component {
 	render() {

@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';

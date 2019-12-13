@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';

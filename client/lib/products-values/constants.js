@@ -101,6 +101,8 @@ export const JETPACK_BACKUP_PRODUCT_DESCRIPTIONS = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION,
 };
 
+export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
+
 export const JETPACK_PRODUCT_PRICE_MATRIX = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 		relatedProduct: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -117,7 +119,6 @@ export const JETPACK_PRODUCTS = [
 		title: translate( 'Jetpack Backup' ),
 		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
 		id: PRODUCT_JETPACK_BACKUP,
-		landingPageUrl: 'https://jetpack.com/upgrade/backup/',
 		options: {
 			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
@@ -131,6 +132,6 @@ export const JETPACK_PRODUCTS = [
 		optionDescriptions: {
 			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
-		optionsLabel: translate( 'Backup Options:' ),
+		optionsLabel: translate( 'Select a backup option:' ),
 	},
 ];

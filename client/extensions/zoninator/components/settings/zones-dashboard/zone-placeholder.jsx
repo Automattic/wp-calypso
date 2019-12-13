@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 const ZonePlaceholder = () => (
 	<CompactCard>

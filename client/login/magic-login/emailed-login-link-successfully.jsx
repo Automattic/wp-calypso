@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { login } from 'lib/paths';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
@@ -22,6 +22,11 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 import Gridicon from 'components/gridicon';
+
+/**
+ * Image dependencies
+ */
+import checkEmailImage from 'assets/images/illustrations/check-email.svg';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
@@ -68,7 +73,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 				<Card className="magic-login__form">
 					<img
-						src="/calypso/images/login/check-email.svg"
+						alt=""
+						src={ checkEmailImage }
 						className="magic-login__check-email-image"
 					/>
 					<p>{ line }</p>

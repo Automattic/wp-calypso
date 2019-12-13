@@ -10,10 +10,9 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
-import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';

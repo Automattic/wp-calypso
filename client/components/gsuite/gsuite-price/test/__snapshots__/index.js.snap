@@ -5,19 +5,17 @@ exports[`GSuitePrice renders correctly 1`] = `
   className="gsuite-price"
 >
   <h4
-    className="gsuite-price__price-per-user-per-month"
+    className="gsuite-price__monthly-price"
   >
-    <span>
-      <strong>
-        €6,40
-      </strong>
-       per user / month
-    </span>
+    <strong>
+      €6,40
+    </strong>
+     per user/month
   </h4>
   <h5
-    className="gsuite-price__price-per-user-per-year"
+    className="gsuite-price__annual-price"
   >
-    €76 billed yearly
+    €76 billed annually
   </h5>
 </div>
 `;

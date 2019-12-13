@@ -35,7 +35,6 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -172,7 +171,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			},
 			site_creation_flow: flowToCheck,
 		},
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		validate: false,
 	};
 
@@ -375,7 +374,18 @@ export function launchSiteApi( callback, dependencies ) {
 export function createAccount(
 	callback,
 	dependencies,
-	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup, recaptchaToken },
+	{
+		userData,
+		flowName,
+		queryArgs,
+		service,
+		access_token,
+		id_token,
+		oauth2Signup,
+		recaptchaDidntLoad,
+		recaptchaFailed,
+		recaptchaToken,
+	},
 	reduxStore
 ) {
 	const state = reduxStore.getState();
@@ -443,6 +453,8 @@ export function createAccount(
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
 					: null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
 				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
@@ -500,12 +512,11 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
-	const state = reduxStore.getState();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};

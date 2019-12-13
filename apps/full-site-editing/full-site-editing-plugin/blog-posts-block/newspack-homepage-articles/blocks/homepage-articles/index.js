@@ -5,9 +5,14 @@ import { Path, SVG } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 
 /**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks';
+import { __, _x } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
-import { __, _x } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
@@ -66,15 +71,18 @@ export const settings = {
 					postsToShow,
 					categories,
 				} ) => {
-					return createBlock( 'newspack-blocks/homepage-articles', {
-						showExcerpt: displayPostContent,
-						showDate: displayPostDate,
-						postLayout,
-						columns,
-						postsToShow,
-						showAuthor: false,
-						categories: categories ? [ categories ] : [],
-					} );
+					return createBlock(
+						applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ),
+						{
+							showExcerpt: displayPostContent,
+							showDate: displayPostDate,
+							postLayout,
+							columns,
+							postsToShow,
+							showAuthor: false,
+							categories: categories ? [ categories ] : [],
+						}
+					);
 				},
 			},
 		],

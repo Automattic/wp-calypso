@@ -2,24 +2,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, includes } from 'lodash';
+import { get, isEmpty, includes } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 import CardHeading from 'components/card-heading';
-import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import ProgressBar from 'components/progress-bar';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
@@ -41,6 +39,7 @@ class SectionMigrate extends Component {
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
+		startTime: '',
 	};
 
 	componentDidMount() {
@@ -79,7 +78,8 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setState( { migrationStatus: 'backing-up' } );
+		this.setState( { migrationStatus: 'backing-up', startTime: '' } );
+
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
 
@@ -88,8 +88,42 @@ class SectionMigrate extends Component {
 		wpcom
 			.getMigrationStatus( targetSiteId )
 			.then( response => {
-				const { status: migrationStatus, percent } = response;
+				const {
+					status: migrationStatus,
+					percent,
+					source_blog_id: sourceSiteId,
+					created: startTime,
+				} = response;
+
+				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
+					this.setSourceSiteId( sourceSiteId );
+				}
+
 				if ( migrationStatus ) {
+					if ( startTime && isEmpty( this.state.startTime ) ) {
+						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
+
+						if ( ! startMoment.isValid() ) {
+							this.setState( {
+								migrationStatus,
+								percent,
+							} );
+							return;
+						}
+
+						const localizedStartTime = startMoment
+							.local()
+							.locale( getLocaleSlug() )
+							.format( 'lll' );
+
+						this.setState( {
+							migrationStatus,
+							percent,
+							startTime: localizedStartTime,
+						} );
+						return;
+					}
+
 					this.setState( {
 						migrationStatus,
 						percent,
@@ -228,26 +262,43 @@ class SectionMigrate extends Component {
 		const { sourceSite, targetSite } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
+		const subHeaderText = (
+			<>
+				{ "We're moving everything from " }
+				<span className="migrate__domain">{ sourceSiteDomain }</span>
+				{ ' to ' }
+				<span className="migrate__domain">{ targetSiteDomain }</span>.
+			</>
+		);
 
 		return (
 			<>
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime.svg' }
+						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
 						alt=""
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
 						headerText="Migration in progress"
-						subHeaderText={ `We're moving everything from ${ sourceSiteDomain } to ${ targetSiteDomain }.` }
+						subHeaderText={ subHeaderText }
 						align="center"
 					/>
+					{ this.renderStartTime() }
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
 				</Card>
 			</>
 		);
+	}
+
+	renderStartTime() {
+		if ( isEmpty( this.state.startTime ) ) {
+			return <div className="migrate__start-time">&nbsp;</div>;
+		}
+
+		return <div className="migrate__start-time">Migration started { this.state.startTime }</div>;
 	}
 
 	renderProgressBar() {
@@ -273,7 +324,13 @@ class SectionMigrate extends Component {
 			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
 		}
 
-		return <img alt="" src="/calypso/images/importer/circle-gray.svg" />;
+		return (
+			<img
+				alt=""
+				src="/calypso/images/importer/circle-gray.svg"
+				className="migrate__progress-item-icon-todo"
+			/>
+		);
 	}
 
 	renderProgressItem( progressState ) {
@@ -285,13 +342,25 @@ class SectionMigrate extends Component {
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				progressItemText = `Backed up from ${ sourceSiteDomain }`;
+				progressItemText = (
+					<span>
+						Backed up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+					</span>
+				);
 				if ( migrationStatus === 'backing-up' ) {
-					progressItemText = `Backing up from ${ sourceSiteDomain }`;
+					progressItemText = (
+						<span>
+							Backing up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+						</span>
+					);
 				}
 				break;
 			case 'restoring':
-				progressItemText = `Restoring to ${ targetSiteDomain }`;
+				progressItemText = (
+					<span>
+						Restoring to <span className="migrate__domain">{ targetSiteDomain }</span>
+					</span>
+				);
 				break;
 		}
 

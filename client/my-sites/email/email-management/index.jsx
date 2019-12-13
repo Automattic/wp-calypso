@@ -62,7 +62,7 @@ class EmailManagement extends React.Component {
 	};
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, selectedDomainName } = this.props;
 
 		return (
 			<Main className="email-management" wideLayout>
@@ -70,11 +70,14 @@ class EmailManagement extends React.Component {
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="email-management__page-heading"
-					headerText={ this.props.translate( 'Email' ) }
-					align="left"
-				/>
+				{ ! selectedDomainName && (
+					<FormattedHeader
+						className="email-management__page-heading"
+						headerText={ this.props.translate( 'Email' ) }
+						align="left"
+					/>
+				) }
+
 				{ this.headerOrPlansNavigation() }
 				{ this.content() }
 			</Main>

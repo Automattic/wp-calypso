@@ -55,6 +55,10 @@ class ThemesSelection extends Component {
 		getPremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -171,6 +175,7 @@ class ThemesSelection extends Component {
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
+					bookmarkRef={ this.props.bookmarkRef }
 				/>
 			</div>
 		);

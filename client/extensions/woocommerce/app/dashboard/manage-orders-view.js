@@ -16,7 +16,7 @@ import {
 	getCountNewOrders,
 	getCountPendingReviews,
 } from 'woocommerce/state/sites/data/counts/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';

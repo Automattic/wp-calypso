@@ -7,11 +7,6 @@ jest.mock( 'blocks/dismissible-card', () => {
 	return class DismissibleCard extends React.Component {};
 } );
 
-jest.mock( 'components/card', () => {
-	const React = require( 'react' );
-	return class Card extends React.Component {};
-} );
-
 jest.mock( 'lib/analytics/track-component-view', () => {
 	const React = require( 'react' );
 	return class TrackComponentView extends React.Component {};

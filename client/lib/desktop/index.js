@@ -118,7 +118,7 @@ const Desktop = {
 	onShowReader: function() {
 		debug( 'Showing reader' );
 
-		this.navigate( '/' );
+		this.navigate( '/read' );
 	},
 
 	onShowProfile: function() {

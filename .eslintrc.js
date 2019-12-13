@@ -73,6 +73,7 @@ module.exports = {
 		// allow the browser globals. ESLint's `browser` env is too permissive and allows referencing
 		// directly hundreds of properties that are available on `window` and `document`. That
 		// frequently caused bugs where we used an undefined variable and ESLint didn't warn us.
+		globalThis: true,
 		window: true,
 		document: true,
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require

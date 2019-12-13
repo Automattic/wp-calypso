@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ReaderAvatar from 'blocks/reader-avatar';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';

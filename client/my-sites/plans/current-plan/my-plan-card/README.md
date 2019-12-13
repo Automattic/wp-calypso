@@ -13,7 +13,7 @@ See p1HpG7-7ET-p2 for more details.
 ```jsx
 import React from 'react';
 import MyPlanCard from 'components/my-plan-card';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export default class extends React.Component {
 	render() {

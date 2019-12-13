@@ -11,7 +11,7 @@ import { isUndefined } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
 import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';

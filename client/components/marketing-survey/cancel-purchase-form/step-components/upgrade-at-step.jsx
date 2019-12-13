@@ -15,7 +15,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export class UpgradeATStep extends Component {
 	static propTypes = {

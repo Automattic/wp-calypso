@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from '..';
 
 export default class extends PureComponent {
 	static displayName = 'ProgressBar';

@@ -13,8 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';

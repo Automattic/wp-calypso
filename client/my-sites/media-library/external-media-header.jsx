@@ -12,8 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import MediaLibraryScale from './scale';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';

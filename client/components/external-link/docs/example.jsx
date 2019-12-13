@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 export default class extends React.Component {
 	static displayName = 'ExternalLink';

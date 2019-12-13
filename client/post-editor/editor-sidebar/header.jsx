@@ -11,7 +11,7 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EditorPostType from 'post-editor/editor-post-type';
 import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 

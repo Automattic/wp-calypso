@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import Button from '../../components/button';
+import { Button } from '@automattic/components';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
@@ -79,12 +79,9 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 
 	return {
 		id: 'paypal',
-		LabelComponent: PaypalLabel,
-		SubmitButtonComponent: PaypalSubmitButton,
-		SummaryComponent: () => {
-			const localize = useLocalize();
-			return localize( 'PayPal' );
-		},
+		label: <PaypalLabel />,
+		submitButton: <PaypalSubmitButton />,
+		inactiveContent: <PaypalSummary />,
 		getAriaLabel: localize => localize( 'PayPal' ),
 	};
 }
@@ -152,9 +149,9 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 	transform: translateY( 2px );
 `;
 
-export function PaypalSummary() {
+function PaypalSummary() {
 	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Paypal' ) }</React.Fragment>;
+	return localize( 'Paypal' );
 }
 
 function PaypalLogo( { className } ) {

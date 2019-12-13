@@ -52,7 +52,7 @@ export function checkout( context, next ) {
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		context.primary = <CompositeCheckoutContainer />;
+		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } />;
 		next();
 		return;
 	}
@@ -113,6 +113,9 @@ export function checkoutThankYou( context, next ) {
 			gsuiteReceiptId={ gsuiteReceiptId }
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
+			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
+			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>

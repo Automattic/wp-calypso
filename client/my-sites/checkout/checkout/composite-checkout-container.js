@@ -8,11 +8,7 @@ import {
 	createStripeMethod,
 	createApplePayMethod,
 } from '@automattic/composite-checkout';
-import {
-	WPCheckoutWrapper,
-	makeShoppingCartHook,
-	mockPayPalExpressRequest,
-} from '@automattic/composite-checkout-wpcom';
+import { WPCheckoutWrapper, mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -24,52 +20,10 @@ import notices from 'notices';
 
 const debug = debugFactory( 'calypso:composite-checkout-container' );
 
-const initialCart = {
-	coupon: '',
-	currency: 'BRL',
-	is_coupon_applied: false,
-	products: [
-		{
-			extra: {
-				context: 'signup',
-				domain_registration_agreement_url:
-					'https://wordpress.com/automattic-domain-name-registration-agreement/',
-				privacy: true,
-				privacy_available: true,
-				registrar: 'KS_RAM',
-			},
-			free_trial: false,
-			meta: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
-			product_id: 106,
-			volume: 1,
-		},
-		{
-			extra: {
-				context: 'signup',
-				domain_to_bundle: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
-			},
-			free_trial: false,
-			meta: '',
-			product_id: 1009,
-			volume: 1,
-		},
-	],
-	tax: {
-		display_taxes: false,
-		location: {},
-	},
-	temporary: false,
-};
-
 const registry = createRegistry();
 const { registerStore } = registry;
 
 const wpcom = wp.undocumented();
-
-const useShoppingCart = makeShoppingCartHook(
-	( cartKey, cartParam ) => wpcom.setCart( cartKey, cartParam ),
-	initialCart
-);
 
 async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
@@ -125,7 +79,12 @@ export function isApplePayAvailable() {
 
 const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
 
-export default function CompositeCheckoutContainer() {
+// Aliasing getCart and setCart explicitly bound to wpcom is
+// required here; otherwise we get `this is not defined` errors.
+const getCart = ( ...args ) => wpcom.getCart( ...args );
+const setCart = ( ...args ) => wpcom.setCart( ...args );
+
+export default function CompositeCheckoutContainer( { siteSlug } ) {
 	const translate = useTranslate();
 	const onSuccess = () => {
 		debug( 'success' );
@@ -140,7 +99,9 @@ export default function CompositeCheckoutContainer() {
 
 	return (
 		<WPCheckoutWrapper
-			useShoppingCart={ useShoppingCart }
+			siteSlug={ siteSlug }
+			getCart={ getCart }
+			setCart={ setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			onSuccess={ onSuccess }

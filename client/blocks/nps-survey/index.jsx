@@ -13,10 +13,8 @@ import { isNumber, noop, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card, ScreenReaderText } from '@automattic/components';
 import FormTextArea from 'components/forms/form-textarea';
-import ScreenReaderText from 'components/screen-reader-text';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,

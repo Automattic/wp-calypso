@@ -8,8 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';

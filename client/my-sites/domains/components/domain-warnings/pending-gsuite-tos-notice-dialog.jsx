@@ -10,11 +10,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { Dialog } from '@automattic/components';
 import { errorNotice } from 'state/notices/actions';
 import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
 import VerticalNav from 'components/vertical-nav';

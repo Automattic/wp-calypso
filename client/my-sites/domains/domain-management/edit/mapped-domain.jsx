@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';

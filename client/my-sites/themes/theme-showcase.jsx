@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -66,7 +66,7 @@ class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.scrollRef = React.createRef();
-
+		this.bookmarkRef = React.createRef();
 		this.state = {
 			page: 1,
 			showPreview: false,
@@ -74,6 +74,7 @@ class ThemeShowcase extends React.Component {
 				this.props.loggedOutComponent ||
 				this.props.search ||
 				this.props.filter ||
+				this.props.tier ||
 				this.props.hasShowcaseOpened
 			),
 		};
@@ -107,14 +108,33 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
+		const { search, filter, tier, hasShowcaseOpened, themesBookmark } = this.props;
 		// Open showcase on state if we open here with query override.
-		if ( ( this.props.search || this.props.filter ) && ! this.props.hasShowcaseOpened ) {
+		if ( ( search || filter || tier ) && ! hasShowcaseOpened ) {
 			this.props.openThemesShowcase();
+		}
+		// Scroll to bookmark if applicable.
+		if ( themesBookmark ) {
+			// Timeout to move this to the end of the event queue or it won't work here.
+			setTimeout( () => {
+				const lastTheme = this.bookmarkRef.current;
+				if ( lastTheme ) {
+					lastTheme.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+						inline: 'center',
+					} );
+				}
+			} );
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.search !== this.props.search || prevProps.filter !== this.props.filter ) {
+		if (
+			prevProps.search !== this.props.search ||
+			prevProps.filter !== this.props.filter ||
+			prevProps.tier !== this.props.tier
+		) {
 			this.scrollToSearchInput();
 		}
 	}
@@ -251,7 +271,7 @@ class ThemeShowcase extends React.Component {
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const { isShowcaseOpen } = this.state;
-		const isQueried = this.props.search || this.props.filter;
+		const isQueried = this.props.search || this.props.filter || this.props.tier;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -317,6 +337,7 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 								isShowcaseOpen={ isShowcaseOpen }
 								scrollToSearchInput={ this.scrollToSearchInput }
+								bookmarkRef={ this.bookmarkRef }
 							/>
 							<div className="theme-showcase__open-showcase-button-holder">
 								{ isShowcaseOpen ? (
@@ -400,6 +421,7 @@ class ThemeShowcase extends React.Component {
 							} }
 							trackScrollPage={ this.props.trackScrollPage }
 							emptyContent={ this.props.emptyContent }
+							bookmarkRef={ this.bookmarkRef }
 						/>
 						<ThemePreview />
 						{ this.props.children }
@@ -420,6 +442,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
+	themesBookmark: state.themes.themesUI.themesBookmark,
 } );
 
 const mapDispatchToProps = {
@@ -428,4 +451,5 @@ const mapDispatchToProps = {
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };
+
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

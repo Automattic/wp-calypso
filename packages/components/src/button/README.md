@@ -6,7 +6,7 @@ Buttons express what action will occur when the user clicks or taps it. Buttons 
 
 ```jsx
 import Gridicon from 'components/gridicons';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
 	return (
@@ -43,7 +43,7 @@ To use an icon button, insert a Gridicon so that it displays to the left of the 
 
 ```jsx
 import Gridicon from 'components/gridicons';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
 	return (

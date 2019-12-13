@@ -11,11 +11,10 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card, CompactCard } from '@automattic/components';
 import CancelPurchaseButton from './button';
 import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
-import CompactCard from 'components/card/compact';
 import {
 	getName,
 	isCancelable,

@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 

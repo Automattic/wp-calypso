@@ -982,6 +982,8 @@ export default connect(
 			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
 
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		return {
 			canPurchase,
 			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
@@ -997,7 +999,7 @@ export default connect(
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
 				planCredits &&
-				! isJetpack &&
+				! isJetpackNotAtomic &&
 				! isInSignup,
 		};
 	},

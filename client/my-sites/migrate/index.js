@@ -2,22 +2,23 @@
  * External dependencies
  */
 import page from 'page';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { migrateSite } from 'my-sites/migrate/controller';
+import {
+	ensureFeatureFlag,
+	migrateSite,
+	setSiteSelectionHeader,
+} from 'my-sites/migrate/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'my-sites/controller';
 
 export default function() {
 	page(
 		'/migrate',
-		( context, next ) => {
-			context.getSiteSelectionHeaderText = () => i18n.translate( 'Select a site to migrate to' );
-			next();
-		},
+		ensureFeatureFlag,
+		setSiteSelectionHeader,
 		siteSelection,
 		navigation,
 		sites,
@@ -27,6 +28,7 @@ export default function() {
 
 	page(
 		'/migrate/:site_id',
+		ensureFeatureFlag,
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/migrate' ),
@@ -37,6 +39,7 @@ export default function() {
 
 	page(
 		'/migrate/from/:sourceSiteId/to/:site_id',
+		ensureFeatureFlag,
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/migrate' ),

@@ -20,6 +20,8 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const gutenbergUser =
+	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 let driver;
 
@@ -33,7 +35,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Buttons block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -61,7 +63,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Click to Tweet block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -120,7 +122,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Dynamic HR block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -148,7 +150,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Hero block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -184,7 +186,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -231,7 +233,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Pricing Table block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 

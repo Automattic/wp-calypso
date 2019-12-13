@@ -9,7 +9,7 @@ import { trim } from 'lodash';
  * Internal Dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { isSiteDescriptionBlacklisted } from 'reader/lib/site-description-blacklist';
+import { isSiteDescriptionBlocked } from 'reader/lib/site-description-blocklist';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -69,7 +69,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = site.domain;
 	} else {
 		const siteUrl = getSiteUrl( { feed, site, post } );
-		siteName = !! siteUrl ? url.parse( siteUrl ).hostname : null;
+		siteName = siteUrl ? url.parse( siteUrl ).hostname : null;
 	}
 
 	return decodeEntities( siteName );
@@ -77,7 +77,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 
 export const getSiteDescription = ( { site, feed } ) => {
 	const description = ( site && site.description ) || ( feed && feed.description );
-	if ( isSiteDescriptionBlacklisted( description ) ) {
+	if ( isSiteDescriptionBlocked( description ) ) {
 		return null;
 	}
 	return description;

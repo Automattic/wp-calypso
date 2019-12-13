@@ -8,10 +8,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
 import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,

@@ -12,7 +12,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import cancellationReasons from './cancellation-reasons';
 import { cancelAndRefundPurchase } from 'lib/purchases/actions';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { clearPurchases } from 'state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';

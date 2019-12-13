@@ -23,9 +23,16 @@
 	}
 }
 
-.gutenboarding__header-section {
+.gutenboarding__header-section,
+.gutenboarding__header-back-button {
 	display: flex;
 	align-items: center;
+}
+
+.gutenboarding__header-back-button {
+	.dashicons-arrow-left-alt {
+		margin-right: 5px;
+	}
 }
 
 .gutenboarding__header-group {
