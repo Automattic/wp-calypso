@@ -53,16 +53,13 @@ export function CompositeCheckoutWrapper( {
 	const dispatch = useDispatch();
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 
-	const { select, subscribe, registerStore } = registry;
+	const { registerStore } = registry;
 	useWpcomStore( registerStore );
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, onFailure );
 
-	useEffect( () => {
-		debug( 'subscribing to composite-checkout events' );
-		return subscribe( handleCheckoutEvent( select ) );
-	}, [ select, subscribe ] );
+	useRecordStats( registry );
 
 	// Add product if requested in the URL
 	useEffect( () => {
@@ -114,6 +111,14 @@ CompositeCheckoutWrapper.propTypes = {
 	planSlug: PropTypes.string,
 	isJetpackNotAtomic: PropTypes.bool,
 };
+
+function useRecordStats( registry ) {
+	useEffect( () => {
+		const { select, subscribe } = registry;
+		debug( 'subscribing to composite-checkout events' );
+		return subscribe( handleCheckoutEvent( select ) );
+	}, [ registry ] );
+}
 
 function useDisplayErrors( errors, displayError ) {
 	useEffect( () => {
