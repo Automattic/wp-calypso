@@ -35,7 +35,9 @@ async function fetchStripeConfiguration( requestArgs ) {
 }
 
 async function sendStripeTransaction( transactionData ) {
-	return wpcom.transactions( formatDataForTransactionsEndpoint( transactionData ) );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( transactionData );
+	debug( 'sending stripe transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
 }
 
 function formatDataForTransactionsEndpoint( {
@@ -67,7 +69,7 @@ function formatDataForTransactionsEndpoint( {
 		cart: createCartFromLineItems( {
 			siteId,
 			couponId,
-			items,
+			items: items.filter( item => item.type !== 'tax' ),
 			total,
 			country,
 			postalCode,
@@ -88,6 +90,7 @@ export function createCartFromLineItems( {
 	subdivisionCode,
 } ) {
 	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
+	debug( 'creating cart from items', items );
 	return {
 		blog_id: siteId,
 		coupon: couponId || '',
@@ -95,7 +98,7 @@ export function createCartFromLineItems( {
 		temporary: false,
 		extra: [],
 		products: items.map( item => ( {
-			product_id: item.product_id,
+			product_id: item.wpcom_meta?.product_id,
 			meta: '', // TODO: get this for domains, etc
 			currency: item.amount.currency,
 			volume: 1, // TODO: get this from the item
