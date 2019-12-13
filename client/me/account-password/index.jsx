@@ -24,7 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormInputValidation from 'components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
@@ -99,7 +99,11 @@ const AccountPassword = createReactClass( {
 	},
 
 	submitForm: function( event ) {
-		const { translate, errorNotice: showErrorNotice } = this.props;
+		const {
+			translate,
+			errorNotice: showErrorNotice,
+			successNotice: showSuccessNotice,
+		} = this.props;
 
 		event.preventDefault();
 
@@ -124,6 +128,8 @@ const AccountPassword = createReactClass( {
 					this.setState( { submittingForm: false } );
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
+
+					showSuccessNotice( translate( 'Password saved successfully.' ) );
 
 					// Since changing a user's password invalidates the session, we reload.
 					window.location = window.location.pathname + '?updated=password';
@@ -201,6 +207,6 @@ const AccountPassword = createReactClass( {
 } );
 
 export default compose(
-	connect( null, { errorNotice, recordGoogleEvent } ),
+	connect( null, { errorNotice, successNotice, recordGoogleEvent } ),
 	localize
 )( AccountPassword );
