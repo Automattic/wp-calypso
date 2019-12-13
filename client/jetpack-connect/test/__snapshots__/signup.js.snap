@@ -46,7 +46,7 @@ exports[`JetpackSignup should render 1`] = `
       handleSocialResponse={[Function]}
       isSocialSignupEnabled={true}
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
-      submitButtonText="Continue with email"
+      submitButtonText="Create your account"
       submitForm={[Function]}
       submitting={false}
       suggestedUsername=""
@@ -106,7 +106,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       isSocialSignupEnabled={true}
       locale="es"
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
-      submitButtonText="Continue with email"
+      submitButtonText="Create your account"
       submitForm={[Function]}
       submitting={false}
       suggestedUsername=""

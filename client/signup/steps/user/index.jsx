@@ -351,7 +351,7 @@ export class UserStep extends Component {
 				headerText={ this.getHeaderText() }
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+				fallbackHeaderText={ this.props.translate( 'Create your account' ) }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);
