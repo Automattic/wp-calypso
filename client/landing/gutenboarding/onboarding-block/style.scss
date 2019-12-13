@@ -50,7 +50,7 @@
 }
 
 .onboarding-block__background::before {
-	background: $white;
+	background-color: $white;
 	content: '';
 	position: absolute;
 	top: 0;
@@ -58,7 +58,7 @@
 	bottom: 0;
 	left: 0;
 	opacity: 0.7;
-	transition: opacity 1s linear;
+	transition: opacity 1s linear, background-color 250ms linear;
 }
 .onboarding-block__background-fade-enter {
 	&.onboarding-block__background::before {
@@ -99,7 +99,7 @@
 			}
 		}
 		.onboarding-block__background::before {
-			background: $dark-gray-900;
+			background-color: $dark-gray-900;
 		}
 		.components-button.is-link.onboarding-block__question-skip {
 			color: $light-gray-500;
