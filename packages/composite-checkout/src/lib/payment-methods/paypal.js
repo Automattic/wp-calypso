@@ -12,7 +12,6 @@ import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
 import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { createCartFromLineItems } from './transactions-endpoint';
 
 export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
 	registerStore( 'paypal', {
