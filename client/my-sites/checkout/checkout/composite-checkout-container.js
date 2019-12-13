@@ -21,7 +21,7 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import { CompositeCheckoutWrapper } from './composite-checkout-wrapper';
+import { CompositeCheckout } from './composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout-container' );
 
@@ -222,7 +222,7 @@ export default function CompositeCheckoutContainer( {
 	};
 
 	return (
-		<CompositeCheckoutWrapper
+		<CompositeCheckout
 			siteSlug={ siteSlug }
 			getCart={ getCart }
 			setCart={ setCart }

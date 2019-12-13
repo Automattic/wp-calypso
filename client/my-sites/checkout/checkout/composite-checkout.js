@@ -28,7 +28,7 @@ const debug = debugFactory( 'calypso:composite-checkout' );
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
-export function CompositeCheckoutWrapper( {
+export function CompositeCheckout( {
 	siteSlug,
 	planSlug,
 	isJetpackNotAtomic,
@@ -83,7 +83,7 @@ export function CompositeCheckoutWrapper( {
 	);
 }
 
-CompositeCheckoutWrapper.propTypes = {
+CompositeCheckout.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	registry: PropTypes.object.isRequired,
 	siteSlug: PropTypes.string,
