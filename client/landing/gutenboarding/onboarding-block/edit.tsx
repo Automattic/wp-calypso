@@ -59,7 +59,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 				</div>
 			);
 		case Steps.DesignSelection:
-			return <DesignSelector className="onboarding-block__design-selector" />;
+			return <DesignSelector />;
 	}
 
 	return null;

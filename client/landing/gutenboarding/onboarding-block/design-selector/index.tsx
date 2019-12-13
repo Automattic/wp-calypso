@@ -3,8 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useState } from 'react';
-import classNames from 'classnames';
+import React, { useState } from 'react';
 
 /**
  * Internal dependencies
@@ -14,11 +13,7 @@ import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/f
 
 import './style.scss';
 
-interface DesignSelectorProps {
-	className: string;
-}
-
-const DesignSelector: FunctionComponent< DesignSelectorProps > = ( { className } ) => {
+export default () => {
 	const siteVertical = useSelect(
 		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
 	);
@@ -32,7 +27,9 @@ const DesignSelector: FunctionComponent< DesignSelectorProps > = ( { className }
 
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
-		<div className={ classNames( 'page-template-modal__list', className ) }>
+		<div
+			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
+		>
 			<TemplateSelectorControl
 				label={ NO__( 'Layout', 'full-site-editing' ) }
 				templates={ homepageTemplates }
@@ -45,5 +42,3 @@ const DesignSelector: FunctionComponent< DesignSelectorProps > = ( { className }
 		</div>
 	);
 };
-
-export default DesignSelector;
