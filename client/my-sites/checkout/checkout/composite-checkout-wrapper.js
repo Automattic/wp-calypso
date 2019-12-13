@@ -6,15 +6,11 @@ import PropTypes from 'prop-types';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
+import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
  */
-import WPCheckout from './wp-checkout';
-import { useWpcomStore } from '../hooks/wpcom-store';
-import { useShoppingCart } from '../hooks/use-shopping-cart';
-
-// TODO: move this whole file into calypso so we have direct access to all these things instead of reaching across packages like this
 import {
 	conciergeSessionItem,
 	domainMapping,
@@ -28,6 +24,7 @@ import { getPlanBySlug } from 'state/plans/selectors';
 const debug = debugFactory( 'composite-checkout-wpcom:wp-checkout-wrapper' );
 
 // These are used only for redirect payment methods
+// TODO: determine what these should be
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
@@ -36,7 +33,7 @@ const handleCheckoutEvent = () => () => {
 	// TODO: record stats
 };
 
-export function WPCheckoutWrapper( {
+export function CompositeCheckoutWrapper( {
 	siteSlug,
 	planSlug,
 	isJetpackNotAtomic,
@@ -102,7 +99,7 @@ export function WPCheckoutWrapper( {
 	);
 }
 
-WPCheckoutWrapper.propTypes = {
+CompositeCheckoutWrapper.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	registry: PropTypes.object.isRequired,
 	siteSlug: PropTypes.string,
