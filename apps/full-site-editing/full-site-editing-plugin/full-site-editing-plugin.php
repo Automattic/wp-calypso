@@ -117,6 +117,20 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
+ * Load Event Countdown Block
+ */
+add_action( 'plugins_loaded', function() {
+	require_once __DIR__ . '/event-countdown-block/index.php';
+} );
+
+/**
+ * Load Timeline Block
+ */
+add_action( 'plugins_loaded', function() {
+	require_once __DIR__ . '/jetpack-timeline/index.php';
+} );
+
+/** 
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
