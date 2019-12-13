@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { SiteVertical } from '../../stores/onboard/types';
 import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
 
-import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
+import './style.scss';
 
 interface DesignSelectorProps {
 	className: string;
