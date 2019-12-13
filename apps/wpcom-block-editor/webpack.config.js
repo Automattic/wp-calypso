@@ -37,7 +37,7 @@ function getWebpackConfig(
 	env = {},
 	{
 		entry = {
-			common: path.join( __dirname, 'src', 'common' ),
+			default: path.join( __dirname, 'src', 'default' ),
 			wpcom: path.join( __dirname, 'src', 'wpcom' ),
 			'calypso-iframe-bridge-server': path.join(
 				__dirname,

@@ -17,51 +17,52 @@ The block editor integration provides features for the following type of sites a
 
 <table>
   <tr>
-    <th colspan="2">&nbsp;</th>
-    <th><a href="./src/common"><code>common</code></a></th>
+    <th>Site</th>
+    <th>Editor</th>
+    <th><a href="./src/default"><code>default</code></a></th>
     <th><a href="./src/wpcom"><code>wpcom</code></a></th>
     <th><a href="./src/calypso"><code>calypso</code></a></th>
   </tr>
   <tr>
-    <td rowspan="2">WordPress.com site</td>
-    <td>WP Admin block editor</td>
+    <td rowspan="2">WordPress.com</td>
+    <td>WP Admin</td>
     <td>✅</td>
     <td>✅</td>
     <td>❌</td>
   </tr>
   <tr>
-    <td>Calypso block editor</td>
+    <td>Calypso</td>
     <td>✅</td>
     <td>✅</td>
     <td>✅</td>
   </tr>
   <tr>
-    <td rowspan="2">Jetpack site</td>
-    <td>WP Admin block editor</td>
+    <td rowspan="2">Jetpack</td>
+    <td>WP Admin</td>
     <td>✅</td>
     <td>❌</td>
     <td>❌</td>
   </tr>
   <tr>
-    <td>Calypso block editor</td>
+    <td>Calypso</td>
     <td>✅</td>
     <td>❌</td>
     <td>✅</td>
   </tr> 
 </table>
 
-### `common`
+### `default`
 
-- [`rich-text`](./src/common/rich-text.js): Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
-- [`switch-to-classic`](./src/common/switch-to-classic.js): Append a button to the "More tools" menu for switching to the classic editor.
-- [`tracking`](./src/common/tracking.js): Adds analytics around specific user actions for Simple, Jetpack and Atomic sites.
-- [`fix-block-invalidation-errors`](./src/common/fix-block-invalidation-errors.js): Performs block attempt block recovery on editor load if validation errors are detected.`](./src/common/): (Atomic/Simple) Performs block attempt block recovery on editor load if validation errors are detected.
+- [`rich-text`](./src/default/rich-text.js): Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
+- [`switch-to-classic`](./src/default/switch-to-classic.js): Appends a button to the "More tools" menu for switching to the classic editor.
+- [`tracking`](./src/default/tracking.js): Adds analytics around specific user actions for Simple, Jetpack and Atomic sites.
+- [`fix-block-invalidation-errors`](./src/default/fix-block-invalidation-errors.js): Performs block attempt block recovery on editor load if validation errors are detected.`](./src/common/): (Atomic/Simple) Performs block attempt block recovery on editor load if validation errors are detected.
 
 ### `wpcom`
 
-- [`disable-nux-tour`](./src/wpcom/disable-nux-tour.js): Disable the pop-up tooltip tour that is displayed on first use.
+- [`disable-nux-tour`](./src/wpcom/disable-nux-tour.js): Disables the welcome guide that is displayed on first use.
 - [`unregister-experimental-blocks`](./src/wpcom/unregister-experimental-blocks.js): Removes some experimental blocks from the Gutenberg Plugin.
-- [`reorder-block-categories`](./src/wpcom/reorder-block-categories.js): Moves Jetpack and CoBlocks Block Categories below Core Categories
+- [`reorder-block-categories`](./src/wpcom/reorder-block-categories.js): Moves Jetpack and CoBlocks Block Categories below Core Categories.
 
 ### `calypso`
 
