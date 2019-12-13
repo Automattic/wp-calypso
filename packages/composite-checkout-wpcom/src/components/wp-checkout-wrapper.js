@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ import { useSelector } from 'react-redux';
 import WPCheckout from './wp-checkout';
 import { useWpcomStore } from '../hooks/wpcom-store';
 import { useShoppingCart } from '../hooks/use-shopping-cart';
+
+// TODO: move this whole file into calypso so we have direct access to all these things instead of reaching across packages like this
 import {
 	conciergeSessionItem,
 	domainMapping,
@@ -20,6 +22,7 @@ import {
 	themeItem,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
+import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
 
 const debug = debugFactory( 'composite-checkout-wpcom:wp-checkout-wrapper' );
@@ -30,10 +33,9 @@ const failureRedirectUrl = window.location.href;
 
 // Called when the store is changed.
 const handleCheckoutEvent = () => () => {
-	// TODO: write this
+	// TODO: record stats
 };
 
-// This is the parent component which would be included on a host page
 export function WPCheckoutWrapper( {
 	siteSlug,
 	planSlug,
@@ -51,12 +53,12 @@ export function WPCheckoutWrapper( {
 		setCart,
 		getCart
 	);
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) ); // TODO: plan is never being found
+	const dispatch = useDispatch();
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
 
-	// Subscribe to all events
 	useEffect( () => {
 		debug( 'subscribing to composite-checkout events' );
 		return subscribe( handleCheckoutEvent( select ) );
@@ -64,9 +66,17 @@ export function WPCheckoutWrapper( {
 
 	// Add product if requested in the URL
 	useEffect( () => {
+		if ( ! planSlug ) {
+			return;
+		}
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			dispatch( requestPlans() );
+			return;
+		}
 		debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
-		planSlug && plan && addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
-	}, [ planSlug, plan, isJetpackNotAtomic, addItem ] );
+		addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
+	}, [ dispatch, planSlug, plan, isJetpackNotAtomic, addItem ] );
 
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
