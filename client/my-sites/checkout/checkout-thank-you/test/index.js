@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -53,6 +51,9 @@ jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
 jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
+jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( '../header', () => 'CheckoutThankYouHeader' );
+jest.mock( 'components/happiness-support', () => 'HappinessSupport' );
 jest.mock( 'lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
@@ -92,6 +93,53 @@ describe( 'CheckoutThankYou', () => {
 		test( 'Show WordPressLogo when there are no purchase but a receipt is present', () => {
 			const comp = shallow( <CheckoutThankYou { ...defaultProps } receiptId={ 12 } /> );
 			expect( comp.find( 'WordPressLogo' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'Simplified page', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: PLAN_BUSINESS }, [] ],
+				},
+			},
+			refreshSitePlans: selectedSite => selectedSite,
+			planSlug: PLAN_BUSINESS,
+		};
+		test( 'Should display a full version when isSimplified is missing', () => {
+			const comp = shallow( <CheckoutThankYou { ...props } /> );
+			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 1 );
+			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 1 );
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBeFalsy();
+		} );
+		test( 'Should display a simplified version when isSimplified is set to true', () => {
+			const comp = shallow( <CheckoutThankYou { ...props } isSimplified={ true } /> );
+			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 0 );
+			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 0 );
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBe( true );
+		} );
+		test( 'Should pass props down to CheckoutThankYou', () => {
+			const comp = shallow(
+				<CheckoutThankYou
+					{ ...props }
+					isSimplified={ true }
+					siteUnlaunchedBeforeUpgrade={ true }
+					upgradeIntent={ 'plugins' }
+				/>
+			);
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteUnlaunchedBeforeUpgrade ).toBe(
+				true
+			);
+			expect( comp.find( 'CheckoutThankYouHeader' ).props().upgradeIntent ).toBe( 'plugins' );
 		} );
 	} );
 

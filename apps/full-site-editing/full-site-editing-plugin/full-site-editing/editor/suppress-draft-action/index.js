@@ -12,7 +12,11 @@ use( registry => {
 			const actions = { ...registry.dispatch( namespace ) };
 			const { editorPostType } = fullSiteEditing;
 
-			if ( namespace === 'core/editor' && actions.editPost && editorPostType === 'wp_template' ) {
+			if (
+				namespace === 'core/editor' &&
+				actions.editPost &&
+				editorPostType === 'wp_template_part'
+			) {
 				const originalEditPost = actions.editPost;
 
 				actions.editPost = edits => {

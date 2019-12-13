@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
 
@@ -16,6 +13,8 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 
 export class Eventbrite extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 		saveRequests: PropTypes.object,
 		saveSiteSettings: PropTypes.func,
@@ -43,7 +42,7 @@ export class Eventbrite extends SharingService {
 		this.props.deleteKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
+	UNSAFE_componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,

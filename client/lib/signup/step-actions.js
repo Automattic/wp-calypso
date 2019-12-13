@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,6 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -133,42 +130,58 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} = stepData;
 
 	const state = reduxStore.getState();
+	const signupDependencies = getSignupDependencyStore( state );
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
+	const siteVerticalName = getSiteVerticalName( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+
+	// The theme can be provided in this step's dependencies,
+	// the step object itself depending on if the theme is provided in a
+	// query (see `getThemeSlug` in `DomainsStep`),
+	// or the Signup dependency store. Defaults to site type theme.
+	const theme =
+		dependencies.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false ) ||
+		siteTypeTheme;
+
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
 
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
 			designType: designType || undefined,
-			// the theme can be provided in this step's dependencies or the
-			// step object itself depending on if the theme is provided in a
-			// query. See `getThemeSlug` in `DomainsStep`.
-			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+			theme,
+			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
+			site_vertical_name: siteVerticalName || undefined,
 			site_information: {
 				title: siteTitle,
 			},
+			site_creation_flow: flowToCheck,
 		},
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		validate: false,
 	};
 
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
+	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
+	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
 
-	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
+	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
-			get( getSignupDependencyStore( state ), 'username' ) ||
+			get( signupDependencies, 'username' ) ||
 			siteTitle ||
 			siteType ||
 			getSiteVertical( state );
@@ -184,6 +197,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
+	}
+
+	// Provide the default business starter content for the FSE user testing flow.
+	if ( 'test-fse' === lastKnownFlow ) {
+		newSiteParams.options.site_segment = 1;
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
@@ -356,7 +374,18 @@ export function launchSiteApi( callback, dependencies ) {
 export function createAccount(
 	callback,
 	dependencies,
-	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
+	{
+		userData,
+		flowName,
+		queryArgs,
+		service,
+		access_token,
+		id_token,
+		oauth2Signup,
+		recaptchaDidntLoad,
+		recaptchaFailed,
+		recaptchaToken,
+	},
 	reduxStore
 ) {
 	const state = reduxStore.getState();
@@ -423,7 +452,10 @@ export function createAccount(
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 					  }
-					: null
+					: null,
+				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
+				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
+				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
 			( error, response ) => {
 				const errors =
@@ -460,7 +492,7 @@ export function createAccount(
 
 				// Fire after a new user registers.
 				analytics.recordRegistration( { flow: flowName } );
-				analytics.identifyUser( username, userId );
+				analytics.identifyUser( { ID: userId, username, email: userData.email } );
 
 				const providedDependencies = assign( { username }, bearerToken );
 
@@ -480,12 +512,11 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
-	const state = reduxStore.getState();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state ),
+		public: -1,
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
@@ -521,7 +552,13 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	}
 
 	const stepProvidesDependencies = steps[ stepName ].providesDependencies;
-	const dependenciesNotProvided = difference( stepProvidesDependencies, fulfilledDependencies );
+	const stepOptionalDependencies = steps[ stepName ].optionalDependencies;
+
+	const dependenciesNotProvided = difference(
+		stepProvidesDependencies,
+		stepOptionalDependencies,
+		fulfilledDependencies
+	);
 	return isEmpty( dependenciesNotProvided );
 }
 
@@ -650,7 +687,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
  * Creates a user account and sends the user a verification code via email to confirm the account.
  * Returns the dependencies for the step.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
 export function createPasswordlessUser( callback, { email } ) {
@@ -664,10 +701,10 @@ export function createPasswordlessUser( callback, { email } ) {
 /**
  * Verifies a passwordless user code.
  *
- * @param {function} callback Callback function
+ * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
-export async function verifyPasswordlessUser( callback, { email, code } ) {
+export function verifyPasswordlessUser( callback, { email, code } ) {
 	wpcom
 		.undocumented()
 		.usersEmailVerification( { email, code }, null )

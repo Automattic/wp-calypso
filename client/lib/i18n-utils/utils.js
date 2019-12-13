@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,7 @@ import { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { languages } from 'languages';
 
 /**
  * a locale can consist of three component
@@ -50,6 +50,18 @@ export function isLocaleVariant( locale ) {
 	return !! language && isString( language.parentLangSlug );
 }
 
+export function isLocaleRtl( locale ) {
+	if ( ! isString( locale ) ) {
+		return null;
+	}
+	const language = getLanguage( locale );
+	if ( ! language ) {
+		return null;
+	}
+
+	return Boolean( language.rtl );
+}
+
 /**
  * Checks against a list of locales that don't have any GP translation sets
  * A 'translation set' refers to a collection of strings to be translated see:
@@ -67,7 +79,7 @@ export function canBeTranslated( locale ) {
  * @return {Array} A list of all supported language slugs
  */
 export function getLanguageSlugs() {
-	return map( config( 'languages' ), 'langSlug' );
+	return map( languages, 'langSlug' );
 }
 
 /**
@@ -80,8 +92,8 @@ export function getLanguage( langSlug ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
 		return (
-			find( config( 'languages' ), { langSlug } ) ||
-			find( config( 'languages' ), { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
+			find( languages, { langSlug } ) ||
+			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
 		);
 	}
 

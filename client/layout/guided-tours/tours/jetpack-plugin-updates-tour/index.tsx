@@ -57,7 +57,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					<p>
 						{ translate(
 							"Let's activate autoupdates for Jetpack to ensure you're always " +
-								'up-to-date with the latest features and security fixes.'
+								'up to date with the latest features and security fixes.'
 						) }
 					</p>
 					<ButtonRow>

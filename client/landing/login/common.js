@@ -10,7 +10,11 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import analytics from 'lib/analytics';
+import getSuperProps from 'lib/analytics/super-props';
+import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import { setCurrentUser } from 'state/current-user/actions';
+import setRouteAction from 'state/ui/actions/set-route';
 
 const debug = debugFactory( 'calypso' );
 
@@ -76,6 +80,8 @@ function renderDevHelpers( reduxStore ) {
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
+	bindWpLocaleState( reduxStore );
+
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
@@ -91,7 +97,21 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
+const setRouteMiddleware = reduxStore => {
+	page( '*', ( context, next ) => {
+		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
+
+		next();
+	} );
+};
+
+const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
+	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+};
+
 export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware( reduxStore );
+	setRouteMiddleware( reduxStore );
+	setAnalyticsMiddleware( currentUser, reduxStore );
 	renderDevHelpers( reduxStore );
 }

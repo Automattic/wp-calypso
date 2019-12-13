@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,6 +50,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
+		await this.driver.sleep( 2000 );
 	}
 
 	async publish( { visit = false } = {} ) {
@@ -156,6 +155,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
 	async addBlock( name ) {
 		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
+		let blockClass = name;
 		let prefix = '';
 		switch ( name ) {
 			case 'Instagram':
@@ -170,12 +170,23 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Markdown':
 				prefix = 'jetpack-';
 				break;
+			case 'Buttons':
+			case 'Click to Tweet':
+			case 'Hero':
+			case 'Logos':
+			case 'Pricing Table':
+				prefix = 'coblocks-';
+				break;
+			case 'Dynamic HR':
+				prefix = 'coblocks-';
+				blockClass = 'dynamic-separator';
+				break;
 		}
 		const inserterToggleSelector = By.css( '.edit-post-header .editor-inserter__toggle' );
 		const inserterMenuSelector = By.css( '.editor-inserter__menu' );
 		const inserterSearchInputSelector = By.css( 'input.editor-inserter__search' );
 		const inserterBlockItemSelector = By.css(
-			`li.editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ name
+			`li.editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass
 				.replace( /\s+/g, '-' )
 				.toLowerCase() }`
 		);
@@ -362,10 +373,19 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.page-template-modal .components-modal__header button' )
-			);
+			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				await driverHelper.selectElementByText(
+					this.driver,
+					By.css( '.template-selector-item__template-title' ),
+					'Blank'
+				);
+				await this.closeSidebar();
+			} else {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.page-template-modal__buttons .components-button.is-primary' )
+				);
+			}
 		}
 	}
 }

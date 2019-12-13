@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import { bindActionCreators } from 'redux';
@@ -30,7 +29,7 @@ import {
 } from 'woocommerce/state/sites/settings/email/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import CustomerNotification from './components/customer-notification';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
 import NotificationsOrigin from './components/notifications-origin';
@@ -120,7 +119,7 @@ class Settings extends React.Component {
 		this.fetchSettings( this.props );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.fetchSettings( nextProps );
 		}
@@ -293,7 +292,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( Settings );
+export default connect( mapStateToProps, mapDispatchToProps )( Settings );

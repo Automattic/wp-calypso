@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
@@ -15,7 +14,7 @@ import page from 'page';
  */
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -620,8 +619,5 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 } );
 
 export default WithItemsToUpdate(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( localize( ActivityLogTasklist ) )
+	connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogTasklist ) )
 );

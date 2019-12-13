@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,12 +26,17 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import Gridicon from 'components/gridicon';
+import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
+import { Button } from '@automattic/components';
 
-class CheckoutThankYouHeader extends PureComponent {
+export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
+		isSimplified: PropTypes.bool,
+		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
 	};
 
@@ -250,6 +253,16 @@ class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
+	visitSiteHostingSettings = event => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_back_to_hosting' );
+
+		window.location.href = `/hosting-config/${ selectedSite.slug }`;
+	};
+
 	visitScheduler = event => {
 		event.preventDefault();
 		const { selectedSite } = this.props;
@@ -270,14 +283,31 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButtonText = () => {
-		const { translate, hasFailedPurchases, primaryPurchase, displayMode } = this.props;
-		const site = this.props.selectedSite.slug;
+		const {
+			displayMode,
+			hasFailedPurchases,
+			primaryPurchase,
+			selectedSite,
+			translate,
+			upgradeIntent,
+		} = this.props;
+
+		switch ( upgradeIntent ) {
+			case 'browse_plugins':
+				return translate( 'Continue Browsing Plugins' );
+			case 'plugins':
+			case 'install_plugin':
+				return translate( 'Continue Installing Plugin' );
+			case 'themes':
+			case 'install_theme':
+				return translate( 'Continue Installing Theme' );
+		}
 
 		if ( 'concierge' === displayMode ) {
 			return translate( 'Schedule my session' );
 		}
 
-		if ( ! site && hasFailedPurchases ) {
+		if ( ! selectedSite.slug && hasFailedPurchases ) {
 			return translate( 'Register domain' );
 		}
 
@@ -300,7 +330,21 @@ class CheckoutThankYouHeader extends PureComponent {
 		return translate( 'Go to My Site' );
 	};
 
-	getButton() {
+	maybeGetSecondaryButton() {
+		const { upgradeIntent, translate } = this.props;
+
+		if ( upgradeIntent === 'hosting' ) {
+			return (
+				<Button onClick={ this.visitSiteHostingSettings }>
+					{ translate( 'Return to Hosting' ) }
+				</Button>
+			);
+		}
+
+		return null;
+	}
+
+	getButtons() {
 		const {
 			hasFailedPurchases,
 			translate,
@@ -332,6 +376,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		return (
 			<div className="checkout-thank-you__header-button">
+				{ this.maybeGetSecondaryButton() }
 				<button className={ headerButtonClassName } onClick={ clickHandler }>
 					{ this.getButtonText() }
 				</button>
@@ -340,7 +385,7 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
+		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -365,18 +410,61 @@ class CheckoutThankYouHeader extends PureComponent {
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
 
-						<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
+						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
+							this.renderSimplifiedContent()
+						) : (
+							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
+						) }
 
-						{ this.getButton() }
+						{ this.getButtons() }
 					</div>
 				</div>
 			</div>
 		);
 	}
+
+	renderSimplifiedContent() {
+		const { translate, primaryPurchase } = this.props;
+		const messages = [
+			translate(
+				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
+					'Enjoy your powerful new features!',
+				{
+					args: { productName: primaryPurchase.productName },
+					components: { strong: <strong /> },
+				}
+			),
+		];
+		if ( this.props.siteUnlaunchedBeforeUpgrade ) {
+			messages.push(
+				translate(
+					"Your site has been launched. You can share it with the world whenever you're ready."
+				)
+			);
+		}
+
+		if ( messages.length === 1 ) {
+			return <h2 className="checkout-thank-you__header-text">{ messages[ 0 ] }</h2>;
+		}
+
+		const CHECKMARK_SIZE = 24;
+		return (
+			<ul className="checkout-thank-you__success-messages">
+				{ messages.map( message => (
+					<li className="checkout-thank-you__success-message-item">
+						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
+						<div>{ preventWidows( message ) }</div>
+					</li>
+				) ) }
+			</ul>
+		);
+	}
 }
 
 export default connect(
-	null,
+	( state, ownProps ) => ( {
+		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
+	} ),
 	{
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,

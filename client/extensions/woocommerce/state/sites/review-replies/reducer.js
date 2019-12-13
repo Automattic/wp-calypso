@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { reject, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLY_CREATED,
@@ -17,15 +15,20 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 } from 'woocommerce/state/action-types';
 
-export default createReducer(
-	{},
-	{
-		[ WOOCOMMERCE_REVIEW_REPLIES_UPDATED ]: repliesUpdated,
-		[ WOOCOMMERCE_REVIEW_REPLY_DELETED ]: replyDeleted,
-		[ WOOCOMMERCE_REVIEW_REPLY_UPDATED ]: replyUpdated,
-		[ WOOCOMMERCE_REVIEW_REPLY_CREATED ]: replyCreated,
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_REVIEW_REPLIES_UPDATED:
+			return repliesUpdated( state, action );
+		case WOOCOMMERCE_REVIEW_REPLY_DELETED:
+			return replyDeleted( state, action );
+		case WOOCOMMERCE_REVIEW_REPLY_UPDATED:
+			return replyUpdated( state, action );
+		case WOOCOMMERCE_REVIEW_REPLY_CREATED:
+			return replyCreated( state, action );
 	}
-);
+
+	return state;
+} );
 
 export function repliesUpdated( state, action ) {
 	const { reviewId, replies, error } = action;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,10 +11,9 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
@@ -23,7 +21,7 @@ import {
 	emailManagement,
 } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
 import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
 import {
@@ -33,6 +31,7 @@ import {
 	validateAgainstExistingUsers,
 } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -78,7 +77,7 @@ class GSuiteAddUsers extends React.Component {
 
 		if ( canContinue ) {
 			addItems(
-				getItemsForCart( domains, 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+				getItemsForCart( domains, 'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG, users )
 			);
 			page( '/checkout/' + selectedSite.slug );
 		}
@@ -261,7 +260,7 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDecoratedSiteDomains( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 		return {
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),

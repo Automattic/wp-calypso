@@ -294,6 +294,14 @@ $image-height: 47px;
 		}
 	}
 
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+	}
+
+	.wp-login__site-return-link::after {
+		background: none;
+	}
+
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
 		border-color: var( --color-neutral-20 );

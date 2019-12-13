@@ -12,6 +12,7 @@
 	button {
 		display: flex;
 		justify-content: flex-start;
+		align-items: center;
 		cursor: pointer;
 		padding: 8px 0;
 		color: var( --color-neutral-70 );
@@ -23,15 +24,18 @@
 		width: 100%;
 	}
 
-	.gridicons-chevron-left {
+	.gridicons-menu {
 		color: var( --color-neutral-light );
 		margin: 0 8px;
-		align-self: center;
 	}
+}
 
-	.current-section__group-title {
-		font-size: 10px;
-		color: var( --color-neutral-40 );
-		margin: 2px 0 -3px;
+.layout__page-title {
+	font-size: 24px;
+	font-weight: 300;
+	margin: 16px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 8px;
 	}
 }

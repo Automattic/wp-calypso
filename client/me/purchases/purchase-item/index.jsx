@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,17 +9,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import {
-	getName,
+	getDisplayName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	getPartnerName,
 } from 'lib/purchases';
 import {
 	isDomainProduct,
@@ -28,11 +29,13 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
+	isJetpackBackup,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanTermLabel } from 'lib/plans';
@@ -170,6 +173,8 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
+		} else if ( isJetpackBackup( purchase ) ) {
+			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {
@@ -183,16 +188,32 @@ class PurchaseItem extends Component {
 		);
 	}
 
+	getLabelText() {
+		const { purchase, translate } = this.props;
+
+		if ( purchase && isPartnerPurchase( purchase ) ) {
+			return translate( 'This plan is managed by %(partnerName)s', {
+				args: {
+					partnerName: getPartnerName( purchase ),
+				},
+			} );
+		} else if ( purchase && purchase.productSlug ) {
+			return getPlanTermLabel( purchase.productSlug, translate );
+		}
+
+		return null;
+	}
+
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
-		const termLabel =
-			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
+
+		const label = this.getLabelText();
 
 		let content;
 		if ( isPlaceholder ) {
@@ -202,10 +223,12 @@ class PurchaseItem extends Component {
 				<span className="purchase-item__wrapper">
 					{ this.renderIcon() }
 					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getName( purchase ) }</div>
+						<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ termLabel ? <div className="purchase-item__term-label">{ termLabel }</div> : null }
-						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						{ label && <div className="purchase-item__term-label">{ label }</div> }
+						{ ! isPartnerPurchase( purchase ) && (
+							<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						) }
 					</div>
 				</span>
 			);
@@ -243,4 +266,4 @@ PurchaseItem.propTypes = {
 	isJetpack: PropTypes.bool,
 };
 
-export default localize( PurchaseItem );
+export default localize( withLocalizedMoment( PurchaseItem ) );

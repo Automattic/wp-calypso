@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { flowRight, get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -51,7 +48,7 @@ class PreloadTab extends Component {
 		preloadRefresh: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) !== 0 } );
 	}
 
@@ -325,7 +322,4 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PreloadTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PreloadTab );

@@ -48,9 +48,9 @@ function getExternals() {
 		//
 		nodeExternals( {
 			whitelist: [
-				// `@automattic/calypso-ui` is forced to be webpack-ed because it has SCSS and other
+				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/calypso-ui',
+				'@automattic/components',
 
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.

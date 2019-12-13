@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -161,8 +159,6 @@ export default {
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				context={ pageContext }
-				needsDns
-				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -211,7 +207,6 @@ export default {
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsSiteRedirect
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);

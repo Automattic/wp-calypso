@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -51,7 +49,7 @@ class ProductImageUploader extends Component {
 		errors: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._isMounted = true;
 	}
 	componentWillUnmount() {
@@ -282,7 +280,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ errorNotice: errorNoticeAction }
-)( localize( ProductImageUploader ) );
+export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )(
+	localize( ProductImageUploader )
+);

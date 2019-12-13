@@ -7,7 +7,7 @@ import { includes, map, pick, zipObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -51,10 +51,9 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducerWithValidation(
-	{},
-	{
-		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
+export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case INVITES_REQUEST_SUCCESS: {
 			// Invites are returned from the API in descending order by
 			// `invite_date`, which is what we want here.
 
@@ -84,8 +83,8 @@ export const items = createReducerWithValidation(
 				...state,
 				[ action.siteId ]: siteInvites,
 			};
-		},
-		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
+		}
+		case INVITES_DELETE_REQUEST_SUCCESS: {
 			return {
 				...state,
 				[ action.siteId ]: {
@@ -93,10 +92,11 @@ export const items = createReducerWithValidation(
 					pending: deleteInvites( state[ action.siteId ].pending, action.inviteIds ),
 				},
 			};
-		},
-	},
-	inviteItemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 /**
  * Returns an array of site invites, without the deleted invite objects.
@@ -117,23 +117,24 @@ function deleteInvites( siteInvites, invitesToDelete ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const counts = createReducer(
-	{},
-	{
-		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
+export const counts = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case INVITES_REQUEST_SUCCESS: {
 			return {
 				...state,
 				[ action.siteId ]: action.found,
 			};
-		},
-		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
+		}
+		case INVITES_DELETE_REQUEST_SUCCESS: {
 			return {
 				...state,
 				[ action.siteId ]: state[ action.siteId ] - action.inviteIds.length,
 			};
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated site invites resend requests state after an action has been
@@ -182,21 +183,30 @@ export function deleting( state = {}, action ) {
 			const inviteDeletionRequests = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'requesting' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'requesting' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
 		case INVITES_DELETE_REQUEST_FAILURE:
 			const inviteDeletionFailures = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'failure' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'failure' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
 		case INVITES_DELETE_REQUEST_SUCCESS:
 			const inviteDeletionSuccesses = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject( action.inviteIds, map( action.inviteIds, () => 'success' ) )
+				zipObject(
+					action.inviteIds,
+					map( action.inviteIds, () => 'success' )
+				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
 	}

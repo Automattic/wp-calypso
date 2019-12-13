@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { find, size, map } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -85,32 +83,31 @@ class EditorPageTemplates extends Component {
 
 		const templates = this.getTemplates();
 		return (
-			<div>
+			<Fragment>
 				{ siteId && <QueryPageTemplates siteId={ siteId } /> }
 				{ size( templates ) > 1 && (
 					<AccordionSection>
-						<EditorDrawerLabel labelText={ translate( 'Page Template' ) }>
-							<EditorThemeHelp className="editor-page-templates__help-link" />
-							<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
-								{ map( templates, ( { file, label } ) => (
-									/* eslint-disable react/jsx-no-bind */
-									// jsx-no-bind disabled because while it's possible
-									// to extract this out into a separate component
-									// with its own click handler, that would severely
-									// harm the readability of this component.
-									<SelectDropdown.Item
-										key={ file }
-										selected={ file === template }
-										onClick={ () => this.selectTemplate( file ) }
-									>
-										{ label }
-									</SelectDropdown.Item>
-								) ) }
-							</SelectDropdown>
-						</EditorDrawerLabel>
+						<EditorDrawerLabel labelText={ translate( 'Page Template' ) } />
+						<EditorThemeHelp className="editor-page-templates__help-link" />
+						<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
+							{ map( templates, ( { file, label } ) => (
+								/* eslint-disable react/jsx-no-bind */
+								// jsx-no-bind disabled because while it's possible
+								// to extract this out into a separate component
+								// with its own click handler, that would severely
+								// harm the readability of this component.
+								<SelectDropdown.Item
+									key={ file }
+									selected={ file === template }
+									onClick={ () => this.selectTemplate( file ) }
+								>
+									{ label }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
 					</AccordionSection>
 				) }
-			</div>
+			</Fragment>
 		);
 	}
 }

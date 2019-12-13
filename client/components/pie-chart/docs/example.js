@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 
@@ -109,7 +107,7 @@ class PieChartExample extends Component {
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-									<label>{ 'Show' }</label>{' '}
+									<label>{ 'Show' }</label>{ ' ' }
 									<input
 										name={ seriesName }
 										type="checkbox"

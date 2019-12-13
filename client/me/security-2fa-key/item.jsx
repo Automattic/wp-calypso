@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faDeleteButton from './delete-item-button';
 
@@ -33,9 +33,6 @@ Security2faKeyItem.propTypes = {
 	securityKey: PropTypes.object.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKeyItem ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKeyItem ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -119,6 +117,7 @@ export class UpsellNudge extends React.Component {
 			isLoggedIn,
 			upsellType,
 			translate,
+			siteSlug,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -131,6 +130,7 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
+						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>
@@ -145,6 +145,7 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
+						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>

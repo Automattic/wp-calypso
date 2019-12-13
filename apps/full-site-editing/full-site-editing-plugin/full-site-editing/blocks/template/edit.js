@@ -11,7 +11,7 @@ import { get, noop } from 'lodash';
  * WordPress dependencies
  */
 import { parse, createBlock } from '@wordpress/blocks';
-import { BlockEdit } from '@wordpress/editor';
+import { BlockEdit } from '@wordpress/block-editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -33,7 +33,7 @@ const TemplateEdit = compose(
 		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
-		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
+		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
 		const editTemplateUrl = addQueryArgs( fullSiteEditing.editTemplateBaseUrl, {
 			post: templateId,
 			fse_parent_post: currentPostId,
@@ -124,10 +124,15 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
+			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
+			/**
+			 * This must be after setNavigateToTemplate so that local navigation
+			 * (without wpcom overrides) still works correctly.
+			 */
 			event.preventDefault();
 			savePost();
 		};
@@ -169,10 +174,10 @@ const TemplateEdit = compose(
 								/>
 							</div>
 						</Disabled>
-						<Placeholder className="template-block__overlay">
+						<Placeholder className="template-block__overlay" onClick={ save }>
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
-									<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
+									<Spinner /> { sprintf( __( 'Loading editor for: %s' ), templateTitle ) }
 								</div>
 							) }
 							<Button

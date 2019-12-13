@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 } = {} ) {
@@ -99,6 +98,21 @@ export function generateFlows( {
 			lastModified: '2019-08-20',
 		},
 
+		'design-first': {
+			steps: [
+				'template-first-themes',
+				'user',
+				'site-type-with-theme',
+				'site-topic-with-theme',
+				'site-title',
+				'domains',
+				'plans',
+			],
+			destination: getChecklistThemeDestination,
+			description: 'Start with one of our template-first (Gutenberg) themes.',
+			lastModified: '2019-10-16',
+		},
+
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSignupDestination,
@@ -118,13 +132,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-06-20',
-		},
-
-		'get-started': {
-			steps: [ 'user', 'site-type', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'A blank slate flow used with the `signupEscapeHatch` AB test',
-			lastModified: '2019-09-23',
 		},
 
 		desktop: {
@@ -163,10 +170,10 @@ export function generateFlows( {
 		},
 
 		'rewind-setup': {
-			steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
+			steps: [ 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: '/activity-log',
 			description: 'Allows users with Jetpack plan to setup credentials',
-			lastModified: '2018-01-27',
+			lastModified: '2019-11-11',
 			disallowResume: true,
 			allowContinue: false,
 			hideFlowProgress: true,
@@ -215,16 +222,30 @@ export function generateFlows( {
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-01-24',
+			lastModified: '2019-11-22',
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
 			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
-			destination: getSiteDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-11-21',
+			lastModified: '2019-11-22',
+		};
+
+		flows[ 'ecommerce-design-first' ] = {
+			steps: [
+				'template-first-themes',
+				'user',
+				'site-type-with-theme',
+				'domains',
+				'plans-ecommerce',
+			],
+			destination: getSignupDestination,
+			description:
+				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
+			lastModified: '2019-11-27',
 		};
 	}
 
@@ -263,10 +284,10 @@ export function generateFlows( {
 
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-		destination: getSiteDestination,
+		destination: getLaunchDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
-		lastModified: '2019-01-16',
+		lastModified: '2019-11-22',
 		pageTitle: translate( 'Launch your site' ),
 	};
 
@@ -325,17 +346,10 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/full-site-editing' ) ) {
 		flows[ 'test-fse' ] = {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
+			steps: [ 'user', 'fse-themes', 'domains', 'plans' ],
 			destination: getSignupDestination,
-			description: 'A copy of `onboarding` for testing Full Site Editing',
-			lastModified: '2019-08-08',
+			description: 'User testing Signup flow for Full Site Editing',
+			lastModified: '2019-12-02',
 		};
 	}
 

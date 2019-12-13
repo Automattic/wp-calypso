@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,8 +21,7 @@ import EditorMediaModalDetailPreviewImage from './detail-preview-image';
 import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
@@ -331,7 +328,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( EditorMediaModalDetailItem );
+export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );

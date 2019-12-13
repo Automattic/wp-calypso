@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import { getSite } from 'state/reader/sites/selectors';
 import ExternalLink from 'components/external-link';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { unblockSite } from 'state/reader/site-blocks/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 

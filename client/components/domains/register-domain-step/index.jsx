@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,7 +33,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import CompactCard from 'components/card/compact';
+import { CompactCard, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import StickyPanel from 'components/sticky-panel';
 import {
@@ -53,6 +51,7 @@ import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import FreeDomainExplainer from 'components/domains/free-domain-explainer';
 import {
 	DropdownFilters,
 	FilterResetNotice,
@@ -89,7 +88,6 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
-import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
@@ -145,6 +143,7 @@ class RegisterDomainStep extends React.Component {
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
+		showTestCopy: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -386,6 +385,12 @@ class RegisterDomainStep extends React.Component {
 		return suggestions;
 	}
 
+	getPlaceholderText() {
+		const { showTestCopy, translate } = this.props;
+
+		return showTestCopy ? 'Type the domain you want here' : translate( 'Enter a name or keyword' );
+	}
+
 	render() {
 		const queryObject = getQueryObject( this.props );
 		const {
@@ -409,9 +414,13 @@ class RegisterDomainStep extends React.Component {
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
 			? getAvailabilityNotice( lastDomainSearched, availabilityError, availabilityErrorData )
 			: {};
+
+		const searchBoxClassName = classNames( 'register-domain-step__search', {
+			'register-domain-step__search-domain-step-test': this.props.showTestCopy,
+		} );
 		return (
 			<div className="register-domain-step">
-				<StickyPanel className="register-domain-step__search">
+				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
 						<Search
 							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
@@ -427,7 +436,7 @@ class RegisterDomainStep extends React.Component {
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
-							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
+							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
 						/>
 						{ this.renderSearchFilters() }
@@ -489,7 +498,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion, this.state.isInitialQueryActive );
+		this.props.onAddDomain( this.state.selectedSuggestion );
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -1067,6 +1076,7 @@ class RegisterDomainStep extends React.Component {
 						onButtonClick={ this.onAddDomain }
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
+						showTestCopy={ this.props.showTestCopy }
 					/>
 				);
 			}, this );
@@ -1111,6 +1121,10 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderFreeDomainExplainer() {
+		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+	}
+
 	onAddDomain = suggestion => {
 		const domain = get( suggestion, 'domain_name' );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
@@ -1137,11 +1151,11 @@ class RegisterDomainStep extends React.Component {
 							selectedSuggestion: suggestion,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+						this.props.onAddDomain( suggestion );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+			this.props.onAddDomain( suggestion );
 		}
 	};
 
@@ -1179,6 +1193,10 @@ class RegisterDomainStep extends React.Component {
 
 		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
 
+		const hasResults =
+			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
+			! this.state.loadingResults;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1207,7 +1225,10 @@ class RegisterDomainStep extends React.Component {
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
+				showTestCopy={ this.props.showTestCopy }
 			>
+				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
+
 				{ showTldFilterBar && (
 					<TldFilterBar
 						availableTlds={ this.state.availableTlds }

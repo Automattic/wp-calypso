@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { applySiteOffset } from 'lib/site/timezone';
+import { Card } from '@automattic/components';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
@@ -103,35 +103,36 @@ class ClonePointStep extends Component {
 
 		return (
 			<div>
-				<QuerySites siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
-				<section className="clone-point__wrapper">
-					{ theseLogs.map( log => (
-						<Fragment key={ log.activityId }>
-							{ timePeriod( log ) }
-							<ActivityLogItem
-								key={ log.activityId }
-								siteId={ siteId }
-								activity={ log }
-								cloneOnClick={ this.selectedPoint }
-								disableRestore
-								disableBackup
-								hideRestore
-								enableClone
-							/>
-						</Fragment>
-					) ) }
-				</section>
-				<Pagination
-					className="clone-point__pagination"
-					key="clone-point-pagination"
-					nextLabel={ translate( 'Older' ) }
-					page={ this.state.currentPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ translate( 'Newer' ) }
-					total={ logs.length }
-				/>
+				<Card className="clone-point__card">
+					<QuerySites siteId={ siteId } />
+					<QuerySiteSettings siteId={ siteId } />
+					<section className="clone-point__wrapper">
+						{ theseLogs.map( log => (
+							<Fragment key={ log.activityId }>
+								{ timePeriod( log ) }
+								<ActivityLogItem
+									key={ log.activityId }
+									siteId={ siteId }
+									activity={ log }
+									cloneOnClick={ this.selectedPoint }
+									disableRestore
+									disableBackup
+									enableClone
+								/>
+							</Fragment>
+						) ) }
+					</section>
+					<Pagination
+						className="clone-point__pagination"
+						key="clone-point-pagination"
+						nextLabel={ translate( 'Older' ) }
+						page={ this.state.currentPage }
+						pageClick={ this.changePage }
+						perPage={ PAGE_SIZE }
+						prevLabel={ translate( 'Newer' ) }
+						total={ logs.length }
+					/>
+				</Card>
 			</div>
 		);
 	}

@@ -14,6 +14,7 @@ It's meant to comprehensively describe a plan and give enough reasons to upgrade
 - *benefits* - array of strings explaining the benefits of the feature and upgradidng to the plan
 - *upgrade* - upgrade function. If not provided, default will be used.
 - *eventName* - event to record when nudge is shown. Default is `calypso_upgrade_nudge_impression` with properties cta_name: props.event, cta_size: expanded and cta_feature: props.highlightedFeature
+- *forceDisplay* - Used to display the update nudge in devdocs.
 
 
 ## Example - minimal

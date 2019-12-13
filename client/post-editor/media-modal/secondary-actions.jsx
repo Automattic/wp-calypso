@@ -21,7 +21,7 @@ import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {
@@ -85,11 +85,10 @@ class MediaModalSecondaryActions extends Component {
 	}
 
 	render() {
-		
 		if ( this.props.hideButton ) {
 			return null;
 		}
-		
+
 		return (
 			<div>
 				{ this.getButtons().map( button => (

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import MapDomainStep from 'components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { domainRegistration, domainMapping } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import wp from 'lib/wp';
 import { domainManagementList } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
@@ -100,12 +99,10 @@ export class MapDomain extends Component {
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
-			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
-				.then(
-					() => page( domainManagementList( selectedSiteSlug ) ),
-					error => this.setState( { errorMessage: error.message } )
-				);
+			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then(
+				() => page( domainManagementList( selectedSiteSlug ) ),
+				error => this.setState( { errorMessage: error.message } )
+			);
 			return;
 		}
 
@@ -114,11 +111,11 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}
 

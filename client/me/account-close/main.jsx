@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,7 +22,7 @@ import ActionPanelFigureList from 'components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'components/action-panel/figure-list-item';
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySites from 'components/data/query-sites';
@@ -47,7 +45,7 @@ class AccountSettingsClose extends Component {
 		showConfirmDialog: false,
 	};
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();

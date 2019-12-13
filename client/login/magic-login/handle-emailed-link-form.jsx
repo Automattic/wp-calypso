@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
@@ -131,7 +130,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 	};
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
 		if ( ! nextState.hasSubmitted || isFetching ) {
@@ -236,7 +235,4 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HandleEmailedLinkForm ) );
+export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,11 +15,12 @@ import { errorNotice } from 'state/notices/actions';
 import { setVerticals } from 'state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
 import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
+import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 // Some flows do not choose a site type before requesting verticals. In this
 // case don't send a site_type param to the API.
-export const requestVerticals = action =>
-	http(
+export const requestVerticals = action => {
+	return http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
@@ -36,6 +35,7 @@ export const requestVerticals = action =>
 		},
 		action
 	);
+};
 
 export const storeVerticals = ( { search, siteType = '' }, verticals ) =>
 	setVerticals( search, siteType, verticals );
@@ -60,6 +60,7 @@ registerHandlers( 'state/data-layer/wpcom/signup/verticals', {
 			verticalsHandlers( store, {
 				...action,
 				siteTypeId: getSiteTypeId( store.getState(), action.siteType ),
+				flowName: getCurrentFlowName( store.getState() ),
 			} ),
 	],
 } );

@@ -7,15 +7,14 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
@@ -296,7 +295,6 @@ export class PluginMeta extends Component {
 			'another-wordpress-classifieds-plugin',
 			'broken-link-checker',
 			'leads',
-			'mycred',
 			'native-ads-adnow',
 			'ol_scrapes',
 			'page-visit-counter',
@@ -343,7 +341,6 @@ export class PluginMeta extends Component {
 			'fast-velocity-minify',
 			'nginx-helper',
 			'p3',
-			'popup-builder',
 			'porn-embed',
 			'propellerads-official',
 			'speed-contact-bar',
@@ -358,7 +355,6 @@ export class PluginMeta extends Component {
 			'wp-monero-miner-pro',
 			'wp-monero-miner-using-coin-hive',
 			'wp-optimize-by-xtraffic',
-			'wp-phpmyadmin-extension',
 			'wpematico',
 			'yuzo-related-post',
 			'zapp-proxy-server',

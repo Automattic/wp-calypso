@@ -108,10 +108,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			combo = combo.join( '+' );
 			keymaster( combo, ( event, handler ) => {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
-				if (
-					this.isNotificationsOpen &&
-					( this._getKey( event ) !== 'n' && event.keyCode !== 27 )
-				) {
+				if ( this.isNotificationsOpen && this._getKey( event ) !== 'n' && event.keyCode !== 27 ) {
 					return;
 				}
 

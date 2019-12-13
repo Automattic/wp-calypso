@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,12 +25,12 @@ import {
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
-import { injectStripe } from 'react-stripe-elements';
-import { setStripeObject } from 'lib/upgrades/actions';
+import { withStripeProps } from 'lib/stripe';
+import { setStripeObject } from 'lib/transaction/actions';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {
@@ -235,5 +233,5 @@ class CreditCardPaymentBox extends React.Component {
 
 export { CreditCardPaymentBox };
 
-const InjectedStripeCreditCardPaymentBox = injectStripe( CreditCardPaymentBox );
+const InjectedStripeCreditCardPaymentBox = withStripeProps( CreditCardPaymentBox );
 export default InjectedStripeCreditCardPaymentBox;

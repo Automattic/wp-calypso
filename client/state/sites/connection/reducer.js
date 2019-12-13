@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -17,24 +15,33 @@ const createRequestingReducer = requesting => ( state, { siteId } ) => ( {
 	[ siteId ]: requesting,
 } );
 
-export const items = createReducer(
-	{},
-	{
-		[ SITE_CONNECTION_STATUS_RECEIVE ]: ( state, { siteId, status } ) => ( {
-			...state,
-			[ siteId ]: status,
-		} ),
-	}
-);
+export const items = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_CONNECTION_STATUS_RECEIVE: {
+			const { siteId, status } = action;
 
-export const requesting = createReducer(
-	{},
-	{
-		[ SITE_CONNECTION_STATUS_REQUEST ]: createRequestingReducer( true ),
-		[ SITE_CONNECTION_STATUS_REQUEST_FAILURE ]: createRequestingReducer( false ),
-		[ SITE_CONNECTION_STATUS_REQUEST_SUCCESS ]: createRequestingReducer( false ),
+			return {
+				...state,
+				[ siteId ]: status,
+			};
+		}
 	}
-);
+
+	return state;
+} );
+
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_CONNECTION_STATUS_REQUEST:
+			return createRequestingReducer( true )( state, action );
+		case SITE_CONNECTION_STATUS_REQUEST_FAILURE:
+			return createRequestingReducer( false )( state, action );
+		case SITE_CONNECTION_STATUS_REQUEST_SUCCESS:
+			return createRequestingReducer( false )( state, action );
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

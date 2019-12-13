@@ -6,11 +6,12 @@
 		"redux",
 		"selector"
 	],
-	"author": "Jake Fried <samouri@users.noreply.github.com>",
+	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"sideEffects": false,
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

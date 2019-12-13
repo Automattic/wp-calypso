@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { flowRight, map, mapValues, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -133,7 +131,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'plugin_list' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PluginsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PluginsTab );

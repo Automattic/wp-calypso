@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -108,11 +106,19 @@ class SocialLoginForm extends Component {
 	};
 
 	handleAppleResponse = response => {
-		const { onSuccess, redirectTo } = this.props;
+		const { onSuccess, socialService } = this.props;
+		let redirectTo = this.props.redirectTo;
 
 		if ( ! response.id_token ) {
 			return;
 		}
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with apple redirect flow
+		if ( socialService === 'apple' && ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const user = response.user || {};
 
@@ -157,7 +163,7 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLogin = service => {
+	trackLoginAndRememberRedirect = service => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
 		if ( this.props.redirectTo ) {
@@ -165,15 +171,15 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	getRedirectUrl = ( uxMode, service ) => {
-		return uxMode
-			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-					login( { isNative: true, socialService: service } ) }`
-			: null;
+	getRedirectUrl = service => {
+		const host = typeof window !== 'undefined' && window.location.host;
+		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 
 	render() {
 		const { redirectTo, uxMode } = this.props;
+		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
+
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
@@ -181,13 +187,22 @@ class SocialLoginForm extends Component {
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
 						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
-						onClick={ this.trackLogin.bind( null, 'google' ) }
+						redirectUri={ this.getRedirectUrl( 'google' ) }
+						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+						socialServiceResponse={
+							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
+						}
 					/>
 
 					<AppleLoginButton
+						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						onClick={ this.trackLogin.bind( null, 'apple' ) }
+						uxMode={ uxModeApple }
+						redirectUri={ this.getRedirectUrl( 'apple' ) }
+						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
 					/>
 
 					<p className="login__social-tos">

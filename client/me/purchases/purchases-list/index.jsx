@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import ConciergeBanner from '../concierge-banner';
 import EmptyContent from 'components/empty-content';
 import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
@@ -50,7 +48,9 @@ class PurchasesList extends Component {
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
 				<div>
-					{ this.props.isBusinessPlanUser && <ConciergeBanner /> }
+					{ this.props.isBusinessPlanUser && (
+						<ConciergeBanner recordTracksEvent={ this.props.recordTracksEvent } />
+					) }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
 						<PurchasesSite

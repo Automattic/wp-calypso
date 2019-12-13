@@ -1,21 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
 import { defer, uniqueId } from 'lodash';
+import { withRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -23,7 +21,6 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Style dependencies
@@ -116,7 +113,7 @@ class Popover extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
 		this.domContext = ReactDom.findDOMNode( nextProps.context );
 
@@ -251,7 +248,9 @@ class Popover extends Component {
 			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
 			shouldClose =
 				shouldClose &&
-				( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
+				ignoreContext &&
+				ignoreContext.contains &&
+				! ignoreContext.contains( event.target );
 		}
 
 		if ( shouldClose ) {
@@ -518,6 +517,4 @@ class Popover extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( Popover );
+export default withRtl( Popover );

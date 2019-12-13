@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	ID: 95327318,
 	URL: 'https://restapiusertests.wordpress.com',

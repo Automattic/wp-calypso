@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
+	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
@@ -22,7 +21,8 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
+import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -69,6 +69,20 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
+}
+
+function getDisplayName( purchase ) {
+	if ( JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ] ) {
+		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ];
+	}
+	return getName( purchase );
+}
+
+function getPartnerName( purchase ) {
+	if ( isPartnerPurchase( purchase ) ) {
+		return purchase.partnerName;
+	}
+	return null;
 }
 
 function getSubscriptionEndDate( purchase ) {
@@ -247,7 +261,6 @@ function isRefundable( purchase ) {
 
 /**
  * Checks whether the specified purchase can be removed from a user account.
- * Purchases included with a plan can't be removed.
  *
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
@@ -258,6 +271,9 @@ function isRemovable( purchase ) {
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return true;
+		}
 		return false;
 	}
 
@@ -271,6 +287,10 @@ function isRemovable( purchase ) {
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
 	);
+}
+
+function isPartnerPurchase( purchase ) {
+	return !! purchase.partnerName;
 }
 
 /**
@@ -385,6 +405,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -423,6 +447,8 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getDisplayName,
+	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
@@ -433,6 +459,7 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	isPartnerPurchase,
 	hasPaymentMethod,
 	isExpired,
 	isExpiring,

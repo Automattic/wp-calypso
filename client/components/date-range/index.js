@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,16 @@ import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import { withLocalizedMoment } from 'components/localized-moment';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
@@ -696,4 +696,4 @@ export class DateRange extends Component {
 	}
 }
 
-export default localize( DateRange );
+export default localize( withLocalizedMoment( DateRange ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import WindowScroller from 'react-virtualized/WindowScroller';
  */
 import VirtualList from 'components/virtual-list';
 import ListItem from './list-item';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {
@@ -56,11 +54,11 @@ export class TaxonomyManagerList extends Component {
 		requestedPages: [ 1 ],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.termIds = map( this.props.terms, 'ID' );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.terms !== this.props.terms ) {
 			this.termIds = map( newProps.terms, 'ID' );
 		}

@@ -10,10 +10,15 @@ import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCta from 'components/promo-section/promo-card/cta';
 import { FEATURE_MEMBERSHIPS } from 'lib/plans/constants';
 
+/**
+ * Image dependencies
+ */
+import referralImage from 'assets/images/earn/referral.svg';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoCardExample = () => {
 	const img = {
-		path: '/calypso/images/earn/referral.svg',
+		path: referralImage,
 		alt: 'Using Props',
 	};
 	const clicked = () => alert( 'Clicked!' );

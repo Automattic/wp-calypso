@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,9 +11,8 @@ import { find } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
-import CompactCard from 'components/card/compact';
+import { CompactCard, Button } from '@automattic/components';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import Button from 'components/button';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
 
@@ -47,7 +45,7 @@ class CredentialsConfigured extends Component {
 					<p>
 						{ translate(
 							"Your site's server was automatically connected to Jetpack to " +
-								'perform backups, rewinds, and security scans. You do not have to ' +
+								'perform backups, restores, and security scans. You do not have to ' +
 								'configure anything further, but you may revoke the credentials if necessary.'
 						) }
 					</p>
@@ -133,7 +131,6 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ deleteCredentials }
-)( localize( CredentialsConfigured ) );
+export default connect( mapStateToProps, { deleteCredentials } )(
+	localize( CredentialsConfigured )
+);

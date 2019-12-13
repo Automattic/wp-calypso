@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
 
-/** @format */
-
 /**
  * External dependencies
  */

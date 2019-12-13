@@ -86,6 +86,10 @@
 		min-width: 100px;
 	}
 
+	.phone-input__country-select {
+		min-width: 0;
+	}
+
 }
 
 .contact-details-form-fields__extra-fields {
@@ -93,21 +97,7 @@
 }
 
 .contact-details-form-fields__field.first-name,
-.contact-details-form-fields__field.location-search,
 .form__hidden-input .form__hidden-input {
 	margin-top: 0;
-}
-
-.contact-details-form-fields__field.location-search {
-	.address-1:focus {
-		position: relative;
-		z-index: 1;
-	}
-
-	.location-search__predictions {
-		margin: 0 1px;
-		z-index: 0;
-		position: relative;
-	}
 }
 

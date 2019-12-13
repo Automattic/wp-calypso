@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependecies
  */
@@ -34,7 +33,7 @@ function middleware( app ) {
 		);
 	}
 
-	compiler.plugin( 'done', function() {
+	compiler.hooks.done.tap( 'Calypso', function() {
 		built = true;
 
 		// Dequeue and call request handlers

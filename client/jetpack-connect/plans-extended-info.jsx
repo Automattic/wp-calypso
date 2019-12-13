@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 
 const PlansExtendedInfo = ( { recordTracks, translate } ) => (

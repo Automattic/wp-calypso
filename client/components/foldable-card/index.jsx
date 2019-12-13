@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,10 +11,8 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
 import Gridicon from 'components/gridicon';
-import ScreenReaderText from 'components/screen-reader-text';
 
 /**
  * Style dependencies
@@ -55,7 +51,7 @@ class FoldableCard extends Component {
 		expanded: this.props.expanded,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
 		}

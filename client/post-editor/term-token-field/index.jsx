@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,7 +31,7 @@ const DEFAULT_NON_HIERARCHICAL_QUERY = {
 const MAX_TERMS_SUGGESTIONS = 20;
 
 class TermTokenField extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
 	}
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import GMClosureNotice from '../shared/gm-closure-notice';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
@@ -33,7 +31,7 @@ class PrimaryHeader extends Component {
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Support Scheduler' ) }
+						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }
 						subHeaderText={ translate(
 							'Use the tool below to book your in-depth support session.'
 						) }

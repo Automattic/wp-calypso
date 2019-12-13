@@ -25,8 +25,7 @@ import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -270,7 +269,4 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( Banner );
+export default connect( mapStateToProps, { recordTracksEvent } )( Banner );

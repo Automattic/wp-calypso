@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -249,16 +248,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		subscribeToNewPostEmail,
-		unsubscribeToNewPostEmail,
-		updateNewPostEmailSubscription,
-		subscribeToNewCommentEmail,
-		unsubscribeToNewCommentEmail,
-		subscribeToNewPostNotifications,
-		unsubscribeToNewPostNotifications,
-		recordTracksEvent,
-	}
-)( localize( ReaderSiteNotificationSettings ) );
+export default connect( mapStateToProps, {
+	subscribeToNewPostEmail,
+	unsubscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
+	recordTracksEvent,
+} )( localize( ReaderSiteNotificationSettings ) );

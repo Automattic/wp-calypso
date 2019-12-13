@@ -239,8 +239,8 @@ class Login extends Component {
 						{ 'cart' === wccomFrom ? (
 							<WooCommerceConnectCartHeader />
 						) : (
-							<div className="login__woocommerce-logo">
-								<div className={ classNames( 'connect-header' ) }>
+							<div className="login__woocommerce-wrapper">
+								<div className={ classNames( 'login__woocommerce-logo' ) }>
 									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 										<AsyncLoad
 											require="components/jetpack-header/woocommerce"
@@ -264,12 +264,9 @@ class Login extends Component {
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
+				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
-					},
-					components: {
-						br: <br />,
 					},
 				} );
 			}
@@ -295,7 +292,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack' );
+			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -437,7 +434,7 @@ export default connect(
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{ recordTracksEvent }

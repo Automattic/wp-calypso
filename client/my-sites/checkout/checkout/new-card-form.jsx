@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import { setNewCreditCardDetails } from 'lib/upgrades/actions';
+import { setNewCreditCardDetails } from 'lib/transaction/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
 class NewCardForm extends Component {
@@ -23,9 +21,6 @@ class NewCardForm extends Component {
 		hasStoredCards: PropTypes.bool.isRequired,
 		transaction: PropTypes.object.isRequired,
 		selected: PropTypes.bool,
-		stripe: PropTypes.object,
-		isStripeLoading: PropTypes.bool,
-		stripeLoadingError: PropTypes.object,
 	};
 
 	getErrorMessage = fieldName => {
@@ -42,9 +37,6 @@ class NewCardForm extends Component {
 				eventFormName="Checkout Form"
 				onFieldChange={ this.handleFieldChange }
 				getErrorMessage={ this.getErrorMessage }
-				stripe={ this.props.stripe }
-				isStripeLoading={ this.props.isStripeLoading }
-				stripeLoadingError={ this.props.stripeLoadingError }
 			/>
 		);
 	};

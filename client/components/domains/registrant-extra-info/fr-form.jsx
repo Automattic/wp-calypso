@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -78,7 +76,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		registrantVatId: sanitizeVat,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// We're pushing props out into the global state here because:
 		// 1) We want to use these values if the user navigates unexpectedly then returns
 		// 2) We want to use the tld specific forms to manage the tld specific

@@ -15,11 +15,10 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
 import Divider from './divider';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
@@ -186,21 +185,14 @@ export class LoginForm extends Component {
 
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
-		const { onSuccess, redirectTo, domain, isJetpackWooCommerceFlow } = this.props;
+		const { onSuccess, redirectTo, domain } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
-
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-				login_method: 'email',
-			} );
-		}
 
 		this.props
 			.loginUser( usernameOrEmail, password, redirectTo, domain )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
-
 				onSuccess( redirectTo );
 			} )
 			.catch( error => {
@@ -271,11 +263,26 @@ export class LoginForm extends Component {
 	}
 
 	onWooCommerceSocialSuccess = ( ...args ) => {
-		this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-			login_method: 'google',
-		} );
+		this.recordWooCommerceLoginTracks( 'social' );
 		this.props.onSuccess( args );
 	};
+
+	recordWooCommerceLoginTracks( method ) {
+		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+				login_method: method,
+			} );
+		} else if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			'cart' === wccomFrom
+		) {
+			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
+				login_method: method,
+			} );
+		}
+	}
 
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
@@ -284,6 +291,7 @@ export class LoginForm extends Component {
 			this.props.getAuthAccountType( this.state.usernameOrEmail );
 			return;
 		}
+		this.recordWooCommerceLoginTracks( 'email' );
 		this.loginUser();
 	};
 
@@ -564,28 +572,6 @@ export class LoginForm extends Component {
 						</p>
 					) }
 
-					{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
-						<p className="login__form-terms login__form-terms-bottom">
-							{ preventWidows(
-								this.props.translate(
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
-
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>
 							{ this.isPasswordView() || this.isFullView()
@@ -639,7 +625,7 @@ export default connect(
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
-				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),

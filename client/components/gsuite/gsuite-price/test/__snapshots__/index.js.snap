@@ -1,40 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuitePrice it renders GSuitePrice with monthly prices 1`] = `
+exports[`GSuitePrice renders correctly 1`] = `
 <div
   className="gsuite-price"
 >
   <h4
-    className="gsuite-price__price-per-user"
+    className="gsuite-price__monthly-price"
   >
-    <span>
-      <strong>
-        $12
-      </strong>
-       per user / month
-    </span>
+    <strong>
+      €6,40
+    </strong>
+     per user/month
   </h4>
   <h5
     className="gsuite-price__annual-price"
   >
-    $144 billed yearly
+    €76 billed annually
   </h5>
-</div>
-`;
-
-exports[`GSuitePrice it renders GSuitePrice without monthly prices 1`] = `
-<div
-  className="gsuite-price"
->
-  <h4
-    className="gsuite-price__price-per-user"
-  >
-    <span>
-      <strong>
-        $72
-      </strong>
-       per user / year
-    </span>
-  </h4>
 </div>
 `;

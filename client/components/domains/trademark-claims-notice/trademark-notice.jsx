@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { trademarkNoticeText } from './trademark-constants';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import TrademarkClaim from './trademark-claim';
 
 class TrademarkNotice extends React.Component {

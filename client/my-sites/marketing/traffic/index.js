@@ -49,7 +49,7 @@ const SiteSettingsTraffic = ( {
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
 		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
 		{ ! isAdmin && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"

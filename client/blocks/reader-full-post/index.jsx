@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -294,7 +293,7 @@ export class FullPostView extends React.Component {
 			{
 				components: {
 					/* eslint-disable */
-					wpLink: <a href="/" className="reader-related-card__link" />,
+					wpLink: <a href="/read" className="reader-related-card__link" />,
 					/* eslint-enable */
 				},
 			}

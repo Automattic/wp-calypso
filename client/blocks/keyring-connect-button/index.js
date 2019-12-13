@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	deleteStoredKeyringConnection,
 	requestKeyringConnections,
@@ -127,7 +125,7 @@ class KeyringConnectButton extends Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( {
 				isAwaitingConnections: false,

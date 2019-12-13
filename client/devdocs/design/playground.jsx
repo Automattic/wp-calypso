@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -32,7 +31,7 @@ import './syntax.scss';
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();
@@ -179,10 +178,7 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	connectedDesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	connectedDesignAssets = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default connectedDesignAssets || DesignAssets;

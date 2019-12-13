@@ -4,16 +4,21 @@
 		border-color: transparent;
 		box-shadow: none;
 		padding: 24px 0 0;
-		margin-bottom: 4px;
+		margin-top: 12px;
 	}
 
 	.section-header__label::before {
 		background-image: none;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint( '<660px' ) {
 		.card {
 			padding-left: 15px;
+		}
+	}
+
+	@include breakpoint( '<480px' ) {
+		.card {
 			padding-right: 15px;
 		}
 	}

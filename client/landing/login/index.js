@@ -17,6 +17,7 @@ import createStore from './store';
 import { setupMiddlewares, configureReduxStore } from './common';
 import initLoginSection from 'login';
 import userFactory from 'lib/user';
+import { setupLocale } from 'boot/locale';
 
 const debug = debugFactory( 'calypso' );
 
@@ -32,6 +33,7 @@ const boot = currentUser => {
 
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
+	setupLocale( currentUser.get(), store );
 
 	page( '*', ( context, next ) => {
 		context.store = store;
@@ -49,9 +51,5 @@ const boot = currentUser => {
 
 window.AppBoot = () => {
 	const user = userFactory();
-	if ( user.initialized ) {
-		boot( user );
-	} else {
-		user.once( 'change', () => boot( user ) );
-	}
+	user.initialize().then( () => boot( user ) );
 };

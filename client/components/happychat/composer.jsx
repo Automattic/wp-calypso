@@ -10,7 +10,7 @@ import { get, isEmpty, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import scrollbleed from './scrollbleed';
 
 /**

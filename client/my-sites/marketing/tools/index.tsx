@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolsGoogleAdwordsFeature from './google-adwords';
 import MarketingToolsFeature from './feature';
@@ -77,7 +77,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					<Button
 						compact
 						onClick={ handleCreateALogoClick }
-						href="http://logojoy.grsm.io/looka"
+						href="https://wp.me/logo-maker"
 						target="_blank"
 					>
 						{ translate( 'Create A Logo' ) }

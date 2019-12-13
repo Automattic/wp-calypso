@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -499,7 +497,10 @@ export const getCreateDefaultZoneActionListSteps = state => {
 	steps.push( {
 		description: translate( 'Finishing initial setup' ),
 		onStep: ( dispatch, actionList ) => {
-			setCreatedDefaultShippingZone( siteId, true )( dispatch )
+			setCreatedDefaultShippingZone(
+				siteId,
+				true
+			)( dispatch )
 				.then( () => dispatch( actionListStepSuccess( actionList ) ) )
 				.catch( err => dispatch( actionListStepFailure( actionList, err ) ) );
 		},

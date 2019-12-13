@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { union, includes, trim, debounce } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -37,14 +35,14 @@ class ProductCategories extends Component {
 		this.debouncedOnSearch = debounce( this.onSearch, 500 );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId } = this.props;
 		if ( siteId ) {
 			this.props.fetchProductCategories( siteId, { page: 1 } );
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {
@@ -145,7 +143,4 @@ const mapDispatchToProps = dispatch => ( {
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategories ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,7 @@ const debug = debugModule( 'calypso:wpcom-task-list' );
 
 function getTasks( {
 	designType,
-	isSiteUnlaunched,
+	siteIsUnlaunched,
 	phase2,
 	siteSegment,
 	siteVerticals,
@@ -72,7 +71,7 @@ function getTasks( {
 	addTask( 'custom_domain_registered' );
 	addTask( 'mobile_app_installed' );
 
-	if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
+	if ( get( taskStatuses, 'email_verified.completed' ) && siteIsUnlaunched ) {
 		addTask( 'site_launched' );
 	}
 
@@ -129,6 +128,12 @@ class WpcomTaskList {
 		return found;
 	}
 
+	removeTasksWithoutUrls( taskUrls ) {
+		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
+
+		this.tasks = this.tasks.filter( hasUrl );
+	}
+
 	getFirstIncompleteTask() {
 		return this.tasks.find( task => ! task.isCompleted );
 	}
@@ -151,7 +156,7 @@ export const getTaskList = memoize(
 		const key = pick( params, [
 			'taskStatuses',
 			'designType',
-			'isSiteUnlaunched',
+			'siteIsUnlaunched',
 			'siteSegment',
 			'siteVerticals',
 		] );

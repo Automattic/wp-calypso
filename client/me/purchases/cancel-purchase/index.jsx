@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,11 +11,10 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card, CompactCard } from '@automattic/components';
 import CancelPurchaseButton from './button';
 import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
-import CompactCard from 'components/card/compact';
 import {
 	getName,
 	isCancelable,
@@ -37,6 +35,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { withLocalizedMoment } from 'components/localized-moment';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
@@ -242,4 +241,4 @@ export default connect( ( state, props ) => {
 		selectedSite: getSelectedSite( state ),
 		userId: getCurrentUserId( state ),
 	};
-} )( localize( CancelPurchase ) );
+} )( localize( withLocalizedMoment( CancelPurchase ) ) );

@@ -1,48 +1,29 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { requestSiteChecklist } from 'state/checklist/actions';
+import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
 
-class QuerySiteChecklist extends Component {
-	static propTypes = {
-		requestSiteChecklist: PropTypes.func,
-		siteId: PropTypes.number,
-	};
+export default function QuerySiteChecklist( { siteId } ) {
+	const dispatch = useDispatch();
+	const isSiteEligibleForFSE = useSelector( state =>
+		isSiteEligibleForFullSiteEditing( state, siteId )
+	);
 
-	componentWillMount() {
-		this.request( this.props.siteId );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-
-		this.request( nextProps.siteId );
-	}
-
-	request( siteId ) {
+	useEffect( () => {
 		if ( siteId ) {
-			this.props.requestSiteChecklist( siteId );
+			dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
 		}
-	}
+	}, [ dispatch, siteId, isSiteEligibleForFSE ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	null,
-	{ requestSiteChecklist }
-)( QuerySiteChecklist );
+QuerySiteChecklist.propTypes = { siteId: PropTypes.number.isRequired };

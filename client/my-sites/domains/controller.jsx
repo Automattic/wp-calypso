@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -107,6 +106,9 @@ const mapDomain = ( context, next ) => {
 };
 
 const transferDomain = ( context, next ) => {
+	const useStandardBack =
+		context.query.useStandardBack === 'true' || context.query.useStandardBack === '1';
+
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker
@@ -118,6 +120,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					useStandardBack={ useStandardBack }
 				/>
 			</CartData>
 		</Main>

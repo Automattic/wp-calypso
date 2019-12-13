@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * This renders the Concierge Chats scheduling page. It is a "wizard" interface with three steps.
  * Each step is a separate component that calls `onComplete` when the step is complete or `onBack`
@@ -97,7 +95,7 @@ export class ConciergeMain extends Component {
 		}
 
 		if ( nextAppointment && ! rescheduling ) {
-			return <AppointmentInfo appointment={ nextAppointment } />;
+			return <AppointmentInfo appointment={ nextAppointment } site={ site } />;
 		}
 
 		if ( isEmpty( availableTimes ) ) {

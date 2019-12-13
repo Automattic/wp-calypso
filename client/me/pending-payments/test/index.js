@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -85,7 +83,7 @@ describe( 'PendingPayments', () => {
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
 			'Main.pending-payments Connect(Localized(PurchasesHeader))[section="pending"]',
-			'Main.pending-payments Connect(Localized(PendingListItem))',
+			'Main.pending-payments Connect(PendingListItem)',
 		];
 
 		rules.forEach( rule => {

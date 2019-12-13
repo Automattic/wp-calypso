@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	togglePrivacy,
 	domainsReceiveAction,
 	domainsRequestAction,
 	domainsRequestSuccessAction,
@@ -19,8 +17,6 @@ import {
 	SITE_ID_FIRST as siteId,
 	REST_API_RESPONSE as wpcomResponse,
 	REST_API_ERROR_RESPONSE as wpcomErrorResponse,
-	DOMAIN_PRIMARY as firstDomain,
-	ACTION_DOMAIN_PRIVACY_TOGGLE,
 	ACTION_SITE_DOMAIN_RECEIVE,
 	ACTION_SITE_DOMAIN_REQUEST,
 	ACTION_SITE_DOMAIN_REQUEST_SUCCESS,
@@ -61,11 +57,6 @@ describe( 'actions', () => {
 		test( '#domainsRequestFailureAction()', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
-		} );
-
-		test( '#togglePrivacy()', () => {
-			const action = togglePrivacy( siteId, firstDomain.domain );
-			expect( action ).to.eql( ACTION_DOMAIN_PRIVACY_TOGGLE );
 		} );
 	} );
 

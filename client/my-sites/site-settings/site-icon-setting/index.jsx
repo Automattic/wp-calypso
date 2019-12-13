@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';

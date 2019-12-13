@@ -24,15 +24,9 @@ registerBlockType( 'a8c/navigation-menu', {
 	icon,
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full' ],
+		align: [ 'wide', 'full', 'right', 'left' ],
 		html: false,
 		reusable: false,
-	},
-	attributes: {
-		align: {
-			type: 'string',
-			default: 'wide',
-		},
 	},
 	edit,
 	save: () => null,

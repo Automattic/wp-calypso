@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { hideOnboardingWelcomePrompt } from 'state/inline-help/actions';
@@ -78,7 +77,7 @@ class ChecklistOnboardingWelcome extends Component {
 					</p>
 					<p className="checklist-onboarding-welcome__task-estimate">
 						<Gridicon icon="time" size={ 18 } />
-						{ translate( 'Estimated time:' ) }{' '}
+						{ translate( 'Estimated time:' ) }{ ' ' }
 						{ translate( '%d minute', '%d minutes', { count: 15, args: [ 15 ] } ) }
 					</p>
 				</div>

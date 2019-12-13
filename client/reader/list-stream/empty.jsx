@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +34,7 @@ class ListEmptyContent extends React.Component {
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }
-					href="/"
+					href="/read"
 				>
 					{ this.props.translate( 'Back to Following' ) }
 				</a>

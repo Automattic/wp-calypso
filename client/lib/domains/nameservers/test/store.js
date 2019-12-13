@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,14 +6,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import NameserversStore from './../store';
 import Dispatcher from 'dispatcher';
+import NameserversStore from '../store';
 import {
 	NAMESERVERS_FETCH,
 	NAMESERVERS_FETCH_COMPLETED,
 	NAMESERVERS_FETCH_FAILED,
 	NAMESERVERS_UPDATE_COMPLETED,
-} from 'lib/upgrades/action-types';
+} from '../action-types';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,10 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog, Button, CompactCard } from '@automattic/components';
 import config from 'config';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
@@ -202,7 +199,7 @@ class RemovePurchase extends Component {
 						// ^ is the internal WPcom domain i.e. example.wordpress.com
 						// if we want to use the purchased domain we can swap with the below line
 						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					} ) }{' '}
+					} ) }{ ' ' }
 					{ isGoogleApps( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +

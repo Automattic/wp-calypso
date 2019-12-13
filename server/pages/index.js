@@ -46,6 +46,7 @@ import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -239,7 +240,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request ) {
+function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
@@ -294,7 +295,7 @@ function getDefaultContext( request ) {
 		isWCComConnect,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),
+		entrypoint: getFilesForEntrypoint( target, entrypoint ),
 		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -554,7 +555,6 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
@@ -737,7 +737,7 @@ module.exports = function() {
 
 	// Landing pages for domains-related emails
 	app.get( '/domain-services/:action', function( req, res ) {
-		const ctx = getDefaultContext( req );
+		const ctx = getDefaultContext( req, 'entry-domains-landing' );
 		attachBuildTimestamp( ctx );
 		attachHead( ctx );
 		attachI18n( ctx );
@@ -748,22 +748,20 @@ module.exports = function() {
 			query: get( req, 'query', {} ),
 		};
 
-		const target = getBuildTargetFromRequest( req );
-
-		const pageHtml = renderJsx( 'domains-landing', {
-			...ctx,
-			entrypoint: getFilesForEntrypoint( target, 'entry-domains-landing' ),
-		} );
+		const pageHtml = renderJsx( 'domains-landing', ctx );
 		res.send( pageHtml );
 	} );
 
-	function handleSectionPath( section, sectionPath, isEntrypoint = false ) {
+	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get( pathRegex, function( req, res, next ) {
-			req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+			req.context = {
+				...getDefaultContext( req, entrypoint ),
+				sectionName: section.name,
+			};
 
-			if ( ! isEntrypoint && config.isEnabled( 'code-splitting' ) ) {
+			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
 			} else {
 				req.context.chunkFiles = EMPTY_ASSETS;
@@ -800,20 +798,11 @@ module.exports = function() {
 			}
 		} );
 
-	function loginRouteSetup( req, res, next ) {
-		req.context = getDefaultContext( req );
-		const target = getBuildTargetFromRequest( req );
-		req.context.entrypoint = getFilesForEntrypoint( target, 'entry-login' );
-		setUpCSP( req, res, () =>
-			req.context.isLoggedIn
-				? setUpLoggedInRoute( req, res, next )
-				: setUpLoggedOutRoute( req, res, next )
-		);
-	}
-
 	// Set up login routing.
-	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', true );
-	loginRouter( serverRouter( app, loginRouteSetup, null ) );
+	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

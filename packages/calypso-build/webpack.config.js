@@ -71,6 +71,12 @@ function getWebpackConfig(
 		babelConfig = undefined;
 	}
 
+	let postCssConfigPath = process.cwd();
+	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
+		// Default to this package's PostCSS config
+		postCssConfigPath = __dirname;
+	}
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry,
@@ -106,10 +112,7 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
-				} ),
+				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
 				FileConfig.loader(),
 			],
 		},

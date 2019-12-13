@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
@@ -53,10 +51,7 @@ class DismissibleCard extends Component {
 				<Gridicon
 					icon="cross"
 					className="dismissible-card__close-icon"
-					onClick={ flow(
-						onClick,
-						dismissCard
-					) }
+					onClick={ flow( onClick, dismissCard ) }
 				/>
 				{ this.props.children }
 			</Card>

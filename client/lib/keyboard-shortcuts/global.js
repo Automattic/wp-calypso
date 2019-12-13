@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +65,7 @@ GlobalShortcuts.prototype.openSiteSelector = function() {
 };
 
 GlobalShortcuts.prototype.goToReader = function() {
-	page( '/' );
+	page.redirect( '/read' );
 };
 
 GlobalShortcuts.prototype.goToMyLikes = function() {

@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
@@ -12,18 +10,36 @@ import {
 	EMAIL_VERIFY_STATE_RESET,
 } from 'state/action-types';
 
-export const status = createReducer( null, {
-	[ EMAIL_VERIFY_REQUEST ]: () => 'requesting',
-	[ EMAIL_VERIFY_REQUEST_SUCCESS ]: () => 'sent',
-	[ EMAIL_VERIFY_REQUEST_FAILURE ]: () => 'error',
-	[ EMAIL_VERIFY_STATE_RESET ]: () => null,
+export const status = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case EMAIL_VERIFY_REQUEST:
+			return 'requesting';
+		case EMAIL_VERIFY_REQUEST_SUCCESS:
+			return 'sent';
+		case EMAIL_VERIFY_REQUEST_FAILURE:
+			return 'error';
+		case EMAIL_VERIFY_STATE_RESET:
+			return null;
+	}
+
+	return state;
 } );
 
-export const errorMessage = createReducer( '', {
-	[ EMAIL_VERIFY_REQUEST ]: () => '',
-	[ EMAIL_VERIFY_REQUEST_SUCCESS ]: () => '',
-	[ EMAIL_VERIFY_REQUEST_FAILURE ]: ( state, { message } ) => message,
-	[ EMAIL_VERIFY_STATE_RESET ]: () => '',
+export const errorMessage = withoutPersistence( ( state = '', action ) => {
+	switch ( action.type ) {
+		case EMAIL_VERIFY_REQUEST:
+			return '';
+		case EMAIL_VERIFY_REQUEST_SUCCESS:
+			return '';
+		case EMAIL_VERIFY_REQUEST_FAILURE: {
+			const { message } = action;
+			return message;
+		}
+		case EMAIL_VERIFY_STATE_RESET:
+			return '';
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

@@ -7,7 +7,7 @@ Loading Placeholder
 import React from 'react';
 import { localize } from i18n-calypso;
 
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 
 const MyComponentLoadingPlaceholder = ( { translate } ) => (

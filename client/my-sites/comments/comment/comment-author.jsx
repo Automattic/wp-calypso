@@ -1,13 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import getSiteComment from 'state/selectors/get-site-comment';
@@ -34,10 +34,7 @@ export class CommentAuthor extends Component {
 		isLinkTooltipVisible: false,
 	};
 
-	shouldComponentUpdate = ( nextProps, nextState ) =>
-		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
-
-	storeLinkIndicatorRef = icon => ( this.hasLinkIndicator = icon );
+	linkIndicatorRef = React.createRef();
 
 	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
 
@@ -83,20 +80,22 @@ export class CommentAuthor extends Component {
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
 						{ hasLink && (
-							<span
-								onMouseEnter={ this.showLinkTooltip }
-								onMouseLeave={ this.hideLinkTooltip }
-								ref={ this.storeLinkIndicatorRef }
-							>
-								<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+							<Fragment>
+								<span
+									onMouseEnter={ this.showLinkTooltip }
+									onMouseLeave={ this.hideLinkTooltip }
+									ref={ this.linkIndicatorRef }
+								>
+									<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+								</span>
 								<Tooltip
-									context={ this.hasLinkIndicator }
+									context={ this.linkIndicatorRef.current }
 									isVisible={ isLinkTooltipVisible }
 									showOnMobile
 								>
 									{ translate( 'This comment contains links.' ) }
 								</Tooltip>
-							</span>
+							</Fragment>
 						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
@@ -151,4 +150,4 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentAuthor ) );
+export default connect( mapStateToProps )( localize( withLocalizedMoment( CommentAuthor ) ) );

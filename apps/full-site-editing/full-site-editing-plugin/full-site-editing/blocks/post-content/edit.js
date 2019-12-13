@@ -10,7 +10,8 @@ import classNames from 'classnames';
  */
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { InnerBlocks, PostTitle } from '@wordpress/editor';
+import { PostTitle } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { Component, Fragment } from '@wordpress/element';
 
 class PostContentEdit extends Component {

@@ -7,6 +7,7 @@
 .DS_Store
 .idea
 .vscode
+*.code-workspace
 *.iml
 *.iws
 /tags
@@ -49,5 +50,7 @@ cover.html
 cached-requests.json
 
 # Monorepo output
-/apps/**/dist/
+/apps/*/dist/
+/apps/*/types/
 /packages/*/dist/
+/packages/*/types/

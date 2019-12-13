@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -19,15 +18,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -98,46 +88,37 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	customerHomePage: {
-		datestamp: '20190903',
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191106',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	userStepRecaptcha: {
+		datestamp: '20191111',
 		variations: {
 			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		assignmentMethod: 'userId',
-	},
-	signupWithBasicSite: {
-		datestamp: '20190930',
-		variations: {
-			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	placesApiInCheckout: {
-		datestamp: '20190923',
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
 		variations: {
-			original: 50,
-			placesApi: 50,
-		},
-		defaultVariation: 'original',
-	},
-	prefillDomainStepValue: {
-		datestamp: '20190929',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	domainSuggestionsEn: {
-		datestamp: '20191003',
-		variations: {
-			control: 50,
-			test: 50,
+			variantShowUpdates: 90,
+			control: 10,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

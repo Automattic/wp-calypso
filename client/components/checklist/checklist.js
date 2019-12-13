@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 class Checklist extends PureComponent {
 	static propTypes = {
@@ -36,7 +36,7 @@ class Checklist extends PureComponent {
 		this.notifyCompletion();
 	}
 
-	componentWillReceiveProps( { siteId } ) {
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setState( { expandedTaskIndex: undefined } );
 		}

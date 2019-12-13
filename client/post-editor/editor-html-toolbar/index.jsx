@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -35,13 +32,14 @@ import {
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -727,4 +725,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( EditorHtmlToolbar ) );
+)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );

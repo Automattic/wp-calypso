@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {

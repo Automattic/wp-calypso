@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AutomatticLogo from 'components/automattic-logo';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
@@ -132,20 +132,24 @@ class CrowdsignalSignupForm extends Component {
 									>
 										{ translate( 'Create a WordPress.com Account' ) }
 									</FormButton>
+
+									<p className="signup-form__crowdsignal-learn-more">
+										{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
+											components: {
+												a: (
+													<a
+														href="https://crowdsignal.com/2012/12/03/crowdsignal-wordpress-account/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										} ) }
+									</p>
 								</LoggedOutFormFooter>
 							</LoggedOutForm>
 						</div>
 					</div>
-				</div>
-
-				<div className="signup-form__crowdsignal-tos">
-					<span>
-						{ translate( 'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.', {
-							components: {
-								a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
-							},
-						} ) }
-					</span>
 				</div>
 
 				<div className={ backButtonWrapperClass }>

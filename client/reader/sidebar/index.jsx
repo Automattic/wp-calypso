@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,6 +15,7 @@ import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
+import ReaderSidebarNudges from './reader-sidebar-nudges';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
@@ -146,17 +146,18 @@ export class ReaderSidebar extends React.Component {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
+					<ReaderSidebarNudges />
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/', path, {
+								className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 									'sidebar-streams__following': true,
 								} ) }
 								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link="/"
+								link="/read"
 							/>
 
 							<SidebarItem

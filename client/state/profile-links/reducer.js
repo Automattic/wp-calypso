@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
 	USER_PROFILE_LINKS_ADD_FAILURE,
@@ -20,28 +18,55 @@ import {
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'state/action-types';
 
-export const items = createReducer( null, {
-	[ USER_PROFILE_LINKS_RECEIVE ]: ( state, { profileLinks } ) => profileLinks,
-	[ USER_PROFILE_LINKS_DELETE_SUCCESS ]: ( state, { linkSlug } ) =>
-		reject( state, { link_slug: linkSlug } ),
+export const items = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case USER_PROFILE_LINKS_RECEIVE: {
+			const { profileLinks } = action;
+			return profileLinks;
+		}
+		case USER_PROFILE_LINKS_DELETE_SUCCESS: {
+			const { linkSlug } = action;
+			return reject( state, { link_slug: linkSlug } );
+		}
+	}
+
+	return state;
 } );
 
-export const errors = createReducer(
-	{},
-	{
-		[ USER_PROFILE_LINKS_ADD_SUCCESS ]: () => ( {} ),
-		[ USER_PROFILE_LINKS_ADD_DUPLICATE ]: ( state, { profileLinks } ) => ( {
-			duplicate: profileLinks,
-		} ),
-		[ USER_PROFILE_LINKS_ADD_MALFORMED ]: ( state, { profileLinks } ) => ( {
-			malformed: profileLinks,
-		} ),
-		[ USER_PROFILE_LINKS_ADD_FAILURE ]: ( state, { error } ) => ( { error } ),
-		[ USER_PROFILE_LINKS_DELETE_SUCCESS ]: () => ( {} ),
-		[ USER_PROFILE_LINKS_DELETE_FAILURE ]: ( state, { error } ) => ( { error } ),
-		[ USER_PROFILE_LINKS_RESET_ERRORS ]: () => ( {} ),
+export const errors = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_PROFILE_LINKS_ADD_SUCCESS:
+			return {};
+		case USER_PROFILE_LINKS_ADD_DUPLICATE: {
+			const { profileLinks } = action;
+
+			return {
+				duplicate: profileLinks,
+			};
+		}
+		case USER_PROFILE_LINKS_ADD_MALFORMED: {
+			const { profileLinks } = action;
+
+			return {
+				malformed: profileLinks,
+			};
+		}
+		case USER_PROFILE_LINKS_ADD_FAILURE: {
+			const { error } = action;
+			return { error };
+		}
+		case USER_PROFILE_LINKS_DELETE_SUCCESS:
+			return {};
+		case USER_PROFILE_LINKS_DELETE_FAILURE: {
+			const { error } = action;
+			return { error };
+		}
+		case USER_PROFILE_LINKS_RESET_ERRORS:
+			return {};
 	}
-);
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

@@ -40,10 +40,9 @@ import {
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
 	combineReducers,
-	createReducer,
-	createReducerWithValidation,
 	keyedReducer,
 	withSchemaValidation,
+	withoutPersistence,
 } from 'state/utils';
 
 /**
@@ -257,10 +256,17 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requestingAll = createReducer( false, {
-	[ SITES_REQUEST ]: () => true,
-	[ SITES_REQUEST_FAILURE ]: () => false,
-	[ SITES_REQUEST_SUCCESS ]: () => false,
+export const requestingAll = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITES_REQUEST:
+			return true;
+		case SITES_REQUEST_FAILURE:
+			return false;
+		case SITES_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 /**
@@ -271,20 +277,24 @@ export const requestingAll = createReducer( false, {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer(
-	{},
-	{
-		[ SITE_REQUEST ]: ( state, { siteId } ) => {
+export const requesting = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_REQUEST: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: true };
-		},
-		[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		}
+		case SITE_REQUEST_FAILURE: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
-		[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		}
+		case SITE_REQUEST_SUCCESS: {
+			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -296,14 +306,18 @@ export const requesting = createReducer(
  */
 export const deleting = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ SITE_DELETE ]: stubTrue,
-			[ SITE_DELETE_FAILURE ]: stubFalse,
-			[ SITE_DELETE_SUCCESS ]: stubFalse,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case SITE_DELETE:
+				return stubTrue( state, action );
+			case SITE_DELETE_FAILURE:
+				return stubFalse( state, action );
+			case SITE_DELETE_SUCCESS:
+				return stubFalse( state, action );
 		}
-	)
+
+		return state;
+	} )
 );
 
 /**
@@ -313,12 +327,16 @@ export const deleting = keyedReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const hasAllSitesList = createReducerWithValidation(
-	false,
-	{
-		[ SITES_RECEIVE ]: () => true,
-	},
-	hasAllSitesListSchema
+export const hasAllSitesList = withSchemaValidation(
+	hasAllSitesListSchema,
+	( state = false, action ) => {
+		switch ( action.type ) {
+			case SITES_RECEIVE:
+				return true;
+		}
+
+		return state;
+	}
 );
 
 export default combineReducers( {

@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EditGravatar from 'blocks/edit-gravatar';
 import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';
@@ -169,13 +169,6 @@ const Profile = createReactClass( {
 	},
 } );
 
-const connectComponent = connect(
-	null,
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	protectForm,
-	localize
-)( Profile );
+export default flowRight( connectComponent, protectForm, localize )( Profile );

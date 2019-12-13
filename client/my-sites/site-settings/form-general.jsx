@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,15 +12,14 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import { Card, CompactCard, Button } from '@automattic/components';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
+import { languages } from 'languages';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -47,7 +44,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._showWarning( this.props.site );
 	}
 
@@ -155,7 +152,7 @@ export class SiteSettingsFormGeneral extends Component {
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			customAddress = (
 				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
-					<Gridicon icon="plus" />{' '}
+					<Gridicon icon="plus" />{ ' ' }
 					{ translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
@@ -268,7 +265,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				{ errorNotice }
 				<LanguagePicker
-					languages={ config( 'languages' ) }
+					languages={ languages }
 					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
 					value={ errorNotice ? 'en_US' : fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
@@ -370,7 +367,7 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Choose a city in your timezone.' ) }{' '}
+					{ translate( 'Choose a city in your timezone.' ) }{ ' ' }
 					{ translate(
 						'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
 						{

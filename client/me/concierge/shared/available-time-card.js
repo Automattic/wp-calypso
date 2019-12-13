@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * CalendarCard represents a day of schedulable concierge chats. Each card is expandable to
  * allow the user to select a specific time on the day. If the day has no availability, it will
@@ -21,7 +19,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

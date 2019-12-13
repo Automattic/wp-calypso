@@ -1,5 +1,3 @@
-/** @format */
-
 export const couponParams1 = { offset: 0, per_page: 5 };
 export const coupons1 = [
 	{

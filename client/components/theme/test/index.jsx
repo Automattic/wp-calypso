@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -37,6 +36,7 @@ describe( 'Theme', () => {
 			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
 			translate: identity,
+			setThemesBookmark: () => {},
 		};
 	} );
 

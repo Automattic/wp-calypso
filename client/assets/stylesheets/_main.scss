@@ -80,6 +80,10 @@ body {
 	color: var( --color-text );
 }
 
+button {
+	font-size: 14px;
+}
+
 body,
 button,
 input,
@@ -252,6 +256,10 @@ th {
 }
 
 /* Links */
+a {
+	text-decoration: none;
+}
+
 a,
 a:visited {
 	color: var( --color-link );

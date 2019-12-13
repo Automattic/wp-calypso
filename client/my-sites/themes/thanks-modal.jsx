@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
@@ -29,6 +27,8 @@ import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
+import getSiteUrl from 'state/selectors/get-site-url';
 
 /**
  * Style dependencies
@@ -75,7 +75,7 @@ class ThanksModal extends Component {
 
 	visitSite = () => {
 		this.trackClick( 'visit site' );
-		page( this.props.visitSiteUrl );
+		window.open( this.props.siteUrl, '_blank' );
 	};
 
 	goBack = () => {
@@ -108,9 +108,12 @@ class ThanksModal extends Component {
 	};
 
 	goToCustomizer = () => {
+		const { customizeUrl, shouldEditHomepageWithGutenberg } = this.props;
+
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		window.open( this.props.customizeUrl, '_blank' );
+
+		shouldEditHomepageWithGutenberg ? page( customizeUrl ) : window.open( customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -181,36 +184,72 @@ class ThanksModal extends Component {
 		);
 	};
 
-	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated ? (
-			<span className="thanks-modal__button-customize">
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		if ( ! hasActivated ) {
+			return translate( 'Activating theme…' );
+		}
+
+		const gutenbergContent = translate( 'Edit Homepage' );
+		const customizerContent = (
+			<>
 				<Gridicon icon="external" />
 				{ translate( 'Customize site' ) }
-			</span>
-		) : (
-			translate( 'Activating theme…' )
+			</>
 		);
-		const buttons = [
+
+		return (
+			<span className="thanks-modal__button-customize">
+				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
+			</span>
+		);
+	};
+
+	getViewSiteLabel = () => (
+		<span className="thanks-modal__button-customize">
+			<Gridicon icon="external" />
+			{ translate( 'View Site' ) }
+		</span>
+	);
+
+	getButtons = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+
+		const firstButton = shouldEditHomepageWithGutenberg
+			? {
+					action: 'view',
+					label: this.getViewSiteLabel(),
+					onClick: this.visitSite,
+			  }
+			: {
+					action: 'learn',
+					label: translate( 'Learn about this theme' ),
+					onClick: this.learnThisTheme,
+			  };
+
+		return [
 			{
-				action: 'learn',
-				label: translate( 'Learn about this theme' ),
-				onClick: this.learnThisTheme,
+				...firstButton,
+				disabled: ! hasActivated,
 			},
 			{
 				action: 'customizeSite',
-				label: customizeSiteText,
+				label: this.getEditSiteLabel(),
 				isPrimary: true,
 				disabled: ! hasActivated,
 				onClick: this.goToCustomizer,
 			},
 		];
+	};
+
+	render() {
+		const { currentTheme, hasActivated, isActivating } = this.props;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
-				buttons={ buttons }
+				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
@@ -222,12 +261,18 @@ class ThanksModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
+		// Note: Gutenberg buttons will only show if the homepage is a page.
+		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
+
 		return {
 			siteId,
+			siteUrl,
 			currentTheme,
+			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),

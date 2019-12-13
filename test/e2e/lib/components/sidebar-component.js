@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -118,11 +116,15 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.storeSelector );
 	}
 
-	async settingsOptionExists() {
-		return await driverHelper.isElementPresent(
+	async settingsOptionExists( click = false ) {
+		const isDisplayed = await driverHelper.isElementPresent(
 			this.driver,
 			SidebarComponent._getSidebarSelector( 'settings' )
 		);
+		if ( click ) {
+			await this._scrollToAndClickMenuItem( 'settings' );
+		}
+		return isDisplayed;
 	}
 
 	async mediaOptionExists() {
@@ -139,7 +141,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.site__notices' ) );
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.current-site__notices' )
+		);
 
 		if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
 			const settingsSelector = SidebarComponent._getSidebarSelector( 'settings' );
@@ -214,7 +219,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	/**
 	 * Removes a single jetpack site with error label from the sites list.
 	 *
-	 * @return {Promise<boolean>} true if a site was removed
+	 * @returns {Promise<boolean>} true if a site was removed
 	 */
 	async removeBrokenSite() {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );

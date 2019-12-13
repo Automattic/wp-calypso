@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -238,6 +237,78 @@ describe( 'flow-controller', () => {
 			} );
 
 			store.dispatch( submitSignupStep( { stepName: 'stepRequiringSiteSlug' } ) );
+		} );
+	} );
+
+	describe( 'controlling a flow with optional dependencies', () => {
+		test( 'should run `onComplete` once all steps are submitted, including optional dependency', done => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => done(),
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+			store.dispatch(
+				submitSignupStep(
+					{
+						stepName: 'site-topic-with-optional-theme',
+					},
+					{
+						siteTopic: 'foo',
+						themeSlugWithRepo: 'bar',
+					}
+				)
+			);
+		} );
+
+		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', done => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => done(),
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+			store.dispatch(
+				submitSignupStep(
+					{
+						stepName: 'site-topic-with-optional-theme',
+					},
+					{
+						siteTopic: 'foo',
+					}
+				)
+			);
+		} );
+
+		test( "should throw if step doesn't provide required dependency", () => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+
+			expect( () =>
+				store.dispatch(
+					submitSignupStep(
+						{
+							stepName: 'site-topic-with-optional-theme',
+						},
+						{
+							themeSlugWithRepo: 'foo',
+						}
+					)
+				)
+			).toThrow( /the dependencies .* were not provided/i );
 		} );
 	} );
 } );

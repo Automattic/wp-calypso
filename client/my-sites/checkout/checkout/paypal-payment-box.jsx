@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import debugFactory from 'debug';
 import analytics from 'lib/analytics';
 import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';
-import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
+import { setTaxPostalCode } from 'lib/cart/actions';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';

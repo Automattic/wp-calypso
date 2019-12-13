@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -11,6 +9,7 @@ import {
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Triggers a network request for Keyring services.
@@ -18,14 +17,15 @@ import {
  * @return {Function} Action thunk
  */
 export function requestKeyringServices() {
-	return dispatch => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: KEYRING_SERVICES_REQUEST,
 		} );
 
+		const siteId = getSelectedSiteId( getState() );
 		return wpcom
 			.undocumented()
-			.metaKeyring()
+			.sitesExternalServices( siteId )
 			.then( response => {
 				dispatch( {
 					type: KEYRING_SERVICES_RECEIVE,

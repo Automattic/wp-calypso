@@ -409,7 +409,7 @@ export class MediaLibraryContent extends React.Component {
 		const classNames = classnames( 'media-library__content', {
 			'has-no-upload-button': ! this.props.displayUploadMediaButton,
 		} );
-		
+
 		return (
 			<div className={ classNames }>
 				{ this.renderHeader() }

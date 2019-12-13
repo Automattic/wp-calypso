@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -65,7 +63,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		) );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'registrantType' ],

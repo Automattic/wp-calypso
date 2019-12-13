@@ -6,6 +6,7 @@ import svg4everybody from 'svg4everybody';
 import '@webcomponents/url';
 import URLSearchParamsPolyfill from '@ungap/url-search-params';
 import 'isomorphic-fetch';
+import 'globalthis/auto';
 
 /**
  * Internal dependencies

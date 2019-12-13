@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,12 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card, ProgressBar } from '@automattic/components';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
-import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';
@@ -145,7 +142,4 @@ const mapDispatchToProps = {
 	track: recordTracksEvent,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ChecklistBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import CredentialsSetupFlow from './credentials-setup-flow';
+import { CompactCard } from '@automattic/components';
 import CredentialsConfigured from './credentials-configured';
 import Notice from 'components/notice';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -19,6 +17,7 @@ import SettingsSectionHeader from 'my-sites/site-settings/settings-section-heade
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteSlug } from 'state/sites/selectors';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 
 /**
  * Style dependencies
@@ -47,7 +46,15 @@ class JetpackCredentials extends Component {
 				{ hasCredentials ? (
 					<CredentialsConfigured siteId={ siteId } />
 				) : (
-					<CredentialsSetupFlow siteId={ siteId } />
+					<CompactCard>
+						<RewindCredentialsForm
+							{ ...{
+								allowCancel: false,
+								role: 'main',
+								siteId,
+							} }
+						/>
+					</CompactCard>
 				) }
 				{ hasCredentials && (
 					<CompactCard href={ `/activity-log/${ siteSlug }` }>

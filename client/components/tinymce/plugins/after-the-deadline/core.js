@@ -6,7 +6,6 @@
  * Project     : http:
  * Contact     : raffi@automattic.com, andrew.duthie@automattic.com
  *
- * @format
  */
 
 /**

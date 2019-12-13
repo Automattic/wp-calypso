@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
 import { requestTeams } from 'state/reader/teams/actions';
 
 class QueryReaderTeams extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.requestTeams();
 	}
 
@@ -27,7 +25,4 @@ QueryReaderTeams.propTypes = {
 	request: PropTypes.func,
 };
 
-export default connect(
-	null,
-	{ requestTeams }
-)( QueryReaderTeams );
+export default connect( null, { requestTeams } )( QueryReaderTeams );

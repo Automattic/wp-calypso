@@ -1,4 +1,5 @@
-/** @format */
+/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "chaiExpect" ] } ] */
+
 /**
  * External dependencies
  */
@@ -37,7 +38,7 @@ import {
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
-	canCurrentUserUseChecklistMenu,
+	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -3915,7 +3916,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'canCurrentUserUseChecklistMenu()', () => {
+	describe( 'canCurrentUserUseCustomerHome()', () => {
 		const createState = ( { created_at, manage_options = true, jetpack = false } = {} ) => ( {
 			ui: {
 				selectedSiteId: 1,
@@ -3938,32 +3939,32 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true for a simple site created after 2019-08-06', () => {
-			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2020-01-01' } ) ) ).toBe(
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01' } ) ) ).toBe(
 				true
 			);
 		} );
 
 		test( 'should return false for a simple site created before 2019-08-06', () => {
-			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2019-08-01' } ) ) ).toBe(
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-01' } ) ) ).toBe(
 				false
 			);
 		} );
 
 		test( 'should return false for a simple site created on the 2019-08-06', () => {
-			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2019-08-06' } ) ) ).toBe(
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-06' } ) ) ).toBe(
 				true
 			);
 		} );
 
 		test( "should return false for site with a zero'd out created_at option", () => {
 			expect(
-				canCurrentUserUseChecklistMenu( createState( { created_at: '0000-00-00T00:00:00+00:00' } ) )
+				canCurrentUserUseCustomerHome( createState( { created_at: '0000-00-00T00:00:00+00:00' } ) )
 			).toBe( false );
 		} );
 
 		test( "should return false if user can't manage site options", () => {
 			expect(
-				canCurrentUserUseChecklistMenu(
+				canCurrentUserUseCustomerHome(
 					createState( { created_at: '2020-01-01', manage_options: false } )
 				)
 			).toBe( false );
@@ -3971,7 +3972,7 @@ describe( 'selectors', () => {
 
 		test( 'should return false for Jetpack site', () => {
 			expect(
-				canCurrentUserUseChecklistMenu( createState( { created_at: '2020-01-01', jetpack: true } ) )
+				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', jetpack: true } ) )
 			).toBe( false );
 		} );
 	} );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ export default class extends React.Component {
 
 	state = { width: 0, height: 0 };
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 	}
 

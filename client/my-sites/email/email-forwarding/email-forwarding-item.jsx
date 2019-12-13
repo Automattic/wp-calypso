@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -136,10 +135,7 @@ const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination 
 		resendVerificationEmail( domainName, mailbox, destination )
 	);
 
-export default connect(
-	null,
-	{
-		removeEmailForwardWithAnalytics,
-		resendVerificationEmailWithAnalytics,
-	}
-)( localize( EmailForwardingItem ) );
+export default connect( null, {
+	removeEmailForwardWithAnalytics,
+	resendVerificationEmailWithAnalytics,
+} )( localize( EmailForwardingItem ) );

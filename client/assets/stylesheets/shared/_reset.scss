@@ -123,6 +123,15 @@ a:active {
 a img {
 	border: 0;
 }
+button {
+	appearance: none;
+	background: transparent;
+	border: none;
+	font-size: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: baseline;
+}
 
 // Reset the default styling on form inputs in Webkit/iOS
 input,
@@ -130,7 +139,12 @@ textarea {
 	border-radius: 0;
 	appearance: none;
 }
-input[type='radio'],
-input[type='checkbox'] {
-	-webkit-appearance: none;
+
+// Remove Firefox inner focus ring around button text (only FF on Windows shows that)
+button::-moz-focus-inner,
+input[type='reset']::-moz-focus-inner,
+input[type='button']::-moz-focus-inner,
+input[type='submit']::-moz-focus-inner {
+	border: 0;
+	padding: 0;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
@@ -55,11 +52,11 @@ class TransferDomainPrecheck extends React.Component {
 		unlockCheckClicked: false,
 	};
 
-	componentWillMount() {
-		this.componentWillReceiveProps( this.props );
+	UNSAFE_componentWillMount() {
+		this.UNSAFE_componentWillReceiveProps( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset steps if domain became locked again
 		if ( false === nextProps.unlocked ) {
 			this.resetSteps();

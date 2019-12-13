@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,45 +11,25 @@ import { connect } from 'react-redux';
 import { requestPostCounts } from 'state/posts/counts/actions';
 import { isRequestingPostCounts } from 'state/posts/counts/selectors';
 
-class QueryPostCounts extends Component {
-	componentWillMount() {
-		this.request( this.props );
+const request = ( siteId, type ) => ( dispatch, getState ) => {
+	if ( ! isRequestingPostCounts( getState(), siteId, type ) ) {
+		dispatch( requestPostCounts( siteId, type ) );
 	}
+};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId && this.props.type === nextProps.type ) {
-			return;
+export default function QueryPostCounts( { siteId, type } ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteId && type ) {
+			dispatch( request( siteId, type ) );
 		}
+	}, [ dispatch, siteId, type ] );
 
-		this.request( nextProps );
-	}
-
-	request( props ) {
-		if ( props.requesting ) {
-			return;
-		}
-
-		props.requestPostCounts( props.siteId, props.type );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryPostCounts.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	type: PropTypes.string.isRequired,
-	requesting: PropTypes.bool,
-	requestPostCounts: PropTypes.func,
 };
-
-export default connect(
-	( state, ownProps ) => {
-		const { siteId, type } = ownProps;
-		return {
-			requesting: isRequestingPostCounts( state, siteId, type ),
-		};
-	},
-	{ requestPostCounts }
-)( QueryPostCounts );

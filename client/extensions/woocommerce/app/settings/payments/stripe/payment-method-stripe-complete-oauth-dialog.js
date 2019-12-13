@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import {
 	clearError,
 	oauthConnect,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog, ProgressBar } from '@automattic/components';
 import {
 	getError,
 	getIsOAuthConnecting,
@@ -29,7 +27,6 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {
@@ -38,7 +35,7 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 		onCancel: PropTypes.func.isRequired,
 	};
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		this.props.clearError();
 	};
 
@@ -53,7 +50,7 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 		}
 	};
 
-	componentWillReceiveProps = ( { stripeConnectAccount } ) => {
+	UNSAFE_componentWillReceiveProps = ( { stripeConnectAccount } ) => {
 		// Did we receive a connected user ID? Connect must have finished, so
 		// let's close this dialog
 		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );
@@ -160,8 +157,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodStripeCompleteOAuthDialog )
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeCompleteOAuthDialog )
 );

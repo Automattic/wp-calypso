@@ -7,8 +7,9 @@ import analytics from 'lib/analytics';
 
 async function makeRequest( username, password, authCode = '' ) {
 	try {
-		const response = fetch( '/oauth', {
+		const response = await fetch( '/oauth', {
 			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify( {
 				username,
 				password,
@@ -16,9 +17,12 @@ async function makeRequest( username, password, authCode = '' ) {
 			} ),
 		} );
 
+		const json = await response.json();
+		const errorMessage = ( json && json.error_description ) || '';
+
 		return [
-			response.ok ? null : new Error(),
-			{ ok: response.ok, status: response.status, body: await response.json() },
+			response.ok ? null : new Error( errorMessage ),
+			{ ok: response.ok, status: response.status, body: json },
 		];
 	} catch ( error ) {
 		return [ error, null ];
@@ -35,7 +39,7 @@ export function login( username, password, authCode ) {
 
 		Dispatcher.handleServerAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
-			response,
+			data: response,
 			error,
 		} );
 	} );

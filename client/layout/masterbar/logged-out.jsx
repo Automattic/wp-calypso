@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -43,7 +41,7 @@ class MasterbarLoggedOut extends PureComponent {
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
-		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
+		if ( includes( [ 'login' ], sectionName ) ) {
 			return null;
 		}
 
@@ -83,7 +81,7 @@ class MasterbarLoggedOut extends PureComponent {
 		const { currentQuery, currentRoute, sectionName, translate } = this.props;
 
 		// Hide for some sections
-		if ( includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ) {
+		if ( includes( [ 'signup' ], sectionName ) ) {
 			return null;
 		}
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
@@ -142,7 +140,4 @@ const Privacy = createReactClass( {
 	},
 } );
 
-export default compose(
-	localize,
-	protectForm
-)( Privacy );
+export default compose( localize, protectForm )( Privacy );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/cart/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -29,7 +27,7 @@ export class CartCoupon extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}
@@ -56,7 +54,7 @@ export class CartCoupon extends React.Component {
 					{ this.props.translate( 'Coupon applied: %(coupon)s', {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
-				</span>{' '}
+				</span>{ ' ' }
 				<button onClick={ this.clearCoupon } className="button is-link cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
 				</button>
@@ -178,7 +176,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( CartCoupon ) );
+export default connect( null, mapDispatchToProps )( localize( CartCoupon ) );

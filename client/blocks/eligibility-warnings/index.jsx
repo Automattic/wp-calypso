@@ -1,21 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, noop, partition } from 'lodash';
+import { filter, get, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
@@ -25,8 +21,7 @@ import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import WarningList from './warning-list';
@@ -54,9 +49,9 @@ export const EligibilityWarnings = ( {
 } ) => {
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
-	const [ bannerHolds, listHolds ] = partition(
+	const listHolds = filter(
 		get( eligibilityData, 'eligibilityHolds', [] ),
-		hold => includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
+		hold => ! includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
 	);
 
 	const classes = classNames( 'eligibility-warnings', {
@@ -104,20 +99,6 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context } }
 			/>
 			{ businessUpsellBanner }
-			{ hasBusinessPlan && ! isJetpack && includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
-				// TODO: confirm the user has domain credit
-				<Banner
-					className="eligibility-warnings__banner"
-					description={
-						'plugins' === context
-							? translate( 'To install this plugin, add a free custom domain.' )
-							: translate( 'To upload themes, add a free custom domain.' )
-					}
-					href={ `/domains/manage/${ siteSlug }` }
-					icon="domains"
-					title={ translate( 'Custom domain required' ) }
-				/>
-			) }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
@@ -135,10 +116,18 @@ export const EligibilityWarnings = ( {
 
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && translate( 'Please clear all issues above to proceed.' ) }
-					{ isEligible &&
-						warnings.length > 0 &&
-						translate( 'If you proceed you will no longer be able to use these features. ' ) }
+					{ ! isEligible && (
+						<>
+							{ translate( 'Please clear all issues above to proceed.' ) }
+							&nbsp;
+						</>
+					) }
+					{ isEligible && warnings.length > 0 && (
+						<>
+							{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
+							&nbsp;
+						</>
+					) }
 					{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
 						components: {
 							a: (
@@ -208,7 +197,15 @@ const mapDispatchToProps = {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const context = includes( ownProps.backUrl, 'plugins' ) ? 'plugins' : 'themes';
+	let context;
+	if ( includes( ownProps.backUrl, 'plugins' ) ) {
+		context = 'plugins';
+	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+		context = 'themes';
+	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
+		context = 'hosting';
+	}
+
 	const onCancel = () => dispatchProps.trackCancel( { context } );
 	const onProceed = () => {
 		ownProps.onProceed();

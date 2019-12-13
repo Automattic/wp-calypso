@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -55,7 +53,7 @@ const UrlSearch = Component =>
 			searchOpen: false,
 		};
 
-		componentWillReceiveProps( { search } ) {
+		UNSAFE_componentWillReceiveProps( { search } ) {
 			return ! search && this.setState( { searchOpen: false } );
 		}
 
