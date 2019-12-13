@@ -17,6 +17,12 @@ $admin-sidebar-width-collapsed: 0;
 	max-width: 1100px; // Overrides default $content-width
 }
 
+.gutenboarding {
+	.edit-post-layout__content {
+		overflow-y: scroll;
+	}
+}
+
 /**
  * Hide the block UI with CSS overrides
  *

@@ -78,7 +78,7 @@ export function Gutenboard() {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="block-editor__container">
+		<div className="gutenboarding block-editor__container">
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<div
