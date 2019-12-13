@@ -227,10 +227,7 @@ export default class LoginFlow {
 	}
 
 	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectMySite();
-
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		await sideBarComponent.selectPlugins();
+		await this.loginAndSelectPlugins();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();
