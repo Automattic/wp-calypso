@@ -36,7 +36,6 @@ import { Steps } from './types';
 import './stores/domain-suggestions';
 import './stores/verticals-templates';
 import './style.scss';
-import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
 
 const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {
 	[ Steps.IntentGathering ]: ( { siteVertical } ) => !! siteVertical,

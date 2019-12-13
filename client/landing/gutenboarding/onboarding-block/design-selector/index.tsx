@@ -11,6 +11,8 @@ import React, { useState } from 'react';
 import { SiteVertical } from '../../stores/onboard/types';
 import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
 
+import '../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/styles/starter-page-templates-editor.scss';
+
 export default () => {
 	const siteVertical = useSelect(
 		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
