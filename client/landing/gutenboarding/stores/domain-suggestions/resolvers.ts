@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, InputArgsObject } from '@wordpress/url';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
@@ -25,7 +25,7 @@ export function* __internalGetDomainSuggestions(
 	const suggestions = yield apiFetch( {
 		credentials: 'same-origin',
 		mode: 'cors',
-		url: addQueryArgs( url, queryObject ),
+		url: addQueryArgs( url, ( queryObject as unknown ) as InputArgsObject ),
 	} );
 
 	return receiveDomainSuggestions( queryObject, suggestions );
