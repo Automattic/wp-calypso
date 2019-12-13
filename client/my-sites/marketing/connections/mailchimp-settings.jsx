@@ -12,6 +12,7 @@ import { get, isArray } from 'lodash';
 import { requestSettingsUpdate } from 'state/mailchimp/settings/actions';
 import QueryMailchimpLists from 'components/data/query-mailchimp-lists';
 import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
+import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -25,6 +26,7 @@ const MailchimpSettings = ( {
 	requestSettingsUpdateAction,
 	mailchimpLists,
 	mailchimpListId,
+	membershipsConnectedAccountId,
 	isJetpack,
 	isJetpackConnectionBroken,
 	isJetpackTooOld,
@@ -39,6 +41,7 @@ const MailchimpSettings = ( {
 				{
 					follower_list_id: 0,
 					keyring_id: 0,
+					memberships_subscribers_list: 0,
 				},
 				translate( 'Subscriber emails will not be saved to Mailchimp any more' )
 			);
@@ -52,6 +55,18 @@ const MailchimpSettings = ( {
 				keyring_id: keyringConnections[ 0 ].ID,
 			},
 			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
+		);
+	};
+	const chooseMembershipsList = event => {
+		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		requestSettingsUpdateAction(
+			siteId,
+			{
+				memberships_subscribers_list: event.target.value,
+			},
+			translate( 'New Recurring Payments subscribers will be saved to the %s Mailchimp list', {
+				args: list.name,
+			} )
 		);
 	};
 	const common = (
@@ -114,6 +129,7 @@ const MailchimpSettings = ( {
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
+			<QueryMembershipsSettings siteId={ siteId } />
 			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
 			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
 				<Notice
@@ -146,6 +162,26 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
+			{ membershipsConnectedAccountId && mailchimpLists && mailchimpLists.length && (
+				<div>
+					<p>
+						{ translate(
+							'Your site has also enabled Recurring Payments. Do you want your Recurring Payments subscribers to be added to a Mailchimp list?'
+						) }
+					</p>
+					<select value={ mailchimpListId } onChange={ chooseMembershipsList }>
+						<option key="none" value={ 0 }>
+							{ translate( 'Do not connect Recurring Payments with Mailchimp' ) }
+						</option>
+						{ mailchimpLists &&
+							mailchimpLists.map( list => (
+								<option key={ list.id } value={ list.id }>
+									{ list.name }
+								</option>
+							) ) }
+					</select>
+				</div>
+			) }
 			{ common }
 		</div>
 	);
@@ -179,9 +215,19 @@ export default connect(
 			isJetpack: isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
+			membershipsConnectedAccountId: get(
+				state,
+				[ 'memberships', 'settings', siteId, 'connectedAccountId' ],
+				null
+			),
 			mailchimpListId: get(
 				state,
 				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
+				0
+			),
+			membershipsMailchimpListId: get(
+				state,
+				[ 'mailchimp', 'settings', 'items', siteId, 'memberships_subscribers_list' ],
 				0
 			),
 		};
