@@ -52,10 +52,10 @@ class SectionMigrate extends Component {
 		return isTargetSiteJetpack ? targetSiteImportAdminUrl : `/import/${ targetSiteSlug }`;
 	};
 
-	jetpackSiteFilter = sourceSite => {
+	automatedTransferFilter = sourceSite => {
 		const { targetSiteId } = this.props;
 
-		return sourceSite.jetpack && sourceSite.ID !== targetSiteId;
+		return sourceSite.options.is_automated_transfer && sourceSite.ID !== targetSiteId;
 	};
 
 	resetMigration = () => {
@@ -401,7 +401,7 @@ class SectionMigrate extends Component {
 					<SiteSelector
 						className="migrate__source-site"
 						onSiteSelect={ this.setSourceSiteId }
-						filter={ this.jetpackSiteFilter }
+						filter={ this.automatedTransferFilter }
 					/>
 					<div className="migrate__import-instead">
 						Don't see it? You can still{ ' ' }
