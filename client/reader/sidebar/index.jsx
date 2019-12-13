@@ -157,7 +157,7 @@ export class ReaderSidebar extends React.Component {
 								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link="/"
+								link="/read"
 							/>
 
 							<SidebarItem
