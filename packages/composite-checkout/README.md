@@ -150,6 +150,7 @@ It has the following props.
 - theme: object (optional)
 - onSuccess: function (required)
 - onFailure: function (required)
+- onEvent: function
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
 - paymentMethods: array (required)
@@ -166,6 +167,8 @@ The `displayValue` property of both the items and the total can use limited Mark
 `paymentMethods` is an array of Payment Method objects.
 
 `registry` is an object returned by `createRegistry`. If not provided, a default registry will be created.
+
+`onEvent` is an optional callback that will be called for all sorts of events in the code and can be used for all sorts of things. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) which will always be an object that has at least the `type` property and possibly also the `payload` property.
 
 ### CheckoutReviewOrder
 
@@ -263,7 +266,7 @@ A React Hook that will return an array of all payment method objects. See `usePa
 
 ### useCheckoutHandlers
 
-A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that will return an object including the properties `onSuccess`, `onFailure`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useCheckoutRedirects
 

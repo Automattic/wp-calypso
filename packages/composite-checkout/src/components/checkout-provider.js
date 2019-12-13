@@ -36,6 +36,7 @@ export const CheckoutProvider = props => {
 		theme,
 		paymentMethods,
 		registry,
+		onEvent,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -60,6 +61,7 @@ export const CheckoutProvider = props => {
 		onFailure,
 		successRedirectUrl,
 		failureRedirectUrl,
+		onEvent,
 	};
 
 	// This error message cannot be translated because translation hasn't loaded yet.
@@ -96,6 +98,7 @@ CheckoutProvider.propTypes = {
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
+	onEvent: PropTypes.func,
 };
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
@@ -132,11 +135,11 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 }
 
 export const useCheckoutHandlers = () => {
-	const { onSuccess, onFailure } = useContext( CheckoutContext );
+	const { onSuccess, onFailure, onEvent } = useContext( CheckoutContext );
 	if ( ! onSuccess || ! onFailure ) {
 		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
 	}
-	return { onSuccess, onFailure };
+	return { onSuccess, onFailure, onEvent };
 };
 
 export const useCheckoutRedirects = () => {
