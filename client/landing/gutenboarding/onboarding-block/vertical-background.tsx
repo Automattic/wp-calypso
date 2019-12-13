@@ -54,7 +54,7 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { id,
 		<SwitchTransition mode="in-out">
 			<CSSTransition
 				key={ imageUrl || 'empty' }
-				timeout={ 1000 }
+				timeout={ 750 }
 				classNames="onboarding-block__background-fade"
 			>
 				<div
