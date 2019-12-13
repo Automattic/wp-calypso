@@ -3,8 +3,14 @@
  */
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
+const existsSync = require( 'fs' ).existsSync;
 const chalk = require( 'chalk' );
 const _ = require( 'lodash' );
+const path = require( 'path' );
+
+const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
+const phpcsPath = path.join( composerBinDir, 'phpcs' );
+const phpcbfPath = path.join( composerBinDir, 'phpcbf' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -38,14 +44,19 @@ function linterFailure() {
 	process.exit( 1 );
 }
 
+function printPhpcsDocs() {
+	console.log(
+		chalk.red( 'COMMIT ABORTED:' ),
+		'Working with PHP files in this repository requires the PHP Code Sniffer and its dependencies to be installed. Make sure you have composer installed on your machine and from the root of this repository, run `composer install`.'
+	);
+	process.exit( 1 );
+}
+
 function phpcsInstalled() {
-	try {
-		execSync( 'which -s phpcs phpcbf' );
+	if ( existsSync( phpcsPath ) && existsSync( phpcbfPath ) ) {
 		return true;
-	} catch ( error ) {
-		console.log( chalk.red( 'PHP files will not be processed because PHPCS was not found.' ) );
-		return false;
 	}
+	return false;
 }
 
 // determine if PHPCS is available
@@ -104,17 +115,21 @@ if ( toStylelintfix.length ) {
 
 // Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
 toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
-if ( phpcs && toPHPCBF.length ) {
-	try {
-		execSync( `phpcbf --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
-	} catch ( error ) {
-		// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
-		// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
-		if ( 2 === error.status ) {
-			linterFailure();
+if ( toPHPCBF.length ) {
+	if ( phpcs ) {
+		try {
+			execSync( `${ phpcbfPath } --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
+		} catch ( error ) {
+			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
+			// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
+			if ( 2 === error.status ) {
+				linterFailure();
+			}
 		}
+		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
+	} else {
+		printPhpcsDocs();
 	}
-	execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
 }
 
 // Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
@@ -157,13 +172,17 @@ if ( toEslint.length ) {
 }
 
 // and finally PHPCS
-if ( phpcs && toPHPCS.length ) {
-	const lintResult = spawnSync( 'phpcs', [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
-		shell: true,
-		stdio: 'inherit',
-	} );
+if ( toPHPCS.length ) {
+	if ( phpcs ) {
+		const lintResult = spawnSync( phpcsPath, [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
+			shell: true,
+			stdio: 'inherit',
+		} );
 
-	if ( lintResult.status ) {
-		linterFailure();
+		if ( lintResult.status ) {
+			linterFailure();
+		}
+	} else {
+		printPhpcsDocs();
 	}
 }
