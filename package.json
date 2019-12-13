@@ -349,7 +349,7 @@
 		"chai-enzyme": "1.0.0-beta.1",
 		"check-node-version": "4.0.2",
 		"chokidar-cli": "2.1.0",
-		"concurrently": "5.0.0",
+		"concurrently": "5.0.1",
 		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.3",
