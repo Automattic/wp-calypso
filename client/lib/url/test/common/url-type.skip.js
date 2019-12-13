@@ -1,13 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-
-/**
- * Internal dependencies
- */
-import { determineUrlType } from '../url-type';
-
-describe( 'determineUrlType', () => {
+// eslint-disable-next-line jest/no-export
+export default function runTests( determineUrlType ) {
 	test( 'should detect the correct type for absolute URLs', () => {
 		expect( determineUrlType( 'http://example.com/' ) ).toBe( 'ABSOLUTE' );
 		expect( determineUrlType( 'http://www.example.com' ) ).toBe( 'ABSOLUTE' );
@@ -53,8 +45,6 @@ describe( 'determineUrlType', () => {
 		expect( determineUrlType( 0 ) ).toBe( 'INVALID' );
 		expect( determineUrlType( '///' ) ).toBe( 'INVALID' );
 		// From https://url.spec.whatwg.org/#urls
-		expect( determineUrlType( 'https://ex ample.org/' ) ).toBe( 'INVALID' );
 		expect( determineUrlType( 'https://example.com:demo' ) ).toBe( 'INVALID' );
-		expect( determineUrlType( 'http://[www.example.com]/' ) ).toBe( 'INVALID' );
 	} );
-} );
+}
