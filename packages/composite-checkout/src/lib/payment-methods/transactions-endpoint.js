@@ -15,7 +15,7 @@ export function createCartFromLineItems( {
 		temporary: false,
 		extra: [],
 		products: items.map( item => ( {
-			product_id: item.id,
+			product_id: item.id, // TODO: get this from the meta (it must be added to the meta first in the wpcom package)... but since the meta is not part of the line item schema, we should instead add this data during the submission on the host page.
 			meta: '', // TODO: get this for domains, etc
 			currency: item.amount.currency,
 			volume: 1,
