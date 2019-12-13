@@ -61,19 +61,7 @@ export function CompositeCheckoutWrapper( {
 
 	useRecordStats( registry );
 
-	// Add product if requested in the URL
-	useEffect( () => {
-		if ( ! planSlug ) {
-			return;
-		}
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			dispatch( requestPlans() );
-			return;
-		}
-		debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
-		addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
-	}, [ dispatch, planSlug, plan, isJetpackNotAtomic, addItem ] );
+	useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addItem );
 
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
@@ -111,6 +99,21 @@ CompositeCheckoutWrapper.propTypes = {
 	planSlug: PropTypes.string,
 	isJetpackNotAtomic: PropTypes.bool,
 };
+
+function useAddProductToCart( dispatch, planSlug, plan, isJetpackNotAtomic, addItem ) {
+	useEffect( () => {
+		if ( ! planSlug ) {
+			return;
+		}
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			dispatch( requestPlans() );
+			return;
+		}
+		debug( 'adding item as requested in url', { planSlug, plan, isJetpackNotAtomic } );
+		addItem( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
+	}, [ dispatch, planSlug, plan, isJetpackNotAtomic, addItem ] );
+}
 
 function useRecordStats( registry ) {
 	useEffect( () => {
