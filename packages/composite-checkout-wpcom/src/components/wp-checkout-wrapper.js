@@ -51,7 +51,7 @@ export function WPCheckoutWrapper( {
 		setCart,
 		getCart
 	);
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) ); // TODO: plan is never being found
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
