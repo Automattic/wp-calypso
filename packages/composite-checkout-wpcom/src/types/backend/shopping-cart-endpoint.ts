@@ -87,9 +87,9 @@ export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartPr
 	product_id,
 }: ResponseCartProduct ) => {
 	return {
-		product_slug: product_slug,
-		meta: meta,
-		product_id: product_id,
+		product_slug,
+		meta,
+		product_id,
 	} as RequestCartProduct;
 };
 
@@ -101,9 +101,9 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 }: ResponseCart ) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
-		currency: currency,
-		locale: locale,
-		coupon: coupon,
+		currency,
+		locale,
+		coupon,
 		temporary: false,
 		// tax: any[]; // TODO: fix this
 		// is_coupon_applied: boolean;
