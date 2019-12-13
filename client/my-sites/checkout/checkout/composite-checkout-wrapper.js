@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
@@ -45,7 +45,7 @@ export function CompositeCheckoutWrapper( {
 	onSuccess,
 	onFailure,
 } ) {
-	const { items, tax, total, removeItem, addItem, changePlanLength } = useShoppingCart(
+	const { items, tax, total, removeItem, addItem, changePlanLength, errors } = useShoppingCart(
 		siteSlug,
 		setCart,
 		getCart
@@ -55,6 +55,9 @@ export function CompositeCheckoutWrapper( {
 
 	const { select, subscribe, registerStore } = registry;
 	useWpcomStore( registerStore );
+
+	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
+	useDisplayErrors( errorMessages, onFailure );
 
 	useEffect( () => {
 		debug( 'subscribing to composite-checkout events' );
@@ -111,6 +114,12 @@ CompositeCheckoutWrapper.propTypes = {
 	planSlug: PropTypes.string,
 	isJetpackNotAtomic: PropTypes.bool,
 };
+
+function useDisplayErrors( errors, displayError ) {
+	useEffect( () => {
+		errors.map( displayError );
+	}, [ errors, displayError ] );
+}
 
 function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	let cartItem, cartMeta;
