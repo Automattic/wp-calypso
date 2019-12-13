@@ -66,6 +66,13 @@ class ThemesSelection extends Component {
 		showUploadButton: true,
 	};
 
+	componentDidMount() {
+		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
+		if ( ! this.props.recommendedThemes ) {
+			this.props.incrementPage();
+		}
+	}
+
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
 		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
