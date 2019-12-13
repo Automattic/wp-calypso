@@ -36,6 +36,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
+	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
@@ -240,6 +241,22 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						...frontPageOptions,
 					},
 				} ),
+			};
+		}
+
+		case SITE_MIGRATION_STATUS_UPDATE: {
+			const { siteId, migrationStatus } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					migration_status: migrationStatus,
+				},
 			};
 		}
 	}

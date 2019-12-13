@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import getRawSite from 'state/selectors/get-raw-site';
+import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 
 /**
  * Returns true if the site is the target of an active migration
@@ -12,7 +12,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @returns {boolean} True if site is the target of an active migration
  */
 export default function isSiteMigrationInProgress( state, siteId ) {
-	const site = getRawSite( state, siteId );
+	const migrationStatus = getSiteMigrationStatus( state, siteId );
 
-	return site && site.migration_status && site.migration_status === 'migrating';
+	return migrationStatus !== 'inactive';
 }

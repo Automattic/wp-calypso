@@ -24,6 +24,7 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
+	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 
@@ -202,4 +203,17 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
 	type: SITE_FRONT_PAGE_UPDATE,
 	siteId,
 	frontPageOptions,
+} );
+
+/**
+ * Returns an action object to be used to update the site migration status.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {String} migrationStatus The status of the migration.
+ * @return {Object} Action object
+ */
+export const updateSiteMigrationStatus = ( siteId, migrationStatus ) => ( {
+	siteId,
+	type: SITE_MIGRATION_STATUS_UPDATE,
+	migrationStatus,
 } );
