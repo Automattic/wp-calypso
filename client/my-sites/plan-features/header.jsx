@@ -46,6 +46,8 @@ export class PlanFeaturesHeader extends Component {
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		const isCurrent = this.isPlanCurrent();
+		console.log( 'iscurrent is' );
+		console.log( isCurrent );
 
 		return (
 			<header className={ headerClasses }>
@@ -88,7 +90,7 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
-			<>
+			<span>
 				<header className={ headerClasses }>
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
@@ -106,7 +108,7 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
-			</>
+			</span>
 		);
 	}
 

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -26,7 +30,7 @@ jest.mock( 'i18n-calypso', () => ( {
  * External dependencies
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { identity } from 'lodash';
 
 /**
@@ -34,6 +38,7 @@ import { identity } from 'lodash';
  */
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import { PlanFeaturesHeader } from '../header';
+import PlanPill from 'components/plans/plan-pill';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -99,6 +104,34 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 			);
 		} );
 	} );
+} );
+
+describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( productSlug => {
+		test( `Should render "Your Plan" plan pill for paid plans (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isJetpack: false,
+				isPlaceholder: false,
+				currentSitePlan: { productSlug: PLAN_PREMIUM },
+				planType: productSlug,
+			};
+			// const pfh = mount( <PlanFeaturesHeader { ...myProps } />);
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			// const pfh = shallow( comp.renderPlansHeaderNoTabs() );
+			const pfh = shallow( comp.renderPlansHeaderNoTabs() );
+			console.log( pfh.html() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
+		} );
+	} );
+
+	// test( `Should not render "Your Plan" plan pill for free plan (${ productSlug })`, () => {
+	// 	const myProps = { ...props, isJetpack: false, planType: PLAN_FREE };
+	// 	const pfh = mount( <PlanFeaturesHeader { ...myProps } />);
+
+	// 	expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( false );
+	// } );
 } );
 
 describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
