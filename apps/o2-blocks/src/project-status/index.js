@@ -25,6 +25,10 @@ export function registerBlock() {
 			estimate: {
 				type: 'string',
 			},
+			team: {
+				type: 'string',
+				default: '',
+			},
 		},
 		edit,
 		save,

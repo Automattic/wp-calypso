@@ -7,7 +7,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import { CustomSelectControl, PanelBody } from '@wordpress/components';
+import { CustomSelectControl, PanelBody, TextControl } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 import './editor.scss';
@@ -20,7 +20,7 @@ const edit = ( {
 	unassignedTasks,
 	setAttributes,
 } ) => {
-	const { estimate } = attributes;
+	const { estimate, team } = attributes;
 
 	const estimates = [
 		{
@@ -44,7 +44,12 @@ const edit = ( {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Time Estimate' ) }>
+				<PanelBody title={ __( 'Project Settings' ) }>
+					<TextControl
+						label={ __( 'Team Assignment' ) }
+						value={ team }
+						onChange={ value => setAttributes( { team: value } ) }
+					/>
 					<CustomSelectControl
 						label={ __( 'Time Estimate' ) }
 						options={ estimates }
@@ -81,11 +86,14 @@ const edit = ( {
 					} }
 				></span>
 			</div>
-			{ estimate && (
+			{ ( estimate || team ) && (
 				<div className="wp-block-project-status__footer">
-					<span className="wp-block-project-status__estimate">
-						{ estimate && estimates.find( option => option.key === estimate ).name }
-					</span>
+					{ team && <span className="wp-block-project-status__team">{ 'Team ' + team }</span> }
+					{ estimate && (
+						<span className="wp-block-project-status__estimate">
+							{ estimate && estimates.find( option => option.key === estimate ).name }
+						</span>
+					) }
 				</div>
 			) }
 		</>
