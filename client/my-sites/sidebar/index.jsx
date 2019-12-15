@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import { memoize } from 'lodash';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import Badge from 'components/badge';
 import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
 import Sidebar from 'layout/sidebar';
@@ -27,7 +29,7 @@ import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -63,7 +65,7 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import Badge from 'components/badge';
+
 /**
  * Style dependencies
  */
@@ -219,7 +221,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const { path, translate } = this.props;
+		const { path, translate, userDate } = this.props;
 
 		return (
 			<SidebarItem
@@ -230,7 +232,9 @@ export class MySitesSidebar extends Component {
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
 			>
-				<Badge type="info">{ translate( 'New' ) }</Badge>
+				{ moment( userDate ).diff( moment( '2019-11-26 00:00:00' ) ) < 0 && (
+					<Badge type="info">{ translate( 'New' ) }</Badge>
+				) }
 			</SidebarItem>
 		);
 	}
@@ -814,6 +818,7 @@ function mapStateToProps( state ) {
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
+		userDate: getCurrentUserDate( state ),
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
