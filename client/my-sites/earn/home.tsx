@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import React, { FunctionComponent, Fragment } from 'react';
 import page from 'page';
 import { get, compact } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import QueryMembershipsSettings from 'components/data/query-memberships-settings
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserDate } from 'state/current-user/selectors';
 
 /**
  * Image dependencies
@@ -60,6 +62,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
+	userDate,
 } ) => {
 	const translate = useTranslate();
 
@@ -151,7 +154,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
+			badge:
+				moment( userDate ).diff( moment( '2019-11-26 00:00:00' ) ) < 0 ? translate( 'New' ) : null,
 			image: {
 				path: recurringImage,
 			},
@@ -298,6 +302,7 @@ export default connect< ConnectedProps, {}, {} >(
 			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
+			userDate: getCurrentUserDate( state ),
 			hasConnectedAccount: !! get(
 				state,
 				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
