@@ -30,7 +30,7 @@ export const CheckoutProvider = props => {
 		total,
 		items,
 		onPaymentComplete,
-		onFailure,
+		showErrorMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		theme,
@@ -58,7 +58,7 @@ export const CheckoutProvider = props => {
 		paymentMethodId,
 		setPaymentMethodId,
 		onPaymentComplete,
-		onFailure,
+		showErrorMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		onEvent,
@@ -95,7 +95,7 @@ CheckoutProvider.propTypes = {
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethodId: PropTypes.string,
 	onPaymentComplete: PropTypes.func.isRequired,
-	onFailure: PropTypes.func.isRequired,
+	showErrorMessage: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
 	onEvent: PropTypes.func,
@@ -107,7 +107,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		total,
 		items,
 		onPaymentComplete,
-		onFailure,
+		showErrorMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		paymentMethods,
@@ -122,7 +122,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 	validatePaymentMethods( paymentMethods );
 	validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
-	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
+	validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 	return null;
@@ -135,11 +135,11 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 }
 
 export const useCheckoutHandlers = () => {
-	const { onPaymentComplete, onFailure, onEvent } = useContext( CheckoutContext );
-	if ( ! onPaymentComplete || ! onFailure ) {
+	const { onPaymentComplete, showErrorMessage, onEvent } = useContext( CheckoutContext );
+	if ( ! onPaymentComplete || ! showErrorMessage ) {
 		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
 	}
-	return { onPaymentComplete, onFailure, onEvent };
+	return { onPaymentComplete, showErrorMessage, onEvent };
 };
 
 export const useCheckoutRedirects = () => {

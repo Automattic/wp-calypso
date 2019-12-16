@@ -35,11 +35,11 @@ Any component within a Step object gets access to the custom hooks above as well
 
 ## Submitting the form
 
-When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
+When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `showErrorMessage` prop on `Checkout` will be called with an object describing the error.
 
 If the payment method succeeds, the `onPaymentComplete` prop will be called instead.
 
-Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onPaymentComplete` callbacks. All four props are required.
+Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `showErrorMessage` and `onPaymentComplete` callbacks. All four props are required.
 
 ## Steps
 
@@ -149,7 +149,7 @@ It has the following props.
 - total: object (required)
 - theme: object (optional)
 - onPaymentComplete: function (required)
-- onFailure: function (required)
+- showErrorMessage: function (required)
 - onEvent: function
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
@@ -266,7 +266,7 @@ A React Hook that will return an array of all payment method objects. See `usePa
 
 ### useCheckoutHandlers
 
-A React Hook that will return an object including the properties `onPaymentComplete`, `onFailure`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that will return an object including the properties `onPaymentComplete`, `showErrorMessage`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useCheckoutRedirects
 

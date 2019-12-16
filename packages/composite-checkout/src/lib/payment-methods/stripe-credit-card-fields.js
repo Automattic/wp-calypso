@@ -261,7 +261,7 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -277,9 +277,9 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			onFailure( stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
 		}
-	}, [ onFailure, stripeLoadingError ] );
+	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -607,7 +607,7 @@ function LockIcon( { className } ) {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onPaymentComplete, onFailure } = useCheckoutHandlers();
+	const { onPaymentComplete, showErrorMessage } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
@@ -619,7 +619,9 @@ function StripePayButton( { disabled } ) {
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
 			// TODO: clear this after showing it
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
 		}
 		if ( transactionStatus === 'complete' ) {
 			onPaymentComplete();
@@ -632,12 +634,12 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
-				onFailure( error.stripeError || error.message );
+				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
 		onPaymentComplete,
-		onFailure,
+		showErrorMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
@@ -659,7 +661,7 @@ function StripePayButton( { disabled } ) {
 					total,
 					stripe,
 					stripeConfiguration,
-					onFailure,
+					showErrorMessage,
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
@@ -693,7 +695,7 @@ async function submitStripePayment( {
 	total,
 	stripe,
 	stripeConfiguration,
-	onFailure,
+	showErrorMessage,
 	successUrl,
 	cancelUrl,
 	beginStripeTransaction,
@@ -709,7 +711,7 @@ async function submitStripePayment( {
 			cancelUrl,
 		} );
 	} catch ( error ) {
-		onFailure( error );
+		showErrorMessage( error );
 		return;
 	}
 }

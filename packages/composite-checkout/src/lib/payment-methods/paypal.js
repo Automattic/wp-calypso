@@ -131,7 +131,7 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
-	const { onPaymentComplete, onFailure } = useCheckoutHandlers();
+	const { onPaymentComplete, showErrorMessage } = useCheckoutHandlers();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
 
@@ -140,9 +140,11 @@ function useTransactionStatusHandler() {
 			onPaymentComplete();
 		}
 		if ( transactionStatus === 'error' ) {
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
 		}
-	}, [ localize, onPaymentComplete, onFailure, transactionStatus, transactionError ] );
+	}, [ localize, onPaymentComplete, showErrorMessage, transactionStatus, transactionError ] );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
