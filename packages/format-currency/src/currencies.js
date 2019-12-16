@@ -268,6 +268,7 @@ export const CURRENCIES = {
 		grouping: '.',
 		decimal: ',',
 		precision: 2,
+		symbolPosition: 'right',
 	},
 	FJD: {
 		symbol: 'FJ$',
@@ -978,6 +979,7 @@ export function getCurrencyDefaults( code ) {
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
+		symbolPosition: 'left',
 	};
 
 	return CURRENCIES[ code ] || defaultCurrency;

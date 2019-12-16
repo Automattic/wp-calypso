@@ -13,22 +13,26 @@ export { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code
- * @param   {Number}     number              number to format
- * @param   {String}     code                currency code e.g. 'USD'
- * @param   {Object}     options             options object
- * @param   {String}     options.decimal     decimal symbol e.g. ','
- * @param   {String}     options.grouping    thousands separator
- * @param   {Number}     options.precision   decimal digits
- * @param   {String}     options.symbol      currency symbol e.g. 'A$'
- * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
- * @returns {?String}                        A formatted string.
+ * @param   {Number}     number                 number to format
+ * @param   {String}     code                   currency code e.g. 'USD'
+ * @param   {Object}     options                options object
+ * @param   {String}     options.decimal        decimal symbol e.g. ','
+ * @param   {String}     options.grouping       thousands separator
+ * @param   {Number}     options.precision      decimal digits
+ * @param   {String}     options.symbol         currency symbol e.g. 'A$'
+ * @param   {Boolean}    options.stripZeros     whether to remove trailing zero cents
+ * @param   {String}     options.symbolPosition position of symbol, either right or left
+ * @returns {?String}                           A formatted string.
  */
 export default function formatCurrency( number, code, options = {} ) {
 	const currencyDefaults = getCurrencyDefaults( code );
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
 	}
-	const { decimal, grouping, precision, symbol } = { ...currencyDefaults, ...options };
+	const { decimal, grouping, precision, symbol, symbolPosition } = {
+		...currencyDefaults,
+		...options,
+	};
 	const sign = number < 0 ? '-' : '';
 	let value = numberFormat( Math.abs( number ), {
 		decimals: precision,
@@ -40,6 +44,9 @@ export default function formatCurrency( number, code, options = {} ) {
 		value = stripZeros( value, decimal );
 	}
 
+	if ( 'right' === symbolPosition ) {
+		return `${ sign }${ value }${ symbol }`;
+	}
 	return `${ sign }${ symbol }${ value }`;
 }
 
