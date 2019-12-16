@@ -210,7 +210,7 @@ export default function CompositeCheckoutContainer( {
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
 
-	const onSuccess = () => {
+	const onPaymentComplete = () => {
 		debug( 'success' );
 		notices.success( translate( 'Your purchase was successful!' ) );
 	};
@@ -229,7 +229,7 @@ export default function CompositeCheckoutContainer( {
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			siteId={ siteId }
-			onSuccess={ onSuccess }
+			onPaymentComplete={ onPaymentComplete }
 			onFailure={ onFailure }
 			product={ product }
 			planSlug={ planSlug }
