@@ -22,6 +22,8 @@
 	}
 
 	.template-selector-control__options {
+		grid-gap: 4.5em;
+
 		@media screen and ( min-width: 660px ) {
 			margin-top: 0;
 			// stylelint-disable unit-whitelist
