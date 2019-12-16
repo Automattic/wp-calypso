@@ -3,6 +3,7 @@ LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
 
+
 ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
 ENV        PROGRESS=true
@@ -19,12 +20,6 @@ ENV        PROGRESS=true
 #   such as the apt and npm mirrors
 COPY       ./env-config.sh /tmp/env-config.sh
 RUN        bash /tmp/env-config.sh
-
-
-# Install our package manager
-ENV NPM_VERSION 6.13.4
-
-RUN npm install -g npm@$NPM_VERSION
 
 # Build a node_modules layer
 #
