@@ -42,6 +42,7 @@ import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import { getSectionName } from 'state/ui/selectors';
+import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
@@ -272,7 +273,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, sectionName } = this.props;
+		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -290,17 +291,21 @@ export class SiteNotice extends React.Component {
 					( config.isEnabled( 'jitms' ) && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ sectionName }:sidebar_notice` }
+							messagePath={ messagePath }
 							template="sidebar-banner"
 						/>
 					) ) }
 				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.pendingPaymentNotice() }
-				{ domainCreditNotice }
+				{ ! hasJITM && domainCreditNotice }
 				{ jetpackPluginsSetupNotice }
-				{ ! ( discountOrFreeToPaid || domainCreditNotice || jetpackPluginsSetupNotice ) &&
-					this.domainUpsellNudge() }
+				{ ! (
+					hasJITM ||
+					discountOrFreeToPaid ||
+					domainCreditNotice ||
+					jetpackPluginsSetupNotice
+				) && this.domainUpsellNudge() }
 			</div>
 		);
 	}
@@ -309,6 +314,8 @@ export class SiteNotice extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+		const sectionName = getSectionName( state );
+		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
 
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
@@ -324,7 +331,8 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
-			sectionName: getSectionName( state ),
+			hasJITM: getTopJITM( state, messagePath ),
+			messagePath,
 		};
 	},
 	dispatch => {
