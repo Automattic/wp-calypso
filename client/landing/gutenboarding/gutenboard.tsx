@@ -105,7 +105,7 @@ export function Gutenboard() {
 							value={ [ onboardingBlock.current ] }
 							settings={ { templateLock: 'all' } }
 						>
-							<div className="edit-post-layout__content">
+							<div className="gutenboard__edit-post-layout-content edit-post-layout__content ">
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"
 									role="region"
