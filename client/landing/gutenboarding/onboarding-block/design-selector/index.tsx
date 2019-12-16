@@ -8,6 +8,8 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
+import { Card } from '../../components/card';
+import { CardMedia } from '../../components/card/media';
 import { SiteVertical } from '../../stores/onboard/types';
 import { TemplateSelectorControl } from '../../../../../apps/full-site-editing/full-site-editing-plugin/starter-page-templates/page-template-modal/components/template-selector-control';
 
@@ -25,9 +27,14 @@ export default () => {
 
 	const [ previewedTemplate, setPreviewedTemplate ] = useState< string | null >( null );
 	return (
-		<div
-			className="page-template-modal__list" // eslint-disable-line wpcalypso/jsx-classname-namespace
-		>
+		<div>
+			{ homepageTemplates.map( t => (
+				<Card key={ t.slug } isElevated onClick={ () => setPreviewedTemplate( t.slug ) }>
+					<CardMedia>
+						<img alt={ t.title } src={ t.preview } />
+					</CardMedia>
+				</Card>
+			) ) }
 			<TemplateSelectorControl
 				label={ NO__( 'Layout', 'full-site-editing' ) }
 				templates={ homepageTemplates }
