@@ -13,7 +13,7 @@ import './style.scss';
 
 registerBlockType( 'a8c/site-credit', {
 	title: __( 'WordPress.com Credit' ),
-	description: __( "This block tells the wolrd that you're using WordPress.com." ),
+	description: __( "This block tells the world that you're using WordPress.com." ),
 	icon: 'wordpress-alt',
 	category: 'layout',
 	supports: {
