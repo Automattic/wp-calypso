@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
@@ -49,13 +48,8 @@ class Sites extends Component {
 				return false;
 			}
 
-			// Hosting routes apply to all Atomic sites.
-			if ( site.options.is_automated_transfer ) {
-				return true;
-			}
-
-			// hosting/all-sites allows Simple sites, so they can be exposed to upgrade notices.
-			return isEnabled( 'hosting/all-sites' );
+			// allow both Atomic sites and Simple sites, so they can be exposed to upgrade notices.
+			return true;
 		}
 
 		return site;
