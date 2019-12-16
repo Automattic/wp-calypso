@@ -221,6 +221,16 @@ export default function CompositeCheckoutContainer( {
 		notices.error( message || translate( 'An error occurred during your purchase.' ) );
 	};
 
+	const showInfoMessage = message => {
+		debug( 'info', message );
+		notices.info( message );
+	};
+
+	const showSuccessMessage = message => {
+		debug( 'success', message );
+		notices.success( message );
+	};
+
 	return (
 		<CompositeCheckout
 			siteSlug={ siteSlug }
@@ -231,6 +241,8 @@ export default function CompositeCheckoutContainer( {
 			siteId={ siteId }
 			onPaymentComplete={ onPaymentComplete }
 			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			product={ product }
 			planSlug={ planSlug }
 			isJetpackNotAtomic={ isJetpackNotAtomic }

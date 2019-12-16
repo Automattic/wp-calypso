@@ -115,6 +115,8 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 				registry={ registry }
 				onPaymentComplete={ noop }
 				showErrorMessage={ noop }
+				showInfoMessage={ noop }
+				showSuccessMessage={ noop }
 			/>
 		</Provider>
 	);

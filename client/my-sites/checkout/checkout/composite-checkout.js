@@ -39,6 +39,8 @@ export function CompositeCheckout( {
 	siteId,
 	onPaymentComplete,
 	showErrorMessage,
+	showInfoMessage,
+	showSuccessMessage,
 } ) {
 	const { items, tax, total, removeItem, addItem, changePlanLength, errors } = useShoppingCart(
 		siteSlug,
@@ -65,6 +67,8 @@ export function CompositeCheckout( {
 			total={ total }
 			onPaymentComplete={ onPaymentComplete }
 			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			onEvent={ handleCheckoutEvent }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
@@ -88,6 +92,8 @@ CompositeCheckout.propTypes = {
 	getCart: PropTypes.func.isRequired,
 	onPaymentComplete: PropTypes.func.isRequired,
 	showErrorMessage: PropTypes.func.isRequired,
+	showInfoMessage: PropTypes.func.isRequired,
+	showSuccessMessage: PropTypes.func.isRequired,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 	planSlug: PropTypes.string,
 	isJetpackNotAtomic: PropTypes.bool,
