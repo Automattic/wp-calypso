@@ -40,14 +40,15 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 	}
 );
 
-type Props = Omit<
-	Assign<
-		Button.AnchorProps,
-		Assign< Omit< LinkProps, 'component' >, Partial< Pick< LinkProps, 'to' > > >
-	>,
-	'disabled'
->;
+type Assign3< T extends object, U extends object, V extends object > = Assign< T, Assign< U, V > >;
 
+// Button _without_ href
+// LinkProps _without_ component
+// LinkProps `to` is optional
+type Props = Omit<
+	Assign3< Button.AnchorProps, Omit< LinkProps, 'component' >, Partial< Pick< LinkProps, 'to' > > >,
+	'disabled' | 'href'
+>;
 const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
 	if ( props.to ) {
 		return (
