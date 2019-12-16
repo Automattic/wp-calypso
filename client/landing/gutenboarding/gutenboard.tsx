@@ -2,7 +2,7 @@
  * External dependencies
  */
 import '@wordpress/editor'; // This shouldn't be necessary
-import { __ } from '@wordpress/i18n';
+import { __ as NO__ } from '@wordpress/i18n';
 import {
 	BlockEditorProvider,
 	BlockList,
@@ -15,7 +15,7 @@ import {
 	DropZoneProvider,
 	KeyboardShortcuts,
 } from '@wordpress/components';
-import { createBlock, registerBlockType, BlockInstance } from '@wordpress/blocks';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect, useDispatch } from '@wordpress/data';
 import '@wordpress/format-library';
@@ -48,20 +48,26 @@ registerBlockType( name, settings );
 export function Gutenboard() {
 	const r = RR.useRouteMatch( '*' );
 
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
 	let currentStep: Steps;
 	let redirect: undefined | string;
+	let next;
+	let prev;
 	switch ( r?.url ) {
 		case '/':
 			currentStep = Steps.IntentGathering;
+			if ( siteTitle ) {
+				next = '/design';
+			}
 			break;
 
-		case '/fse':
+		case '/design':
 			currentStep = Steps.DesignSelection;
 			if ( ! siteVertical ) {
 				redirect = '/';
 			}
+			prev = '/';
 			break;
 
 		default:
@@ -103,10 +109,10 @@ export function Gutenboard() {
 						/>
 						<Header
 							isEditorSidebarOpened={ isEditorSidebarOpened }
-							nextLinkProps={ null }
-							prevLinkProps={ null }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 							toggleSidebarShortcut={ toggleSidebarShortcut }
+							prev={ prev }
+							next={ next }
 						/>
 						<BlockEditorProvider
 							useSubRegistry={ false }
@@ -117,7 +123,7 @@ export function Gutenboard() {
 								<div
 									className="edit-post-visual-editor editor-styles-wrapper"
 									role="region"
-									aria-label={ __( 'Onboarding screen content' ) }
+									aria-label={ NO__( 'Onboarding screen content' ) }
 									tabIndex={ -1 }
 								>
 									<WritingFlow>
@@ -138,6 +144,5 @@ export function Gutenboard() {
 			<Popover.Slot />
 		</div>
 	);
-
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }

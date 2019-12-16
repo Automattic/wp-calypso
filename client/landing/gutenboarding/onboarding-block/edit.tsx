@@ -5,7 +5,6 @@ import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useState } from 'react';
-import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 
 /**
@@ -20,6 +19,7 @@ import { Attributes } from './types';
 import { Steps } from '../types';
 import './style.scss';
 import VerticalBackground from './vertical-background';
+import Link from '../components/link';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 	attributes: { step = 0 },
@@ -49,10 +49,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 						/>
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
-								<Button className="onboarding-block__question-skip" isLink>
+								<Link to="/design" className="onboarding-block__question-skip" isLink>
 									{ /* @TODO: add transitions and correct action */ }
-									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →{ ' ' }
-								</Button>
+									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
+								</Link>
 							</div>
 						) }
 					</div>

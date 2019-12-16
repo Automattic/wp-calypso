@@ -4,6 +4,7 @@
 import { Button } from '@wordpress/components';
 import { Link as RouterLink, LinkProps } from 'react-router-dom';
 import React, { forwardRef, FunctionComponent } from 'react';
+import { Assign } from 'utility-types';
 
 interface LinkButtonProps extends Button.AnchorProps {
 	navigate: () => void;
@@ -39,12 +40,28 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 	}
 );
 
-interface Props extends Omit< Button.AnchorProps, 'ref' >, Omit< LinkProps, 'component' > {}
+type Props = Omit<
+	Assign<
+		Button.AnchorProps,
+		Assign< Omit< LinkProps, 'component' >, Partial< Pick< LinkProps, 'to' > > >
+	>,
+	'disabled'
+>;
+
 const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
+	if ( props.to ) {
+		return (
+			<RouterLink { ...props } component={ LinkButton }>
+				{ children }
+			</RouterLink>
+		);
+	}
+
+	const { ...buttonProps } = props;
 	return (
-		<RouterLink { ...props } component={ LinkButton }>
+		<Button disabled { ...buttonProps }>
 			{ children }
-		</RouterLink>
+		</Button>
 	);
 };
 export default Link;
