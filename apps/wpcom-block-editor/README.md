@@ -59,7 +59,7 @@ The block editor integration provides features for the following type of sites a
 ### `wpcom`
 
 - [`disable-nux-tour`](./src/wpcom/disable-nux-tour.js): Disables the welcome guide that is displayed on first use.
-- [`fix-block-invalidation-errors`](./src/wpcom/fix-block-invalidation-errors.js): Performs block attempt block recovery on editor load if validation errors are detected.`](./src/common/): (Atomic/Simple) Performs block attempt block recovery on editor load if validation errors are detected.
+- [`fix-block-invalidation-errors`](./src/wpcom/fix-block-invalidation-errors.js): Performs block attempt block recovery on editor load if validation errors are detected.
 - [`reorder-block-categories`](./src/wpcom/reorder-block-categories.js): Moves Jetpack and CoBlocks Block Categories below Core Categories.
 - [`tracking`](./src/wpcom/tracking.js): Adds analytics around specific user actions.
 - [`unregister-experimental-blocks`](./src/wpcom/unregister-experimental-blocks.js): Removes some experimental blocks from the Gutenberg Plugin.
