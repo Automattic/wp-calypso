@@ -38,7 +38,7 @@ export function CompositeCheckout( {
 	registry,
 	siteId,
 	onPaymentComplete,
-	onFailure,
+	showErrorMessage,
 } ) {
 	const { items, tax, total, removeItem, addItem, changePlanLength, errors } = useShoppingCart(
 		siteSlug,
@@ -49,7 +49,7 @@ export function CompositeCheckout( {
 	useWpcomStore( registerStore );
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
-	useDisplayErrors( errorMessages, onFailure );
+	useDisplayErrors( errorMessages, showErrorMessage );
 
 	// TODO: record stats
 
@@ -64,7 +64,7 @@ export function CompositeCheckout( {
 			items={ itemsForCheckout }
 			total={ total }
 			onPaymentComplete={ onPaymentComplete }
-			onFailure={ onFailure }
+			showErrorMessage={ showErrorMessage }
 			onEvent={ handleCheckoutEvent }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
@@ -87,7 +87,7 @@ CompositeCheckout.propTypes = {
 	setCart: PropTypes.func.isRequired,
 	getCart: PropTypes.func.isRequired,
 	onPaymentComplete: PropTypes.func.isRequired,
-	onFailure: PropTypes.func.isRequired,
+	showErrorMessage: PropTypes.func.isRequired,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 	planSlug: PropTypes.string,
 	isJetpackNotAtomic: PropTypes.bool,

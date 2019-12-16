@@ -215,7 +215,7 @@ export default function CompositeCheckoutContainer( {
 		notices.success( translate( 'Your purchase was successful!' ) );
 	};
 
-	const onFailure = error => {
+	const showErrorMessage = error => {
 		debug( 'error', error );
 		const message = error && error.toString ? error.toString() : error;
 		notices.error( message || translate( 'An error occurred during your purchase.' ) );
@@ -230,7 +230,7 @@ export default function CompositeCheckoutContainer( {
 			registry={ registry }
 			siteId={ siteId }
 			onPaymentComplete={ onPaymentComplete }
-			onFailure={ onFailure }
+			showErrorMessage={ showErrorMessage }
 			product={ product }
 			planSlug={ planSlug }
 			isJetpackNotAtomic={ isJetpackNotAtomic }
