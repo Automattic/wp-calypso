@@ -16,7 +16,7 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { Attributes } from './types';
-import { Steps } from '../types';
+import { Step } from '../types';
 import './style.scss';
 import VerticalBackground from './vertical-background';
 import Link from '../components/link';
@@ -28,7 +28,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 	const [ hasBackground, setHasBackground ] = useState( false );
 
 	switch ( step ) {
-		case Steps.IntentGathering:
+		case Step.IntentGathering:
 			return (
 				<div
 					className={ classNames( 'onboarding-block__acquire-intent', {
@@ -58,7 +58,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 					</div>
 				</div>
 			);
-		case Steps.DesignSelection:
+		case Step.DesignSelection:
 			return <DesignSelector />;
 	}
 

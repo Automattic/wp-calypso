@@ -1,4 +1,4 @@
-export enum Steps {
+export enum Step {
 	IntentGathering,
 	DesignSelection,
 }

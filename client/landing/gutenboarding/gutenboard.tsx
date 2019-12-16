@@ -32,7 +32,7 @@ import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
-import { Steps } from './types';
+import { Step } from './types';
 import './style.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
@@ -50,20 +50,20 @@ export function Gutenboard() {
 
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
-	let currentStep: Steps;
+	let currentStep: Step;
 	let redirect: undefined | string;
 	let next;
 	let prev;
 	switch ( r?.url ) {
 		case '/':
-			currentStep = Steps.IntentGathering;
+			currentStep = Step.IntentGathering;
 			if ( siteTitle ) {
 				next = '/design';
 			}
 			break;
 
 		case '/design':
-			currentStep = Steps.DesignSelection;
+			currentStep = Step.DesignSelection;
 			if ( ! siteVertical ) {
 				redirect = '/';
 			}
@@ -71,7 +71,7 @@ export function Gutenboard() {
 			break;
 
 		default:
-			currentStep = Steps.IntentGathering;
+			currentStep = Step.IntentGathering;
 			redirect = '/';
 			break;
 	}

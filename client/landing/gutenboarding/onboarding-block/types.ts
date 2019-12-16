@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { Steps } from '../types';
+import { Step } from '../types';
 
 export interface Attributes {
 	align: 'full';
-	step: Steps;
+	step: Step;
 }
