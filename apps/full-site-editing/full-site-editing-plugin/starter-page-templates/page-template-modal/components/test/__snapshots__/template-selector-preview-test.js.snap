@@ -13,13 +13,13 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
       >
         <div
           class="editor-styles-wrapper"
-          style="visibility: hidden;"
         >
           <div
             class="editor-writing-flow"
           >
             <div
               class="editor-post-title"
+              style="transform: scale(1);"
             >
               <div
                 class="wp-block editor-post-title__block"
@@ -31,6 +31,7 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
             </div>
             <div
               class="template-selector-preview__offset-correction"
+              style="top: 120px;"
             >
               <div
                 data-testid="block-template-preview"
