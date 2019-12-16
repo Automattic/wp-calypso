@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { IconButton } from '@wordpress/components';
+import { Icon, IconButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -15,8 +15,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
 import { selectorDebounce } from '../../constants';
-import Prev from './prev';
-import Next from './next';
+import Link from '../link';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -84,7 +83,10 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Prev to={ prev } />
+					<Link className="gutenboarding__header-back-button" to={ prev }>
+						<Icon icon="arrow-left-alt" />
+						{ NO__( 'Back' ) }
+					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
 					{ currentDomain ? (
@@ -103,7 +105,9 @@ const Header: FunctionComponent< Props > = ( {
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
-				<Next to={ next } />
+				<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+					{ NO__( 'Next' ) }
+				</Link>
 				<div className="gutenboarding__header-group">
 					<IconButton
 						aria-expanded={ isEditorSidebarOpened }
