@@ -23,11 +23,13 @@ class PrimaryHeader extends Component {
 					displayAt="2019-12-17 00:00Z"
 					closesAt="2019-12-24 00:00Z"
 					reopensAt="2019-12-26 07:00Z"
+					holidayName="Christmas"
 				/>
 				<ClosureNotice
 					displayAt="2019-12-26 00:00Z"
 					closesAt="2019-12-31 00:00Z"
 					reopensAt="2020-01-02 07:00Z"
+					holidayName="New Year's Day"
 				/>
 				<Card>
 					<img
