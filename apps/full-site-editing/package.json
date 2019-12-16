@@ -44,6 +44,7 @@
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh"
 	},
 	"dependencies": {
+		"@wordpress/base-styles": "1.0.0",
 		"classnames": "2.2.6"
 	},
 	"devDependencies": {
