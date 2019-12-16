@@ -9,10 +9,10 @@ import { __ as NO__ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
-import { InjectedStepProps } from './stepper-wizard';
+import { StepProps } from './stepper-wizard';
 import Question from './question';
 
-const SiteTitle: FunctionComponent< InjectedStepProps > = ( {
+const SiteTitle: FunctionComponent< StepProps > = ( {
 	onSelect,
 	inputClass,
 	isActive,
