@@ -29,7 +29,7 @@ export const CheckoutProvider = props => {
 		locale,
 		total,
 		items,
-		onSuccess,
+		onPaymentComplete,
 		onFailure,
 		successRedirectUrl,
 		failureRedirectUrl,
@@ -57,7 +57,7 @@ export const CheckoutProvider = props => {
 		allPaymentMethods: paymentMethods,
 		paymentMethodId,
 		setPaymentMethodId,
-		onSuccess,
+		onPaymentComplete,
 		onFailure,
 		successRedirectUrl,
 		failureRedirectUrl,
@@ -94,7 +94,7 @@ CheckoutProvider.propTypes = {
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethodId: PropTypes.string,
-	onSuccess: PropTypes.func.isRequired,
+	onPaymentComplete: PropTypes.func.isRequired,
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
@@ -106,7 +106,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		total,
 		items,
-		onSuccess,
+		onPaymentComplete,
 		onFailure,
 		successRedirectUrl,
 		failureRedirectUrl,
@@ -121,7 +121,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 	validateLineItems( items );
 	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 	validatePaymentMethods( paymentMethods );
-	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
+	validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
 	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
@@ -135,11 +135,11 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 }
 
 export const useCheckoutHandlers = () => {
-	const { onSuccess, onFailure, onEvent } = useContext( CheckoutContext );
-	if ( ! onSuccess || ! onFailure ) {
+	const { onPaymentComplete, onFailure, onEvent } = useContext( CheckoutContext );
+	if ( ! onPaymentComplete || ! onFailure ) {
 		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
 	}
-	return { onSuccess, onFailure, onEvent };
+	return { onPaymentComplete, onFailure, onEvent };
 };
 
 export const useCheckoutRedirects = () => {

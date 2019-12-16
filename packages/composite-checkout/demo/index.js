@@ -41,10 +41,18 @@ const initialItems = [
 ];
 
 // These are used only for non-redirect payment methods
-const onSuccess = () => window.alert( 'Payment succeeded!' );
-const onFailure = error => {
+const onPaymentComplete = () => window.alert( 'Payment succeeded!' );
+const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
+};
+const showInfoMessage = message => {
+	console.log( 'Info:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
+const showSuccessMessage = message => {
+	console.log( 'Success:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
 };
 
 // These are used only for redirect payment methods
@@ -286,8 +294,10 @@ function MyCheckout() {
 			locale={ 'en' }
 			items={ items }
 			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }

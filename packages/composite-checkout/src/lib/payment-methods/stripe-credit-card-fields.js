@@ -607,7 +607,7 @@ function LockIcon( { className } ) {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
+	const { onPaymentComplete, onFailure } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
@@ -622,7 +622,7 @@ function StripePayButton( { disabled } ) {
 			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
 		}
 		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+			onPaymentComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -636,7 +636,7 @@ function StripePayButton( { disabled } ) {
 			} );
 		}
 	}, [
-		onSuccess,
+		onPaymentComplete,
 		onFailure,
 		transactionStatus,
 		transactionError,
