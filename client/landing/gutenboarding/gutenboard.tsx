@@ -22,7 +22,7 @@ import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useRef, useState, useEffect } from 'react';
 import '@wordpress/components/build-style/style.css';
-import * as RR from 'react-router-dom';
+import { Redirect, useRouteMatch } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ const toggleSidebarShortcut = {
 registerBlockType( name, settings );
 
 export function Gutenboard() {
-	const r = RR.useRouteMatch( '*' );
+	const r = useRouteMatch( '*' );
 
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 
@@ -93,7 +93,7 @@ export function Gutenboard() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="block-editor__container">
-			{ redirect && <RR.Redirect to={ redirect } /> }
+			{ redirect && <Redirect to={ redirect } /> }
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<div
