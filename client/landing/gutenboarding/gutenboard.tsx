@@ -46,14 +46,16 @@ const toggleSidebarShortcut = {
 registerBlockType( name, settings );
 
 export function Gutenboard() {
-	const r = useRouteMatch( '*' );
+	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
+	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const r = useRouteMatch( '*' );
 
 	let currentStep: Step;
 	let redirect: undefined | string;
-	let next;
-	let prev;
+	let next: undefined | string;
+	let prev: undefined | string;
 	switch ( r?.url ) {
 		case '/':
 			currentStep = Step.IntentGathering;
@@ -75,9 +77,6 @@ export function Gutenboard() {
 			redirect = '/';
 			break;
 	}
-
-	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
-	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	const onboardingBlock = useRef( createBlock( name, { step: currentStep } ) );
 
