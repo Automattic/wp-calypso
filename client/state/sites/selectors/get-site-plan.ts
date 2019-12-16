@@ -8,6 +8,16 @@ import { get } from 'lodash';
  */
 import getRawSite from 'state/selectors/get-raw-site';
 
+export interface SitePlan {
+	expired: boolean;
+	free_trial?: boolean;
+	is_free?: boolean;
+	product_id: number;
+	product_name_short: string;
+	product_slug: string;
+	user_is_owner?: boolean;
+}
+
 /**
  * Returns a site's plan object by site ID.
  *
@@ -15,11 +25,11 @@ import getRawSite from 'state/selectors/get-raw-site';
  * with the /sites/$site/plans endpoint while the former selectors works with /sites/$site endpoint.
  * Query these endpoints to see if you need the first or the second one.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Object}        Site's plan object
+ * @param state Global state tree
+ * @param siteId Site ID
+ * @returns Site's plan object
  */
-export default function getSitePlan( state, siteId ) {
+export default function getSitePlan( state, siteId: number ): SitePlan | null {
 	const site = getRawSite( state, siteId );
 
 	if ( ! site ) {
