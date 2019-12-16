@@ -196,7 +196,7 @@ class Home extends Component {
 			if ( siteIsUnlaunched || isAtomic ) {
 				//Only show pre-launch, or for Atomic sites
 				return (
-					<React.Fragment>
+					<>
 						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
 						{ currentThemeId && (
 							<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
@@ -215,7 +215,7 @@ class Home extends Component {
 							}
 							subHeaderText={ this.getChecklistSubHeaderText() }
 						/>
-					</React.Fragment>
+					</>
 				);
 			}
 		}
@@ -223,7 +223,7 @@ class Home extends Component {
 		// Show a congratulatory message post-launch
 		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
 			return (
-				<React.Fragment>
+				<>
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -234,7 +234,7 @@ class Home extends Component {
 						headerText={ translate( 'You launched your site!' ) }
 						subHeaderText={ this.getChecklistSubHeaderText() }
 					/>
-				</React.Fragment>
+				</>
 			);
 		}
 
@@ -592,8 +592,7 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			// For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information
-			displayChecklist: ! isAtomic && hasChecklistData && ! isChecklistComplete,
+			displayChecklist: !! ( hasChecklistData && ! isChecklistComplete ),
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
