@@ -2,13 +2,12 @@
  * External dependencies
  */
 import { Button } from '@wordpress/components';
-import { Link as RouterLink } from 'react-router-dom';
-import React, { forwardRef } from 'react';
+import { Link as RouterLink, LinkProps } from 'react-router-dom';
+import React, { forwardRef, FunctionComponent } from 'react';
 
 interface LinkButtonProps extends Button.AnchorProps {
-	navigate: () => {};
+	navigate: () => void;
 }
-
 // Render `Link` with `@wordpress/components` `Button`
 // Needs to handle `navigate` onClick
 // from https://github.com/ReactTraining/react-router/blob/e81dfa2d01937969ee3f9b1f33c9ddd319f9e091/packages/react-router-dom/modules/Link.js#L21
@@ -40,8 +39,7 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 	}
 );
 
-interface Props extends Button.AnchorProps {}
-
+interface Props extends Omit< Button.AnchorProps, 'ref' >, Omit< LinkProps, 'component' > {}
 const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
 	return (
 		<RouterLink { ...props } component={ LinkButton }>
