@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { PageTemplatesPlugin } from '../index';
-import TemplateSelectorItem from './template-selector-item';
+import TemplateSelectorItem from './template-selector/item';
 import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {

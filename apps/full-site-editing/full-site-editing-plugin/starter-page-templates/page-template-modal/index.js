@@ -27,8 +27,8 @@ import { parse as parseBlocks } from '@wordpress/blocks';
  * Internal dependencies
  */
 import './styles/starter-page-templates-editor.scss';
-import TemplateSelectorControl from './components/template-selector-control';
-import TemplateSelectorPreview from './components/template-selector-preview';
+import TemplateSelector from './components/template-selector';
+import TemplateSelectorPreview from './components/template-selector/preview';
 import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
@@ -243,7 +243,7 @@ class PageTemplateModal extends Component {
 	renderTemplatesList = ( templatesList, legendLabel ) => (
 		<fieldset className="page-template-modal__list">
 			<legend className="page-template-modal__form-title">{ legendLabel }</legend>
-			<TemplateSelectorControl
+			<TemplateSelector
 				label={ __( 'Layout', 'full-site-editing' ) }
 				templates={ templatesList }
 				blocksByTemplates={ this.getBlocksByTemplateSlugs( this.props.templates ) }

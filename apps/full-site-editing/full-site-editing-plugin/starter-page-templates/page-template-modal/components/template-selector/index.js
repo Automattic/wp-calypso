@@ -18,10 +18,10 @@ import { memo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import TemplateSelectorItem from './template-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
+import TemplateSelectorItem from './item';
+import replacePlaceholders from '../../utils/replace-placeholders';
 
-export const TemplateSelectorControl = ( {
+export const TemplateSelector = ( {
 	label,
 	className,
 	help,
@@ -41,21 +41,18 @@ export const TemplateSelectorControl = ( {
 		return null;
 	}
 
-	const id = `template-selector-control-${ instanceId }`;
+	const id = `template-selector-${ instanceId }`;
 
 	return (
 		<BaseControl
 			label={ label }
 			id={ id }
 			help={ help }
-			className={ classnames( className, 'template-selector-control' ) }
+			className={ classnames( className, 'template-selector' ) }
 		>
-			<ul
-				className="template-selector-control__options"
-				data-testid="template-selector-control-options"
-			>
+			<ul className="template-selector__options" data-testid="template-selector-options">
 				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
-					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
+					<li key={ `${ id }-${ slug }` } className="template-selector__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
@@ -75,4 +72,4 @@ export const TemplateSelectorControl = ( {
 	);
 };
 
-export default compose( memo, withInstanceId )( TemplateSelectorControl );
+export default compose( memo, withInstanceId )( TemplateSelector );

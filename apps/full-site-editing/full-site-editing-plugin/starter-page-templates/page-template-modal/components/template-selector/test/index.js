@@ -8,7 +8,7 @@ import { uniqueId, omit } from 'lodash';
 import { render, fireEvent } from '@testing-library/react';
 
 import { templatesFixture, blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
-import { TemplateSelectorControl } from '../template-selector-control';
+import { TemplateSelector } from '..';
 
 // Mock out this component until @wordpress/block-editor
 // `BlockPreview` component is available as default export.
@@ -34,7 +34,7 @@ afterAll( () => {
 
 const testUniqueId = uniqueId();
 
-describe( 'TemplateSelectorControl', () => {
+describe( 'TemplateSelector', () => {
 	const siteInformation = {
 		title: 'gutenberg-training',
 		vertical: 'Business',
@@ -43,7 +43,7 @@ describe( 'TemplateSelectorControl', () => {
 	describe( 'Basic rendering', () => {
 		it( 'renders with required props', () => {
 			const { getByText, container } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -63,7 +63,7 @@ describe( 'TemplateSelectorControl', () => {
 
 		it( 'highlights the selected template', () => {
 			render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -78,7 +78,7 @@ describe( 'TemplateSelectorControl', () => {
 
 		it( 'does not render when missing templates prop', () => {
 			const { queryByText, queryByTestId } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					blocksByTemplates={ blocksByTemplatesFixture }
@@ -87,12 +87,12 @@ describe( 'TemplateSelectorControl', () => {
 
 			// use `queryBy` to avoid throwing an error with `getBy`
 			expect( queryByText( 'Select a Template...' ) ).not.toBeInTheDocument();
-			expect( queryByTestId( 'template-selector-control-options' ) ).not.toBeInTheDocument();
+			expect( queryByTestId( 'template-selector-options' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'does not render when templates prop is not an Array', () => {
 			const { queryByText, queryByTestId } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ 'evil stuff here' }
@@ -101,7 +101,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( queryByText( 'Select a Template...' ) ).not.toBeInTheDocument();
-			expect( queryByTestId( 'template-selector-control-options' ) ).not.toBeInTheDocument();
+			expect( queryByTestId( 'template-selector-options' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -110,7 +110,7 @@ describe( 'TemplateSelectorControl', () => {
 			const onSelectSpy = jest.fn();
 
 			const { getByText } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -129,7 +129,7 @@ describe( 'TemplateSelectorControl', () => {
 	describe( 'Static previews', () => {
 		it( 'renders in static preview mode by default ', () => {
 			const { getByAltText } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -148,7 +148,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			const { getByText } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixtureWithoutPreviews }
@@ -165,7 +165,7 @@ describe( 'TemplateSelectorControl', () => {
 	describe( 'Dynamic previews', () => {
 		it( 'renders in dynamic preview mode when useDynamicPreview is true', () => {
 			const { queryByAltText, getAllByTestId } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -184,7 +184,7 @@ describe( 'TemplateSelectorControl', () => {
 
 		it( 'does not render without blocksByTemplatesFixture prop when in dynamic mode', () => {
 			const { queryByLabelText, queryByTestId } = render(
-				<TemplateSelectorControl
+				<TemplateSelector
 					label="Select a Template..."
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
@@ -194,7 +194,7 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( queryByLabelText( 'Select a Template...' ) ).not.toBeInTheDocument();
-			expect( queryByTestId( 'template-selector-control-options' ) ).not.toBeInTheDocument();
+			expect( queryByTestId( 'template-selector-options' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
