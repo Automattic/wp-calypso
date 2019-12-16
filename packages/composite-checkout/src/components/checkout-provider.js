@@ -4,6 +4,7 @@
 import React, { useContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -21,6 +22,8 @@ import {
 	validatePaymentMethods,
 } from '../lib/validation';
 
+const debug = debugFactory( 'composite-checkout:checkout-provider' );
+
 export const CheckoutProvider = props => {
 	const {
 		locale,
@@ -33,6 +36,7 @@ export const CheckoutProvider = props => {
 		theme,
 		paymentMethods,
 		registry,
+		onEvent,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -43,6 +47,7 @@ export const CheckoutProvider = props => {
 	const wrappers = [
 		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
 	];
+	debug( `applying ${ wrappers.length } CheckoutWrapper wrappers` );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -56,6 +61,7 @@ export const CheckoutProvider = props => {
 		onFailure,
 		successRedirectUrl,
 		failureRedirectUrl,
+		onEvent,
 	};
 
 	// This error message cannot be translated because translation hasn't loaded yet.
@@ -92,6 +98,7 @@ CheckoutProvider.propTypes = {
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
+	onEvent: PropTypes.func,
 };
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
@@ -105,6 +112,8 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		failureRedirectUrl,
 		paymentMethods,
 	} = propsToValidate;
+	debug( 'propsToValidate', propsToValidate );
+
 	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
 	validateArg( total, 'CheckoutProvider missing required prop: total' );
 	validateTotal( total );
@@ -126,11 +135,11 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 }
 
 export const useCheckoutHandlers = () => {
-	const { onSuccess, onFailure } = useContext( CheckoutContext );
+	const { onSuccess, onFailure, onEvent } = useContext( CheckoutContext );
 	if ( ! onSuccess || ! onFailure ) {
 		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
 	}
-	return { onSuccess, onFailure };
+	return { onSuccess, onFailure, onEvent };
 };
 
 export const useCheckoutRedirects = () => {

@@ -29,8 +29,10 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
+import { useCheckoutHandlers } from './checkout-provider';
 
 function useRegisterCheckoutStore() {
+	const { onEvent } = useCheckoutHandlers();
 	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
@@ -45,11 +47,17 @@ function useRegisterCheckoutStore() {
 			return state;
 		},
 		actions: {
-			changeStep( payload ) {
+			*changeStep( payload ) {
+				yield { type: 'STEP_NUMBER_CHANGE_EVENT', payload };
 				return { type: 'STEP_NUMBER_SET', payload };
 			},
 			updatePaymentData( key, value ) {
 				return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
+			},
+		},
+		controls: {
+			STEP_NUMBER_CHANGE_EVENT( action ) {
+				onEvent && onEvent( action );
 			},
 		},
 		selectors: {

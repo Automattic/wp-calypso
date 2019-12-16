@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
@@ -9,6 +9,7 @@ import {
 	useIsStepActive,
 	useSelect,
 	useLineItems,
+	useDispatch,
 } from '@automattic/composite-checkout';
 
 /**
@@ -30,7 +31,7 @@ const OrderReviewTitle = () => {
 	return translate( 'Review your order' );
 };
 
-export default function WPCheckout( { removeItem, changePlanLength } ) {
+export default function WPCheckout( { removeItem, changePlanLength, siteId } ) {
 	const translate = useTranslate();
 	const [ itemsWithTax ] = useLineItems();
 
@@ -41,6 +42,12 @@ export default function WPCheckout( { removeItem, changePlanLength } ) {
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
 	const domainContactInfo = useSelect( sel => sel( 'wpcom' ).getDomainContactInfo() ) || {};
 	const isDomainContactSame = useSelect( sel => sel( 'wpcom' ).isDomainContactSame() ) || false;
+	const { setSiteId } = useDispatch( 'wpcom' );
+
+	// Copy siteId to the store so it can be more easily accessed during payment submission
+	useEffect( () => {
+		setSiteId( siteId );
+	}, [ siteId, setSiteId ] );
 
 	const steps = [
 		{

@@ -5,21 +5,23 @@
  * External dependencies
  */
 import React from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import { unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { createRegistry, createPayPalMethod } from '@automattic/composite-checkout';
+import {
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
+	mockPayPalExpressRequest,
+} from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
  */
-import {
-	WPCheckoutWrapper,
-	mockSetCartEndpoint,
-	mockGetCartEndpointWith,
-	mockPayPalExpressRequest,
-} from '../src/index';
+import { CompositeCheckout } from '../composite-checkout';
 
 let container = null;
 
@@ -94,22 +96,27 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 
 	const registry = createRegistry();
 	const { registerStore } = registry;
+	const store = createStore( () => ( {
+		plans: { items: [] },
+	} ) );
 
 	const MyCheckout = () => (
-		<WPCheckoutWrapper
-			siteSlug={ 'foo.com' }
-			setCart={ mockSetCartEndpoint }
-			getCart={ mockGetCartEndpointWith( initialCart ) }
-			availablePaymentMethods={ [
-				createPayPalMethod( {
-					registerStore: registerStore,
-					makePayPalExpressRequest: mockPayPalExpressRequest,
-				} ),
-			] }
-			registry={ registry }
-			onSuccess={ noop }
-			onFailure={ noop }
-		/>
+		<Provider store={ store }>
+			<CompositeCheckout
+				siteSlug={ 'foo.com' }
+				setCart={ mockSetCartEndpoint }
+				getCart={ mockGetCartEndpointWith( initialCart ) }
+				availablePaymentMethods={ [
+					createPayPalMethod( {
+						registerStore: registerStore,
+						makePayPalExpressRequest: mockPayPalExpressRequest,
+					} ),
+				] }
+				registry={ registry }
+				onSuccess={ noop }
+				onFailure={ noop }
+			/>
+		</Provider>
 	);
 
 	let renderResult;

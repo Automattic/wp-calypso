@@ -34,7 +34,7 @@ export interface CheckoutCartTotal {
  * Cart item with WPCOM specific info added.
  */
 export type WPCOMCartItem = CheckoutCartItem & {
-	wpcom_meta: { uuid: string; plan_length?: string };
+	wpcom_meta: { uuid: string; plan_length?: string; product_id: number };
 };
 
 export interface WPCOMCart {

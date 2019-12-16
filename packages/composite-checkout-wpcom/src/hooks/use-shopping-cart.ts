@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -150,40 +150,57 @@ export function useShoppingCart(
 		}
 	}, [ setServerCart, cacheStatus, responseCart ] );
 
+	// Keep a separate cache of the displayed cart which we regenerate only when
+	// the cart has been downloaded
+	const [ responseCartToDisplay, setResponseCartToDisplay ] = useState( responseCart );
+	useEffect( () => {
+		if ( cacheStatus === 'valid' ) {
+			debug( 'updating the displayed cart to match the server cart' );
+			setResponseCartToDisplay( responseCart );
+		}
+	}, [ responseCart, cacheStatus ] );
+
 	// Translate the responseCart into the format needed in checkout.
-	const cart: WPCOMCart = translateWpcomCartToCheckoutCart( responseCart );
+	const cart: WPCOMCart = useMemo(
+		() => translateWpcomCartToCheckoutCart( responseCartToDisplay ),
+		[ responseCartToDisplay ]
+	);
 
-	const addItem: ( WPCOMCartItem ) => void = itemToAdd => {
+	const addItem: ( WPCOMCartItem ) => void = useCallback( itemToAdd => {
 		debug( 'adding item to cart', itemToAdd );
+		setResponseCart( currentResponseCart => ( {
+			...currentResponseCart,
+			products: [ ...currentResponseCart.products, itemToAdd ],
+		} ) );
 		setCacheStatus( 'invalid' );
-		setResponseCart( responseCart );
-	};
+	}, [] );
 
-	const removeItem: ( WPCOMCartItem ) => void = itemToRemove => {
-		const filteredProducts = responseCart.products.filter( ( _, index ) => {
-			return index.toString() !== itemToRemove.wpcom_meta.uuid;
-		} );
-		debug( 'removing item from cart' );
+	const removeItem: ( WPCOMCartItem ) => void = useCallback( itemToRemove => {
+		debug( 'removing item from cart', itemToRemove );
+		setResponseCart( currentResponseCart => ( {
+			...currentResponseCart,
+			products: currentResponseCart.products.filter( ( _, index ) => {
+				return index.toString() !== itemToRemove.wpcom_meta.uuid;
+			} ),
+		} ) );
 		setCacheStatus( 'invalid' );
-		setResponseCart( { ...responseCart, products: filteredProducts } );
-	};
+	}, [] );
 
 	const changePlanLength = ( planItem, planLength ) => {
-		// TODO
+		// TODO: change plan length
 		debug( 'changing plan length in cart', planItem, planLength );
-		setResponseCart( responseCart );
 	};
 
 	const updatePricesForAddress = address => {
-		// TODO
+		// TODO: updatePricesForAddress
 		debug( 'updating prices for address in cart', address );
-		setResponseCart( responseCart );
 	};
 
 	return {
 		items: cart.items,
 		tax: cart.tax,
 		total: cart.total,
+		errors: responseCart.messages?.errors ?? [],
 		addItem,
 		removeItem,
 		changePlanLength,

@@ -77,6 +77,7 @@ function translateWpcomCartItemToCheckoutCartItem(
 	index: number
 ): WPCOMCartItem {
 	const {
+		product_id,
 		product_name,
 		product_slug,
 		currency,
@@ -95,12 +96,13 @@ function translateWpcomCartItemToCheckoutCartItem(
 		sublabel: sublabel,
 		type: product_slug,
 		amount: {
-			currency: currency,
+			currency,
 			value: item_subtotal_integer,
 			displayValue: item_subtotal_display,
 		},
 		wpcom_meta: {
 			uuid: String( index ),
+			product_id,
 		},
 	};
 }
