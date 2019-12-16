@@ -1,14 +1,5 @@
 @import '../components/template-selector/shared.scss';
 
-$wp-org-sidebar-reduced: 36px;
-$wp-org-sidebar-full: 160px;
-
-// Preview positioning
-$preview-max-width: 960px;
-$preview-right-margin: 24px;
-$preview-left-sidebar-reduced: calc( 30% + #{$wp-org-sidebar-reduced} );
-$preview-left-sidebar-full: calc( 30% + #{$wp-org-sidebar-full} );
-
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;

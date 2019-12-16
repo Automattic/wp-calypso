@@ -1,5 +1,13 @@
 @import './shared.scss';
 
+// Preview positioning
+$preview-max-width: 960px;
+$preview-right-margin: 24px;
+$preview-left-sidebar-reduced: calc( 30% + #{$wp-org-sidebar-reduced} );
+$preview-left-sidebar-full: calc( 30% + #{$wp-org-sidebar-full} );
+
+$template-large-preview-title-height: 120px;
+
 // Template Selector Preview
 .template-selector-preview {
 	@media screen and ( max-width: 659px ) {
@@ -178,5 +186,3 @@ body:not( .is-fullscreen-mode ) {
 		height: 100%;
 	}
 }
-
-$template-large-preview-title-height: 120px;
