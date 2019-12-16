@@ -15,6 +15,8 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { launchSite as launchSiteActionCreator } from 'state/sites/launch/actions';
 import { Button, Card } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
@@ -37,6 +39,8 @@ export const EligibilityWarnings = ( {
 	eligibilityData,
 	isEligible,
 	isPlaceholder,
+	isUnlaunched,
+	launchSite,
 	onProceed,
 	siteId,
 	translate,
@@ -47,6 +51,16 @@ export const EligibilityWarnings = ( {
 	const classes = classNames( 'eligibility-warnings', {
 		'eligibility-warnings__placeholder': isPlaceholder,
 	} );
+
+	const handleContinueClick = async () => {
+		if ( isUnlaunched ) {
+			await launchSite( siteId );
+		} else if ( listHolds.includes( 'SITE_PRIVATE' ) ) {
+			//
+		}
+
+		onProceed();
+	};
 
 	return (
 		<div className={ classes }>
@@ -77,7 +91,7 @@ export const EligibilityWarnings = ( {
 					<Button
 						primary={ true }
 						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
-						onClick={ onProceed }
+						onClick={ handleContinueClick }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
@@ -111,12 +125,14 @@ const mapStateToProps = ( state: object ) => {
 	const siteId = getSelectedSiteId( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const isUnlaunched = siteId !== null && isUnlaunchedSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
 
 	return {
 		eligibilityData,
 		isEligible,
 		isPlaceholder: ! dataLoaded,
+		isUnlaunched,
 		siteId,
 	};
 };
@@ -124,6 +140,7 @@ const mapStateToProps = ( state: object ) => {
 const mapDispatchToProps = {
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
+	launchSite: launchSiteActionCreator,
 };
 
 function mergeProps(

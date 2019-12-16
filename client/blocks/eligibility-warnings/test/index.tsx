@@ -7,18 +7,19 @@
  */
 import { noop } from 'lodash';
 import React, { ReactChild } from 'react';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 /**
  * Internal dependencies
  */
 import EligibilityWarnings from '..';
+import { createReduxStore } from 'state';
+import wpcom from 'lib/wp';
 
 function renderWithStore( element: ReactChild, initialState: object ) {
-	const store = createStore( state => state, initialState );
+	const store = createReduxStore( initialState );
 	return {
 		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,
@@ -27,9 +28,10 @@ function renderWithStore( element: ReactChild, initialState: object ) {
 
 function createState( {
 	holds = [],
+	isUnlaunched = false,
 	siteId = 1,
 	warnings = [],
-}: { holds?: string[]; siteId?: number; warnings?: unknown[] } = {} ) {
+}: { holds?: string[]; isUnlaunched?: boolean; siteId?: number; warnings?: unknown[] } = {} ) {
 	return {
 		automatedTransfer: {
 			[ siteId ]: {
@@ -40,6 +42,7 @@ function createState( {
 				},
 			},
 		},
+		sites: { items: { [ siteId ]: { launch_status: isUnlaunched ? 'unlaunched' : 'launched' } } },
 		ui: { selectedSiteId: siteId },
 	};
 }
@@ -170,5 +173,47 @@ describe( '<EligibilityWarnings>', () => {
 
 		fireEvent.click( continueButton );
 		expect( handleProceed ).not.toHaveBeenCalled();
+	} );
+
+	it( 'launches site if site has business plan and no other holds', async () => {
+		let completePostRequest = noop;
+
+		const post = jest
+			.spyOn( wpcom.req, 'post' )
+			.mockImplementationOnce( ( params, query, callback ) => {
+				completePostRequest = () => callback( null, { ID: 113, options: {} }, [] );
+
+				// Implementation expects object with this shape
+				return { upload: {} };
+			} );
+
+		const state = createState( {
+			holds: [ 'SITE_PRIVATE' ],
+			siteId: 113,
+			isUnlaunched: true,
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		fireEvent.click( getByText( 'Continue' ) );
+
+		expect( post ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/sites/113/launch',
+			} ),
+			expect.anything(),
+			expect.anything()
+		);
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+
+		completePostRequest();
+
+		await wait( () => expect( handleProceed ).toHaveBeenCalled() );
 	} );
 } );
