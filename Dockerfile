@@ -22,8 +22,7 @@ RUN        bash /tmp/env-config.sh
 
 
 # Install our package manager
-ARG npm_version=6.13.4
-ENV NPM_VERSION $npm_version
+ENV NPM_VERSION 6.13.4
 
 RUN npm install -g npm@$NPM_VERSION
 
