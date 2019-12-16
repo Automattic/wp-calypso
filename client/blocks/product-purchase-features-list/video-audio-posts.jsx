@@ -20,13 +20,13 @@ function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
-				'directly to your site — the Business Plan has unlimited storage.'
+				'directly to your site — the Business Plan has 200 GB storage.'
 		);
 	}
 	if ( isWpComEcommercePlan( plan ) ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
-				'directly to your site — the Ecommerce Plan has unlimited storage.'
+				'directly to your site — the Ecommerce Plan has 200 GB storage.'
 		);
 	}
 
