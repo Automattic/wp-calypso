@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import './fix-block-invalidation-errors';
 import './rich-text';
 import './switch-to-classic';
 
