@@ -3,7 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import { blocksFixture } from './helpers/templates-blocks-helpers';
-import TemplateSelectorPreview from '../template-selector-preview';
+import TemplateSelectorPreview from '../preview';
 
 // Mock the "pass through" version of the `BlockPreview` component
 // See `components/block-preview.js`
