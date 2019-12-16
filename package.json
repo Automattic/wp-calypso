@@ -223,7 +223,7 @@
 	},
 	"engines": {
 		"node": "^10.16.3",
-		"npm": "^6.13.4"
+		"npm": "^6.9.0"
 	},
 	"scripts": {
 		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true PROGRESS=1 NODE_ARGS=--max_old_space_size=8192 npm run -s build-client-evergreen",
