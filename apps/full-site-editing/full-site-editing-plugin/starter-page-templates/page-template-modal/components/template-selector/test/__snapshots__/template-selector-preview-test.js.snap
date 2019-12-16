@@ -30,7 +30,7 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
               </div>
             </div>
             <div
-              class="template-selector-preview__offset-correction"
+              class="template-selector__preview-offset-correction"
             >
               <div
                 data-testid="block-template-preview"

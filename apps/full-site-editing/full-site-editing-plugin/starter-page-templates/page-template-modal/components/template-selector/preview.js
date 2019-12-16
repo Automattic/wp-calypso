@@ -21,6 +21,8 @@ import { useState, useEffect, useLayoutEffect, useRef, useReducer } from '@wordp
 import PreviewTemplateTitle from './preview-template-title';
 import BlockPreview from './block-preview';
 
+import './preview.scss';
+
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
 
@@ -67,7 +69,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 				// Try to adjust vertical offset of the large preview.
 				const offsetCorrectionEl = previewContainerEl.closest(
-					'.template-selector-preview__offset-correction'
+					'.template-selector__preview-offset-correction'
 				);
 
 				if ( offsetCorrectionEl && scale ) {
@@ -106,7 +108,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	if ( isEmpty( blocks ) || ! isArray( blocks ) ) {
 		return (
 			<div className={ classnames( 'template-selector-preview', 'is-blank-preview' ) }>
-				<div className="template-selector-preview__placeholder">
+				<div className="template-selector__preview-placeholder">
 					{ __( 'Select a layout to preview.', 'full-site-editing' ) }
 				</div>
 			</div>
@@ -121,7 +123,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
 							<PreviewTemplateTitle title={ title } />
-							<div className="template-selector-preview__offset-correction">
+							<div className="template-selector__preview-offset-correction">
 								<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
 							</div>
 						</div>

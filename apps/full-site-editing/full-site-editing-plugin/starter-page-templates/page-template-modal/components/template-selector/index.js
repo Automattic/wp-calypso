@@ -20,6 +20,7 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './item';
 import replacePlaceholders from '../../utils/replace-placeholders';
+import './style.scss';
 
 export const TemplateSelector = ( {
 	label,

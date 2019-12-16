@@ -1,0 +1,21 @@
+$template-selector-border-color: #e2e4e7;
+$template-selector-border-color-selected: #555d66;
+$template-selector-border-color-active: #00a0d2;
+$template-selector-border-color-hover: #c9c9ca;
+$template-selector-empty-background: #fff;
+$template-selector-modal-offset-bottom: 25px;
+$template-selector-modal-offset-right: 32px;
+$template-selector-blank-template-mobile-height: 70px;
+
+@mixin screen-reader-text() {
+	border: 0;
+	clip: rect( 1px, 1px, 1px, 1px );
+	clip-path: inset( 50% );
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}

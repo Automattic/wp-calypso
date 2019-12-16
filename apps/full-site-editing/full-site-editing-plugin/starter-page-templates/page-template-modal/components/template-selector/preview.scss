@@ -1,0 +1,182 @@
+@import './shared.scss';
+
+// Template Selector Preview
+.template-selector-preview {
+	@media screen and ( max-width: 659px ) {
+		display: none;
+	}
+
+	@media screen and ( min-width: 783px ) {
+		width: calc( 70% - 50px );
+	}
+
+	@media screen and ( min-width: 660px ) {
+		&.is-blank-preview {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+	@media screen and ( min-width: 1648px ) {
+		right: unset;
+		left: calc(
+			#{$preview-left-sidebar-full} + (
+					100vw - #{$preview-left-sidebar-full} - #{$preview-max-width} - #{$preview-right-margin}
+				) / 2
+		);
+		body.folded & {
+			left: calc(
+				#{$preview-left-sidebar-reduced} + (
+						100vw - #{$preview-left-sidebar-reduced} - #{$preview-max-width} - #{$preview-right-margin}
+					) / 2
+			);
+		}
+	}
+
+	position: fixed;
+	top: 111px;
+	bottom: 24px;
+	right: $preview-right-margin;
+	width: calc( 80% - 50px );
+	background: $template-selector-empty-background;
+	border-radius: 2px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+
+	.edit-post-visual-editor {
+		margin: 0;
+		padding: 0;
+	}
+
+	.editor-styles-wrapper {
+		.template-selector__preview-offset-correction {
+			position: relative;
+			top: $template-large-preview-title-height;
+		}
+
+		.editor-post-title {
+			transform-origin: top left;
+			width: 960px;
+			display: block;
+			position: absolute;
+			top: 0;
+		}
+
+		.editor-post-title,
+		.editor-post-title__block,
+		.editor-post-title__input {
+			padding-top: 0;
+			padding-bottom: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+			.editor-post-title__input {
+				margin: 0;
+				padding: 0;
+				height: $template-large-preview-title-height;
+				line-height: $template-large-preview-title-height;
+				overflow: hidden;
+				resize: none;
+			}
+		}
+	}
+}
+
+body:not( .is-fullscreen-mode ) {
+	.template-selector-preview {
+		@media screen and ( min-width: 783px ) {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + ( 24px * 2 )} );
+		}
+
+		@media screen and ( min-width: 961px ) {
+			width: calc( 70% - #{$wp-org-sidebar-full} );
+		}
+	}
+	@media screen and ( min-width: 783px ) {
+		&.folded .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-reduced + ( 24px * 2 )} );
+		}
+		&:not( .folded ):not( .auto-fold ) .template-selector-preview {
+			width: calc( 70% - #{$wp-org-sidebar-full} );
+		}
+	}
+}
+
+.template-selector__preview-placeholder {
+	color: var( --color-text-subtle );
+	font-size: 15px;
+	font-weight: 400;
+}
+
+// Preview adjustments.
+// Tweak styles which are inside of the preview container.
+.block-editor-block-preview__container,
+.template-selector-preview {
+	max-width: $preview-max-width;
+
+	.editor-styles-wrapper {
+		.wp-block {
+			width: 100%;
+		}
+
+		.wp-block[data-align='wide'] {
+			//max-width: 800px;
+		}
+
+		// `core/cover`
+		.wp-block[data-type='core/cover'][data-align='full'] {
+			margin: 0;
+			.wp-block-cover {
+				padding: 0;
+			}
+		}
+
+		// `core/columns`
+		.wp-block-columns
+			> .editor-inner-blocks
+			> .editor-block-list__layout
+			> [data-type='core/column'] {
+			//margin-left: -14px;
+			//margin-right: -14px;
+
+			& > .editor-block-list__block-edit > div > .block-core-columns > .editor-inner-blocks {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+		}
+
+		.block-editor-block-list__block {
+			&[data-align='full'] {
+				margin: 0;
+			}
+
+			.block-editor-block-list__block-edit {
+				@media screen and ( min-width: 600px ) {
+					margin: 0;
+				}
+			}
+		}
+
+		// Fix upstream: https://github.com/WordPress/gutenberg/pull/17202.
+		.block-editor-block-list__layout,
+		.block-editor-block-list__block {
+			padding: inherit;
+		}
+	}
+}
+
+// Set full height to preview container to inherits styles defined for themes.
+.template-selector-preview .components-disabled,
+.template-selector-preview .edit-post-visual-editor,
+.template-selector-item__preview-wrap .components-disabled,
+.template-selector-item__preview-wrap .edit-post-visual-editor {
+	height: 100%;
+
+	.editor-styles-wrapper {
+		height: 100%;
+	}
+}
+
+$template-large-preview-title-height: 120px;
