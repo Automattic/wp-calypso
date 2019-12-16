@@ -1,0 +1,18 @@
+.design-selector {
+	display: grid;
+	grid-gap: 4.5em;
+
+	@include breakpoint( '>660px' ) {
+		// stylelint-disable unit-whitelist
+		grid-template-columns: repeat( 2, 1fr );
+		// stylelint-enable unit-whitelist
+	}
+}
+
+.design-selector__design-option {
+	transition: transform 100ms ease-in-out;
+
+	&.is-selected {
+		transform: scale( 1.1 );
+	}
+}
