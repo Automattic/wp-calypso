@@ -7,7 +7,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import GMClosureNotice from '../shared/gm-closure-notice';
+import ClosureNotice from '../shared/gm-closure-notice';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
 import { localize } from 'i18n-calypso';
@@ -19,10 +19,15 @@ class PrimaryHeader extends Component {
 
 		return (
 			<Fragment>
-				<GMClosureNotice
-					displayAt="2019-09-03 00:00Z"
-					closesAt="2019-09-10 00:00Z"
-					reopensAt="2019-09-19 04:00Z"
+				<ClosureNotice
+					displayAt="2019-12-17 00:00Z"
+					closesAt="2019-12-24 00:00Z"
+					reopensAt="2019-12-26 07:00Z"
+				/>
+				<ClosureNotice
+					displayAt="2019-12-26 00:00Z"
+					closesAt="2019-12-31 00:00Z"
+					reopensAt="2020-01-02 07:00Z"
 				/>
 				<Card>
 					<img
