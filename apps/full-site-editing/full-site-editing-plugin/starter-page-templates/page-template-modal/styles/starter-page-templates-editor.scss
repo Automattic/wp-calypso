@@ -10,19 +10,19 @@
 body:not( .is-fullscreen-mode ) {
 	.page-template-modal-screen-overlay {
 		@media screen and ( min-width: 783px ) {
-			left: $wp-org-sidebar-reduced;
+			left: $admin-sidebar-width-collapsed;
 		}
 
 		@media screen and ( min-width: 961px ) {
-			left: $wp-org-sidebar-full;
+			left: $admin-sidebar-width;
 		}
 	}
 	@media screen and ( min-width: 783px ) {
 		&.folded .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-reduced;
+			left: $admin-sidebar-width-collapsed;
 		}
 		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-full;
+			left: $admin-sidebar-width;
 		}
 	}
 }
