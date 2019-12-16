@@ -150,6 +150,8 @@ It has the following props.
 - theme: object (optional)
 - onPaymentComplete: function (required)
 - showErrorMessage: function (required)
+- showInfoMessage: function (required)
+- showSuccessMessage: function (required)
 - onEvent: function
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
@@ -266,7 +268,7 @@ A React Hook that will return an array of all payment method objects. See `usePa
 
 ### useCheckoutHandlers
 
-A React Hook that will return an object including the properties `onPaymentComplete`, `showErrorMessage`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that will return an object including the properties `onPaymentComplete`, `showErrorMessage`, `showSuccessMessage`, `showInfoMessage`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useCheckoutRedirects
 
