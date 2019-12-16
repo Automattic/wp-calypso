@@ -544,7 +544,7 @@ class HelpContact extends React.Component {
 							compact={ compact }
 							displayAt="2019-12-26 07:00Z"
 							closesAt="2019-12-31 00:00Z"
-							reopensAt="2020-02-01 07:00Z"
+							reopensAt="2020-01-02 07:00Z"
 						/>
 						<GMClosureNotice
 							compact={ compact }
