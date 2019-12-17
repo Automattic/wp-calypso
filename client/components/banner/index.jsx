@@ -24,11 +24,11 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getProductIconSlug } from 'lib/products-values';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, ProductIcon } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
-import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -143,7 +143,7 @@ export class Banner extends Component {
 		if ( plan && ! icon ) {
 			return (
 				<div className="banner__icon-plan">
-					<PlanIcon plan={ plan } />
+					<ProductIcon slug={ getProductIconSlug( plan ) } />
 				</div>
 			);
 		}
