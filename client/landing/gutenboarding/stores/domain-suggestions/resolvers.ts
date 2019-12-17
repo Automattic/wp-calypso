@@ -25,6 +25,9 @@ export function* __internalGetDomainSuggestions(
 	const suggestions = yield apiFetch( {
 		credentials: 'same-origin',
 		mode: 'cors',
+		// Cast so we can use our closed interface without an index type.
+		// It's likely the type definitions could be improved upstream to allow this:
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/dd4b4bf26c3bf43ea2df913efe70a427969f3731/types/wordpress__url/index.d.ts#L7-L54
 		url: addQueryArgs( url, ( queryObject as unknown ) as InputArgsObject ),
 	} );
 
