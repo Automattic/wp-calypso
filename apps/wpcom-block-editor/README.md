@@ -16,6 +16,11 @@ There are two editors supported:
 The block editor integration provides features for the following type of sites and editors:
 
 <table>
+  <colgroup>
+    <col>
+    <col style="width: 100px;">
+    <col span="3" style="text-align: center;">
+  </colgroup>
   <tr>
     <th>Feature</th>
     <th>Editor</th>
