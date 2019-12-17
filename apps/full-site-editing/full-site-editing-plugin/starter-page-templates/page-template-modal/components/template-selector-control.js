@@ -21,26 +21,6 @@ import { memo } from '@wordpress/element';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 
-/**
- * @typedef Props
- *
- * @property {import('react').ReactNode} [label]
- * @property {string} [className]
- * @property {import('react').ReactNode} [help]
- * @property {string} instanceId
- * @property {any[]} [templates=[]]
- * @property {{[templateSlug: string]: any}} [blocksByTemplates={}]
- * @property {boolean} [useDynamicPreview=false]
- * @property {(templateSlug: string) => void} [onTemplateSelect=noop] Callback receives template slug when called
- * @property {{[key: string]: any}} [siteInformation={}] TODO: Better type
- * @property {string|undefined} selectedTemplate The selected template slug
- */
-
-/**
- * Template selector control component
- *
- * @param {Props} _ Component props
- */
 export const TemplateSelectorControl = ( {
 	label,
 	className,
