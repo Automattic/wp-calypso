@@ -43,7 +43,7 @@ import { SummaryLine, SummaryDetails } from '../styled-components/summary-detail
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
-import { useFormStatus } from '../../components/checkout-provider';
+import { useFormStatus } from '../form-status';
 
 export function createStripeMethod( {
 	getSiteId,

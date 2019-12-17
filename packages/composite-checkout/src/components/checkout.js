@@ -31,7 +31,8 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useEvents, useFormStatus } from './checkout-provider';
+import { useEvents } from './checkout-provider';
+import { useFormStatus } from '../lib/form-status';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 

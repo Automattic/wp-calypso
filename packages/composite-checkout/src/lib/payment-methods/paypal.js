@@ -16,7 +16,7 @@ import {
 	useCheckoutRedirects,
 	useLineItems,
 } from '../../public-api';
-import { useFormStatus } from '../../components/checkout-provider';
+import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
