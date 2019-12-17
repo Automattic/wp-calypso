@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
+import { find, findKey, flowRight as compose, includes, isEmpty, map, invoke } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -155,7 +155,7 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
+		const { currentPlanSlug, selectedSiteSlug, translate } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
@@ -172,15 +172,26 @@ export class ProductSelector extends Component {
 
 		const purchase = product ? this.getPurchaseByProduct( product ) : null;
 
-		if ( purchase ) {
-			return translate( 'Purchased on %(purchaseDate)s', {
-				args: {
-					purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
-				},
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( purchase.autoRenew && purchase.autoRenewDateMoment ) {
+			return translate( 'Set to auto-renew on %s.', {
+				args: invoke( purchase, 'autoRenewDateMoment.format', 'LL' ),
 			} );
 		}
 
-		return null;
+		// Show purchase date if still refundable.
+		if ( purchase.isRefundable && purchase.subscribedMoment ) {
+			return translate( 'Purchased on %s.', {
+				args: invoke( purchase, 'subscribedMoment.format', 'LL' ),
+			} );
+		}
+
+		return translate( 'Expires on %s.', {
+			args: invoke( purchase, 'expiryMoment.format', 'LL' ),
+		} );
 	}
 
 	getDescriptionByProduct( product ) {
