@@ -219,7 +219,8 @@ export class EditorMediaModal extends Component {
 			);
 			if (
 				itemsWithTransientId.length === 1 &&
-				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
+				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image' &&
+				this.state.source !== 'google_photos'
 			) {
 				this.copyExternal( itemsWithTransientId, this.state.source );
 				this.props.onClose( {
@@ -239,6 +240,10 @@ export class EditorMediaModal extends Component {
 				: undefined;
 			this.props.onClose( value );
 		}
+	};
+
+	isTransientSelected = () => {
+		return this.props.mediaLibrarySelectedItems.some( item => item.transient );
 	};
 
 	setDetailSelectedIndex = index => {
@@ -499,7 +504,9 @@ export class EditorMediaModal extends Component {
 			let label = this.props.translate( 'Insert' );
 			if (
 				selectedItems.length > 1 ||
-				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
+				( selectedItems.length === 1 &&
+					MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' ) ||
+				this.state.source === 'google_photos'
 			) {
 				label = this.props.translate( 'Copy to media library' );
 			}
@@ -532,7 +539,7 @@ export class EditorMediaModal extends Component {
 				action: 'confirm',
 				label: this.props.labels.confirm || this.props.translate( 'Insert' ),
 				isPrimary: true,
-				disabled: isDisabled || 0 === selectedItems.length,
+				disabled: isDisabled || 0 === selectedItems.length || this.isTransientSelected(),
 				onClick: this.confirmSelection,
 			} );
 		}
