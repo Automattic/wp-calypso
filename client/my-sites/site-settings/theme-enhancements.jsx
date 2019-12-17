@@ -228,54 +228,50 @@ class ThemeEnhancements extends Component {
 				>
 					<NoticeAction href={ minilevenSupportUrl }>{ translate( 'Learn more' ) }</NoticeAction>
 				</Notice>
-				{ minilevenModuleActive && (
-					<Fragment>
-						<SupportInfo
-							text={ translate(
-								'Enables a lightweight, mobile-friendly theme ' +
-									'that will be displayed to visitors on mobile devices.'
-							) }
-							link={ minilevenSupportUrl }
-						/>
-						<p>
-							{ translate(
-								'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
-									'still see your regular theme on other screen sizes.'
-							) }
-						</p>
-						<JetpackModuleToggle
-							siteId={ selectedSiteId }
-							moduleSlug="minileven"
-							label={ translate( 'Enable the Jetpack Mobile theme' ) }
-							disabled={ formPending || ! minilevenModuleActive }
-						/>
+				<SupportInfo
+					text={ translate(
+						'Enables a lightweight, mobile-friendly theme ' +
+							'that will be displayed to visitors on mobile devices.'
+					) }
+					link={ minilevenSupportUrl }
+				/>
+				<p>
+					{ translate(
+						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
+							'still see your regular theme on other screen sizes.'
+					) }
+				</p>
+				<JetpackModuleToggle
+					siteId={ selectedSiteId }
+					moduleSlug="minileven"
+					label={ translate( 'Enable the Jetpack Mobile theme' ) }
+					disabled={ formPending || ! minilevenModuleActive }
+				/>
 
-						<div className="theme-enhancements__module-settings site-settings__child-settings">
-							{ this.renderToggle(
-								'wp_mobile_excerpt',
-								! minilevenModuleActive,
-								translate( 'Use excerpts instead of full posts on front page and archive pages' )
-							) }
-							{ this.renderToggle(
-								'wp_mobile_featured_images',
-								! minilevenModuleActive,
-								translate( 'Show featured images' )
-							) }
-							{ this.renderToggle(
-								'wp_mobile_app_promos',
-								! minilevenModuleActive,
-								translate(
-									'Show an ad for the {{link}}WordPress mobile apps{{/link}} in the footer of the mobile theme',
-									{
-										components: {
-											link: <a href="https://apps.wordpress.com/" />,
-										},
-									}
-								)
-							) }
-						</div>
-					</Fragment>
-				) }
+				<div className="theme-enhancements__module-settings site-settings__child-settings">
+					{ this.renderToggle(
+						'wp_mobile_excerpt',
+						! minilevenModuleActive,
+						translate( 'Use excerpts instead of full posts on front page and archive pages' )
+					) }
+					{ this.renderToggle(
+						'wp_mobile_featured_images',
+						! minilevenModuleActive,
+						translate( 'Show featured images' )
+					) }
+					{ this.renderToggle(
+						'wp_mobile_app_promos',
+						! minilevenModuleActive,
+						translate(
+							'Show an ad for the {{link}}WordPress mobile apps{{/link}} in the footer of the mobile theme',
+							{
+								components: {
+									link: <a href="https://apps.wordpress.com/" />,
+								},
+							}
+						)
+					) }
+				</div>
 			</FormFieldset>
 		);
 	}
