@@ -281,10 +281,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSuccessViewPostNotice() {
-		// FIXME: Temporary hack to make sure it works with both 6.1 and core's Gutenberg (WP 5.2)
-		const noticeSelector =
-			getJetpackHost() === 'WPCOM' ? '.components-snackbar' : '.components-notice.is-success';
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( noticeSelector ) );
+		const noticeSelector = By.css( '.components-snackbar' );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, noticeSelector );
 	}
 
 	async dismissSuccessNotice() {
