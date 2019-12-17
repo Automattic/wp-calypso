@@ -12,18 +12,19 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal Dependencies
  **/
+import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import PlanPill from 'components/plans/plan-pill';
-import PlanIcon from 'components/plans/plan-icon';
 import { TYPE_FREE } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
+import { getProductIconSlug } from 'lib/products-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { planLevelsMatch } from 'lib/plans/index';
@@ -59,7 +60,7 @@ export class PlanFeaturesHeader extends Component {
 		return (
 			<header className={ headerClasses }>
 				<div className="plan-features__header-figure">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ getProductIconSlug( planType ) } />
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
@@ -138,7 +139,7 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ getProductIconSlug( planType ) } />
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
