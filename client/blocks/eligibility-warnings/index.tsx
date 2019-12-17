@@ -17,6 +17,7 @@ import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { launchSite as launchSiteActionCreator } from 'state/sites/launch/actions';
+import { saveSiteSettings as saveSiteSettingsActionCreator } from 'state/site-settings/actions';
 import { Button, Card } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
@@ -42,6 +43,7 @@ export const EligibilityWarnings = ( {
 	isUnlaunched,
 	launchSite,
 	onProceed,
+	saveSiteSettings,
 	siteId,
 	translate,
 }: Props ) => {
@@ -58,7 +60,10 @@ export const EligibilityWarnings = ( {
 				return;
 			}
 		} else if ( listHolds.includes( 'SITE_PRIVATE' ) ) {
-			//
+			const response = await saveSiteSettings( siteId, { blog_public: 0 } );
+			if ( response?.updated?.blog_public !== 0 ) {
+				return;
+			}
 		}
 
 		onProceed();
@@ -143,6 +148,7 @@ const mapDispatchToProps = {
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
 	launchSite: launchSiteActionCreator,
+	saveSiteSettings: saveSiteSettingsActionCreator,
 };
 
 function mergeProps(

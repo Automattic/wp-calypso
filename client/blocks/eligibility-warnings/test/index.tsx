@@ -261,4 +261,91 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( handleProceed ).not.toHaveBeenCalled();
 	} );
+
+	it( 'makes site hidden if has business plan and no other holds', async () => {
+		let completePostRequest = noop;
+
+		const post = jest.spyOn( wpcom.req, 'post' ).mockImplementationOnce( () => {
+			return new Promise( resolve => {
+				completePostRequest = () => resolve( { updated: { blog_public: 0 } } );
+			} );
+		} );
+
+		const state = createState( {
+			holds: [ 'SITE_PRIVATE' ],
+			siteId: 113,
+			isUnlaunched: false,
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		fireEvent.click( getByText( 'Continue' ) );
+
+		expect( post ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/sites/113/settings',
+			} ),
+			expect.anything(),
+			expect.objectContaining( {
+				blog_public: 0,
+			} ),
+			undefined // expect.anything() doesn't match undefined
+		);
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+
+		completePostRequest();
+
+		await wait( () => expect( handleProceed ).toHaveBeenCalled() );
+	} );
+
+	it( "doesn't proceed if site fails to be set to hidden", async () => {
+		let completePostRequest = noop;
+
+		const post = jest.spyOn( wpcom.req, 'post' ).mockImplementationOnce( () => {
+			return new Promise( ( resolve, reject ) => {
+				completePostRequest = () => reject( new Error() );
+			} );
+		} );
+
+		const state = createState( {
+			holds: [ 'SITE_PRIVATE' ],
+			siteId: 113,
+			isUnlaunched: false,
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		fireEvent.click( getByText( 'Continue' ) );
+
+		expect( post ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/sites/113/settings',
+			} ),
+			expect.anything(),
+			expect.objectContaining( {
+				blog_public: 0,
+			} ),
+			undefined // expect.anything() doesn't match undefined
+		);
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+
+		completePostRequest();
+
+		// Flush promises
+		await new Promise( setImmediate );
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+	} );
 } );
