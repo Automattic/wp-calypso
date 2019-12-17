@@ -302,13 +302,18 @@ function getStepNumberFromUrl() {
 }
 
 function saveStepNumberToUrl( stepNumber ) {
-	if ( window.history?.pushState && window.location?.hash ) {
-		window.history.pushState(
-			null,
-			null,
-			window.location.href.replace( window.location.hash, `#step${ stepNumber }` )
-		);
+	if ( ! window.history?.pushState ) {
+		return;
 	}
+	const newHash = `#step${ stepNumber }`;
+	if ( window.location.hash === newHash ) {
+		return;
+	}
+	const newUrl = window.location.hash
+		? window.location.href.replace( window.location.hash, newHash )
+		: window.location.href + newHash;
+	debug( 'updating url to', newUrl );
+	window.history.pushState( null, null, newUrl );
 }
 
 function useChangeStepNumberForUrl() {
