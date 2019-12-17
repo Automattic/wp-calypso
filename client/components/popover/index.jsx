@@ -31,57 +31,15 @@ import './style.scss';
  */
 const debug = debugFactory( 'calypso:popover' );
 
-// We accept DOM elements and React component instances as the `context` prop.
-// In case of a React component instance, we'll find the DOM element with `findDOMNode`.
-const PropTypeElement = PropTypes.oneOfType( [
-	PropTypes.instanceOf( Component ),
-	PropTypes.instanceOf( window.Element ),
-] );
-
 class PopoverInner extends Component {
-	static propTypes = {
-		autoPosition: PropTypes.bool,
-		autoRtl: PropTypes.bool,
-		className: PropTypes.string,
-		closeOnEsc: PropTypes.bool,
-		id: PropTypes.string,
-		context: PropTypeElement,
-		ignoreContext: PropTypeElement,
-		isRtl: PropTypes.bool,
-		isVisible: PropTypes.bool,
-		position: PropTypes.oneOf( [
-			'top',
-			'top right',
-			'right',
-			'bottom right',
-			'bottom',
-			'bottom left',
-			'left',
-			'top left',
-		] ),
-		showDelay: PropTypes.number,
-		onClose: PropTypes.func,
-		onShow: PropTypes.func,
-		relativePosition: PropTypes.shape( { left: PropTypes.number } ),
-		// Bypass position calculations and provide custom position values
-		customPosition: PropTypes.shape( {
-			top: PropTypes.number,
-			left: PropTypes.number,
-			positionClass: PropTypes.oneOf( [ 'top', 'right', 'bottom', 'left' ] ),
-		} ),
-	};
-
 	static defaultProps = {
 		autoPosition: true,
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
 		isRtl: false,
-		isVisible: false,
 		position: 'top',
-		showDelay: 0,
 		onClose: noop,
-		onShow: noop,
 	};
 
 	/**
@@ -103,46 +61,22 @@ class PopoverInner extends Component {
 	popoverInnerNodeRef = React.createRef();
 
 	state = {
-		show: this.props.isVisible,
 		left: -99999,
 		top: -99999,
 		positionClass: this.getPositionClass( this.props.position ),
 	};
 
 	componentDidMount() {
-		if ( this.state.show ) {
-			this.bindListeners();
-			this.setPositionAndFocus();
-		}
+		this.bindListeners();
+		this.setPositionAndFocus();
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		// Show can be delayed with `showDelay`, so `state.show` lags behind `props.isVisible`
-		if ( this.props.isVisible !== prevProps.isVisible ) {
-			if ( this.props.isVisible ) {
-				this.show();
-			} else {
-				this.hide();
-			}
-		}
-
-		// When showing, bind window listeners, set position and focus.
-		// Corresponds exactly to `componentDidMount`.
-		if ( ! prevState.show && this.state.show ) {
-			this.bindListeners();
-			this.setPositionAndFocus();
-		}
-
-		// When hiding, unbind window listeners. Corresponds exactly to `componentWillUnmount`.
-		if ( prevState.show && ! this.state.show ) {
-			this.unbindListeners();
-		}
-
+	componentDidUpdate() {
 		// Update our position even when only our children change. To prevent infinite loops,
 		// use `defer` and avoid scheduling a second update when one is already scheduled by
 		// setting and checking `this.scheduledPositionUpdate`.
 		// See https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
-		if ( prevState.show && this.state.show && this.scheduledPositionUpdate == null ) {
+		if ( this.scheduledPositionUpdate == null ) {
 			this.scheduledPositionUpdate = defer( () => {
 				this.setPosition();
 				this.scheduledPositionUpdate = null;
@@ -384,47 +318,11 @@ class PopoverInner extends Component {
 		return { left, top };
 	}
 
-	show() {
-		if ( ! this.props.showDelay ) {
-			this.setState( { show: true } );
-			return;
-		}
-
-		debug( 'showing in %o', `${ this.props.showDelay }ms` );
-		this.clearShowTimer();
-
-		this._openDelayTimer = setTimeout( () => {
-			this.setState( { show: true } );
-		}, this.props.showDelay );
-	}
-
-	hide() {
-		this.setState( { show: false } );
-		this.clearShowTimer();
-	}
-
-	clearShowTimer() {
-		if ( this._openDelayTimer ) {
-			clearTimeout( this._openDelayTimer );
-			this._openDelayTimer = null;
-		}
-	}
-
 	close( wasCanceled = false ) {
-		if ( ! this.props.isVisible ) {
-			debug( 'popover should be already closed' );
-			return null;
-		}
-
 		this.props.onClose( wasCanceled );
 	}
 
 	render() {
-		if ( ! this.state.show ) {
-			debug( 'is hidden. return no render' );
-			return null;
-		}
-
 		if ( ! this.props.context ) {
 			debug( 'No `context` to tie. return no render' );
 			return null;
@@ -451,15 +349,88 @@ class PopoverInner extends Component {
 	}
 }
 
-export default function Popover( props ) {
+// Wrapping children inside `<RootChild>` changes the timing of lifecycles and setting refs,
+// because the children are rendered inside `RootChild`'s `componentDidMount`, later than
+// usual. That's why we need this wrapper that removes `RootChild` from the inner component
+// and simplifies its complicated lifecycle logic.
+//
+// We also use the outer component to manage the `show` state that can be delayed behind
+// the outer `isVisible` prop by the `showDelay` timeout. One consequence is that the `RootChild`
+// is created on show and destroyed on hide, making sure that the last shown popover will be
+// also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
+function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 	const isRtl = useRtl();
-	// wrapping children inside `<RootChild>` changes the timing of lifecycles and setting refs,
-	// because the children are rendered inside `RootChild`'s `componentDidMount`, later than
-	// usual. That's why we need this wrapper that removes `RootChild` from the inner component
-	// and simplifies its complicated lifecycle logic.
+	const [ show, setShow ] = React.useState( isVisible );
+
+	// If `showDelay` is non-zero, the hide -> show transition will be delayed and will not
+	// happen immediately after the new value of `isVisible` is received.
+	React.useEffect( () => {
+		if ( showDelay > 0 && show !== isVisible && isVisible ) {
+			debug( `showing in ${ showDelay } ms` );
+			const showDelayTimer = setTimeout( () => {
+				setShow( true );
+			}, showDelay );
+
+			return () => {
+				clearTimeout( showDelayTimer );
+			};
+		}
+	}, [ showDelay, isVisible, show ] );
+
+	// sync the `isVisible` flag to `show` state immediately, unless it's a hide -> show transition
+	// and `showDelay` is non-zero. In that case, the hide -> show transition will be delayed by
+	// the `useEffect` hook.
+	if ( show !== isVisible && ( showDelay === 0 || ! isVisible ) ) {
+		setShow( isVisible );
+	}
+
+	if ( ! show ) {
+		debug( 'is hidden. return no render' );
+		return null;
+	}
+
 	return (
 		<RootChild>
 			<PopoverInner { ...props } isRtl={ isRtl } />
 		</RootChild>
 	);
 }
+
+// We accept DOM elements and React component instances as the `context` prop.
+// In case of a React component instance, we'll find the DOM element with `findDOMNode`.
+const PropTypeElement = PropTypes.oneOfType( [
+	PropTypes.instanceOf( Component ),
+	PropTypes.instanceOf( window.Element ),
+] );
+
+Popover.propTypes = {
+	autoPosition: PropTypes.bool,
+	autoRtl: PropTypes.bool,
+	className: PropTypes.string,
+	closeOnEsc: PropTypes.bool,
+	id: PropTypes.string,
+	context: PropTypeElement,
+	ignoreContext: PropTypeElement,
+	isVisible: PropTypes.bool,
+	position: PropTypes.oneOf( [
+		'top',
+		'top right',
+		'right',
+		'bottom right',
+		'bottom',
+		'bottom left',
+		'left',
+		'top left',
+	] ),
+	showDelay: PropTypes.number,
+	onClose: PropTypes.func,
+	relativePosition: PropTypes.shape( { left: PropTypes.number } ),
+	// Bypass position calculations and provide custom position values
+	customPosition: PropTypes.shape( {
+		top: PropTypes.number,
+		left: PropTypes.number,
+		positionClass: PropTypes.oneOf( [ 'top', 'right', 'bottom', 'left' ] ),
+	} ),
+};
+
+export default Popover;
