@@ -44,6 +44,7 @@
 		"@babel/preset-env": "7.7.6",
 		"@babel/preset-react": "7.7.4",
 		"@babel/preset-typescript": "7.7.4",
+		"@types/webpack-env": "1.14.1",
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.3.0",
 		"@wordpress/browserslist-config": "2.6.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "2.1.0",
@@ -54,9 +55,9 @@
 		"caniuse-api": "3.0.0",
 		"css-loader": "3.2.1",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
-		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.3",
+		"enzyme": "3.10.0",
 		"file-loader": "4.2.0",
 		"jest-config": "24.9.0",
 		"jest-enzyme": "7.1.2",
@@ -69,9 +70,9 @@
 		"terser-webpack-plugin": "2.2.1",
 		"thread-loader": "2.1.3",
 		"typescript": "3.7.3",
-		"webpack": "4.41.2",
 		"webpack-cli": "3.3.10",
 		"webpack-filter-warnings-plugin": "1.2.1",
-		"webpack-rtl-plugin": "2.0.0"
+		"webpack-rtl-plugin": "2.0.0",
+		"webpack": "4.41.2"
 	}
 }
