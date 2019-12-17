@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { createContext, useContext } from '@wordpress/element';
 
