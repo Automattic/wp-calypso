@@ -15,61 +15,61 @@ class Newspack_Blocks_API {
 	 */
 	public static function register_rest_fields() {
 		register_rest_field(
-			[ 'post', 'page' ],
+			array( 'post', 'page' ),
 			'newspack_featured_image_src',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ],
-				'schema'       => [
-					'context' => [
+			array(
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ),
+				'schema'       => array(
+					'context' => array(
 						'edit',
-					],
+					),
 					'type'    => 'array',
-				],
-			]
+				),
+			)
 		);
 
 		register_rest_field(
-			[ 'post', 'page' ],
+			array( 'post', 'page' ),
 			'newspack_featured_image_caption',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ],
-				'schema'       => [
-					'context' => [
+			array(
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ),
+				'schema'       => array(
+					'context' => array(
 						'edit',
-					],
+					),
 					'type'    => 'string',
-				],
-			]
+				),
+			)
 		);
 
 		/* Add author info source */
 		register_rest_field(
 			'post',
 			'newspack_author_info',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ],
-				'schema'       => [
-					'context' => [
+			array(
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ),
+				'schema'       => array(
+					'context' => array(
 						'edit',
-					],
+					),
 					'type'    => 'array',
-				],
-			]
+				),
+			)
 		);
 
 		/* Add first category source */
 		register_rest_field(
 			'post',
 			'newspack_category_info',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ],
-				'schema'       => [
-					'context' => [
+			array(
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ),
+				'schema'       => array(
+					'context' => array(
 						'edit',
-					],
+					),
 					'type'    => 'string',
-				],
-			]
+				),
+			)
 		);
 	}
 
@@ -80,7 +80,7 @@ class Newspack_Blocks_API {
 	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
-		$featured_image_set = [];
+		$featured_image_set = array();
 
 		if ( 0 === $object['featured_media'] ) {
 			return false;
@@ -146,7 +146,7 @@ class Newspack_Blocks_API {
 	 * @return array Author data.
 	 */
 	public static function newspack_blocks_get_author_info( $object ) {
-		$author_data = [];
+		$author_data = array();
 
 		if ( function_exists( 'coauthors_posts_links' ) ) :
 			$authors = get_coauthors();
@@ -169,6 +169,8 @@ class Newspack_Blocks_API {
 					'display_name' => esc_html( $author->display_name ),
 					/* Get the author avatar */
 					'avatar'       => wp_kses_post( $author_avatar ),
+					/* Get the author ID */
+					'id'           => $author->ID,
 				);
 			}
 		else :
@@ -177,6 +179,8 @@ class Newspack_Blocks_API {
 				'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
 				/* Get the author avatar */
 				'avatar'       => get_avatar( $object['author'], 48 ),
+				/* Get the author ID */
+				'id'           => $object['author'],
 			);
 		endif;
 
