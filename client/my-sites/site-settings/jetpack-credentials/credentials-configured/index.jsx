@@ -4,17 +4,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
-import { CompactCard, Button } from '@automattic/components';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
+import Gridicon from 'components/gridicon';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
+import { CompactCard, Button } from '@automattic/components';
+import { deleteCredentials } from 'state/jetpack/credentials/actions';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
+import { planHasFeature } from 'lib/plans';
+import {
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products-values/constants';
 
 /**
  * Style dependencies
@@ -33,6 +41,25 @@ class CredentialsConfigured extends Component {
 		);
 
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
+
+	supportsRealtimeBackup() {
+		const { currentPlanSlug, purchases } = this.props;
+		const productSlugs = [
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		];
+
+		const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
+			planHasFeature( currentPlanSlug, productSlug )
+		);
+		const hasActiveRealtimeBackupProduct = some(
+			purchases,
+			purchase =>
+				purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
+		);
+
+		return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;
+	}
 
 	render() {
 		const { canAutoconfigure, siteId, translate } = this.props;
@@ -89,6 +116,14 @@ class CredentialsConfigured extends Component {
 			);
 		}
 
+		const headerText = this.supportsRealtimeBackup()
+			? translate(
+					'Your site is being backed up in real time and regularly scanned for security threats.'
+			  )
+			: translate(
+					'Your site is being backed up every day and regularly scanned for security threats.'
+			  );
+
 		const header = (
 			<div className="credentials-configured__info">
 				<Gridicon
@@ -98,17 +133,15 @@ class CredentialsConfigured extends Component {
 				/>
 				<div className="credentials-configured__info-text">
 					<h3 className="credentials-configured__info-protocol">{ translate( 'Connected' ) }</h3>
-					<h4 className="credentials-configured__info-description">
-						{ translate(
-							'Your site is being backed up in real time and regularly scanned for security threats.'
-						) }
-					</h4>
+					<h4 className="credentials-configured__info-description">{ headerText }</h4>
 				</div>
 			</div>
 		);
 
 		return (
 			<FoldableCard header={ header } className="credentials-configured">
+				<QuerySitePurchases siteId={ siteId } />
+
 				<RewindCredentialsForm
 					{ ...{
 						role: 'main',
@@ -127,7 +160,9 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
+		currentPlanSlug: getSitePlanSlug( state, siteId ),
 		mainCredentials: find( credentials, { role: 'main' } ),
+		purchases: getSitePurchases( state, siteId ),
 	};
 };
 
