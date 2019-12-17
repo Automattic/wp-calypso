@@ -18,6 +18,7 @@ import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import LocaleSuggestions from 'components/locale-suggestions';
 import {
@@ -27,6 +28,7 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 import Main from 'components/main';
+import JetpackHeader from 'components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
 import Gridicon from 'components/gridicon';
@@ -65,6 +67,7 @@ class MagicLogin extends React.Component {
 
 		const loginParameters = {
 			isNative: true,
+			isJetpack: this.props.isJetpackLogin,
 			locale: this.props.locale,
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
@@ -75,7 +78,7 @@ class MagicLogin extends React.Component {
 	};
 
 	renderLinks() {
-		const { locale, showCheckYourEmail, translate } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
 
 		if ( showCheckYourEmail ) {
 			return null;
@@ -87,6 +90,7 @@ class MagicLogin extends React.Component {
 		// paste somewhere else, their email address isn't included in it.
 		const loginParameters = {
 			isNative: true,
+			isJetpack: isJetpackLogin,
 			locale: locale,
 		};
 
@@ -113,6 +117,8 @@ class MagicLogin extends React.Component {
 	render() {
 		return (
 			<Main className="magic-login magic-login__request-link">
+				{ this.props.isJetpackLogin && ( <JetpackHeader/> ) }
+
 				{ this.renderLocaleSuggestions() }
 
 				<GlobalNotices id="notices" notices={ notices.list } />
@@ -129,6 +135,7 @@ const mapState = state => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
+	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 } );
 
 const mapDispatch = {
