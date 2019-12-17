@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -46,12 +46,23 @@ export const CheckoutProvider = props => {
 		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
 
-	const [ formStatus, setFormStatus ] = useState( isLoading ? 'loading' : 'ready' );
+	const [ formStatus, setFormStatusActual ] = useState( isLoading ? 'loading' : 'ready' );
+	const setFormStatus = useCallback( value => {
+		if ( typeof value === 'function' ) {
+			return setFormStatusActual( currentValue => {
+				const newValue = value( currentValue );
+				debug( 'setting form status to', newValue );
+				return newValue;
+			} );
+		}
+		debug( 'setting form status', value );
+		return setFormStatusActual( value );
+	}, [] );
 	useEffect( () => {
 		const newStatus = isLoading ? 'loading' : 'ready';
 		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
 		setFormStatus( newStatus );
-	}, [ isLoading ] );
+	}, [ isLoading, setFormStatus ] );
 	debug( `form status is ${ formStatus }` );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
