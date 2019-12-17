@@ -592,7 +592,7 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			displayChecklist: !! ( ! isAtomic && hasChecklistData && ! isChecklistComplete ),
+			displayChecklist: !! ( hasChecklistData && ! isChecklistComplete ),
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
