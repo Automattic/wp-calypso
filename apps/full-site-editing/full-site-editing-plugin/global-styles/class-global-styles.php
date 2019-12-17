@@ -195,6 +195,14 @@ class Global_Styles {
 						],
 					],
 				],
+				'line_height_base' => [
+					'type'    => 'literal',
+					'default' => 1.5
+				],
+				'line_height_headings' => [
+					'type' => 'literal',
+					'default' => 1.8,
+				]
 			]
 		);
 
