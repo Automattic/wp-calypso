@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -39,11 +39,20 @@ export const CheckoutProvider = props => {
 		paymentMethods,
 		registry,
 		onEvent,
+		isLoading,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
+
+	const [ formStatus, setFormStatus ] = useState( isLoading ? 'loading' : 'ready' );
+	useEffect( () => {
+		const newStatus = isLoading ? 'loading' : 'ready';
+		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
+		setFormStatus( newStatus );
+	}, [ isLoading ] );
+	debug( `form status is ${ formStatus }` );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
@@ -66,6 +75,8 @@ export const CheckoutProvider = props => {
 		successRedirectUrl,
 		failureRedirectUrl,
 		onEvent,
+		formStatus,
+		setFormStatus,
 	};
 
 	// This error message cannot be translated because translation hasn't loaded yet.
@@ -105,6 +116,7 @@ CheckoutProvider.propTypes = {
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
 	onEvent: PropTypes.func,
+	isLoading: PropTypes.bool,
 };
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
@@ -175,3 +187,8 @@ export const useCheckoutRedirects = () => {
 	}
 	return { successRedirectUrl, failureRedirectUrl };
 };
+
+export function useFormStatus() {
+	const { formStatus, setFormStatus } = useContext( CheckoutContext );
+	return [ formStatus, setFormStatus ];
+}
