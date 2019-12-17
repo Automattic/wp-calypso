@@ -12,7 +12,7 @@ export const createSitePlanObject = plan => {
 		currencyCode: plan.currency_code,
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
-		expiryDate: plan.expiryDate,
+		expiryDate: plan.expiry,
 		expiryDateValid: Boolean( plan.expiry ),
 		expiryDateFormat: null,
 		formattedDiscount: plan.formatted_discount,
