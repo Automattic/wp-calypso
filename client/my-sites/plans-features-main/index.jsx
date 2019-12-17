@@ -71,6 +71,7 @@ import {
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -118,6 +119,7 @@ export class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
 			basePlansPath,
+			countryCode,
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
@@ -186,6 +188,7 @@ export class PlansFeaturesMain extends Component {
 						isJetpack,
 						isInSignup,
 						isLaunchPage,
+						countryCode,
 					} ) }
 					siteId={ siteId }
 				/>
@@ -544,6 +547,10 @@ export default connect(
 			currentPlan,
 		} );
 
+		const isDevelopment = 'development' === process.env.NODE_ENV;
+		const devCountryCode = isDevelopment && global.window && global.window.userCountryCode;
+		const countryCode = devCountryCode || getCurrentUserCountryCode( state );
+
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -560,6 +567,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
+			countryCode,
 		};
 	},
 	{

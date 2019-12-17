@@ -445,6 +445,7 @@ export const getPopularPlanSpec = ( {
 	abtest,
 	isInSignup,
 	isLaunchPage,
+	countryCode,
 } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
@@ -460,6 +461,7 @@ export const getPopularPlanSpec = ( {
 		if (
 			isInSignup &&
 			! isLaunchPage &&
+			'US' !== countryCode &&
 			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
 		) {
 			return spec;
