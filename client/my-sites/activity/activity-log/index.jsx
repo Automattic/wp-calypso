@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
-import { isFreePlan } from 'lib/plans';
+import { isFreePlan, planHasFeature } from 'lib/plans';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -43,8 +43,8 @@ import FormattedHeader from 'components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSitePurchases, siteHasBackupProductPurchase } from 'state/purchases/selectors';
+import { getCurrentPlan, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
@@ -73,6 +73,10 @@ import analytics from 'lib/analytics';
 import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
+import {
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products-values/constants';
 
 /**
  * Style dependencies
@@ -357,6 +361,25 @@ class ActivityLog extends Component {
 		);
 	}
 
+	supportsRealtimeBackup() {
+		const { currentPlanSlug, purchases } = this.props;
+		const productSlugs = [
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		];
+
+		const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
+			planHasFeature( currentPlanSlug, productSlug )
+		);
+		const hasActiveRealtimeBackupProduct = some(
+			purchases,
+			purchase =>
+				purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
+		);
+
+		return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -406,12 +429,24 @@ class ActivityLog extends Component {
 			};
 		} )();
 
+		const provisioningText = this.supportsRealtimeBackup()
+			? translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes in real time."
+			  )
+			: translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes every day."
+			  );
+
 		return (
 			<div>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
+
 				<SidebarNavigation />
 
 				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
@@ -431,10 +466,7 @@ class ActivityLog extends Component {
 						icon="history"
 						disableHref
 						title={ translate( 'Your backup is underway' ) }
-						description={ translate(
-							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-								"After this initial backup, we'll save future changes in real time."
-						) }
+						description={ provisioningText }
 					/>
 				) }
 				<IntroBanner siteId={ siteId } />
@@ -583,6 +615,7 @@ export default connect(
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
+			currentPlanSlug: getSitePlanSlug( state, siteId ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&
@@ -598,6 +631,7 @@ export default connect(
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
+			purchases: getSitePurchases( state, siteId ),
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
