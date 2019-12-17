@@ -1,3 +1,10 @@
+# THIS IS TEMPORARY
+
+This is an unreleased component copied from
+[`@wordpress/components`](https://github.com/WordPress/gutenberg/tree/master/packages/components/src/card).
+
+_It should not be heavily modified, it will be replaced with the published component soon._
+
 # Card
 
 Card provides a flexible and extensible content container.
@@ -16,21 +23,21 @@ const Example = () => (
 
 ## Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`isBorderless` | `boolean` | `false` | Determines the border style of the card.
-`isElevated` | `boolean` | `false` | Determines the elevation style of the card.
-`size` | `string` | `medium` | Determines the amount of padding within the card.
+| Name           | Type      | Default  | Description                                       |
+| -------------- | --------- | -------- | ------------------------------------------------- |
+| `isBorderless` | `boolean` | `false`  | Determines the border style of the card.          |
+| `isElevated`   | `boolean` | `false`  | Determines the elevation style of the card.       |
+| `size`         | `string`  | `medium` | Determines the amount of padding within the card. |
 
 ## Sub-Components
 
 This component provides a collection of sub-component that can be used to compose various interfaces.
 
--   [`<CardBody />`](./docs/body.md)
--   [`<CardDivider />`](./docs/divider.md)
--   [`<CardFooter />`](./docs/footer.md)
--   [`<CardHeader />`](./docs/header.md)
--   [`<CardMedia />`](./docs/media.md)
+- [`<CardBody />`](./docs/body.md)
+- [`<CardDivider />`](./docs/divider.md)
+- [`<CardFooter />`](./docs/footer.md)
+- [`<CardHeader />`](./docs/header.md)
+- [`<CardMedia />`](./docs/media.md)
 
 ### Sub-Components Example
 
