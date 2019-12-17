@@ -15,21 +15,10 @@
 	}
 }
 
-@media ( min-width: 782px ) {
-	.edit-post-layout__content {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		top: 88px;
-		min-height: calc( 100% - 88px );
-		height: auto;
-		margin-left: 160px;
-	}
-
-	body.is-fullscreen-mode .edit-post-layout__content {
-		top: 56px;
-		position: fixed;
+body.is-fullscreen-mode {
+	.edit-post-editor-regions,
+	.components-editor-notices__dismissible {
+		top: 0;
 	}
 }
 
