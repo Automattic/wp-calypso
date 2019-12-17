@@ -29,17 +29,17 @@ export default () => {
 	const [ selectedDesign, setSelectedDesign ] = useState< string | undefined >();
 	return (
 		<div className="design-selector">
-			{ homepageTemplates.map( t => (
+			{ homepageTemplates.map( template => (
 				<Card
 					className={ classnames( 'design-selector__design-option', {
-						'is-selected': t.slug === selectedDesign,
+						'is-selected': template.slug === selectedDesign,
 					} ) }
-					key={ t.slug }
+					key={ template.slug }
 					isElevated
-					onClick={ () => setSelectedDesign( t.slug ) }
+					onClick={ () => setSelectedDesign( template.slug ) }
 				>
 					<CardMedia>
-						<img alt={ t.title } src={ t.preview } />
+						<img alt={ template.title } src={ template.preview } />
 					</CardMedia>
 				</Card>
 			) ) }
