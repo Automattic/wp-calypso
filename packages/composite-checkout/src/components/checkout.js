@@ -14,6 +14,7 @@ import { useLocalize, sprintf } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
+import LoadingContent from './loading-content';
 import {
 	usePrimarySelect,
 	usePrimaryDispatch,
@@ -30,7 +31,7 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useEvents } from './checkout-provider';
+import { useEvents, useFormStatus } from './checkout-provider';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -80,6 +81,7 @@ export default function Checkout( { steps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
+	const [ formStatus ] = useFormStatus();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -129,6 +131,19 @@ export default function Checkout( { steps, className } ) {
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
 	const isCheckoutInProgress = isThereAnIncompleteStep || isThereAnotherNumberedStep;
+
+	if ( formStatus === 'loading' ) {
+		return (
+			<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+				<MainContent
+					className={ joinClasses( [ className, 'checkout__content' ] ) }
+					isCheckoutInProgress={ isCheckoutInProgress }
+				>
+					<LoadingContent />
+				</MainContent>
+			</Container>
+		);
+	}
 
 	return (
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
