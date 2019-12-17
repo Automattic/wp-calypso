@@ -162,7 +162,7 @@ export function useEvents() {
 
 export function useMessages() {
 	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
-	if ( ( ! showErrorMessage, showInfoMessage, showSuccessMessage ) ) {
+	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
 		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
 	}
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
