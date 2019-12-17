@@ -12,7 +12,7 @@ import { ENTER } from '@wordpress/keycodes';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { SiteVertical } from '../../stores/onboard/types';
-import { InjectedStepProps } from '../stepper-wizard';
+import { StepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from '../../../../types';
 
@@ -21,7 +21,7 @@ import { __TodoAny__ } from '../../../../types';
  */
 import './style.scss';
 
-const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
+const VerticalSelect: FunctionComponent< StepProps > = ( {
 	onSelect,
 	inputClass,
 	isActive,

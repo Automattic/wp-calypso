@@ -44,10 +44,9 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 								! siteTitle &&
 								NO__( "Let's set up your website – it takes only a moment." ) }
 						</h2>
-						<StepperWizard>
-							<VerticalSelect />
-							{ ( siteVertical || siteTitle ) && <SiteTitle /> }
-						</StepperWizard>
+						<StepperWizard
+							stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }
+						/>
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
 								<Button className="onboarding-block__question-skip" isLink>
