@@ -130,7 +130,8 @@ export default function Checkout( { steps, className } ) {
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
-	const isCheckoutInProgress = isThereAnIncompleteStep || isThereAnotherNumberedStep;
+	const isCheckoutInProgress =
+		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
 
 	if ( formStatus === 'loading' ) {
 		return (
