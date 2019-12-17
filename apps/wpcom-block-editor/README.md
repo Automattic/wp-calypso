@@ -18,7 +18,7 @@ The block editor integration provides features for the following type of sites a
 <table>
   <tr>
     <th>Feature</th>
-    <th style="width: 100px;">Editor</th>
+    <th>Editor</th>
     <th>Simple site</th>
     <th>Atomic site</th>
     <th>Jetpack site</th>
