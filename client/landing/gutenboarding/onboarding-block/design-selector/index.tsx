@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import React, { useState } from 'react';
 import classnames from 'classnames';
@@ -14,6 +15,11 @@ import { CardMedia } from '../../components/card/media';
 import { SiteVertical } from '../../stores/onboard/types';
 
 import './style.scss';
+
+const gridWidth = 960;
+
+const srcSet = ( src: string, widths: number[] ) =>
+	widths.map( width => addQueryArgs( src, { w: width } ) + ` ${ width }w` ).join( ', ' );
 
 export default () => {
 	const siteVertical = useSelect(
@@ -43,7 +49,11 @@ export default () => {
 						onClick={ () => setSelectedDesign( template.slug ) }
 					>
 						<CardMedia>
-							<img alt={ template.title } src={ template.preview } />
+							<img
+								alt={ template.title }
+								src={ template.preview }
+								srcSet={ srcSet( template.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
+							/>
 						</CardMedia>
 					</Card>
 				) ) }
