@@ -56,9 +56,11 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	getCopy( variation ) {
-		const { planName, siteDomain, purchase, translate } = this.props;
+		const { planName, siteDomain, purchase, translate, moment } = this.props;
 
-		const expiryDate = purchase.expiryMoment.format( 'LL' );
+		const expiryDate =
+			purchase.expiryDateValid &&
+			moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' );
 
 		switch ( variation ) {
 			case 'plan':

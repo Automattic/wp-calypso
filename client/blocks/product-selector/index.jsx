@@ -156,7 +156,7 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { currentPlanSlug, selectedSiteSlug, translate } = this.props;
+		const { currentPlanSlug, selectedSiteSlug, translate, moment } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
@@ -177,10 +177,17 @@ export class ProductSelector extends Component {
 			return null;
 		}
 
+		const subscribedMoment =
+			purchase.subscribedDateValid && moment( purchase.subscribedDate );
+
+		const expiryMoment =
+			purchase.expiryDateValid &&
+			moment( purchase.expiryDate, purchase.expiryDateFormat );
+
 		return (
 			<ProductExpiration
-				expiryDateMoment={ purchase.expiryMoment }
-				purchaseDateMoment={ purchase.subscribedMoment }
+				expiryDateMoment={ expiryMoment }
+				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>
 		);

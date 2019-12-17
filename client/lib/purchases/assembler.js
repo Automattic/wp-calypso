@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-
 import { camelCase } from 'lodash';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,9 +15,7 @@ function createPurchaseObject( purchase ) {
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		mostRecentRenewDate: purchase.most_recent_renew_date,
-		mostRecentRenewMoment: purchase.most_recent_renew_date
-			? i18n.moment( purchase.most_recent_renew_date )
-			: null,
+		mostRecentRenewDateValid: Boolean( purchase.most_recent_renew_date ),
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		costToUnbundle: purchase.cost_to_unbundle
@@ -36,7 +32,8 @@ function createPurchaseObject( purchase ) {
 		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryMoment: purchase.expiry_date ? i18n.moment( purchase.expiry_date ) : null,
+		expiryDateValid: Boolean( purchase.expiry_date ),
+		expiryDateFormat: null,
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -66,14 +63,13 @@ function createPurchaseObject( purchase ) {
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
-		// only generate a moment if `renewDate` is present and positive
-		renewMoment:
-			purchase.renew_date && purchase.renew_date > '0' ? i18n.moment( purchase.renew_date ) : null,
+		// only consider valid if `renewDate` is present and positive
+		renewDateValid: Boolean( purchase.renew_date ) && purchase.renew_date > '0',
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
 		subscribedDate: purchase.subscribed_date,
-		subscribedMoment: purchase.subscribed_date ? i18n.moment( purchase.subscribed_date ) : null,
+		subscribedDateValid: Boolean( purchase.subscribed_date ),
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
@@ -82,26 +78,25 @@ function createPurchaseObject( purchase ) {
 	};
 
 	if ( 'credit_card' === purchase.payment_type ) {
-		const payment = Object.assign( {}, object.payment, {
+		const payment = {
+			...object.payment,
 			creditCard: {
 				id: Number( purchase.payment_card_id ),
 				type: purchase.payment_card_type,
 				processor: purchase.payment_card_processor,
 				number: purchase.payment_details,
 				expiryDate: purchase.payment_expiry,
-				expiryMoment: purchase.payment_expiry
-					? i18n.moment( purchase.payment_expiry, 'MM/YY' )
-					: null,
+				expiryDateValid: Boolean( purchase.payment_expiry ),
+				expiryDateFormat: 'MM/YY',
 			},
-		} );
+		};
 
-		return Object.assign( {}, object, { payment } );
+		return { ...object, payment };
 	}
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
-		object.payment.expiryMoment = purchase.payment_expiry
-			? i18n.moment( purchase.payment_expiry, 'MM/YY' )
-			: null;
+		object.payment.expiryDateValid = Boolean( purchase.payment_expiry );
+		object.payment.expiryDateFormat = 'MM/YY';
 	}
 
 	return object;

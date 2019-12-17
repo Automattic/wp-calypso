@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -42,7 +41,8 @@ describe( 'assembler', () => {
 		const payment = purchase[ 0 ].payment;
 		const creditCard = payment.creditCard;
 		expect( creditCard.expiryDate ).to.equal( '11/16' );
-		expect( creditCard.expiryMoment.isSame( moment( '11/16', 'MM/YY' ) ) ).to.equal( true );
+		expect( creditCard.expiryDateValid ).to.equal( true );
+		expect( creditCard.expiryDateFormat ).to.equal( 'MM/YY' );
 		expect( creditCard.id ).to.equal( 1234 );
 		expect( creditCard.number ).to.equal( 7890 );
 		expect( creditCard.type ).to.equal( 'visa' );

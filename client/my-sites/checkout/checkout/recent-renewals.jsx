@@ -3,26 +3,26 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 
-function RecentRenewalListItem( { domain, productName, expiryMoment, translate } ) {
+function RecentRenewalListItem( { domain, productName, expiryString, translate } ) {
 	return (
-		expiryMoment && (
+		expiryString && (
 			<li>
 				<strong>{ domain }</strong>{ ' ' }
 				{ translate( '%(productName)s recently renewed and will expire on %(expiryDate)s', {
 					args: {
 						productName,
-						expiryDate: expiryMoment.format( 'LL' ),
+						expiryDate: expiryString,
 					},
 				} ) }
 				.
@@ -34,37 +34,44 @@ function RecentRenewalListItem( { domain, productName, expiryMoment, translate }
 RecentRenewalListItem.propTypes = {
 	domain: PropTypes.string.isRequired,
 	productName: PropTypes.string.isRequired,
-	expiryMoment: PropTypes.object.isRequired,
+	expiry: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-function getRecentRenewalProductsMatchingIds( products, ids ) {
+function getRecentRenewalProductsMatchingIds( products, ids, moment ) {
 	const oldestMoment = moment().subtract( 30, 'days' );
 	return products.filter( product => {
 		return (
 			ids.includes( product.productId ) &&
 			product.subscriptionStatus === 'active' &&
 			product.productName &&
-			product.expiryMoment &&
-			product.mostRecentRenewMoment &&
-			product.mostRecentRenewMoment.isAfter( oldestMoment )
+			product.expiryDateValid &&
+			product.mostRecentRenewDateValid &&
+			moment( product.mostRecentRenewDate ).isAfter( oldestMoment )
 		);
 	} );
 }
 
-export function RecentRenewals( { purchases, siteId, cart, translate } ) {
+export function RecentRenewals( { purchases, siteId, cart } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	const idsInCart = cart.products ? cart.products.map( product => product.product_id ) : [];
 	const recentRenewals = getRecentRenewalProductsMatchingIds( purchases, idsInCart );
 	const productListItems = recentRenewals.map( product => {
 		const domain = product.isDomainRegistration
 			? product.meta || product.domain
 			: product.includedDomain || product.domain;
+
+		const expiry =
+			product.expiryDateValid && moment( product.expiryDate, product.expiryDateFormat );
+
 		return (
 			<RecentRenewalListItem
 				key={ product.id }
 				domain={ domain }
 				productName={ product.productName }
-				expiryMoment={ product.expiryMoment }
+				expiry={ expiry && expiry.format( 'LL' ) }
 				translate={ translate }
 			/>
 		);
@@ -95,4 +102,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( RecentRenewals ) );
+export default connect( mapStateToProps )( RecentRenewals );

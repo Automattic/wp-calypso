@@ -85,8 +85,15 @@ function getPartnerName( purchase ) {
 	return null;
 }
 
+// TODO: refactor to avoid returning a localized string.
 function getSubscriptionEndDate( purchase ) {
-	return purchase.expiryMoment.format( 'LL' );
+	const localeSlug = i18n.getLocaleSlug();
+	return (
+		purchase.expiryDateValid &&
+		moment( purchase.expiryDate, purchase.expiryDateFormat )
+			.locale( localeSlug )
+			.format( 'LL' )
+	);
 }
 
 /**
@@ -347,15 +354,20 @@ function isPaidWithCreditCard( purchase ) {
 }
 
 function isPaidWithPayPalDirect( purchase ) {
-	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryMoment;
+	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDateValid;
 }
 
 function hasCreditCardData( purchase ) {
-	return Boolean( purchase.payment.creditCard.expiryMoment );
+	return purchase.payment.creditCard.expiryDateValid;
 }
 
-function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
-	return expiryMoment > moment().add( 3, 'months' );
+function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
+	if ( ! purchase.expiryDateValid ) {
+		return false;
+	}
+
+	const expiry = moment( purchase.expiryDate, purchase.expiryDateFormat );
+	return expiry > moment().add( 3, 'months' );
 }
 
 /**
@@ -371,15 +383,26 @@ function canExplicitRenew( purchase ) {
 }
 
 function creditCardExpiresBeforeSubscription( purchase ) {
+	const creditCard = purchase?.payment?.creditCard;
+	const purchaseExpiryDate =
+		purchase?.expiryDateValid && moment( purchase.expiryDate, purchase.expiryDateFormat );
+
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		purchase.payment.creditCard.expiryMoment.diff( purchase.expiryMoment, 'months' ) < 0
+		creditCard.expiryDateValid &&
+		moment( creditCard.expiryDate, creditCard.expiryDateFormat ).diff(
+			purchaseExpiryDate,
+			'months'
+		) < 0
 	);
 }
 
 function monthsUntilCardExpires( purchase ) {
-	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
+	const creditCard = purchase?.payment?.creditCard;
+	const expiry =
+		creditCard?.expiryDateValid && moment( creditCard.expiryDate, creditCard.expiryDateFormat );
+	return expiry && expiry.diff( moment(), 'months' );
 }
 
 function subscribedWithinPastWeek( purchase ) {
