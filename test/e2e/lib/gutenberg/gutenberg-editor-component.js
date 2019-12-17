@@ -7,7 +7,6 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper';
-import { getJetpackHost } from '../data-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
