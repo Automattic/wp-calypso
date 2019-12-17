@@ -4,13 +4,13 @@
 import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
 
 jest.mock( 'i18n-calypso', () => {
-	const moment = require( 'moment' );
-	moment.now = () => new Date( 2018, 4, 24 ); //May 24, 2018
 	return {
 		translate: str => str,
-		moment,
 	};
 } );
+
+const moment = require( 'moment' );
+moment.now = () => new Date( 2018, 4, 24 ); // May 24, 2018
 
 describe( 'getBillingTransactionDateFilterValues()', () => {
 	const state = {
@@ -57,7 +57,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 		expect( result ).toEqual( [
 			{
 				count: 1,
-				title: 'May 2018',
+				dateString: '2018-05-01',
 				value: {
 					month: '2018-05',
 					operator: 'equal',
@@ -65,7 +65,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 1,
-				title: 'Apr 2018',
+				dateString: '2018-04-01',
 				value: {
 					month: '2018-04',
 					operator: 'equal',
@@ -73,7 +73,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 3,
-				title: 'Mar 2018',
+				dateString: '2018-03-01',
 				value: {
 					month: '2018-03',
 					operator: 'equal',
@@ -81,7 +81,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 0,
-				title: 'Feb 2018',
+				dateString: '2018-02-01',
 				value: {
 					month: '2018-02',
 					operator: 'equal',
@@ -89,7 +89,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 1,
-				title: 'Jan 2018',
+				dateString: '2018-01-01',
 				value: {
 					month: '2018-01',
 					operator: 'equal',
@@ -97,7 +97,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 2,
-				title: 'Dec 2017',
+				dateString: '2017-12-01',
 				value: {
 					month: '2017-12',
 					operator: 'equal',
@@ -105,7 +105,7 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 2,
-				title: 'Older',
+				older: true,
 				value: {
 					month: '2017-12',
 					operator: 'before',
