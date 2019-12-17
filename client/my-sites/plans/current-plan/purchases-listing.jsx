@@ -138,6 +138,13 @@ class PurchasesListing extends Component {
 			} );
 		}
 
+		// Show purchase date if still refundable.
+		if ( purchase.isRefundable && purchase.subscribedMoment ) {
+			return translate( 'Purchased on %s.', {
+				args: invoke( purchase, 'subscribedMoment.format', 'LL' ),
+			} );
+		}
+
 		return translate( 'Expires on %s.', {
 			args: invoke( purchase, 'expiryMoment.format', 'LL' ),
 		} );
