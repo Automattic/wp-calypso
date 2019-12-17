@@ -113,7 +113,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced customization' ),
 		getDescription: () =>
 			i18n.translate(
-				'In addition to extended color schemes and backgrounds, you have access to edit CSS, giving you complete control over how your site displays.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -217,9 +217,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		getTitle: () => i18n.translate( '200 GB storage' ),
 		getDescription: () =>
-			i18n.translate(
-				'Upload more images, audio, and documents to your website with increased storage space.'
-			),
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	[ constants.FEATURE_ADVANCED_SEO_TOOLS ]: {
@@ -293,10 +291,7 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Upload more images, audio, and documents to your website with ' +
-					'increased storage space.'
-			),
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 		getStoreSlug: () => 'unlimited_space',
 	},
 
@@ -356,8 +351,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Optimize your site for better SEO, faster-loading pages, and protection from spam. ' +
-					'You can also automate social sharing and access detailed reports of all activity on your site.'
+				'Optimize your site for better SEO, faster-loading pages, and protection from spam.'
 			),
 	},
 
@@ -458,9 +452,7 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'In addition to extended color schemes and backgrounds, ' +
-					'you have access to edit CSS, giving you complete control over ' +
-					'how your site displays.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 		getStoreSlug: () => constants.FEATURE_ADVANCED_DESIGN,
 	},
@@ -503,7 +495,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Get Personalized Help' ),
 		getDescription: () =>
 			i18n.translate(
-				"Get one-on-one help from a WordPress.com expert who'll help you set up your site and services exactly as you need them."
+				"Meet one-on-one with a WordPress.com expert who'll help you set up your site exactly as you need it."
 			),
 	},
 
@@ -541,7 +533,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Site Monetization' ),
 		getDescription: () =>
 			i18n.translate(
-				'More ways to earn by displaying ads and collecting recurring payments or donations from visitors.'
+				'Earn money on your site by displaying ads and collecting recurring payments or donations.'
 			),
 	},
 
@@ -580,10 +572,7 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Upload more images, audio, and documents to your website with ' +
-					'increased storage space.'
-			),
+			i18n.translate( 'Upload more images, audio, and documents to your website.' ),
 	},
 
 	[ constants.FEATURE_13GB_STORAGE ]: {
@@ -595,10 +584,7 @@ export const FEATURES_LIST = {
 				},
 			} ),
 		getDescription: () =>
-			i18n.translate(
-				'Upload more images, audio, and documents to your website with ' +
-					'increased storage space.'
-			),
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	[ constants.FEATURE_COMMUNITY_SUPPORT ]: {
@@ -629,7 +615,7 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support for your site.'
+					'You can also email us any day of the week for personalized support.'
 			),
 	},
 
@@ -639,7 +625,7 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support for your site.'
+					'You can also email us any day of the week for personalized support.'
 			),
 	},
 
