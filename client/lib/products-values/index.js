@@ -8,22 +8,39 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_CHARGEBACK,
@@ -532,6 +549,57 @@ export function isConciergeSession( product ) {
 	assertValidProduct( product );
 
 	return 'concierge-session' === product.product_slug;
+}
+
+/**
+ * Return icon slug based on the product or plan slug.
+ *
+ * @param   slug {string}      Product or plan slug
+ * @returns      {string|null} Icon slug
+ */
+export function getProductIconSlug( slug ) {
+	switch ( slug ) {
+		case PLAN_FREE:
+			return 'wpcom-free';
+		case PLAN_BLOGGER:
+		case PLAN_BLOGGER_2_YEARS:
+			return 'wpcom-blogger';
+		case PLAN_PERSONAL_MONTHLY:
+		case PLAN_PERSONAL:
+		case PLAN_PERSONAL_2_YEARS:
+			return 'wpcom-personal';
+		case PLAN_PREMIUM_MONTHLY:
+		case PLAN_PREMIUM:
+		case PLAN_PREMIUM_2_YEARS:
+			return 'wpcom-premium';
+		case PLAN_ECOMMERCE_MONTHLY:
+		case PLAN_ECOMMERCE:
+		case PLAN_ECOMMERCE_2_YEARS:
+			return 'wpcom-ecommerce';
+		case PLAN_BUSINESS_MONTHLY:
+		case PLAN_BUSINESS:
+		case PLAN_BUSINESS_2_YEARS:
+			return 'wpcom-business';
+		case PLAN_JETPACK_FREE:
+			return 'jetpack-free';
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+		case PLAN_JETPACK_PERSONAL:
+			return 'jetpack-personal';
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+		case PLAN_JETPACK_PREMIUM:
+			return 'jetpack-premium';
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+		case PLAN_JETPACK_BUSINESS:
+			return 'jetpack-professional';
+		case PRODUCT_JETPACK_BACKUP_DAILY:
+		case PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY:
+			return 'jetpack-backup-daily';
+		case PRODUCT_JETPACK_BACKUP_REALTIME:
+		case PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY:
+			return 'jetpack-backup-realtime';
+		default:
+			return null;
+	}
 }
 
 export default {
