@@ -15,7 +15,7 @@ import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 
-export default function WPContactForm( { summary, isComplete, isActive } ) {
+export default function WPContactForm( { summary, isComplete, isActive, CountrySelectMenu } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
@@ -31,7 +31,12 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 		<BillingFormFields>
 			{ isDomainFieldsVisible && <DomainFields /> }
 
-			<TaxFields section="contact" taxInfo={ contactInfo } setters={ setters } />
+			<TaxFields
+				section="contact"
+				taxInfo={ contactInfo }
+				setters={ setters }
+				CountrySelectMenu={ CountrySelectMenu }
+			/>
 
 			<PhoneNumberField
 				id="contact-phone-number"
@@ -316,7 +321,7 @@ function VatIdField() {
 	);
 }
 
-function TaxFields( { section, taxInfo, setters } ) {
+function TaxFields( { section, taxInfo, setters, CountrySelectMenu } ) {
 	const translate = useTranslate();
 	const { postalCode, country } = taxInfo;
 	const { setContactField } = setters;
@@ -340,17 +345,16 @@ function TaxFields( { section, taxInfo, setters } ) {
 			</LeftColumn>
 
 			<RightColumn>
-				<Field
-					id={ section + '-country' }
-					type="text"
-					label={ translate( 'Country' ) }
-					value={ country.value }
-					onChange={ value =>
-						setContactField( 'country', { value, isTouched: true, isValid: !! value } )
-					}
-					autoComplete={ section + ' country' }
+				<CountrySelectMenu
+					translate={ translate }
+					onChange={ event => {
+						const value = event.target.value;
+						setContactField( 'country', { value, isTouched: true, isValid: !! value } );
+					} }
 					isError={ country.isTouched && ! country.isValid }
+					isDisabled={ false } // TODO
 					errorMessage={ translate( 'This field is required.' ) }
+					currentValue={ country.value }
 				/>
 			</RightColumn>
 		</FieldRow>

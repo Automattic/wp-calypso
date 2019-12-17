@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
-import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
+import { WPCheckout, useWpcomStore, useShoppingCart, FormFieldAnnotation } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -28,6 +28,10 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { FormCountrySelect } from 'components/forms/form-country-select';
+import getCountries from 'state/selectors/get-countries';
+import { fetchPaymentCountries } from 'state/countries/actions';
+
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -41,6 +45,58 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
+
+function CountrySelectMenu( {
+	translate,
+	onChange,
+	isDisabled,
+	isError,
+	errorMessage,
+	currentValue,
+} ) {
+	const dispatch = useDispatch();
+	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
+
+	debug( 'Rendering CountrySelectMenu' );
+
+	useEffect( () => {
+		debug(
+			'Deciding whether to dispatch a request for the countries list in the global state.',
+			countriesList
+		);
+		if ( countriesList?.length <= 0 ) {
+			debug( 'Countries list is empty; dispatching request for data' );
+			dispatch( fetchPaymentCountries() );
+		}
+	}, [ countriesList, dispatch ] );
+
+	const countrySelectorId = 'country-selector';
+	const countrySelectorLabelId = 'country-selector-label';
+	const countrySelectorDescriptionId = 'country-selector-description';
+
+	return (
+		<FormFieldAnnotation
+			labelText={ translate( 'Country' ) }
+			isError={ isError }
+			isDisabled={ isDisabled }
+			formFieldId={ countrySelectorId }
+			labelId={ countrySelectorLabelId }
+			descriptionId={ countrySelectorDescriptionId }
+			errorMessage={ errorMessage }
+		>
+			<FormCountrySelect
+				id={ countrySelectorId }
+				countriesList={ countriesList }
+				translate={ translate }
+				onChange={ onChange }
+				disabled={ isDisabled }
+				value={ currentValue }
+				aria-labelledby={ countrySelectorLabelId }
+				aria-describedby={ countrySelectorDescriptionId }
+			/>
+		</FormFieldAnnotation>
+	);
+}
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -160,6 +216,7 @@ export default function CompositeCheckout( {
 				changePlanLength={ changePlanLength }
 				siteId={ siteId }
 				siteUrl={ siteSlug }
+				CountrySelectMenu={ CountrySelectMenu }
 			/>
 		</CheckoutProvider>
 	);
