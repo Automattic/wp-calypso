@@ -1,5 +1,7 @@
+@import '~@wordpress/base-styles/colors';
+
 .design-selector__title {
-	color: #23282d;
+	color: $dark-gray-800;
 	font-size: 2em;
 	font-weight: bold;
 	margin-bottom: 0.25em;
@@ -7,7 +9,7 @@
 }
 
 .design-selector__subtitle {
-	color: #23282d;
+	color: $dark-gray-800;
 	font-size: 1.3em;
 	margin-bottom: 3em;
 	text-align: center;
