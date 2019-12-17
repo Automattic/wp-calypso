@@ -19,6 +19,8 @@ import {
 	FONT_PAIRINGS,
 	FONT_OPTIONS,
 	SITE_NAME,
+	LINE_HEIGHT_BASE,
+	LINE_HEIGHT_HEADINGS,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -41,6 +43,8 @@ registerPlugin( PLUGIN_NAME, {
 			fontPairings: getSelectors( STORE_NAME ).getOption( FONT_PAIRINGS ),
 			fontOptions: getSelectors( STORE_NAME ).getOption( FONT_OPTIONS ),
 			hasLocalChanges: getSelectors( STORE_NAME ).hasLocalChanges(),
+			lineHeightBase: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_BASE ),
+			lineHeightHeadings: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_HEADINGS ),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,
