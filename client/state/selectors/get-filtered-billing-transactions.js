@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { getLocaleSlug } from 'i18n-calypso';
-import { compact, flatten, isDate, omit, slice, some, values } from 'lodash';
+import { compact, flatMap, omit, slice, some, values } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -35,11 +35,11 @@ function formatDate( date ) {
  * @returns {Array}             list of searchable strings
  */
 function getSearchableStrings( transaction ) {
-	const rootStrings = values( omit( transaction, 'items' ) ),
-		transactionItems = transaction.items || [],
-		itemStrings = flatten( transactionItems.map( values ) );
+	const rootStrings = values( omit( transaction, [ 'date', 'items' ] ) );
+	const dateString = transaction.date ? formatDate( transaction.date ) : null;
+	const itemStrings = flatMap( transaction.items, values );
 
-	return compact( rootStrings.concat( itemStrings ) );
+	return compact( [ ...rootStrings, dateString, ...itemStrings ] );
 }
 
 /**
@@ -50,16 +50,12 @@ function getSearchableStrings( transaction ) {
  * @returns {Array}            search results
  */
 function search( transactions, searchQuery ) {
+	const needle = searchQuery.toLowerCase();
+
 	return transactions.filter( transaction =>
 		some( getSearchableStrings( transaction ), val => {
-			if ( isDate( val ) ) {
-				val = formatDate( val );
-			}
-
 			const haystack = val.toString().toLowerCase();
-			const needle = searchQuery.toLowerCase();
-
-			return haystack.indexOf( needle ) !== -1;
+			return haystack.includes( needle );
 		} )
 	);
 }

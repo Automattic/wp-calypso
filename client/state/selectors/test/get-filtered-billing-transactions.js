@@ -256,6 +256,19 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			} );
 		} );
 
+		test( 'query matches date of a transaction', () => {
+			const testState = cloneDeep( state );
+			testState.ui.billingTransactions.past = {
+				query: 'may 1',
+			};
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
+			expect( result.total ).toBe( 1 );
+			expect( result.transactions ).toHaveLength( 1 );
+			result.transactions.forEach( transaction => {
+				expect( transaction.date ).toBe( '2018-05-01T12:00:00' );
+			} );
+		} );
+
 		test( 'query matches a field in the transaction items array', () => {
 			const testState = cloneDeep( state );
 			testState.ui.billingTransactions.past = {
