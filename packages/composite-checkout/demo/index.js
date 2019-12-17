@@ -295,6 +295,12 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 
+	// This simulates loading the data
+	const [ isLoading, setIsLoading ] = useState( true );
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 1500 );
+	}, [] );
+
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
@@ -308,6 +314,7 @@ function MyCheckout() {
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
+			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
 				Boolean
 			) }
