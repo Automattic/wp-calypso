@@ -169,7 +169,10 @@ class PurchaseMeta extends Component {
 		}
 
 		if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-			return moment( purchase.expiryDate ).format( 'LL' );
+			return (
+				purchase.expiryDateValid &&
+				moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' )
+			);
 		}
 
 		if ( isRenewing( purchase ) ) {
