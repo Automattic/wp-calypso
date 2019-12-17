@@ -57,21 +57,6 @@ The block editor integration provides features for the following combination of 
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/features/disable-nux-tour.js"><code>disable-nux-tour</code></a>:
-      Disables the welcome guide that is displayed on first use.
-    <td>WP Admin</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td>Calypso</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td rowspan="2">
       <a href="./src/wpcom/features/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
       Performs block attempt block recovery on editor load if validation errors are detected.
     </td>
@@ -106,22 +91,6 @@ The block editor integration provides features for the following combination of 
     <td rowspan="2">
       <a href="./src/wpcom/features/tracking.js"><code>tracking</code></a>:
       Adds analytics around specific user actions.
-    </td>
-    <td>WP Admin</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td>Calypso</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td rowspan="2">
-      <a href="./src/wpcom/features/unregister-experimental-blocks.js"><code>unregister-experimental-blocks</code></a>:
-      Removes experimental blocks from the Gutenberg Plugin.
     </td>
     <td>WP Admin</td>
     <td>✅</td>
