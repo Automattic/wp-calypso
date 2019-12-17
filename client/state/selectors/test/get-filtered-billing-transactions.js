@@ -179,12 +179,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
-					transaction => ( {
-						...transaction,
-						date: new Date( transaction.date ),
-					} )
-				),
+				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
 			} );
 		} );
 
@@ -196,9 +191,9 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 3 );
 			expect( result.transactions ).toHaveLength( 3 );
-			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
-			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 2 );
-			expect( result.transactions[ 2 ].date.getMonth() ).toEqual( 2 );
+			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
+			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 2 );
+			expect( new Date( result.transactions[ 2 ].date ).getMonth() ).toBe( 2 );
 		} );
 
 		test( 'returns transactions before the month set in the filter', () => {
@@ -209,8 +204,8 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
 			expect( result.transactions ).toHaveLength( 2 );
-			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 10 );
-			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 0 );
+			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 10 );
+			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 0 );
 		} );
 	} );
 
@@ -220,12 +215,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
-					transaction => ( {
-						...transaction,
-						date: new Date( transaction.date ),
-					} )
-				),
+				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
 			} );
 		} );
 
@@ -249,12 +239,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
-					transaction => ( {
-						...transaction,
-						date: new Date( transaction.date ),
-					} )
-				),
+				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
 			} );
 		} );
 
@@ -298,9 +283,9 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
 			expect( result.transactions ).toHaveLength( 2 );
-			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
+			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
 			expect( result.transactions[ 0 ].service ).toEqual( 'Store Services' );
-			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 2 );
+			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 2 );
 			expect( result.transactions[ 1 ].service ).toEqual( 'Store Services' );
 		} );
 
@@ -330,7 +315,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result.total ).toEqual( 1 );
 			expect( result.transactions ).toHaveLength( 1 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
-			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 4 );
+			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 4 );
 		} );
 
 		test( 'app, date and query filters', () => {
@@ -344,7 +329,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result.total ).toEqual( 1 );
 			expect( result.transactions ).toHaveLength( 1 );
 			expect( result.transactions[ 0 ].cc_type ).toEqual( 'visa' );
-			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
+			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
 			expect( result.transactions[ 0 ].service ).toEqual( 'WordPress.com' );
 		} );
 	} );
