@@ -40,8 +40,9 @@ const initialItems = [
 	},
 ];
 
-// These are used only for non-redirect payment methods
 const onPaymentComplete = () => window.alert( 'Payment succeeded!' );
+const onEvent = event => window.console.log( 'Event', event );
+
 const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
@@ -294,6 +295,7 @@ function MyCheckout() {
 			locale={ 'en' }
 			items={ items }
 			total={ total }
+			onEvent={ onEvent }
 			onPaymentComplete={ onPaymentComplete }
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
