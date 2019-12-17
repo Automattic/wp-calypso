@@ -16,7 +16,7 @@ import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
@@ -45,6 +45,7 @@ import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
+	getProductIconSlug,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -62,7 +63,6 @@ import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
-import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -345,10 +345,10 @@ class ManagePurchase extends Component {
 
 	renderPlanIcon() {
 		const { purchase } = this.props;
-		if ( isPlan( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+					<ProductIcon slug={ getProductIconSlug( purchase.productSlug ) } />
 				</div>
 			);
 		}
@@ -365,14 +365,6 @@ class ManagePurchase extends Component {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="themes" size={ 54 } />
-				</div>
-			);
-		}
-
-		if ( isJetpackBackup( purchase ) ) {
-			return (
-				<div className="manage-purchase__plan-icon">
-					<Gridicon icon="cloud-upload" size={ 48 } />
 				</div>
 			);
 		}
