@@ -29,7 +29,7 @@ class TransactionsHeader extends React.Component {
 		event.preventDefault();
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
@@ -92,10 +92,22 @@ class TransactionsHeader extends React.Component {
 		);
 	}
 
+	getFilterTitle( filter ) {
+		if ( ! filter ) {
+			return this.props.translate( 'Date' );
+		}
+
+		if ( filter.older ) {
+			return this.props.translate( 'Older' );
+		}
+
+		return this.props.moment( filter.dateString ).format( 'MMM YYYY' );
+	}
+
 	renderDatePopover() {
-		const { dateFilters, filter, translate, moment } = this.props;
+		const { dateFilters, filter, translate } = this.props;
 		const selectedFilter = find( dateFilters, { value: filter.date } );
-		const selectedText = selectedFilter ? selectedFilter.title : translate( 'Date' );
+		const selectedText = this.getFilterTitle( selectedFilter );
 
 		return (
 			<SelectDropdown
@@ -115,7 +127,7 @@ class TransactionsHeader extends React.Component {
 				) }
 				<SelectDropdown.Separator />
 				<SelectDropdown.Label>{ translate( 'By Month' ) }</SelectDropdown.Label>
-				{ dateFilters.map( function( { count, dateString, older, value }, index ) {
+				{ dateFilters.map( ( dateFilter, index ) => {
 					let analyticsEvent = 'Current Month';
 
 					if ( 1 === index ) {
@@ -124,10 +136,14 @@ class TransactionsHeader extends React.Component {
 						analyticsEvent = index + ' Months Before';
 					}
 
-					const title = older ? translate( 'Older' ) : moment( dateString ).format( 'MMM YYYY' );
-
-					return this.renderDatePicker( index, title, value, count, analyticsEvent );
-				}, this ) }
+					return this.renderDatePicker(
+						index,
+						this.getFilterTitle( dateFilter ),
+						dateFilter.value,
+						dateFilter.count,
+						analyticsEvent
+					);
+				} ) }
 			</SelectDropdown>
 		);
 	}
