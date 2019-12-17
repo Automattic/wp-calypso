@@ -3,7 +3,9 @@
  */
 import {
 	CheckoutProvider,
-	useCheckoutHandlers,
+	useEvents,
+	usePaymentComplete,
+	useMessages,
 	useCheckoutRedirects,
 } from './components/checkout-provider';
 import CheckoutStep from './components/checkout-step';
@@ -63,11 +65,13 @@ export {
 	renderDisplayValueMarkdown,
 	useActiveStep,
 	useAllPaymentMethods,
-	useCheckoutHandlers,
 	useCheckoutRedirects,
 	useDispatch,
+	useEvents,
 	useIsStepActive,
 	useLineItems,
+	useMessages,
+	usePaymentComplete,
 	usePaymentData,
 	usePaymentMethod,
 	usePaymentMethodId,

@@ -102,7 +102,7 @@ Each payment method is an object with the following properties:
 - `id: string`. A unique id.
 - `label: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
 - `activeContent: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
-- `submitButton: React.Component`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook. When disabled, it will be provided with the `disabled` prop and must disable the button.
+- `submitButton: React.Component`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `CheckoutWrapper?: React.Component`. A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
@@ -266,10 +266,6 @@ A React Hook that will return the currently active [Step object](#steps). Only w
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### useCheckoutHandlers
-
-A React Hook that will return an object including the properties `onPaymentComplete`, `showErrorMessage`, `showSuccessMessage`, `showInfoMessage`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
-
 ### useCheckoutRedirects
 
 A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -278,6 +274,10 @@ A React Hook that will return a two element array where the first element is the
 
 A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).
 
+### useEvents
+
+A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+
 ### useIsStepActive
 
 A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
@@ -285,6 +285,14 @@ A React Hook that will return true if the current step is the currently active [
 ### useLineItems
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useMessages
+
+A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentComplete
+
+A React Hook that will return the `onPaymentComplete` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentData
 

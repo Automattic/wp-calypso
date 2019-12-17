@@ -144,6 +144,30 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	}, children );
 }
 
+export function usePaymentComplete() {
+	const { onPaymentComplete } = useContext( CheckoutContext );
+	if ( ! onPaymentComplete ) {
+		throw new Error( 'usePaymentComplete can only be used inside a CheckoutProvider' );
+	}
+	return onPaymentComplete;
+}
+
+export function useEvents() {
+	const { onEvent } = useContext( CheckoutContext );
+	if ( ! onEvent ) {
+		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
+	}
+	return onEvent;
+}
+
+export function useMessages() {
+	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
+	if ( ( ! showErrorMessage, showInfoMessage, showSuccessMessage ) ) {
+		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
+	}
+	return { showErrorMessage, showInfoMessage, showSuccessMessage };
+}
+
 export const useCheckoutHandlers = () => {
 	const {
 		onPaymentComplete,
