@@ -29,10 +29,10 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useCheckoutHandlers } from './checkout-provider';
+import { useEvents } from './checkout-provider';
 
 function useRegisterCheckoutStore() {
-	const { onEvent } = useCheckoutHandlers();
+	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
 		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {

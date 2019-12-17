@@ -22,7 +22,8 @@ import {
 import {
 	useSelect,
 	useDispatch,
-	useCheckoutHandlers,
+	usePaymentComplete,
+	useMessages,
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
@@ -261,7 +262,7 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -277,9 +278,9 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			onFailure( stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
 		}
-	}, [ onFailure, stripeLoadingError ] );
+	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -607,7 +608,8 @@ function LockIcon( { className } ) {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onPaymentComplete = usePaymentComplete();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
@@ -619,10 +621,12 @@ function StripePayButton( { disabled } ) {
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
 			// TODO: clear this after showing it
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
 		}
 		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+			onPaymentComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -632,12 +636,12 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
-				onFailure( error.stripeError || error.message );
+				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
-		onSuccess,
-		onFailure,
+		onPaymentComplete,
+		showErrorMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
@@ -659,7 +663,7 @@ function StripePayButton( { disabled } ) {
 					total,
 					stripe,
 					stripeConfiguration,
-					onFailure,
+					showErrorMessage,
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
@@ -693,7 +697,7 @@ async function submitStripePayment( {
 	total,
 	stripe,
 	stripeConfiguration,
-	onFailure,
+	showErrorMessage,
 	successUrl,
 	cancelUrl,
 	beginStripeTransaction,
@@ -709,7 +713,7 @@ async function submitStripePayment( {
 			cancelUrl,
 		} );
 	} catch ( error ) {
-		onFailure( error );
+		showErrorMessage( error );
 		return;
 	}
 }

@@ -29,8 +29,10 @@ export const CheckoutProvider = props => {
 		locale,
 		total,
 		items,
-		onSuccess,
-		onFailure,
+		onPaymentComplete,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		theme,
@@ -57,8 +59,10 @@ export const CheckoutProvider = props => {
 		allPaymentMethods: paymentMethods,
 		paymentMethodId,
 		setPaymentMethodId,
-		onSuccess,
-		onFailure,
+		onPaymentComplete,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		onEvent,
@@ -94,8 +98,10 @@ CheckoutProvider.propTypes = {
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethodId: PropTypes.string,
-	onSuccess: PropTypes.func.isRequired,
-	onFailure: PropTypes.func.isRequired,
+	onPaymentComplete: PropTypes.func.isRequired,
+	showErrorMessage: PropTypes.func.isRequired,
+	showInfoMessage: PropTypes.func.isRequired,
+	showSuccessMessage: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
 	onEvent: PropTypes.func,
@@ -106,8 +112,10 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		total,
 		items,
-		onSuccess,
-		onFailure,
+		onPaymentComplete,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
 		paymentMethods,
@@ -121,8 +129,10 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 	validateLineItems( items );
 	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 	validatePaymentMethods( paymentMethods );
-	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
-	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
+	validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
+	validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
+	validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
+	validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
 	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
 	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 	return null;
@@ -134,13 +144,29 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	}, children );
 }
 
-export const useCheckoutHandlers = () => {
-	const { onSuccess, onFailure, onEvent } = useContext( CheckoutContext );
-	if ( ! onSuccess || ! onFailure ) {
-		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
+export function usePaymentComplete() {
+	const { onPaymentComplete } = useContext( CheckoutContext );
+	if ( ! onPaymentComplete ) {
+		throw new Error( 'usePaymentComplete can only be used inside a CheckoutProvider' );
 	}
-	return { onSuccess, onFailure, onEvent };
-};
+	return onPaymentComplete;
+}
+
+export function useEvents() {
+	const { onEvent } = useContext( CheckoutContext );
+	if ( ! onEvent ) {
+		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
+	}
+	return onEvent;
+}
+
+export function useMessages() {
+	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
+	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
+		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
+	}
+	return { showErrorMessage, showInfoMessage, showSuccessMessage };
+}
 
 export const useCheckoutRedirects = () => {
 	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );

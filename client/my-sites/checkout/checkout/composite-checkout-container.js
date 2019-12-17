@@ -210,15 +210,25 @@ export default function CompositeCheckoutContainer( {
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
 
-	const onSuccess = () => {
+	const onPaymentComplete = () => {
 		debug( 'success' );
 		notices.success( translate( 'Your purchase was successful!' ) );
 	};
 
-	const onFailure = error => {
+	const showErrorMessage = error => {
 		debug( 'error', error );
 		const message = error && error.toString ? error.toString() : error;
 		notices.error( message || translate( 'An error occurred during your purchase.' ) );
+	};
+
+	const showInfoMessage = message => {
+		debug( 'info', message );
+		notices.info( message );
+	};
+
+	const showSuccessMessage = message => {
+		debug( 'success', message );
+		notices.success( message );
 	};
 
 	return (
@@ -229,8 +239,10 @@ export default function CompositeCheckoutContainer( {
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			siteId={ siteId }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			product={ product }
 			planSlug={ planSlug }
 			isJetpackNotAtomic={ isJetpackNotAtomic }

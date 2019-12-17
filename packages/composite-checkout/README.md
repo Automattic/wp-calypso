@@ -27,7 +27,7 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
 
-Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useCheckoutHandlers](#useCheckoutHandlers), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [usePaymentComplete](#usePaymentComplete), [useMessages](#useMessages), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
@@ -35,11 +35,11 @@ Any component within a Step object gets access to the custom hooks above as well
 
 ## Submitting the form
 
-When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
+When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `showErrorMessage` prop on `Checkout` will be called with an object describing the error.
 
-If the payment method succeeds, the `onSuccess` prop will be called instead.
+If the payment method succeeds, the `onPaymentComplete` prop will be called instead.
 
-Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
+Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `showErrorMessage` and `onPaymentComplete` callbacks. All four props are required.
 
 ## Steps
 
@@ -102,7 +102,7 @@ Each payment method is an object with the following properties:
 - `id: string`. A unique id.
 - `label: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
 - `activeContent: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
-- `submitButton: React.Component`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook. When disabled, it will be provided with the `disabled` prop and must disable the button.
+- `submitButton: React.Component`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
 - `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `CheckoutWrapper?: React.Component`. A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
 - `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
@@ -148,8 +148,10 @@ It has the following props.
 - items: array (required)
 - total: object (required)
 - theme: object (optional)
-- onSuccess: function (required)
-- onFailure: function (required)
+- onPaymentComplete: function (required)
+- showErrorMessage: function (required)
+- showInfoMessage: function (required)
+- showSuccessMessage: function (required)
 - onEvent: function
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
@@ -264,10 +266,6 @@ A React Hook that will return the currently active [Step object](#steps). Only w
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### useCheckoutHandlers
-
-A React Hook that will return an object including the properties `onSuccess`, `onFailure`, and `onEvent` as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
-
 ### useCheckoutRedirects
 
 A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -276,6 +274,10 @@ A React Hook that will return a two element array where the first element is the
 
 A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).
 
+### useEvents
+
+A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+
 ### useIsStepActive
 
 A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
@@ -283,6 +285,14 @@ A React Hook that will return true if the current step is the currently active [
 ### useLineItems
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useMessages
+
+A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentComplete
+
+A React Hook that will return the `onPaymentComplete` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentData
 
