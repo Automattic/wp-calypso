@@ -14,7 +14,6 @@ import {
 	createStripeMethod,
 	createPayPalMethod,
 	createApplePayMethod,
-	createCreditCardMethod,
 	useIsStepActive,
 	usePaymentData,
 	getDefaultPaymentMethodStep,
@@ -93,8 +92,6 @@ const stripeMethod = createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } );
-
-const creditCardMethod = createCreditCardMethod();
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
@@ -315,9 +312,7 @@ function MyCheckout() {
 			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
 			isLoading={ isLoading }
-			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
-				Boolean
-			) }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
 			<Checkout steps={ steps } />
 		</CheckoutProvider>
