@@ -110,6 +110,18 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
+## Line Items
+
+Each item is an object with the following properties:
+
+- `id: string`. A unique identifier for this line item within the array of line items. Do not use the product id; never assume that only one instance of a particular product is present.
+- `type: string`. Not used internally but can be used to organize line items (eg: `tax` for a VAT line item).
+- `label: string`. The displayed title of the line item.
+- `subLabel?: string`. An optional subtitle for the line item.
+- `amount: { currency: string, value: number, displayValue: string }`. The price of the line item. For line items without a price, set value to 0 and displayValue to an empty string.
+
+The `displayValue` property can use limited Markdown formatting, including the `~~` characters for strike-through text. When rendering `displayValue`, the property should be passed through the `renderDisplayValueMarkdown()` helper.
+
 ## Data Stores
 
 Each Payment Method or component can create a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. These functions can be accessed by calling the `useRegistry` hook. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
@@ -144,33 +156,22 @@ Renders its `children` prop and acts as a React Context provider. All of checkou
 
 It has the following props.
 
-- locale: string (required)
-- items: array (required)
-- total: object (required)
-- theme: object (optional)
-- onPaymentComplete: function (required)
-- showErrorMessage: function (required)
-- showInfoMessage: function (required)
-- showSuccessMessage: function (required)
-- onEvent: function
-- successRedirectUrl: string (required)
-- failureRedirectUrl: string (required)
-- paymentMethods: array (required)
-- registry: object (optional)
-
-The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
-
-If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` array should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
+- `locale: string`. A [BCP 47 language tag](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locales_argument).
+- `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
+- `total: object`. A [line item object](#line-items) with the final total to be paid.
+- `theme?: object`. A [theme object](#styles-and-themes).
+- `onPaymentComplete: () => null`. A function to call for non-redirect payment methods when payment is successful.
+- `showErrorMessage: (string) => null`. A function that will display a message with an "error" type.
+- `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
+- `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
+- `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
+- `successRedirectUrl: string`. The url to load if using a redirect payment method and it succeeds.
+- `failureRedirectUrl: string`. The url to load if using a redirect payment method and it fails.
+- `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
+- `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, a default registry will be created.
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
-
-The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
-
-`paymentMethods` is an array of Payment Method objects.
-
-`registry` is an object returned by `createRegistry`. If not provided, a default registry will be created.
-
-`onEvent` is an optional callback that will be called for all sorts of events in the code and can be used for all sorts of things. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) which will always be an object that has at least the `type` property and possibly also the `payload` property.
 
 ### CheckoutReviewOrder
 
