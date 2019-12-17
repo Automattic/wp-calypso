@@ -41,12 +41,12 @@ export default ( {
 				style={ { fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault } }
 			/>
 			<RangeControl
-				label={ __( 'Heading line height' ) }
-				value={ lineHeightBase }
-				onChange={ newValue => updateBaseLineHeight( newValue ) }
-				allowReset={ true }
-				min={ 1.2 }
-				max={ 2 }
+				label={ __( 'Headings line height' ) }
+				value={ lineHeightHeadings }
+				onChange={ newValue => updateHeadingsLineHeight( newValue ) }
+				min={ 0 }
+				max={ 3 }
+				step={ 0.1 }
 			/>
 			<SelectControl
 				label={ __( 'Base Font' ) }
@@ -57,11 +57,11 @@ export default ( {
 			/>
 			<RangeControl
 				label={ __( 'Base line height' ) }
-				value={ lineHeightHeadings }
-				onChange={ newValue => updateHeadingsLineHeight( newValue ) }
-				allowReset={ true }
-				min={ 1.2 }
-				max={ 2 }
+				value={ lineHeightBase }
+				onChange={ newValue => updateBaseLineHeight( newValue ) }
+				min={ 0 }
+				max={ 3 }
+				step={ 0.1 }
 			/>
 			<hr />
 		</>
