@@ -61,7 +61,7 @@ export const EligibilityWarnings = ( {
 			}
 		} else if ( listHolds.includes( 'SITE_PRIVATE' ) ) {
 			const response = await saveSiteSettings( siteId, { blog_public: 0 } );
-			if ( response?.updated?.blog_public !== 0 ) {
+			if ( response?.updated?.blog_public !== '0' ) {
 				return;
 			}
 		}

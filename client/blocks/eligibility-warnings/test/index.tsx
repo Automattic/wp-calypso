@@ -138,9 +138,14 @@ describe( '<EligibilityWarnings>', () => {
 		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
 	} );
 
-	it( 'calls onProceed prop when clicking "Upgrade and continue"', () => {
+	it( 'calls onProceed prop when clicking "Upgrade and continue"', async () => {
+		jest
+			.spyOn( wpcom.req, 'post' )
+			.mockImplementationOnce( () => Promise.resolve( { updated: { blog_public: '0' } } ) );
+
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ],
+			isUnlaunched: false,
 		} );
 
 		const handleProceed = jest.fn();
@@ -152,7 +157,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		fireEvent.click( getByText( 'Upgrade and continue' ) );
 
-		expect( handleProceed ).toHaveBeenCalled();
+		await wait( () => expect( handleProceed ).toHaveBeenCalled() );
 	} );
 
 	it( `disables the "Continue" button if holds can't be handled automatically`, () => {
@@ -267,7 +272,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		const post = jest.spyOn( wpcom.req, 'post' ).mockImplementationOnce( () => {
 			return new Promise( resolve => {
-				completePostRequest = () => resolve( { updated: { blog_public: 0 } } );
+				completePostRequest = () => resolve( { updated: { blog_public: '0' } } );
 			} );
 		} );
 
