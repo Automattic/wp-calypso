@@ -154,6 +154,6 @@ export default {
 			control: 90,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 	},
 };
