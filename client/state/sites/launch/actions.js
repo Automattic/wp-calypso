@@ -7,10 +7,16 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
-export const launchSite = siteId => ( {
-	type: SITE_LAUNCH,
-	siteId,
-} );
+export function launchSite( siteId ) {
+	return async ( dispatch, getState ) => {
+		await dispatch( {
+			type: SITE_LAUNCH,
+			siteId,
+		} );
+
+		return ! isUnlaunchedSite( getState(), siteId );
+	};
+}
 
 export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getState ) => {
 	if ( ! isUnlaunchedSite( getState(), siteId ) ) {
@@ -27,6 +33,6 @@ export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getS
 
 	const siteSlug = getSiteSlug( getState(), siteId );
 
-	// TODO: consider using the `page` library instead of calling using `location.href` here
-	location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+	// TODO: consider using the `page` library instead of calling using `window.location.href` here
+	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
 };

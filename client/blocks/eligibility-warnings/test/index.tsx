@@ -216,4 +216,49 @@ describe( '<EligibilityWarnings>', () => {
 
 		await wait( () => expect( handleProceed ).toHaveBeenCalled() );
 	} );
+
+	it( "doesn't proceed if site fails to launch", async () => {
+		let completePostRequest = noop;
+
+		const post = jest
+			.spyOn( wpcom.req, 'post' )
+			.mockImplementationOnce( ( params, query, callback ) => {
+				completePostRequest = () => callback( new Error(), {}, [] );
+
+				// Implementation expects object with this shape
+				return { upload: {} };
+			} );
+
+		const state = createState( {
+			holds: [ 'SITE_PRIVATE' ],
+			siteId: 113,
+			isUnlaunched: true,
+		} );
+
+		const handleProceed = jest.fn();
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			state
+		);
+
+		fireEvent.click( getByText( 'Continue' ) );
+
+		expect( post ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/sites/113/launch',
+			} ),
+			expect.anything(),
+			expect.anything()
+		);
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+
+		completePostRequest();
+
+		// Flush promises
+		await new Promise( setImmediate );
+
+		expect( handleProceed ).not.toHaveBeenCalled();
+	} );
 } );

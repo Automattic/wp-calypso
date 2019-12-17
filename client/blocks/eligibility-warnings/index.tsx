@@ -54,7 +54,9 @@ export const EligibilityWarnings = ( {
 
 	const handleContinueClick = async () => {
 		if ( isUnlaunched ) {
-			await launchSite( siteId );
+			if ( ! ( await launchSite( siteId ) ) ) {
+				return;
+			}
 		} else if ( listHolds.includes( 'SITE_PRIVATE' ) ) {
 			//
 		}
