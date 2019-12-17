@@ -46,22 +46,7 @@ export const CheckoutProvider = props => {
 		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
 
-	const [ formStatus, dispatchFormStatus ] = useReducer(
-		formStatusReducer,
-		isLoading ? 'loading' : 'ready'
-	);
-	const setFormStatus = useCallback( payload => {
-		if ( typeof payload === 'function' ) {
-			return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE_WITH_FUNCTION', payload } );
-		}
-		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
-	}, [] );
-	useEffect( () => {
-		const newStatus = isLoading ? 'loading' : 'ready';
-		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
-		setFormStatus( newStatus );
-	}, [ isLoading, setFormStatus ] );
-	debug( `form status is ${ formStatus }` );
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
@@ -199,6 +184,26 @@ export const useCheckoutRedirects = () => {
 
 export function useFormStatus() {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
+	return [ formStatus, setFormStatus ];
+}
+
+function useFormStatusManager( isLoading ) {
+	const [ formStatus, dispatchFormStatus ] = useReducer(
+		formStatusReducer,
+		isLoading ? 'loading' : 'ready'
+	);
+	const setFormStatus = useCallback( payload => {
+		if ( typeof payload === 'function' ) {
+			return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE_WITH_FUNCTION', payload } );
+		}
+		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
+	}, [] );
+	useEffect( () => {
+		const newStatus = isLoading ? 'loading' : 'ready';
+		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
+		setFormStatus( newStatus );
+	}, [ isLoading, setFormStatus ] );
+	debug( `form status is ${ formStatus }` );
 	return [ formStatus, setFormStatus ];
 }
 
