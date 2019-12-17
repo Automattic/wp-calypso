@@ -292,8 +292,8 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site } = this.props;
-		if ( ! site || this.props.isSiteMigrationInProgress ) {
+		const { site, isMigrationInProgress } = this.props;
+		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
 
@@ -335,7 +335,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
-			isSiteMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
 		};
 	},
 	dispatch => {

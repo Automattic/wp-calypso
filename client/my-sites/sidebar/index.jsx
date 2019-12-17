@@ -701,7 +701,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		if ( this.props.isSiteMigrationInProgress ) {
+		if ( this.props.isMigrationInProgress ) {
 			return <SidebarMenu />;
 		}
 
@@ -825,7 +825,7 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isSiteMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
+		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,
