@@ -2,26 +2,23 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
-import React, { useState } from 'react';
+import React, { useState, FunctionComponent, MouseEvent } from 'react';
 import classnames from 'classnames';
+import { CSSTransition } from 'react-transition-group';
+import PageLayoutSelector from './page-layout-selector';
+import { partition } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { Card } from '../../components/card';
-import { CardMedia } from '../../components/card/media';
 import { SiteVertical } from '../../stores/onboard/types';
+import { Template } from '../../stores/verticals-templates/types';
+import DeisgnCard from './design-card';
 
 import './style.scss';
 
-const gridWidth = 960;
-
-const srcSet = ( src: string, widths: number[] ) =>
-	widths.map( width => addQueryArgs( src, { w: width } ) + ` ${ width }w` ).join( ', ' );
-
-export default () => {
+const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(
 		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
 	);
@@ -31,37 +28,89 @@ export default () => {
 			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
 		) ?? [];
 
-	const homepageTemplates = templates.filter( template => template.category === 'home' );
+	const [ designs, otherTemplates ] = partition(
+		templates,
+		( { category } ) => category === 'home'
+	);
 
-	const [ selectedDesign, setSelectedDesign ] = useState< string | undefined >();
+	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
+	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
+	const resetLayouts = () => setSelectedLayouts( new Set() );
+	const toggleLayout = ( layout: Template ) =>
+		setSelectedLayouts( layouts => {
+			const nextLayouts = new Set( layouts );
+			if ( nextLayouts.has( layout.slug ) ) {
+				nextLayouts.delete( layout.slug );
+			} else {
+				nextLayouts.add( layout.slug );
+			}
+			return nextLayouts;
+		} );
+
+	const resetState = () => {
+		setSelectedDesign( undefined );
+		resetLayouts();
+	};
+
+	const transitionTiming = 250;
+	const hasSelectedDesign = !! selectedDesign;
+	const [ cp, setCp ] = useState< number >();
+
 	return (
-		<div className="design-selector">
-			<h1 className="design-selector__title">
-				{ NO__( 'Choose a starting design for your site' ) }
-			</h1>
-			<h2 className="design-selector__subtitle">
-				{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
-			</h2>
-			<div className="design-selector__grid">
-				{ homepageTemplates.map( template => (
-					<Card
-						className={ classnames( 'design-selector__design-option', {
-							'is-selected': template.slug === selectedDesign,
-						} ) }
-						key={ template.slug }
-						isElevated
-						onClick={ () => setSelectedDesign( template.slug ) }
-					>
-						<CardMedia>
-							<img
-								alt={ template.title }
-								src={ template.preview }
-								srcSet={ srcSet( template.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
-							/>
-						</CardMedia>
-					</Card>
-				) ) }
+		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
+			<div className="design-selector__header-container" onClick={ () => resetState() }>
+				<h1 className="design-selector__title">
+					{ NO__( 'Choose a starting design for your site' ) }
+				</h1>
+				<h2 className="design-selector__subtitle">
+					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
+				</h2>
 			</div>
+
+			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
+				<div
+					className="design-selector__grid-container"
+					onClick={ hasSelectedDesign ? resetState : undefined }
+				>
+					<div className="design-selector__grid">
+						{ designs.map( design => (
+							<DeisgnCard
+								key={ design.slug }
+								design={ design }
+								isSelected={ design.slug === selectedDesign?.slug }
+								style={
+									selectedDesign?.slug === design.slug
+										? {
+												transform: `translate3d( 0, calc( -100vh + ${ -cp + 10 }px ), 0 )`,
+										  }
+										: undefined
+								}
+								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
+									window.scrollTo( 0, 0 );
+									setCp( e.currentTarget.offsetTop );
+									setSelectedDesign( currentTemplate =>
+										currentTemplate?.slug === design?.slug ? undefined : design
+									);
+									resetLayouts();
+								} }
+							/>
+						) ) }
+					</div>
+				</div>
+			</CSSTransition>
+
+			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming } unmountOnExit>
+				<div className="page-selector__grid-container">
+					<PageLayoutSelector
+						selectedDesign={ selectedDesign }
+						selectedLayouts={ selectedLayouts }
+						selectLayout={ toggleLayout }
+						templates={ otherTemplates }
+					/>
+				</div>
+			</CSSTransition>
 		</div>
 	);
 };
+
+export default DesignSelector;
