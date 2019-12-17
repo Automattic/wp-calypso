@@ -1,4 +1,21 @@
-.design-selector {
+@import '~@wordpress/base-styles/colors';
+
+.design-selector__title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.25em;
+	text-align: center;
+}
+
+.design-selector__subtitle {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	margin-bottom: 3em;
+	text-align: center;
+}
+
+.design-selector__grid {
 	display: grid;
 	grid-gap: 4.5em;
 
