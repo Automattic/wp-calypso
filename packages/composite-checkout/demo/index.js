@@ -74,8 +74,8 @@ async function sendStripeTransaction( data ) {
 	};
 }
 
-async function makePayPalExpressRequest() {
-	// return this.wpcom.req.post( '/me/paypal-express-url', data );
+async function makePayPalExpressRequest( data ) {
+	window.console.log( 'Processing paypal transaction with data', data );
 	return window.location.href;
 }
 
