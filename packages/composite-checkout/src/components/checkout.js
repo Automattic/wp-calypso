@@ -34,10 +34,10 @@ import { useEvents } from './checkout-provider';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
-function useRegisterCheckoutStore( { urlStepNumber = 1 } ) {
+function useRegisterCheckoutStore() {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: urlStepNumber, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: getStepNumberFromUrl(), paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
@@ -76,8 +76,7 @@ function useRegisterCheckoutStore( { urlStepNumber = 1 } ) {
 }
 
 export default function Checkout( { steps, className } ) {
-	const urlStepNumber = getStepNumberFromUrl();
-	useRegisterCheckoutStore( { urlStepNumber } );
+	useRegisterCheckoutStore();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
