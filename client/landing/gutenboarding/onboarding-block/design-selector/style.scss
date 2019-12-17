@@ -1,5 +1,5 @@
 .design-selector {
-	h1 {
+	.design-selector__title {
 		color: #23282d;
 		font-size: 2em;
 		font-weight: bold;
@@ -7,8 +7,7 @@
 		text-align: center;
 	}
 
-	h2,
-	h3 {
+	.design-selector__subtitle {
 		color: #23282d;
 		font-size: 1.3em;
 		margin-bottom: 3em;

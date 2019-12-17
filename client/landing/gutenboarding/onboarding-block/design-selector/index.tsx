@@ -36,8 +36,12 @@ export default () => {
 	const [ selectedDesign, setSelectedDesign ] = useState< string | undefined >();
 	return (
 		<div className="design-selector">
-			<h1>{ NO__( 'Choose a starting design for your site' ) }</h1>
-			<h2>{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }</h2>
+			<h1 className="design-selector__title">
+				{ NO__( 'Choose a starting design for your site' ) }
+			</h1>
+			<h2 className="design-selector__subtitle">
+				{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
+			</h2>
 			<div className="design-selector__grid">
 				{ homepageTemplates.map( template => (
 					<Card
