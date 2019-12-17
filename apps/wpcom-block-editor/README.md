@@ -13,7 +13,7 @@ There are two editors supported:
 
 ## Features
 
-The block editor integration provides features for the following type of sites and editors:
+The block editor integration provides features for the following combination of sites and editors:
 
 <table>
   <tr>
@@ -25,7 +25,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/default/rich-text.js"><code>rich-text</code></a>:
+      <a href="./src/default/features/rich-text.js"><code>rich-text</code></a>:
       Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
     </td>
     <td>WP Admin</td>
@@ -41,7 +41,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/default/switch-to-classic.js"><code>switch-to-classic</code></a>:
+      <a href="./src/default/features/switch-to-classic.js"><code>switch-to-classic</code></a>:
       Appends a button to the "More tools" menu for switching to the classic editor.
     </td>
     <td>WP Admin</td>
@@ -57,7 +57,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/disable-nux-tour.js"><code>disable-nux-tour</code></a>:
+      <a href="./src/wpcom/features/disable-nux-tour.js"><code>disable-nux-tour</code></a>:
       Disables the welcome guide that is displayed on first use.
     <td>WP Admin</td>
     <td>✅</td>
@@ -72,7 +72,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
+      <a href="./src/wpcom/features/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
       Performs block attempt block recovery on editor load if validation errors are detected.
     </td>
     <td>WP Admin</td>
@@ -88,7 +88,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/reorder-block-categories.js"><code>reorder-block-categories</code></a>:
+      <a href="./src/wpcom/features/reorder-block-categories.js"><code>reorder-block-categories</code></a>:
       Moves Jetpack and CoBlocks Block Categories below Core Categories.
     </td>
     <td>WP Admin</td>
@@ -104,7 +104,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/tracking.js"><code>tracking</code></a>:
+      <a href="./src/wpcom/features/tracking.js"><code>tracking</code></a>:
       Adds analytics around specific user actions.
     </td>
     <td>WP Admin</td>
@@ -120,7 +120,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/wpcom/unregister-experimental-blocks.js"><code>unregister-experimental-blocks</code></a>:
+      <a href="./src/wpcom/features/unregister-experimental-blocks.js"><code>unregister-experimental-blocks</code></a>:
       Removes experimental blocks from the Gutenberg Plugin.
     </td>
     <td>WP Admin</td>
@@ -136,7 +136,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/calypso/iframe-bridge-server.js"><code>iframe-bridge-server</code></a>:
+      <a href="./src/calypso/features/iframe-bridge-server.js"><code>iframe-bridge-server</code></a>:
       Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See <a href="../../client/gutenberg/editor/calypsoify-iframe.tsx"><code>calypsoify-iframe.jsx</code></a>.
     </td>
     <td>WP Admin</td>
@@ -152,7 +152,7 @@ The block editor integration provides features for the following type of sites a
   </tr>
   <tr>
     <td rowspan="2">
-      <a href="./src/calypso/tinymce.js"><code>tinymce</code></a>:
+      <a href="./src/calypso/features/tinymce.js"><code>tinymce</code></a>:
       Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
     </td>
     <td>WP Admin</td>
@@ -167,6 +167,20 @@ The block editor integration provides features for the following type of sites a
     <td>✅</td>
   </tr>
 </table>
+
+## Structure
+
+Features in the `wpcom-block-editor/src` folder loosely follow this structure:
+
+```
+.
+└── bundle-name/
+	├── features    ← Directory with all features that are bundled under this group.
+	├── editor.js   ← script importing features that will be loaded only in the editor.
+	├── editor.scss ← stylesheet importing styles of features that will be loaded only in the editor.
+	├── view.js     ← script importing features that will be loaded in both editor and front-end.
+	└── view.scss   ← stylesheet importing styles of features that will loaded in both editor and front-end.
+```
 
 ## Build
 

@@ -17,12 +17,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { inIframe, sendMessage } from './utils';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { inIframe, sendMessage } from '../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 

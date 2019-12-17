@@ -37,15 +37,11 @@ function getWebpackConfig(
 	env = {},
 	{
 		entry = {
-			default: path.join( __dirname, 'src', 'default' ),
-			wpcom: path.join( __dirname, 'src', 'wpcom' ),
-			'calypso-iframe-bridge-server': path.join(
-				__dirname,
-				'src',
-				'calypso',
-				'iframe-bridge-server.js'
-			),
-			'calypso-tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce.js' ),
+			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),
+			'default.view': path.join( __dirname, 'src', 'default', 'view' ),
+			'wpcom.editor': path.join( __dirname, 'src', 'wpcom', 'editor' ),
+			'calypso.editor': path.join( __dirname, 'src', 'calypso', 'editor' ),
+			'calypso.tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce' ),
 		},
 		'output-path': outputPath = path.join( __dirname, 'dist' ),
 		'output-filename': outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
