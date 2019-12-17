@@ -91,7 +91,6 @@ RecentRenewals.propTypes = {
 	purchases: PropTypes.array.isRequired,
 	cart: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
