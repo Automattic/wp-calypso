@@ -283,10 +283,15 @@ function CountrySelectMenu( {
 	errorMessage,
 	currentValue,
 	countriesList,
+	selectorIdPrefix,
 } ) {
-	const countrySelectorId = 'country-selector';
-	const countrySelectorLabelId = 'country-selector-label';
-	const countrySelectorDescriptionId = 'country-selector-description';
+    const idPrefix = selectorIdPrefix
+        ? selectorIdPrefix + '__country-selector'
+        : 'country-selector';
+
+	const countrySelectorId = idPrefix;
+	const countrySelectorLabelId = idPrefix + '-label';
+	const countrySelectorDescriptionId = idPrefix + '-description';
 
 	return (
 		<FormFieldAnnotation
