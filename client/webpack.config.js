@@ -82,6 +82,7 @@ const fileLoader = FileConfig.loader(
 		? {
 				outputPath: 'images',
 				publicPath: '/calypso/evergreen/images/',
+				esModules: true,
 		  }
 		: {
 				// File-loader does not understand absolute paths so __dirname won't work.
@@ -89,6 +90,7 @@ const fileLoader = FileConfig.loader(
 				outputPath: path.join( '..', 'images' ),
 				publicPath: '/calypso/images/',
 				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+				esModules: true,
 		  }
 );
 
