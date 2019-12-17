@@ -72,28 +72,6 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		// Skipped for now. https://github.com/Automattic/jetpack/pull/12839 changed the redirect behavior, which should be updated in near future
-		// step( 'Can then see secure payment component', async function() {
-		// 	return await SecurePaymentComponent.Expect( driver );
-		// } );
-
-		// Remove all items from basket for clean up
-		// after( async function() {
-		// 	await ReaderPage.Visit( driver );
-
-		// 	const navbarComponent = await NavBarComponent.Expect( driver );
-		// 	await navbarComponent.clickMySites();
-
-		// 	await StatsPage.Expect( driver );
-
-		// 	const sidebarComponent = await SidebarComponent.Expect( driver );
-		// 	await sidebarComponent.selectPlan();
-
-		// 	await PlansPage.Expect( driver );
-		// 	const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-		// 	await shoppingCartWidgetComponent.empty();
-		// } );
-
 		step( 'Can click upgrade on Jetpack landing page', async function() {
 			const searchLandingPage = await JetpackComSearchLandingPage.Expect( driver );
 			return await searchLandingPage.upgrade();
