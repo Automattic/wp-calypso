@@ -289,18 +289,21 @@ export class PlanFeaturesHeader extends Component {
 			currentSitePlan,
 			discountPrice,
 			isJetpack,
+			isSiteAT,
 			planType,
 			rawPrice,
 			showPlanCreditsApplied,
 			translate,
 		} = this.props;
 
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		if (
 			! showPlanCreditsApplied ||
 			! availableForPurchase ||
 			planMatches( planType, { type: TYPE_FREE } ) ||
 			planType === currentSitePlan.productSlug ||
-			isJetpack ||
+			isJetpackNotAtomic ||
 			! discountPrice ||
 			discountPrice >= rawPrice
 		) {

@@ -492,6 +492,8 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		rawPrice: 100,
 		discountPrice: 80,
 		translate: identity,
+		isJetpack: false,
+		isSiteAT: false,
 	};
 
 	test( 'Should display credit label for discounted higher-tier plans that are available for purchase', () => {
@@ -527,6 +529,27 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 
 	test( 'Should not display credit label when discount price is higher than rawPrice', () => {
 		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 101 } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should display credit label for atomic site on Business plan ', () => {
+		const instance = new PlanFeaturesHeader( {
+			...baseProps,
+			planType: PLAN_BUSINESS,
+			isJetpack: true,
+			isSiteAT: true,
+		} );
+		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
+		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+	} );
+
+	test( 'Should not display credit label for Jetpack site ', () => {
+		const instance = new PlanFeaturesHeader( {
+			...baseProps,
+			planType: PLAN_JETPACK_PREMIUM,
+			isJetpack: true,
+			isSiteAT: false,
+		} );
 		expect( instance.renderCreditLabel() ).toBe( null );
 	} );
 } );

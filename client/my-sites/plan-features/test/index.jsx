@@ -259,6 +259,8 @@ describe( 'PlanFeatures.renderCreditNotice', () => {
 			{ currencyCode: 'USD', planName: 'test-bundle', availableForPurchase: true },
 		],
 		showPlanCreditsApplied: true,
+		isJetpack: false,
+		isSiteAT: false,
 	};
 
 	const createInstance = props => {
@@ -308,5 +310,14 @@ describe( 'PlanFeatures.renderCreditNotice', () => {
 		const instance = createInstance( { ...baseProps, planCredits: 0 } );
 		const notice = instance.renderCreditNotice();
 		expect( notice ).toBe( null );
+	} );
+
+	test( 'Should display a credit notice for an atomic site on a Business plan', () => {
+		const instance = createInstance( { ...baseProps, isJetpack: true, isSiteAT: true } );
+		const notice = instance.renderCreditNotice();
+		expect( notice ).not.toBe( null );
+
+		const wrapper = shallow( notice );
+		expect( wrapper.find( '.plan-features__notice-credits' ).length ).toBe( 1 );
 	} );
 } );
