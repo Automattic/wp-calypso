@@ -1,4 +1,22 @@
 .design-selector {
+	h1 {
+		color: #23282d;
+		font-size: 2em;
+		font-weight: bold;
+		margin-bottom: 0.25em;
+		text-align: center;
+	}
+
+	h2,
+	h3 {
+		color: #23282d;
+		font-size: 1.3em;
+		margin-bottom: 3em;
+		text-align: center;
+	}
+}
+
+.design-selector__grid {
 	display: grid;
 	grid-gap: 4.5em;
 
