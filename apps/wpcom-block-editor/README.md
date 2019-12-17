@@ -17,17 +17,36 @@ The block editor integration provides features for the following type of sites a
 
 <table>
   <tr>
-    <th>Site</th>
+    <th>Feature</th>
     <th>Editor</th>
-    <th><a href="./src/default"><code>default</code></a></th>
-    <th><a href="./src/wpcom"><code>wpcom</code></a></th>
-    <th><a href="./src/calypso"><code>calypso</code></a></th>
+    <th>Simple site</th>
+    <th>Atomic site</th>
+    <th>Jetpack site</th>
   </tr>
   <tr>
-    <td rowspan="2">WordPress.com</td>
+    <td rowspan="2">
+      <a href="./src/default/rich-text.js"><code>rich-text</code></a>:
+      Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
+    </td>
     <td>WP Admin</td>
     <td>✅</td>
     <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/default/switch-to-classic.js"><code>switch-to-classic</code></a>:
+      Appends a button to the "More tools" menu for switching to the classic editor.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>❌</td>
     <td>❌</td>
   </tr>
   <tr>
@@ -37,37 +56,117 @@ The block editor integration provides features for the following type of sites a
     <td>✅</td>
   </tr>
   <tr>
-    <td rowspan="2">Jetpack</td>
+    <td rowspan="2">
+      <a href="./src/wpcom/disable-nux-tour.js"><code>disable-nux-tour</code></a>:
+      Disables the welcome guide that is displayed on first use.
     <td>WP Admin</td>
     <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
+      Performs block attempt block recovery on editor load if validation errors are detected.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/reorder-block-categories.js"><code>reorder-block-categories</code></a>:
+      Moves Jetpack and CoBlocks Block Categories below Core Categories.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/tracking.js"><code>tracking</code></a>:
+      Adds analytics around specific user actions.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/unregister-experimental-blocks.js"><code>unregister-experimental-blocks</code></a>:
+      Removes experimental blocks from the Gutenberg Plugin.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/calypso/iframe-bridge-server.js"><code>iframe-bridge-server</code></a>:
+      Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See <a href="../../client/gutenberg/editor/calypsoify-iframe.tsx"><code>calypsoify-iframe.jsx</code></a>.
+    </td>
+    <td>WP Admin</td>
+    <td>❌</td>
     <td>❌</td>
     <td>❌</td>
   </tr>
   <tr>
     <td>Calypso</td>
     <td>✅</td>
-    <td>❌</td>
     <td>✅</td>
-  </tr> 
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/calypso/tinymce.js"><code>tinymce</code></a>:
+      Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
+    </td>
+    <td>WP Admin</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
 </table>
-
-### `default`
-
-- [`rich-text`](./src/default/rich-text.js): Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
-- [`switch-to-classic`](./src/default/switch-to-classic.js): Appends a button to the "More tools" menu for switching to the classic editor.
-
-### `wpcom`
-
-- [`disable-nux-tour`](./src/wpcom/disable-nux-tour.js): Disables the welcome guide that is displayed on first use.
-- [`fix-block-invalidation-errors`](./src/wpcom/fix-block-invalidation-errors.js): Performs block attempt block recovery on editor load if validation errors are detected.
-- [`reorder-block-categories`](./src/wpcom/reorder-block-categories.js): Moves Jetpack and CoBlocks Block Categories below Core Categories.
-- [`tracking`](./src/wpcom/tracking.js): Adds analytics around specific user actions.
-- [`unregister-experimental-blocks`](./src/wpcom/unregister-experimental-blocks.js): Removes some experimental blocks from the Gutenberg Plugin.
-
-### `calypso`
-
-- [`iframe-bridge-server`](./src/calypso/iframe-bridge-server.js): Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
-- [`tinymce`](./src/calypso/tinymce.js): Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
 
 ## Build
 
