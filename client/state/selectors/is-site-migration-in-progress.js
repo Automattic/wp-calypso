@@ -13,8 +13,8 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
  */
 /* eslint-disable */
 export default function isSiteMigrationInProgress( state, siteId ) {
-	const migrationStatus = getSiteMigrationStatus( state, siteId );
+	const site = getRawSite( state, siteId );
 
-	return migrationStatus !== 'inactive';
+	return site && site.migration_status && site.migration_status === 'migrating';
 }
 /* eslint-enable */
