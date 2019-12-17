@@ -74,10 +74,12 @@ export const setupDevTool = ( siteId, dispatch ) => {
  *
  * @param {number} siteId The site id
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
+ * @param {?string} locale Current user locale
  * @returns {object} The action to fetch the jitms
  */
-export const fetchJITM = ( siteId, messagePath ) => ( {
+export const fetchJITM = ( siteId, messagePath, locale ) => ( {
 	type: JITM_FETCH,
 	siteId,
 	messagePath,
+	locale,
 } );

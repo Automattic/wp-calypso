@@ -65,6 +65,7 @@ export const doFetchJITM = action => {
 					message_path: action.messagePath,
 				} ),
 				http_envelope: 1,
+				locale: action.locale,
 			},
 		},
 		{ ...action }

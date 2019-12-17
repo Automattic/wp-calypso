@@ -10,11 +10,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { fetchJITM } from 'state/jitm/actions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
-function QueryJITM( { siteId, sectionName, messagePath, doFetchJITM } ) {
+function QueryJITM( { siteId, sectionName, messagePath, doFetchJITM, locale } ) {
 	useEffect( () => {
-		doFetchJITM( siteId, messagePath );
-	}, [ siteId, sectionName, messagePath ] );
+		doFetchJITM( siteId, messagePath, locale );
+	}, [ siteId, sectionName, messagePath, locale ] );
 
 	return null;
 }
@@ -29,4 +30,8 @@ QueryJITM.defaultProps = {
 	sectionName: '',
 };
 
-export default connect( null, { doFetchJITM: fetchJITM } )( QueryJITM );
+const mapStateToProps = state => ( {
+	locale: getCurrentUserLocale( state ),
+} );
+
+export default connect( mapStateToProps, { doFetchJITM: fetchJITM } )( QueryJITM );
