@@ -230,6 +230,10 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
+	isTransientSelected = () => {
+		return this.props.mediaLibrarySelectedItems.some( item => item.transient );
+	};
+
 	setDetailSelectedIndex = index => {
 		this.setState( {
 			detailSelectedIndex: index,
@@ -510,7 +514,7 @@ export class EditorMediaModal extends Component {
 				action: 'confirm',
 				label: this.props.labels.confirm || this.props.translate( 'Insert' ),
 				isPrimary: true,
-				disabled: isDisabled || 0 === selectedItems.length,
+				disabled: isDisabled || 0 === selectedItems.length || this.isTransientSelected(),
 				onClick: this.confirmSelection,
 			} );
 		}
