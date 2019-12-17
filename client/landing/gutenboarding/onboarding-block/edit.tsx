@@ -51,7 +51,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
 								<Button className="onboarding-block__question-skip" isLink>
-									{ siteTitle ? NO__( 'Next' ) : NO__( "Don't know yet" ) } →
+									{ /* @TODO: add transitions and correct action */ }
+									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →{ ' ' }
 								</Button>
 							</div>
 						) }
