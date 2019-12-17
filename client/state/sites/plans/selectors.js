@@ -171,7 +171,9 @@ export function isRequestingSitePlans( state, siteId ) {
 
 export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
-	const expiration = currentPlan?.expiryValid && moment( currentPlan.expiry ).startOf( 'day' );
+	const expiration =
+		currentPlan?.expiryDateValid &&
+		moment( currentPlan.expiryDate, currentPlan.expiryDateFormat ).startOf( 'day' );
 	return expiration < moment().add( 30, 'days' );
 }
 
