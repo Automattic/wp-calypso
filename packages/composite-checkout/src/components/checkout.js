@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -31,10 +32,12 @@ import {
 import { validateSteps } from '../lib/validation';
 import { useEvents } from './checkout-provider';
 
-function useRegisterCheckoutStore() {
+const debug = debugFactory( 'composite-checkout:checkout' );
+
+function useRegisterCheckoutStore( { initialStepNumber = 1 } ) {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: initialStepNumber, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
@@ -72,7 +75,8 @@ function useRegisterCheckoutStore() {
 }
 
 export default function Checkout( { steps, className } ) {
-	useRegisterCheckoutStore();
+	const initialStepNumber = useStepNumberFromUrl();
+	useRegisterCheckoutStore( { initialStepNumber } );
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
@@ -82,6 +86,7 @@ export default function Checkout( { steps, className } ) {
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
+	debug( 'current step number is', stepNumber );
 	const { changeStep } = usePrimaryDispatch();
 	steps = steps || makeDefaultSteps( localize );
 	validateSteps( steps );
@@ -280,4 +285,15 @@ function useRenderOnStoreUpdate() {
 			setForceReload( current => current + 1 );
 		} );
 	}, [ subscribe ] );
+}
+
+function useStepNumberFromUrl() {
+	const hashValue = window.location?.hash;
+	if ( hashValue?.startsWith?.( '#step' ) ) {
+		const parts = hashValue.split( '#step' );
+		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
+		debug( 'found step number in url', stepNumber );
+		return parseInt( stepNumber, 10 );
+	}
+	return 1;
 }
