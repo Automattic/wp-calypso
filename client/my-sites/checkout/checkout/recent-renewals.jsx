@@ -57,7 +57,7 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 	const moment = useLocalizedMoment();
 
 	const idsInCart = cart.products ? cart.products.map( product => product.product_id ) : [];
-	const recentRenewals = getRecentRenewalProductsMatchingIds( purchases, idsInCart );
+	const recentRenewals = getRecentRenewalProductsMatchingIds( purchases, idsInCart, moment );
 	const productListItems = recentRenewals.map( product => {
 		const domain = product.isDomainRegistration
 			? product.meta || product.domain
