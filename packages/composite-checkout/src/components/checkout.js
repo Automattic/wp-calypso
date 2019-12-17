@@ -34,10 +34,10 @@ import { useEvents } from './checkout-provider';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
-function useRegisterCheckoutStore( { initialStepNumber = 1 } ) {
+function useRegisterCheckoutStore( { urlStepNumber = 1 } ) {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: initialStepNumber, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: urlStepNumber, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
@@ -61,6 +61,7 @@ function useRegisterCheckoutStore( { initialStepNumber = 1 } ) {
 		controls: {
 			STEP_NUMBER_CHANGE_EVENT( action ) {
 				onEvent && onEvent( action );
+				saveStepNumberToUrl( action.payload );
 			},
 		},
 		selectors: {
@@ -75,8 +76,8 @@ function useRegisterCheckoutStore( { initialStepNumber = 1 } ) {
 }
 
 export default function Checkout( { steps, className } ) {
-	const initialStepNumber = useStepNumberFromUrl();
-	useRegisterCheckoutStore( { initialStepNumber } );
+	const urlStepNumber = getStepNumberFromUrl();
+	useRegisterCheckoutStore( { urlStepNumber } );
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
@@ -90,6 +91,9 @@ export default function Checkout( { steps, className } ) {
 	const { changeStep } = usePrimaryDispatch();
 	steps = steps || makeDefaultSteps( localize );
 	validateSteps( steps );
+
+	// Change the step if the url changes
+	useChangeStepNumberForUrl();
 
 	// Assign step numbers to all steps with numbers
 	let numberedStepNumber = 0;
@@ -287,7 +291,7 @@ function useRenderOnStoreUpdate() {
 	}, [ subscribe ] );
 }
 
-function useStepNumberFromUrl() {
+function getStepNumberFromUrl() {
 	const hashValue = window.location?.hash;
 	if ( hashValue?.startsWith?.( '#step' ) ) {
 		const parts = hashValue.split( '#step' );
@@ -296,4 +300,27 @@ function useStepNumberFromUrl() {
 		return parseInt( stepNumber, 10 );
 	}
 	return 1;
+}
+
+function saveStepNumberToUrl( stepNumber ) {
+	if ( window.history?.pushState && window.location?.hash ) {
+		window.history.pushState(
+			null,
+			null,
+			window.location.href.replace( window.location.hash, `#step${ stepNumber }` )
+		);
+	}
+}
+
+function useChangeStepNumberForUrl() {
+	const { changeStep } = usePrimaryDispatch();
+	useEffect( () => {
+		let isSubscribed = true;
+		window.addEventListener?.( 'hashchange', function() {
+			const newStepNumber = getStepNumberFromUrl();
+			debug( 'step number in url changed to', newStepNumber );
+			isSubscribed && changeStep( newStepNumber );
+		} );
+		return () => ( isSubscribed = false );
+	}, [ changeStep ] );
 }
