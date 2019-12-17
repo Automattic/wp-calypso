@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, findKey, flowRight as compose, includes, isEmpty, map, invoke } from 'lodash';
+import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -19,6 +19,7 @@ import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -176,22 +177,14 @@ export class ProductSelector extends Component {
 			return null;
 		}
 
-		if ( purchase.autoRenew && purchase.autoRenewDateMoment ) {
-			return translate( 'Set to auto-renew on %s.', {
-				args: invoke( purchase, 'autoRenewDateMoment.format', 'LL' ),
-			} );
-		}
-
-		// Show purchase date if still refundable.
-		if ( purchase.isRefundable && purchase.subscribedMoment ) {
-			return translate( 'Purchased on %s.', {
-				args: invoke( purchase, 'subscribedMoment.format', 'LL' ),
-			} );
-		}
-
-		return translate( 'Expires on %s.', {
-			args: invoke( purchase, 'expiryMoment.format', 'LL' ),
-		} );
+		return (
+			<ProductExpiration
+				expiryDateMoment={ purchase.expiryMoment }
+				purchaseDateMoment={ purchase.subscribedMoment }
+				isRefundable={ purchase.isRefundable }
+				translate={ translate }
+			/>
+		);
 	}
 
 	getDescriptionByProduct( product ) {

@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, invoke, isEmpty } from 'lodash';
+import { find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
@@ -131,23 +132,14 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		// Show auto-renew information if it is enabled.
-		if ( purchase.autoRenew && purchase.autoRenewDateMoment ) {
-			return translate( 'Set to auto-renew on %s.', {
-				args: invoke( purchase, 'autoRenewDateMoment.format', 'LL' ),
-			} );
-		}
-
-		// Show purchase date if still refundable.
-		if ( purchase.isRefundable && purchase.subscribedMoment ) {
-			return translate( 'Purchased on %s.', {
-				args: invoke( purchase, 'subscribedMoment.format', 'LL' ),
-			} );
-		}
-
-		return translate( 'Expires on %s.', {
-			args: invoke( purchase, 'expiryMoment.format', 'LL' ),
-		} );
+		return (
+			<ProductExpiration
+				expiryDateMoment={ purchase.expiryMoment }
+				purchaseDateMoment={ purchase.subscribedMoment }
+				isRefundable={ purchase.isRefundable }
+				translate={ translate }
+			/>
+		);
 	}
 
 	getActionButton( purchase ) {
