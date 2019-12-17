@@ -168,20 +168,6 @@ export function useMessages() {
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
 }
 
-export const useCheckoutHandlers = () => {
-	const {
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		onEvent,
-	} = useContext( CheckoutContext );
-	if ( ! onPaymentComplete || ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
-		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
-	}
-	return { onPaymentComplete, showErrorMessage, showInfoMessage, showSuccessMessage, onEvent };
-};
-
 export const useCheckoutRedirects = () => {
 	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
 	if ( ! successRedirectUrl || ! failureRedirectUrl ) {

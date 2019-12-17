@@ -7,7 +7,7 @@ import React, { useState, useEffect, useMemo } from 'react';
  * Internal dependencies
  */
 import { StripeHookProvider, useStripe } from '../../lib/stripe';
-import { useLineItems, useCheckoutHandlers } from '../../public-api';
+import { useLineItems, usePaymentComplete } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -85,7 +85,7 @@ export function ApplePayLabel() {
 
 export function ApplePaySubmitButton( { disabled } ) {
 	const localize = useLocalize();
-	const { onPaymentComplete } = useCheckoutHandlers();
+	const onPaymentComplete = usePaymentComplete();
 	const paymentRequestOptions = usePaymentRequestOptions();
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,

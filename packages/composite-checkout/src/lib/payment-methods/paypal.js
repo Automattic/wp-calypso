@@ -10,7 +10,12 @@ import styled from '@emotion/styled';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
-import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
+import {
+	useMessages,
+	usePaymentComplete,
+	useCheckoutRedirects,
+	useLineItems,
+} from '../../public-api';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
@@ -131,7 +136,8 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
-	const { onPaymentComplete, showErrorMessage } = useCheckoutHandlers();
+	const onPaymentComplete = usePaymentComplete();
+	const { showErrorMessage } = useMessages();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
 

@@ -22,7 +22,8 @@ import {
 import {
 	useSelect,
 	useDispatch,
-	useCheckoutHandlers,
+	usePaymentComplete,
+	useMessages,
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
@@ -261,7 +262,7 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { showErrorMessage } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -607,7 +608,8 @@ function LockIcon( { className } ) {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onPaymentComplete, showErrorMessage } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onPaymentComplete = usePaymentComplete();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
