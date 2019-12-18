@@ -20,8 +20,8 @@ import { useDebounce } from 'use-debounce';
 import {
 	DomainSuggestion,
 	DomainSuggestionQuery,
-} from '@automattic/calypso-data-stores/domain-suggestions/types';
-import { STORE_KEY } from '@automattic/calypso-data-stores/domain-suggestions';
+} from '@automattic/calypso-data-stores/src/domain-suggestions/types';
+import { STORE_KEY } from '@automattic/calypso-data-stores/src/domain-suggestions';
 import { selectorDebounce } from '../../constants';
 
 export interface Props {

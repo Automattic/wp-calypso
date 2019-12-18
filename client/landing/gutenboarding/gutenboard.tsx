@@ -33,8 +33,8 @@ import SettingsSidebar from './components/settings-sidebar';
 import { State as OnboardingState } from './stores/onboard/reducer';
 import { STORE_KEY } from './stores/onboard';
 import { Steps } from './types';
-import '@automattic/calypso-data-stores/domain-suggestions';
-import '@automattic/calypso-data-stores/verticals-templates';
+import '@automattic/calypso-data-stores/src/domain-suggestions';
+import '@automattic/calypso-data-stores/src/verticals-templates';
 import './style.scss';
 
 const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {

@@ -11,7 +11,7 @@ import { ENTER } from '@wordpress/keycodes';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as VERTICALS_STORE } from '@automattic/calypso-data-stores/verticals';
+import { STORE_KEY as VERTICALS_STORE } from '@automattic/calypso-data-stores/src/verticals';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';

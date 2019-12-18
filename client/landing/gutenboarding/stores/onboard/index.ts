@@ -11,7 +11,7 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { SelectFromMap, DispatchFromMap } from '@automattic/calypso-data-stores/mapped-types';
+import { SelectFromMap, DispatchFromMap } from '@automattic/calypso-data-stores/src/mapped-types';
 
 export { STORE_KEY };
 
