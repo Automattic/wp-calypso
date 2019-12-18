@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -31,10 +32,12 @@ import {
 import { validateSteps } from '../lib/validation';
 import { useEvents } from './checkout-provider';
 
+const debug = debugFactory( 'composite-checkout:checkout' );
+
 function useRegisterCheckoutStore() {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+		reducer( state = { stepNumber: getStepNumberFromUrl(), paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
@@ -58,6 +61,7 @@ function useRegisterCheckoutStore() {
 		controls: {
 			STEP_NUMBER_CHANGE_EVENT( action ) {
 				onEvent && onEvent( action );
+				saveStepNumberToUrl( action.payload );
 			},
 		},
 		selectors: {
@@ -82,9 +86,13 @@ export default function Checkout( { steps, className } ) {
 
 	// stepNumber is the displayed number of the active step, not its index
 	const stepNumber = usePrimarySelect( select => select().getStepNumber() );
+	debug( 'current step number is', stepNumber );
 	const { changeStep } = usePrimaryDispatch();
 	steps = steps || makeDefaultSteps( localize );
 	validateSteps( steps );
+
+	// Change the step if the url changes
+	useChangeStepNumberForUrl();
 
 	// Assign step numbers to all steps with numbers
 	let numberedStepNumber = 0;
@@ -280,4 +288,43 @@ function useRenderOnStoreUpdate() {
 			setForceReload( current => current + 1 );
 		} );
 	}, [ subscribe ] );
+}
+
+function getStepNumberFromUrl() {
+	const hashValue = window.location?.hash;
+	if ( hashValue?.startsWith?.( '#step' ) ) {
+		const parts = hashValue.split( '#step' );
+		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
+		debug( 'found step number in url', stepNumber );
+		return parseInt( stepNumber, 10 );
+	}
+	return 1;
+}
+
+function saveStepNumberToUrl( stepNumber ) {
+	if ( ! window.history?.pushState ) {
+		return;
+	}
+	const newHash = `#step${ stepNumber }`;
+	if ( window.location.hash === newHash ) {
+		return;
+	}
+	const newUrl = window.location.hash
+		? window.location.href.replace( window.location.hash, newHash )
+		: window.location.href + newHash;
+	debug( 'updating url to', newUrl );
+	window.history.pushState( null, null, newUrl );
+}
+
+function useChangeStepNumberForUrl() {
+	const { changeStep } = usePrimaryDispatch();
+	useEffect( () => {
+		let isSubscribed = true;
+		window.addEventListener?.( 'hashchange', function() {
+			const newStepNumber = getStepNumberFromUrl();
+			debug( 'step number in url changed to', newStepNumber );
+			isSubscribed && changeStep( newStepNumber );
+		} );
+		return () => ( isSubscribed = false );
+	}, [ changeStep ] );
 }
