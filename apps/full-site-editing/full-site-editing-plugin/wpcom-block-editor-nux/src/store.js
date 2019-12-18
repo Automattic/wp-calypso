@@ -14,7 +14,7 @@ const actions = {
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
 		if ( ! bypassApi ) {
 			apiFetch( {
-				path: 'fse/v1/wpcom-block-editor/nux',
+				path: '/wpcom/v2/block-editor/nux',
 				method: 'POST',
 				data: { isNuxEnabled },
 			} );

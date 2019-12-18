@@ -20,9 +20,7 @@ function WpcomNux() {
 			return;
 		}
 		const fetchWpcomNuxStatus = async () => {
-			const response = await apiFetch( {
-				path: 'fse/v1/wpcom-block-editor/nux',
-			} );
+			const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
 			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
 		};
 		fetchWpcomNuxStatus();

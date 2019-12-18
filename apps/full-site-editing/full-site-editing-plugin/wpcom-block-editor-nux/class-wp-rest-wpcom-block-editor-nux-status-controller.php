@@ -15,10 +15,8 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller constructor.
 	 */
 	public function __construct() {
-		$this->user_id = get_current_user_id();
-
-		$this->namespace = 'fse/v1';
-		$this->rest_base = 'wpcom-block-editor/nux';
+		$this->namespace = 'wpcom/v2';
+		$this->rest_base = 'block-editor/nux';
 	}
 
 	/**
@@ -69,11 +67,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 */
 	public function get_nux_status() {
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
-			$nux_status = apply_filter( 'wpcom_block_editor_nux_get_status', false );
-		} elseif ( ! metadata_exists( 'user', $this->user_id, 'wpcom_block_editor_nux_status' ) ) {
+			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
+		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';
 		} else {
-			$nux_status = get_user_meta( $this->user_id, 'wpcom_block_editor_nux_status', true );
+			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
 		return rest_ensure_response(
 			array(
@@ -94,7 +92,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		if ( has_action( 'wpcom_block_editor_nux_update_status' ) ) {
 			do_action( 'wpcom_block_editor_nux_update_status', $nux_status );
 		}
-		update_user_meta( $this->user_id, 'wpcom_block_editor_nux_status', $nux_status );
+		update_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', $nux_status );
 		return rest_ensure_response( array( 'is_nux_enabled' => $this->is_nux_enabled( $nux_status ) ) );
 	}
 }
