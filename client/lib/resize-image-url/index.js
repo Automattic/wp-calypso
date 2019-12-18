@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, assign, omit, includes, mapValues, findKey } from 'lodash';
+import { get, assign, defaults, omit, includes, mapValues, findKey } from 'lodash';
 import { parse, format } from 'url';
 
 /**
@@ -26,6 +26,8 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  */
 const IMAGE_SCALE_FACTOR =
 	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+
+const DEFAULT_QUALITY = IMAGE_SCALE_FACTOR > 1 ? '40' : undefined;
 
 /**
  * Query parameters to be treated as image dimensions
@@ -101,6 +103,11 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	// recurse with an assumed set of query arguments for Photon
 	if ( ! service && makeSafe ) {
 		return resizeImageUrl( safeImageUrl( imageUrl ), resize, null, false );
+	}
+
+	// assign the default quality is one is not already assigned
+	if ( DEFAULT_QUALITY ) {
+		defaults( parsedUrl.query, { quality: DEFAULT_QUALITY } );
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor

@@ -183,28 +183,28 @@ describe( 'resizeImageUrl()', () => {
 		test( 'should append resize argument', () => {
 			const resizedUrl = resizeImageUrl( imageUrl, { resize: '40,40' } );
 			expect( resizedUrl ).to.equal(
-				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?resize=80%2C80'
+				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?quality=40&resize=80%2C80'
 			);
 		} );
 
 		test( 'should append fit argument', () => {
 			const resizedUrl = resizeImageUrl( imageUrl, { fit: '40,40' } );
 			expect( resizedUrl ).to.equal(
-				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?fit=80%2C80'
+				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?quality=40&fit=80%2C80'
 			);
 		} );
 
 		test( 'should append w argument', () => {
 			const resizedUrl = resizeImageUrl( imageUrl, { w: 40 } );
 			expect( resizedUrl ).to.equal(
-				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=80'
+				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?quality=40&w=80'
 			);
 		} );
 
 		test( 'should append s argument', () => {
 			const resizedUrl = resizeImageUrl( imageUrl, { s: 200 } );
 			expect( resizedUrl ).to.equal(
-				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?s=400'
+				'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?quality=40&s=400'
 			);
 		} );
 	} );

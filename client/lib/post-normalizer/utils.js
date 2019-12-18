@@ -12,7 +12,7 @@ import safeImageURL from 'lib/safe-image-url';
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
 
-const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
+const DEFAULT_PHOTON_QUALITY = IMAGE_SCALE_FACTOR > 1 ? 40 : 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
 
 export function isPhotonHost( hostname ) {
 	return /^i[0-2]\.wp\.com$/.test( hostname );
