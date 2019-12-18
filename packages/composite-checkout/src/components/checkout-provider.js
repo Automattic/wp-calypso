@@ -69,7 +69,7 @@ export const CheckoutProvider = props => {
 		showSuccessMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
-		onEvent,
+		onEvent: onEvent || ( () => {} ),
 		formStatus,
 		setFormStatus,
 	};

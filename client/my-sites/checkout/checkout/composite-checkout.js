@@ -58,8 +58,6 @@ export function CompositeCheckout( {
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, showErrorMessage );
 
-	// TODO: record stats
-
 	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
