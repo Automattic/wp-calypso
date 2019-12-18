@@ -208,9 +208,9 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
 /**
  * Returns an action object to be used to update the site migration status.
  *
- * @param  {Number} siteId Site ID
- * @param  {String} migrationStatus The status of the migration.
- * @return {Object} Action object
+ * @param  {number} siteId Site ID
+ * @param  {string} migrationStatus The status of the migration.
+ * @returns {object} Action object
  */
 export const updateSiteMigrationStatus = ( siteId, migrationStatus ) => ( {
 	siteId,
