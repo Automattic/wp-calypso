@@ -9,7 +9,7 @@ module.exports = {
 		path.join( __dirname, 'jest', 'setup.js' ),
 		require.resolve( 'jest-enzyme' ),
 	],
-	snapshotSerializers: [ 'enzyme-to-json/serializer' ],
+	snapshotSerializers: [ 'enzyme-to-json/serializer', 'jest-emotion' ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
