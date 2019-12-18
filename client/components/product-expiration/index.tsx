@@ -4,33 +4,33 @@
 import React from 'react';
 
 interface Moment {
+	diff: ( date: Date ) => number;
+	format: ( dateFormat: string ) => string;
 	isValid: () => boolean;
-	format: ( arg0: string ) => string;
-	diff: ( arg0: Date ) => number;
 }
 
-export interface Props {
-	expiryDateMoment: Moment;
-	purchaseDateMoment: Moment;
-	isRefundable: boolean;
+interface Props {
 	dateFormat: string;
+	expiryDateMoment: Moment;
+	isRefundable: boolean;
+	purchaseDateMoment: Moment;
 	translate: ( arg0: string, arg1: object ) => string;
 }
 
 class ProductExpiration extends React.PureComponent< Props > {
 	static defaultProps = {
-		expiryDateMoment: null,
-		purchaseDateMoment: null,
-		isRefundable: false,
 		dateFormat: 'LL',
+		expiryDateMoment: null,
+		isRefundable: false,
+		purchaseDateMoment: null,
 	};
 
 	render() {
 		const {
-			expiryDateMoment,
-			purchaseDateMoment,
-			isRefundable,
 			dateFormat,
+			expiryDateMoment,
+			isRefundable,
+			purchaseDateMoment,
 			translate,
 		} = this.props;
 
