@@ -289,10 +289,8 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							<Fragment>
-								{ this.renderMinilevenSettings() }
-								<hr />
-							</Fragment>
+							{ this.renderMinilevenSettings() }
+							<hr />
 							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
