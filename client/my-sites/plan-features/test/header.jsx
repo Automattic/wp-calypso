@@ -112,7 +112,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
 			const myProps = {
 				...props,
 				isPlaceholder: false,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: PLAN_PREMIUM,
 				popular: false,
 				newPlan: false,
@@ -128,7 +128,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
 			const myProps = {
 				...props,
 				isPlaceholder: false,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: PLAN_PREMIUM,
 				popular: true,
 				newPlan: false,
@@ -149,7 +149,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				...props,
 				isPlaceholder: false,
 				isInSignup: false,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: productSlug,
 			};
 			const comp = new PlanFeaturesHeader( { ...myProps } );
@@ -166,7 +166,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				...props,
 				isPlaceholder: false,
 				isInSignup: false,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: PLAN_PREMIUM,
 				popular: true,
 			};
@@ -185,7 +185,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				...props,
 				isPlaceholder: false,
 				isInSignup: true,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: PLAN_PREMIUM,
 			};
 			// const pfh = mount( <PlanFeaturesHeader { ...myProps } />);
@@ -220,7 +220,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				...props,
 				isPlaceholder: false,
 				isInSignup: false,
-				currentSitePlan: { productSlug: productSlug },
+				currentSitePlan: { productSlug },
 				planType: productSlug,
 				popular: false,
 				newPlan: false,
