@@ -10,7 +10,8 @@ import { ENTER } from '@wordpress/keycodes';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../stores/onboard';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { STORE_KEY as VERTICALS_STORE } from '../../stores/verticals';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
@@ -52,7 +53,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const suggestionRef = createRef< __TodoAny__ >();
 
 	const verticals = useSelect( select =>
-		select( STORE_KEY )
+		select( VERTICALS_STORE )
 			.getVerticals()
 			.map( x => ( {
 				label: x.vertical_name,
@@ -60,8 +61,8 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			} ) )
 	);
 
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteVertical, resetSiteVertical } = useDispatch( STORE_KEY );
+	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( e.target.value !== inputValue && ! dirty ) {
