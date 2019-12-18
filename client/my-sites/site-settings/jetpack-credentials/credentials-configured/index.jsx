@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, some } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,15 +14,9 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import Gridicon from 'components/gridicon';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
+import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { CompactCard, Button } from '@automattic/components';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature } from 'lib/plans';
-import {
-	PRODUCT_JETPACK_BACKUP_REALTIME,
-	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'lib/products-values/constants';
 
 /**
  * Style dependencies
@@ -42,27 +36,8 @@ class CredentialsConfigured extends Component {
 
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
 
-	supportsRealtimeBackup() {
-		const { currentPlanSlug, purchases } = this.props;
-		const productSlugs = [
-			PRODUCT_JETPACK_BACKUP_REALTIME,
-			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-		];
-
-		const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
-			planHasFeature( currentPlanSlug, productSlug )
-		);
-		const hasActiveRealtimeBackupProduct = some(
-			purchases,
-			purchase =>
-				purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
-		);
-
-		return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;
-	}
-
 	render() {
-		const { canAutoconfigure, siteId, translate } = this.props;
+		const { canAutoconfigure, siteId, supportsRealtimeBackup, translate } = this.props;
 
 		const isRevoking = this.state.isRevoking;
 
@@ -116,7 +91,7 @@ class CredentialsConfigured extends Component {
 			);
 		}
 
-		const headerText = this.supportsRealtimeBackup()
+		const headerText = supportsRealtimeBackup
 			? translate(
 					'Your site is being backed up in real time and regularly scanned for security threats.'
 			  )
@@ -160,9 +135,8 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
-		currentPlanSlug: getSitePlanSlug( state, siteId ),
 		mainCredentials: find( credentials, { role: 'main' } ),
-		purchases: getSitePurchases( state, siteId ),
+		supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
 	};
 };
 
