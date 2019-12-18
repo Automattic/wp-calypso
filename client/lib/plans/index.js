@@ -458,10 +458,12 @@ export const getPopularPlanSpec = ( {
 	};
 
 	if ( customerType === 'personal' ) {
+		const isUserOutsideUS = countryCode && 'US' !== countryCode;
+
 		if (
 			isInSignup &&
 			! isLaunchPage &&
-			'US' !== countryCode &&
+			isUserOutsideUS &&
 			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
 		) {
 			return spec;

@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -71,7 +72,6 @@ import {
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -549,7 +549,9 @@ export default connect(
 
 		const isDevelopment = 'development' === process.env.NODE_ENV;
 		const devCountryCode = isDevelopment && global.window && global.window.userCountryCode;
-		const countryCode = devCountryCode || getCurrentUserCountryCode( state );
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const countryCode = devCountryCode || countryCodeFromCookie;
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
