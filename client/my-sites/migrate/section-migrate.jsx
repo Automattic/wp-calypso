@@ -24,6 +24,7 @@ import SiteSelector from 'components/site-selector';
 import Spinner from 'components/spinner';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
+import { updateSiteMigrationStatus } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpLib from 'lib/wp';
@@ -67,6 +68,13 @@ class SectionMigrate extends Component {
 		} );
 	};
 
+	setMigrationState = state => {
+		if ( state.migrationStatus ) {
+			this.props.updateSiteMigrationStatus( this.props.targetSiteId, state.migrationStatus );
+		}
+		this.setState( state );
+	};
+
 	setSourceSiteId = sourceSiteId => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
@@ -78,7 +86,7 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setState( { migrationStatus: 'backing-up', startTime: '' } );
+		this.setMigrationState( { migrationStatus: 'backing-up', startTime: '' } );
 
 		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
 	};
@@ -104,7 +112,7 @@ class SectionMigrate extends Component {
 						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
 
 						if ( ! startMoment.isValid() ) {
-							this.setState( {
+							this.setMigrationState( {
 								migrationStatus,
 								percent,
 							} );
@@ -116,7 +124,7 @@ class SectionMigrate extends Component {
 							.locale( getLocaleSlug() )
 							.format( 'lll' );
 
-						this.setState( {
+						this.setMigrationState( {
 							migrationStatus,
 							percent,
 							startTime: localizedStartTime,
@@ -124,7 +132,7 @@ class SectionMigrate extends Component {
 						return;
 					}
 
-					this.setState( {
+					this.setMigrationState( {
 						migrationStatus,
 						percent,
 					} );
@@ -476,5 +484,5 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite }
+	{ navigateToSelectedSourceSite, updateSiteMigrationStatus }
 )( localize( SectionMigrate ) );
