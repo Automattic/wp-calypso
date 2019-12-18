@@ -42,11 +42,16 @@ export function CompositeCheckout( {
 	showInfoMessage,
 	showSuccessMessage,
 } ) {
-	const { items, tax, total, removeItem, addItem, changePlanLength, errors } = useShoppingCart(
-		siteSlug,
-		setCart,
-		getCart
-	);
+	const {
+		items,
+		tax,
+		total,
+		removeItem,
+		addItem,
+		changePlanLength,
+		errors,
+		isLoading,
+	} = useShoppingCart( siteSlug, setCart, getCart );
 	const { registerStore } = registry;
 	useWpcomStore( registerStore );
 
@@ -74,6 +79,7 @@ export function CompositeCheckout( {
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
+			isLoading={ isLoading }
 		>
 			<WPCheckout
 				removeItem={ removeItem }
