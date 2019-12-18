@@ -123,7 +123,7 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if ( false !== this.props.shouldShowDomainTestCopy && ! props.cartItem ) {
+		if ( false !== this.props.shouldShowDomainTestCopy && ! props.isPlanStepFulfilled ) {
 			if (
 				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ||
 				'variantShowUpdates' === abtest( 'nonEnglishDomainStepCopyUpdates' )
@@ -730,7 +730,7 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			cartItem: ownProps.signupDependencies.cartItem,
+			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
 		};
 	},
 	{
