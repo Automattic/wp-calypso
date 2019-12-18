@@ -27,6 +27,7 @@ import {
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
+	useEvents,
 } from '../../public-api';
 import useLocalize, { sprintf } from '../localize';
 import {
@@ -264,6 +265,7 @@ function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
 	const { showErrorMessage } = useMessages();
+	const onEvent = useEvents();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -290,6 +292,14 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
+			onEvent( {
+				type: 'a8c_checkout_error',
+				payload: {
+					type: 'Stripe field error',
+					field: input.elementType,
+					message: input.error.message,
+				},
+			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -312,6 +322,8 @@ function StripeCreditCardFields() {
 	};
 
 	if ( stripeLoadingError ) {
+		onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+
 		return (
 			<CreditCardFieldsWrapper isLoaded={ true }>
 				<ErrorMessage>
