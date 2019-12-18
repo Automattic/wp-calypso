@@ -1203,6 +1203,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Block Editor loads with shared content', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.dismissEditorWelcomeModal();
 			await gEditorComponent.closeSidebar();
 		} );
 
