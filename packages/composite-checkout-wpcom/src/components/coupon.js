@@ -121,7 +121,7 @@ function handleFormSubmit(
 		setIsCouponApplied( true );
 		onEvent( {
 			type: 'a8c_checkout_add_coupon',
-			payload: { coupon: couponFieldValue, client_id: 'WordPress.com' },
+			payload: { coupon: couponFieldValue },
 		} );
 
 		if ( couponAdded ) {
@@ -133,7 +133,7 @@ function handleFormSubmit(
 
 	onEvent( {
 		type: 'a8c_checkout_add_coupon_error',
-		payload: { type: 'Invalid code', client_id: 'WordPress.com' },
+		payload: { type: 'Invalid code' },
 	} );
 	setHasCouponError( true );
 }

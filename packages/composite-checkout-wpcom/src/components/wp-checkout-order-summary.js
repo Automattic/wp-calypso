@@ -129,6 +129,5 @@ function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
 	setIsCouponFieldVisible( true );
 	onEvent( {
 		type: 'a8c_checkout_add_coupon_button_clicked',
-		payload: { location: 'order-summary', client_id: 'WordPress.com' },
 	} );
 }
