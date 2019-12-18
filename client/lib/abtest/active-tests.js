@@ -138,7 +138,8 @@ export default {
 		variations: {
 			variation2_front: 0,
 			variation3_front: 50,
-			variation4_front: 50,
+			variation4_front: 25,
+			variation5_front: 25,
 		},
 		defaultVariation: 'variation2_front',
 	},
