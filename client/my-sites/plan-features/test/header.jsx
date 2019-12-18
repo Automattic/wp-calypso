@@ -188,7 +188,6 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				currentSitePlan: { productSlug },
 				planType: PLAN_PREMIUM,
 			};
-			// const pfh = mount( <PlanFeaturesHeader { ...myProps } />);
 			const comp = new PlanFeaturesHeader( { ...myProps } );
 			const pfh = shallow( comp.renderPlansHeader() );
 
