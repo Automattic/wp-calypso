@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteVertical, Vertical } from './types';
+import { ActionType, SiteVertical } from './types';
 import { DomainSuggestion } from '../domain-suggestions/types';
 
 export const setDomain = ( domain: DomainSuggestion ) => ( {
@@ -21,9 +21,4 @@ export const resetSiteVertical = () => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
-} );
-
-export const receiveVerticals = ( verticals: Vertical[] ) => ( {
-	type: ActionType.RECEIVE_VERTICALS as const,
-	verticals,
 } );
