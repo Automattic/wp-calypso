@@ -42,5 +42,10 @@
 		"clean": "npx rimraf dist types",
 		"prepublish": "npm run clean",
 		"prepare": "transpile && tsc && copy-assets"
+	},
+	"devDependencies": {
+		"@storybook/addon-actions": "^5.2.8",
+		"@storybook/preset-scss": "^1.0.2",
+		"@storybook/react": "^5.2.8"
 	}
 }
