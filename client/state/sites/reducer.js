@@ -49,9 +49,9 @@ import {
 /**
  * Tracks all known site objects, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
@@ -269,9 +269,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Requesting state tracks whether a network request is in progress for all
  * sites.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const requestingAll = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -290,9 +290,9 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -317,9 +317,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const deleting = keyedReducer(
 	'siteId',
@@ -340,9 +340,9 @@ export const deleting = keyedReducer(
 /**
  * Tracks whether all sites have been fetched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const hasAllSitesList = withSchemaValidation(
 	hasAllSitesListSchema,
