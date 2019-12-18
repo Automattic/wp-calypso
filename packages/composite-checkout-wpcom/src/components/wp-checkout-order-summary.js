@@ -127,5 +127,8 @@ function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {
 
 function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
 	setIsCouponFieldVisible( true );
-	onEvent( { type: 'ADD_COUPON_BUTTON_CLICKED', payload: { location: 'order-summary' } } );
+	onEvent( {
+		type: 'a8c_checkout_add_coupon_button_clicked',
+		payload: { location: 'order-summary', client_id: 'WordPress.com' },
+	} );
 }

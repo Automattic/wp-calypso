@@ -119,7 +119,10 @@ function handleFormSubmit(
 	//TODO: Validate coupon field and replace condition in the following if statement
 	if ( couponFieldValue === 'Add' ) {
 		setIsCouponApplied( true );
-		onEvent( { type: 'calypso_checkout_add_coupon', payload: { coupon: couponFieldValue } } );
+		onEvent( {
+			type: 'a8c_checkout_add_coupon',
+			payload: { coupon: couponFieldValue, client_id: 'WordPress.com' },
+		} );
 
 		if ( couponAdded ) {
 			couponAdded();
@@ -128,6 +131,9 @@ function handleFormSubmit(
 		return;
 	}
 
-	onEvent( { type: 'calypso_checkout_add_coupon_error', payload: { type: 'Invalid code' } } );
+	onEvent( {
+		type: 'a8c_checkout_add_coupon_error',
+		payload: { type: 'Invalid code', client_id: 'WordPress.com' },
+	} );
 	setHasCouponError( true );
 }
