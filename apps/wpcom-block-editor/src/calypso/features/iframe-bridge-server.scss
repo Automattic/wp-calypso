@@ -31,7 +31,3 @@ body.is-fullscreen-mode {
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
 }
-
-.has-text-align-justify {
-	text-align: justify;
-}

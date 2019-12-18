@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-import './features/tinymce';
+import './view.scss';

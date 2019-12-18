@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global wpcomGutenberg */
 
 /**
@@ -6,7 +7,7 @@
 import $ from 'jquery';
 
 function addSwitchToClassicButton() {
-	if ( ! wpcomGutenberg.switchToClassic.isVisible ) {
+	if ( ! wpcomGutenberg?.switchToClassic?.isVisible ) {
 		return;
 	}
 
@@ -15,10 +16,10 @@ function addSwitchToClassicButton() {
 		setTimeout( () => {
 			//role may be 'menu' or 'group', depending on the Gutenberg version
 			$( '.edit-post-more-menu__content .components-menu-group:last-child > div[role]' ).append( `
-					<a 
-						href="${ wpcomGutenberg.switchToClassic.url }" target="_top" role="menuitem" 
+					<a
+						href="${ wpcomGutenberg.switchToClassic.url }" target="_top" role="menuitem"
 						aria-label="${ wpcomGutenberg.switchToClassic.label }"
-						class="components-button components-menu-item__button" 
+						class="components-button components-menu-item__button"
 					>
 						${ wpcomGutenberg.switchToClassic.label }
 					</a>
