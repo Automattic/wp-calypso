@@ -16,7 +16,7 @@ export const getState = ( state: State ) => state;
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 export const getDomainSuggestions = (
-	state: State,
+	_state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
@@ -27,7 +27,7 @@ export const getDomainSuggestions = (
 };
 
 export const isLoadingDomainSuggestions = (
-	state: State,
+	_state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
