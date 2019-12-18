@@ -12,7 +12,7 @@ import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import FontPairingsPanel from './font-pairings-panel';
 import FontSelectionPanel from './font-selection-panel';
 import { GlobalStylesIcon } from './icon';
-import { FONT_BASE, FONT_HEADINGS, LINE_HEIGHT_BASE, LINE_HEIGHT_HEADINGS } from './constants';
+import { FONT_BASE, FONT_HEADINGS, LINE_HEIGHT_BODY, LINE_HEIGHT_HEADING } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
 
@@ -119,9 +119,9 @@ export default ( {
 						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
 						lineHeightBase={ lineHeightBase }
 						lineHeightHeadings={ lineHeightHeadings }
-						updateBaseLineHeight={ value => updateOptions( { [ LINE_HEIGHT_BASE ]: value } ) }
+						updateBaseLineHeight={ value => updateOptions( { [ LINE_HEIGHT_BODY ]: value } ) }
 						updateHeadingsLineHeight={ value =>
-							updateOptions( { [ LINE_HEIGHT_HEADINGS ]: value } )
+							updateOptions( { [ LINE_HEIGHT_HEADING ]: value } )
 						}
 					/>
 					<FontPairingsPanel

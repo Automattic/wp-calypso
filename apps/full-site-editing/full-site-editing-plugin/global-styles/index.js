@@ -19,8 +19,8 @@ import {
 	FONT_PAIRINGS,
 	FONT_OPTIONS,
 	SITE_NAME,
-	LINE_HEIGHT_BASE,
-	LINE_HEIGHT_HEADINGS,
+	LINE_HEIGHT_BODY,
+	LINE_HEIGHT_HEADING,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -30,7 +30,7 @@ import './editor.scss';
 const { PLUGIN_NAME, STORE_NAME, REST_PATH } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
 registerStore( STORE_NAME, REST_PATH );
-registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], select( STORE_NAME ).getOption );
+registerDOMUpdater( [ LINE_HEIGHT_BODY, LINE_HEIGHT_HEADING, FONT_BASE, FONT_HEADINGS ], select( STORE_NAME ).getOption );
 
 registerPlugin( PLUGIN_NAME, {
 	render: compose(
@@ -43,8 +43,8 @@ registerPlugin( PLUGIN_NAME, {
 			fontPairings: getSelectors( STORE_NAME ).getOption( FONT_PAIRINGS ),
 			fontOptions: getSelectors( STORE_NAME ).getOption( FONT_OPTIONS ),
 			hasLocalChanges: getSelectors( STORE_NAME ).hasLocalChanges(),
-			lineHeightBase: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_BASE ),
-			lineHeightHeadings: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_HEADINGS ),
+			lineHeightBase: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_BODY ),
+			lineHeightHeadings: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_HEADING ),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,
