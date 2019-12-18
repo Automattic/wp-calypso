@@ -32,5 +32,17 @@
 		"clean": "npx rimraf dist types",
 		"prepublish": "npm run clean",
 		"prepare": "transpile && tsc"
+	},
+	"dependencies": {
+		"@types/fast-json-stable-stringify": "^2.0.0",
+		"@types/redux": "^3.6.0",
+		"@types/wordpress__data": "^4.6.5",
+		"@types/wordpress__data-controls": "^1.0.1",
+		"@types/wordpress__url": "^2.3.0",
+		"@wordpress/data": "^4.10.0",
+		"@wordpress/data-controls": "^1.4.0",
+		"@wordpress/url": "^2.8.2",
+		"fast-json-stable-stringify": "^2.1.0",
+		"redux": "^4.0.4"
 	}
 }
