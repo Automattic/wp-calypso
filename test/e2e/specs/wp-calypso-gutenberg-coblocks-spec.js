@@ -174,7 +174,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can select an image as a logo', async function() {
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.editor-media-placeholder' )
+				By.css( '.block-editor-media-placeholder' )
 			);
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
