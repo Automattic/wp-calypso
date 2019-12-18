@@ -76,6 +76,8 @@ export default ( {
 		publishOptions( {
 			[ FONT_BASE ]: fontBase,
 			[ FONT_HEADINGS ]: fontHeadings,
+			[ LINE_HEIGHT_BODY ]: lineHeightBase,
+			[ LINE_HEIGHT_HEADING ]: lineHeightHeadings,
 		} );
 	return (
 		<>

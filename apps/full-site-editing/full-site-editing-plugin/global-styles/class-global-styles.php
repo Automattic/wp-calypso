@@ -78,7 +78,7 @@ class Global_Styles {
 	 */
 	private $plugin_name = 'jetpack-global-styles';
 
-	const VERSION = '1909241817';
+	const VERSION = '1912181304';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
 	const AVAILABLE_FONTS = [
@@ -196,12 +196,16 @@ class Global_Styles {
 					],
 				],
 				'line_height_body' => [
-					'type'    => 'literal',
-					'default' => 1.78
+					'type'      => 'option',
+					'name'      => ['jetpack_global_styles', 'line_height_body'],
+					'default'   => 1.78,
+					'updatable' => true,
 				],
 				'line_height_heading' => [
-					'type' => 'literal',
-					'default' => 1.125,
+					'type'      => 'option',
+					'name'      => ['jetpack_global_styles', 'line_height_heading'],
+					'default'   => 1.125,
+					'updatable' => true,
 				]
 			]
 		);
@@ -430,7 +434,14 @@ class Global_Styles {
 		 */
 		$result = $result . ':root {';
 		$value  = '';
-		$keys   = [ 'font_headings', 'font_base', 'font_headings_default', 'font_base_default' ];
+		$keys   = [
+			'font_headings',
+			'font_base',
+			'font_headings_default',
+			'font_base_default',
+			'line_height_body',
+			'line_height_heading'
+		];
 		foreach ( $keys as $key ) {
 			$value  = $data[ $key ];
 			$result = $result . ' --' . str_replace( '_', '-', $key ) . ': ' . $value . ';';
@@ -512,6 +523,12 @@ class Global_Styles {
 				array_key_exists( $key, $incoming_data ) &&
 				in_array( $incoming_data[ $key ], $font_values, true )
 			) {
+				$result[ $key ] = $incoming_data[ $key ];
+			}
+		}
+
+		foreach( [ 'line_height_body', 'line_height_heading'] as $key ) {
+			if( is_numeric( $incoming_data[ $key ] ) ) {
 				$result[ $key ] = $incoming_data[ $key ];
 			}
 		}
