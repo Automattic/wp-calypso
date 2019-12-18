@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 
@@ -18,16 +13,8 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
  */
 /* eslint-disable */
 export default function isSiteMigrationInProgress( state, siteId ) {
-	const site = getRawSite( state, siteId );
+	const migrationStatus = getSiteMigrationStatus( state, siteId );
 
-	if ( null === site ) {
-		return false;
-	}
-
-	return (
-		site &&
-		site.migration_status &&
-		includes( [ 'backing-up', 'restoring' ], site.migration_status )
-	);
+	return migrationStatus !== 'inactive';
 }
 /* eslint-enable */
