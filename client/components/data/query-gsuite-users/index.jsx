@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,21 +11,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
+const request = siteId => ( dispatch, getState ) => {
+	const isRequesting = isRequestingGSuiteUsers( getState(), siteId );
+	if ( ! isRequesting ) {
+		dispatch( getGSuiteUsers( siteId ) );
+	}
+};
+
 const QueryGSuiteUsers = ( { siteId } ) => {
 	const dispatch = useDispatch();
-	const isRequesting = useSelector( state => isRequestingGSuiteUsers( state, siteId ) );
-	const prevIsRequesting = useRef( isRequesting );
 
 	useEffect( () => {
-		if ( ! ( isRequesting || prevIsRequesting.current ) ) {
-			dispatch( getGSuiteUsers( siteId ) );
-		}
-		return () => {
-			if ( isRequesting ) {
-				prevIsRequesting.current = true;
-			}
-		};
-	} );
+		dispatch( request( siteId ) );
+	}, [ siteId, dispatch ] );
 
 	return null;
 };
