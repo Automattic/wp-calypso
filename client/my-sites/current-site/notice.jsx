@@ -43,6 +43,7 @@ import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { CTA_FREE_TO_PAID } from './constants';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -291,8 +292,8 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site } = this.props;
-		if ( ! site ) {
+		const { site, isMigrationInProgress } = this.props;
+		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
 
@@ -334,6 +335,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
+			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
 		};
 	},
 	dispatch => {
