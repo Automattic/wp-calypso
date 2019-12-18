@@ -10,6 +10,6 @@ dispatch( 'core/nux' ).disableTips();
 subscribe( () => {
 	if ( select( 'core/nux' ).areTipsEnabled() ) {
 		dispatch( 'core/nux' ).disableTips();
-		dispatch( 'automattic/nux' ).setWpcomNuxStatus( true );
+		dispatch( 'automattic/nux' ).setWpcomNuxStatus( { isNuxEnabled: true } );
 	}
 } );

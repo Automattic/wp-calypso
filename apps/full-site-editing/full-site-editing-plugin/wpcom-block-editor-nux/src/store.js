@@ -11,7 +11,7 @@ const reducer = ( state = {}, { type, isNuxEnabled } ) =>
 	'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS' === type ? { ...state, isNuxEnabled } : state;
 
 const actions = {
-	setWpcomNuxStatus: ( isNuxEnabled, bypassApi ) => {
+	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
 		if ( ! bypassApi ) {
 			apiFetch( {
 				path: 'fse/v1/wpcom-block-editor/nux',

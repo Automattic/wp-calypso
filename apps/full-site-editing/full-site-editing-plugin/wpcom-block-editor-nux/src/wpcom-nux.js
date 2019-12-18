@@ -12,9 +12,9 @@ import { registerPlugin } from '@wordpress/plugins';
 
 function WpcomNux() {
 	const isWpcomNuxEnabled = useSelect( select => select( 'automattic/nux' ).isWpcomNuxEnabled() );
-
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
+	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
 	useEffect( () => {
 		if ( typeof isWpcomNuxEnabled !== 'undefined' ) {
 			return;
@@ -23,7 +23,7 @@ function WpcomNux() {
 			const response = await apiFetch( {
 				path: 'fse/v1/wpcom-block-editor/nux',
 			} );
-			setWpcomNuxStatus( response.is_nux_enabled, true );
+			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
 		};
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
@@ -32,7 +32,7 @@ function WpcomNux() {
 		return null;
 	}
 
-	const dismissWpcomNux = () => setWpcomNuxStatus( false );
+	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	return (
 		<Guide
