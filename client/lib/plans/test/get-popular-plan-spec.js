@@ -37,23 +37,49 @@ describe( 'getPopularPlanSpec()', () => {
 	} );
 
 	describe( 'showBusinessPlanPopular A/B test === variantShowBizPopular', () => {
-		test( 'Should return biz for personal customer type when in signup flow', () => {
+		test( 'Should return biz for personal customer type in signup flow for user not in USA', () => {
 			expect(
 				getPopularPlanSpec( {
 					customerType: 'personal',
 					isInSignup: true,
 					isLaunchPage: false,
+					countryCode: 'DE',
 					abtest,
 				} )
 			).toEqual( { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 		} );
 
-		test( 'Should return premium for personal customer type when in launch flow', () => {
+		test( 'Should return premium for personal customer type in signup flow for user in USA', () => {
+			expect(
+				getPopularPlanSpec( {
+					customerType: 'personal',
+					isInSignup: true,
+					isLaunchPage: false,
+					countryCode: 'US',
+					abtest,
+				} )
+			).toEqual( { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+		} );
+
+		test( 'Should return premium for personal customer type in signup flow for country code null', () => {
+			expect(
+				getPopularPlanSpec( {
+					customerType: 'personal',
+					isInSignup: true,
+					isLaunchPage: false,
+					countryCode: null,
+					abtest,
+				} )
+			).toEqual( { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+		} );
+
+		test( 'Should return premium for personal customer type in launch flow', () => {
 			expect(
 				getPopularPlanSpec( {
 					customerType: 'personal',
 					isInSignup: true,
 					isLaunchPage: true,
+					countryCode: 'DE',
 					abtest,
 				} )
 			).toEqual( { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
@@ -71,12 +97,13 @@ describe( 'getPopularPlanSpec()', () => {
 	} );
 
 	describe( 'showBusinessPlanPopular A/B test === control', () => {
-		test( 'Should return premium for personal customer type when in signup flow', () => {
+		test( 'Should return premium for personal customer type when in signup flow for user not in USA', () => {
 			expect(
 				getPopularPlanSpec( {
 					customerType: 'personal',
 					isInSignup: true,
 					isLaunchPage: false,
+					countryCode: 'DE',
 					abtest: () => 'control',
 				} )
 			).toEqual( { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
