@@ -12,18 +12,17 @@ import { getGSuiteUsers } from 'state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
 const request = siteId => ( dispatch, getState ) => {
-	const isRequesting = isRequestingGSuiteUsers( getState(), siteId );
-	if ( ! isRequesting ) {
+	if ( ! isRequestingGSuiteUsers( getState(), siteId ) ) {
 		dispatch( getGSuiteUsers( siteId ) );
 	}
 };
 
-const QueryGSuiteUsers = ( { siteId } ) => {
+export default function QueryGSuiteUsers( { siteId } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
 		dispatch( request( siteId ) );
-	}, [ siteId, dispatch ] );
+	}, [ dispatch, siteId ] );
 
 	return null;
 };
@@ -31,5 +30,3 @@ const QueryGSuiteUsers = ( { siteId } ) => {
 QueryGSuiteUsers.propTypes = {
 	siteId: PropTypes.number.isRequired,
 };
-
-export default QueryGSuiteUsers;
