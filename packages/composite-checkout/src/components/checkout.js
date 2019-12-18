@@ -62,7 +62,7 @@ function useRegisterCheckoutStore() {
 		},
 		controls: {
 			STEP_NUMBER_CHANGE_EVENT( action ) {
-				onEvent && onEvent( action );
+				onEvent( action );
 				saveStepNumberToUrl( action.payload );
 			},
 		},
