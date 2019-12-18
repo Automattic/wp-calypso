@@ -2,19 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-
-interface Moment {
-	diff: ( date: Date ) => number;
-	format: ( dateFormat: string ) => string;
-	isValid: () => boolean;
-}
+import { translate as translateType } from 'i18n-calypso/types';
+import { Moment } from 'moment';
 
 interface Props {
 	dateFormat: string;
 	expiryDateMoment: Moment;
 	isRefundable: boolean;
 	purchaseDateMoment: Moment;
-	translate: ( arg0: string, arg1: object ) => string;
+	translate: typeof translateType;
 }
 
 class ProductExpiration extends React.PureComponent< Props > {
