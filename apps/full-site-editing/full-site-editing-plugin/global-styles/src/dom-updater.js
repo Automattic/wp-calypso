@@ -16,7 +16,7 @@ export default ( options, getOptionValue ) => {
 		const cssVariables = {};
 		options.forEach( option => {
 			current[ option ] = null;
-			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
+			cssVariables[ option ] = `--${ option.replace( /_/g, '-' ) }`;
 		} );
 
 		subscribe( () => {
