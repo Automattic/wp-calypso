@@ -201,7 +201,7 @@ class Global_Styles {
 				],
 				'line_height_heading' => [
 					'type' => 'literal',
-					'default' => 1.25,
+					'default' => 1.125,
 				]
 			]
 		);
