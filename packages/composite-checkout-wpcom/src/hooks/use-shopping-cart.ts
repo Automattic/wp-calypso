@@ -34,6 +34,7 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *     * removeItem: callback for removing an item from the cart
  */
 export interface ShoppingCartManager {
+	isLoading: boolean;
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
 	total: CheckoutCartTotal;
@@ -197,6 +198,7 @@ export function useShoppingCart(
 	};
 
 	return {
+		isLoading: cacheStatus === 'fresh',
 		items: cart.items,
 		tax: cart.tax,
 		total: cart.total,

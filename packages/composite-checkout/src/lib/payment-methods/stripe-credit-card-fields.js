@@ -43,6 +43,7 @@ import { SummaryLine, SummaryDetails } from '../styled-components/summary-detail
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
+import { useFormStatus } from '../form-status';
 
 export function createStripeMethod( {
 	getSiteId,
@@ -617,6 +618,7 @@ function StripePayButton( { disabled } ) {
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const [ formStatus, setFormStatus ] = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -649,10 +651,10 @@ function StripePayButton( { disabled } ) {
 		localize,
 	] );
 
-	const buttonString = sprintf(
-		localize( 'Pay %s' ),
-		renderDisplayValueMarkdown( total.amount.displayValue )
-	);
+	const buttonString =
+		formStatus === 'submitting'
+			? localize( 'Processing...' )
+			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
@@ -667,6 +669,7 @@ function StripePayButton( { disabled } ) {
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
+					setFormStatus,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -701,8 +704,10 @@ async function submitStripePayment( {
 	successUrl,
 	cancelUrl,
 	beginStripeTransaction,
+	setFormStatus,
 } ) {
 	try {
+		setFormStatus( 'submitting' );
 		beginStripeTransaction( {
 			stripe,
 			name,
@@ -713,6 +718,7 @@ async function submitStripePayment( {
 			cancelUrl,
 		} );
 	} catch ( error ) {
+		setFormStatus( 'ready' );
 		showErrorMessage( error );
 		return;
 	}

@@ -14,7 +14,6 @@ import {
 	createStripeMethod,
 	createPayPalMethod,
 	createApplePayMethod,
-	createCreditCardMethod,
 	useIsStepActive,
 	usePaymentData,
 	getDefaultPaymentMethodStep,
@@ -74,8 +73,8 @@ async function sendStripeTransaction( data ) {
 	};
 }
 
-async function makePayPalExpressRequest() {
-	// return this.wpcom.req.post( '/me/paypal-express-url', data );
+async function makePayPalExpressRequest( data ) {
+	window.console.log( 'Processing paypal transaction with data', data );
 	return window.location.href;
 }
 
@@ -93,8 +92,6 @@ const stripeMethod = createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } );
-
-const creditCardMethod = createCreditCardMethod();
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
@@ -295,6 +292,12 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 
+	// This simulates loading the data
+	const [ isLoading, setIsLoading ] = useState( true );
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 1500 );
+	}, [] );
+
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
@@ -308,9 +311,8 @@ function MyCheckout() {
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
-			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
-				Boolean
-			) }
+			isLoading={ isLoading }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
 			<Checkout steps={ steps } />
 		</CheckoutProvider>

@@ -14,6 +14,7 @@ import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
+import { useFormStatusManager } from '../lib/form-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -39,11 +40,14 @@ export const CheckoutProvider = props => {
 		paymentMethods,
 		registry,
 		onEvent,
+		isLoading,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
+
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
@@ -65,7 +69,9 @@ export const CheckoutProvider = props => {
 		showSuccessMessage,
 		successRedirectUrl,
 		failureRedirectUrl,
-		onEvent,
+		onEvent: onEvent || ( () => {} ),
+		formStatus,
+		setFormStatus,
 	};
 
 	// This error message cannot be translated because translation hasn't loaded yet.
@@ -105,6 +111,7 @@ CheckoutProvider.propTypes = {
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
 	onEvent: PropTypes.func,
+	isLoading: PropTypes.bool,
 };
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {

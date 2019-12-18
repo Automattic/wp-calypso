@@ -42,18 +42,21 @@ export function CompositeCheckout( {
 	showInfoMessage,
 	showSuccessMessage,
 } ) {
-	const { items, tax, total, removeItem, addItem, changePlanLength, errors } = useShoppingCart(
-		siteSlug,
-		setCart,
-		getCart
-	);
+	const {
+		items,
+		tax,
+		total,
+		removeItem,
+		addItem,
+		changePlanLength,
+		errors,
+		isLoading,
+	} = useShoppingCart( siteSlug, setCart, getCart );
 	const { registerStore } = registry;
 	useWpcomStore( registerStore );
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, showErrorMessage );
-
-	// TODO: record stats
 
 	useAddProductToCart( planSlug, isJetpackNotAtomic, addItem );
 
@@ -74,6 +77,7 @@ export function CompositeCheckout( {
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
+			isLoading={ isLoading }
 		>
 			<WPCheckout
 				removeItem={ removeItem }

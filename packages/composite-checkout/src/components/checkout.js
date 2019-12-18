@@ -14,6 +14,7 @@ import { useLocalize, sprintf } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
+import LoadingContent from './loading-content';
 import {
 	usePrimarySelect,
 	usePrimaryDispatch,
@@ -31,6 +32,7 @@ import {
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
 import { useEvents } from './checkout-provider';
+import { useFormStatus } from '../lib/form-status';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -60,7 +62,7 @@ function useRegisterCheckoutStore() {
 		},
 		controls: {
 			STEP_NUMBER_CHANGE_EVENT( action ) {
-				onEvent && onEvent( action );
+				onEvent( action );
 				saveStepNumberToUrl( action.payload );
 			},
 		},
@@ -80,6 +82,7 @@ export default function Checkout( { steps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
+	const [ formStatus ] = useFormStatus();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -128,7 +131,21 @@ export default function Checkout( { steps, className } ) {
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
-	const isCheckoutInProgress = isThereAnIncompleteStep || isThereAnotherNumberedStep;
+	const isCheckoutInProgress =
+		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
+
+	if ( formStatus === 'loading' ) {
+		return (
+			<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+				<MainContent
+					className={ joinClasses( [ className, 'checkout__content' ] ) }
+					isCheckoutInProgress={ isCheckoutInProgress }
+				>
+					<LoadingContent />
+				</MainContent>
+			</Container>
+		);
+	}
 
 	return (
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
