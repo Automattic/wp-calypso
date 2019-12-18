@@ -10,22 +10,6 @@ import { determineUrlType, URL_TYPE } from './url-type';
 
 const BASE_URL = `http://__domain__.invalid`;
 
-type UrlPartKey = keyof URL;
-
-const URL_PART_KEYS: UrlPartKey[] = [
-	'protocol',
-	'host',
-	'hostname',
-	'port',
-	'origin',
-	'pathname',
-	'hash',
-	'search',
-	'searchParams',
-	'username',
-	'password',
-];
-
 interface UrlParts {
 	protocol: string;
 	host: string;
@@ -40,20 +24,35 @@ interface UrlParts {
 	password: string;
 }
 
+type UrlPartKey = keyof UrlParts;
+
+const EMPTY_URL: Readonly< UrlParts > = Object.freeze( {
+	protocol: '',
+	host: '',
+	hostname: '',
+	port: '',
+	origin: '',
+	pathname: '',
+	hash: '',
+	search: '',
+	searchParams: new URLSearchParams(),
+	username: '',
+	password: '',
+} );
+
+const URL_PART_KEYS = Object.keys( EMPTY_URL ) as UrlPartKey[];
+
 function pickUrlParts(
 	parsedUrl: URL | undefined,
 	include: UrlPartKey[] = URL_PART_KEYS
 ): UrlParts {
-	const result = URL_PART_KEYS.reduce(
-		( parts, part ) => ( {
-			...parts,
-			[ part ]: include.includes( part ) ? parsedUrl?.[ part ] ?? '' : '',
-		} ),
-		{} as UrlParts
-	);
-	result.searchParams = result.searchParams || new URLSearchParams();
+	const pickedUrl = { ...EMPTY_URL };
 
-	return result;
+	include.forEach( < T extends UrlPartKey >( name: T ) => {
+		pickedUrl[ name ] = parsedUrl?.[ name ] ?? EMPTY_URL[ name ];
+	} );
+
+	return pickedUrl;
 }
 
 /**
