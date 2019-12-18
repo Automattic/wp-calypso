@@ -385,4 +385,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			}
 		}
 	}
+
+	async dismissEditorWelcomeModal() {
+		if (
+			await driverHelper.isElementPresent( this.driver, By.css( '.edit-post-welcome-guide' ) )
+		) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.edit-post-welcome-guide .components-modal__header .components-button' )
+			);
+		}
+	}
 }
