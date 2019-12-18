@@ -792,7 +792,7 @@ workflows:
           name: test-e2e-jetpack
           requires:
             - setup
-          test-flags: '-j'
+          test-flags: '-j -s desktop'
           jetpack-host: 'PRESSABLEBLEEDINGEDGE'
           test-target: 'JETPACK'
           slack-webhook: '$SLACK_JP'
