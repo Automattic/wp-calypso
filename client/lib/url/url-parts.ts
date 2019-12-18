@@ -67,7 +67,7 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 
 	// Invalid URL; return empty URL parts.
 	if ( urlType === URL_TYPE.INVALID ) {
-		return pickUrlParts( undefined, [] );
+		return { ...EMPTY_URL };
 	}
 
 	const parsed = url instanceof URL ? url : new URL( url, BASE_URL );
