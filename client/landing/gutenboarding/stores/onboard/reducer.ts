@@ -8,7 +8,7 @@ import { combineReducers } from '@wordpress/data';
  * Internal dependencies
  */
 import { ActionType, SiteVertical } from './types';
-import { DomainSuggestion } from '../domain-suggestions/types';
+import { DomainSuggestion } from '@automattic/calypso-data-stores/domain-suggestions/types';
 import * as Actions from './actions';
 
 const domain: Reducer<

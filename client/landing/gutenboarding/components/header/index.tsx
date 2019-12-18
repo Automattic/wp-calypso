@@ -10,7 +10,7 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
+import { STORE_KEY as DOMAIN_STORE } from '@automattic/calypso-data-stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
