@@ -23,7 +23,7 @@ function WpcomNux() {
 			const response = await apiFetch( {
 				path: 'fse/v1/wpcom-block-editor/nux',
 			} );
-			setWpcomNuxStatus( response.is_nux_enabled );
+			setWpcomNuxStatus( response.is_nux_enabled, true );
 		};
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
@@ -32,14 +32,7 @@ function WpcomNux() {
 		return null;
 	}
 
-	const dismissWpcomNux = () => {
-		setWpcomNuxStatus( false );
-		apiFetch( {
-			path: 'fse/v1/wpcom-block-editor/nux',
-			method: 'POST',
-			data: { isNuxEnabled: false },
-		} );
-	};
+	const dismissWpcomNux = () => setWpcomNuxStatus( false );
 
 	return (
 		<Guide
