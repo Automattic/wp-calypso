@@ -4,7 +4,6 @@
 
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 
-/* eslint-disable */
 /**
  * Returns true if the site is the target of an active migration
  *
@@ -12,6 +11,7 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site is the target of an active migration
  */
+/* eslint-disable */
 export default function isSiteMigrationInProgress( state, siteId ) {
 	const migrationStatus = getSiteMigrationStatus( state, siteId );
 
