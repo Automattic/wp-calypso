@@ -60,9 +60,9 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 		reducer( state = {}, action ) {
 			switch ( action.type ) {
 				case 'PAYPAL_TRANSACTION_BEGIN':
-					return { ...state, paypalStatus: 'submitting', paypalExpressUrl: action.payload };
+					return { ...state, paypalStatus: 'submitting' };
 				case 'PAYPAL_TRANSACTION_END':
-					return { ...state, paypalStatus: 'complete', paypalExpressUrl: action.payload };
+					return { ...state, paypalStatus: 'redirecting', paypalExpressUrl: action.payload };
 				case 'PAYPAL_TRANSACTION_ERROR':
 					return { ...state, paypalStatus: 'error', paypalError: action.payload };
 			}
@@ -144,8 +144,8 @@ function useTransactionStatusHandler() {
 	const [ , setFormStatus ] = useFormStatus();
 
 	useEffect( () => {
-		if ( transactionStatus === 'complete' ) {
-			setFormStatus( 'provisioning' );
+		if ( transactionStatus === 'redirecting' ) {
+			// TODO: redirect to url
 			return;
 		}
 		if ( transactionStatus === 'error' ) {

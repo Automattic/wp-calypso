@@ -90,7 +90,7 @@ export function ApplePaySubmitButton( { disabled } ) {
 	const [ , setFormStatus ] = useFormStatus();
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,
-		onSubmit: () => setFormStatus( 'provisioning' ),
+		onSubmit: () => setFormStatus( 'complete' ),
 	} );
 
 	if ( ! canMakePayment ) {

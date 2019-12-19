@@ -627,7 +627,7 @@ function StripePayButton( { disabled } ) {
 			setFormStatus( 'ready' );
 		}
 		if ( transactionStatus === 'complete' ) {
-			setFormStatus( 'provisioning' );
+			setFormStatus( 'complete' );
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -637,6 +637,7 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
+				setFormStatus( 'ready' );
 				showErrorMessage( error.stripeError || error.message );
 			} );
 		}

@@ -110,7 +110,7 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
-When the `submitButton` component has been clicked, it should use `setFormStatus` (see [useFormStatus](#useFormStatus)) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'provisioning', which will cause [Checkout](#Checkout) to render its `provisioningContent`.
+When the `submitButton` component has been clicked, it should use `setFormStatus` (see [useFormStatus](#useFormStatus)) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'complete', which will cause [Checkout](#Checkout) to call `onPaymentComplete` (see [CheckoutProvider](#CheckoutProvider)).
 
 ## Line Items
 
@@ -141,9 +141,6 @@ While the `Checkout` component takes care of most everything, there are many sit
 The main component in this package. It has the following props.
 
 - `steps: array`. See the [Steps](#steps) section above for more details.
-- `provisioningContent: React.ReactNode`. The component to display after the payment method is complete.
-
-The provisioningContent component should display a "pending" message and poll for full payment completion. When the provisioning is complete, it should use `setFormStatus` (see [useFormStatus](#useFormStatus)) to change the status to 'complete', which will cause `onPaymentComplete` to be called.
 
 ### CheckoutNextStepButton
 
@@ -284,7 +281,7 @@ A React Hook that will return the `onEvent` callback as passed to `CheckoutProvi
 
 ### useFormStatus
 
-A React Hook that will return a two-element array where the first element is the `formStatus` (one of 'loading', 'ready', 'submitting', 'provisioning', or 'complete') and the second element is `setFormStatus` which can be used to change the status. Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that will return a two-element array where the first element is the `formStatus` (one of 'loading', 'ready', 'submitting', or 'complete') and the second element is `setFormStatus` which can be used to change the status. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useIsStepActive
 

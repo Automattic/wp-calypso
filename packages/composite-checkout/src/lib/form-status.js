@@ -54,7 +54,7 @@ function formStatusReducer( state, action ) {
 }
 
 function validateStatus( status ) {
-	const validStatuses = [ 'loading', 'ready', 'submitting', 'provisioning', 'complete' ];
+	const validStatuses = [ 'loading', 'ready', 'submitting', 'complete' ];
 	if ( ! validStatuses.includes( status ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}

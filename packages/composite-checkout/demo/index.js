@@ -17,7 +17,6 @@ import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	useFormStatus,
 	useIsStepActive,
 	usePaymentData,
 } from '../src/public-api';
@@ -61,6 +60,8 @@ const showSuccessMessage = message => {
 };
 
 async function fetchStripeConfiguration() {
+	// This simulates the network request time
+	await asyncTimeout( 2000 );
 	return {
 		public_key: stripeKey,
 		js_url: 'https://js.stripe.com/v3/',
@@ -69,6 +70,8 @@ async function fetchStripeConfiguration() {
 
 async function sendStripeTransaction( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return {
 		success: true,
 	};
@@ -76,6 +79,8 @@ async function sendStripeTransaction( data ) {
 
 async function makePayPalExpressRequest( data ) {
 	window.console.log( 'Processing paypal transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return window.location.href;
 }
 
@@ -246,17 +251,6 @@ function AdditionalFields() {
 	);
 }
 
-function ProvisioningContent() {
-	const [ , setFormStatus ] = useFormStatus();
-	// This simulates provisioning
-	useEffect( () => {
-		setTimeout( () => {
-			setFormStatus( 'complete' );
-		}, 1500 );
-	}, [ setFormStatus ] );
-	return <div>Please wait...</div>;
-}
-
 const steps = [
 	getDefaultOrderSummaryStep(),
 	{
@@ -310,8 +304,6 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [] );
 
-	const provisioningContent = <ProvisioningContent />;
-
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
@@ -328,7 +320,7 @@ function MyCheckout() {
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
-			<Checkout steps={ steps } provisioningContent={ provisioningContent } />
+			<Checkout steps={ steps } />
 		</CheckoutProvider>
 	);
 }
@@ -339,6 +331,11 @@ function formatValueForCurrency( currency, value ) {
 	}
 	const floatValue = value / 100;
 	return '$' + floatValue.toString();
+}
+
+// Simulate network request time
+async function asyncTimeout( timeout ) {
+	return new Promise( resolve => setTimeout( resolve, timeout ) );
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );
