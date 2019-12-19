@@ -35,7 +35,7 @@ export class ProductExpiration extends React.PureComponent< Props > {
 		// Return the subscription date if we don't have the expiry date or the plan is refundable.
 		if ( ! expiryDateMoment || isRefundable ) {
 			if ( purchaseDateMoment && purchaseDateMoment.isValid() ) {
-				return translate( 'Purchased on %s.', { args: purchaseDateMoment.format( dateFormat ) } );
+				return translate( 'Purchased on %s', { args: purchaseDateMoment.format( dateFormat ) } );
 			}
 			return null;
 		}
@@ -47,11 +47,11 @@ export class ProductExpiration extends React.PureComponent< Props > {
 
 		// If the expiry date is in the past, show the expiration date.
 		if ( expiryDateMoment.diff( new Date() ) < 0 ) {
-			return translate( 'Expired on %s.', { args: expiryDateMoment.format( dateFormat ) } );
+			return translate( 'Expired on %s', { args: expiryDateMoment.format( dateFormat ) } );
 		}
 
 		// Lastly, return the renewal date.
-		return translate( 'Renews on %s.', { args: expiryDateMoment.format( dateFormat ) } );
+		return translate( 'Renews on %s', { args: expiryDateMoment.format( dateFormat ) } );
 	}
 }
 
