@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
 	createRegistry,
 	createPayPalMethod,
@@ -210,26 +210,30 @@ export default function CompositeCheckoutContainer( {
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
 
-	const onPaymentComplete = () => {
-		debug( 'success' );
+	const onPaymentComplete = useCallback( () => {
+		debug( 'payment completed successfully' );
+		// TODO: redirect to the pending page
 		notices.success( translate( 'Your purchase was successful!' ) );
-	};
+	}, [ translate ] );
 
-	const showErrorMessage = error => {
-		debug( 'error', error );
-		const message = error && error.toString ? error.toString() : error;
-		notices.error( message || translate( 'An error occurred during your purchase.' ) );
-	};
+	const showErrorMessage = useCallback(
+		error => {
+			debug( 'error', error );
+			const message = error && error.toString ? error.toString() : error;
+			notices.error( message || translate( 'An error occurred during your purchase.' ) );
+		},
+		[ translate ]
+	);
 
-	const showInfoMessage = message => {
+	const showInfoMessage = useCallback( message => {
 		debug( 'info', message );
 		notices.info( message );
-	};
+	}, [] );
 
-	const showSuccessMessage = message => {
+	const showSuccessMessage = useCallback( message => {
 		debug( 'success', message );
 		notices.success( message );
-	};
+	}, [] );
 
 	return (
 		<CompositeCheckout
