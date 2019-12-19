@@ -6,18 +6,16 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { Moment } from 'moment';
 
 interface Props extends LocalizeProps {
-	dateFormat: string;
+	dateFormat?: string;
 	expiryDateMoment: Moment;
-	isRefundable: boolean;
-	purchaseDateMoment: Moment;
+	isRefundable?: boolean;
+	purchaseDateMoment?: Moment;
 }
 
 export class ProductExpiration extends React.PureComponent< Props > {
 	static defaultProps = {
 		dateFormat: 'LL',
-		expiryDateMoment: null,
 		isRefundable: false,
-		purchaseDateMoment: null,
 	};
 
 	render() {
@@ -36,7 +34,7 @@ export class ProductExpiration extends React.PureComponent< Props > {
 
 		// Return the subscription date if we don't have the expiry date or the plan is refundable.
 		if ( ! expiryDateMoment || isRefundable ) {
-			if ( purchaseDateMoment.isValid() ) {
+			if ( purchaseDateMoment && purchaseDateMoment.isValid() ) {
 				return translate( 'Purchased on %s.', { args: purchaseDateMoment.format( dateFormat ) } );
 			}
 			return null;
