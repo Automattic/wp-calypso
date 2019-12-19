@@ -25,8 +25,8 @@ export const WarningList = ( { translate, warnings }: Props ) => (
 			<div className="eligibility-warnings__message">
 				<span className="eligibility-warnings__message-description">
 					{ translate(
-						"This feature isn't (yet) compatible with Plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with Plugin uploads and will be disabled:",
+						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
+						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
 						{
 							count: warnings.length,
 							args: warnings.length,
