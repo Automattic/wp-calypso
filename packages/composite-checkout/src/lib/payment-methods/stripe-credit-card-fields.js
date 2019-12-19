@@ -27,7 +27,7 @@ import {
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
-import useLocalize, { sprintf } from '../localize';
+import { sprintf, useLocalize } from '../localize';
 import {
 	VisaLogo,
 	AmexLogo,
