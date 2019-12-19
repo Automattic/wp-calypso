@@ -3,9 +3,7 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { plugins, registerStore, use } from '@wordpress/data';
-
-use( plugins.persistence, {} );
+import { registerStore } from '@wordpress/data';
 
 const reducer = ( state = {}, { type, isNuxEnabled } ) =>
 	'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS' === type ? { ...state, isNuxEnabled } : state;

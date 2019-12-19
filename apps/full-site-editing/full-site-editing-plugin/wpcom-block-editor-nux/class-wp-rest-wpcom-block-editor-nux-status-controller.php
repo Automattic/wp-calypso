@@ -73,11 +73,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
-		return rest_ensure_response(
-			array(
-				'is_nux_enabled' => $this->is_nux_enabled( $nux_status ),
-			)
-		);
+		return rest_ensure_response( array( 'is_nux_enabled' => $this->is_nux_enabled( $nux_status ) ) );
 	}
 
 	/**
