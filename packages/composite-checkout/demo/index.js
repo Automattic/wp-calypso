@@ -10,15 +10,16 @@ import ReactDOM from 'react-dom';
 import {
 	Checkout,
 	CheckoutProvider,
+	createApplePayMethod,
+	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
-	createPayPalMethod,
-	createApplePayMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	useFormStatus,
 	useIsStepActive,
 	usePaymentData,
-	getDefaultPaymentMethodStep,
-	getDefaultOrderSummaryStep,
-	getDefaultOrderReviewStep,
 } from '../src/public-api';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
@@ -245,6 +246,17 @@ function AdditionalFields() {
 	);
 }
 
+function ProvisioningContent() {
+	const [ , setFormStatus ] = useFormStatus();
+	// This simulates provisioning
+	useEffect( () => {
+		setTimeout( () => {
+			setFormStatus( 'complete' );
+		}, 1500 );
+	}, [ setFormStatus ] );
+	return <div>Please wait...</div>;
+}
+
 const steps = [
 	getDefaultOrderSummaryStep(),
 	{
@@ -298,6 +310,8 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [] );
 
+	const provisioningContent = <ProvisioningContent />;
+
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
@@ -314,7 +328,7 @@ function MyCheckout() {
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
-			<Checkout steps={ steps } />
+			<Checkout steps={ steps } provisioningContent={ provisioningContent } />
 		</CheckoutProvider>
 	);
 }
