@@ -54,7 +54,7 @@ function onViewportChange() {
 	_viewport = updateViewport();
 }
 
-const bindWindowListeners = () => {
+export function bindWindowListeners() {
 	if ( _windowEventsRefCount++ > 0 ) {
 		return;
 	}
@@ -63,9 +63,9 @@ const bindWindowListeners = () => {
 	// don't debounce these because they don't so any work that requires layout
 	window.addEventListener( 'resize', onViewportChange, true );
 	window.addEventListener( 'scroll', onViewportChange, true );
-};
+}
 
-const unbindWindowListeners = () => {
+export function unbindWindowListeners() {
 	if ( --_windowEventsRefCount > 0 ) {
 		return;
 	}
@@ -73,9 +73,9 @@ const unbindWindowListeners = () => {
 	debug( 'unbind handlers to `resize` and `scroll` events' );
 	window.removeEventListener( 'resize', onViewportChange, true );
 	window.removeEventListener( 'scroll', onViewportChange, true );
-};
+}
 
-const suggested = ( pos, el, target ) => {
+export function suggested( pos, el, target ) {
 	const viewport = getViewport();
 	const targetPosition = getBoundingClientRect( target );
 	const h = el.clientHeight;
@@ -100,7 +100,7 @@ const suggested = ( pos, el, target ) => {
 	}
 
 	return chooseSecondary( primary, pos1, el, target, w, h ) || pos;
-};
+}
 
 function choosePrimary( prefered, room ) {
 	// top, bottom, left, right in order of preference
@@ -189,7 +189,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 	return bestPos;
 }
 
-function offset( pos, el, target, relativePosition ) {
+export function offset( pos, el, target, relativePosition ) {
 	const pad = 15;
 	const tipRect = getBoundingClientRect( el );
 
@@ -343,12 +343,10 @@ function _offset( box, doc ) {
  * @param {window.Element} el Element to be constained to viewport
  * @returns {number}    the best width
  */
-function constrainLeft( off, el ) {
+export function constrainLeft( off, el ) {
 	const viewport = getViewport();
 	const ew = getBoundingClientRect( el ).width;
 	off.left = Math.max( 0, Math.min( off.left, viewport.width - ew ) );
 
 	return off;
 }
-
-export { constrainLeft, bindWindowListeners, unbindWindowListeners, suggested, offset };
