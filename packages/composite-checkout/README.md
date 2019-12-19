@@ -110,6 +110,8 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
+When the `submitButton` component has been clicked, it should use `setFormStatus` (see [useFormStatus](#useFormStatus)) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'provisioning', which will cause [Checkout](#Checkout) to render its `provisioningContent`.
+
 ## Line Items
 
 Each item is an object with the following properties:
