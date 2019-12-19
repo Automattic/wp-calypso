@@ -7,7 +7,6 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'config', () => {
 	const fn = () => {};
 	fn.isEnabled = jest.fn( () => true );
@@ -18,8 +17,6 @@ jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
 jest.mock( 'components/data/cart', () => 'CartData' );
 jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
