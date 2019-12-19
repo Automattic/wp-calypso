@@ -39,9 +39,13 @@ const initialItems = [
 	},
 ];
 
-const onPaymentComplete = () => window.alert( 'Payment succeeded!' );
-const onEvent = event => window.console.log( 'Event', event );
+const successRedirectUrl = '/complete.html';
+const failureRedirectUrl = window.location.href;
 
+const onPaymentComplete = () => {
+	window.location.href = successRedirectUrl;
+};
+const onEvent = event => window.console.log( 'Event', event );
 const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
@@ -54,10 +58,6 @@ const showSuccessMessage = message => {
 	console.log( 'Success:', message ); /* eslint-disable-line no-console */
 	window.alert( message );
 };
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
 
 async function fetchStripeConfiguration() {
 	return {
