@@ -28,3 +28,5 @@ const VerticalSelect = () => ( {
 ```
 
 The stores in this package are written in TypeScript, and type definitions are generated as part of the build process. Furthermore, we're injecting type information for available selectors and actions into the `@wordpress/data` module, which means that you'll get handy autocomplete suggestions, if you're writing your project in TypeScript and you've enabled your editor's TypeScript feature or plugin.
+
+![autocomplete](./autocomplete.gif)
