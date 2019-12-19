@@ -400,7 +400,7 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 // In case of a React component instance, we'll find the DOM element with `findDOMNode`.
 const PropTypeElement = PropTypes.oneOfType( [
 	PropTypes.instanceOf( Component ),
-	PropTypes.instanceOf( window.Element ),
+	PropTypes.instanceOf( typeof window !== 'undefined' ? window.Element : Object ),
 ] );
 
 Popover.propTypes = {
