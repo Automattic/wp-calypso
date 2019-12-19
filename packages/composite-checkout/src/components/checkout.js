@@ -78,7 +78,7 @@ function useRegisterCheckoutStore() {
 	} );
 }
 
-export default function Checkout( { steps, className } ) {
+export default function Checkout( { steps, provisioningContent, className } ) {
 	useRegisterCheckoutStore();
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
@@ -156,7 +156,7 @@ export default function Checkout( { steps, className } ) {
 					className={ joinClasses( [ className, 'checkout__content' ] ) }
 					isCheckoutInProgress={ isCheckoutInProgress }
 				>
-					<ProvisioningContent />
+					{ provisioningContent }
 				</MainContent>
 			</Container>
 		);
@@ -209,6 +209,7 @@ export default function Checkout( { steps, className } ) {
 Checkout.propTypes = {
 	className: PropTypes.string,
 	steps: PropTypes.array,
+	provisioningContent: PropTypes.node.isRequired,
 };
 
 function CheckoutStepContainer( {
