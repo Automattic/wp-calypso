@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,25 +11,22 @@ import { connect } from 'react-redux';
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
-const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
+const request = siteId => ( dispatch, getState ) => {
+	if ( ! isRequestingGSuiteUsers( getState(), siteId ) ) {
+		dispatch( getGSuiteUsers( siteId ) );
+	}
+};
+
+export default function QueryGSuiteUsers( { siteId } ) {
+	const dispatch = useDispatch();
+
 	useEffect( () => {
-		if ( ! isRequesting ) {
-			request( siteId );
-		}
-	}, [ siteId, request, isRequesting ] );
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 };
 
 QueryGSuiteUsers.propTypes = {
-	isRequesting: PropTypes.bool.isRequired,
 	siteId: PropTypes.number.isRequired,
-	request: PropTypes.func.isRequired,
 };
-
-export default connect(
-	( state, ownProps ) => ( {
-		isRequesting: isRequestingGSuiteUsers( state, ownProps.siteId ),
-	} ),
-	{ request: getGSuiteUsers }
-)( QueryGSuiteUsers );
