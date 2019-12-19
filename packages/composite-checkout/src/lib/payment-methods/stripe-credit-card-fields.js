@@ -22,7 +22,6 @@ import {
 import {
 	useSelect,
 	useDispatch,
-	usePaymentComplete,
 	useMessages,
 	useLineItems,
 	useCheckoutRedirects,
@@ -610,7 +609,6 @@ function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
-	const onPaymentComplete = usePaymentComplete();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
@@ -626,9 +624,10 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			setFormStatus( 'ready' );
 		}
 		if ( transactionStatus === 'complete' ) {
-			onPaymentComplete();
+			setFormStatus( 'provisioning' );
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -642,7 +641,7 @@ function StripePayButton( { disabled } ) {
 			} );
 		}
 	}, [
-		onPaymentComplete,
+		setFormStatus,
 		showErrorMessage,
 		transactionStatus,
 		transactionError,

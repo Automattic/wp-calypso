@@ -10,12 +10,7 @@ import styled from '@emotion/styled';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
-import {
-	useMessages,
-	usePaymentComplete,
-	useCheckoutRedirects,
-	useLineItems,
-} from '../../public-api';
+import { useMessages, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -143,7 +138,6 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
-	const onPaymentComplete = usePaymentComplete();
 	const { showErrorMessage } = useMessages();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
@@ -151,7 +145,7 @@ function useTransactionStatusHandler() {
 
 	useEffect( () => {
 		if ( transactionStatus === 'complete' ) {
-			onPaymentComplete();
+			setFormStatus( 'provisioning' );
 			return;
 		}
 		if ( transactionStatus === 'error' ) {
@@ -166,14 +160,7 @@ function useTransactionStatusHandler() {
 			return;
 		}
 		setFormStatus( status => ( status === 'submitting' ? 'ready' : status ) );
-	}, [
-		localize,
-		onPaymentComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		setFormStatus,
-	] );
+	}, [ localize, showErrorMessage, transactionStatus, transactionError, setFormStatus ] );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`

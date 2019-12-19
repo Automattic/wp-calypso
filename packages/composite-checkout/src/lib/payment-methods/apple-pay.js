@@ -7,10 +7,11 @@ import React, { useState, useEffect, useMemo } from 'react';
  * Internal dependencies
  */
 import { StripeHookProvider, useStripe } from '../../lib/stripe';
-import { useLineItems, usePaymentComplete } from '../../public-api';
+import { useLineItems } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import { useFormStatus } from '../form-status';
 
 export function createApplePayMethod( { registerStore, fetchStripeConfiguration } ) {
 	const actions = {
@@ -85,11 +86,11 @@ export function ApplePayLabel() {
 
 export function ApplePaySubmitButton( { disabled } ) {
 	const localize = useLocalize();
-	const onPaymentComplete = usePaymentComplete();
 	const paymentRequestOptions = usePaymentRequestOptions();
+	const [ , setFormStatus ] = useFormStatus();
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,
-		onSubmit: onPaymentComplete,
+		onSubmit: () => setFormStatus( 'provisioning' ),
 	} );
 
 	if ( ! canMakePayment ) {
