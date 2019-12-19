@@ -19,7 +19,7 @@ exports[`DateRange should render 1`] = `
     startDate={null}
     startDateText="MM/DD/YYYY"
   />
-  <WithRtl(Popover)
+  <Popover
     className="date-range__popover"
     context={null}
     isVisible={false}
@@ -100,6 +100,6 @@ exports[`DateRange should render 1`] = `
         showOutsideDays={false}
       />
     </div>
-  </WithRtl(Popover)>
+  </Popover>
 </div>
 `;
