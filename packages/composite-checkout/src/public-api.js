@@ -40,6 +40,7 @@ import {
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
+import { useFormStatus } from './lib/form-status';
 
 // Re-export the public API
 export {
@@ -67,6 +68,7 @@ export {
 	useCheckoutRedirects,
 	useDispatch,
 	useEvents,
+	useFormStatus,
 	useIsStepActive,
 	useLineItems,
 	useMessages,
