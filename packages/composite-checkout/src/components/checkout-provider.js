@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useMemo, useState, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -142,21 +142,35 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		failureRedirectUrl,
 		paymentMethods,
 	} = propsToValidate;
-	debug( 'propsToValidate', propsToValidate );
+	useEffect( () => {
+		debug( 'propsToValidate', propsToValidate );
 
-	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
-	validateArg( total, 'CheckoutProvider missing required prop: total' );
-	validateTotal( total );
-	validateArg( items, 'CheckoutProvider missing required prop: items' );
-	validateLineItems( items );
-	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
-	validatePaymentMethods( paymentMethods );
-	validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
-	validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
-	validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
-	validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
-	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
-	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
+		validateArg( total, 'CheckoutProvider missing required prop: total' );
+		validateTotal( total );
+		validateArg( items, 'CheckoutProvider missing required prop: items' );
+		validateLineItems( items );
+		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
+		validatePaymentMethods( paymentMethods );
+		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
+		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
+		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
+		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
+		validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
+		validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+	}, [
+		failureRedirectUrl,
+		items,
+		locale,
+		onPaymentComplete,
+		paymentMethods,
+		propsToValidate,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
+		successRedirectUrl,
+		total,
+	] );
 	return null;
 }
 
