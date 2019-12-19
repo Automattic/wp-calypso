@@ -1,0 +1,47 @@
+.upsell-nudge {
+	border-left: 4px solid var( --color-accent );
+	background-color: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
+	display: flex;
+	align-items: center;
+
+	&__content {
+		padding: 1em;
+		margin-right: auto;
+	}
+
+	&__icon {
+		margin-right: 1em;
+	}
+
+	&__dismiss {
+		margin-left: 1em;
+	}
+
+	&__dismiss-icon {
+		fill: var( --color-text-inverted );
+	}
+
+	&__button {
+		margin-left: auto;
+		overflow: visible;
+	}
+
+	&.compact {
+		font-size: 12px;
+		padding: 8px;
+
+		.upsell-nudge__content {
+			padding: 5px;
+		}
+
+		.upsell-nudge__icon {
+			margin-top: -2px;
+			margin-right: 0.5em;
+		}
+
+		.upsell-nudge__dismiss {
+			margin-left: 0.5em;
+		}
+	}
+}
