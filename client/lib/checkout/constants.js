@@ -36,3 +36,8 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		],
 	},
 };
+
+export const UPGRADE_INTENT_PLUGINS = 'plugins';
+export const UPGRADE_INTENT_INSTALL_PLUGIN = 'install_plugin';
+export const UPGRADE_INTENT_THEMES = 'themes';
+export const UPGRADE_INTENT_INSTALL_THEME = 'install_theme';

@@ -343,7 +343,12 @@ export class Checkout extends React.Component {
 		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
+			redirectTo = getExitCheckoutUrl(
+				this.state.previousCart,
+				selectedSiteSlug,
+				this.props.upgradeIntent,
+				this.props.redirectTo
+			);
 		}
 
 		page.redirect( redirectTo );
