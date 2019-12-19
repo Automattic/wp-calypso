@@ -16,7 +16,6 @@ import { EditorGroundControl } from '../';
 import { isSaveAvailableFn } from '../quick-save-buttons';
 
 jest.mock( 'blocks/site', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'components/post-schedule', () => require( 'components/empty-component' ) );
 jest.mock( 'components/sticky-panel', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/edit-post-status', () => require( 'components/empty-component' ) );

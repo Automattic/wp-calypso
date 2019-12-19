@@ -15,14 +15,10 @@ import { THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
-jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
 
 describe( 'logged-out', () => {
 	describe( 'when calling renderToString()', () => {
