@@ -15,6 +15,7 @@ import CheckoutStep from './checkout-step';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
+import ProvisioningContent from './provisioning-content';
 import {
 	usePrimarySelect,
 	usePrimaryDispatch,
@@ -142,6 +143,19 @@ export default function Checkout( { steps, className } ) {
 					isCheckoutInProgress={ isCheckoutInProgress }
 				>
 					<LoadingContent />
+				</MainContent>
+			</Container>
+		);
+	}
+
+	if ( formStatus === 'provisioning' ) {
+		return (
+			<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
+				<MainContent
+					className={ joinClasses( [ className, 'checkout__content' ] ) }
+					isCheckoutInProgress={ isCheckoutInProgress }
+				>
+					<ProvisioningContent />
 				</MainContent>
 			</Container>
 		);
