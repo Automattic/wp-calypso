@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 
@@ -10,9 +10,9 @@ import { __, setLocaleData, sprintf } from '@wordpress/i18n';
  */
 import LocalizeContext from './localize-context';
 
-export default function localizeFactory( locale ) {
+function useLocalizeFactory( locale ) {
 	setLocaleData( getLocaleDataForLocale( locale ) );
-	return text => __( text, 'default' );
+	return useCallback( text => __( text, 'default' ), [] );
 }
 
 export function useLocalize() {
@@ -27,7 +27,7 @@ export function LocalizeProvider( { locale, children } ) {
 	if ( ! locale ) {
 		throw new Error( 'LocalizeProvider requires locale' );
 	}
-	const localize = localizeFactory( locale );
+	const localize = useLocalizeFactory( locale );
 	return <LocalizeContext.Provider value={ localize }>{ children }</LocalizeContext.Provider>;
 }
 
