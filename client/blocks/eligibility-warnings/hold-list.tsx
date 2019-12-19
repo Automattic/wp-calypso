@@ -197,11 +197,11 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	switch ( context ) {
 		case 'plugins':
-			return translate( "To install plugins, you'll need to:" );
+			return translate( "To install plugins you'll need to:" );
 		case 'themes':
-			return translate( "To install themes, you'll need to:" );
+			return translate( "To install themes you'll need to:" );
 		default:
-			return translate( "To continue, you'll need to:" );
+			return translate( "To continue you'll need to" + ':' );
 	}
 }
 
