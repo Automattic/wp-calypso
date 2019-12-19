@@ -22,7 +22,7 @@ describe( 'ProductExpiration', () => {
 		const wrapper = shallow(
 			<ProductExpiration purchaseDateMoment={ date } translate={ translate } isRefundable />
 		);
-		expect( wrapper.text() ).toEqual( 'Purchased on November 10, 2009.' );
+		expect( wrapper.text() ).toEqual( 'Purchased on November 10, 2009' );
 	} );
 
 	it( 'should return the expiry date in past tense when date is in past', () => {
@@ -30,7 +30,7 @@ describe( 'ProductExpiration', () => {
 		const wrapper = shallow(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( wrapper.text() ).toEqual( 'Expired on November 10, 2009.' );
+		expect( wrapper.text() ).toEqual( 'Expired on November 10, 2009' );
 	} );
 
 	it( 'should return the renewal date in when the date is in the future', () => {
@@ -38,7 +38,7 @@ describe( 'ProductExpiration', () => {
 		const wrapper = shallow(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( wrapper.text() ).toEqual( 'Renews on November 10, 2100.' );
+		expect( wrapper.text() ).toEqual( 'Renews on November 10, 2100' );
 	} );
 
 	it( 'should return null when provided an invalid expiry date', () => {
