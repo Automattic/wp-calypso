@@ -4,16 +4,16 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import moment from 'moment';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ProductExpiration from '../index';
-import { translate } from 'i18n-calypso';
+import { ProductExpiration } from '../index';
 
 describe( 'ProductExpiration', () => {
 	it( 'should return null if not provided dates', () => {
-		const wrapper = shallow( <ProductExpiration /> );
+		const wrapper = shallow( <ProductExpiration translate={ translate } /> );
 		expect( wrapper.isEmptyRender() ).toEqual( true );
 	} );
 

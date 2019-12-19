@@ -2,18 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import { translate as translateType } from 'i18n-calypso/types';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { Moment } from 'moment';
 
-interface Props {
+interface Props extends LocalizeProps {
 	dateFormat: string;
 	expiryDateMoment: Moment;
 	isRefundable: boolean;
 	purchaseDateMoment: Moment;
-	translate: typeof translateType;
 }
 
-class ProductExpiration extends React.PureComponent< Props > {
+export class ProductExpiration extends React.PureComponent< Props > {
 	static defaultProps = {
 		dateFormat: 'LL',
 		expiryDateMoment: null,
@@ -58,4 +57,4 @@ class ProductExpiration extends React.PureComponent< Props > {
 	}
 }
 
-export default ProductExpiration;
+export default localize( ProductExpiration );
