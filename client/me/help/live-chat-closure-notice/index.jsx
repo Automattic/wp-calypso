@@ -18,7 +18,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
  */
 import './style.scss';
 
-const DATE_FORMAT = 'LLL z';
+const DATE_FORMAT = 'LLL';
 
 const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
 	const translate = useTranslate();
