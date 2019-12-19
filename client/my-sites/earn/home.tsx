@@ -151,7 +151,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			image: {
 				path: recurringImage,
 			},
