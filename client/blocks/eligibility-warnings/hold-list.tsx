@@ -165,7 +165,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 					map( holds, hold =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
-								<Gridicon icon="checkmark-circle" size={ 24 } />
+								<Gridicon icon="chevron-right" size={ 24 } />
 								<div className="eligibility-warnings__message">
 									<div className="eligibility-warnings__message-title">
 										{ holdMessages[ hold ].title }
@@ -197,11 +197,11 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	switch ( context ) {
 		case 'plugins':
-			return translate( "To install plugins, you'll need a couple things:" );
+			return translate( "To install plugins, you'll need a couple of things:" );
 		case 'themes':
-			return translate( "To install themes, you'll need a couple things:" );
+			return translate( "To install themes, you'll need a couple of things:" );
 		default:
-			return translate( "To continue, you'll need a couple things:" );
+			return translate( "To continue, you'll need a couple of things:" );
 	}
 }
 

@@ -17,7 +17,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { Button, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
@@ -60,11 +60,7 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
-				<WarningList warnings={ warnings } />
-			) }
-
-			<Card>
+			<CompactCard>
 				{ ( isPlaceholder || listHolds.length > 0 ) && (
 					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 				) }
@@ -77,7 +73,13 @@ export const EligibilityWarnings = ( {
 						</span>
 					</div>
 				) }
-
+			</CompactCard>
+			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
+				<CompactCard className="eligibility-warnings__warnings-card">
+					<WarningList warnings={ warnings } />
+				</CompactCard>
+			) }
+			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<Button
 						primary={ true }
