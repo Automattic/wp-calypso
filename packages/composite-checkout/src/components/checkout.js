@@ -32,7 +32,7 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useEvents, useCheckoutRedirects } from './checkout-provider';
+import { useEvents, usePaymentComplete } from './checkout-provider';
 import { useFormStatus } from '../lib/form-status';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
@@ -84,7 +84,7 @@ export default function Checkout( { steps, className } ) {
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
 	const [ formStatus ] = useFormStatus();
-	const { successRedirectUrl } = useCheckoutRedirects();
+	const onPaymentComplete = usePaymentComplete();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -163,7 +163,7 @@ export default function Checkout( { steps, className } ) {
 	}
 
 	if ( formStatus === 'complete' ) {
-		window.location.href = successRedirectUrl;
+		onPaymentComplete();
 	}
 
 	return (
