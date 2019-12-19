@@ -18,7 +18,7 @@ call_user_func(
 			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
 		}
 		$image_size = 'newspack-article-block-uncropped';
-		if ( 'uncropped' !== $attributes['imageShape'] ) {
+		if ( has_post_thumbnail() && 'uncropped' !== $attributes['imageShape'] ) {
 			$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
 		}
 		$thumbnail_args = '';
@@ -42,7 +42,7 @@ call_user_func(
 			}
 		}
 		?>
-	<article
+	<article data-post-id="<?php the_id(); ?>"
 		<?php if ( has_post_thumbnail() ) : ?>
 		class="post-has-image"
 		<?php endif; ?>
