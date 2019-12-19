@@ -533,14 +533,14 @@ class HelpContact extends React.Component {
 				{ isUserAffectedByLiveChatClosure && (
 					<>
 						<LiveChatClosureNotice
-							holidayName="Christmas"
+							holidayName={ translate( 'Christmas' ) }
 							compact={ compact }
 							displayAt="2019-12-17 00:00Z"
 							closesAt="2019-12-24 00:00Z"
 							reopensAt="2019-12-26 07:00Z"
 						/>
 						<LiveChatClosureNotice
-							holidayName="New Year's Day"
+							holidayName={ translate( "New Year's Day" ) }
 							compact={ compact }
 							displayAt="2019-12-26 07:00Z"
 							closesAt="2019-12-31 00:00Z"
