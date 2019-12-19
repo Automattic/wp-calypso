@@ -21,7 +21,7 @@ import {
 	DomainSuggestion,
 	DomainSuggestionQuery,
 } from '@automattic/calypso-data-stores/src/domain-suggestions/types';
-import { STORE_KEY } from '@automattic/calypso-data-stores/src/domain-suggestions';
+import { DOMAIN_SUGGESTIONS_STORE } from '@automattic/calypso-data-stores';
 import { selectorDebounce } from '../../constants';
 
 export interface Props {
@@ -56,7 +56,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return select( STORE_KEY ).getDomainSuggestions( search, {
+				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, {
 					include_wordpressdotcom: true,
 					include_dotblogsubdomain: true,
 					quantity: 4,
