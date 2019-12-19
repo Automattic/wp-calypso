@@ -33,13 +33,15 @@
 	}
 }
 
-.eligibility-warnings__hold {
+.eligibility-warnings__hold,
+.eligibility-warnings__warning {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
 }
 
-.eligibility-warnings__hold {
+.eligibility-warnings__hold,
+.eligibility-warnings__warning {
 	align-items: flex-start;
 	margin-bottom: 16px;
 
@@ -48,9 +50,17 @@
 	}
 }
 
+.eligibility-warnings__hold .gridicon,
+.eligibility-warnings__warning .gridicon {
+	flex-shrink: 0;
+}
+
 .eligibility-warnings__hold .gridicon {
 	color: var( --color-neutral-10 );
-	flex-shrink: 0;
+}
+
+.eligibility-warnings__warning .gridicon {
+	color: var( --color-warning-10 );
 }
 
 .eligibility-warnings__message {
@@ -64,6 +74,10 @@
 
 	.eligibility-warnings__message-description {
 		color: var( --color-text-subtle );
+	}
+
+	&--indented {
+		margin-left: 24px;
 	}
 }
 
