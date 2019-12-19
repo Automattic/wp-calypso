@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 
@@ -11,8 +11,12 @@ import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import LocalizeContext from './localize-context';
 
 function useLocalizeFactory( locale ) {
-	setLocaleData( getLocaleDataForLocale( locale ) );
-	return useCallback( text => __( text, 'default' ), [] );
+	const localize = useRef( text => text );
+	useEffect( () => {
+		setLocaleData( getLocaleDataForLocale( locale ) );
+		localize.current = text => __( text, 'default' );
+	}, [ locale ] );
+	return localize.current;
 }
 
 export function useLocalize() {
