@@ -125,8 +125,6 @@ class PurchasesListing extends Component {
 	}
 
 	getExpirationInfo( purchase ) {
-		const { translate } = this.props;
-
 		// No expiration date for free plan or partner site.
 		if ( this.isFreePlan( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
@@ -137,7 +135,6 @@ class PurchasesListing extends Component {
 				expiryDateMoment={ purchase.expiryMoment }
 				purchaseDateMoment={ purchase.subscribedMoment }
 				isRefundable={ purchase.isRefundable }
-				translate={ translate }
 			/>
 		);
 	}

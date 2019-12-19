@@ -182,7 +182,6 @@ export class ProductSelector extends Component {
 				expiryDateMoment={ purchase.expiryMoment }
 				purchaseDateMoment={ purchase.subscribedMoment }
 				isRefundable={ purchase.isRefundable }
-				translate={ translate }
 			/>
 		);
 	}
