@@ -18,9 +18,9 @@ const VerticalSelect = () => ( {
 
     return (
         <ul>
-        { verticals.map( vertical => (
-                <li key={ vertical.vertical_id }>{ vertical.vertical_name }</li>
-        ) ) }
+            { verticals.map( vertical => (
+                    <li key={ vertical.vertical_id }>{ vertical.vertical_name }</li>
+            ) ) }
         </ul>
     );
 } );
