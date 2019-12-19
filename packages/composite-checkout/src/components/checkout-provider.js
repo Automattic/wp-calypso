@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -59,20 +59,35 @@ export const CheckoutProvider = props => {
 	const registryRef = useRef( registry );
 	registryRef.current = registryRef.current || createRegistry();
 
-	const value = {
-		allPaymentMethods: paymentMethods,
-		paymentMethodId,
-		setPaymentMethodId,
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		successRedirectUrl,
-		failureRedirectUrl,
-		onEvent: onEvent || ( () => {} ),
-		formStatus,
-		setFormStatus,
-	};
+	const value = useMemo(
+		() => ( {
+			allPaymentMethods: paymentMethods,
+			paymentMethodId,
+			setPaymentMethodId,
+			onPaymentComplete,
+			showErrorMessage,
+			showInfoMessage,
+			showSuccessMessage,
+			successRedirectUrl,
+			failureRedirectUrl,
+			onEvent: onEvent || ( () => {} ),
+			formStatus,
+			setFormStatus,
+		} ),
+		[
+			failureRedirectUrl,
+			formStatus,
+			onEvent,
+			onPaymentComplete,
+			paymentMethodId,
+			paymentMethods,
+			setFormStatus,
+			showErrorMessage,
+			showInfoMessage,
+			showSuccessMessage,
+			successRedirectUrl,
+		]
+	);
 
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
