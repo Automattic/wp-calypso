@@ -82,10 +82,12 @@ export class UpsellNudge extends Component {
 					eventProperties={ { event_name: eventName, ...eventProperties } }
 				/>
 				{ icon && (
-					<Gridicon className="upsell-nudge__icon" icon={ icon } size={ isCompact ? 18 : 36 } />
+					<Gridicon className="upsell-nudge__icon" icon={ icon } size={ isCompact ? 18 : 24 } />
 				) }
 				<span className="upsell-nudge__content">
-					<span className="upsell-nudge__text">{ text }</span>
+					<span className="upsell-nudge__text">
+						<a href={ href }>{ text }</a>
+					</span>
 				</span>
 				{ buttonText && (
 					<Button
