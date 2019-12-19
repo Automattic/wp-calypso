@@ -122,6 +122,16 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	nonEnglishDomainStepCopyUpdates: {
+		datestamp: '20191219',
+		variations: {
+			variantShowUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
 	},
 };
