@@ -32,6 +32,13 @@
 		@include grid-column( 1, 12 );
 	}
 
+	&__main .banner.card {
+		@include grid-column( 1, 12 );
+		@include grid-row( 2, 1 );
+		margin-left: 0;
+		margin-right: 0;
+	}
+
 	&__page-heading {
 		@include grid-row( 1, 1 );
 		@include breakpoint( '>1040px' ) {
@@ -199,7 +206,7 @@
 		padding-bottom: 12px;
 	}
 	&__layout {
-		@include grid-row( 2, 1 );
+		@include grid-row( 3, 1 );
 		@include breakpoint( '>1040px' ) {
 			@include grid-column( 1, 12 );
 			@include display-grid;
