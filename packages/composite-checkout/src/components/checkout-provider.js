@@ -151,14 +151,6 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	}, children );
 }
 
-export function usePaymentComplete() {
-	const { onPaymentComplete } = useContext( CheckoutContext );
-	if ( ! onPaymentComplete ) {
-		throw new Error( 'usePaymentComplete can only be used inside a CheckoutProvider' );
-	}
-	return onPaymentComplete;
-}
-
 export function useEvents() {
 	const { onEvent } = useContext( CheckoutContext );
 	if ( ! onEvent ) {

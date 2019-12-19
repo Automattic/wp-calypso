@@ -4,7 +4,6 @@
 import {
 	CheckoutProvider,
 	useEvents,
-	usePaymentComplete,
 	useMessages,
 	useCheckoutRedirects,
 } from './components/checkout-provider';
@@ -71,7 +70,6 @@ export {
 	useIsStepActive,
 	useLineItems,
 	useMessages,
-	usePaymentComplete,
 	usePaymentData,
 	usePaymentMethod,
 	usePaymentMethodId,
