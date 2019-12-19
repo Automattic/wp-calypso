@@ -3,25 +3,21 @@
 /**
  * External dependencies
  */
-import { select, dispatch, subscribe } from '@wordpress/data';
+import { select, dispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
-const unsubscribe = subscribe( () => {
-	const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
+/**
+ * Internal dependencies
+ */
+import { isEditorReadyWithBlocks } from '../../utils';
 
-	if ( isCleanNewPost ) {
-		unsubscribe();
-	}
-
-	const blocks = select( 'core/editor' ).getBlocks();
-
-	if ( blocks.length === 0 ) {
+async function fixInvalidBlocks() {
+	const editorHasBlocks = await isEditorReadyWithBlocks();
+	if ( ! editorHasBlocks ) {
 		return;
 	}
 
-	unsubscribe();
-
-	//If any blocks have validation issues auto-fix them for now, until core is less strict.
+	// If any blocks have validation issues auto-fix them for now, until core is less strict.
 	select( 'core/editor' )
 		.getBlocks()
 		.filter( block => ! block.isValid )
@@ -31,4 +27,6 @@ const unsubscribe = subscribe( () => {
 				createBlock( name, attributes, innerBlocks )
 			);
 		} );
-} );
+}
+
+fixInvalidBlocks();
