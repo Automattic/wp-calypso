@@ -136,6 +136,12 @@ export default function Checkout( { steps, className } ) {
 	const isCheckoutInProgress =
 		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
 
+	useEffect( () => {
+		if ( formStatus === 'complete' ) {
+			onPaymentComplete();
+		}
+	}, [ formStatus, onPaymentComplete ] );
+
 	if ( formStatus === 'loading' ) {
 		return (
 			<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
@@ -147,10 +153,6 @@ export default function Checkout( { steps, className } ) {
 				</MainContent>
 			</Container>
 		);
-	}
-
-	if ( formStatus === 'complete' ) {
-		onPaymentComplete();
 	}
 
 	return (
