@@ -6,7 +6,7 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '.';
+import { STORE_KEY } from './constants';
 import { DomainSuggestionQuery } from './types';
 import { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
