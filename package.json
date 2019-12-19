@@ -34,6 +34,7 @@
 		]
 	},
 	"dependencies": {
+		"@automattic/calypso-data-stores": "file:./packages/calypso-data-stores",
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:./packages/components",
 		"@automattic/composite-checkout": "file:./packages/composite-checkout",
