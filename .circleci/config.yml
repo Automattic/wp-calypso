@@ -222,7 +222,9 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run typecheck -- --project client/landing/gutenboarding
+          command: |
+            npm run typecheck -- --project packages/calypso-data-stores
+              && npm run typecheck -- --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
