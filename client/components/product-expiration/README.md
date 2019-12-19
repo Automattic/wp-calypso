@@ -19,7 +19,7 @@ Controls whether the product is currently in the refund window, which changes th
 #### `purchaseDateMoment { moment } - optional`
 Optional purchase date, used only when `isRefundable` provided.
 
-### `ProductExpiration` Usage
+### Usage
 
 ```jsx
 const expiryDateMoment = moment( product.expiry );

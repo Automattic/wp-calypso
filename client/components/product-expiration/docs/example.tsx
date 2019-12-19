@@ -13,21 +13,30 @@ import ProductExpiration from '../index';
 function ProductExpirationExample() {
 	return (
 		<>
-			<h3>Product still refundable</h3>
 			<p>
-				<ProductExpiration
-					purchaseDateMoment={ moment() }
-					expiryDateMoment={ moment() }
-					isRefundable
-				/>
+				Product still refundable:
+				<br />
+				<em>
+					<ProductExpiration
+						purchaseDateMoment={ moment() }
+						expiryDateMoment={ moment() }
+						isRefundable
+					/>
+				</em>
 			</p>
-			<h3>Product previously expired</h3>
 			<p>
-				<ProductExpiration expiryDateMoment={ moment( new Date( 0 ) ) } />
+				Product previously expired:
+				<br />
+				<em>
+					<ProductExpiration expiryDateMoment={ moment( new Date( 0 ) ) } />
+				</em>
 			</p>
-			<h3>Product subscription expires in future</h3>
 			<p>
-				<ProductExpiration expiryDateMoment={ moment().add( 1, 'day' ) } />
+				Product subscription expires in future:
+				<br />
+				<em>
+					<ProductExpiration expiryDateMoment={ moment().add( 1, 'day' ) } />
+				</em>
 			</p>
 		</>
 	);
