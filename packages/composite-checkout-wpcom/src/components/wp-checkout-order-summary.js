@@ -3,7 +3,12 @@
  */
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import {
+	useLineItems,
+	useTotal,
+	renderDisplayValueMarkdown,
+	useEvents,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -15,6 +20,7 @@ import Coupon from './coupon';
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
 	const [ items ] = useLineItems();
+	const onEvent = useEvents();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
@@ -35,7 +41,7 @@ export default function WPCheckoutOrderSummary() {
 					<AddCouponButton
 						buttonState="text-button"
 						onClick={ () => {
-							setIsCouponFieldVisible( true );
+							handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent );
 						} }
 					>
 						{ translate( 'Add a coupon' ) }
@@ -117,4 +123,11 @@ const AddCouponButton = styled( Button )`
 function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {
 	setIsCouponFieldVisible( false );
 	setHasCouponBeenApplied( true );
+}
+
+function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
+	setIsCouponFieldVisible( true );
+	onEvent( {
+		type: 'a8c_checkout_add_coupon_button_clicked',
+	} );
 }
