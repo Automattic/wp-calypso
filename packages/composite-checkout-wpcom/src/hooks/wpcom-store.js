@@ -3,9 +3,10 @@
  */
 import { useRef } from 'react';
 
-export function useWpcomStore( registerStore ) {
+export function useWpcomStore( registerStore, onEvent ) {
 	// Only register once
 	const registerComplete = useRef();
+
 	if ( registerComplete.current ) {
 		return;
 	}
@@ -92,6 +93,16 @@ export function useWpcomStore( registerStore ) {
 			},
 
 			setContactField( key, field ) {
+				if ( ! field.isValid ) {
+					onEvent( {
+						type: 'a8c_checkout_error',
+						payload: {
+							type: 'Field error',
+							field: key,
+						},
+					} );
+				}
+
 				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
 			},
 			setVatId( payload ) {

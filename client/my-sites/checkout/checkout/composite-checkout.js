@@ -53,7 +53,7 @@ export function CompositeCheckout( {
 		isLoading,
 	} = useShoppingCart( siteSlug, setCart, getCart );
 	const { registerStore } = registry;
-	useWpcomStore( registerStore );
+	useWpcomStore( registerStore, handleCheckoutEvent );
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, showErrorMessage );
