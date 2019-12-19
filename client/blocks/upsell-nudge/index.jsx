@@ -86,7 +86,9 @@ export class UpsellNudge extends Component {
 				) }
 				<span className="upsell-nudge__content">
 					<span className="upsell-nudge__text">
-						<a href={ href }>{ text }</a>
+						<a href={ href } onClick={ this.onClick }>
+							{ text }
+						</a>
 					</span>
 				</span>
 				{ buttonText && (

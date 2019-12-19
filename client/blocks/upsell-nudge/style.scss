@@ -4,14 +4,15 @@
 	color: var( --color-text-inverted );
 	display: flex;
 	align-items: center;
-	padding: 0.5em 1em;
+	margin-bottom: 1.5em;
+	padding: 0.5em 1.5em;
 
 	a {
 		color: var( --color-text-inverted );
 	}
 
 	&__content {
-		padding: 1em;
+		padding: 1em 1em 1em 0;
 		margin-right: auto;
 	}
 
@@ -26,11 +27,13 @@
 	&__button {
 		margin-left: auto;
 		overflow: visible;
+		white-space: nowrap;
 	}
 
 	&.compact {
 		border-left-width: 4px;
 		font-size: 12px;
+		margin-bottom: 0;
 		padding: 8px;
 
 		.upsell-nudge__content {
