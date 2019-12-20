@@ -16,10 +16,10 @@ export function useFormStatus() {
 	return useMemo(
 		() => ( {
 			formStatus,
-			setFormLoading: setFormStatus( 'loading' ),
-			setFormReady: setFormStatus( 'ready' ),
-			setFormSubmitting: setFormStatus( 'submitting' ),
-			setFormComplete: setFormStatus( 'complete' ),
+			setFormLoading: () => setFormStatus( 'loading' ),
+			setFormReady: () => setFormStatus( 'ready' ),
+			setFormSubmitting: () => setFormStatus( 'submitting' ),
+			setFormComplete: () => setFormStatus( 'complete' ),
 		} ),
 		[ formStatus, setFormStatus ]
 	);
