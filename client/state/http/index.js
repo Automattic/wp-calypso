@@ -80,7 +80,6 @@ export const httpHandler = async ( { dispatch }, action ) => {
 
 	let response, json;
 	try {
-		// eslint thinks fetch is not defined
 		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,
 			headers: fetchHeaders,
