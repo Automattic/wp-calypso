@@ -17,7 +17,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { inIframe, sendMessage } from '../utils';
+import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -26,43 +26,37 @@ const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function triggerConversionPrompt( calypsoPort ) {
+async function triggerConversionPrompt( calypsoPort ) {
 	const { port1, port2 } = new MessageChannel();
 
-	const unsubscribe = subscribe( () => {
-		const currentPost = select( 'core/editor' ).getCurrentPost();
-		const initialized = currentPost && currentPost.id;
+	const editorHasBlocks = await isEditorReadyWithBlocks();
+	if ( ! editorHasBlocks ) {
+		return;
+	}
 
-		if ( ! initialized ) {
+	const blocks = select( 'core/editor' ).getBlocks();
+	const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
+
+	if ( ! eligible ) {
+		return;
+	}
+
+	calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
+
+	port1.onmessage = ( { data: confirmed } ) => {
+		port1.close();
+
+		if ( confirmed !== true ) {
 			return;
 		}
 
-		unsubscribe();
-
-		const blocks = select( 'core/editor' ).getBlocks();
-		const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
-
-		if ( ! eligible ) {
-			return;
-		}
-
-		calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
-
-		port1.onmessage = ( { data: confirmed } ) => {
-			port1.close();
-
-			if ( confirmed !== true ) {
-				return;
-			}
-
-			dispatch( 'core/editor' ).replaceBlock(
-				blocks[ 0 ].clientId,
-				rawHandler( {
-					HTML: blocks[ 0 ].originalContent,
-				} )
-			);
-		};
-	} );
+		dispatch( 'core/editor' ).replaceBlock(
+			blocks[ 0 ].clientId,
+			rawHandler( {
+				HTML: blocks[ 0 ].originalContent,
+			} )
+		);
+	};
 }
 
 /**

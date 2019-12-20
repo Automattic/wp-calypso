@@ -8,7 +8,7 @@ import tinymce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { inIframe, sendMessage } from '../utils';
+import { inIframe, sendMessage } from '../../utils';
 
 function replaceMediaModalOnClassicBlocks() {
 	if ( ! inIframe() ) {

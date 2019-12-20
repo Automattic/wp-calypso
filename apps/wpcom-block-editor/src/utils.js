@@ -1,3 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/**
+ * External dependencies
+ */
+import { select, subscribe } from '@wordpress/data';
+
 /**
  * Checks self and top to determine if we are being loaded in an iframe.
  * Can't use window.frameElement because we are being embedded from a different origin.
@@ -25,3 +31,27 @@ export function sendMessage( message ) {
 
 	window.parent.postMessage( { ...message, type: 'gutenbergIframeMessage' }, '*' );
 }
+
+/**
+ * Indicates if the block editor has been initialized with blocks.
+ *
+ * @returns {Promise} Promise that resolves when the editor has been initialized.
+ */
+export const isEditorReadyWithBlocks = async () => new Promise( resolve => {
+	const unsubscribe = subscribe( () => {
+		const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
+
+		if ( isCleanNewPost ) {
+			unsubscribe();
+			resolve( false );
+		}
+
+		const blocks = select( 'core/editor' ).getBlocks();
+
+		if ( blocks.length > 0 ) {
+			unsubscribe();
+			resolve( true );
+		}
+	} );
+} );
+
