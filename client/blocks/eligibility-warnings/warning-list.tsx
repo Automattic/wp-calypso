@@ -32,7 +32,7 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 
 		{ map( warnings, ( { name, description, supportUrl }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
-				<div className="eligibility-warnings__message eligibility-warnings__message--indented">
+				<div className="eligibility-warnings__message">
 					<span className="eligibility-warnings__message-title">{ name }</span>
 					:&nbsp;
 					<span className="eligibility-warnings__message-description">
@@ -48,7 +48,7 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 		) ) }
 
 		<div className="eligibility-warnings__warning">
-			<div className="eligibility-warnings__message eligibility-warnings__message--indented">
+			<div className="eligibility-warnings__message">
 				<span className="eligibility-warnings__message-title">{ translate( 'Questions?' ) }</span>
 				:&nbsp;
 				<span className="eligibility-warnings__message-description">
