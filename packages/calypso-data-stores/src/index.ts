@@ -1,16 +1,11 @@
 /**
  * Internal dependencies
  */
-export { STORE_KEY as DOMAIN_SUGGESTIONS_STORE } from './domain-suggestions';
-export { STORE_KEY as VERTICALS_STORE } from './verticals';
-export { STORE_KEY as VERTICALS_TEMPLATES_STORE } from './verticals-templates';
+import * as DomainSuggestions from './domain-suggestions';
+import * as Verticals from './verticals';
+import * as VerticalsTemplates from './verticals-templates';
 
-/**
- * Types
- */
-export * from './domain-suggestions/types';
-export * from './verticals/types';
-export * from './verticals-templates/types';
+export { DomainSuggestions, Verticals, VerticalsTemplates };
 
 /**
  * Helper types

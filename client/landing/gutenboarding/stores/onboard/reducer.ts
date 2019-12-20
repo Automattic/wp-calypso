@@ -8,11 +8,10 @@ import { combineReducers } from '@wordpress/data';
  * Internal dependencies
  */
 import { ActionType, SiteVertical } from './types';
-import { DomainSuggestion } from '@automattic/calypso-data-stores';
 import * as Actions from './actions';
 
 const domain: Reducer<
-	DomainSuggestion | undefined,
+	import('@automattic/calypso-data-stores').DomainSuggestions.types.DomainSuggestion | undefined,
 	ReturnType< typeof Actions[ 'setDomain' ] >
 > = ( state = undefined, action ) => {
 	if ( action.type === ActionType.SET_DOMAIN ) {

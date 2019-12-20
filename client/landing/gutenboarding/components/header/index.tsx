@@ -10,11 +10,13 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DOMAIN_SUGGESTIONS_STORE } from '@automattic/calypso-data-stores';
+import { DomainSuggestions } from '@automattic/calypso-data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
 import { selectorDebounce } from '../../constants';
+
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.STORE_KEY;
 
 interface Props {
 	isEditorSidebarOpened: boolean;

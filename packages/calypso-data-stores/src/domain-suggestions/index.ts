@@ -10,22 +10,20 @@ import { registerStore } from '@wordpress/data';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
-import * as selectors from './selectors';
 import * as resolvers from './resolvers';
+import * as selectors from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import * as types from './types';
 
-export { STORE_KEY };
+export { State, STORE_KEY, types };
 
-registerStore< State >( STORE_KEY, {
-	actions,
-	controls,
-	reducer,
-	resolvers,
-	selectors,
-	// persist: [],
-} );
+export function register() {
+	registerStore< State >( STORE_KEY, { actions, controls, reducer, resolvers, selectors } );
+}
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch(
+		key: typeof import('./constants').STORE_KEY
+	): DispatchFromMap< typeof actions >;
+	function select( key: typeof import('./constants').STORE_KEY ): SelectFromMap< typeof selectors >;
 }

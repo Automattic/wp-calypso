@@ -17,12 +17,10 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import {
-	DOMAIN_SUGGESTIONS_STORE,
-	DomainSuggestion,
-	DomainSuggestionQuery,
-} from '@automattic/calypso-data-stores';
+import { DomainSuggestions } from '@automattic/calypso-data-stores';
 import { selectorDebounce } from '../../constants';
+
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.STORE_KEY;
 
 export interface Props {
 	/**
@@ -35,12 +33,12 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestions.types.DomainSuggestion ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestionQuery >;
+	queryParameters?: Partial< DomainSuggestions.types.DomainSuggestionQuery >;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {

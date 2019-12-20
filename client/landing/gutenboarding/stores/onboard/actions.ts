@@ -2,9 +2,10 @@
  * Internal dependencies
  */
 import { ActionType, SiteVertical } from './types';
-import { DomainSuggestion } from '@automattic/calypso-data-stores';
 
-export const setDomain = ( domain: DomainSuggestion ) => ( {
+export const setDomain = (
+	domain: import('@automattic/calypso-data-stores').DomainSuggestions.types.DomainSuggestion
+) => ( {
 	type: ActionType.SET_DOMAIN as const,
 	domain,
 } );
