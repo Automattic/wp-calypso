@@ -5,8 +5,12 @@ import { getPopularPlanSpec } from '..';
 import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../constants';
 
 const abtest = test => {
-	expect( test ).toBe( 'showBusinessPlanPopular' );
-	return 'variantShowBizPopular';
+	if ( 'showBusinessPlanPopular' === test ) {
+		return 'variantShowBizPopular';
+	} else if ( 'nonEnglishDomainStepCopyUpdates' === test ) {
+		return 'control';
+	}
+	return;
 };
 
 describe( 'getPopularPlanSpec()', () => {
