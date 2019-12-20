@@ -134,7 +134,7 @@ class Home extends Component {
 	};
 
 	getChecklistSubHeaderText = () => {
-		const { checklistMode, currentTheme, translate, user, siteHasPaidPlan } = this.props;
+		const { checklistMode, currentTheme, translate, user } = this.props;
 
 		switch ( checklistMode ) {
 			case 'gsuite':
@@ -175,13 +175,9 @@ class Home extends Component {
 				return translate( 'Make sure you share it with everyone and show it off.' );
 
 			default:
-				if ( siteHasPaidPlan ) {
-					return translate(
-						'Next, use this quick list of setup tasks to get your site ready to share.'
-					);
-				}
-
-				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
+				return translate(
+					'Next, use this quick list of setup tasks to get your site ready to share.'
+				);
 		}
 	};
 
