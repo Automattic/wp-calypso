@@ -31,8 +31,8 @@
 	"types": "types",
 	"scripts": {
 		"clean": "npx rimraf dist types",
-		"prepublish": "npm run clean",
-		"prepare": "transpile && tsc"
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "npm run clean"
 	},
 	"dependencies": {
 		"@wordpress/data": "^4.10.0",

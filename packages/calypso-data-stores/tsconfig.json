@@ -3,12 +3,10 @@
 		"target": "es5",
 		"module": "esnext",
 		"allowJs": false,
-		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "./types",
-		"emitDeclarationOnly": true,
-		"isolatedModules": true,
+		"outDir": "./dist/esm",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -19,7 +17,9 @@
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 
-		"forceConsistentCasingInFileNames": true
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ]
 	},
 	"files": [ "src/index" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
