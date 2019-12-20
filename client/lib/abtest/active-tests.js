@@ -133,8 +133,9 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 		localeExceptions: [ 'en' ],
+	},
 	domainSuggestionsWithHints: {
-		datestamp: '20191217',
+		datestamp: '20191220',
 		variations: {
 			variation2_front: 0,
 			variation3_front: 50,
