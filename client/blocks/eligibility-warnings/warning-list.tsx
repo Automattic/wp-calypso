@@ -19,20 +19,13 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { translate, warnings }: Props ) => (
+export const WarningList = ( { context, translate, warnings }: Props ) => (
 	<div>
 		<div className="eligibility-warnings__warning">
 			<Gridicon icon="notice-outline" size={ 24 } />
 			<div className="eligibility-warnings__message">
 				<span className="eligibility-warnings__message-description">
-					{ translate(
-						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
-						{
-							count: warnings.length,
-							args: warnings.length,
-						}
-					) }
+					{ getWarningDescription( context, warnings.length, translate ) }
 				</span>
 			</div>
 		</div>
@@ -75,56 +68,36 @@ function getWarningDescription(
 	warningCount: number,
 	translate: LocalizeProps[ 'translate' ]
 ) {
-	const defaultCopy = translate(
-		"By proceeding you'll lose %d feature:",
-		"By proceeding you'll lose these %d features:",
-		{
-			count: warningCount,
-			args: warningCount,
-		}
-	);
 	switch ( context ) {
 		case 'plugins':
-			return hasTranslation(
-				"This feature isn't (yet) compatible with plugin uploads and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
+				"These features aren't (yet) compatible with plugin uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		case 'themes':
-			return hasTranslation(
-				"This feature isn't (yet) compatible with theme uploads and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with theme uploads and will be disabled:",
-						"These features aren't (yet) compatible with theme uploads and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with theme uploads and will be disabled:",
+				"These features aren't (yet) compatible with theme uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		case 'hosting':
-			return hasTranslation(
-				"This feature isn't (yet) compatible with hosting access and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with hosting access and will be disabled:",
-						"These features aren't (yet) compatible with hosting access and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with hosting access and will be disabled:",
+				"These features aren't (yet) compatible with hosting access and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		default:
 			return null;

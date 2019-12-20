@@ -17,13 +17,19 @@ import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
+// TODO: update supportUrls and maybe create similar mapping for warnings
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Upgrade to a Business plan' ),
-			description: translate(
-				"You'll also get to install custom themes, have more storage, and access live support."
-			),
+			description:
+				context === 'themes'
+					? translate(
+							"You'll also get to install custom plugins, have more storage, and access live support."
+					  )
+					: translate(
+							"You'll also get to install custom themes, have more storage, and access live support."
+					  ),
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
@@ -68,7 +74,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
 			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
@@ -116,7 +122,7 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( translate );
+	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
@@ -200,6 +206,8 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 			return translate( "To install plugins you'll need to:" );
 		case 'themes':
 			return translate( "To install themes you'll need to:" );
+		case 'hosting':
+			return translate( "To activate hosting access you'll need to:" );
 		default:
 			return translate( "To continue you'll need to" + ':' );
 	}
