@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
 import { map } from 'lodash';
 import Gridicon from 'components/gridicon';
 
@@ -51,13 +50,13 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 		<div className="eligibility-warnings__warning">
 			<div className="eligibility-warnings__message">
 				<span className="eligibility-warnings__message-title">
-					{ hasTranslation( 'Questions?' )
+					{ i18n.hasLocalizedText( 'Questions?' )
 						? translate( 'Questions?' )
 						: translate( 'Any Questions?' ) }
 				</span>
 				:&nbsp;
 				<span className="eligibility-warnings__message-description">
-					{ hasTranslation( '{{a}}Contact support{{/a}} for help.' ) ? (
+					{ i18n.hasLocalizedText( '{{a}}Contact support{{/a}} for help.' ) ? (
 						translate( '{{a}}Contact support{{/a}} for help.', {
 							components: {
 								a: <ActionPanelLink href="/help/contact" />,
@@ -89,7 +88,7 @@ function getWarningDescription(
 	);
 	switch ( context ) {
 		case 'plugins':
-			return hasTranslation(
+			return i18n.hasLocalizedText(
 				"This feature isn't (yet) compatible with plugin uploads and will be disabled:"
 			)
 				? translate(
@@ -103,7 +102,7 @@ function getWarningDescription(
 				: defaultCopy;
 
 		case 'themes':
-			return hasTranslation(
+			return i18n.hasLocalizedText(
 				"This feature isn't (yet) compatible with theme uploads and will be disabled:"
 			)
 				? translate(
@@ -117,7 +116,7 @@ function getWarningDescription(
 				: defaultCopy;
 
 		case 'hosting':
-			return hasTranslation(
+			return i18n.hasLocalizedText(
 				"This feature isn't (yet) compatible with hosting access and will be disabled:"
 			)
 				? translate(

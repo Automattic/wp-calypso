@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
 import { includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -119,15 +118,15 @@ function getSiteIsEligibleMessage(
 	switch ( context ) {
 		case 'plugins':
 		case 'themes':
-			return hasTranslation( 'This site is eligible to install plugins and upload themes.' )
+			return i18n.hasLocalizedText( 'This site is eligible to install plugins and upload themes.' )
 				? translate( 'This site is eligible to install plugins and upload themes.' )
 				: defaultCopy;
 		case 'hosting':
-			return hasTranslation( 'This site is eligible to activate hosting access.' )
+			return i18n.hasLocalizedText( 'This site is eligible to activate hosting access.' )
 				? translate( 'This site is eligible to activate hosting access.' )
 				: defaultCopy;
 		default:
-			return hasTranslation( 'This site is eligible to continue.' )
+			return i18n.hasLocalizedText( 'This site is eligible to continue.' )
 				? translate( 'This site is eligible to continue.' )
 				: defaultCopy;
 	}
@@ -136,12 +135,12 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	const defaultCopy = translate( 'Proceed' );
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
-		return hasTranslation( 'Upgrade and continue' )
+		return i18n.hasLocalizedText( 'Upgrade and continue' )
 			? translate( 'Upgrade and continue' )
 			: defaultCopy;
 	}
 
-	return hasTranslation( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
+	return i18n.hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
