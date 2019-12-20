@@ -14,7 +14,7 @@ import { partition } from 'lodash';
  */
 import { SiteVertical } from '../../stores/onboard/types';
 import { Template } from '../../stores/verticals-templates/types';
-import DeisgnCard from './design-card';
+import DesignCard from './design-card';
 
 import './style.scss';
 
@@ -78,7 +78,7 @@ const DesignSelector: FunctionComponent = () => {
 				>
 					<div className="design-selector__grid">
 						{ designs.map( design => (
-							<DeisgnCard
+							<DesignCard
 								key={ design.slug }
 								design={ design }
 								isSelected={ design.slug === selectedDesign?.slug }
