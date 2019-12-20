@@ -389,7 +389,9 @@ class RegisterDomainStep extends React.Component {
 	getPlaceholderText() {
 		const { showTestCopy, translate } = this.props;
 
-		return showTestCopy ? 'Type the domain you want here' : translate( 'Enter a name or keyword' );
+		return showTestCopy
+			? translate( 'Type the domain you want here' )
+			: translate( 'Enter a name or keyword' );
 	}
 
 	render() {

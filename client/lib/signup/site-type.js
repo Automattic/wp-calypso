@@ -36,9 +36,10 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			domainsStepSubheader: i18n.translate(
 				'Enter a keyword that describes your site to get started.'
 			),
-			domainsStepHeaderTestCopy: "Let's get your site a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your site's name or a few keywords, and we'll come up with some suggestions.",
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your site a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
+				"Tell us your site's name or a few keywords, and we'll come up with some suggestions."
+			),
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
 				'This will help you get started with a theme you might like. You can change it later.'
@@ -105,9 +106,10 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: "Let's get your blog a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions.",
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your blog a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
+				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions."
+			),
 		},
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results
@@ -124,9 +126,10 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your business's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: "Let's get your business a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your business's name or a few keywords, and we'll come up with some suggestions.",
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your business a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
+				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."
+			),
 			customerType: 'business',
 		},
 		{
@@ -165,9 +168,10 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your site's name or some keywords that describe it to get started."
 			),
-			domainsStepHeaderTestCopy: "Let's get your store a domain!",
-			domainsStepSubheaderTestCopy:
-				"Tell us your store's name or a few keywords, and we'll come up with some suggestions.",
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your store a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
+				"Tell us your store's name or a few keywords, and we'll come up with some suggestions."
+			),
 		},
 	];
 }

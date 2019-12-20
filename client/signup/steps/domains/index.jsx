@@ -122,11 +122,13 @@ class DomainsStep extends React.Component {
 
 		this.showTestCopy = false;
 
-		if (
-			false !== this.props.shouldShowDomainTestCopy &&
-			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-		) {
-			this.showTestCopy = true;
+		if ( false !== this.props.shouldShowDomainTestCopy ) {
+			if (
+				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ||
+				'variantShowUpdates' === abtest( 'nonEnglishDomainStepCopyUpdates' )
+			) {
+				this.showTestCopy = true;
+			}
 		}
 
 		this.showTestParagraph = false;
