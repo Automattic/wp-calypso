@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
@@ -34,21 +35,33 @@ type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
 	context,
+	feature,
 	eligibilityData,
 	isEligible,
 	isPlaceholder,
 	onProceed,
+	recordCtaClick,
 	siteId,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
+	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames( 'eligibility-warnings', {
 		'eligibility-warnings__placeholder': isPlaceholder,
+		'eligibility-warnings--with-indent': showWarnings,
 	} );
 
-	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
+	const logEventAndProceed = () => {
+		// We removed <Banner /> Component which logged this event on upsell click.
+		// We want to keep tracking the data in the same way, so let's fake the banner click here
+		recordCtaClick( feature );
+		onProceed();
+	};
+
+	const showThisSiteIsEligibleMessage =
+		isEligible && 0 === listHolds.length && 0 === warnings.length;
 
 	return (
 		<div className={ classes }>
@@ -57,25 +70,22 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			<CompactCard>
-				{ ( isPlaceholder || listHolds.length > 0 ) && (
-					<HoldList
-						context={ context }
-						holds={ listHolds }
-						isPlaceholder={ isPlaceholder }
-						isIndented={ showWarnings }
-					/>
-				) }
 
-				{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
+			{ ( isPlaceholder || listHolds.length > 0 ) && (
+				<CompactCard>
+					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+				</CompactCard>
+			) }
+
+			{ showThisSiteIsEligibleMessage && (
+				<CompactCard>
 					<div className="eligibility-warnings__no-conflicts">
 						<Gridicon icon="thumbs-up" size={ 24 } />
-						<span>
-							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-						</span>
+						<span>{ getSiteIsEligibleMessage( context, translate ) }</span>
 					</div>
-				) }
-			</CompactCard>
+				</CompactCard>
+			) }
+
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
 					<WarningList context={ context } warnings={ warnings } />
@@ -86,7 +96,7 @@ export const EligibilityWarnings = ( {
 					<Button
 						primary={ true }
 						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
-						onClick={ onProceed }
+						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
@@ -95,6 +105,21 @@ export const EligibilityWarnings = ( {
 		</div>
 	);
 };
+
+function getSiteIsEligibleMessage(
+	context: string | null,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	switch ( context ) {
+		case 'plugins':
+		case 'themes':
+			return translate( 'This site is eligible to install plugins and upload themes.' );
+		case 'hosting':
+			return translate( 'This site is eligible to activate hosting access.' );
+		default:
+			return translate( 'This site is eligible to continue.' );
+	}
+}
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
@@ -133,6 +158,12 @@ const mapStateToProps = ( state: object ) => {
 const mapDispatchToProps = {
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
+	recordCtaClick: ( feature: string ) =>
+		recordTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: 'calypso-theme-eligibility-upgrade-nudge',
+			cta_feature: feature,
+			cta_size: 'regular',
+		} ),
 };
 
 function mergeProps(
@@ -141,12 +172,16 @@ function mergeProps(
 	ownProps: ExternalProps
 ) {
 	let context: string | null = null;
+	let feature: string | null = null;
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
+		feature = FEATURE_UPLOAD_PLUGINS;
 	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
 		context = 'themes';
+		feature = FEATURE_UPLOAD_THEMES;
 	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
 		context = 'hosting';
+		feature = FEATURE_SFTP;
 	}
 
 	const onProceed = () => {
@@ -160,6 +195,7 @@ function mergeProps(
 		...dispatchProps,
 		onProceed,
 		context,
+		feature,
 	};
 }
 
