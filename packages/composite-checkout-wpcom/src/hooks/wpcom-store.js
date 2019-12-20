@@ -6,7 +6,6 @@ import { useRef } from 'react';
 export function useWpcomStore( registerStore, onEvent ) {
 	// Only register once
 	const registerComplete = useRef();
-
 	if ( registerComplete.current ) {
 		return;
 	}
