@@ -661,7 +661,7 @@ class ThemeSheet extends React.Component {
 						'redirect_to',
 						`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 							encodeQueryParameters( [
-								[ 'intent', 'install_plugin' ],
+								[ 'intent', 'install_theme' ],
 								[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 								[ 'redirect_to', document.location.pathname ],
 							] ),
