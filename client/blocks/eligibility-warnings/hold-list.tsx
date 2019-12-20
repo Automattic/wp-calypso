@@ -2,7 +2,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import i18n, { localize, LocalizeProps } from 'i18n-calypso';
+const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
 import { identity, map } from 'lodash';
 import React from 'react';
 
@@ -21,15 +22,32 @@ import { localizeUrl } from 'lib/i18n-utils';
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: translate( 'Upgrade to a Business plan' ),
-			description:
-				context === 'themes'
+			title: hasTranslation( 'Upgrade to a Business plan' )
+				? translate( 'Upgrade to a Business plan' )
+				: translate( 'Upgrade to Business' ),
+			description: ( function() {
+				if ( context === 'themes' ) {
+					return hasTranslation(
+						"You'll also get to install custom plugins, have more storage, and access live support."
+					)
+						? translate(
+								"You'll also get to install custom plugins, have more storage, and access live support."
+						  )
+						: translate(
+								'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+						  );
+				}
+
+				return hasTranslation(
+					"You'll also get to install custom themes, have more storage, and access live support."
+				)
 					? translate(
-							"You'll also get to install custom plugins, have more storage, and access live support."
+							"You'll also get to install custom themes, have more storage, and access live support."
 					  )
 					: translate(
-							"You'll also get to install custom themes, have more storage, and access live support."
-					  ),
+							'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+					  );
+			} )(),
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
@@ -73,9 +91,15 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			message: translate(
+			message: hasTranslation(
 				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
-			),
+			)
+				? translate(
+						'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+				  )
+				: translate(
+						'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+				  ),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
@@ -97,16 +121,26 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			contactUrl: null,
 		},
 		SITE_GRAYLISTED: {
-			message: translate(
+			message: hasTranslation(
 				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
-			),
+			)
+				? hasTranslation(
+						"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+				  )
+				: translate( "Contact us to review your site's standing and resolve the dispute." ),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
-			message: translate(
+			message: hasTranslation(
 				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
-			),
+			)
+				? hasTranslation(
+						'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+				  )
+				: translate(
+						'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.\''
+				  ),
 			status: null,
 			contactUrl: null,
 		},
@@ -200,15 +234,24 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 };
 
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+	const defaultCopy = translate( 'Please clear all issues above to proceed.' );
 	switch ( context ) {
 		case 'plugins':
-			return translate( "To install plugins you'll need to:" );
+			return hasTranslation( "To install plugins you'll need to:" )
+				? translate( "To install plugins you'll need to:" )
+				: defaultCopy;
 		case 'themes':
-			return translate( "To install themes you'll need to:" );
+			return hasTranslation( "To install themes you'll need to:" )
+				? translate( "To install plugins you'll need to:" )
+				: defaultCopy;
 		case 'hosting':
-			return translate( "To activate hosting access you'll need to:" );
+			return hasTranslation( "To activate hosting access you'll need to:" )
+				? translate( "To activate hosting access you'll need to:" )
+				: defaultCopy;
 		default:
-			return translate( "To continue you'll need to" + ':' );
+			return hasTranslation( "To continue you'll need to:" )
+				? translate( "To continue you'll need to:" )
+				: defaultCopy;
 	}
 }
 
