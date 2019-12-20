@@ -71,7 +71,7 @@ export const EligibilityWarnings = ( {
 			</CompactCard>
 			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList warnings={ warnings } />
+					<WarningList context={ context } warnings={ warnings } />
 				</CompactCard>
 			) }
 			<CompactCard>

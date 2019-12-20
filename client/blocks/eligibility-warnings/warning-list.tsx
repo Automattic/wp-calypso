@@ -13,25 +13,19 @@ import ExternalLink from 'components/external-link';
 import ActionPanelLink from 'components/action-panel/link';
 
 interface ExternalProps {
+	context: string | null;
 	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { translate, warnings }: Props ) => (
+export const WarningList = ( { context, translate, warnings }: Props ) => (
 	<div>
 		<div className="eligibility-warnings__warning">
 			<Gridicon icon="notice-outline" size={ 24 } />
 			<div className="eligibility-warnings__message">
 				<span className="eligibility-warnings__message-description">
-					{ translate(
-						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
-						{
-							count: warnings.length,
-							args: warnings.length,
-						}
-					) }
+					{ getWarningDescription( context, warnings.length, translate ) }
 				</span>
 			</div>
 		</div>
@@ -68,5 +62,46 @@ export const WarningList = ( { translate, warnings }: Props ) => (
 		</div>
 	</div>
 );
+
+function getWarningDescription(
+	context: string | null,
+	warningCount: number,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	switch ( context ) {
+		case 'plugins':
+			return translate(
+				"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
+				"These features aren't (yet) compatible with plugin uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
+
+		case 'themes':
+			return translate(
+				"This feature isn't (yet) compatible with theme uploads and will be disabled:",
+				"These features aren't (yet) compatible with theme uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
+
+		case 'hosting':
+			return translate(
+				"This feature isn't (yet) compatible with hosting access and will be disabled:",
+				"These features aren't (yet) compatible with hosting access and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
+
+		default:
+			return null;
+	}
+}
 
 export default localize( WarningList );
