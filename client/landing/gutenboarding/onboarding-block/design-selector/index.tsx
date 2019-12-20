@@ -85,7 +85,7 @@ const DesignSelector: FunctionComponent = () => {
 								style={
 									selectedDesign?.slug === design.slug
 										? {
-												transform: `translate3d( 0, calc( -100vh + ${ -cp + 10 }px ), 0 )`,
+												transform: `translate3d( 0, calc( -100vh + ${ -( cp ?? 0 ) + 10 }px ), 0 )`,
 										  }
 										: undefined
 								}
