@@ -507,12 +507,11 @@ export function getThemeDemoUrl( state, themeId, siteId ) {
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
- * @param  {String}  siteId  Site ID
- * @return {?String}         Theme forum URL
+ * @returns {?String}        Theme forum URL
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isThemePremium( state, themeId ) ) {
-		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
+		return '//premium-themes.forums.wordpress.com/' + themeId;
 	}
 	if ( isWpcomTheme( state, themeId ) ) {
 		return '//en.forums.wordpress.com/forum/themes';
@@ -729,12 +728,12 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 
 /**
  * Returns the price string to display for a given theme on a given site:
- * @TODO Add tests!
+ * TODO Add tests!
  *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
- * @return {String}          Price
+ * @returns {String}          Price
  */
 export function getPremiumThemePrice( state, themeId, siteId ) {
 	if ( ! isThemePremium( state, themeId ) || isPremiumThemeAvailable( state, themeId, siteId ) ) {
@@ -761,7 +760,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
  * @param {Object} state   Global state tree
  * @param {String} themeId An identifier for the theme - like
  *                         `independent-publisher-2` or `maywood`.
- * @return {Boolean} True if the theme should be edited with gutenberg.
+ * @returns {Boolean} True if the theme should be edited with gutenberg.
  */
 export function isThemeGutenbergFirst( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
