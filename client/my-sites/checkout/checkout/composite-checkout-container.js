@@ -12,6 +12,7 @@ import { mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -212,9 +213,9 @@ export default function CompositeCheckoutContainer( {
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
-		// TODO: redirect to the pending page
-		notices.success( translate( 'Your purchase was successful!' ) );
-	}, [ translate ] );
+		// TODO: determine which thank-you page to visit
+		page.redirect( `/checkout/thank-you/${ siteId }/` );
+	}, [ siteId ] );
 
 	const showErrorMessage = useCallback(
 		error => {
