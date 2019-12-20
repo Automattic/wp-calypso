@@ -241,7 +241,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 };
 
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
-	const defaultCopy = translate( 'Please clear all issues above to proceed.' );
+	const defaultCopy = translate( "To continue you'll need to:" );
 	switch ( context ) {
 		case 'plugins':
 			return hasTranslation( "To install plugins you'll need to:" )
@@ -256,9 +256,7 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 				? translate( "To activate hosting access you'll need to:" )
 				: defaultCopy;
 		default:
-			return hasTranslation( "To continue you'll need to:" )
-				? translate( "To continue you'll need to:" )
-				: defaultCopy;
+			return defaultCopy;
 	}
 }
 
