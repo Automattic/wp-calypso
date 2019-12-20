@@ -33,12 +33,12 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestions.types.DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestions.types.DomainSuggestionQuery >;
+	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {

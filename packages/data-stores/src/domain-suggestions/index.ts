@@ -13,9 +13,9 @@ import * as actions from './actions';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import * as types from './types';
 
-export { State, STORE_KEY, types };
+export * from './types';
+export { State, STORE_KEY };
 
 export function register() {
 	registerStore< State >( STORE_KEY, { actions, controls, reducer, resolvers, selectors } );

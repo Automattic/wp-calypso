@@ -13,10 +13,11 @@ import { partition } from 'lodash';
  * Internal dependencies
  */
 import { SiteVertical } from '../../stores/onboard/types';
-import { Template } from '../../stores/verticals-templates/types';
 import DesignCard from './design-card';
 
 import './style.scss';
+
+type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
 
 const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(

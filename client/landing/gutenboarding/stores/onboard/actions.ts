@@ -4,7 +4,7 @@
 import { ActionType, SiteVertical } from './types';
 
 export const setDomain = (
-	domain: import('@automattic/data-stores').DomainSuggestions.types.DomainSuggestion
+	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
 ) => ( {
 	type: ActionType.SET_DOMAIN as const,
 	domain,

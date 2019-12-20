@@ -10,7 +10,6 @@ import classnames from 'classnames';
  */
 import { Card } from '../../components/card';
 import { CardMedia } from '../../components/card/media';
-import { Template } from '../../stores/verticals-templates/types';
 
 const gridWidth = 960;
 const srcSet = ( src: string, widths: number[] ) =>
@@ -18,7 +17,7 @@ const srcSet = ( src: string, widths: number[] ) =>
 
 interface Props {
 	isSelected?: boolean;
-	design: Template;
+	design: import('@automattic/data-stores').VerticalsTemplates.Template;
 	onClick: MouseEventHandler< HTMLDivElement >;
 	style?: CSSProperties;
 }

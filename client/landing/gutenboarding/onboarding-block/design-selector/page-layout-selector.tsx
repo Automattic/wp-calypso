@@ -8,11 +8,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Template } from '../../stores/verticals-templates/types';
 import Card from '../../components/card';
 import CardMedia from '../../components/card/media';
 import { removeQueryArgs } from '@wordpress/url';
 import { Icon } from '@wordpress/components';
+
+type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
 
 interface Props {
 	selectedDesign: Template | undefined;
