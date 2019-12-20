@@ -101,19 +101,17 @@ describe( '<EligibilityWarnings>', () => {
 			],
 		} );
 
-		const { container, getByLabelText } = renderWithStore(
+		const { getByText } = renderWithStore(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
 
-		const notices = container.querySelectorAll( '.notice.is-warning' );
+		expect( getByText( 'Warning 1' ) ).toBeVisible();
+		expect( getByText( 'Describes warning 1' ) ).toBeVisible();
+		expect( getByText( 'Warning 2' ) ).toBeVisible();
+		expect( getByText( 'Describes warning 2' ) ).toBeVisible();
 
-		expect( notices[ 0 ] ).toBeVisible();
-		expect( notices[ 0 ] ).toHaveTextContent( 'Describes warning 1' );
-		expect( notices[ 1 ] ).toBeVisible();
-		expect( notices[ 1 ] ).toHaveTextContent( 'Describes warning 2' );
-
-		expect( getByLabelText( 'Help' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
+		expect( getByText( 'Learn more.' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {
