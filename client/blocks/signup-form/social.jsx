@@ -99,6 +99,7 @@ class SocialSignupForm extends Component {
 						uxMode={ uxMode }
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'google' ) }
+						isSignup={ true }
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
@@ -110,6 +111,7 @@ class SocialSignupForm extends Component {
 						uxMode={ uxModeApple }
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
+						isSignup={ true }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}

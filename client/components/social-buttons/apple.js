@@ -31,6 +31,7 @@ class AppleLoginButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		isFormDisabled: PropTypes.bool,
+		isSignup: PropTypes.bool,
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
@@ -42,6 +43,7 @@ class AppleLoginButton extends Component {
 		onClick: noop,
 		scope: 'name email',
 		uxMode: 'popup',
+		isSignup: false,
 	};
 
 	appleClient = null;
@@ -127,7 +129,7 @@ class AppleLoginButton extends Component {
 			return null;
 		}
 
-		const { children, isFormDisabled: isDisabled } = this.props;
+		const { children, isFormDisabled: isDisabled, isSignup } = this.props;
 		let customButton = null;
 
 		if ( children ) {
@@ -151,11 +153,17 @@ class AppleLoginButton extends Component {
 						<AppleIcon isDisabled={ isDisabled } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Continue with %(service)s', {
-								args: { service: 'Apple' },
-								comment:
-									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-							} ) }
+							{ isSignup
+								? this.props.translate( 'Create an account with %(service)s', {
+										args: { service: 'Apple' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+								  } )
+								: this.props.translate( 'Continue with %(service)s', {
+										args: { service: 'Apple' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+								  } ) }
 						</span>
 					</button>
 				) }

@@ -736,21 +736,6 @@ class SignupForm extends Component {
 			}
 		);
 
-		if ( this.props.isSocialSignupEnabled ) {
-			return (
-				<p className="signup-form__terms-of-service-link">
-					{ this.props.translate(
-						'By continuing, you are creating an account on WordPress.com, and you agree to our {{a}}Terms of Service{{/a}}.',
-						{
-							components: {
-								a: tosLink,
-							},
-						}
-					) }
-				</p>
-			);
-		}
-
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 

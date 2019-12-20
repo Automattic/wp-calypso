@@ -30,6 +30,7 @@ class GoogleLoginButton extends Component {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
 		isFormDisabled: PropTypes.bool,
+		isSignup: PropTypes.bool,
 		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectUri: PropTypes.string,
@@ -43,6 +44,7 @@ class GoogleLoginButton extends Component {
 		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
+		isSignup: false,
 	};
 
 	state = {
@@ -186,7 +188,7 @@ class GoogleLoginButton extends Component {
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
 
-		const { children } = this.props;
+		const { children, isSignup } = this.props;
 		let customButton = null;
 
 		if ( children ) {
@@ -218,11 +220,17 @@ class GoogleLoginButton extends Component {
 						<GoogleIcon isDisabled={ isDisabled } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Continue with %(service)s', {
-								args: { service: 'Google' },
-								comment:
-									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-							} ) }
+							{ isSignup
+								? this.props.translate( 'Create an account with %(service)s', {
+										args: { service: 'Google' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+								  } )
+								: this.props.translate( 'Continue with %(service)s', {
+										args: { service: 'Google' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+								  } ) }
 						</span>
 					</button>
 				) }

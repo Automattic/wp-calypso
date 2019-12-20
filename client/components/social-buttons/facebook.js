@@ -25,6 +25,7 @@ class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
+		isSignup: PropTypes.bool,
 		appId: PropTypes.string.isRequired,
 		version: PropTypes.string,
 		cookie: PropTypes.bool,
@@ -43,6 +44,7 @@ class FacebookLoginButton extends Component {
 		xfbml: true,
 		scope: 'public_profile,email',
 		onClick: noop,
+		isSignup: false,
 	};
 
 	constructor( props ) {
@@ -120,11 +122,17 @@ class FacebookLoginButton extends Component {
 					<FacebookIcon />
 
 					<span className="social-buttons__service-name">
-						{ this.props.translate( 'Continue with %(service)s', {
-							args: { service: 'Facebook' },
-							comment:
-								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-						} ) }
+						{ this.props.isSignup
+							? this.props.translate( 'Create an account with %(service)s', {
+									args: { service: 'Facebook' },
+									comment:
+										'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+							  } )
+							: this.props.translate( 'Continue with %(service)s', {
+									args: { service: 'Facebook' },
+									comment:
+										'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+							  } ) }
 					</span>
 				</button>
 			</div>
