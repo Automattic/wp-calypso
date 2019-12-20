@@ -15,4 +15,4 @@ export * from './verticals-templates/types';
 /**
  * Helper types
  */
-export { DispatchFromMap, SelectFromMap } from './mapped-types';
+export * from './mapped-types';
