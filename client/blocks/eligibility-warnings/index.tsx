@@ -41,6 +41,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isPlaceholder,
 	onProceed,
+	recordCtaClick,
 	siteId,
 	translate,
 }: Props ) => {
@@ -53,7 +54,15 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings--with-indent': showWarnings,
 	} );
 
-	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
+	const logEventAndProceed = () => {
+		// We removed <Banner /> Component which logged this event on upsell click.
+		// We want to keep tracking the data in the same way, so let's fake the banner click here
+		recordCtaClick( feature );
+		onProceed();
+	};
+
+	const showThisSiteIsEligibleMessage =
+		isEligible && 0 === listHolds.length && 0 === warnings.length;
 
 	return (
 		<div className={ classes }>
@@ -62,25 +71,22 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			<CompactCard>
-				{ ( isPlaceholder || listHolds.length > 0 ) && (
-					<HoldList
-						context={ context }
-						holds={ listHolds }
-						isPlaceholder={ isPlaceholder }
-						isIndented={ showWarnings }
-					/>
-				) }
 
-				{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
+			{ ( isPlaceholder || listHolds.length > 0 ) && (
+				<CompactCard>
+					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+				</CompactCard>
+			) }
+
+			{ showThisSiteIsEligibleMessage && (
+				<CompactCard>
 					<div className="eligibility-warnings__no-conflicts">
 						<Gridicon icon="thumbs-up" size={ 24 } />
-						<span>
-							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-						</span>
+						<span>{ getSiteIsEligibleMessage( context, translate ) }</span>
 					</div>
-				) }
-			</CompactCard>
+				</CompactCard>
+			) }
+
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
 					<WarningList context={ context } warnings={ warnings } />
@@ -91,7 +97,7 @@ export const EligibilityWarnings = ( {
 					<Button
 						primary={ true }
 						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
-						onClick={ onProceed }
+						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
@@ -100,6 +106,21 @@ export const EligibilityWarnings = ( {
 		</div>
 	);
 };
+
+function getSiteIsEligibleMessage(
+	context: string | null,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	switch ( context ) {
+		case 'plugins':
+		case 'themes':
+			return translate( 'This site is eligible to install plugins and upload themes.' );
+		case 'hosting':
+			return translate( 'This site is eligible to activate hosting access.' );
+		default:
+			return translate( 'This site is eligible to continue.' );
+	}
+}
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
@@ -152,7 +173,7 @@ function mergeProps(
 	ownProps: ExternalProps
 ) {
 	let context: string | null = null;
-	let feature = '';
+	let feature: string | null = null;
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;

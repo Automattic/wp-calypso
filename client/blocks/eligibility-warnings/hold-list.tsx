@@ -116,20 +116,16 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
-	isIndented: boolean;
 	isPlaceholder: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const HoldList = ( { context, holds, isIndented, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
-	const messageClassName = classNames( 'eligibility-warnings__message ', {
-		'eligibility-warnings__message--indented': isIndented,
-	} );
 
 	return (
 		<>
@@ -175,7 +171,7 @@ export const HoldList = ( { context, holds, isIndented, isPlaceholder, translate
 					map( holds, hold =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
-								<div className={ messageClassName }>
+								<div className="eligibility-warnings__message">
 									<div className="eligibility-warnings__message-title">
 										{ holdMessages[ hold ].title }
 									</div>
