@@ -8,9 +8,10 @@ This lib enables translations, exposing three public methods:
 
 It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
-Finally, this lib exposes a utility method for your React application:
+Finally, this lib exposes some utility methods for your React application:
 
-* [.hasTranslation()](#hastranslation-method)
+- [.hasTranslation()](#hastranslation-method)
+- [.hasLocalizedText()](#haslocalizedtext-method)
 
 ## Translate Method
 
@@ -250,6 +251,21 @@ Using the method `hasTranslation` you can check whether a translation for a give
 var i18n = require( 'i18n-calypso' );
 i18n.hasTranslation( 'This has been translated' ); // true
 i18n.hasTranslation( 'Not translation exists' ); // false
+```
+
+## hasLocalizedText Method
+
+Using the method `hasLocalizedText`, you can check if the string is usable in the selected locale.
+If the locale is the default, this will always return true.
+If the locale is not the default, returns the value of `this.hasTranslation` for the input.
+
+### Usage
+
+```js
+var i18n = require( 'i18n-calypso' );
+var label = i18n.hasLocalizedText( 'Some string that may not yet be translated' )
+	? translate( 'Some string that may not yet be translated in the current locale' )
+	: translate( "Some string that we're confident is translated" );
 ```
 
 ## Mixin
