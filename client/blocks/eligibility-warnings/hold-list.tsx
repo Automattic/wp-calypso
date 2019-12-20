@@ -18,7 +18,6 @@ import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-// TODO: update supportUrls and maybe create similar mapping for warnings
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		NO_BUSINESS_PLAN: {
