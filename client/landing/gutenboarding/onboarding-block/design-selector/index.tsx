@@ -100,7 +100,7 @@ const DesignSelector: FunctionComponent = () => {
 			</CSSTransition>
 
 			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming } unmountOnExit>
-				<div className="page-selector__grid-container">
+				<div className="page-layout-selector__container">
 					<PageLayoutSelector
 						selectedDesign={ selectedDesign }
 						selectedLayouts={ selectedLayouts }
