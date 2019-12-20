@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "es5",
 		"module": "esnext",
-		"allowJs": true,
+		"allowJs": false,
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
