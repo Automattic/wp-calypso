@@ -8,6 +8,7 @@ const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
 import { includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -58,7 +59,8 @@ export const EligibilityWarnings = ( {
 	const logEventAndProceed = () => {
 		recordCtaClick( feature );
 		if ( siteRequiresUpgrade( listHolds ) ) {
-            page.redirect(`/checkout/${siteSlug}/business`);
+			page.redirect( `/checkout/${ siteSlug }/business` );
+			return;
 		}
 		onProceed();
 	};
@@ -144,8 +146,7 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
 	const canHandleHoldsAutomatically =
-		holds.length <= 2 &&
-		holds.every( hold => [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ].includes( hold ) );
+		holds.length <= 2 && holds.every( hold => [ 'NO_BUSINESS_PLAN' ].includes( hold ) );
 
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
