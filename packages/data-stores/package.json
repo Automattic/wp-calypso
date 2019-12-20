@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/calypso-data-stores",
+	"name": "@automattic/data-stores",
 	"version": "1.0.0-alpha.0",
 	"description": "Calypso Data Stores",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -11,7 +11,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/calypso-data-stores"
+		"directory": "packages/data-stores"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -6,14 +6,16 @@ It is meant to be helpful for projects developed inside the [Calypso monorepo](h
 
 To use stores from the package, import the relevant store key like so:
 
-```ts
+```tsx
 import React from 'react';
 import { useSelect } from '@wordpress/data';
-import { VERTICALS_STORE } from '@automattic/calypso-data-stores';
+import { Verticals } from '@automattic/data-stores';
+
+Verticals.register()
 
 const VerticalSelect = () => ( {
 	const verticals = useSelect( select =>
-		select( VERTICALS_STORE ).getVerticals()
+		select( Verticals.STORE_KEY ).getVerticals()
     );
 
     return (

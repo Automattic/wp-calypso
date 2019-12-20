@@ -11,7 +11,7 @@ import { ActionType, SiteVertical } from './types';
 import * as Actions from './actions';
 
 const domain: Reducer<
-	import('@automattic/calypso-data-stores').DomainSuggestions.types.DomainSuggestion | undefined,
+	import('@automattic/data-stores').DomainSuggestions.types.DomainSuggestion | undefined,
 	ReturnType< typeof Actions[ 'setDomain' ] >
 > = ( state = undefined, action ) => {
 	if ( action.type === ActionType.SET_DOMAIN ) {

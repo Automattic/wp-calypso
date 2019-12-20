@@ -17,7 +17,7 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/calypso-data-stores';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.STORE_KEY;
