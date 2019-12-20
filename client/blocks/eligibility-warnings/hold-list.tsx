@@ -87,6 +87,14 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 	};
 }
 
+/**
+ * This function defines how we should communicate each type of blocking hold the public-api returns.
+ * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
+ * should short-circuit any eligibility checks and just communicate the problem.
+ *
+ * @param {Function} translate Translate fn
+ * @returns {object} Dictionary of blocking holds and their corresponding messages
+ */
 function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
@@ -261,6 +269,15 @@ function isKnownHoldType(
 	return holdMessages.hasOwnProperty( hold );
 }
 
+/**
+ * This checks if hold coming from API is blocking (@see getBlockingMessages);
+ * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
+ * to our support.
+ *
+ * @param {string} hold Specific hold we want to check
+ * @param {object} blockingMessages List of all holds we consider blocking
+ * @returns {boolean} Is {hold} blocking or not
+ */
 function isHardBlockingHoldType(
 	hold: string,
 	blockingMessages: ReturnType< typeof getBlockingMessages >
