@@ -194,8 +194,8 @@ export function isBestValue( plan ) {
 /**
  * Return estimated duration of given PLAN_TERM in days
  *
- * @param {String} term TERM_ constant
- * @return {Number} Term duration
+ * @param {string} term TERM_ constant
+ * @returns {number} Term duration
  */
 export function getTermDuration( term ) {
 	switch ( term ) {
