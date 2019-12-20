@@ -355,15 +355,13 @@ function isPaidWithPayPalDirect( purchase ) {
 }
 
 function hasCreditCardData( purchase ) {
-	return purchase.payment.creditCard.expiryDate;
+	return Boolean( purchase.payment.creditCard.expiryDate );
 }
 
 function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
-	if ( ! purchase.expiryDate ) {
-		return false;
-	}
-
-	const expiry = moment( purchase.expiryDate, purchase.expiryDateFormat );
+	const expiry = purchase.expiryDate
+		? moment( purchase.expiryDate, purchase.expiryDateFormat )
+		: null;
 	return expiry > moment().add( 3, 'months' );
 }
 
@@ -395,9 +393,9 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 }
 
 function monthsUntilCardExpires( purchase ) {
-	const creditCard = purchase?.payment?.creditCard;
+	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard.expiryDate, creditCard.expiryDateFormat );
-	return expiry && expiry.diff( moment(), 'months' );
+	return expiry.diff( moment(), 'months' );
 }
 
 function subscribedWithinPastWeek( purchase ) {
