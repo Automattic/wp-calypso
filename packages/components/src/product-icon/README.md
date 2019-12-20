@@ -69,6 +69,6 @@ In order to add a new icon to the component, do the following:
 * Add the image path to the `paths` object in the `config.js` file.
 * Add a new entry in the `iconToProductSlugMap` object in the `config.js` file:
   * key should match the image slug that just have been added,
-  * value should be an array of product slugs the image should be displayed for,
+  * value should be an array of product slugs the image should be displayed for.
 * Document the new icon as an available option for the `slug` prop in this README.
 * Optionally, update the `docs/example.jsx` file to include the new icon.
