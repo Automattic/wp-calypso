@@ -68,6 +68,8 @@ declare namespace i18nCalypso {
 
 	export function hasTranslation( original: string ): boolean;
 
+	export function hasLocalizedText( original: string ): boolean;
+
 	export interface NumberFormatOptions {
 		decimals?: number;
 		decPoint?: string;
