@@ -60,6 +60,7 @@ import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
+import { INSTALL_THEME } from 'state/plugins/installed/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
@@ -661,7 +662,7 @@ class ThemeSheet extends React.Component {
 						'redirect_to',
 						`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 							encodeQueryParameters( [
-								[ 'intent', 'install_theme' ],
+								[ 'intent', INSTALL_THEME ],
 								[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 								[ 'redirect_to', document.location.pathname ],
 							] ),

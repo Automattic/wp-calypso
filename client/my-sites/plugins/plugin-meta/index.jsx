@@ -44,6 +44,7 @@ import { encodeQueryParameters } from 'state/http';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { INSTALL_PLUGIN } from 'state/plugins/installed/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -613,7 +614,7 @@ export class PluginMeta extends Component {
 					'redirect_to',
 					`/checkout/thank-you/${ slug }/:receiptId?` +
 						encodeQueryParameters( [
-							[ 'intent', 'install_plugin' ],
+							[ 'intent', INSTALL_PLUGIN ],
 							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 						] ),
