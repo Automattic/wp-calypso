@@ -10,6 +10,7 @@ import config from '../../config';
  * Internal dependencies
  */
 import { Gutenboard } from './gutenboard';
+import { setupWpDataDebug } from './devtools';
 
 /**
  * Style dependencies
@@ -21,7 +22,8 @@ window.AppBoot = () => {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
 		window.location = '/';
 	} else {
-		// @TODO: Add replacement for wpDataDebugMiddleware
+		setupWpDataDebug();
+
 		ReactDom.render(
 			<BrowserRouter basename="gutenboarding">
 				<Gutenboard />
