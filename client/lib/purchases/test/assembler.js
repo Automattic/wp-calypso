@@ -41,7 +41,6 @@ describe( 'assembler', () => {
 		const payment = purchase[ 0 ].payment;
 		const creditCard = payment.creditCard;
 		expect( creditCard.expiryDate ).to.equal( '11/16' );
-		expect( creditCard.expiryDateValid ).to.equal( true );
 		expect( creditCard.expiryDateFormat ).to.equal( 'MM/YY' );
 		expect( creditCard.id ).to.equal( 1234 );
 		expect( creditCard.number ).to.equal( 7890 );

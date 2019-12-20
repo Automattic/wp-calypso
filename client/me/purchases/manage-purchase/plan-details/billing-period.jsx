@@ -55,14 +55,14 @@ class PlanBillingPeriod extends Component {
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryDateValid ) {
+		if ( isExpiring( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expires on %s', {
 				args: moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryDateValid ) {
+		if ( isExpired( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
 					timeSinceExpiry: moment( purchase.expiryDate, purchase.expiryDateFormat ).fromNow(),

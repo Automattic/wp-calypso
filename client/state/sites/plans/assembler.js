@@ -6,14 +6,12 @@ export const createSitePlanObject = plan => {
 	return {
 		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
 		autoRenewDate: plan.auto_renew_date,
-		autoRenewDateValid: Boolean( plan.auto_renew_date ),
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
 		expiryDate: plan.expiry,
-		expiryDateValid: Boolean( plan.expiry ),
 		expiryDateFormat: null,
 		formattedDiscount: plan.formatted_discount,
 		formattedOriginalPrice: plan.formatted_original_price,
@@ -28,7 +26,6 @@ export const createSitePlanObject = plan => {
 		rawDiscount: plan.raw_discount,
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
-		subscribedDateValid: Boolean( plan.subscribed_date ),
 		userIsOwner: Boolean( plan.user_is_owner ),
 	};
 };

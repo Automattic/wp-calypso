@@ -169,10 +169,7 @@ class PurchaseMeta extends Component {
 		}
 
 		if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-			return (
-				purchase.expiryDateValid &&
-				moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' )
-			);
+			return moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' );
 		}
 
 		if ( isRenewing( purchase ) ) {
@@ -204,9 +201,9 @@ class PurchaseMeta extends Component {
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
 				paymentInfo = translate( 'expiring %(cardExpiry)s', {
 					args: {
-						cardExpiry:
-							payment.expiryDateValid &&
-							moment( payment.expiryDate, payment.expiryDateFormat ).format( 'MMMM YYYY' ),
+						cardExpiry: moment( payment.expiryDate, payment.expiryDateFormat ).format(
+							'MMMM YYYY'
+						),
 					},
 				} );
 			}
@@ -322,9 +319,7 @@ class PurchaseMeta extends Component {
 				  } )
 				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 						args: {
-							expireDate:
-								purchase.expiryDateValid &&
-								moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' ),
+							expireDate: moment( purchase.expiryDate, purchase.expiryDateFormat ).format( 'LL' ),
 						},
 						components: {
 							dateSpan,

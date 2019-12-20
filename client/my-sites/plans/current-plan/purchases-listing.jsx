@@ -73,7 +73,7 @@ class PurchasesListing extends Component {
 	isProductExpiring( product ) {
 		const { moment } = this.props;
 
-		if ( ! product.expiryDateValid ) {
+		if ( ! product.expiryDate ) {
 			return false;
 		}
 
@@ -130,12 +130,13 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		const subscribedMoment =
-			purchase.subscribedDateValid && this.props.moment( purchase.subscribedDate );
+		const subscribedMoment = purchase.subscribedDate
+			? this.props.moment( purchase.subscribedDate )
+			: null;
 
-		const expiryMoment =
-			purchase.expiryDateValid &&
-			this.props.moment( purchase.expiryDate, purchase.expiryDateFormat );
+		const expiryMoment = purchase.expiryDate
+			? this.props.moment( purchase.expiryDate, purchase.expiryDateFormat )
+			: null;
 
 		return (
 			<ProductExpiration

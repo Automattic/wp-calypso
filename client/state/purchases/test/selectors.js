@@ -87,7 +87,6 @@ describe( 'selectors', () => {
 				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
-				expiryDateValid: false,
 				expiryDateFormat: null,
 				expiryStatus: '',
 				includedDomain: undefined,
@@ -100,7 +99,6 @@ describe( 'selectors', () => {
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
-				mostRecentRenewDateValid: false,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -118,7 +116,6 @@ describe( 'selectors', () => {
 				renewDateValid: false,
 				siteName: undefined,
 				subscribedDate: undefined,
-				subscribedDateValid: false,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
 				taxAmount: undefined,

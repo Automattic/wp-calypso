@@ -88,12 +88,9 @@ function getPartnerName( purchase ) {
 // TODO: refactor to avoid returning a localized string.
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
-	return (
-		purchase.expiryDateValid &&
-		moment( purchase.expiryDate, purchase.expiryDateFormat )
-			.locale( localeSlug )
-			.format( 'LL' )
-	);
+	return moment( purchase.expiryDate, purchase.expiryDateFormat )
+		.locale( localeSlug )
+		.format( 'LL' );
 }
 
 /**
@@ -354,15 +351,15 @@ function isPaidWithCreditCard( purchase ) {
 }
 
 function isPaidWithPayPalDirect( purchase ) {
-	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDateValid;
+	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDate;
 }
 
 function hasCreditCardData( purchase ) {
-	return purchase.payment.creditCard.expiryDateValid;
+	return purchase.payment.creditCard.expiryDate;
 }
 
 function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
-	if ( ! purchase.expiryDateValid ) {
+	if ( ! purchase.expiryDate ) {
 		return false;
 	}
 
@@ -384,13 +381,12 @@ function canExplicitRenew( purchase ) {
 
 function creditCardExpiresBeforeSubscription( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
-	const purchaseExpiryDate =
-		purchase?.expiryDateValid && moment( purchase.expiryDate, purchase.expiryDateFormat );
+	const purchaseExpiryDate = moment( purchase.expiryDate, purchase.expiryDateFormat );
 
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		creditCard.expiryDateValid &&
+		creditCard.expiryDate &&
 		moment( creditCard.expiryDate, creditCard.expiryDateFormat ).diff(
 			purchaseExpiryDate,
 			'months'
@@ -400,8 +396,7 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 
 function monthsUntilCardExpires( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
-	const expiry =
-		creditCard?.expiryDateValid && moment( creditCard.expiryDate, creditCard.expiryDateFormat );
+	const expiry = moment( creditCard.expiryDate, creditCard.expiryDateFormat );
 	return expiry && expiry.diff( moment(), 'months' );
 }
 

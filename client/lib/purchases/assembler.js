@@ -15,7 +15,6 @@ function createPurchaseObject( purchase ) {
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		mostRecentRenewDate: purchase.most_recent_renew_date,
-		mostRecentRenewDateValid: Boolean( purchase.most_recent_renew_date ),
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		costToUnbundle: purchase.cost_to_unbundle
@@ -32,7 +31,6 @@ function createPurchaseObject( purchase ) {
 		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryDateValid: Boolean( purchase.expiry_date ),
 		expiryDateFormat: null,
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
@@ -69,7 +67,6 @@ function createPurchaseObject( purchase ) {
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
 		subscribedDate: purchase.subscribed_date,
-		subscribedDateValid: Boolean( purchase.subscribed_date ),
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
@@ -86,7 +83,6 @@ function createPurchaseObject( purchase ) {
 				processor: purchase.payment_card_processor,
 				number: purchase.payment_details,
 				expiryDate: purchase.payment_expiry,
-				expiryDateValid: Boolean( purchase.payment_expiry ),
 				expiryDateFormat: 'MM/YY',
 			},
 		};
@@ -95,7 +91,6 @@ function createPurchaseObject( purchase ) {
 	}
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
-		object.payment.expiryDateValid = Boolean( purchase.payment_expiry );
 		object.payment.expiryDateFormat = 'MM/YY';
 	}
 

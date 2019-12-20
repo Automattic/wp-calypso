@@ -45,8 +45,8 @@ function getRecentRenewalProductsMatchingIds( products, ids, moment ) {
 			ids.includes( product.productId ) &&
 			product.subscriptionStatus === 'active' &&
 			product.productName &&
-			product.expiryDateValid &&
-			product.mostRecentRenewDateValid &&
+			product.expiryDate &&
+			product.mostRecentRenewDate &&
 			moment( product.mostRecentRenewDate ).isAfter( oldestMoment )
 		);
 	} );
@@ -63,8 +63,7 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 			? product.meta || product.domain
 			: product.includedDomain || product.domain;
 
-		const expiry =
-			product.expiryDateValid && moment( product.expiryDate, product.expiryDateFormat );
+		const expiry = moment( product.expiryDate, product.expiryDateFormat );
 
 		return (
 			<RecentRenewalListItem
