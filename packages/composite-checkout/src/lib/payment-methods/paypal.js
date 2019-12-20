@@ -111,7 +111,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	const [ paymentData ] = usePaymentData();
 	const { billing = {} } = paymentData;
 	useTransactionStatusHandler();
-	const [ formStatus ] = useFormStatus();
+	const { formStatus } = useFormStatus();
 
 	const onClick = () =>
 		submitPaypalPayment( {
@@ -141,7 +141,7 @@ function useTransactionStatusHandler() {
 	const { showErrorMessage } = useMessages();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
-	const [ , setFormStatus ] = useFormStatus();
+	const { setFormReady, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'redirecting' ) {
@@ -149,18 +149,24 @@ function useTransactionStatusHandler() {
 			return;
 		}
 		if ( transactionStatus === 'error' ) {
-			setFormStatus( 'ready' );
+			setFormReady();
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
 			return;
 		}
 		if ( transactionStatus === 'submitting' ) {
-			setFormStatus( 'submitting' );
+			setFormSubmitting();
 			return;
 		}
-		setFormStatus( status => ( status === 'submitting' ? 'ready' : status ) );
-	}, [ localize, showErrorMessage, transactionStatus, transactionError, setFormStatus ] );
+	}, [
+		localize,
+		showErrorMessage,
+		transactionStatus,
+		transactionError,
+		setFormReady,
+		setFormSubmitting,
+	] );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`

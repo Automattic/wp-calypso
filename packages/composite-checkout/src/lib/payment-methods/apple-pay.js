@@ -87,10 +87,10 @@ export function ApplePayLabel() {
 export function ApplePaySubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const paymentRequestOptions = usePaymentRequestOptions();
-	const [ , setFormStatus ] = useFormStatus();
+	const { setFormComplete } = useFormStatus();
 	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		paymentRequestOptions,
-		onSubmit: () => setFormStatus( 'complete' ),
+		onSubmit: setFormComplete,
 	} );
 
 	if ( ! canMakePayment ) {

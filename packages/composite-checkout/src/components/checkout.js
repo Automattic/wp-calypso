@@ -83,7 +83,7 @@ export default function Checkout( { steps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
-	const [ formStatus ] = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const onPaymentComplete = usePaymentComplete();
 
 	// Re-render if any store changes; that way isComplete can rely on any data

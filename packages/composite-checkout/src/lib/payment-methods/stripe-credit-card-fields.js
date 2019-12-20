@@ -616,7 +616,7 @@ function StripePayButton( { disabled } ) {
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
-	const [ formStatus, setFormStatus ] = useFormStatus();
+	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -624,10 +624,10 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
-			setFormStatus( 'ready' );
+			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			setFormStatus( 'complete' );
+			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -637,12 +637,13 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
-				setFormStatus( 'ready' );
+				setFormReady();
 				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
-		setFormStatus,
+		setFormReady,
+		setFormComplete,
 		showErrorMessage,
 		transactionStatus,
 		transactionError,
@@ -669,7 +670,7 @@ function StripePayButton( { disabled } ) {
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
-					setFormStatus,
+					setFormSubmitting,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -704,10 +705,11 @@ async function submitStripePayment( {
 	successUrl,
 	cancelUrl,
 	beginStripeTransaction,
-	setFormStatus,
+	setFormSubmitting,
+	setFormReady,
 } ) {
 	try {
-		setFormStatus( 'submitting' );
+		setFormSubmitting();
 		beginStripeTransaction( {
 			stripe,
 			name,
@@ -718,7 +720,7 @@ async function submitStripePayment( {
 			cancelUrl,
 		} );
 	} catch ( error ) {
-		setFormStatus( 'ready' );
+		setFormReady();
 		showErrorMessage( error );
 		return;
 	}

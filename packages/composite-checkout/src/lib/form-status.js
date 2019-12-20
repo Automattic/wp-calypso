@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useReducer, useCallback, useContext, useEffect } from 'react';
+import { useReducer, useMemo, useCallback, useContext, useEffect } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -13,7 +13,16 @@ const debug = debugFactory( 'composite-checkout:form-status' );
 
 export function useFormStatus() {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
-	return [ formStatus, setFormStatus ];
+	return useMemo(
+		() => ( {
+			formStatus,
+			setFormLoading: setFormStatus( 'loading' ),
+			setFormReady: setFormStatus( 'ready' ),
+			setFormSubmitting: setFormStatus( 'submitting' ),
+			setFormComplete: setFormStatus( 'complete' ),
+		} ),
+		[ formStatus, setFormStatus ]
+	);
 }
 
 export function useFormStatusManager( isLoading ) {
