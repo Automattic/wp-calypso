@@ -1,7 +1,6 @@
-enum ActionType {
+export enum DomainSuggestionsActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
-export { ActionType };
 
 export interface DomainSuggestionQuery {
 	/**

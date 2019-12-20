@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Template } from './types';
+import { VerticalsTemplatesActionType as ActionType, Template } from './types';
 import * as Actions from './actions';
 
 const templates: Reducer<

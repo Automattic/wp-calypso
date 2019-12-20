@@ -1,7 +1,6 @@
-enum ActionType {
+export enum VerticalsTemplatesActionType {
 	RECEIVE_TEMPLATES = 'RECEIVE_TEMPLATES',
 }
-export { ActionType };
 
 export interface Template {
 	/**

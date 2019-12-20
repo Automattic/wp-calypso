@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, DomainSuggestion } from './types';
+import { DomainSuggestionsActionType as ActionType, DomainSuggestion } from './types';
 import * as Actions from './actions';
 import { stringifyDomainQueryObject } from './utils';
 

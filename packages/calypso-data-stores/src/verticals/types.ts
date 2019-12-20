@@ -1,7 +1,6 @@
-enum ActionType {
+export enum VerticalsActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 }
-export { ActionType };
 
 /**
  * Representation of well-known verticals
