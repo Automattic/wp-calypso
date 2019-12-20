@@ -4,11 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { findKey } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import paths from './paths';
+import { iconToProductSlugMap, paths, supportedSlugs } from './config';
 
 /**
  * Style dependencies
@@ -16,14 +17,21 @@ import paths from './paths';
 import './style.scss';
 
 function ProductIcon( { className, slug } ) {
-	if ( ! slug || ! paths[ slug ] ) {
+	if ( ! slug ) {
+		return null;
+	}
+
+	const iconSlug = findKey( iconToProductSlugMap, products => products.includes( slug ) );
+	const iconPath = paths[ iconSlug ];
+
+	if ( ! iconPath ) {
 		return null;
 	}
 
 	return (
 		<img
-			src={ paths[ slug ] }
-			className={ classNames( 'product-icon', `is-${ slug }`, className ) }
+			src={ iconPath }
+			className={ classNames( 'product-icon', `is-${ iconSlug }`, className ) }
 			role="presentation"
 			alt=""
 		/>
@@ -32,7 +40,7 @@ function ProductIcon( { className, slug } ) {
 
 ProductIcon.propTypes = {
 	classNames: PropTypes.string,
-	slug: PropTypes.oneOf( Object.keys( paths ) ).isRequired,
+	slug: PropTypes.oneOf( supportedSlugs ).isRequired,
 };
 
 export default ProductIcon;

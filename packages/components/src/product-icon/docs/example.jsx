@@ -24,22 +24,22 @@ function ProductIconExample() {
 			<h3>Plan Icons</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-free" />
+					<ProductIcon slug="free_plan" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-blogger" />
+					<ProductIcon slug="blogger-bundle" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-personal" />
+					<ProductIcon slug="personal-bundle" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-premium" />
+					<ProductIcon slug="value_bundle" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-business" />
+					<ProductIcon slug="business-bundle" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="wpcom-ecommerce" />
+					<ProductIcon slug="ecommerce-bundle" />
 				</div>
 			</div>
 
@@ -48,16 +48,16 @@ function ProductIconExample() {
 			<h3>Jetpack Plan Icons</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-free" />
+					<ProductIcon slug="jetpack_free" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-personal" />
+					<ProductIcon slug="jetpack_personal" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-premium" />
+					<ProductIcon slug="jetpack_premium" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-professional" />
+					<ProductIcon slug="jetpack_business" />
 				</div>
 			</div>
 
@@ -66,10 +66,10 @@ function ProductIconExample() {
 			<h3>Jetpack Products</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-backup-daily" />
+					<ProductIcon slug="jetpack_backup_daily" />
 				</div>
 				<div style={ iconStyle }>
-					<ProductIcon slug="jetpack-backup-realtime" />
+					<ProductIcon slug="jetpack_backup_realtime" />
 				</div>
 			</div>
 		</Fragment>
