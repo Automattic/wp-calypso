@@ -464,6 +464,7 @@ export const getPopularPlanSpec = ( {
 			isInSignup &&
 			! isLaunchPage &&
 			isUserOutsideUS &&
+			'control' === abtest( 'nonEnglishDomainStepCopyUpdates' ) &&
 			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
 		) {
 			return spec;
