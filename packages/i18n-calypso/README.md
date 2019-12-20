@@ -2,9 +2,9 @@
 
 This lib enables translations, exposing three public methods:
 
-* [.translate()](#translate-method)
-* [.moment()](#moment-method)
-* [.numberFormat()](#numberformat-method)
+- [.translate()](#translate-method)
+- [.moment()](#moment-method)
+- [.numberFormat()](#numberformat-method)
 
 It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
@@ -29,10 +29,10 @@ Finally, this lib exposes some utility methods for your React application:
 
 The following attributes can be set in the options object to alter the translation type. The attributes can be combined as needed for a particular case.
 
-* **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
-* **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
-* **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
-* **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
+- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
+- **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
+- **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
+- **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
 
 ## Usage
 
@@ -66,10 +66,10 @@ var example = i18n.translate( 'foo' );
 
 // do concatenate long strings with the + operator
 var translation = i18n.translate(
-    'I am the very model of a modern Major-General, ' +
-    'I\'ve information vegetable, animal, and mineral, ' +
-    'I know the kings of England, and I quote the fights historical ' +
-    'from Marathon to Waterloo, in order categorical.'
+	'I am the very model of a modern Major-General, ' +
+		"I've information vegetable, animal, and mineral, " +
+		'I know the kings of England, and I quote the fights historical ' +
+		'from Marathon to Waterloo, in order categorical.'
 );
 ```
 
@@ -80,22 +80,22 @@ The `translate()` method uses sprintf interpolation for string substitution ([se
 ```js
 // named arguments (preferred approach)
 i18n.translate( 'My %(thing)s has %(number)d corners', {
-    args: {
-        thing: 'hat',
-        number: 3
-    }
+	args: {
+		thing: 'hat',
+		number: 3,
+	},
 } );
 // 'My hat has 3 corners'
 
 // argument array
 i18n.translate( 'My %s has %d corners', {
-    args: [ 'hat', 3 ]
+	args: [ 'hat', 3 ],
 } );
 // 'My hat has 3 corners'
 
 // single substitution
 i18n.translate( 'My %s has 3 corners', {
-    args: 'hat'
+	args: 'hat',
 } );
 // 'My hat has 3 corners'
 ```
@@ -111,61 +111,52 @@ Instead we use the [interpolate-components module](https://github.com/Automattic
 ```js
 // self-closing component syntax
 var example = i18n.translate( 'My hat has {{hatInput/}} corners', {
-        components: {
-            hatInput: <input name="hatInput" type="text" />
-        }
-    } );
+	components: {
+		hatInput: <input name="hatInput" type="text" />,
+	},
+} );
 
 // component that wraps part of the string
 var example2 = i18n.translate( 'I feel {{em}}very{{/em}} strongly about this.', {
-        components: {
-            em: <em />
-        }
-    } );
+	components: {
+		em: <em />,
+	},
+} );
 
 // components can nest
 var example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to see examples.', {
-        components: {
-            a: <a href="#" />,
-            em: <em />,
-            icon: <Icon size="huge" />
-        }
-    } );
-
-
+	components: {
+		a: <a href="#" />,
+		em: <em />,
+		icon: <Icon size="huge" />,
+	},
+} );
 ```
 
 ### Pluralization
 
 You must specify both the singular and plural variants of a string when it contains plurals. If the string uses placeholders that will be replaced with actual values, then both the plural and singular strings should include those placeholders. It might seem redundant, but it is necessary for languages where a singular version may be used for counts other than 1.
 
-
 ```js
-
 // An example where the translated string does not have
 // a number represented directly, but still depends on it
 var numHats = howManyHats(), // returns integer
-    content = i18n.translate(
-    	'My hat has three corners.',
-    	'My hats have three corners.',
-    	{
-            count: numHats
-        }
-    );
+	content = i18n.translate( 'My hat has three corners.', 'My hats have three corners.', {
+		count: numHats,
+	} );
 
 // An example where the translated string includes the actual number it depends on
 var numDays = daysUntilExpiration(), // returns integer
-    content = i18n.translate(
-        'Your subscription will expire in %(numberOfDays)d day.',
-        'Your subscription will expire in %(numberOfDays)d days.',
-        {
-            count: numDays,
-            args: {
-                numberOfDays: numDays
-            }
-        }
-    );
-
+	content = i18n.translate(
+		'Your subscription will expire in %(numberOfDays)d day.',
+		'Your subscription will expire in %(numberOfDays)d days.',
+		{
+			count: numDays,
+			args: {
+				numberOfDays: numDays,
+			},
+		}
+	);
 ```
 
 ### More translate() Examples
@@ -176,39 +167,38 @@ var content = i18n.translate( 'My hat has three corners.' );
 
 // sprintf-style string substitution
 var city = getCity(), // returns string
-    zip = getZip(), // returns string
-    content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
-        args: {
-            city: city,
-            zip: zip
-        }
-    } );
+	zip = getZip(), // returns string
+	content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
+		args: {
+			city: city,
+			zip: zip,
+		},
+	} );
 
 // Mixing strings and markup
 // NOTE: This will return a React component, not a string
 var component = i18n.translate( 'I bought my hat in {{country/}}.', {
-        components: {
-            country: <input name="someName" type="text" />
-        }
-    } );
+	components: {
+		country: <input name="someName" type="text" />,
+	},
+} );
 
 // Mixing strings with markup that has nested content
 var component = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
-        components: {
-            link: <a href="#three" />
-        }
-    } );
+	components: {
+		link: <a href="#three" />,
+	},
+} );
 
 // add a comment to the translator
 var content = i18n.translate( 'g:i:s a', {
-        comment: 'draft saved date format, see http://php.net/date'
-    } );
+	comment: 'draft saved date format, see http://php.net/date',
+} );
 
 // providing context
 var content = i18n.translate( 'post', {
-        context: 'verb'
-    } );
-
+	context: 'verb',
+} );
 ```
 
 See the [test cases](test/test.jsx) for more example usage.
@@ -218,14 +208,14 @@ See the [test cases](test/test.jsx) for more example usage.
 This module includes an instantiation of `moment.js` to allow for internationalization of dates and times. We generate a momentjs locale file as part of loading a locale and automatically update the moment instance to use the correct locale and translations. You can use `moment()` from within any component like this:
 
 ```js
-var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
+var thisMagicMoment = i18n.moment( '2014-07-18T14:59:09-07:00' ).format( 'LLLL' );
 ```
 
 And you can use it from outside of React like this.
 
 ```js
 var i18n = require( 'i18n-calypso' );
-var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
+var thisMagicMoment = i18n.moment( '2014-07-18T14:59:09-07:00' ).format( 'LLLL' );
 ```
 
 ## numberFormat Method
@@ -239,7 +229,7 @@ The numberFormat method is also available to format numbers using the loaded loc
 // locale-formatted numbers
 i18n.numberFormat( 2500.25 ); // '2.500'
 i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
-i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); // '2*500@330'
+i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@' } ); // '2*500@330'
 ```
 
 ## hasTranslation Method
@@ -247,6 +237,7 @@ i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); 
 Using the method `hasTranslation` you can check whether a translation for a given string exists. As the `translate()` function will always return screen text that can be displayed (will supply the source text if no translation exists), it is unsuitable to determine whether text is translated. Other factors are optional [key hashing](#key-hashing) as well as purposeful translation to the source text.
 
 ### Usage
+
 ```js
 var i18n = require( 'i18n-calypso' );
 i18n.hasTranslation( 'This has been translated' ); // true
@@ -272,7 +263,6 @@ var label = i18n.hasLocalizedText( 'Some string that may not yet be translated' 
 
 The mixin has been removed from this distribution. Please use version 1 of `i18n-calypso` if you need to use the mixin.
 
-
 ## Localize
 
 `localize` is a higher-order component which, when invoked as a function with a component,
@@ -292,11 +282,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 function Greeting( { translate, className } ) {
-	return (
-		<h1 className={ className }>
-			{ translate( 'Hello!' ) }
-		</h1>
-	);
+	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
 }
 
 export default localize( Greeting );
@@ -310,10 +296,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Greeting from './greeting';
 
-render(
-	<Greeting className="greeting" />,
-	document.body
-);
+render( <Greeting className="greeting" />, document.body );
 ```
 
 ## React Hook
@@ -324,9 +307,11 @@ resulting component is also reactive, i.e., it gets rerendered when the `i18n` l
 and the state emitter emits a `change` event.
 
 The `useTranslate` hook returns the `translate` function:
+
 ```jsx
 const translate = useTranslate();
 ```
+
 The function can be called to return a localized value of a string, and it also exposes a
 `localeSlug` property whose value is a string with the current locale slug.
 
@@ -337,13 +322,9 @@ import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 function Greeting( { className } ) {
-  const translate = useTranslate();
-  debug( 'using translate with locale:', translate.localeSlug );
-	return (
-		<h1 className={ className }>
-			{ translate( 'Hello!' ) }
-		</h1>
-	);
+	const translate = useTranslate();
+	debug( 'using translate with locale:', translate.localeSlug );
+	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
 }
 
 export default Greeting;
@@ -416,13 +397,23 @@ In order to reduce file-size, i18n-calypso allows the usage of hashed keys for l
 #### Example
 
 Instead of providing the full English text, like here:
+
 ```json
-{"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de" },
+	"Please enter a valid email address.": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
+
 just the hash is used for lookup, resulting in a shorter file.
+
 ```json
-{"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de", "key-hash": "sha1-1" },
+	"d": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
+
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.
 
 Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.
