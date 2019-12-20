@@ -53,6 +53,8 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings--with-indent': showWarnings,
 	} );
 
+	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -62,7 +64,12 @@ export const EligibilityWarnings = ( {
 			/>
 			<CompactCard>
 				{ ( isPlaceholder || listHolds.length > 0 ) && (
-					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+					<HoldList
+						context={ context }
+						holds={ listHolds }
+						isPlaceholder={ isPlaceholder }
+						isIndented={ showWarnings }
+					/>
 				) }
 
 				{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
@@ -74,7 +81,7 @@ export const EligibilityWarnings = ( {
 					</div>
 				) }
 			</CompactCard>
-			{ warnings.length > 0 && ! hasBlockingHold( listHolds ) && (
+			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
 					<WarningList context={ context } warnings={ warnings } />
 				</CompactCard>
