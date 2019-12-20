@@ -24,7 +24,6 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getProductIconSlug } from 'lib/products-values';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { Button, Card, ProductIcon } from '@automattic/components';
@@ -143,7 +142,7 @@ export class Banner extends Component {
 		if ( plan && ! icon ) {
 			return (
 				<div className="banner__icon-plan">
-					<ProductIcon slug={ getProductIconSlug( plan ) } />
+					<ProductIcon slug={ plan } />
 				</div>
 			);
 		}

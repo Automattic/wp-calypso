@@ -17,7 +17,6 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan, getPlanClass } from 'lib/plans';
-import { getProductIconSlug } from 'lib/products-values';
 import ThankYouCard from 'components/thank-you-card';
 
 /**
@@ -61,7 +60,7 @@ class PlanThankYouCard extends Component {
 			return null;
 		}
 
-		return <ProductIcon slug={ getProductIconSlug( plan.productSlug ) } />;
+		return <ProductIcon slug={ plan.productSlug } />;
 	}
 
 	renderAction() {

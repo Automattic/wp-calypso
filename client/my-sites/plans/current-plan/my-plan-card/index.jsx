@@ -9,7 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Card, ProductIcon } from '@automattic/components';
-import { getProductIconSlug } from 'lib/products-values';
 
 /**
  * Style dependencies
@@ -22,13 +21,12 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline
 		'has-action-only': action && ! details && ! isPlaceholder,
 	} );
 	const detailsClassNames = classNames( 'my-plan-card__details', { 'is-error': isError } );
-	const iconSlug = product && getProductIconSlug( product );
 
 	return (
 		<Card className={ cardClassNames } compact>
 			<div className="my-plan-card__primary">
 				<div className="my-plan-card__icon">
-					{ ! isPlaceholder && iconSlug && <ProductIcon slug={ iconSlug } /> }
+					{ ! isPlaceholder && product && <ProductIcon slug={ product } /> }
 				</div>
 				<div className="my-plan-card__header">
 					{ title && <h2 className="my-plan-card__title">{ title }</h2> }

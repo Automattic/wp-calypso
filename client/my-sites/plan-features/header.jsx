@@ -24,7 +24,6 @@ import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { getProductIconSlug } from 'lib/products-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { planLevelsMatch } from 'lib/plans/index';
@@ -60,7 +59,7 @@ export class PlanFeaturesHeader extends Component {
 		return (
 			<header className={ headerClasses }>
 				<div className="plan-features__header-figure">
-					<ProductIcon slug={ getProductIconSlug( planType ) } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
@@ -139,7 +138,7 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
-					<ProductIcon slug={ getProductIconSlug( planType ) } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }

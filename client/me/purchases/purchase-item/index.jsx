@@ -24,7 +24,6 @@ import {
 	getPartnerName,
 } from 'lib/purchases';
 import {
-	getProductIconSlug,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleApps,
@@ -162,7 +161,7 @@ class PurchaseItem extends Component {
 		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
-					<ProductIcon slug={ getProductIconSlug( purchase.productSlug ) } />
+					<ProductIcon slug={ purchase.productSlug } />
 				</div>
 			);
 		}

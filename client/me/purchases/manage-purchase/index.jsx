@@ -45,7 +45,6 @@ import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
-	getProductIconSlug,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -348,7 +347,7 @@ class ManagePurchase extends Component {
 		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<ProductIcon slug={ getProductIconSlug( purchase.productSlug ) } />
+					<ProductIcon slug={ purchase.productSlug } />
 				</div>
 			);
 		}

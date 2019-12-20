@@ -23,7 +23,6 @@ import { getPlan } from 'lib/plans';
 import { getFeatureTitle } from 'lib/plans/features-list';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getProductIconSlug } from 'lib/products-values';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -98,10 +97,12 @@ class UpgradeNudgeExpanded extends Component {
 					{ this.props.title && (
 						<div className="upgrade-nudge-expanded__title">
 							<div className="upgrade-nudge-expanded__title-plan">
-								<ProductIcon
-									slug={ getProductIconSlug( this.props.plan.product_slug ) }
-									className="upgrade-nudge-expanded__title-plan-icon"
-								/>
+								{ this.props.plan.product_slug && (
+									<ProductIcon
+										slug={ this.props.plan.product_slug }
+										className="upgrade-nudge-expanded__title-plan-icon"
+									/>
+								) }
 							</div>
 							<p className="upgrade-nudge-expanded__title-message">{ this.props.title }</p>
 						</div>
