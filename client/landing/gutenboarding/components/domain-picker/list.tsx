@@ -18,10 +18,10 @@ import { useDebounce } from 'use-debounce';
  * Internal dependencies
  */
 import {
+	DOMAIN_SUGGESTIONS_STORE,
 	DomainSuggestion,
 	DomainSuggestionQuery,
-} from '@automattic/calypso-data-stores/src/domain-suggestions/types';
-import { DOMAIN_SUGGESTIONS_STORE } from '@automattic/calypso-data-stores';
+} from '@automattic/calypso-data-stores';
 import { selectorDebounce } from '../../constants';
 
 export interface Props {
