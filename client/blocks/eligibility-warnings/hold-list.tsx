@@ -249,7 +249,7 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 				: defaultCopy;
 		case 'themes':
 			return hasLocalizedText( "To install themes you'll need to:" )
-				? translate( "To install plugins you'll need to:" )
+				? translate( "To install themes you'll need to:" )
 				: defaultCopy;
 		case 'hosting':
 			return hasLocalizedText( "To activate hosting access you'll need to:" )
