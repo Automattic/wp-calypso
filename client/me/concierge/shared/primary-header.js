@@ -18,6 +18,10 @@ class PrimaryHeader extends Component {
 	render() {
 		const { translate } = this.props;
 
+		const xmasHolidayName = translate( 'Christmas', {
+			context: 'Holiday name',
+		} );
+
 		return (
 			<Fragment>
 				<GMClosureNotice
@@ -29,13 +33,13 @@ class PrimaryHeader extends Component {
 					displayAt="2019-12-17 00:00Z"
 					closesAt="2019-12-24 00:00Z"
 					reopensAt="2019-12-26 07:00Z"
-					holidayName="Christmas"
+					holidayName={ xmasHolidayName }
 				/>
 				<ClosureNotice
 					displayAt="2019-12-26 07:00Z"
 					closesAt="2019-12-31 00:00Z"
 					reopensAt="2020-01-02 07:00Z"
-					holidayName="New Year's Day"
+					holidayName={ translate( "New Year's Day" ) }
 				/>
 				<Card>
 					<img
