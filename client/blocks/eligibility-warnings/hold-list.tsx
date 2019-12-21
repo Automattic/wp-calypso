@@ -2,15 +2,14 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) =>
-	i18n.state.localeSlug === i18n.defaultLocaleSlug || i18n.hasTranslation( message );
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { identity, map } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
+import { hasLocalizedText } from './has-localized-text';
 import { Button } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
@@ -22,12 +21,12 @@ import { localizeUrl } from 'lib/i18n-utils';
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: hasTranslation( 'Upgrade to a Business plan' )
+			title: hasLocalizedText( 'Upgrade to a Business plan' )
 				? translate( 'Upgrade to a Business plan' )
 				: translate( 'Upgrade to Business' ),
 			description: ( function() {
 				if ( context === 'themes' ) {
-					return hasTranslation(
+					return hasLocalizedText(
 						"You'll also get to install custom plugins, have more storage, and access live support."
 					)
 						? translate(
@@ -38,7 +37,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 						  );
 				}
 
-				return hasTranslation(
+				return hasLocalizedText(
 					"You'll also get to install custom themes, have more storage, and access live support."
 				)
 					? translate(
@@ -99,7 +98,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			message: hasTranslation(
+			message: hasLocalizedText(
 				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
 			)
 				? translate(
@@ -129,10 +128,10 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			contactUrl: null,
 		},
 		SITE_GRAYLISTED: {
-			message: hasTranslation(
+			message: hasLocalizedText(
 				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
 			)
-				? hasTranslation(
+				? hasLocalizedText(
 						"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
 				  )
 				: translate( "Contact us to review your site's standing and resolve the dispute." ),
@@ -140,10 +139,10 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
-			message: hasTranslation(
+			message: hasLocalizedText(
 				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 			)
-				? hasTranslation(
+				? hasLocalizedText(
 						'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 				  )
 				: translate(
@@ -245,19 +244,21 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 	const defaultCopy = translate( "To continue you'll need to:" );
 	switch ( context ) {
 		case 'plugins':
-			return hasTranslation( "To install plugins you'll need to:" )
+			return hasLocalizedText( "To install plugins you'll need to:" )
 				? translate( "To install plugins you'll need to:" )
 				: defaultCopy;
 		case 'themes':
-			return hasTranslation( "To install themes you'll need to:" )
+			return hasLocalizedText( "To install themes you'll need to:" )
 				? translate( "To install plugins you'll need to:" )
 				: defaultCopy;
 		case 'hosting':
-			return hasTranslation( "To activate hosting access you'll need to:" )
+			return hasLocalizedText( "To activate hosting access you'll need to:" )
 				? translate( "To activate hosting access you'll need to:" )
 				: defaultCopy;
 		default:
-			return defaultCopy;
+			return hasLocalizedText( "To continue you'll need to:" )
+				? translate( "To continue you'll need to:" )
+				: defaultCopy;
 	}
 }
 
