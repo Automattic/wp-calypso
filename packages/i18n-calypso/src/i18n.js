@@ -349,7 +349,18 @@ I18N.prototype.addTranslations = function( localeData ) {
  * @returns {boolean} whether a translation exists
  */
 I18N.prototype.hasTranslation = function() {
-	return !! getTranslation( this, normalizeTranslateArguments( arguments ) );
+	return (
+		this.isDefaultLocale() || !! getTranslation( this, normalizeTranslateArguments( arguments ) )
+	);
+};
+
+/**
+ * Does the instance's localeSlug match the default
+ *
+ * @returns {boolean} Whether the i18n instance matches the default locale
+ */
+I18N.prototype.isDefaultLocale = function() {
+	return this.state.localeSlug === this.defaultLocaleSlug;
 };
 
 /**
