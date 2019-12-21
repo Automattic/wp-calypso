@@ -5,6 +5,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import { noop } from 'lodash';
 import React, { ReactChild } from 'react';
 import { createStore } from 'redux';
@@ -15,6 +16,10 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
+jest.mock( 'page', () => ( {
+	redirect: jest.fn(),
+} ) );
+
 import EligibilityWarnings from '..';
 
 function renderWithStore( element: ReactChild, initialState: object ) {
@@ -24,6 +29,8 @@ function renderWithStore( element: ReactChild, initialState: object ) {
 		store,
 	};
 }
+
+global.document = {};
 
 function createState( {
 	holds = [],
@@ -47,6 +54,10 @@ function createState( {
 }
 
 describe( '<EligibilityWarnings>', () => {
+	beforeEach( () => {
+		page.redirect.mockReset();
+	} );
+
 	it( 'renders error notice when AT has been blocked by a sticker', () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER' ],
@@ -137,7 +148,7 @@ describe( '<EligibilityWarnings>', () => {
 
 	it( 'goes to checkout when clicking "Upgrade and continue"', () => {
 		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN', 'SITE_PRIVATE' ],
+			holds: [ 'NO_BUSINESS_PLAN' ],
 			siteUrl: 'https://example.wordpress.com',
 		} );
 
@@ -149,14 +160,13 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		const upgradeAndContinue = getByText( 'Upgrade and continue' );
+		expect( upgradeAndContinue ).toBeVisible();
 
 		fireEvent.click( upgradeAndContinue );
 
 		expect( handleProceed ).not.toHaveBeenCalled();
-		expect( upgradeAndContinue ).toHaveAttribute(
-			'href',
-			'/checkout/example.wordpress.com/business'
-		);
+		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
+		expect( page.redirect ).toHaveBeenCalledWith( '/checkout/example.wordpress.com/business' );
 	} );
 
 	it( `disables the "Continue" button if holds can't be handled automatically`, () => {
