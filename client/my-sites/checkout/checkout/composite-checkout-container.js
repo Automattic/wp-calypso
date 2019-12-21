@@ -90,6 +90,35 @@ function formatDataForTransactionsEndpoint( {
 	};
 }
 
+function formatDataForPayPalExpressEndpoint( {
+	successUrl,
+	cancelUrl,
+	siteId,
+	country,
+	postalCode,
+	subdivisionCode,
+	phoneNumber,
+	couponId,
+	items,
+	domainDetails,
+} ) {
+	return {
+		successUrl,
+		cancelUrl,
+		cart: createCartFromLineItems( {
+			siteId,
+			country,
+			postalCode,
+			subdivisionCode,
+			phoneNumber,
+			couponId,
+			items,
+		} ),
+		domainDetails,
+		postalCode,
+	};
+}
+
 // Create cart object as required by the WPCOM transactions endpoint '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createCartFromLineItems( {
 	siteId,
@@ -124,7 +153,9 @@ export function createCartFromLineItems( {
 }
 
 async function makePayPalExpressRequest( transactionData ) {
-	return wpcom.paypalExpressUrl( transactionData );
+	const formattedTransactionData = formatDataForPayPalExpressEndpoint( transactionData );
+	debug( 'sending paypal transaction', formattedTransactionData );
+	return wpcom.paypalExpressUrl( formattedTransactionData );
 }
 
 function getDomainDetails() {
