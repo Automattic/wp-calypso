@@ -3,7 +3,8 @@
  */
 import React from 'react';
 import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
+const hasTranslation = ( message: string ) =>
+	i18n.state.localeSlug === i18n.defaultLocaleSlug || i18n.hasTranslation( message );
 import { map } from 'lodash';
 import Gridicon from 'components/gridicon';
 
