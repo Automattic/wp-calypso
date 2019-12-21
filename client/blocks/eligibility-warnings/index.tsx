@@ -36,13 +36,14 @@ interface ExternalProps {
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
+	ctaName,
 	context,
 	feature,
 	eligibilityData,
 	isEligible,
 	isPlaceholder,
 	onProceed,
-	recordCtaClick,
+	recordUpgradeClick,
 	siteId,
 	siteSlug,
 	translate,
@@ -57,8 +58,8 @@ export const EligibilityWarnings = ( {
 	} );
 
 	const logEventAndProceed = () => {
-		recordCtaClick( feature );
 		if ( siteRequiresUpgrade( listHolds ) ) {
+			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
 			return;
 		}
@@ -178,9 +179,9 @@ const mapStateToProps = ( state: object ) => {
 const mapDispatchToProps = {
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
-	recordCtaClick: ( feature: string ) =>
+	recordUpgradeClick: ( ctaName: string, feature: string ) =>
 		recordTracksEvent( 'calypso_banner_cta_click', {
-			cta_name: 'calypso-theme-eligibility-upgrade-nudge',
+			cta_name: ctaName,
 			cta_feature: feature,
 			cta_size: 'regular',
 		} ),
@@ -193,15 +194,19 @@ function mergeProps(
 ) {
 	let context: string | null = null;
 	let feature = '';
+	let ctaName = '';
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
+		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
 		context = 'themes';
 		feature = FEATURE_UPLOAD_THEMES;
+		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
 		context = 'hosting';
 		feature = FEATURE_SFTP;
+		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
 	}
 
 	const onProceed = () => {
@@ -216,6 +221,7 @@ function mergeProps(
 		onProceed,
 		context,
 		feature,
+		ctaName,
 	};
 }
 
