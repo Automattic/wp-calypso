@@ -138,6 +138,7 @@ export default function Checkout( { steps, className } ) {
 
 	useEffect( () => {
 		if ( formStatus === 'complete' ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
 			onPaymentComplete();
 		}
 	}, [ formStatus, onPaymentComplete ] );

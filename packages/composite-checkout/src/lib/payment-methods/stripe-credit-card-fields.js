@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -44,6 +45,8 @@ import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
 import { useFormStatus } from '../form-status';
 
+const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
+
 export function createStripeMethod( {
 	getSiteId,
 	getCountry,
@@ -55,6 +58,7 @@ export function createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } ) {
+	debug( 'creating a new stripe payment method' );
 	const actions = {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
@@ -92,6 +96,7 @@ export function createStripeMethod( {
 						phoneNumber: getPhoneNumber(),
 					},
 				};
+				debug( 'stripe payment token created' );
 				stripeResponse = yield {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
@@ -104,19 +109,20 @@ export function createStripeMethod( {
 						paymentMethodToken,
 					},
 				};
+				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
+				debug( 'stripe transaction had an error', error );
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
-			if (
-				stripeResponse &&
-				stripeResponse.message &&
-				stripeResponse.message.payment_intent_client_secret
-			) {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'stripe transaction requires auth' );
 				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
 			}
-			if ( stripeResponse && stripeResponse.redirect_url ) {
+			if ( stripeResponse?.redirect_url ) {
+				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
+			debug( 'stripe transaction requires is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
@@ -627,6 +633,7 @@ function StripePayButton( { disabled } ) {
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
+			debug( 'stripe transaction is complete' );
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
@@ -708,6 +715,7 @@ async function submitStripePayment( {
 	setFormSubmitting,
 	setFormReady,
 } ) {
+	debug( 'submitting stripe payment' );
 	try {
 		setFormSubmitting();
 		beginStripeTransaction( {
