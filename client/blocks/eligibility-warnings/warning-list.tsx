@@ -9,7 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { hasLocalizedText } from './has-localized-text';
+import hasLocalizedText from './has-localized-text';
 import ExternalLink from 'components/external-link';
 import ActionPanelLink from 'components/action-panel/link';
 

@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { hasLocalizedText } from './has-localized-text';
+import hasLocalizedText from './has-localized-text';
 import { Button } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';

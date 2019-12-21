@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize, LocalizeProps } from 'i18n-calypso';
-const hasTranslation = ( message: string ) => i18n.hasTranslation( message );
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -13,6 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import hasLocalizedText from './has-localized-text';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -119,15 +119,15 @@ function getSiteIsEligibleMessage(
 	switch ( context ) {
 		case 'plugins':
 		case 'themes':
-			return hasTranslation( 'This site is eligible to install plugins and upload themes.' )
+			return hasLocalizedText( 'This site is eligible to install plugins and upload themes.' )
 				? translate( 'This site is eligible to install plugins and upload themes.' )
 				: defaultCopy;
 		case 'hosting':
-			return hasTranslation( 'This site is eligible to activate hosting access.' )
+			return hasLocalizedText( 'This site is eligible to activate hosting access.' )
 				? translate( 'This site is eligible to activate hosting access.' )
 				: defaultCopy;
 		default:
-			return hasTranslation( 'This site is eligible to continue.' )
+			return hasLocalizedText( 'This site is eligible to continue.' )
 				? translate( 'This site is eligible to continue.' )
 				: defaultCopy;
 	}
@@ -136,12 +136,12 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	const defaultCopy = translate( 'Proceed' );
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
-		return hasTranslation( 'Upgrade and continue' )
+		return hasLocalizedText( 'Upgrade and continue' )
 			? translate( 'Upgrade and continue' )
 			: defaultCopy;
 	}
 
-	return hasTranslation( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
+	return hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
