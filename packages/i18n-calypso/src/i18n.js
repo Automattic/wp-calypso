@@ -353,6 +353,25 @@ I18N.prototype.hasTranslation = function() {
 };
 
 /**
+ * If the locale is the default, this will always return true.
+ * If the locale is not the default, returns the value of `this.hasTranslation` for the input.
+ *
+ * @returns {boolean} whether localized text exists
+ */
+I18N.prototype.hasLocalizedText = function() {
+	return this.isDefaultLocale() || this.hasTranslation( normalizeTranslateArguments( arguments ) );
+};
+
+/**
+ * Does the instance's localeSlug match the default
+ *
+ * @returns {boolean} Whether the i18n instance matches the default locale
+ */
+I18N.prototype.isDefaultLocale = function() {
+	return this.state.localeSlug === this.defaultLocaleSlug;
+};
+
+/**
  * Exposes single translation method.
  * See sibling README
  *

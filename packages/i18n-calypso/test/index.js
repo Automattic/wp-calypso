@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import ReactDomServer from 'react-dom/server';
 
 /**
@@ -13,8 +14,9 @@ import i18n, { numberFormat, translate } from '../src';
 /**
  * Pass in a react-generated html string to remove react-specific attributes
  * to make it easier to compare to expected html structure
+ *
  * @param  {string} string React-generated html string
- * @return {string}        html with react attributes removed
+ * @returns {string}        html with react attributes removed
  */
 function stripReactAttributes( string ) {
 	return string.replace( /\sdata-(reactid|react-checksum)="[^"]+"/g, '' );
@@ -285,6 +287,53 @@ describe( 'I18n', function() {
 			expect( translate( 'simple' ) ).toBe( 'implesa' );
 			expect( translate( 'red' ) ).toBe( 'edra' );
 			expect( translate( 'grey' ) ).toBe( 'reyga' );
+		} );
+	} );
+
+	describe( 'hasTranslation()', function() {
+		it( 'should return true for a simple translation', function() {
+			expect( i18n.hasTranslation( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return false for a string without translation', function() {
+			expect(
+				i18n.hasTranslation(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( false );
+		} );
+
+		it( 'should return false for a simple translation when using default locale', function() {
+			i18n.configure();
+			expect( i18n.hasTranslation( 'test1' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'hasLocalizedText', function() {
+		it( 'should return true for a simple translation', function() {
+			expect( i18n.hasLocalizedText( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return false for a string without translation', function() {
+			expect(
+				i18n.hasLocalizedText(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( false );
+		} );
+
+		it( 'should return true for a simple translation when using default locale', function() {
+			i18n.configure();
+			expect( i18n.hasLocalizedText( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return true for a string without translation when using default locale', function() {
+			i18n.configure();
+			expect(
+				i18n.hasLocalizedText(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( true );
 		} );
 	} );
 } );
