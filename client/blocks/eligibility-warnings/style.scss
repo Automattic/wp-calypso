@@ -1,8 +1,16 @@
-
-
 .eligibility-warnings {
 	margin-top: 16px;
 	font-size: 14px;
+}
+
+.eligibility-warnings--with-indent {
+	.eligibility-warnings__message {
+		padding: 0 16px;
+		margin-left: 24px;
+	}
+	.gridicon + .eligibility-warnings__message {
+		margin-left: 0;
+	}
 }
 
 .eligibility-warnings__placeholder {
@@ -22,13 +30,9 @@
 	}
 
 	.button,
-	.eligibility-warnings__confirm-box {
+	.eligibility-warnings__confirm-buttons {
 		display: none;
 	}
-}
-
-.eligibility-warnings .card {
-	margin: 0;
 }
 
 .eligibility-warnings .banner {
@@ -40,8 +44,7 @@
 }
 
 .eligibility-warnings__hold,
-.eligibility-warnings__warning,
-.eligibility-warnings__confirm-box.card {
+.eligibility-warnings__warning {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
@@ -52,21 +55,28 @@
 	align-items: flex-start;
 	margin-bottom: 16px;
 
-	&:last-child {
-		margin-bottom: 0;
+	&:first-of-type {
+		padding-top: 6px;
 	}
 }
 
 .eligibility-warnings__hold .gridicon,
-.eligibility-warnings__warning > .gridicon {
-	color: var( --color-error );
+.eligibility-warnings__warning .gridicon {
 	flex-shrink: 0;
+}
+
+.eligibility-warnings__hold .gridicon {
+	color: var( --color-neutral-10 );
+}
+
+.eligibility-warnings__warning .gridicon {
+	color: var( --color-warning-10 );
 }
 
 .eligibility-warnings__message {
 	flex-grow: 1;
 	line-height: 24px;
-	padding: 0 16px;
+	padding: 0;
 
 	.eligibility-warnings__message-title {
 		font-weight: 600;
@@ -77,7 +87,8 @@
 	}
 }
 
-.eligibility-warnings__action a {
+.eligibility-warnings__action a,
+.eligibility-warnings__hold-action a {
 	.gridicons-help-outline {
 		color: var( --color-neutral-light );
 	}
@@ -86,7 +97,11 @@
 	}
 }
 
-.eligibility-warnings__no-conflicts.card {
+.eligibility-warnings__hold-action {
+	align-self: center;
+}
+
+.eligibility-warnings__no-conflicts {
 	align-items: center;
 	display: flex;
 
@@ -101,19 +116,7 @@
 	}
 }
 
-.eligibility-warnings__confirm-box {
-	flex-wrap: wrap;
-	justify-content: flex-end;
-
-	.eligibility-warnings__confirm-text {
-		color: var( --color-text-subtle );
-		flex-basis: 60%;
-		flex-grow: 1;
-		font-style: italic;
-		padding: 8px 0;
-	}
-
-	.button {
-		margin-left: 16px;
-	}
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
+	opacity: 0.2;
 }
