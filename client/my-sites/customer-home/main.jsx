@@ -59,6 +59,10 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+
 const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
 	return (
