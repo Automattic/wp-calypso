@@ -20,8 +20,7 @@ import { useDebounce } from 'use-debounce';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
 
-DomainSuggestions.register();
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.STORE_KEY;
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export interface Props {
 	/**

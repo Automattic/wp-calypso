@@ -20,8 +20,7 @@ import { VerticalsTemplates } from '@automattic/data-stores';
 
 type Template = VerticalsTemplates.Template;
 
-VerticalsTemplates.register();
-const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.STORE_KEY;
+const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(
