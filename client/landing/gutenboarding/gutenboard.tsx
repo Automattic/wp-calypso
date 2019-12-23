@@ -20,7 +20,7 @@ import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keyc
 import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '@wordpress/components/build-style/style.css';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -65,7 +65,10 @@ export function Gutenboard() {
 			break;
 	}
 
-	const onboardingBlock = createBlock( name, {} );
+	// We're caching the block via `useRef` in order to prevent re-renders
+	// which would collide with the routing done inside of the block
+	// (and would lead to weird mounting/unmounting behavior).
+	const onboardingBlock = useRef( createBlock( name, {} ) );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -92,7 +95,7 @@ export function Gutenboard() {
 						/>
 						<BlockEditorProvider
 							useSubRegistry={ false }
-							value={ [ onboardingBlock ] }
+							value={ [ onboardingBlock.current ] }
 							settings={ { templateLock: 'all' } }
 						>
 							<div className="gutenboard__edit-post-layout-content edit-post-layout__content ">
