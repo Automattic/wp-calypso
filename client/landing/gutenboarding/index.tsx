@@ -20,7 +20,7 @@ import 'components/environment-badge/style.scss';
 
 window.AppBoot = () => {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
-		window.location = '/';
+		window.location.href = '/';
 	} else {
 		setupWpDataDebug();
 
