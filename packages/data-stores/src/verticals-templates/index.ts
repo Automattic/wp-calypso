@@ -27,7 +27,6 @@ export function register(): typeof STORE_KEY {
 			reducer,
 			resolvers,
 			selectors,
-			persist: [],
 		} );
 	}
 	return STORE_KEY;
