@@ -17,6 +17,7 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { Attributes } from './types';
+import { Step } from '../types';
 import './style.scss';
 import VerticalBackground from './vertical-background';
 import Link from '../components/link';
@@ -27,7 +28,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 	return (
 		<Switch>
-			<Route exact path="/">
+			<Route exact path={ Step.IntentGathering }>
 				<div
 					className={ classNames( 'onboarding-block__acquire-intent', {
 						'has-background': hasBackground && siteVertical,
@@ -47,7 +48,11 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						/>
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
-								<Link to="/design" className="onboarding-block__question-skip" isLink>
+								<Link
+									to={ Step.DesignSelection }
+									className="onboarding-block__question-skip"
+									isLink
+								>
 									{ /* @TODO: add transitions and correct action */ }
 									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
 								</Link>
@@ -56,7 +61,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					</div>
 				</div>
 			</Route>
-			<Route path="/design">
+			<Route path={ Step.DesignSelection }>
 				<DesignSelector />
 			</Route>
 		</Switch>
