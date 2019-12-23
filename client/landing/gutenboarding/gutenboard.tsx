@@ -22,7 +22,7 @@ import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import '@wordpress/components/build-style/style.css';
-import { Redirect, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -48,10 +48,9 @@ export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
-	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const r = useRouteMatch( '*' );
 
-	let redirect: undefined | string;
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
@@ -62,14 +61,7 @@ export function Gutenboard() {
 			break;
 
 		case '/design':
-			if ( ! siteVertical ) {
-				redirect = '/';
-			}
 			prev = '/';
-			break;
-
-		default:
-			redirect = '/';
 			break;
 	}
 
@@ -78,7 +70,6 @@ export function Gutenboard() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="block-editor__container">
-			{ redirect && <Redirect to={ redirect } /> }
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<div

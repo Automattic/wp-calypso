@@ -6,7 +6,7 @@ import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useState } from 'react';
 import classNames from 'classnames';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</div>
 			</Route>
 			<Route path={ Step.DesignSelection }>
-				<DesignSelector />
+				{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
 			</Route>
 		</Switch>
 	);
