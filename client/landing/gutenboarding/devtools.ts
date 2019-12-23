@@ -17,8 +17,3 @@ export const setupWpDataDebug = () => {
 		}
 	}
 };
-
-export const wpDataDebugMiddleware: PageJS.Callback = ( context, next ) => {
-	setupWpDataDebug();
-	next();
-};
