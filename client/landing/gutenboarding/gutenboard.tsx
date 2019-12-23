@@ -48,14 +48,14 @@ export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
-	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const r = useRouteMatch( '*' );
 
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
 		case '/':
-			if ( siteTitle ) {
+			if ( siteVertical ) {
 				next = '/design';
 			}
 			break;
