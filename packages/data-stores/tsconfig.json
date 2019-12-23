@@ -19,7 +19,10 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"typeRoots": [ "../../node_modules/@types" ]
+		"typeRoots": [ "../../node_modules/@types" ],
+
+		"noEmitHelpers": true,
+		"importHelpers": true
 	},
 	"files": [ "./src/index.ts" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
