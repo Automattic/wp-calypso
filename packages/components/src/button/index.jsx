@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 
 /**
@@ -10,45 +9,27 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export default class Button extends PureComponent {
-	static propTypes = {
-		compact: PropTypes.bool,
-		primary: PropTypes.bool,
-		scary: PropTypes.bool,
-		busy: PropTypes.bool,
-		type: PropTypes.string,
-		href: PropTypes.string,
-		borderless: PropTypes.bool,
-		target: PropTypes.string,
-		rel: PropTypes.string,
-	};
+const Button = ( { type = 'button', compact, primary, scary, busy, borderless, ...props } ) => {
+	const className = classNames( 'button', props.className, {
+		'is-compact': compact,
+		'is-primary': primary,
+		'is-scary': scary,
+		'is-busy': busy,
+		'is-borderless': borderless,
+	} );
 
-	static defaultProps = {
-		type: 'button',
-	};
+	if ( props.href ) {
+		// block referrers when external link
+		const rel = props.target
+			? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
+			: props.rel;
 
-	render() {
-		const className = classNames( 'button', this.props.className, {
-			'is-compact': this.props.compact,
-			'is-primary': this.props.primary,
-			'is-scary': this.props.scary,
-			'is-busy': this.props.busy,
-			'is-borderless': this.props.borderless,
-		} );
-
-		if ( this.props.href ) {
-			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
-
-			// block referrers when external link
-			const rel = props.target
-				? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
-				: props.rel;
-
-			return <a { ...props } rel={ rel } className={ className } />;
-		}
-
-		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
-
-		return <button { ...props } className={ className } />;
+		return <a { ...props } rel={ rel } className={ className } />;
 	}
-}
+
+	const { target, rel, ...buttonProps } = props;
+
+	return <button { ...buttonProps } type={ type } className={ className } />;
+};
+
+export default Button;
