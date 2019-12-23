@@ -1,4 +1,4 @@
-export enum VerticalsTemplatesActionType {
+export const enum ActionType {
 	RECEIVE_TEMPLATES = 'RECEIVE_TEMPLATES',
 }
 

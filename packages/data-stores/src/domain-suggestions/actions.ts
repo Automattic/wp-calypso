@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	DomainSuggestionsActionType as ActionType,
-	DomainSuggestion,
-	DomainSuggestionQuery,
-} from './types';
+import { ActionType, DomainSuggestion, DomainSuggestionQuery } from './types';
 
 export const receiveDomainSuggestions = (
 	queryObject: DomainSuggestionQuery,

@@ -1,4 +1,4 @@
-export enum DomainSuggestionsActionType {
+export const enum ActionType {
 	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
 }
 

@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { VerticalsActionType as ActionType, Vertical } from './types';
+import { ActionType, Vertical } from './types';
 import * as Actions from './actions';
 
 const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVerticals' ] > > = (

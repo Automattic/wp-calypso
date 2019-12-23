@@ -1,4 +1,4 @@
-export enum VerticalsActionType {
+export const enum ActionType {
 	RECEIVE_VERTICALS = 'RECEIVE_VERTICALS',
 }
 
