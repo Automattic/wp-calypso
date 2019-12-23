@@ -49,8 +49,11 @@ export function Gutenboard() {
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const r = useRouteMatch( '*' );
 
+	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
+	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
+	// entirely into the block), we'll be able to remove this code.
+	const r = useRouteMatch( '*' );
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
