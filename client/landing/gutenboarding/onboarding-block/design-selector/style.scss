@@ -69,6 +69,15 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-show();
 }
 
+.page-layout-selector__overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow-anchor: auto;
+}
+
 .page-layout-selector__container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
@@ -87,7 +96,6 @@ $deisgn-selector-selection-space: 175px;
 	&.enter-done {
 		.page-layout-selector {
 			@include design-selector-show();
-			transform: translate3d( 0, 0, 0 );
 		}
 	}
 }
