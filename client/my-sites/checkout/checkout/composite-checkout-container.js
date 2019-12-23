@@ -112,9 +112,10 @@ function formatDataForPayPalExpressEndpoint( {
 			subdivisionCode,
 			phoneNumber,
 			couponId,
-			items,
+			items: items.filter( item => item.type !== 'tax' ),
 		} ),
 		domainDetails,
+		country,
 		postalCode,
 	};
 }
