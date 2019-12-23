@@ -22,7 +22,7 @@ interface Props {
 	onClick: MouseEventHandler< HTMLDivElement >;
 	style?: CSSProperties;
 }
-const DeisgnCard: FunctionComponent< Props > = ( { design, onClick, isSelected, style } ) => (
+const DesignCard: FunctionComponent< Props > = ( { design, onClick, isSelected, style } ) => (
 	<Card
 		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
 		isElevated
@@ -41,4 +41,4 @@ const DeisgnCard: FunctionComponent< Props > = ( { design, onClick, isSelected, 
 	</Card>
 );
 
-export default DeisgnCard;
+export default DesignCard;
