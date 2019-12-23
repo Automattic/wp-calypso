@@ -88,6 +88,9 @@ module.exports = {
 		react: {
 			version: reactVersion,
 		},
+		jsdoc: {
+			mode: 'typescript',
+		},
 	},
 	rules: {
 		// REST API objects include underscores
