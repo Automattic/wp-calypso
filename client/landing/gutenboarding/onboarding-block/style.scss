@@ -64,7 +64,7 @@ $onboarding-block-css-transition-duration: 750ms;
 	z-index: -1;
 }
 
-.onboarding-block__background::before {
+.onboarding-block__background.has-background::before {
 	background-color: $white;
 	content: '';
 	position: absolute;

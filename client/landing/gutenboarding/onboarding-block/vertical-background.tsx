@@ -4,6 +4,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { useSelect } from '@wordpress/data';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ export interface VerticalBackgroundProps {
 
 const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onLoad } ) => {
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const [ imageUrl, setImageUrl ] = useState< string | null >( null );
+	const [ imageUrl, setImageUrl ] = useState< string | undefined >();
 
 	// Prefetch the default image.
 	useEffect( () => void ( new window.Image().src = defaultImageUrl ), [] );
@@ -36,7 +37,6 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 			};
 			// We get an esmodule wrapping the url here
 			const successHandler = ( { default: url }: { default: string } ) => {
-				preloadImage;
 				preloadImage.onload = () => {
 					setImageUrl( url );
 					onLoad();
@@ -62,12 +62,12 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 	return (
 		<SwitchTransition mode="in-out">
 			<CSSTransition
-				key={ imageUrl || 'empty' }
+				key={ imageUrl || 'none' }
 				timeout={ 750 }
 				classNames="onboarding-block__background-fade"
 			>
 				<div
-					className="onboarding-block__background"
+					className={ classnames( 'onboarding-block__background', { 'has-background': imageUrl } ) }
 					style={ {
 						backgroundImage: imageUrl ? `url( ${ imageUrl } ) ` : 'none',
 					} }
