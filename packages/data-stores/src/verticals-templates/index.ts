@@ -17,15 +17,19 @@ import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 export * from './types';
 export { State, STORE_KEY };
 
+let isRegistered = false;
 export function register() {
-	registerStore< State >( STORE_KEY, {
-		actions,
-		controls,
-		reducer,
-		resolvers,
-		selectors,
-		persist: [],
-	} );
+	if ( ! isRegistered ) {
+		isRegistered = true;
+		registerStore< State >( STORE_KEY, {
+			actions,
+			controls,
+			reducer,
+			resolvers,
+			selectors,
+			persist: [],
+		} );
+	}
 }
 
 declare module '@wordpress/data' {
