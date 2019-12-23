@@ -1,6 +1,12 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		// FIXME: Should target "ES5" according to our package convention.
+		// There is a compatibility issue between the TypeScript generator
+		// es5 helper and `@wordpress/redux-routine` that breaks when
+		// targetting es5.
+		// see issue: https://github.com/microsoft/TypeScript/issues/35833
+		"target": "es2015",
+
 		"module": "esnext",
 		"allowJs": false,
 		"jsx": "react",
