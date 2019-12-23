@@ -26,8 +26,6 @@ export function register() {
 }
 
 declare module '@wordpress/data' {
-	function dispatch(
-		key: typeof import('./constants').STORE_KEY
-	): DispatchFromMap< typeof actions >;
-	function select( key: typeof import('./constants').STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
+	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

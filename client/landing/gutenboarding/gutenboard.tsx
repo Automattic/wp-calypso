@@ -33,12 +33,7 @@ import SettingsSidebar from './components/settings-sidebar';
 import { State as OnboardingState } from './stores/onboard/reducer';
 import { STORE_KEY } from './stores/onboard';
 import { Steps } from './types';
-import { DomainSuggestions, Verticals, VerticalsTemplates } from '@automattic/data-stores';
 import './style.scss';
-
-DomainSuggestions.register();
-Verticals.register();
-VerticalsTemplates.register();
 
 const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {
 	[ Steps.IntentGathering ]: ( { siteVertical } ) => !! siteVertical,

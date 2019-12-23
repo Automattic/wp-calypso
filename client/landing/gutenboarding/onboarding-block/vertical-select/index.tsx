@@ -22,6 +22,7 @@ import { __TodoAny__ } from '../../../../types';
  */
 import './style.scss';
 
+Verticals.register();
 const VERTICALS_STORE = Verticals.STORE_KEY;
 
 const VerticalSelect: FunctionComponent< StepProps > = ( {

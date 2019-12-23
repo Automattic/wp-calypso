@@ -16,6 +16,7 @@ import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
 import { selectorDebounce } from '../../constants';
 
+DomainSuggestions.register();
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.STORE_KEY;
 
 interface Props {

@@ -16,8 +16,12 @@ import { SiteVertical } from '../../stores/onboard/types';
 import DesignCard from './design-card';
 
 import './style.scss';
+import { VerticalsTemplates } from '@automattic/data-stores';
 
-type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
+type Template = VerticalsTemplates.Template;
+
+VerticalsTemplates.register();
+const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.STORE_KEY;
 
 const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(
@@ -25,9 +29,8 @@ const DesignSelector: FunctionComponent = () => {
 	);
 
 	const templates =
-		useSelect( select =>
-			select( 'automattic/verticals/templates' ).getTemplates( siteVertical.id )
-		) ?? [];
+		useSelect( select => select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical.id ) ) ??
+		[];
 
 	const [ designs, otherTemplates ] = partition(
 		templates,
