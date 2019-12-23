@@ -17,10 +17,10 @@ import {
 } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
 import classnames from 'classnames';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '@wordpress/components/build-style/style.css';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 
@@ -32,7 +32,6 @@ import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
-import { Step } from './types';
 import './style.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
@@ -52,20 +51,17 @@ export function Gutenboard() {
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const r = useRouteMatch( '*' );
 
-	let currentStep: Step;
 	let redirect: undefined | string;
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
 		case '/':
-			currentStep = Step.IntentGathering;
 			if ( siteTitle ) {
 				next = '/design';
 			}
 			break;
 
 		case '/design':
-			currentStep = Step.DesignSelection;
 			if ( ! siteVertical ) {
 				redirect = '/';
 			}
@@ -73,21 +69,11 @@ export function Gutenboard() {
 			break;
 
 		default:
-			currentStep = Step.IntentGathering;
 			redirect = '/';
 			break;
 	}
 
-	const onboardingBlock = useRef( createBlock( name, { step: currentStep } ) );
-
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
-	useEffect(
-		() =>
-			void updateBlockAttributes( onboardingBlock.current.clientId, {
-				step: currentStep,
-			} ),
-		[ currentStep, redirect, updateBlockAttributes ]
-	);
+	const onboardingBlock = createBlock( name, {} );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -115,7 +101,7 @@ export function Gutenboard() {
 						/>
 						<BlockEditorProvider
 							useSubRegistry={ false }
-							value={ [ onboardingBlock.current ] }
+							value={ [ onboardingBlock ] }
 							settings={ { templateLock: 'all' } }
 						>
 							<div className="gutenboard__edit-post-layout-content edit-post-layout__content ">
