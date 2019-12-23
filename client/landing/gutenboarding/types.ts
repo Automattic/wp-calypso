@@ -1,4 +1,4 @@
 export enum Step {
-	IntentGathering,
-	DesignSelection,
+	IntentGathering = '/',
+	DesignSelection = '/design',
 }
