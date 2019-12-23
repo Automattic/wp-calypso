@@ -17,7 +17,7 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 		const { target } = rest;
 		const props = {
 			...rest,
-			onClick: event => {
+			onClick: ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 				try {
 					if ( onClick ) onClick( event );
 				} catch ( ex ) {
@@ -67,6 +67,6 @@ const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
 };
 export default Link;
 
-function isModifiedEvent( event ) {
+function isModifiedEvent( event: React.MouseEvent ) {
 	return !! ( event.metaKey || event.altKey || event.ctrlKey || event.shiftKey );
 }
