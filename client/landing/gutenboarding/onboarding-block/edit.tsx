@@ -25,40 +25,42 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const [ hasBackground, setHasBackground ] = useState( false );
 
-	<Switch>
-		<Route exact path="/">
-			<div
-				className={ classNames( 'onboarding-block__acquire-intent', {
-					'has-background': hasBackground && siteVertical,
-				} ) }
-			>
-				{ ( hasBackground || siteVertical ) && (
-					<VerticalBackground id={ siteVertical?.id } onLoad={ () => setHasBackground( true ) } />
-				) }
-				<div className="onboarding-block__questions">
-					<h2 className="onboarding-block__questions-heading">
-						{ ! siteVertical &&
-							! siteTitle &&
-							NO__( "Let's set up your website – it takes only a moment." ) }
-					</h2>
-					<StepperWizard
-						stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }
-					/>
-					{ siteVertical && (
-						<div className="onboarding-block__footer">
-							<Link to="/design" className="onboarding-block__question-skip" isLink>
-								{ /* @TODO: add transitions and correct action */ }
-								{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
-							</Link>
-						</div>
+	return (
+		<Switch>
+			<Route exact path="/">
+				<div
+					className={ classNames( 'onboarding-block__acquire-intent', {
+						'has-background': hasBackground && siteVertical,
+					} ) }
+				>
+					{ ( hasBackground || siteVertical ) && (
+						<VerticalBackground id={ siteVertical?.id } onLoad={ () => setHasBackground( true ) } />
 					) }
+					<div className="onboarding-block__questions">
+						<h2 className="onboarding-block__questions-heading">
+							{ ! siteVertical &&
+								! siteTitle &&
+								NO__( "Let's set up your website – it takes only a moment." ) }
+						</h2>
+						<StepperWizard
+							stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }
+						/>
+						{ siteVertical && (
+							<div className="onboarding-block__footer">
+								<Link to="/design" className="onboarding-block__question-skip" isLink>
+									{ /* @TODO: add transitions and correct action */ }
+									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
+								</Link>
+							</div>
+						) }
+					</div>
 				</div>
-			</div>
-		</Route>
-		<Route path="/design">
-			<DesignSelector />
-		</Route>
-	</Switch>;
+			</Route>
+			<Route path="/design">
+				<DesignSelector />
+			</Route>
+		</Switch>
+	);
 };
 
 export default OnboardingEdit;
