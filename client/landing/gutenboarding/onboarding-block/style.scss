@@ -77,7 +77,11 @@ $onboarding-block-css-transition-duration: 750ms;
 		// @TODO: replace with opacity transition
 			background-color $onboarding-block-css-transition-duration linear
 			$onboarding-block-css-transition-duration;
+	@media ( prefers-color-scheme: dark ) {
+		background-color: $dark-gray-900;
+	}
 }
+
 .onboarding-block__background-fade-enter {
 	&.onboarding-block__background::before {
 		opacity: 0.8;
@@ -115,9 +119,6 @@ $onboarding-block-css-transition-duration: 750ms;
 			.onboarding-block__question-answered {
 				color: $blue-medium-highlight;
 			}
-		}
-		.onboarding-block__background::before {
-			background-color: $dark-gray-900;
 		}
 		.components-button.is-link.onboarding-block__question-skip {
 			color: $light-gray-500;
