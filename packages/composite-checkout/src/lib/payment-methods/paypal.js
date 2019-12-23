@@ -3,6 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import { useDispatch, useSelect } from '../../lib/registry';
 import { useMessages, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+
+const debug = debugFactory( 'composite-checkout:paypal' );
 
 export function createPayPalMethod( {
 	registerStore,
@@ -47,6 +50,7 @@ export function createPayPalMethod( {
 				try {
 					yield { type: 'PAYPAL_TRANSACTION_BEGIN', payload };
 					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_SUBMIT', payload };
+					debug( 'received successful paypal endpoint response', paypalResponse );
 					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
 				} catch ( error ) {
 					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error };
@@ -132,10 +136,13 @@ function useTransactionStatusHandler() {
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
 	const { setFormReady, setFormSubmitting } = useFormStatus();
+	const paypalExpressUrl = useSelect( select => select( 'paypal' ).getRedirectUrl() );
 
 	useEffect( () => {
 		if ( transactionStatus === 'redirecting' ) {
-			// TODO: redirect to url
+			debug( 'redirecting to paypal url', paypalExpressUrl );
+			// TODO: should this redirect go through the host page?
+			window.location.href = paypalExpressUrl;
 			return;
 		}
 		if ( transactionStatus === 'error' ) {
@@ -156,6 +163,7 @@ function useTransactionStatusHandler() {
 		transactionError,
 		setFormReady,
 		setFormSubmitting,
+		paypalExpressUrl,
 	] );
 }
 
