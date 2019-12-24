@@ -6,7 +6,7 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '.';
+import { STORE_KEY } from './constants';
 import { DomainSuggestionQuery } from './types';
 import { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
@@ -16,7 +16,7 @@ export const getState = ( state: State ) => state;
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 export const getDomainSuggestions = (
-	state: State,
+	_state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
@@ -27,7 +27,7 @@ export const getDomainSuggestions = (
 };
 
 export const isLoadingDomainSuggestions = (
-	state: State,
+	_state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {

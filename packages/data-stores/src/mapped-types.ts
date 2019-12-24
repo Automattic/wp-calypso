@@ -10,6 +10,8 @@
  * @see https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Maps a "raw" selector object to the selectors available when registered on the @wordpress/data store.
  *

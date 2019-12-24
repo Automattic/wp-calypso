@@ -33,8 +33,6 @@ import SettingsSidebar from './components/settings-sidebar';
 import { State as OnboardingState } from './stores/onboard/reducer';
 import { STORE_KEY } from './stores/onboard';
 import { Steps } from './types';
-import './stores/domain-suggestions';
-import './stores/verticals-templates';
 import './style.scss';
 
 const stepCompleted: Record< Steps, ( state: OnboardingState ) => boolean > = {

@@ -10,11 +10,13 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
 import { selectorDebounce } from '../../constants';
+
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
 	isEditorSidebarOpened: boolean;
@@ -52,7 +54,7 @@ const Header: FunctionComponent< Props > = ( {
 			if ( ! domainSearch ) {
 				return;
 			}
-			return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
+			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				quantity: 1,

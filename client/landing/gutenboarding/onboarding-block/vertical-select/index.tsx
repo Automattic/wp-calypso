@@ -11,7 +11,7 @@ import { ENTER } from '@wordpress/keycodes';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as VERTICALS_STORE } from '../../stores/verticals';
+import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
@@ -21,6 +21,8 @@ import { __TodoAny__ } from '../../../../types';
  * Style dependencies
  */
 import './style.scss';
+
+const VERTICALS_STORE = Verticals.register();
 
 const VerticalSelect: FunctionComponent< StepProps > = ( {
 	onSelect,
