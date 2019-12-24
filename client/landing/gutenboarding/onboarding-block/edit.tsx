@@ -61,7 +61,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					</div>
 				</div>
 			</Route>
-			<Route path={ Step.DesignSelection }>
+			<Route exact path={ Step.DesignSelection }>
 				{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
 			</Route>
 		</Switch>
