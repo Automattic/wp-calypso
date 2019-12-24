@@ -17,7 +17,7 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { Attributes } from './types';
-import { Step } from '../types';
+import { Step } from '../steps';
 import './style.scss';
 import VerticalBackground from './vertical-background';
 import Link from '../components/link';
