@@ -52,7 +52,6 @@ import {
 	getJetpackSiteRemoteManagementUrl,
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
-	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
@@ -2699,73 +2698,6 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
-		} );
-	} );
-
-	describe( '#siteHasMinimumJetpackVersion()', () => {
-		test( 'it should return `null` for a non-existing site', () => {
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
-			chaiExpect( hasMinimumVersion ).to.equal( null );
-		} );
-
-		test( 'it should return `null` for a non jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: false,
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( null );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater that minimum version', () => {
-			const greaterVersion = '3.5';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: greaterVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( true );
-		} );
-
-		test( 'it should return `true` if jetpack version is equal to minimum version', () => {
-			const equalVersion = config( 'jetpack_min_version' );
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: equalVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( true );
-		} );
-
-		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const smallerVersion = '3.2';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: smallerVersion,
-					},
-				},
-			} );
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			chaiExpect( hasMinimumVersion ).to.equal( false );
 		} );
 	} );
 
