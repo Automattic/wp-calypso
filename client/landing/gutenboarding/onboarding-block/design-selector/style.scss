@@ -57,7 +57,6 @@ $deisgn-selector-selection-space: 175px;
 	&.exit,
 	&.exit-done {
 		overflow-y: hidden;
-		// height: 100vh;
 
 		.design-selector__grid {
 			@include design-selector-hide();
