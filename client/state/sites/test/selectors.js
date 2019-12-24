@@ -2507,22 +2507,6 @@ describe( 'selectors', () => {
 			chaiExpect( canUpdateFiles ).to.equal( null );
 		} );
 
-		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const smallerVersion = '3.2';
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						jetpack_version: smallerVersion,
-					},
-				},
-			} );
-
-			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			chaiExpect( canUpdateFiles ).to.equal( false );
-		} );
-
 		test( 'it should return `false` if is a multi-network site', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
