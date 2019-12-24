@@ -647,19 +647,8 @@
 	.login__social,
 	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
-		margin: 0 -16px;
 		padding-top: 44px;
-		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
-
-		@include breakpoint( '>480px' ) {
-			margin: 0 -24px;
-			width: calc( 100% + ( #{$woo-form-whitespace-480} * 2 ) );
-		}
-
-		@include breakpoint( '>660px' ) {
-			margin: 0 -100px;
-			width: calc( 100% + ( #{$woo-form-whitespace-660} * 2 ) );
-		}
+		text-align: center;
 	}
 
 	.wp-login__links {
