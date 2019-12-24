@@ -8,6 +8,8 @@ import classnames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
+import { Portal } from 'reakit/Portal';
+import { Dialog, DialogBackdrop } from 'reakit/Dialog';
 
 /**
  * Internal dependencies
@@ -37,6 +39,7 @@ const DesignSelector: FunctionComponent = () => {
 	);
 
 	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
+
 	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
 	const resetLayouts = () => setSelectedLayouts( new Set() );
 	const toggleLayout = ( layout: Template ) =>
@@ -57,7 +60,10 @@ const DesignSelector: FunctionComponent = () => {
 
 	const transitionTiming = 250;
 	const hasSelectedDesign = !! selectedDesign;
+	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
 	const [ cp, setCp ] = useState< number >();
+
+	const dialogId = 'page-selector-modal';
 
 	return (
 		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
@@ -75,14 +81,12 @@ const DesignSelector: FunctionComponent = () => {
 			</div>
 
 			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
-				<div
-					className="design-selector__grid-container"
-					onClick={ hasSelectedDesign ? resetState : undefined }
-				>
+				<div className="design-selector__grid-container">
 					<div className="design-selector__grid">
 						{ designs.map( design => (
 							<DesignCard
 								key={ design.slug }
+								dialogId={ dialogId }
 								design={ design }
 								isSelected={ design.slug === selectedDesign?.slug }
 								style={
@@ -106,15 +110,36 @@ const DesignSelector: FunctionComponent = () => {
 				</div>
 			</CSSTransition>
 
-			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming } unmountOnExit>
-				<div className="design-selector__page-layout-container">
-					<PageLayoutSelector
-						selectedDesign={ selectedDesign }
-						selectedLayouts={ selectedLayouts }
-						selectLayout={ toggleLayout }
-						templates={ otherTemplates }
-					/>
-				</div>
+			<Portal>
+				<DialogBackdrop
+					visible={ hasSelectedDesign }
+					className="design-selector__page-layout-backdrop"
+				/>
+			</Portal>
+
+			<CSSTransition
+				in={ hasSelectedDesign }
+				onEnter={ () => setIsDialogVisible( true ) }
+				onExited={ () => setIsDialogVisible( false ) }
+				timeout={ transitionTiming }
+			>
+				<Dialog
+					visible={ isDialogVisible }
+					baseId={ dialogId }
+					hide={ resetState }
+					aria-labelledby="page-layout-selector__title"
+					hideOnClickOutside
+					hideOnEsc
+				>
+					<div className="design-selector__page-layout-container">
+						<PageLayoutSelector
+							selectedDesign={ selectedDesign }
+							selectedLayouts={ selectedLayouts }
+							selectLayout={ toggleLayout }
+							templates={ otherTemplates }
+						/>
+					</div>
+				</Dialog>
 			</CSSTransition>
 		</div>
 	);

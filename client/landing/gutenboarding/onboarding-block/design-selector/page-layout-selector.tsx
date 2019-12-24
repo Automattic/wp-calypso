@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { __ as NO__, sprintf } from '@wordpress/i18n';
+import { __ as NO__ } from '@wordpress/i18n';
 import classnames from 'classnames';
 
 /**
@@ -23,17 +23,17 @@ interface Props {
 }
 
 const PageLayoutSelector: FunctionComponent< Props > = ( {
-	selectedDesign,
 	selectedLayouts,
 	selectLayout,
 	templates,
 } ) => (
 	<div className="page-layout-selector">
 		<div className="page-layout-selector__content">
-			<h1 className="page-layout-selector__title">
-				{ selectedDesign
-					? sprintf( NO__( 'Select the pages you want to use with %s:' ), selectedDesign.title )
-					: null }
+			<h1
+				/* ID for aria-labelledby */ id="page-layout-selector__title"
+				className="page-layout-selector__title"
+			>
+				{ NO__( "Select the pages you'd like to include:" ) }
 			</h1>
 			<div className="page-layout-selector__grid">
 				{ templates.map( template => (

@@ -76,22 +76,30 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-show();
 }
 
+.design-selector__page-layout-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
 .design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
 
 	&,
-	&.enter,
-	&.exit-active.exit-active, // duplicate selector to override `.exit` below
-	&.exit-done {
+	.enter > &,
+	.exit-active.exit-active > &, // duplicate selector to override `.exit` below
+	.exit-done > & {
 		.page-layout-selector {
 			@include design-selector-hide();
 		}
 	}
 
-	&.exit,
-	&.enter-active,
-	&.enter-done {
+	.exit > &,
+	.enter-active > &,
+	.enter-done > & {
 		.page-layout-selector {
 			@include design-selector-show();
 			transform: translate3d( 0, 0, 0 );

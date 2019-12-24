@@ -20,13 +20,22 @@ interface Props {
 	design: import('@automattic/data-stores').VerticalsTemplates.Template;
 	onClick: MouseEventHandler< HTMLDivElement >;
 	style?: CSSProperties;
+	dialogId: string;
 }
-const DesignCard: FunctionComponent< Props > = ( { design, onClick, isSelected, style } ) => (
+const DesignCard: FunctionComponent< Props > = ( {
+	design,
+	dialogId,
+	isSelected,
+	onClick,
+	style,
+} ) => (
 	<Card
 		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
 		isElevated
 		onClick={ onClick }
 		style={ style }
+		aria-haspopup="dialog"
+		aria-controls={ dialogId }
 	>
 		<CardMedia>
 			<img
