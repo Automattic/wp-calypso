@@ -117,19 +117,19 @@ const DesignSelector: FunctionComponent = () => {
 				/>
 			</Portal>
 
-			<CSSTransition
-				in={ hasSelectedDesign }
-				onEnter={ () => setIsDialogVisible( true ) }
-				onExited={ () => setIsDialogVisible( false ) }
-				timeout={ transitionTiming }
+			<Dialog
+				visible={ isDialogVisible }
+				baseId={ dialogId }
+				hide={ resetState }
+				aria-labelledby="page-layout-selector__title"
+				hideOnClickOutside
+				hideOnEsc
 			>
-				<Dialog
-					visible={ isDialogVisible }
-					baseId={ dialogId }
-					hide={ resetState }
-					aria-labelledby="page-layout-selector__title"
-					hideOnClickOutside
-					hideOnEsc
+				<CSSTransition
+					in={ hasSelectedDesign }
+					onEnter={ () => setIsDialogVisible( true ) }
+					onExited={ () => setIsDialogVisible( false ) }
+					timeout={ transitionTiming }
 				>
 					<div className="design-selector__page-layout-container">
 						<PageLayoutSelector
@@ -139,8 +139,8 @@ const DesignSelector: FunctionComponent = () => {
 							templates={ otherTemplates }
 						/>
 					</div>
-				</Dialog>
-			</CSSTransition>
+				</CSSTransition>
+			</Dialog>
 		</div>
 	);
 };

@@ -96,15 +96,15 @@ $deisgn-selector-selection-space: 175px;
 	transition-timing-function: ease-out;
 
 	&,
-	.enter > &,
-	.exit-active.exit-active > &, // duplicate selector to override `.exit` below
-	.exit-done > & {
+	&.enter,
+	&.exit-active.exit-active , // duplicate selector to override `.exit` below
+	&.exit-done {
 		@include design-selector-hide();
 	}
 
-	.exit > &,
-	.enter-active > &,
-	.enter-done > & {
+	&.exit,
+	&.enter-active,
+	&.enter-done {
 		@include design-selector-show();
 	}
 }
