@@ -32,7 +32,7 @@ import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
-import { Step } from './types';
+import { routes, Step } from './types';
 import './style.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
@@ -54,7 +54,7 @@ export function Gutenboard() {
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
-	const r = useRouteMatch( '*' );
+	const r = useRouteMatch( routes );
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
