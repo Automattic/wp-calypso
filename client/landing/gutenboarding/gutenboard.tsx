@@ -60,12 +60,12 @@ export function Gutenboard() {
 	switch ( r?.url ) {
 		case Step.IntentGathering:
 			if ( siteVertical ) {
-				next = '/design';
+				next = Step.DesignSelection;
 			}
 			break;
 
 		case Step.DesignSelection:
-			prev = '/';
+			prev = Step.IntentGathering;
 			break;
 	}
 
