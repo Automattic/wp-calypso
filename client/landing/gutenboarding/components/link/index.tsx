@@ -52,7 +52,8 @@ type Props = Omit<
 const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
 	if ( props.to ) {
 		return (
-			<RouterLink { ...props } component={ LinkButton }>
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			<RouterLink { ...( props as any ) } component={ LinkButton }>
 				{ children }
 			</RouterLink>
 		);
