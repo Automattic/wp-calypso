@@ -57,7 +57,7 @@ $deisgn-selector-selection-space: 175px;
 	&.exit,
 	&.exit-done {
 		overflow-y: hidden;
-		height: 100vh;
+		// height: 100vh;
 
 		.design-selector__grid {
 			@include design-selector-hide();
@@ -87,30 +87,31 @@ $deisgn-selector-selection-space: 175px;
 .design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
+	width: 100%;
+	background: $white;
+	box-shadow: gray 0 0 12px; // use a sass variable
+	padding: 2em 4em;
+
+	@include design-selector-transition();
+	transition-timing-function: ease-out;
 
 	&,
 	.enter > &,
 	.exit-active.exit-active > &, // duplicate selector to override `.exit` below
 	.exit-done > & {
-		.page-layout-selector {
-			@include design-selector-hide();
-		}
+		@include design-selector-hide();
 	}
 
 	.exit > &,
 	.enter-active > &,
 	.enter-done > & {
-		.page-layout-selector {
-			@include design-selector-show();
-			transform: translate3d( 0, 0, 0 );
-		}
+		@include design-selector-show();
 	}
 }
+
 .page-layout-selector {
-	@include design-selector-transition();
-	background: $white;
-	box-shadow: gray 0 0 12px; // use a sass variable
-	padding: 2em 4em;
+	max-width: $design-selector-max-width;
+	margin: 0 auto;
 }
 
 .design-selector__header-container {
