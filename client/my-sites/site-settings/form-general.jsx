@@ -20,7 +20,6 @@ import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
 import { languages } from 'languages';
-import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -44,10 +43,6 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
-	UNSAFE_componentWillMount() {
-		this._showWarning( this.props.site );
-	}
-
 	componentDidMount() {
 		// Wait for page.js to update the URL, then see if we are linking
 		// directly to a section of this page.
@@ -494,9 +489,6 @@ export class SiteSettingsFormGeneral extends Component {
 			siteSlug,
 			translate,
 		} = this.props;
-		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			return null;
-		}
 
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -563,24 +555,6 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 			</div>
 		);
-	}
-
-	_showWarning( site ) {
-		const { siteIsJetpack, translate } = this.props;
-		if ( ! site || ! site.options ) {
-			return;
-		}
-		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			notices.warning(
-				translate( 'Jetpack %(version)s is required to manage Settings', {
-					args: { version: config( 'jetpack_min_version' ) },
-				} ),
-				{
-					button: translate( 'Update now' ),
-					href: site.options.admin_url + 'plugins.php?plugin_status=upgrade',
-				}
-			);
-		}
 	}
 }
 

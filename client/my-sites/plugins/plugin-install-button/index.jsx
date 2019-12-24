@@ -1,3 +1,7 @@
+/* eslint-disable react/no-string-refs */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /**
  * External dependencies
  */
@@ -127,6 +131,7 @@ export class PluginInstallButton extends Component {
 					<li key={ 'reason-i' + i + '-' + siteId }>{ reason }</li>
 				) );
 				html.push(
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -194,25 +199,6 @@ export class PluginInstallButton extends Component {
 		const { translate, selectedSite, isEmbed } = this.props;
 
 		if ( ! selectedSite.canUpdateFiles ) {
-			if ( ! selectedSite.hasMinimumJetpackVersion ) {
-				return (
-					<div
-						className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }
-					>
-						<span className="plugin-install-button__warning">
-							{ translate( 'Jetpack 3.7 is required' ) }
-						</span>
-						<Button
-							compact={ true }
-							onClick={ this.updateJetpackAction }
-							href={ selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-						>
-							{ translate( 'update', { context: 'verb, update plugin button label' } ) }
-						</Button>
-					</div>
-				);
-			}
-
 			if ( this.getDisabledInfo() ) {
 				return (
 					<div

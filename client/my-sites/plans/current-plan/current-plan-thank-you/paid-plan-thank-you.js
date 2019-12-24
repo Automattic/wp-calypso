@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { parse as parseUrl } from 'url';
 import Gridicon from 'components/gridicon';
 import React, { Component, Fragment } from 'react';
 
@@ -15,7 +13,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
-import { untrailingslashit } from 'lib/route';
 import { Button, ProgressBar } from '@automattic/components';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import ThankYou from './thank-you';
@@ -45,11 +42,6 @@ export class PaidPlanThankYou extends Component {
 			installState === INSTALL_STATE_COMPLETE
 		) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_success' );
-		} else if ( site && ! site.hasMinimumJetpackVersion ) {
-			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
-				error: 'jetpack_version_too_old',
-				jetpack_version: get( site, [ 'options', 'jetpack_version' ], 'unknown' ),
-			} );
 		} else if ( site && site.isSecondaryNetworkSite ) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'secondary_network_site',
@@ -66,39 +58,6 @@ export class PaidPlanThankYou extends Component {
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
 		const fireworksIllustration = '/calypso/images/illustrations/fireworks.svg';
-
-		// Jetpack is too old
-		if ( ! site.hasMinimumJetpackVersion ) {
-			// Link to "Plugins" page in wp-admin
-			let wpAdminPluginsUrl = get( site, 'options.admin_url' );
-			wpAdminPluginsUrl = wpAdminPluginsUrl
-				? untrailingslashit( parseUrl( wpAdminPluginsUrl ).pathname ) + '/plugins.php'
-				: undefined;
-
-			return (
-				<ThankYou
-					illustration={ fireworksIllustration }
-					showContinueButton={ ! wpAdminPluginsUrl }
-					showHideMessage={ wpAdminPluginsUrl }
-					title={ translate( 'Thank you for your purchase!' ) }
-				>
-					<p>
-						{ preventWidows(
-							translate(
-								'Unfortunately, we are unable to set up your plan because your site has an older version of Jetpack. Please upgrade Jetpack.'
-							)
-						) }
-					</p>
-					{ wpAdminPluginsUrl && (
-						<p>
-							<Button primary href={ wpAdminPluginsUrl } target="_blank">
-								<span>{ translate( 'Upgrade Jetpack' ) }</span> <Gridicon icon="external" />
-							</Button>
-						</p>
-					) }
-				</ThankYou>
-			);
-		}
 
 		// Non-main site at multisite, cannot install anything
 		if ( site.isSecondaryNetworkSite ) {

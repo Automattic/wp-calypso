@@ -128,7 +128,6 @@ describe( 'selectors', () => {
 				is_customizable: false,
 				is_previewable: true,
 				jetpack: true,
-				hasMinimumJetpackVersion: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
 				canManage: true,
@@ -3686,7 +3685,6 @@ describe( 'selectors', () => {
 			};
 
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canManage ).to.equal( undefined );
@@ -3715,7 +3713,6 @@ describe( 'selectors', () => {
 				},
 			};
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.canManage ).to.have.property;
