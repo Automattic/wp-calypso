@@ -57,7 +57,7 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 				preloadImage.onerror = null;
 			};
 		}
-		return setImageUrl( undefined );
+		setImageUrl( undefined );
 	}, [ siteVertical, onLoad ] );
 
 	return (
