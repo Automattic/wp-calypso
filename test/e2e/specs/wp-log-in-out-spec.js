@@ -53,7 +53,7 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 	} );
 } );
 
-describe( `[${ host }] Authentication: (${ screenSize })`, function() {
+describe( `[${ host }] Authentication:  (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Logging In and Out: @jetpack', function() {
