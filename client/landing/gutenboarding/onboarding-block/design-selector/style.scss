@@ -76,7 +76,7 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-show();
 }
 
-.page-layout-selector__container {
+.design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
 
