@@ -32,6 +32,7 @@ import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
+import { Step } from './types';
 import './style.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
@@ -57,13 +58,13 @@ export function Gutenboard() {
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
-		case '/':
+		case Step.IntentGathering:
 			if ( siteVertical ) {
 				next = '/design';
 			}
 			break;
 
-		case '/design':
+		case Step.DesignSelection:
 			prev = '/';
 			break;
 	}
