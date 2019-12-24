@@ -5,8 +5,8 @@ import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useState } from 'react';
-import { Button } from '@wordpress/components';
 import classNames from 'classnames';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -17,19 +17,18 @@ import StepperWizard from './stepper-wizard';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { Attributes } from './types';
-import { Steps } from '../types';
+import { Step } from '../steps';
 import './style.scss';
 import VerticalBackground from './vertical-background';
+import Link from '../components/link';
 
-const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
-	attributes: { step = 0 },
-} ) => {
+const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const [ hasBackground, setHasBackground ] = useState( false );
 
-	switch ( step ) {
-		case Steps.IntentGathering:
-			return (
+	return (
+		<Switch>
+			<Route exact path={ Step.IntentGathering }>
 				<div
 					className={ classNames( 'onboarding-block__acquire-intent', {
 						'has-background': hasBackground && siteVertical,
@@ -49,20 +48,24 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = ( {
 						/>
 						{ siteVertical && (
 							<div className="onboarding-block__footer">
-								<Button className="onboarding-block__question-skip" isLink>
+								<Link
+									to={ Step.DesignSelection }
+									className="onboarding-block__question-skip"
+									isLink
+								>
 									{ /* @TODO: add transitions and correct action */ }
-									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →{ ' ' }
-								</Button>
+									{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
+								</Link>
 							</div>
 						) }
 					</div>
 				</div>
-			);
-		case Steps.DesignSelection:
-			return <DesignSelector />;
-	}
-
-	return null;
+			</Route>
+			<Route exact path={ Step.DesignSelection }>
+				{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
+			</Route>
+		</Switch>
+	);
 };
 
 export default OnboardingEdit;

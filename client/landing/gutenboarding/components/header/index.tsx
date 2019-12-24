@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button, Icon, IconButton } from '@wordpress/components';
+import { Icon, IconButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -15,13 +15,14 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import { DomainPickerButton } from '../domain-picker';
 import { selectorDebounce } from '../../constants';
+import Link from '../link';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
 	isEditorSidebarOpened: boolean;
-	next?: () => void;
-	prev?: () => void;
+	next?: string;
+	prev?: string;
 	toggleGeneralSidebar: () => void;
 	toggleSidebarShortcut: KeyboardShortcut;
 }
@@ -82,14 +83,10 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button
-						className="gutenboarding__header-back-button"
-						disabled={ ! prev }
-						onClick={ prev }
-					>
+					<Link className="gutenboarding__header-back-button" to={ prev }>
 						<Icon icon="arrow-left-alt" />
 						{ NO__( 'Back' ) }
-					</Button>
+					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
 					{ currentDomain ? (
@@ -108,11 +105,9 @@ const Header: FunctionComponent< Props > = ( {
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					<Button isPrimary isLarge disabled={ ! next } onClick={ next }>
-						{ NO__( 'Next' ) }
-					</Button>
-				</div>
+				<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+					{ NO__( 'Next' ) }
+				</Link>
 				<div className="gutenboarding__header-group">
 					<IconButton
 						aria-expanded={ isEditorSidebarOpened }
