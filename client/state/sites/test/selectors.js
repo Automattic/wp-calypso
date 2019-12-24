@@ -94,7 +94,6 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return a normalized site with computed attributes', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const state = {
 				...userState,
 				sites: {
@@ -105,7 +104,7 @@ describe( 'selectors', () => {
 							URL: 'https://example.com',
 							jetpack: true,
 							options: {
-								jetpack_version: jetpackMinVersion,
+								jetpack_version: '8.0',
 								unmapped_url: 'https://example.wordpress.com',
 							},
 						},
@@ -134,7 +133,7 @@ describe( 'selectors', () => {
 				isSecondaryNetworkSite: false,
 				isSiteUpgradeable: null,
 				options: {
-					jetpack_version: jetpackMinVersion,
+					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',
 				},
 			};
