@@ -40,7 +40,6 @@ import {
 	canJetpackSiteManage,
 } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
-import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
@@ -608,7 +607,6 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<FormattedHeader

@@ -29,7 +29,6 @@ import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -506,7 +505,6 @@ export class PluginsMain extends Component {
 
 		return (
 			<Main wideLayout>
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
