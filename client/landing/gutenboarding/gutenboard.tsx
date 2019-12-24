@@ -68,7 +68,7 @@ export function Gutenboard() {
 			break;
 	}
 
-	// We're caching the block via `useRef` in order to prevent re-renders
+	// We're persisting the block via `useRef` in order to prevent re-renders
 	// which would collide with the routing done inside of the block
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = useRef( createBlock( name, {} ) );
