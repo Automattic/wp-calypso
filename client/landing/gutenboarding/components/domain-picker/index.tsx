@@ -98,18 +98,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
-					{ ! suggestions?.length
-						? times( searchOptions.quantity, i => (
-								<Button className="domain-picker__suggestion-item" key={ i }>
-									<span className="domain-picker__suggestion-item-name placeholder">
-										example.wordpress.com
-									</span>
-									<span className="domain-picker__suggestion-action placeholder">
-										{ NO__( 'Select' ) }
-									</span>
-								</Button>
-						  ) )
-						: null }
 					{ suggestions?.length
 						? suggestions.map( suggestion => (
 								<Button
@@ -134,7 +122,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									) }
 								</Button>
 						  ) )
-						: null }
+						: times( searchOptions.quantity, i => (
+								<Button className="domain-picker__suggestion-item" key={ i }>
+									<span className="domain-picker__suggestion-item-name placeholder">
+										example.wordpress.com
+									</span>
+									<span className="domain-picker__suggestion-action placeholder">
+										{ NO__( 'Select' ) }
+									</span>
+								</Button>
+						  ) ) }
 				</PanelRow>
 
 				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
