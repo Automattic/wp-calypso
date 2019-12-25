@@ -100,7 +100,12 @@ const Header: FunctionComponent< Props > = ( {
 							<span>{ currentDomain.domain_name }</span>
 						</DomainPickerButton>
 					) : (
-						siteTitleElement
+						<>
+							{ siteTitleElement }
+							<span className="gutenboarding__header-domain-picker-button-domain placeholder">
+								example.wordpress.com
+							</span>
+						</>
 					) }
 				</div>
 			</div>
