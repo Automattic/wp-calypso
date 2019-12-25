@@ -28,6 +28,7 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
 /**
  * Determine the type of a URL, with regards to its completeness.
+ *
  * @param url the URL to analyze
  *
  * @returns the type of the URL
@@ -52,8 +53,12 @@ export function determineUrlType( url: URLString | URL ): URL_TYPE {
 
 	try {
 		// If we can parse the URL without a base, it's an absolute URL.
+		// The polyfill works differently, however, so we need to take that into account.
+		// See https://github.com/webcomponents/polyfills/issues/241
 		parsed = new URL( url );
-		return URL_TYPE.ABSOLUTE;
+		if ( parsed.protocol && parsed.protocol !== ':' ) {
+			return URL_TYPE.ABSOLUTE;
+		}
 	} catch {
 		// Do nothing.
 	}
@@ -62,6 +67,12 @@ export function determineUrlType( url: URLString | URL ): URL_TYPE {
 		parsed = new URL( url, BASE_URL );
 	} catch {
 		// If it can't be parsed even with a base URL, it's an invalid URL.
+		return URL_TYPE.INVALID;
+	}
+
+	// The polyfill sometimes doesn't throw an exception for invalid URLs, instead
+	// leaving the `pathname` blank (which it shouldn't be, at this point).
+	if ( parsed.pathname === '' ) {
 		return URL_TYPE.INVALID;
 	}
 

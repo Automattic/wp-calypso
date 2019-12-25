@@ -241,7 +241,6 @@ class WpcomChecklistComponent extends PureComponent {
 
 	render() {
 		const {
-			phase2,
 			siteId,
 			taskList,
 			taskStatuses,
@@ -284,7 +283,6 @@ class WpcomChecklistComponent extends PureComponent {
 					setStoredTask={ setStoredTask }
 					storedTask={ storedTask }
 					taskList={ taskList }
-					phase2={ phase2 }
 					onExpandTask={ this.trackExpandTask }
 					showChecklistHeader={ false }
 				>
@@ -1093,7 +1091,6 @@ export default connect(
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
-			phase2: get( siteChecklist, 'phase2' ),
 			siteId,
 			siteSlug,
 			siteVerticals: get( siteChecklist, 'verticals' ),

@@ -343,7 +343,12 @@ export class Checkout extends React.Component {
 		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
+			redirectTo = getExitCheckoutUrl(
+				this.state.previousCart,
+				selectedSiteSlug,
+				this.props.upgradeIntent,
+				this.props.redirectTo
+			);
 		}
 
 		page.redirect( redirectTo );
@@ -469,10 +474,10 @@ export class Checkout extends React.Component {
 		return;
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId ) {
+	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
 		const { cart, selectedSiteSlug } = this.props;
 
-		if ( hasPersonalPlan( cart ) ) {
+		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
 			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
 				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 			}
@@ -490,14 +495,12 @@ export class Checkout extends React.Component {
 		// then skip this section so that we do not show further upsells.
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
-			stepResult &&
-			isEmpty( stepResult.failed_purchases ) &&
 			! hasConciergeSession( cart ) &&
 			! hasJetpackPlan( cart ) &&
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
 			if ( upgradePath ) {
 				return upgradePath;
 			}

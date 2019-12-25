@@ -124,6 +124,7 @@ const CheckoutModalTitle = styled.h1`
 	font-weight: ${props => props.theme.weights.normal};
 	font-size: 24px;
 	color: ${props => props.theme.colors.textColor};
+	line-height: 1.3;
 `;
 
 const CheckoutModalCopy = styled.p`

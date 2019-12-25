@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useCallback, useContext, createContext } from 'react';
+import React, {
+	useEffect,
+	useReducer,
+	useState,
+	useCallback,
+	useContext,
+	createContext,
+} from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
@@ -65,7 +72,7 @@ export { StripePaymentMethodError };
  *
  * @param {object} stripe The stripe object with payment data included
  * @param {object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
- * @return {Promise} Promise that will be resolved or rejected
+ * @returns {Promise} Promise that will be resolved or rejected
  */
 export async function createStripePaymentMethod( stripe, paymentDetails ) {
 	const { paymentMethod, error } = await stripe.createPaymentMethod( 'card', {
@@ -94,7 +101,7 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
  *
  * @param {object} stripeConfiguration The data from the Stripe Configuration endpoint
  * @param {string} paymentIntentClientSecret The client secret of the PaymentIntent
- * @return {Promise} Promise that will be resolved or rejected
+ * @returns {Promise} Promise that will be resolved or rejected
  */
 export async function confirmStripePaymentIntent( stripeConfiguration, paymentIntentClientSecret ) {
 	// Setup a stripe instance that is disconnected from our Elements
@@ -119,7 +126,7 @@ export async function confirmStripePaymentIntent( stripeConfiguration, paymentIn
  * Returns null if validation errors cannot be found.
  *
  * @param {object} error An error returned by a Stripe function like createPaymentMethod
- * @return {object | null} An object keyed by input field name whose values are arrays of error strings for that field
+ * @returns {object | null} An object keyed by input field name whose values are arrays of error strings for that field
  */
 function getValidationErrorsFromStripeError( error ) {
 	if ( error.type !== 'validation_error' || ! error.code ) {
@@ -145,6 +152,28 @@ function getValidationErrorsFromStripeError( error ) {
 	return null;
 }
 
+const initialStripeJsState = {
+	stripeJs: null,
+	isStripeLoading: true,
+	stripeLoadingError: null,
+};
+
+function stripeJsReducer( state, action ) {
+	switch ( action.type ) {
+		case 'STRIPE_LOADING_ERROR':
+			return { ...state, isStripeLoading: false, stripeLoadingError: action.payload };
+		case 'STRIPE_JS_SET':
+			return {
+				...state,
+				stripeJs: action.payload,
+				isStripeLoading: false,
+				stripeLoadingError: null,
+			};
+		default:
+			return state;
+	}
+}
+
 /**
  * React custom Hook for loading stripeJs
  *
@@ -153,39 +182,35 @@ function getValidationErrorsFromStripeError( error ) {
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
- * @return {object} { stripeJs, isStripeLoading }
+ * @returns {object} { stripeJs, isStripeLoading }
  */
 function useStripeJs( stripeConfiguration ) {
-	const [ stripeJs, setStripeJs ] = useState( null );
-	const [ isStripeLoading, setStripeLoading ] = useState( true );
-	const [ stripeLoadingError, setStripeLoadingError ] = useState();
+	const [ state, dispatch ] = useReducer( stripeJsReducer, initialStripeJsState );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = state;
+	const setStripeLoadingError = payload => dispatch( { type: 'STRIPE_LOADING_ERROR', payload } );
+	const setStripeJs = payload => dispatch( { type: 'STRIPE_JS_SET', payload } );
+
 	useEffect( () => {
 		let isSubscribed = true;
+
 		async function loadAndInitStripe() {
-			if ( ! stripeConfiguration ) {
-				return;
-			}
 			if ( window.Stripe ) {
-				setStripeLoading( false );
-				if ( ! stripeJs ) {
-					setStripeLoadingError();
-					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-				}
+				isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
 			await loadScriptAsync( stripeConfiguration.js_url );
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError();
 			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
 
-		loadAndInitStripe().catch( error => {
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError( error );
-		} );
+		if ( stripeConfiguration ) {
+			loadAndInitStripe().catch( error => {
+				isSubscribed && setStripeLoadingError( error );
+			} );
+		}
 
 		return () => ( isSubscribed = false );
-	}, [ stripeConfiguration, stripeJs ] );
+	}, [ stripeConfiguration ] );
+
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -217,7 +242,7 @@ function loadScriptAsync( url ) {
  * the configuration to reload by calling `forceReload()`.
  *
  * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
- * @return {object} See above
+ * @returns {object} See above
  */
 function useStripeConfiguration( requestArgs ) {
 	const [ currentAttempt, setAttempt ] = useState( 1 );
@@ -247,7 +272,7 @@ const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
  * This has one optional prop, `configurationArgs`, which is an object that
  * will be used when fetching the stripe configuration.
  *
- * @return {object} React element
+ * @returns {object} React element
  */
 export function StripeHookProvider( { children, configurationArgs } ) {
 	const { stripeConfiguration, forceReload } = useStripeConfiguration( configurationArgs );
@@ -285,7 +310,7 @@ export function StripeHookProvider( { children, configurationArgs } ) {
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
  * - forceReload: a function that can be called to force the stripe configuration to reload
  *
- * @return {object} See above
+ * @returns {object} See above
  */
 export function useStripe() {
 	const stripeData = useContext( StripeContext );

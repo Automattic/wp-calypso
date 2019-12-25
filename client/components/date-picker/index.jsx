@@ -180,15 +180,7 @@ class DatePicker extends PureComponent {
 	);
 
 	getDateInstance( v ) {
-		if ( this.props.moment.isMoment( v ) ) {
-			return v.toDate();
-		}
-
-		if ( v instanceof Number || typeof v === 'number' ) {
-			return new Date( v );
-		}
-
-		return v;
+		return this.props.moment( v ).toDate();
 	}
 
 	renderDay = ( date, modifiers ) => (

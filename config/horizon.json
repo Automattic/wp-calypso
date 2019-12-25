@@ -125,6 +125,5 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
 	"google_analytics_key": "UA-10673494-20",
-	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true
 }

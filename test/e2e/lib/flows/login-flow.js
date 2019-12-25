@@ -124,6 +124,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.dismissEditorWelcomeModal();
 			await gEditorComponent.closeSidebar();
 		}
 
@@ -227,10 +228,7 @@ export default class LoginFlow {
 	}
 
 	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectMySite();
-
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		await sideBarComponent.selectPlugins();
+		await this.loginAndSelectPlugins();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();

@@ -17,9 +17,10 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DomainSuggestion, DomainSuggestionQuery } from '../../stores/domain-suggestions/types';
-import { STORE_KEY } from '../../stores/domain-suggestions';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
+
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export interface Props {
 	/**
@@ -32,12 +33,12 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestionQuery >;
+	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -53,7 +54,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return select( STORE_KEY ).getDomainSuggestions( search, {
+				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, {
 					include_wordpressdotcom: true,
 					include_dotblogsubdomain: true,
 					quantity: 4,

@@ -12,7 +12,7 @@ import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
  */
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
-import { Button } from '@automattic/components';
+import Button from '../../components/button';
 import {
 	useStripe,
 	createStripePaymentMethod,
@@ -21,12 +21,13 @@ import {
 } from '../stripe';
 import {
 	useSelect,
-	usePaymentData,
 	useDispatch,
-	useCheckoutHandlers,
+	usePaymentComplete,
+	useMessages,
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
+	useEvents,
 } from '../../public-api';
 import useLocalize, { sprintf } from '../localize';
 import {
@@ -43,8 +44,15 @@ import { SummaryLine, SummaryDetails } from '../styled-components/summary-detail
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
+import { useFormStatus } from '../form-status';
 
 export function createStripeMethod( {
+	getSiteId,
+	getCountry,
+	getPostalCode,
+	getPhoneNumber,
+	getSubdivisionCode,
+	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
@@ -77,7 +85,27 @@ export function createStripeMethod( {
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
-				stripeResponse = yield { type: 'STRIPE_TRANSACTION_BEGIN', payload };
+				const paymentMethodToken = yield {
+					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						phoneNumber: getPhoneNumber(),
+					},
+				};
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						siteId: getSiteId(),
+						country: getCountry(),
+						postalCode: getPostalCode(),
+						subdivisionCode: getSubdivisionCode(),
+						domainDetails: getDomainDetails(),
+						paymentMethodToken,
+					},
+				};
 			} catch ( error ) {
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
@@ -203,8 +231,11 @@ export function createStripeMethod( {
 			STRIPE_CONFIGURATION_FETCH( action ) {
 				return fetchStripeConfiguration( action.payload );
 			},
+			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
+				return createStripePaymentMethodToken( action.payload );
+			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( formatDataForStripeTransaction( action.payload ) );
+				return sendStripeTransaction( action.payload );
 			},
 		},
 	} );
@@ -233,7 +264,8 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onEvent = useEvents();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -249,9 +281,9 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			onFailure( stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
 		}
-	}, [ onFailure, stripeLoadingError ] );
+	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -260,6 +292,14 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
+			onEvent( {
+				type: 'a8c_checkout_error',
+				payload: {
+					type: 'Stripe field error',
+					field: input.elementType,
+					message: input.error.message,
+				},
+			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -282,6 +322,8 @@ function StripeCreditCardFields() {
 	};
 
 	if ( stripeLoadingError ) {
+		onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+
 		return (
 			<CreditCardFieldsWrapper isLoaded={ true }>
 				<ErrorMessage>
@@ -579,22 +621,26 @@ function LockIcon( { className } ) {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onPaymentComplete = usePaymentComplete();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
-	const [ paymentData ] = usePaymentData();
-	const { billing = {}, domains = {} } = paymentData;
+	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const [ formStatus, setFormStatus ] = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			// TODO: clear this after showing it
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
 		}
 		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+			onPaymentComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -604,12 +650,12 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
-				onFailure( error.stripeError || error.message );
+				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
-		onSuccess,
-		onFailure,
+		onPaymentComplete,
+		showErrorMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
@@ -617,25 +663,25 @@ function StripePayButton( { disabled } ) {
 		localize,
 	] );
 
-	const buttonString = sprintf(
-		localize( 'Pay %s' ),
-		renderDisplayValueMarkdown( total.amount.displayValue )
-	);
+	const buttonString =
+		formStatus === 'submitting'
+			? localize( 'Processing...' )
+			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () =>
 				submitStripePayment( {
-					billing,
-					domains,
+					name,
 					items,
 					total,
 					stripe,
 					stripeConfiguration,
-					onFailure,
+					showErrorMessage,
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
+					setFormStatus,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -661,54 +707,44 @@ function StripeSummary() {
 }
 
 async function submitStripePayment( {
+	name,
 	items,
 	total,
 	stripe,
 	stripeConfiguration,
-	onFailure,
+	showErrorMessage,
 	successUrl,
 	cancelUrl,
-	billing,
-	domains,
 	beginStripeTransaction,
+	setFormStatus,
 } ) {
-	const name = billing.name || '';
-	const country = billing.country || '';
-	const postalCode = billing.zipCode || billing.postalCode || '';
-	const phone = domains.phone || '';
-	const subdivisionCode = billing.state || billing.province || '';
-	// TODO: validate fields
-	const paymentDetailsForStripe = {
+	try {
+		setFormStatus( 'submitting' );
+		beginStripeTransaction( {
+			stripe,
+			name,
+			items,
+			total,
+			stripeConfiguration,
+			successUrl,
+			cancelUrl,
+		} );
+	} catch ( error ) {
+		setFormStatus( 'ready' );
+		showErrorMessage( error );
+		return;
+	}
+}
+
+function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
+	return createStripePaymentMethod( stripe, {
 		name,
 		address: {
 			country,
 			postal_code: postalCode,
 		},
-	};
-
-	if ( phone ) {
-		paymentDetailsForStripe.phone = phone;
-	}
-
-	try {
-		const stripePaymentMethod = await createStripePaymentMethod( stripe, paymentDetailsForStripe );
-		const dataForTransaction = {
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-			paymentData: { billing, domains },
-			stripePaymentMethod,
-			stripeConfiguration,
-			successUrl,
-			cancelUrl,
-		};
-		beginStripeTransaction( dataForTransaction );
-	} catch ( error ) {
-		onFailure( error );
-		return;
-	}
+		...( phoneNumber ? { phone: phoneNumber } : {} ),
+	} );
 }
 
 async function showStripeModalAuth( { stripeConfiguration, response } ) {
@@ -720,77 +756,4 @@ async function showStripeModalAuth( { stripeConfiguration, response } ) {
 	if ( authenticationResponse ) {
 		// TODO: what do we do here?
 	}
-}
-
-function formatDataForStripeTransaction( {
-	name,
-	items,
-	total,
-	country,
-	postalCode,
-	subdivisionCode,
-	paymentData,
-	stripePaymentMethod,
-	stripeConfiguration,
-	successUrl,
-	cancelUrl,
-} ) {
-	const siteId = ''; // TODO: get site id
-	const couponId = null; // TODO: get couponId
-	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: stripePaymentMethod.id,
-		payment_partner: stripeConfiguration.processor_id,
-		name,
-		zip: postalCode,
-		country,
-		successUrl,
-		cancelUrl,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domainDetails: paymentData, // TODO: get this somehow
-		payment,
-	};
-}
-
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.id,
-			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
-			currency: item.amount.currency,
-			volume: 1,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
 }

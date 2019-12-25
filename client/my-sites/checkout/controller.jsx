@@ -51,8 +51,18 @@ export function checkout( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
-		context.primary = <CompositeCheckoutContainer siteSlug={ selectedSite.slug } />;
+		context.primary = (
+			<CompositeCheckoutContainer
+				siteSlug={ selectedSite.slug }
+				siteId={ selectedSite.ID }
+				product={ product }
+				purchaseId={ purchaseId }
+				couponCode={ couponCode }
+			/>
+		);
 		next();
 		return;
 	}
@@ -70,6 +80,7 @@ export function checkout( context, next ) {
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
 			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
 			clearTransaction={ false }
 		/>
 	);

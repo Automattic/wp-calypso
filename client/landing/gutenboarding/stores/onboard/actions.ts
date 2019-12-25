@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteVertical, Vertical } from './types';
-import { DomainSuggestion } from '../domain-suggestions/types';
+import { ActionType, SiteVertical } from './types';
 
-export const setDomain = ( domain: DomainSuggestion ) => ( {
+export const setDomain = (
+	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
+) => ( {
 	type: ActionType.SET_DOMAIN as const,
 	domain,
 } );
@@ -21,9 +22,4 @@ export const resetSiteVertical = () => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
-} );
-
-export const receiveVerticals = ( verticals: Vertical[] ) => ( {
-	type: ActionType.RECEIVE_VERTICALS as const,
-	verticals,
 } );

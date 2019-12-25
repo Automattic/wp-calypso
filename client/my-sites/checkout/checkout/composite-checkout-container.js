@@ -8,20 +8,25 @@ import {
 	createStripeMethod,
 	createApplePayMethod,
 } from '@automattic/composite-checkout';
-import { WPCheckoutWrapper, mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
+import { mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import wp from 'lib/wp';
 import notices from 'notices';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { CompositeCheckout } from './composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout-container' );
 
 const registry = createRegistry();
-const { registerStore } = registry;
+const { registerStore, select } = registry;
 
 const wpcom = wp.undocumented();
 
@@ -29,14 +34,121 @@ async function fetchStripeConfiguration( requestArgs ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-async function sendStripeTransaction() {
-	// return await wpcom.req.post( '/me/transactions', transaction );
+async function sendStripeTransaction( transactionData ) {
+	const formattedTransactionData = formatDataForTransactionsEndpoint( transactionData );
+	debug( 'sending stripe transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
+}
+
+function formatDataForTransactionsEndpoint( {
+	siteId,
+	couponId, // TODO: get this
+	country,
+	postalCode,
+	subdivisionCode,
+	domainDetails,
+	paymentMethodToken,
+	name,
+	items,
+	total,
+	stripeConfiguration,
+	successUrl,
+	cancelUrl,
+} ) {
+	const payment = {
+		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+		payment_key: paymentMethodToken.id,
+		payment_partner: stripeConfiguration.processor_id,
+		name,
+		zip: postalCode,
+		country,
+		successUrl,
+		cancelUrl,
+	};
 	return {
-		success: true,
+		cart: createCartFromLineItems( {
+			siteId,
+			couponId,
+			items: items.filter( item => item.type !== 'tax' ),
+			total,
+			country,
+			postalCode,
+			subdivisionCode,
+		} ),
+		domainDetails,
+		payment,
+	};
+}
+
+// Create cart object as required by the WPCOM transactions endpoint '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
+export function createCartFromLineItems( {
+	siteId,
+	couponId,
+	items,
+	country,
+	postalCode,
+	subdivisionCode,
+} ) {
+	const currency = items.reduce( ( firstValue, item ) => firstValue || item.amount.currency, null );
+	debug( 'creating cart from items', items );
+	return {
+		blog_id: siteId,
+		coupon: couponId || '',
+		currency: currency || '',
+		temporary: false,
+		extra: [],
+		products: items.map( item => ( {
+			product_id: item.wpcom_meta?.product_id,
+			meta: '', // TODO: get this for domains, etc
+			currency: item.amount.currency,
+			volume: 1, // TODO: get this from the item
+		} ) ),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
+}
+
+function getDomainDetails() {
+	const isDomainContactSame = select( 'wpcom' )?.isDomainContactSame?.() ?? false;
+	const {
+		firstName,
+		lastName,
+		email,
+		phoneNumber,
+		address,
+		city,
+		state,
+		country,
+		postalCode,
+	} = isDomainContactSame
+		? select( 'wpcom' )?.getContactInfo?.() ?? {}
+		: select( 'wpcom' )?.getDomainContactInfo?.() ?? {};
+	// TODO: what is getContactInfo for other than the domainDetails?
+	return {
+		firstName,
+		lastName,
+		email,
+		phoneNumber,
+		address,
+		city,
+		state,
+		country,
+		postalCode,
 	};
 }
 
 const stripeMethod = createStripeMethod( {
+	getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
+	getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+	getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+	getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+	getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
@@ -84,28 +196,56 @@ const availablePaymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].f
 const getCart = ( ...args ) => wpcom.getCart( ...args );
 const setCart = ( ...args ) => wpcom.setCart( ...args );
 
-export default function CompositeCheckoutContainer( { siteSlug } ) {
+export default function CompositeCheckoutContainer( {
+	siteId,
+	siteSlug,
+	product,
+	// TODO: handle these also
+	// purchaseId,
+	// couponCode,
+} ) {
 	const translate = useTranslate();
-	const onSuccess = () => {
+	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
+	const isJetpackNotAtomic = useSelector(
+		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
+	const onPaymentComplete = () => {
 		debug( 'success' );
 		notices.success( translate( 'Your purchase was successful!' ) );
 	};
 
-	const onFailure = error => {
+	const showErrorMessage = error => {
 		debug( 'error', error );
 		const message = error && error.toString ? error.toString() : error;
 		notices.error( message || translate( 'An error occurred during your purchase.' ) );
 	};
 
+	const showInfoMessage = message => {
+		debug( 'info', message );
+		notices.info( message );
+	};
+
+	const showSuccessMessage = message => {
+		debug( 'success', message );
+		notices.success( message );
+	};
+
 	return (
-		<WPCheckoutWrapper
+		<CompositeCheckout
 			siteSlug={ siteSlug }
 			getCart={ getCart }
 			setCart={ setCart }
 			availablePaymentMethods={ availablePaymentMethods }
 			registry={ registry }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
+			siteId={ siteId }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
+			product={ product }
+			planSlug={ planSlug }
+			isJetpackNotAtomic={ isJetpackNotAtomic }
 		/>
 	);
 }

@@ -12,7 +12,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 import { CompactCard as Card } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 
-const DATE_FORMAT = 'MMMM D h:mma z';
+const DATE_FORMAT = 'LLL';
 
 const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 	const translate = useTranslate();
@@ -29,7 +29,7 @@ const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 
 	if ( currentDate.isBefore( closesAt ) ) {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Support sessions will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
+			'{{strong}}Note:{{/strong}} Quick Start sessions will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
 				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
 				'get to it as fast as we can. Thank you!',
 			{
@@ -46,7 +46,7 @@ const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 		);
 	} else {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Support sessions are closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
+			'{{strong}}Note:{{/strong}} Quick Start sessions are closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
 				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
 				'get back to you as fast as we can. Thank you!',
 			{

@@ -117,6 +117,7 @@ describe( 'selectors', () => {
 				renewMoment: null,
 				siteName: undefined,
 				subscribedDate: undefined,
+				subscribedMoment: null,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
 				taxAmount: undefined,

@@ -3,7 +3,7 @@
  */
 import { useRef } from 'react';
 
-export function useWpcomStore( registerStore ) {
+export function useWpcomStore( registerStore, onEvent ) {
 	// Only register once
 	const registerComplete = useRef();
 	if ( registerComplete.current ) {
@@ -63,21 +63,45 @@ export function useWpcomStore( registerStore ) {
 		}
 	}
 
+	function siteIdReducer( state = null, action ) {
+		switch ( action.type ) {
+			case 'SET_SITE_ID':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	registerStore( 'wpcom', {
 		reducer( state = {}, action ) {
 			return {
 				isDomainContactSame: isDomainContactSameReducer( state.isDomainContactSame, action ),
 				contact: contactReducer( state.contact, action ),
 				domainContact: domainContactReducer( state.domainContact, action ),
+				siteId: siteIdReducer( state.siteId, action ),
 			};
 		},
 
 		actions: {
+			setSiteId( payload ) {
+				return { type: 'SET_SITE_ID', payload };
+			},
+
 			setIsDomainContactSame( payload ) {
 				return { type: 'CONTACT_SET_DOMAIN_SAME', payload };
 			},
 
 			setContactField( key, field ) {
+				if ( ! field.isValid ) {
+					onEvent( {
+						type: 'a8c_checkout_error',
+						payload: {
+							type: 'Field error',
+							field: key,
+						},
+					} );
+				}
+
 				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
 			},
 			setVatId( payload ) {
@@ -90,6 +114,10 @@ export function useWpcomStore( registerStore ) {
 		},
 
 		selectors: {
+			getSiteId( state ) {
+				return state.siteId;
+			},
+
 			isDomainContactSame( state ) {
 				return state.isDomainContactSame;
 			},

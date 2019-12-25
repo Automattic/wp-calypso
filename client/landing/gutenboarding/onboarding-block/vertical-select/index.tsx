@@ -10,9 +10,10 @@ import { ENTER } from '@wordpress/keycodes';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../stores/onboard';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../stores/onboard/types';
-import { InjectedStepProps } from '../stepper-wizard';
+import { StepProps } from '../stepper-wizard';
 import Question from '../question';
 import { __TodoAny__ } from '../../../../types';
 
@@ -21,7 +22,9 @@ import { __TodoAny__ } from '../../../../types';
  */
 import './style.scss';
 
-const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
+const VERTICALS_STORE = Verticals.register();
+
+const VerticalSelect: FunctionComponent< StepProps > = ( {
 	onSelect,
 	inputClass,
 	isActive,
@@ -52,7 +55,7 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 	const suggestionRef = createRef< __TodoAny__ >();
 
 	const verticals = useSelect( select =>
-		select( STORE_KEY )
+		select( VERTICALS_STORE )
 			.getVerticals()
 			.map( x => ( {
 				label: x.vertical_name,
@@ -60,8 +63,8 @@ const VerticalSelect: FunctionComponent< InjectedStepProps > = ( {
 			} ) )
 	);
 
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteVertical, resetSiteVertical } = useDispatch( STORE_KEY );
+	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( e.target.value !== inputValue && ! dirty ) {

@@ -7,7 +7,6 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper';
-import { getJetpackHost } from '../data-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
@@ -281,10 +280,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSuccessViewPostNotice() {
-		// FIXME: Temporary hack to make sure it works with both 6.1 and core's Gutenberg (WP 5.2)
-		const noticeSelector =
-			getJetpackHost() === 'WPCOM' ? '.components-snackbar' : '.components-notice.is-success';
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( noticeSelector ) );
+		const noticeSelector = By.css( '.components-snackbar' );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, noticeSelector );
 	}
 
 	async dismissSuccessNotice() {
@@ -386,6 +383,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 			}
+		}
+	}
+
+	async dismissEditorWelcomeModal() {
+		if (
+			await driverHelper.isElementPresent( this.driver, By.css( '.edit-post-welcome-guide' ) )
+		) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.edit-post-welcome-guide .components-modal__header .components-button' )
+			);
 		}
 	}
 }

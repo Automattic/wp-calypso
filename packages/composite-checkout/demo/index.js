@@ -14,7 +14,6 @@ import {
 	createStripeMethod,
 	createPayPalMethod,
 	createApplePayMethod,
-	createCreditCardMethod,
 	useIsStepActive,
 	usePaymentData,
 	getDefaultPaymentMethodStep,
@@ -40,11 +39,20 @@ const initialItems = [
 	},
 ];
 
-// These are used only for non-redirect payment methods
-const onSuccess = () => window.alert( 'Payment succeeded!' );
-const onFailure = error => {
+const onPaymentComplete = () => window.alert( 'Payment succeeded!' );
+const onEvent = event => window.console.log( 'Event', event );
+
+const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
+};
+const showInfoMessage = message => {
+	console.log( 'Info:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
+};
+const showSuccessMessage = message => {
+	console.log( 'Success:', message ); /* eslint-disable-line no-console */
+	window.alert( message );
 };
 
 // These are used only for redirect payment methods
@@ -52,22 +60,21 @@ const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
 async function fetchStripeConfiguration() {
-	// return await wpcom.req.get( '/me/stripe-configuration', query );
 	return {
 		public_key: stripeKey,
 		js_url: 'https://js.stripe.com/v3/',
 	};
 }
 
-async function sendStripeTransaction() {
-	// return await wpcom.req.post( '/me/transactions', transaction );
+async function sendStripeTransaction( data ) {
+	window.console.log( 'Processing stripe transaction with data', data );
 	return {
 		success: true,
 	};
 }
 
-async function makePayPalExpressRequest() {
-	// return this.wpcom.req.post( '/me/paypal-express-url', data );
+async function makePayPalExpressRequest( data ) {
+	window.console.log( 'Processing paypal transaction with data', data );
 	return window.location.href;
 }
 
@@ -75,12 +82,16 @@ const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
 const stripeMethod = createStripeMethod( {
+	getSiteId: () => 5555,
+	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
+	getPostalCode: () => 90210,
+	getPhoneNumber: () => 5555555555,
+	getSubdivisionCode: () => 'CA',
+	getDomainDetails: () => ( {} ),
 	registerStore,
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } );
-
-const creditCardMethod = createCreditCardMethod();
 
 const applePayMethod = isApplePayAvailable()
 	? createApplePayMethod( {
@@ -281,19 +292,27 @@ function MyCheckout() {
 	}, [] );
 	const total = useMemo( () => getTotal( items ), [ items ] );
 
+	// This simulates loading the data
+	const [ isLoading, setIsLoading ] = useState( true );
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 1500 );
+	}, [] );
+
 	return (
 		<CheckoutProvider
 			locale={ 'en' }
 			items={ items }
 			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
+			onEvent={ onEvent }
+			onPaymentComplete={ onPaymentComplete }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
-			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ].filter(
-				Boolean
-			) }
+			isLoading={ isLoading }
+			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
 			<Checkout steps={ steps } />
 		</CheckoutProvider>

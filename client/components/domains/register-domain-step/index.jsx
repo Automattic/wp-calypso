@@ -144,6 +144,7 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		showTestCopy: PropTypes.bool,
+		showTestParagraph: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -388,7 +389,9 @@ class RegisterDomainStep extends React.Component {
 	getPlaceholderText() {
 		const { showTestCopy, translate } = this.props;
 
-		return showTestCopy ? 'Type the domain you want here' : translate( 'Enter a name or keyword' );
+		return showTestCopy
+			? translate( 'Type the domain you want here' )
+			: translate( 'Enter a name or keyword' );
 	}
 
 	render() {
@@ -579,6 +582,10 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
+			if ( this.props.showTestParagraph ) {
+				return this.renderFreeDomainExplainer();
+			}
+
 			return this.renderExampleSuggestions();
 		}
 
@@ -757,11 +764,13 @@ class RegisterDomainStep extends React.Component {
 				( error, result ) => {
 					const timeDiff = Date.now() - timestamp;
 					const status = get( result, 'status', error );
+					const mappable = get( result, 'mappable' );
 					const domainChecked = get( result, 'domain_name', domain );
 
 					const {
 						AVAILABLE,
 						AVAILABLE_PREMIUM,
+						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
@@ -769,10 +778,14 @@ class RegisterDomainStep extends React.Component {
 					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
+					const isDomainMapped = MAPPED === mappable;
+
+					// Mapped status always overrides other statuses.
+					const availabilityStatus = isDomainMapped ? mappable : status;
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
-						lastDomainStatus: status,
+						lastDomainStatus: availabilityStatus,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
 					if ( isDomainAvailable ) {
@@ -791,7 +804,7 @@ class RegisterDomainStep extends React.Component {
 						) {
 							site = get( this.props, 'selectedSite.slug', null );
 						}
-						this.showAvailabilityErrorMessage( domain, status, {
+						this.showAvailabilityErrorMessage( domain, availabilityStatus, {
 							site,
 							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
 						} );
@@ -1197,6 +1210,11 @@ class RegisterDomainStep extends React.Component {
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
 			! this.state.loadingResults;
 
+		const useYourDomainFunction =
+			domainAvailability.MAPPED === lastDomainStatus
+				? this.goToTransferDomainStep
+				: this.goToUseYourDomainStep;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1211,7 +1229,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ this.goToUseYourDomainStep }
+				onClickUseYourDomain={ useYourDomainFunction }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				isLoadingSuggestions={ this.state.loadingResults }
@@ -1227,7 +1245,10 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				showTestCopy={ this.props.showTestCopy }
 			>
-				{ this.props.showTestCopy && hasResults && this.renderFreeDomainExplainer() }
+				{ this.props.showTestCopy &&
+					hasResults &&
+					! this.props.showTestParagraph &&
+					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

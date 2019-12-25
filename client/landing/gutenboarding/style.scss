@@ -13,6 +13,10 @@ $admin-sidebar-width-collapsed: 0;
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
+.gutenboard__edit-post-layout-content {
+	position: static;
+}
+
 .wp-block {
 	max-width: 1100px; // Overrides default $content-width
 }

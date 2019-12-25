@@ -67,6 +67,10 @@ export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
 }
 
+export function domainManagementChangeSiteAddress( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'change-site-address' );
+}
+
 export function domainManagementNameServers( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'name-servers' );
 }
