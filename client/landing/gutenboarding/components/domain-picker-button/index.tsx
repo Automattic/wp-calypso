@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from './list';
+import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
 
 /**
  * Style dependencies
@@ -51,7 +51,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				aria-expanded={ isDomainPopoverVisible }
 				aria-haspopup="menu"
 				aria-pressed={ isDomainPopoverVisible }
-				className={ classnames( 'domain-picker__button', className, {
+				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
 				} ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }

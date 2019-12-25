@@ -13,7 +13,7 @@ import { useDebounce } from 'use-debounce';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
-import { DomainPickerButton } from '../domain-picker';
+import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
 

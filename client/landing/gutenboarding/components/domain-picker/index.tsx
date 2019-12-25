@@ -21,6 +21,11 @@ import { times } from 'lodash';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export interface Props {
