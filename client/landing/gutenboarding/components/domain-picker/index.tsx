@@ -111,7 +111,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					{ ! suggestions?.length && isLoading
 						? times( searchOptions.quantity, i => (
 								<Button className="domain-picker__suggestion-item" key={ i }>
-									WordPress.com
+									<span className="domain-picker__suggestion-item-name placeholder">
+										example.wordpress.com
+									</span>
+									<span className="domain-picker__suggestion-action placeholder">
+										{ NO__( 'Select' ) }
+									</span>
 								</Button>
 						  ) )
 						: null }

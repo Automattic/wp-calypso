@@ -1,4 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 
 .domain-picker__choose-domain-header {
 	font-weight: bold;
@@ -20,10 +22,20 @@
 	margin-top: 18px;
 }
 
+.domain-picker__suggestion-item-name {
+	&.placeholder {
+		@include placeholder();
+	}
+}
+
 .domain-picker__suggestion-action {
 	color: var( --studio-blue-40 );
 	text-decoration: none;
 	margin-left: 20px;
+
+	&.placeholder {
+		@include placeholder( --studio-blue-30 );
+	}
 }
 
 .domain-picker__has-domain {
