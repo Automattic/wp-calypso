@@ -78,10 +78,10 @@ const Header: FunctionComponent< Props > = ( {
 	const domainElement = (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: siteTitle && ! currentDomain,
+				placeholder: ! currentDomain,
 			} ) }
 		>
-			{ siteTitle && currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
+			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
 		</span>
 	);
 
