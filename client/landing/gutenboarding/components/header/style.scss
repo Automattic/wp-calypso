@@ -57,6 +57,13 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 		outline: 0;
 	}
 
+	&:disabled {
+		opacity: 1;
+		.gutenboarding__site-title {
+			color: black;
+		}
+	}
+
 	.gutenboarding__site-title {
 		padding: 0;
 	}
