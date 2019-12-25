@@ -104,6 +104,8 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		},
 	];
 
+	const normalizedInputValue = inputValue.trim().toLowerCase();
+
 	const suggestions = ! inputValue.length
 		? popular
 				.map( label => ( {
@@ -111,7 +113,15 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					category: NO__( 'Popular' ),
 				} ) )
 				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
-		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.trim().toLowerCase() ) );
+		: verticals.filter( x => x.label.toLowerCase().includes( normalizedInputValue ) );
+
+	if (
+		! suggestions.some(
+			( suggestion: SiteVertical ) => suggestion.label.toLowerCase() === normalizedInputValue
+		)
+	) {
+		suggestions.unshift( { id: '', label: inputValue.trim() } );
+	}
 
 	const label = NO__( 'My site is about' );
 	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
