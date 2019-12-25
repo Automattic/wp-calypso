@@ -111,7 +111,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					category: NO__( 'Popular' ),
 				} ) )
 				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
-		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
+		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.trim().toLowerCase() ) );
 
 	const label = NO__( 'My site is about' );
 	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
