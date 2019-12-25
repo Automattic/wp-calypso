@@ -75,7 +75,6 @@ class AppointmentInfo extends Component {
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
 							{ moment( endTimestamp ).format( 'LT ' ) }
-							{ moment.tz.zone( meta.timezone ).abbr( 360 ) }
 						</FormSettingExplanation>
 					</FormFieldset>
 
