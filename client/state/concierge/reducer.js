@@ -8,6 +8,7 @@ import availableTimes from './available-times/reducer';
 import nextAppointment from './next-appointment/reducer';
 import signupForm from './signup-form/reducer';
 import scheduleId from './schedule-id/reducer';
+import hasAvailableConciergeSessions from './has-available-concierge-sessions/reducer';
 
 export default combineReducers( {
 	appointmentDetails,
@@ -16,4 +17,5 @@ export default combineReducers( {
 	nextAppointment,
 	signupForm,
 	scheduleId,
+	hasAvailableConciergeSessions,
 } );

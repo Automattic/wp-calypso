@@ -28,6 +28,18 @@ import {
 	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id.js';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
+import {
+	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
+	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
+	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+	CONCIERGE_WPCOM_BUSINESS_ID,
+	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
+} from 'me/concierge/constants';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -36,6 +48,42 @@ class PurchasesList extends Component {
 		}
 
 		return ! this.props.sites.length;
+	}
+
+	renderConciergeBanner() {
+		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
+
+		if ( null === hasAvailableConciergeSessions ) {
+			return <ConciergeBanner bannerType="placeholder" />;
+		}
+
+		let bannerType;
+
+		if ( nextAppointment ) {
+			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
+		} else if ( hasAvailableConciergeSessions ) {
+			switch ( scheduleId ) {
+				case CONCIERGE_WPCOM_BUSINESS_ID:
+					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
+					break;
+
+				case CONCIERGE_WPCOM_SESSION_PRODUCT_ID:
+					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
+					break;
+
+				default:
+					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
+			}
+		} else {
+			bannerType = CONCIERGE_SUGGEST_PURCHASE_CONCIERGE;
+		}
+
+		return (
+			<ConciergeBanner
+				bannerType={ bannerType }
+				recordTracksEvent={ this.props.recordTracksEvent }
+			/>
+		);
 	}
 
 	render() {
@@ -48,9 +96,7 @@ class PurchasesList extends Component {
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
 				<div>
-					{ this.props.isBusinessPlanUser && (
-						<ConciergeBanner recordTracksEvent={ this.props.recordTracksEvent } />
-					) }
+					{ this.renderConciergeBanner() }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
 						<PurchasesSite
@@ -68,17 +114,22 @@ class PurchasesList extends Component {
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
 			content = (
-				<CompactCard className="purchases-list__no-content">
-					<EmptyContent
-						title={ this.props.translate( 'Looking to upgrade?' ) }
-						line={ this.props.translate(
-							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
-						) }
-						action={ this.props.translate( 'Upgrade Now' ) }
-						actionURL={ '/plans' }
-						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-					/>
-				</CompactCard>
+				<>
+					{ this.renderConciergeBanner() }
+
+					<CompactCard className="purchases-list__no-content">
+						<EmptyContent
+							title={ this.props.translate( 'Looking to upgrade?' ) }
+							line={ this.props.translate(
+								'Our plans give your site the power to thrive. ' +
+									'Find the plan that works for you.'
+							) }
+							action={ this.props.translate( 'Upgrade Now' ) }
+							actionURL={ '/plans' }
+							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+						/>
+					</CompactCard>
+				</>
 			);
 		}
 
@@ -89,6 +140,7 @@ class PurchasesList extends Component {
 				<MeSidebarNavigation />
 				<PurchasesHeader section="purchases" />
 				{ content }
+				<QueryConciergeInitial />
 			</Main>
 		);
 	}
@@ -111,6 +163,9 @@ export default connect(
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),
 			purchases: getUserPurchases( state, userId ),
 			sites: getSites( state ),
+			nextAppointment: getConciergeNextAppointment( state ),
+			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
+			scheduleId: getConciergeScheduleId( state ),
 			userId,
 		};
 	},

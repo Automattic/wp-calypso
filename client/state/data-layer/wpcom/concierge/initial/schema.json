@@ -29,6 +29,9 @@
 		},
 		"schedule_id": {
 			"type": "number"
+		},
+		"has_available_concierge_sessions": {
+			"type": "boolean"
 		}
 	}
 }
