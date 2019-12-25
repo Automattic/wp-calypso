@@ -102,9 +102,11 @@ const Header: FunctionComponent< Props > = ( {
 					) : (
 						<>
 							{ siteTitleElement }
-							<span className="gutenboarding__header-domain-picker-button-domain placeholder">
-								example.wordpress.com
-							</span>
+							{ siteTitle ? (
+								<span className="gutenboarding__header-domain-picker-button-domain placeholder">
+									example.wordpress.com
+								</span>
+							) : null }
 						</>
 					) }
 				</div>
