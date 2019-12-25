@@ -64,21 +64,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		...queryParameters,
 	};
 
-	const { isLoading, suggestions } = useSelect(
+	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return {
-					isLoading: select( DOMAIN_SUGGESTIONS_STORE ).isLoadingDomainSuggestions(
-						search,
-						searchOptions
-					),
-					suggestions: select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions(
-						search,
-						searchOptions
-					),
-				};
+				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, searchOptions );
 			}
-			return {};
 		},
 		[ search, queryParameters ]
 	);
@@ -108,7 +98,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
-					{ ! suggestions?.length && isLoading
+					{ ! suggestions?.length
 						? times( searchOptions.quantity, i => (
 								<Button className="domain-picker__suggestion-item" key={ i }>
 									<span className="domain-picker__suggestion-item-name placeholder">
