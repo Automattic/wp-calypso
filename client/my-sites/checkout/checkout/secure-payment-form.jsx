@@ -11,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
@@ -70,7 +71,7 @@ export class SecurePaymentForm extends Component {
 		this.setInitialPaymentDetails();
 	}
 
-	componentDidUpdate( prevProps ) {
+	async componentDidUpdate( prevProps ) {
 		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
 			this.setInitialPaymentDetails();
 		}
@@ -80,7 +81,7 @@ export class SecurePaymentForm extends Component {
 			nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
-			this.handleTransactionStep( this.props );
+			await this.handleTransactionStep( this.props );
 		}
 	}
 
@@ -182,14 +183,6 @@ export class SecurePaymentForm extends Component {
 			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
-		try {
-			await this.maybeSetSiteToPublic( { cart } );
-		} catch ( e ) {
-			debug( 'Error setting site to public', e );
-			displayError();
-			return;
-		}
-
 		submit(
 			{
 				cart,
@@ -229,12 +222,13 @@ export class SecurePaymentForm extends Component {
 		const response = await this.props.saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 		} );
+
 		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
 			throw 'Invalid response';
 		}
 	}
 
-	handleTransactionStep( { cart, selectedSite, transaction } ) {
+	async handleTransactionStep( { cart, selectedSite, transaction } ) {
 		const step = transaction.step;
 
 		debug( 'transaction step: ' + step.name );
@@ -242,7 +236,7 @@ export class SecurePaymentForm extends Component {
 		this.displayNotices( cart, step );
 		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
 
-		this.finishIfLastStep( cart, selectedSite, step );
+		await this.finishIfLastStep( cart, selectedSite, step );
 	}
 
 	displayNotices( cart, step ) {
@@ -256,8 +250,26 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	finishIfLastStep( cart, selectedSite, step ) {
+	async finishIfLastStep( cart, selectedSite, step ) {
 		if ( ! step.last || step.error ) {
+			return;
+		}
+
+		try {
+			await this.maybeSetSiteToPublic( { cart } );
+		} catch ( e ) {
+			const message = this.props.translate(
+				'There was a problem completing the checkout. {{a}}Contact support{{/a}}.',
+				{
+					components: { a: <a href="/help/contact" /> },
+					comment:
+						"This is an error message that is shown when a user's purchase has failed at the checkout page",
+				}
+			);
+
+			debug( 'Error setting site to public', e );
+			notices.error( message );
+
 			return;
 		}
 
