@@ -120,7 +120,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			( suggestion: SiteVertical ) => suggestion.label.toLowerCase() === normalizedInputValue
 		)
 	) {
-		suggestions.unshift( { id: '', label: inputValue.trim() } );
+		suggestions.unshift( { id: undefined, label: inputValue.trim() } );
 	}
 
 	const label = NO__( 'My site is about' );
