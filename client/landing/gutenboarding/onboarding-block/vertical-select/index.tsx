@@ -115,12 +115,15 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
 		: verticals.filter( x => x.label.toLowerCase().includes( normalizedInputValue ) );
 
+	// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
+	// vertical to the list.
 	if (
 		! suggestions.some(
 			( suggestion: SiteVertical ) => suggestion.label.toLowerCase() === normalizedInputValue
 		)
 	) {
-		suggestions.unshift( { id: undefined, label: inputValue.trim() } );
+		// User-supplied verticals don't have IDs.
+		suggestions.unshift( { label: inputValue.trim() } );
 	}
 
 	const label = NO__( 'My site is about' );
