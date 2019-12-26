@@ -28,7 +28,7 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 	useEffect( () => void ( new window.Image().src = defaultImageUrl ), [] );
 
 	useEffect( () => {
-		if ( siteVertical ) {
+		if ( siteVertical?.id ) {
 			const preloadImage = new window.Image();
 			const failureHandler = () => {
 				setImageUrl( defaultImageUrl );
