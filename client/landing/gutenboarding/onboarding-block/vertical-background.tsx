@@ -17,7 +17,6 @@ import { STORE_KEY } from '../stores/onboard';
 import defaultImageUrl from '../../../../static/images/verticals/default.jpg';
 
 export interface VerticalBackgroundProps {
-	id?: string;
 	onLoad: () => void;
 }
 
