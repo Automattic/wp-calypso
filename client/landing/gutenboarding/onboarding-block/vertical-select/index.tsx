@@ -117,6 +117,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
 	// vertical to the list.
 	if (
+		normalizedInputValue &&
 		! suggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
 	) {
 		// User-supplied verticals don't have IDs.
