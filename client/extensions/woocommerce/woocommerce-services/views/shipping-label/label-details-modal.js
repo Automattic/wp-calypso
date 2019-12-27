@@ -43,7 +43,11 @@ const DetailsDialog = props => {
 		}
 
 		return (
-			<a href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` } target="_blank">
+			<a
+				href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				{ translate( 'Receipt' ) }
 			</a>
 		);
