@@ -107,20 +107,15 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const normalizedInputValue = inputValue.trim().toLowerCase();
 
 	const suggestions = ! inputValue.length
-		? popular
-				.map( label => ( {
-					...verticals.find( vertical => vertical.label === label ),
-					category: NO__( 'Popular' ),
-				} ) )
-				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
-		: verticals.filter( x => x.label.toLowerCase().includes( normalizedInputValue ) );
+		? verticals
+				.filter( vertical => popular.includes( vertical.label ) )
+				.map( vertical => ( { ...vertical, category: NO__( 'Popular' ) } ) )
+		: verticals.filter( vertical => vertical.label.toLowerCase().includes( normalizedInputValue ) );
 
 	// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
 	// vertical to the list.
 	if (
-		! suggestions.some(
-			( suggestion: SiteVertical ) => suggestion.label.toLowerCase() === normalizedInputValue
-		)
+		! suggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
 	) {
 		// User-supplied verticals don't have IDs.
 		suggestions.unshift( { label: inputValue.trim() } );
