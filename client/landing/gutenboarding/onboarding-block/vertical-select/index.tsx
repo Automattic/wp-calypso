@@ -43,7 +43,8 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	];
 
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ dirty, setDirty ] = useState( false );
+
+	const normalizedInputValue = inputValue.trim().toLowerCase();
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -69,9 +70,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( e.target.value !== inputValue && ! dirty ) {
-			setDirty( true );
-		}
 		setInputValue( e.target.value );
 	};
 
@@ -87,15 +85,19 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
-		setDirty( false );
 		onSelect();
 	};
 
 	const handleBlur = () => {
-		if ( dirty ) {
+		if ( ! normalizedInputValue ) {
 			resetSiteVertical();
+		} else {
+			const vertical = verticals.find( ( { label } ) =>
+				label.toLowerCase().includes( normalizedInputValue )
+			) ?? { label: inputValue.trim() };
+
+			setSiteVertical( vertical );
 		}
-		setDirty( false );
 		onSelect();
 	};
 
@@ -105,8 +107,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			category: NO__( 'Loading, please wait…' ),
 		},
 	];
-
-	const normalizedInputValue = inputValue.trim().toLowerCase();
 
 	const suggestions: Suggestion[] = ! inputValue.length
 		? verticals
