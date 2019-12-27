@@ -113,6 +113,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
+		setInputValue( vertical.label );
 		onSelect();
 	};
 
