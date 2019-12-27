@@ -83,24 +83,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		}
 	};
 
-	const handleSelect = ( vertical: SiteVertical ) => {
-		setSiteVertical( vertical );
-		onSelect();
-	};
-
-	const handleBlur = () => {
-		if ( ! normalizedInputValue ) {
-			resetSiteVertical();
-		} else {
-			const vertical = verticals.find( ( { label } ) =>
-				label.toLowerCase().includes( normalizedInputValue )
-			) ?? { label: inputValue.trim() };
-
-			setSiteVertical( vertical );
-		}
-		onSelect();
-	};
-
 	const loadingMessage = [
 		{
 			label: '',
@@ -123,6 +105,24 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		// User-supplied verticals don't have IDs.
 		suggestions.unshift( { label: inputValue.trim() } );
 	}
+
+	const handleSelect = ( vertical: SiteVertical ) => {
+		setSiteVertical( vertical );
+		onSelect();
+	};
+
+	const handleBlur = () => {
+		if ( ! normalizedInputValue ) {
+			resetSiteVertical();
+		} else {
+			const vertical = suggestions.find( ( { label } ) =>
+				label.toLowerCase().includes( normalizedInputValue )
+			) ?? { label: inputValue.trim() };
+
+			setSiteVertical( vertical );
+		}
+		onSelect();
+	};
 
 	const label = NO__( 'My site is about' );
 	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
