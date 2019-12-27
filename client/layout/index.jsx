@@ -39,7 +39,6 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import DocumentHead from 'components/data/document-head';
-import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
@@ -181,7 +180,9 @@ class Layout extends Component {
 					) }
 				<SupportArticleDialog />
 				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
-				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
+				{ config.isEnabled( 'gdpr-banner' ) && (
+					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
+				) }
 			</div>
 		);
 	}
