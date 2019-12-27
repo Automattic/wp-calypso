@@ -22,6 +22,8 @@ import { __TodoAny__ } from '../../../../types';
  */
 import './style.scss';
 
+type Suggestion = SiteVertical & { category?: string };
+
 const VERTICALS_STORE = Verticals.register();
 
 const VerticalSelect: FunctionComponent< StepProps > = ( {
@@ -106,7 +108,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 
 	const normalizedInputValue = inputValue.trim().toLowerCase();
 
-	const suggestions = ! inputValue.length
+	const suggestions: Suggestion[] = ! inputValue.length
 		? verticals
 				.filter( vertical => popular.includes( vertical.label ) )
 				.map( vertical => ( { ...vertical, category: NO__( 'Popular' ) } ) )
