@@ -14,7 +14,6 @@ import { Dialog, DialogBackdrop } from 'reakit/Dialog';
 /**
  * Internal dependencies
  */
-import { SiteVertical } from '../../stores/onboard/types';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -26,7 +25,7 @@ const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
+		select => select( 'automattic/onboard' ).getState().siteVertical
 	);
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
