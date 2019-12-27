@@ -206,7 +206,7 @@ class CancelPurchase extends React.Component {
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
-					<ProductLink purchase={ purchase } siteSlug={ this.props.siteSlug } />
+					<ProductLink purchase={ purchase } selectedSite={ this.props.selectedSite } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
 					<div className="cancel-purchase__refund-amount">
