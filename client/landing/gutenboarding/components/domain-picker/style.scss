@@ -2,6 +2,10 @@
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 
+.domain-picker {
+	min-width: 22em;
+}
+
 .domain-picker__choose-domain-header {
 	font-weight: bold;
 	text-align: center;
