@@ -9,11 +9,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import Card from '../../components/card';
-import CardFooter from '../../components/card/footer';
-import CardMedia from '../../components/card/media';
+import { Card, CardFooter, CardMedia, Icon } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
-import { Icon } from '@wordpress/components';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
