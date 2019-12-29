@@ -6,6 +6,7 @@ import { Icon, IconButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import { useDebounce } from 'use-debounce';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
-import { DomainPickerButton } from '../domain-picker';
+import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
 import Link from '../link';
 
@@ -74,6 +75,16 @@ const Header: FunctionComponent< Props > = ( {
 		</span>
 	);
 
+	const domainElement = (
+		<span
+			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
+				placeholder: ! currentDomain,
+			} ) }
+		>
+			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
+		</span>
+	);
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -89,15 +100,16 @@ const Header: FunctionComponent< Props > = ( {
 					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
-					{ currentDomain ? (
+					{ siteTitle ? (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
+							disabled={ ! currentDomain }
 							onDomainSelect={ setDomain }
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ siteTitleElement }
-							<span>{ currentDomain.domain_name }</span>
+							{ domainElement }
 						</DomainPickerButton>
 					) : (
 						siteTitleElement

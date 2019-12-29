@@ -13,12 +13,18 @@ import {
 import { __ as NO__ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -51,15 +57,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const [ domainSearch, setDomainSearch ] = useState( '' );
 
 	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
+	const searchOptions = {
+		include_wordpressdotcom: true,
+		include_dotblogsubdomain: true,
+		quantity: 4,
+		...queryParameters,
+	};
+
 	const suggestions = useSelect(
 		select => {
 			if ( search ) {
-				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, {
-					include_wordpressdotcom: true,
-					include_dotblogsubdomain: true,
-					quantity: 4,
-					...queryParameters,
-				} );
+				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, searchOptions );
 			}
 		},
 		[ search, queryParameters ]
@@ -88,34 +96,44 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 				<HorizontalRule className="domain-picker__divider" />
 
-				{ suggestions?.length ? (
-					<PanelRow className="domain-picker__panel-row">
-						<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
-						{ suggestions.map( suggestion => (
-							<Button
-								onClick={ () => onDomainSelect( suggestion ) }
-								className="domain-picker__suggestion-item"
-								key={ suggestion.domain_name }
-							>
-								<span className="domain-picker__suggestion-item-name">
-									{ suggestion.domain_name }
-								</span>
-								{ suggestion.is_free ? (
-									<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
-								) : (
-									<a
-										className="domain-picker__suggestion-action"
-										href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{ NO__( 'Upgrade' ) }
-									</a>
-								) }
-							</Button>
-						) ) }
-					</PanelRow>
-				) : null }
+				<PanelRow className="domain-picker__panel-row">
+					<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
+					{ suggestions?.length
+						? suggestions.map( suggestion => (
+								<Button
+									onClick={ () => onDomainSelect( suggestion ) }
+									className="domain-picker__suggestion-item"
+									key={ suggestion.domain_name }
+								>
+									<span className="domain-picker__suggestion-item-name">
+										{ suggestion.domain_name }
+									</span>
+									{ suggestion.is_free ? (
+										<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
+									) : (
+										<a
+											className="domain-picker__suggestion-action"
+											href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{ NO__( 'Upgrade' ) }
+										</a>
+									) }
+								</Button>
+						  ) )
+						: times( searchOptions.quantity, i => (
+								<Button className="domain-picker__suggestion-item" key={ i }>
+									<span className="domain-picker__suggestion-item-name placeholder">
+										example.wordpress.com
+									</span>
+									<span className="domain-picker__suggestion-action placeholder">
+										{ NO__( 'Select' ) }
+									</span>
+								</Button>
+						  ) ) }
+				</PanelRow>
+
 				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
 					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
 				</PanelRow>
