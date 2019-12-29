@@ -956,7 +956,7 @@ That's all there is to it!
 ```
 
 ### https://github.com/slevithan/xregexp
-#### client/lib/embeds/list-store.js
+#### client/state/embeds/utils.js
 ```text
 The MIT License
 
