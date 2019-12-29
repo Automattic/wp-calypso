@@ -9,8 +9,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Card } from '../../components/card';
-import { CardMedia } from '../../components/card/media';
+import { Card, CardMedia } from '@wordpress/components';
 
 const gridWidth = 960;
 const srcSet = ( src: string, widths: number[] ) =>

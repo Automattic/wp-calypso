@@ -8,11 +8,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from '../../components/card';
-import CardFooter from '../../components/card/footer';
-import CardMedia from '../../components/card/media';
+import { Card, CardFooter, CardMedia, Icon } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
-import { Icon } from '@wordpress/components';
 
 type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
 
