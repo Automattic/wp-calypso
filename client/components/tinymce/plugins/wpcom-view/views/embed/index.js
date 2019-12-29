@@ -1,140 +1,51 @@
 /**
- * External dependencies
- */
-
-import EventEmitter from 'events';
-import { defer, uniqueId } from 'lodash';
-/**
  * Internal dependencies
  */
-import EmbedsListStore from 'lib/embeds/list-store';
-import EmbedsStore from 'lib/embeds/store';
-import actions from 'lib/embeds/actions';
 import EmbedView from './view';
+import getSiteEmbeds from 'state/selectors/get-site-embeds';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { SELECTED_SITE_SUBSCRIBE, SELECTED_SITE_UNSUBSCRIBE } from 'state/action-types';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
+import { requestEmbed, requestEmbeds } from 'state/embeds/actions';
 
-export default class EmbedViewManager extends EventEmitter {
-	constructor() {
-		super();
+const EmbedViewManager = {};
 
-		this.sitesListener = this.updateSite.bind( this );
+EmbedViewManager.match = content => {
+	const siteId = getSelectedSiteId( reduxGetState() );
+	if ( ! siteId ) {
+		return;
 	}
 
-	onChange() {
-		this.emit( 'change' );
-		this.fetchSiteEmbeds();
+	reduxDispatch( requestEmbeds( siteId ) );
+
+	const embeds = getSiteEmbeds( reduxGetState(), siteId );
+	if ( ! embeds ) {
+		return;
 	}
 
-	updateSite( selectedSiteId ) {
-		const siteId = selectedSiteId || getSelectedSiteId( this.store.getState() );
+	const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
+	let currentMatch;
+	while ( ( currentMatch = rxLink.exec( content ) ) ) {
+		const url = currentMatch[ 2 ];
 
-		if ( ! this.hasOwnProperty( 'siteId' ) ) {
-			// First update (after adding initial listener) should trigger a
-			// fetch, but not emit a change event
-			this.siteId = siteId;
-			this.fetchSiteEmbeds();
-		} else if ( this.siteId !== siteId ) {
-			// Subsequent updates should neither emit a change nor trigger a
-			// fetch unless the site has changed
-			this.siteId = siteId;
-			this.onChange();
-		}
-	}
-
-	addListener( event, listener, store ) {
-		super.addListener( event, listener );
-		if ( 'change' === event && 1 === this.listeners( event ).length ) {
-			this.store = store;
-			this.selectedSiteSubscriberId = uniqueId();
-			store.dispatch( {
-				type: SELECTED_SITE_SUBSCRIBE,
-				listener: this.sitesListener,
-			} );
-			this.embedsListListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
-			this.embedsListener = EmbedsStore.addListener( this.onChange.bind( this ) );
-			this.updateSite();
-		}
-	}
-
-	removeListener( event, listener ) {
-		super.removeListener( event, listener );
-
-		if ( 'change' === event && ! this.listeners( event ).length ) {
-			this.store.dispatch( {
-				type: SELECTED_SITE_UNSUBSCRIBE,
-				listener: this.sitesListener,
-			} );
-			if ( this.embedsListListener ) {
-				this.embedsListListener.remove();
-			}
-
-			if ( this.embedsListener ) {
-				this.embedsListener.remove();
-			}
-		}
-	}
-
-	fetchSiteEmbeds() {
-		if ( this.siteId && ! EmbedsListStore.get( this.siteId ) ) {
-			actions.fetch( this.siteId );
-		}
-	}
-
-	fetchEmbed( url ) {
-		// Only make a single attempt to fetch the embed, assuming that errors
-		// are intentional if the service chooses not to support the specific
-		// URL pattern. An unset status indicates an attempt is yet to be made.
-		if ( this.siteId && ! EmbedsStore.get( url ).status ) {
-			actions.fetch( this.siteId, url );
-		}
-	}
-
-	match( content ) {
-		if ( ! this.siteId ) {
-			return;
+		// Disregard URL if it's not a supported embed pattern for the site
+		const isMatchingPattern = embeds.some( pattern => pattern.test( url ) );
+		if ( ! isMatchingPattern ) {
+			continue;
 		}
 
-		const list = EmbedsListStore.get( this.siteId );
-		if ( ! list || 'LOADED' !== list.status ) {
-			return;
-		}
+		reduxDispatch( requestEmbed( siteId, url ) );
 
-		const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
-		let currentMatch;
-		while ( ( currentMatch = rxLink.exec( content ) ) ) {
-			const url = currentMatch[ 2 ];
-
-			// Disregard URL if it's not a supported embed pattern for the site
-			const isMatchingPattern = list.embeds.some( pattern => pattern.test( url ) );
-			if ( ! isMatchingPattern ) {
-				continue;
-			}
-
-			// Disregard URL if we've not yet retrieved the embed result, or if
-			// the embed result is an error
-			const embed = EmbedsStore.get( url );
-			if ( ! embed.body ) {
-				defer( () => this.fetchEmbed( url ) );
-				continue;
-			}
-
-			return {
-				index: currentMatch.index + currentMatch[ 1 ].length,
-				content: url,
-			};
-		}
+		return {
+			index: currentMatch.index + currentMatch[ 1 ].length,
+			content: url,
+		};
 	}
+};
 
-	serialize( content ) {
-		return encodeURIComponent( content );
-	}
+EmbedViewManager.serialize = content => encodeURIComponent( content );
 
-	getComponent() {
-		return EmbedView;
-	}
+EmbedViewManager.getComponent = () => EmbedView;
 
-	edit( editor, content ) {
-		editor.execCommand( 'embedDialog', content );
-	}
-}
+EmbedViewManager.edit = ( editor, content ) => editor.execCommand( 'embedDialog', content );
+
+export default EmbedViewManager;

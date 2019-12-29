@@ -19,7 +19,7 @@ import SimplePaymentsView from './views/simple-payments';
  */
 const views = {
 	gallery: GalleryView,
-	embed: new EmbedViewManager(),
+	embed: EmbedViewManager,
 	contactForm: ContactFormView,
 	video: VideoView,
 	simplePayments: SimplePaymentsView,
@@ -41,9 +41,8 @@ export default {
 	 * replacing any matches with markers,
 	 * and creates a new instance for every match.
 	 *
-	 * @param {string} content The string to scan.
-	 *
-	 * @returns {string} The string with markers.
+	 * @param   {string} content The string to scan.
+	 * @returns {string}         The string with markers.
 	 */
 	setMarkers( content ) {
 		let pieces = [ { content: content } ],
