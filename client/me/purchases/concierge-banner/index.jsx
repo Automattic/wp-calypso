@@ -32,6 +32,7 @@ class ConciergeBanner extends Component {
 			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
 			CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+			'placeholder',
 		] ).isRequired,
 	};
 
