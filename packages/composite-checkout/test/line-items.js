@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { LineItemsProvider, useLineItems } from '../../src/lib/line-items';
+import { LineItemsProvider, useLineItems } from '../src/lib/line-items';
 
 // React writes to console.error when a component throws before re-throwing
 // but we don't want to see that here so we mock console.error.

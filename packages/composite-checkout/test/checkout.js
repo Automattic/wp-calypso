@@ -1,6 +1,3 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-require( '@babel/polyfill' );
-
 /**
  * External dependencies
  */
@@ -25,7 +22,7 @@ import {
 	createRegistry,
 	useRegisterStore,
 	usePaymentData,
-} from '../../src/public-api';
+} from '../src/public-api';
 
 const noop = () => {};
 
