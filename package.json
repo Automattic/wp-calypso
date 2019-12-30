@@ -118,7 +118,6 @@
 		"email-validator": "2.0.4",
 		"emoji-text": "0.2.6",
 		"emotion-theming": "10.0.19",
-		"escape-regexp": "0.0.1",
 		"escape-string-regexp": "2.0.0",
 		"events": "3.0.0",
 		"exports-loader": "0.7.0",
