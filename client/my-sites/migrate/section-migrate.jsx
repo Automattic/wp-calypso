@@ -41,6 +41,7 @@ class SectionMigrate extends Component {
 		migrationStatus: 'unknown',
 		percent: 0,
 		startTime: '',
+		errorMessage: '',
 	};
 
 	componentDidMount() {
@@ -62,9 +63,11 @@ class SectionMigrate extends Component {
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
+		this.setMigrationState( { migrationStatus: 'unknown', errorMessage: '' } );
+		this.updateFromAPI();
+
 		wpcom.resetMigration( targetSiteId ).then( () => {
 			page( `/migrate/${ targetSiteSlug }` );
-			this.updateFromAPI();
 		} );
 	};
 
@@ -86,9 +89,16 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setMigrationState( { migrationStatus: 'backing-up', startTime: '' } );
-
-		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
+		wpcom
+			.startMigration( sourceSiteId, targetSiteId )
+			.then( () => {
+				this.setMigrationState( { migrationStatus: 'backing-up', startTime: '' } );
+				this.updateFromAPI();
+			} )
+			.catch( error => {
+				const { message = '' } = error;
+				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+			} );
 	};
 
 	updateFromAPI = () => {
@@ -108,6 +118,10 @@ class SectionMigrate extends Component {
 				}
 
 				if ( migrationStatus ) {
+					if ( 'error' === this.state.migrationStatus ) {
+						return;
+					}
+
 					if ( startTime && isEmpty( this.state.startTime ) ) {
 						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
 
@@ -249,20 +263,26 @@ class SectionMigrate extends Component {
 
 	renderMigrationError() {
 		return (
-			<>
+			<Card className="migrate__pane">
+				<img
+					className="migrate__illustration"
+					src={ '/calypso/images/illustrations/waitTime.svg' }
+					alt=""
+				/>
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Migrate"
-					subHeaderText="Migrate your WordPress site to WordPress.com"
-					align="left"
+					headerText="Import failed"
+					align="center"
 				/>
-				<CompactCard>
-					<div className="migrate__status">There was an error with your migration.</div>
-					<Button primary onClick={ this.resetMigration }>
-						Try again
-					</Button>
-				</CompactCard>
-			</>
+				<div className="migrate__status">
+					There was an error with your import.
+					<br />
+					{ this.state.errorMessage }
+				</div>
+				<Button primary onClick={ this.resetMigration }>
+					Try again
+				</Button>
+			</Card>
 		);
 	}
 
@@ -280,24 +300,22 @@ class SectionMigrate extends Component {
 		);
 
 		return (
-			<>
-				<Card className="migrate__pane">
-					<img
-						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
-						alt=""
-					/>
-					<FormattedHeader
-						className="migrate__section-header"
-						headerText="Migration in progress"
-						subHeaderText={ subHeaderText }
-						align="center"
-					/>
-					{ this.renderStartTime() }
-					{ this.renderProgressBar() }
-					{ this.renderProgressList() }
-				</Card>
-			</>
+			<Card className="migrate__pane">
+				<img
+					className="migrate__illustration"
+					src={ '/calypso/images/illustrations/waitTime-plain.svg' }
+					alt=""
+				/>
+				<FormattedHeader
+					className="migrate__section-header"
+					headerText="Migration in progress"
+					subHeaderText={ subHeaderText }
+					align="center"
+				/>
+				{ this.renderStartTime() }
+				{ this.renderProgressBar() }
+				{ this.renderProgressList() }
+			</Card>
 		);
 	}
 
