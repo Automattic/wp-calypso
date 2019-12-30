@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ as NO__ } from '@wordpress/i18n';
 import React, { FunctionComponent, MouseEventHandler, CSSProperties } from 'react';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
@@ -46,6 +47,11 @@ const DesignCard: FunctionComponent< Props > = ( {
 				src={ removeQueryArgs( design.preview, 'w' ) }
 				srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
 			/>
+			<span className="design-selector__option-overlay">
+				<span className="design-selector__option-overlay-text">
+					{ NO__( 'Select this design' ) }
+				</span>
+			</span>
 		</CardMedia>
 	</Card>
 );
