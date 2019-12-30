@@ -93,6 +93,11 @@ class PageTemplateModal extends Component {
 		if ( ! prevState.isOpen && this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
+
+		// Disable welcome guide right away as it collides with the modal window.
+		if ( this.props.isWelcomeGuideActive || this.props.areTipsEnabled ) {
+			this.props.hideWelcomeGuide();
+		}
 	}
 
 	static getDefaultSelectedTemplate = props => {
@@ -364,19 +369,13 @@ export const PageTemplatesPlugin = compose(
 			postContentBlock: select( 'core/editor' )
 				.getBlocks()
 				.find( block => block.name === 'a8c/post-content' ),
-			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ),
+			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 and higher
+			areTipsEnabled: select( 'core/nux' ).areTipsEnabled
+				? select( 'core/nux' ).areTipsEnabled()
+				: false, // Gutenberg 7.1.0 and lower
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
-		// Disable welcome guide right away as it collides with the modal window.
-		if ( ownProps.isWelcomeGuideActive ) {
-			// Gutenberg 7.1.0 or higher.
-			dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
-		} else if ( dispatch( 'core/nux' ).disableTips ) {
-			// Gutenberg 7.0.0 or lower.
-			dispatch( 'core/nux' ).disableTips();
-		}
-
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
 			saveTemplateChoice: slug => {
@@ -402,6 +401,15 @@ export const PageTemplatesPlugin = compose(
 					blocks,
 					false
 				);
+			},
+			hideWelcomeGuide: () => {
+				if ( ownProps.isWelcomeGuideActive ) {
+					// Gutenberg 7.2.0 or higher.
+					dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+				} else if ( ownProps.areTipsEnabled ) {
+					// Gutenberg 7.1.0 or lower.
+					dispatch( 'core/nux' ).disableTips();
+				}
 			},
 		};
 	} )
