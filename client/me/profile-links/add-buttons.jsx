@@ -17,7 +17,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 class AddProfileLinksButtons extends React.Component {
 	static propTypes = {
-		showingForm: PropTypes.bool,
+		showingForm: PropTypes.string,
 		showPopoverMenu: PropTypes.bool,
 		onShowAddWordPress: PropTypes.func.isRequired,
 		onShowAddOther: PropTypes.func.isRequired,
@@ -47,7 +47,7 @@ class AddProfileLinksButtons extends React.Component {
 				<Button
 					ref={ this.popoverContext }
 					compact
-					disabled={ this.props.showingForm }
+					disabled={ !! this.props.showingForm }
 					onClick={ this.props.onShowPopoverMenu }
 				>
 					<Gridicon icon="add-outline" />
