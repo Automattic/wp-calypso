@@ -38,16 +38,17 @@ const PageLayoutSelector: FunctionComponent< Props > = ( {
 			<div className="page-layout-selector__grid">
 				{ templates.map( template => (
 					<Card
+						as="button"
 						className={ classnames( 'page-layout-selector__item', {
 							'is-selected': selectedLayouts.has( template.slug ),
 						} ) }
 						onClick={ () => selectLayout( template ) }
 						key={ template.slug }
 					>
-						<div className="page-layout-selector__selected-indicator">
+						<span className="page-layout-selector__selected-indicator">
 							<Icon icon="yes" size={ 24 } />
-						</div>
-						<CardMedia>
+						</span>
+						<CardMedia as="span">
 							<img alt={ template.description } src={ removeQueryArgs( template.preview, 'w' ) } />
 						</CardMedia>
 					</Card>

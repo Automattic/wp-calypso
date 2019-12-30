@@ -30,6 +30,7 @@ const DesignCard: FunctionComponent< Props > = ( {
 	style,
 } ) => (
 	<Card
+		as="button"
 		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
 		isElevated
 		onClick={ onClick }
@@ -37,7 +38,7 @@ const DesignCard: FunctionComponent< Props > = ( {
 		aria-haspopup="dialog"
 		aria-controls={ dialogId }
 	>
-		<CardMedia>
+		<CardMedia as="span">
 			<img
 				width={ 480 }
 				height={ 360 }
