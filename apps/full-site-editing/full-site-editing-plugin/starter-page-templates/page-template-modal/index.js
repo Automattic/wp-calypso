@@ -369,10 +369,8 @@ export const PageTemplatesPlugin = compose(
 			postContentBlock: select( 'core/editor' )
 				.getBlocks()
 				.find( block => block.name === 'a8c/post-content' ),
-			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 and higher
-			areTipsEnabled: select( 'core/nux' ).areTipsEnabled
-				? select( 'core/nux' ).areTipsEnabled()
-				: false, // Gutenberg 7.1.0 and lower
+			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
+			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
