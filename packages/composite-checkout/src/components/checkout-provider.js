@@ -48,6 +48,12 @@ export const CheckoutProvider = props => {
 	);
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	useEffect( () => {
+		if ( formStatus === 'complete' ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			onPaymentComplete();
+		}
+	}, [ formStatus, onPaymentComplete ] );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
@@ -64,7 +70,6 @@ export const CheckoutProvider = props => {
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
-			onPaymentComplete,
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
@@ -78,7 +83,6 @@ export const CheckoutProvider = props => {
 			failureRedirectUrl,
 			formStatus,
 			onEvent,
-			onPaymentComplete,
 			paymentMethodId,
 			paymentMethods,
 			setFormStatus,
@@ -178,14 +182,6 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	return wrappers.reduce( ( whole, Wrapper ) => {
 		return <Wrapper>{ whole }</Wrapper>;
 	}, children );
-}
-
-export function usePaymentComplete() {
-	const { onPaymentComplete } = useContext( CheckoutContext );
-	if ( ! onPaymentComplete ) {
-		throw new Error( 'usePaymentComplete can only be used inside a CheckoutProvider' );
-	}
-	return onPaymentComplete;
 }
 
 export function useEvents() {
