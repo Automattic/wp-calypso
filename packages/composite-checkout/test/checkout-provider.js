@@ -19,9 +19,15 @@ import {
 const noop = () => {};
 
 const CustomForm = () => {
-	const { formStatus, setFormComplete, setFormLoading } = useFormStatus();
+	const { formStatus, setFormComplete, setFormLoading, setFormSubmitting } = useFormStatus();
 	if ( formStatus === 'loading' ) {
 		return <div>Loading</div>;
+	}
+	if ( formStatus === 'submitting' ) {
+		return <div>Submitting</div>;
+	}
+	if ( formStatus === 'complete' ) {
+		return <div>Form Complete</div>;
 	}
 	return (
 		<div>
@@ -29,8 +35,11 @@ const CustomForm = () => {
 			<button disabled={ formStatus !== 'ready' } onClick={ setFormLoading }>
 				Load
 			</button>
-			<button disabled={ formStatus !== 'ready' } onClick={ setFormComplete }>
+			<button disabled={ formStatus !== 'ready' } onClick={ setFormSubmitting }>
 				Submit
+			</button>
+			<button disabled={ formStatus !== 'ready' } onClick={ setFormComplete }>
+				Complete
 			</button>
 		</div>
 	);
@@ -76,12 +85,20 @@ describe( 'CheckoutProvider', () => {
 		expect( getByText( 'Submit' ) ).not.toBeDisabled();
 	} );
 
-	it( 'sets form status to complete when setFormComplete is called', () => {
-		const { getByText } = render( <MyCheckout /> );
+	it( 'sets form status to submitting when setFormSubmitting is called', () => {
+		const { getByText, queryByText } = render( <MyCheckout /> );
 		const button = getByText( 'Submit' );
-		expect( button ).not.toBeDisabled();
+		expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
 		fireEvent.click( button );
-		expect( button ).toBeDisabled();
+		expect( getByText( 'Submitting' ) ).toBeInTheDocument();
+	} );
+
+	it( 'sets form status to complete when setFormComplete is called', () => {
+		const { getByText, queryByText } = render( <MyCheckout /> );
+		const button = getByText( 'Complete' );
+		expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
+		fireEvent.click( button );
+		expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 	} );
 
 	it( 'sets form status to loading when setFormLoading is called', () => {
@@ -102,9 +119,9 @@ describe( 'CheckoutProvider', () => {
 	it( 'calls onPaymentComplete when form status is complete', () => {
 		const onPaymentComplete = jest.fn();
 		const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-		const button = getByText( 'Submit' );
+		const button = getByText( 'Complete' );
 		fireEvent.click( button );
-		expect( button ).toBeDisabled();
+		expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 		expect( onPaymentComplete ).toBeCalled();
 	} );
 } );
