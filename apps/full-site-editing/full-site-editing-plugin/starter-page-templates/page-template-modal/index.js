@@ -364,11 +364,18 @@ export const PageTemplatesPlugin = compose(
 			postContentBlock: select( 'core/editor' )
 				.getBlocks()
 				.find( block => block.name === 'a8c/post-content' ),
+			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
-		// Disable tips right away as the collide with the modal window.
-		dispatch( 'core/nux' ).disableTips();
+		// Disable welcome guide right away as it collides with the modal window.
+		if ( ownProps.isWelcomeGuideActive ) {
+			// Gutenberg 7.1.0 or higher.
+			dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+		} else if ( dispatch( 'core/nux' ).disableTips ) {
+			// Gutenberg 7.0.0 or lower.
+			dispatch( 'core/nux' ).disableTips();
+		}
 
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
