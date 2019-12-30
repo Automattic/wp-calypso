@@ -360,3 +360,5 @@ To maintain the integrity of the line item schema, adding custom fields is disco
 ## Development
 
 In the root of the monorepo, run `npm run composite-checkout-demo` which will start a local webserver that will display the component.
+
+To run the tests for this package, run `npm run test-packages composite-checkout`.

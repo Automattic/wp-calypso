@@ -31,7 +31,7 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useEvents, usePaymentComplete } from './checkout-provider';
+import { useEvents } from './checkout-provider';
 import { useFormStatus } from '../lib/form-status';
 import useConstructor from '../lib/use-constructor';
 
@@ -84,7 +84,6 @@ export default function Checkout( { steps, className } ) {
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
 	const { formStatus } = useFormStatus();
-	const onPaymentComplete = usePaymentComplete();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -135,13 +134,6 @@ export default function Checkout( { steps, className } ) {
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
 	const isCheckoutInProgress =
 		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
-
-	useEffect( () => {
-		if ( formStatus === 'complete' ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			onPaymentComplete();
-		}
-	}, [ formStatus, onPaymentComplete ] );
 
 	if ( formStatus === 'loading' ) {
 		return (
