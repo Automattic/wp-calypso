@@ -31,15 +31,16 @@ import {
 	getDefaultOrderReviewStep,
 } from './default-steps';
 import { validateSteps } from '../lib/validation';
-import { useEvents } from './checkout-provider';
+import { useEvents, usePaymentComplete } from './checkout-provider';
 import { useFormStatus } from '../lib/form-status';
+import useConstructor from '../lib/use-constructor';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
 function useRegisterCheckoutStore() {
 	const onEvent = useEvents();
 	useRegisterPrimaryStore( {
-		reducer( state = { stepNumber: getStepNumberFromUrl(), paymentData: {} }, action ) {
+		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
 			switch ( action.type ) {
 				case 'STEP_NUMBER_SET':
 					return { ...state, stepNumber: action.payload };
@@ -82,7 +83,8 @@ export default function Checkout( { steps, className } ) {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentData();
 	const activePaymentMethod = usePaymentMethod();
-	const [ formStatus ] = useFormStatus();
+	const { formStatus } = useFormStatus();
+	const onPaymentComplete = usePaymentComplete();
 
 	// Re-render if any store changes; that way isComplete can rely on any data
 	useRenderOnStoreUpdate();
@@ -93,9 +95,6 @@ export default function Checkout( { steps, className } ) {
 	const { changeStep } = usePrimaryDispatch();
 	steps = steps || makeDefaultSteps( localize );
 	validateSteps( steps );
-
-	// Change the step if the url changes
-	useChangeStepNumberForUrl();
 
 	// Assign step numbers to all steps with numbers
 	let numberedStepNumber = 0;
@@ -126,6 +125,9 @@ export default function Checkout( { steps, className } ) {
 		};
 	} );
 
+	// Change the step if the url changes
+	useChangeStepNumberForUrl( annotatedSteps );
+
 	const nextStep = annotatedSteps.find( ( step, index ) => {
 		return index > activeStep.stepIndex && step.hasStepNumber;
 	} );
@@ -133,6 +135,13 @@ export default function Checkout( { steps, className } ) {
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
 	const isCheckoutInProgress =
 		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
+
+	useEffect( () => {
+		if ( formStatus === 'complete' ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			onPaymentComplete();
+		}
+	}, [ formStatus, onPaymentComplete ] );
 
 	if ( formStatus === 'loading' ) {
 		return (
@@ -312,7 +321,6 @@ function getStepNumberFromUrl() {
 	if ( hashValue?.startsWith?.( '#step' ) ) {
 		const parts = hashValue.split( '#step' );
 		const stepNumber = parts.length > 1 ? parts[ 1 ] : 1;
-		debug( 'found step number in url', stepNumber );
 		return parseInt( stepNumber, 10 );
 	}
 	return 1;
@@ -333,11 +341,32 @@ function saveStepNumberToUrl( stepNumber ) {
 	window.history.pushState( null, null, newUrl );
 }
 
-function useChangeStepNumberForUrl() {
+function areAllPreviousStepsComplete( steps, stepNumber ) {
+	return steps.reduce( ( allComplete, step ) => {
+		if ( step.stepNumber && step.stepNumber < stepNumber ) {
+			if ( allComplete === false ) {
+				return false;
+			}
+			return step.isComplete;
+		}
+		return allComplete;
+	}, false );
+}
+
+function useChangeStepNumberForUrl( steps ) {
 	const { changeStep } = usePrimaryDispatch();
+	useConstructor( () => {
+		const newStepNumber = getStepNumberFromUrl();
+		if ( areAllPreviousStepsComplete( steps, newStepNumber ) ) {
+			debug( 'changing initial step to', newStepNumber );
+			changeStep( newStepNumber );
+			return;
+		}
+		changeStep( 1 );
+	} );
 	useEffect( () => {
 		let isSubscribed = true;
-		window.addEventListener?.( 'hashchange', function() {
+		window.addEventListener?.( 'hashchange', () => {
 			const newStepNumber = getStepNumberFromUrl();
 			debug( 'step number in url changed to', newStepNumber );
 			isSubscribed && changeStep( newStepNumber );
