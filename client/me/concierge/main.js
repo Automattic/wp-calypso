@@ -28,7 +28,6 @@ import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import getUserSettings from 'state/selectors/get-user-settings';
-import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
 import { getSite } from 'state/sites/selectors';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
@@ -81,7 +80,6 @@ export class ConciergeMain extends Component {
 			userSettings,
 			nextAppointment,
 			rescheduling,
-			hasAvailableConciergeSessions,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -91,7 +89,8 @@ export class ConciergeMain extends Component {
 			return <Skeleton />;
 		}
 
-		if ( ! hasAvailableConciergeSessions ) {
+		// if scheduleId is 0, it means the user is not eligible for the concierge service.
+		if ( scheduleId === 0 ) {
 			return <Upsell site={ site } />;
 		}
 
@@ -143,5 +142,4 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
-	hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 } ) )( ConciergeMain );
