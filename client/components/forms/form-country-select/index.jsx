@@ -20,6 +20,8 @@ export class FormCountrySelect extends Component {
 		disabled: PropTypes.bool,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
+		ariaLabelledBy: PropTypes.string,
+		ariaDescribedBy: PropTypes.string,
 	};
 
 	getOptions() {
@@ -57,6 +59,8 @@ export class FormCountrySelect extends Component {
 				className={ classnames( this.props.className, 'form-country-select' ) }
 				onChange={ this.props.onChange }
 				disabled={ this.props.disabled }
+				aria-labelledby={ this.props.ariaLabelledBy }
+				aria-describedby={ this.props.ariaDescribedBy }
 			>
 				{ options.map( function( option ) {
 					return (
