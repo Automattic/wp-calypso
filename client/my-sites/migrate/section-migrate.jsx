@@ -73,7 +73,7 @@ class SectionMigrate extends Component {
 			page( `/migrate/${ targetSiteSlug }` );
 			/**
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
-			 * Call to updateFromAPI will update non-local state.
+			 * Call to updateFromAPI will update both local and non-local state.
 			 */
 			this.setState( { migrationStatus: 'inactive' }, this.updateFromAPI );
 		} );
