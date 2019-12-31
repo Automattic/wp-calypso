@@ -149,7 +149,7 @@ export default {
 	},
 	readerFreeToPaidPlanNudge: {
 		datestamp: '20200102',
-		variatations: {
+		variations: {
 			display: 50,
 			control: 50,
 		},
