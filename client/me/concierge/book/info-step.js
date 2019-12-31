@@ -33,6 +33,7 @@ import { getLanguage } from 'lib/i18n-utils';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -98,7 +99,8 @@ class InfoStep extends Component {
 	componentDidMount() {
 		const {
 			userSettings,
-			signupForm: { firstname, lastname },
+			signupForm: { firstname, lastname, timezone },
+			moment,
 		} = this.props;
 
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
@@ -110,6 +112,10 @@ class InfoStep extends Component {
 				firstname: userSettings.first_name,
 				lastname: userSettings.last_name,
 			} );
+		}
+
+		if ( ! timezone ) {
+			this.updateSignupForm( 'timezone', moment.tz.guess() );
 		}
 	}
 
@@ -240,4 +246,4 @@ export default connect(
 		updateConciergeSignupForm,
 		recordTracksEvent,
 	}
-)( localize( InfoStep ) );
+)( localize( withLocalizedMoment( InfoStep ) ) );
