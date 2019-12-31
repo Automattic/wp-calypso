@@ -40,7 +40,7 @@ function getStateFromStores( props ) {
 		selectedSite: props.selectedSite,
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
-		users: UsersStore.getUsers( { siteId: props.selectedSite.ID } ),
+		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
 		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
 	};
 }

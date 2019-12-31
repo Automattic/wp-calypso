@@ -17,6 +17,10 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
+export const getAllDomains = state => {
+	return state.sites.domains.items;
+};
+
 /**
  * Returns the list of site domains for the specified site.
  *
@@ -52,6 +56,10 @@ export const hasLoadedSiteDomains = ( state, siteId ) => {
  */
 export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
+};
+
+export const getAllRequestingSiteDomains = state => {
+	return state.sites.domains.requesting;
 };
 
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
