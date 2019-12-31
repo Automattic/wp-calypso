@@ -22,6 +22,7 @@ export class FormCountrySelect extends Component {
 		translate: PropTypes.func.isRequired,
 		ariaLabelledBy: PropTypes.string,
 		ariaDescribedBy: PropTypes.string,
+		selectedValue: PropTypes.string,
 	};
 
 	getOptions() {
@@ -61,6 +62,7 @@ export class FormCountrySelect extends Component {
 				disabled={ this.props.disabled }
 				aria-labelledby={ this.props.ariaLabelledBy }
 				aria-describedby={ this.props.ariaDescribedBy }
+				value={ this.props.selectedValue }
 			>
 				{ options.map( function( option ) {
 					return (
