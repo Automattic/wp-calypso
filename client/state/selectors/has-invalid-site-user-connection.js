@@ -14,8 +14,8 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
  * and user, or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  userId User ID
+ * @param  {number}  siteId Site ID
+ * @param  {number}  userId User ID
  * @return {Boolean}        Whether broken connection exists
  */
 export default function hasInvalidSiteUserConnection( state, siteId, userId ) {

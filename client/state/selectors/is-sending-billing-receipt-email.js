@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Returns null if the receipt ID is unknown, or there is no information yet.
  *
  * @param  {object}  state       Global state tree
- * @param  {Number}  receiptId   The ID of the receipt we're querying
+ * @param  {number}  receiptId   The ID of the receipt we're querying
  * @return {?Boolean}            Whether email is being sent for that receipt
  */
 export default function isSendingBillingReceiptEmail( state, receiptId ) {

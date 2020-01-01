@@ -22,7 +22,7 @@ export const isActive = status => ( status ? status === transferStates.START : n
  * Indicates whether or not an automated transfer is active for a given site
  *
  * @param {object} state app state
- * @param {Number} siteId site of interest
+ * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is active, or null if not known
  */
 export const isAutomatedTransferActive = compose( isActive, getAutomatedTransferStatus );

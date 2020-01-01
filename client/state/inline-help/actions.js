@@ -56,7 +56,7 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 /**
  * Selects a specific result in the inline help results list.
  *
- * @param  {Number}  resultIndex Index of the result to select
+ * @param  {number}  resultIndex Index of the result to select
  * @return {Function}        Action thunk
  */
 export function selectResult( resultIndex ) {

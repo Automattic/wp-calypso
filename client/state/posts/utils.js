@@ -76,7 +76,7 @@ export function getNormalizedPostsQuery( query ) {
  * Returns a serialized posts query
  *
  * @param  {object} query  Posts query
- * @param  {Number} siteId Optional site ID
+ * @param  {number} siteId Optional site ID
  * @return {string}        Serialized posts query
  */
 export function getSerializedPostsQuery( query = {}, siteId ) {
@@ -115,7 +115,7 @@ export function getDeserializedPostsQueryDetails( serializedQuery ) {
  * Returns a serialized posts query, excluding any page parameter
  *
  * @param  {object} query  Posts query
- * @param  {Number} siteId Optional site ID
+ * @param  {number} siteId Optional site ID
  * @return {string}        Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query, siteId ) {

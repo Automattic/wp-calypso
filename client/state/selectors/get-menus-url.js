@@ -10,7 +10,7 @@ import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selecto
  * Returns the menus admin URL for the given site ID
  *
  * @param {object}  state   Global state tree
- * @param {Number}  siteId  A site ID
+ * @param {number}  siteId  A site ID
  * @return {?string}        Menus admin URL
  */
 export default function getMenusUrl( state, siteId ) {

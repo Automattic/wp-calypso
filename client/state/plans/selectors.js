@@ -33,7 +33,7 @@ export const isRequestingPlans = state => {
 /**
  * Returns a plan
  * @param  {object} state      global state
- * @param  {Number} productId  the plan productId
+ * @param  {number} productId  the plan productId
  * @return {object} the matching plan
  */
 export const getPlan = createSelector(
@@ -55,9 +55,9 @@ export const getPlanBySlug = createSelector(
 /**
  * Returns a plan price
  * @param  {object}  state     global state
- * @param  {Number}  productId the plan productId
+ * @param  {number}  productId the plan productId
  * @param  {Boolean} isMonthly if true, returns monthly price
- * @return {Number}  plan price
+ * @return {number}  plan price
  */
 export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
@@ -74,7 +74,7 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  *
  * @param  {object}  state     global state
- * @param  {Number}  productId the plan productId
+ * @param  {number}  productId the plan productId
  * @return {string}  plan product_slug
  */
 export function getPlanSlug( state, productId ) {

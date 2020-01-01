@@ -13,7 +13,7 @@ const supportedBrowsers = browserslist( null, { env: process.env.BROWSERSLIST_EN
  *
  * @param {Array<String>} browsers The list of supported browsers.
  *
- * @returns {Number} The maximum supported ECMAScript version.
+ * @returns {number} The maximum supported ECMAScript version.
  */
 function chooseTerserEcmaVersion( browsers ) {
 	if ( ! caniuse.isSupported( 'arrow-functions', browsers ) ) {

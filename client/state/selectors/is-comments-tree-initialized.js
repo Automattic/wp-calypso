@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns true if a comment tree has been initialized.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   The ID of the site we're querying
+ * @param  {number}  siteId   The ID of the site we're querying
  * @param  {string}  status   unapproved|approved|all|spam|trash
  * @return {Boolean} True if the comment tree has been initialized
  */

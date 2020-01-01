@@ -10,7 +10,7 @@ const MINUTE_IN_MS = 60 * 1000;
  * False otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether site is newly created.
  */
 export default function isNewSite( state, siteId ) {

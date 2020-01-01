@@ -17,7 +17,7 @@ import {
 /**
  * Returns an action object to be used in signalling that sharing buttons have been received.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} settings The sharing buttons object
  * @return {object}        Action object
  */
@@ -32,7 +32,7 @@ export function receiveSharingButtons( siteId, settings ) {
 /**
  * Returns an action object to be used in signalling that some sharing buttons have been updated.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} settings The updated sharing buttons
  * @return {object}        Action object
  */
@@ -48,7 +48,7 @@ export function updateSharingButtons( siteId, settings ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve sharing buttons
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {Function}      Action thunk
  */
 export function requestSharingButtons( siteId ) {
@@ -82,7 +82,7 @@ export function requestSharingButtons( siteId ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * update the sharing buttons
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} settings The sharing buttons to save
  * @return {Function}      Action thunk
  */

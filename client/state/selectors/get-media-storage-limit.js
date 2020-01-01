@@ -16,7 +16,7 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
  * Note that the API will return -1 to indicate unlimited storage.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?Number}        Storage limit in bytes
  */
 export default function getMediaStorageLimit( state, siteId ) {

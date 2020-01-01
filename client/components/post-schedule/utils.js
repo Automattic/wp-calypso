@@ -34,7 +34,7 @@ export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
  *
  * @param {Moment} date - date instance
  * @param {string} tz - timezone
- * @param {Number} gmt - gmt offset in minutes
+ * @param {number} gmt - gmt offset in minutes
  * @return {Moment} localized date
  */
 export const getLocalizedDate = ( date, tz, gmt ) => {
@@ -81,7 +81,7 @@ export const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * adding a `+` when the number is greater than zero,
  * not adding `:00` case (zero minutes).
  *
- * @param  {Number} minutes - a number of minutes
+ * @param  {number} minutes - a number of minutes
  * @return {string} `hh:mm` format
  */
 export const convertMinutesToHHMM = minutes => {

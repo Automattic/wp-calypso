@@ -124,7 +124,7 @@ function getRenderedPostsIds() {
  * occurs.
  *
  * @param {object} options XMLHttpRequest options
- * @param {Number} n retry count before throwing
+ * @param {number} n retry count before throwing
  */
 function fetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();

@@ -10,7 +10,7 @@ import isCurrentPlanPaid from './is-current-plan-paid';
  * Returns true if current user can purchase upgrades for this site
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is previewable
  */
 export default function canCurrentUserUpgradeSite( state, siteId = null ) {

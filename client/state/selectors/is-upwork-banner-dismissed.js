@@ -15,7 +15,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  location The Id of the banner
- * @return {Number}  Timestamp marking the last time the banner was dismissed
+ * @return {number}  Timestamp marking the last time the banner was dismissed
  */
 const getLastDismissTime = ( state, location ) => {
 	const preference = getPreference( state, 'upwork-dismissible-banner' ) || {};

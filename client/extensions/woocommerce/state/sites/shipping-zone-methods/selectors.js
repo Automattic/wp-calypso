@@ -22,8 +22,8 @@ const getAPIShippingZoneMethods = ( state, siteId = getSelectedSiteId( state ) )
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} id Shipping Zone Method ID to get
- * @param {Number} [siteId] Site ID to get. If not provided, the Site ID selected in the UI will be used
+ * @param {number} id Shipping Zone Method ID to get
+ * @param {number} [siteId] Site ID to get. If not provided, the Site ID selected in the UI will be used
  * @return {Object|null} The shipping zone method definition, or null if it wasn't found
  */
 export const getShippingZoneMethod = ( state, id, siteId = getSelectedSiteId( state ) ) => {
@@ -36,8 +36,8 @@ export const getShippingZoneMethod = ( state, id, siteId = getSelectedSiteId( st
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} zoneId Shipping Zone ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} zoneId Shipping Zone ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping methods for the given zone have been successfully loaded from the server
  */
 export const areShippingZoneMethodsLoaded = (
@@ -70,8 +70,8 @@ export const areShippingZoneMethodsLoaded = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} zoneId Shipping Zone ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} zoneId Shipping Zone ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping methods for the given zone are currently being retrieved from the server
  */
 export const areShippingZoneMethodsLoading = (

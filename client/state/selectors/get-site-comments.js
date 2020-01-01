@@ -22,7 +22,7 @@ function filterCommentsByStatus( comments, status ) {
  * Returns list of loaded comments for a given site, filtered by status
  *
  * @param {object} state Redux state
- * @param {Number} siteId Site for whose comments to find
+ * @param {number} siteId Site for whose comments to find
  * @param {string} [status] Status to filter comments
  * @param {string} [order=asc] Order in which to sort filtered comments
  * @returns {Array<Object>} Available comments for site, filtered by status

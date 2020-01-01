@@ -14,7 +14,7 @@ import { updateRewindRestoreProgress } from 'state/activity-log/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
 /** @type {Map<String, Number>} stores most-recent polling times */

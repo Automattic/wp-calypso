@@ -113,8 +113,8 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 /**
  * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
  * @param {object} state global state tree
- * @param {Number} orderId order Id
- * @param {Number} siteId site Id
+ * @param {number} orderId order Id
+ * @param {number} siteId site Id
  *
  * @returns {object} price breakdown
  */
@@ -580,7 +580,7 @@ export const canPurchase = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
  */
 export const getOriginCountryNames = createSelector(
@@ -595,7 +595,7 @@ export const getOriginCountryNames = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
  */
 export const getDestinationCountryNames = createSelector(
@@ -612,7 +612,7 @@ export const getDestinationCountryNames = createSelector(
  * @param {object} state Whole Redux state tree
  * @param {string} countryCode 2-letter ISO country code
  * @param {string} stateCode 2-letter code of the country's state
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
  * the country doesn't have a list of states
  */

@@ -45,7 +45,7 @@ export const MODAL_VIEW_STATS = {
  * Returns an action object to be used in signalling that the editor should
  * begin to edit the post with the specified post ID, or `null` as a new post.
  *
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {?Number} postId   Post ID
  * @return {Action}           Action object
  */
@@ -76,7 +76,7 @@ export function startEditingNewPost( siteId, post ) {
  * Returns an action object to be used in signalling that the editor should
  * stop editing.
  *
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @param  {?Number} postId Post ID
  * @return {Action}         Action object
  */
@@ -123,7 +123,7 @@ export function setEditorMediaModalView( view ) {
  * Returns an action object used in signalling that the confirmation sidebar
  * preference has changed.
  *
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
  * @return {object}            Action object
  */

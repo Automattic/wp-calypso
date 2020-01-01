@@ -9,7 +9,7 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * @param   {object}   state                                Global state tree
  * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
- * @param   {Number}   queryObject.quantity                 max results
+ * @param   {number}   queryObject.quantity                 max results
  * @param   {string}   queryObject.vendor                   vendor
  * @param   {?Boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
@@ -27,7 +27,7 @@ export function getDomainsSuggestions( state, queryObject ) {
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
- * @param   {Number}     queryObject.quantity                 max results
+ * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {Boolean}   true if requesting
@@ -45,7 +45,7 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
- * @param   {Number}     queryObject.quantity                 max results
+ * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {?object}    error or null

@@ -67,7 +67,7 @@ export const clearNewApplicationPassword = () => ( {
 /**
  * Returns an action object to signal the deletion of an application password.
  *
- * @param  {Number} appPasswordId ID of the application password.
+ * @param  {number} appPasswordId ID of the application password.
  * @return {object}               Action object.
  */
 export const deleteApplicationPassword = appPasswordId => ( {
@@ -78,7 +78,7 @@ export const deleteApplicationPassword = appPasswordId => ( {
 /**
  * Returns an action object to signal the successful deletion of an application password.
  *
- * @param  {Number} appPasswordId ID of the application password.
+ * @param  {number} appPasswordId ID of the application password.
  * @return {object}               Action object.
  */
 export const deleteApplicationPasswordSuccess = appPasswordId => ( {

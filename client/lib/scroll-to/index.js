@@ -61,8 +61,8 @@ class Stepper {
 
 	/**
 	 * Jump directly to a position, bypassing the stepper
-	 * @param {Number} x - x coord
-	 * @param {Number} y - y coord
+	 * @param {number} x - x coord
+	 * @param {number} y - y coord
 	 */
 	jumpTo( x, y ) {
 		this.cancel();
@@ -84,7 +84,7 @@ class Stepper {
 
 	/**
 	 * Move a step along the timeline, with optional easing
-	 * @param {Number} ts - timestamp
+	 * @param {number} ts - timestamp
 	 */
 	step = ts => {
 		// reset the nextFrame raf handle so we can schedule another step
@@ -132,8 +132,8 @@ class Stepper {
 /**
  * Eases the progress of a curve from 0 to 1. Slows down as it approaches the target.
  *
- * @param {Number} val current value to be eased. [0,1]
- * @returns {Number} eased val
+ * @param {number} val current value to be eased. [0,1]
+ * @returns {number} eased val
  */
 function circularOutEasing( val ) {
 	const inverse = val - 1;

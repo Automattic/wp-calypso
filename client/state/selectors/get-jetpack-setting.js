@@ -13,7 +13,7 @@ import getJetpackSettings from 'state/selectors/get-jetpack-settings';
  * Returns null if the site is unknown, or settings have not been fetched yet.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   The ID of the site we're querying
+ * @param  {number}  siteId   The ID of the site we're querying
  * @param  {string}  setting  Name of the setting
  * @return {*}                Value of the Jetpack setting
  */

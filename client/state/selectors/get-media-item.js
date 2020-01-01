@@ -2,7 +2,7 @@
  * Returns a media object by site ID, media ID, or null if not known
  *
  *
- * @param {Number}  mediaId Media ID
+ * @param {number}  mediaId Media ID
  * @return {?object}         Media object, if known
  */
 

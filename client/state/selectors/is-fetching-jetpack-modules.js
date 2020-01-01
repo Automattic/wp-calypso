@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * Returns null if the status for queried site and module is unknown.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId The ID of the site we're querying
+ * @param  {number}  siteId The ID of the site we're querying
  * @return {?Boolean}         Whether the list is being requested
  */
 export default function isFetchingJetpackModules( state, siteId ) {

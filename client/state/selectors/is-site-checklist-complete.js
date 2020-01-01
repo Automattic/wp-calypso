@@ -10,7 +10,7 @@ import { getSiteFrontPage } from 'state/sites/selectors';
  * Checks whether the tasklist has been completed.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
  */
 export default function isSiteChecklistComplete( state, siteId ) {

@@ -17,7 +17,7 @@ import {
 /**
  * Creates a new (empty) Shipping Zone. This will open the newly created zone for editing, but the zone itself
  * won't be saved into "permanent" state until `closeEditingShippingZone` is called.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const addNewShippingZone = siteId => {
@@ -26,8 +26,8 @@ export const addNewShippingZone = siteId => {
 
 /**
  * Opens the given Shipping Zone for editing it.
- * @param {Number} siteId Site ID.
- * @param {Number} id Shipping Zone ID to open.
+ * @param {number} siteId Site ID.
+ * @param {number} id Shipping Zone ID to open.
  * @return {object} Action object.
  */
 export const openShippingZoneForEdit = ( siteId, id ) => {
@@ -36,7 +36,7 @@ export const openShippingZoneForEdit = ( siteId, id ) => {
 
 /**
  * Saves the changes made to the Shipping Zone currently being edited, and stops editing it.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const closeEditingShippingZone = siteId => {
@@ -46,7 +46,7 @@ export const closeEditingShippingZone = siteId => {
 /**
  * Stops editing the Shipping Zone currently being edited, discarding all the changes made to it since the modal
  * was opened.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const cancelEditingShippingZone = siteId => {
@@ -55,7 +55,7 @@ export const cancelEditingShippingZone = siteId => {
 
 /**
  * Changes the name of the Shipping Zone currently being edited.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} name New name for the Shipping Zone.
  * @return {object} Action object.
  */
@@ -66,8 +66,8 @@ export const changeShippingZoneName = ( siteId, name ) => {
 /**
  * Deletes the given Shipping Zone. Note that this action (as any other in this file) won't trigger any request
  * to the server.
- * @param {Number} siteId Site ID.
- * @param {Number} id Shipping Zone ID to delete.
+ * @param {number} siteId Site ID.
+ * @param {number} id Shipping Zone ID to delete.
  * @return {object} Action object.
  */
 export const deleteShippingZone = ( siteId, id ) => {

@@ -51,7 +51,7 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 /**
  * Updates change setting stored in Redux store
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  setting, single setting object { id: '', value: '' }
  * @return {object} Action object
  */
@@ -68,7 +68,7 @@ export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => 
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  settingsData, either single object { id: '', value: '' }, or array of settings objects
  * @param {Mixed}  successAction, either action object or empty (null)
  * @param {Mixed}  failureAction, either action object or empty (null)
@@ -117,7 +117,7 @@ export const updateSettingsProducts = (
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {object}  successAction, success action object
  * @param {object}  failureAction, failure action object
  * @return {object} Action object

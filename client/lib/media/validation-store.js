@@ -93,7 +93,7 @@ MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
  * Update the errors object for a site by picking only items where errors still
  * exist after excluding all errors for that item matching the specified type.
  *
- * @param {Number}               siteId    The site ID
+ * @param {number}               siteId    The site ID
  * @param {MediaValidationError} errorType The error type to remove
  */
 MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType ) {

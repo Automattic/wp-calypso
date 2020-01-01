@@ -148,7 +148,7 @@ export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
  * or null if capabilities are not known for the site.
  *
  * @param  {object}   state      Global state tree
- * @param  {Number}   siteId     Site ID
+ * @param  {number}   siteId     Site ID
  * @param  {string}   capability Capability name
  * @return {?Boolean}            Whether capability name is valid
  */

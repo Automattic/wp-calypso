@@ -17,7 +17,7 @@ import {
 
 /**
  * Opens the locations UI for editing them
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const openEditLocations = siteId => {
@@ -29,7 +29,7 @@ export const openEditLocations = siteId => {
 
 /**
  * Closes the locations UI, saving any changes that were made
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const closeEditLocations = siteId => {
@@ -41,7 +41,7 @@ export const closeEditLocations = siteId => {
 
 /**
  * Closes the locations UI, discarding any changes that were made
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const cancelEditLocations = siteId => {
@@ -53,7 +53,7 @@ export const cancelEditLocations = siteId => {
 
 /**
  * Selects or un-selects a continent.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} continentCode 2-letter continent code, such as EU (Europe) or NA (North America).
  * @param {Boolean} selected Whether the action was to select the continent (true), or to un-select it (false).
  * @return {object} Action object.
@@ -69,7 +69,7 @@ export const toggleContinentSelected = ( siteId, continentCode, selected ) => {
 
 /**
  * Selects or un-selects a country.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} countryCode 2-letter ISO country code.
  * @param {Boolean} selected Whether the action was to select the country (true), or to un-select it (false).
  * @return {object} Action object.
@@ -85,7 +85,7 @@ export const toggleCountrySelected = ( siteId, countryCode, selected ) => {
 
 /**
  * Selects or un-selects a state.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} stateCode 2-letter state code, such as CA (California).
  * @param {Boolean} selected Whether the action was to select the state (true), or to un-select it (false).
  * @return {object} Action object.
@@ -101,7 +101,7 @@ export const toggleStateSelected = ( siteId, stateCode, selected ) => {
 
 /**
  * Changes the value of the postcode range.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} postcode New value for the postcode or postcode range.
  * @return {object} Action object.
  */
@@ -115,7 +115,7 @@ export const editPostcode = ( siteId, postcode ) => {
 
 /**
  * Sets the location filter to "Ship to whole country"
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const filterByWholeCountry = siteId => {
@@ -127,7 +127,7 @@ export const filterByWholeCountry = siteId => {
 
 /**
  * Sets the location filter to "Ship only to a few states of the selected country"
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const filterByState = siteId => {
@@ -139,7 +139,7 @@ export const filterByState = siteId => {
 
 /**
  * Sets the location filter to "Ship only to a postcode range of the selected country"
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const filterByPostcode = siteId => {

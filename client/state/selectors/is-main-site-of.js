@@ -14,8 +14,8 @@ import { withoutHttp } from 'lib/url';
  * Returns null if with the information available in state the relationship is unknown.
  *
  * @param  {object} 	state       		Global state tree
- * @param  {Number}  	mainSiteId      	The ID of the main site
- * @param  {Number}  	secondarySiteId		The ID of the main site
+ * @param  {number}  	mainSiteId      	The ID of the main site
+ * @param  {number}  	secondarySiteId		The ID of the main site
  * @return {?Boolean}	            		Whether site with id equal to mainSiteId is main site of site with id equal to secondarySiteId
  */
 export default ( state, mainSiteId, secondarySiteId ) => {

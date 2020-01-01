@@ -12,7 +12,7 @@ import getSiteSetting from 'state/selectors/get-site-setting';
  * Check if a site blacklist contains an email address.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @param {string} email An email address.
  * @returns {Boolean} If the blacklist contains the email address.
  */

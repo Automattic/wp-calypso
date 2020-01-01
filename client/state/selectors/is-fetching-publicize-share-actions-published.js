@@ -6,8 +6,8 @@ import { get } from 'lodash';
 
 /**
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
+ * @param {number} siteId Site ID
+ * @param {number} postId Post ID
  * @return {Boolean} true if we are fetching publicize share actions for a post
  */
 export default function isFetchingPublicizeShareActionsPublished( state, siteId, postId ) {

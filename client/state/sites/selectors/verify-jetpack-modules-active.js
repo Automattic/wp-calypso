@@ -14,7 +14,7 @@ import isJetpackSite from './is-jetpack-site';
  * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @param {Array} moduleIds A list of active module ids to verify
  * @return {?Boolean} true if the all the given modules are active for this site
  */

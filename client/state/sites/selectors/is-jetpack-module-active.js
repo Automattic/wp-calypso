@@ -14,7 +14,7 @@ import getSiteOption from './get-site-option';
  * or is not a Jetpack site.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @param  {string}   slug   Module slug
  * @return {?Boolean}        Whether site has Jetpack module active
  */

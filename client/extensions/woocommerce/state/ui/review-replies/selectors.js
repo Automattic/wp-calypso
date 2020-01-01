@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number|Object} The ID of the review reply (or object placeholder, if a new reply)
  */
 export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -25,7 +25,7 @@ export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSit
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number|Object} The ID of the review that a reply edit is associated with.
  */
 export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -38,7 +38,7 @@ export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The local edits made to the reply.
  */
 export const getReviewReplyEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -51,7 +51,7 @@ export const getReviewReplyEdits = ( state, siteId = getSelectedSiteId( state ) 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The reply merged with changes, or just the changes if a new reply
  */
 export const getReviewReplyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -73,7 +73,7 @@ export const getReviewReplyWithEdits = ( state, siteId = getSelectedSiteId( stat
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} True if there is a reply ID tracked as "editing"
  */
 export const isCurrentlyEditingReviewReply = ( state, siteId = getSelectedSiteId( state ) ) => {

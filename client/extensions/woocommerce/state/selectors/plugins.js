@@ -25,7 +25,7 @@ const getWcsPluginData = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the given site has woocommerce services installed & active
  */
 export const isWcsEnabled = ( state, siteId = getSelectedSiteId( state ) ) =>
@@ -46,7 +46,7 @@ const isVersionAtLeast = ( minimumVersion, pluginVersion ) => {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the given site has a version of WooCommerce Services new enough to support international labels
  */
 export const isWcsInternationalLabelsEnabled = ( state, siteId = getSelectedSiteId( state ) ) =>
@@ -56,7 +56,7 @@ export const isWcsInternationalLabelsEnabled = ( state, siteId = getSelectedSite
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean|null} Whether the given site has all required plugins installed & active
  */
 export const areAllRequiredPluginsActive = ( state, siteId = getSelectedSiteId( state ) ) => {

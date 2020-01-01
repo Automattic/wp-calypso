@@ -12,7 +12,7 @@ import {
 /**
  * Returns an action object to be used in signalling that status have been received.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} status Status object
  * @return {object} Action object
  */
@@ -25,7 +25,7 @@ export const receiveStatus = ( siteId, status ) => ( {
 /*
  * Retrieves status for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests status for a given site
  */
 export const requestStatus = siteId => {

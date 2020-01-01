@@ -30,7 +30,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
  * Triggers a network request to find domain suggestions
  * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
- * @param   {Number}   queryObject.quantity                 max results
+ * @param   {number}   queryObject.quantity                 max results
  * @param   {string}   queryObject.vendor                   vendor
  * @param   {?Boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
  * @returns {Function}                                      Action thunk

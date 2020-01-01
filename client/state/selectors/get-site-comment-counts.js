@@ -12,8 +12,8 @@ import { get } from 'lodash';
  * Return comment counts for the given site and post ID, if applicable.
  *
  * @param {object} state Redux state
- * @param {Number} siteId Site identifier
- * @param {Number} [postId] Post identifier
+ * @param {number} siteId Site identifier
+ * @param {number} [postId] Post identifier
  * @returns {object} The requested comment counts
  */
 export const getSiteCommentCounts = ( state, siteId, postId ) => {

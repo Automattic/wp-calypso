@@ -119,7 +119,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @param  {object} query Query object
 	 * @param  {object} postA First post
 	 * @param  {object} postB Second post
-	 * @return {Number}       0 if equal, less than 0 if postA is first,
+	 * @return {number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */
 	static compare( query, postA, postB ) {

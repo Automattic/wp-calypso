@@ -14,7 +14,7 @@ import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customi
  *
  * @param  {object}   state   Global state tree
  * @param  {string}   themeId Theme ID
- * @param  {Number}   siteId  Site ID to open the customizer or block editor for
+ * @param  {number}   siteId  Site ID to open the customizer or block editor for
  * @return {string}           Customizer or Block Editor URL
  */
 export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId ) {

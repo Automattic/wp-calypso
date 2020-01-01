@@ -19,7 +19,7 @@ export function getOrderDiscountTax( order ) {
  * Get the total tax for a given line item's value
  *
  * @param {object} order An order as returned from API
- * @param {Number} id The ID of the line_item
+ * @param {number} id The ID of the line_item
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderLineItemTax( order, id ) {
@@ -32,7 +32,7 @@ export function getOrderLineItemTax( order, id ) {
  * Get the total tax for a given fee
  *
  * @param {object} order An order as returned from API
- * @param {Number} id The ID of a fee line in this order
+ * @param {number} id The ID of a fee line in this order
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderFeeTax( order, id ) {

@@ -10,7 +10,7 @@ const EMPTY_OPTIONS = Object.freeze( {} );
  * Returns the site options
  *
  * @param    {object}    state    Global state tree
- * @param    {Number}    siteId   Site ID
+ * @param    {number}    siteId   Site ID
  * @returns  {?object}            Site options or null
  */
 export default ( state, siteId ) => {

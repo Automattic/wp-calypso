@@ -8,7 +8,7 @@ import MediaQueryManager from 'lib/query-manager/media';
  * Returns true if media is being requested for a specified site ID and query.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @param  {object}  query  Query object
  * @return {bool}           True if media is being requested
  */

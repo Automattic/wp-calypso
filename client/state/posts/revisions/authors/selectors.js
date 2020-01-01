@@ -2,7 +2,7 @@
  * Returns an author (user) object by ID.
  *
  *
- * @param {Number} userId User ID
+ * @param {number} userId User ID
  * @return {object}        User object
  */
 

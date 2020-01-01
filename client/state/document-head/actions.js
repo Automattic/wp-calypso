@@ -27,7 +27,7 @@ export function setDocumentHeadTitle( title ) {
  * Returns an action object used in signalling that the unread count to be
  * shown in the document title should be assigned to the specified value.
  *
- * @param  {Number} count Unread count
+ * @param  {number} count Unread count
  * @return {object}       Action object
  */
 export function setDocumentHeadUnreadCount( count ) {

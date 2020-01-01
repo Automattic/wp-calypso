@@ -11,7 +11,7 @@ import isSiteConflicting from './is-site-conflicting';
  * Returns the domain for a site, or null if the site is unknown.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?string}        Site domain
  */
 export default function getSiteDomain( state, siteId ) {

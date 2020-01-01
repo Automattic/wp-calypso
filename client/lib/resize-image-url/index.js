@@ -22,7 +22,7 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  * high pixel-density displays (e.g. retina). This multiplier currently maxes
  * at 2x image size, though could foreseeably be the exact display ratio.
  *
- * @type {Number}
+ * @type {number}
  */
 const IMAGE_SCALE_FACTOR =
 	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
@@ -47,8 +47,8 @@ const SERVICE_HOSTNAME_PATTERNS = {
 /**
  * Given a numberic value, returns the value multiplied by image scale factor
  *
- * @param  {Number} value Original value
- * @return {Number}       Updated value
+ * @param  {number} value Original value
+ * @return {number}       Updated value
  */
 const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 

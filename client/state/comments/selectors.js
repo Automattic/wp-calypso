@@ -28,8 +28,8 @@ import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 /***
  * Gets comment items for post
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
  * @return {Array} comment items
  */
 export const getPostCommentItems = ( state, siteId, postId ) =>
@@ -63,9 +63,9 @@ export const getCommentErrors = state => {
 /***
  * Get total number of comments on the server for a given post
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Number} total comments count on the server. if not found, assume infinity
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
+ * @return {number} total comments count on the server. if not found, assume infinity
  */
 export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
 	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
@@ -74,10 +74,10 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
  * Get total number of comments in state at a given date and time
  *
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
  * @param {Date} date Date to count comments for
- * @return {Number} total comments count in state
+ * @return {number} total comments count in state
  */
 export const getPostCommentsCountAtDate = ( state, siteId, postId, date ) => {
 	// Check the provided date
@@ -104,8 +104,8 @@ export const getPostCommentsCountAtDate = ( state, siteId, postId, date ) => {
 /***
  * Get most recent comment date for a given post
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
  * @return {Date} most recent comment date
  */
 export const getPostNewestCommentDate = treeSelect(
@@ -119,8 +119,8 @@ export const getPostNewestCommentDate = treeSelect(
 /***
  * Get oldest comment date for a given post
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
  * @return {Date} earliest comment date
  */
 export const getPostOldestCommentDate = treeSelect(
@@ -134,10 +134,10 @@ export const getPostOldestCommentDate = treeSelect(
 /***
  * Gets comment tree for a given post
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
  * @param {string} status String representing the comment status to show. Defaults to 'approved'.
- * @param {Number} authorId - when specified we only return pending comments that match this id
+ * @param {number} authorId - when specified we only return pending comments that match this id
  * @return {object} comments tree, and in addition a children array
  */
 export const getPostCommentsTree = treeSelect(
@@ -221,9 +221,9 @@ export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 
 /***
  * Gets likes stats for the comment
  * @param {object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @param {Number} commentId comment identification
+ * @param {number} siteId site identification
+ * @param {number} postId site identification
+ * @param {number} commentId comment identification
  * @return {object} that has i_like and like_count props
  */
 export const getCommentLike = treeSelect(

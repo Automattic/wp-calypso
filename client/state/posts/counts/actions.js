@@ -14,7 +14,7 @@ import {
  * Returns an action object signalling that post counts have been received for
  * the site and post type.
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
  * @param  {object} counts   Mapping of post status to count
  * @return {object}          Action object
@@ -32,7 +32,7 @@ export function receivePostCounts( siteId, postType, counts ) {
  * Returns an action thunk, dispatching progress of a request to retrieve post
  * counts for a site and post type.
  *
- * @param  {Number}   siteId   Site ID
+ * @param  {number}   siteId   Site ID
  * @param  {string}   postType Post type
  * @return {Function}          Action thunk
  */

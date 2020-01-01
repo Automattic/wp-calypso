@@ -11,7 +11,7 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
  * if defined, or site's UTC offset ( eg 'UTC-3' ) in that order of preference.
  *
  * @param  {object}  state - Global state tree
- * @param  {Number}  siteId - Site ID
+ * @param  {number}  siteId - Site ID
  * @return {?string} site setting timezone
  */
 export default function getSiteTimezoneName( state, siteId ) {

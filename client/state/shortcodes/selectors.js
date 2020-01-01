@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * false otherwise.
  *
  * @param  {object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {string}  shortcode Shortcode
  * @return {Boolean}           Whether that shortcode is being requested
  */
@@ -20,7 +20,7 @@ export const isRequestingShortcode = ( state, siteId, shortcode ) => {
 /**
  * Retrieve the data of a certain shortcode for a particular site
  * @param  {object} state      Global state tree
- * @param  {Number} siteId     Site ID
+ * @param  {number} siteId     Site ID
  * @param  {string} shortcode  Shortcode
  * @return {object}            Shortcode data
  */

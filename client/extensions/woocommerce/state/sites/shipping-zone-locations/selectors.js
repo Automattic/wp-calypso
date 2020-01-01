@@ -16,8 +16,8 @@ export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} zoneId Shipping Zone ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} zoneId Shipping Zone ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone have been successfully loaded from the server
  */
 export const areShippingZoneLocationsLoaded = (
@@ -31,8 +31,8 @@ export const areShippingZoneLocationsLoaded = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} zoneId Shipping Zone ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} zoneId Shipping Zone ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone are currently being retrieved from the server
  */
 export const areShippingZoneLocationsLoading = (
@@ -51,7 +51,7 @@ export const areShippingZoneLocationsLoading = (
  * that can't be reliably represented in Calypso, and as such the UI must forbid him to add new zones or edit
  * existing zones locations.
  * @param {object} appState Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zones have valid locations to be edited in Calypso
  */
 export const areShippingZonesLocationsValid = (

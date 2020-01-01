@@ -9,7 +9,7 @@ import { find } from 'lodash';
  * is active. This is useful for jetpack connected sites.
  *
  * @param {object} state - Global state tree
- * @param {Number} siteId - Site ID
+ * @param {number} siteId - Site ID
  * @param {string} pluginSlug - Plugin slug
  * @return {Boolean} - truthiness of a site having an active plugin
  */

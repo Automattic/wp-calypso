@@ -11,10 +11,10 @@ import {
 /**
  * Returns an action object to indicate that a zone lock should be updated
  *
- * @param  {Number}  siteId          Site ID
- * @param  {Number}  zoneId          Zone ID
- * @param  {Number}  expires         Expiration time in milliseconds
- * @param  {Number}  maxLockPeriod   Maximum number of milliseconds to extend the lock to
+ * @param  {number}  siteId          Site ID
+ * @param  {number}  zoneId          Zone ID
+ * @param  {number}  expires         Expiration time in milliseconds
+ * @param  {number}  maxLockPeriod   Maximum number of milliseconds to extend the lock to
  * @return {object}                  Action object
  */
 export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
@@ -28,8 +28,8 @@ export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
 /**
  * Returns an action object to indicate that a zone lock should be requested
  *
- * @param  {Number}  siteId    Site ID
- * @param  {Number}  zoneId    Zone ID
+ * @param  {number}  siteId    Site ID
+ * @param  {number}  zoneId    Zone ID
  * @return {object}            Action object
  */
 export const requestLock = ( siteId, zoneId ) => ( {
@@ -41,8 +41,8 @@ export const requestLock = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that a zone failed to lock
  *
- * @param  {Number}  siteId  Site ID
- * @param  {Number}  zoneId  Zone ID
+ * @param  {number}  siteId  Site ID
+ * @param  {number}  zoneId  Zone ID
  * @return {object}          Action object
  */
 export const requestLockError = ( siteId, zoneId ) => ( {
@@ -54,8 +54,8 @@ export const requestLockError = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that a zone lock should be reset
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
  * @return {object}        Action object
  */
 export const resetLock = ( siteId, zoneId ) => ( {

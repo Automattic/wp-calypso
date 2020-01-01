@@ -17,7 +17,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * Returns null if the site is unknown and settings have not been fetched.
  *
  * @param  {object}    state   Global state tree
- * @param  {Number}    siteId  The ID of the site we're querying
+ * @param  {number}    siteId  The ID of the site we're querying
  * @return {?string}           The default post format of that site
  */
 export default function getSiteDefaultPostFormat( state, siteId ) {

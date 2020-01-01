@@ -485,7 +485,7 @@ export function canUserDeleteItem( item, user, site ) {
  * @param {object} canvas the canvas element
  * @param {Function} callback function to process the blob after it is extracted
  * @param {string} type image type to be extracted
- * @param {Number} quality extracted image quality
+ * @param {number} quality extracted image quality
  */
 export function canvasToBlob( canvas, callback, type, quality ) {
 	if ( ! HTMLCanvasElement.prototype.toBlob ) {

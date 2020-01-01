@@ -30,7 +30,7 @@ export function getVariationEditsStateForProduct(
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {any} variationId The id of the variation (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The current accumulated edits
  */
 export function getVariationEdits(
@@ -51,7 +51,7 @@ export function getVariationEdits(
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {any} variationId The id of the variation (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The product data merged between the fetched data and edits
  */
 export function getVariationWithLocalEdits(
@@ -73,7 +73,7 @@ export function getVariationWithLocalEdits(
  *
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} Variation object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingVariation(
@@ -92,7 +92,7 @@ export function getCurrentlyEditingVariation(
  *
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} Array of variation objects.
  */
 export function getProductVariationsWithLocalEdits(

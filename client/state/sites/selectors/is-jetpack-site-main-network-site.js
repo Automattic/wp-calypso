@@ -13,7 +13,7 @@ import isJetpackSite from './is-jetpack-site';
  * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {?Boolean} true if the site is the main site
  */
 export default function isJetpackSiteMainNetworkSite( state, siteId ) {

@@ -48,7 +48,7 @@ export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
 
 /**
  * Fetches the available advanced settings for customizing export content
- * @param {Number} siteId The ID of the site to fetch
+ * @param {number} siteId The ID of the site to fetch
  * @return {thunk}        An action thunk for fetching the advanced settings
  */
 export function advancedSettingsFetch( siteId ) {
@@ -97,7 +97,7 @@ export function advancedSettingsFail( siteId, error ) {
 
 /**
  * Sends a request to the server to start an export.
- * @param  {Number}   siteId  The ID of the site to export
+ * @param  {number}   siteId  The ID of the site to export
  * @return {Function}         Action thunk
  */
 export function startExport( siteId, { exportAll = true } = {} ) {

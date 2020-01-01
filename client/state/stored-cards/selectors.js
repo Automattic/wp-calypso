@@ -11,7 +11,7 @@ export const getStoredCards = state => state.storedCards.items;
 /**
  * Returns a Stored Card
  * @param  {object} state      global state
- * @param  {Number} cardId  the card id
+ * @param  {number} cardId  the card id
  * @return {object} the matching card if there is one
  */
 export const getStoredCardById = ( state, cardId ) =>

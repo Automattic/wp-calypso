@@ -9,7 +9,7 @@ import { isFreePlan } from 'lib/plans';
  * or if the site or plan is unknown.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {Boolean} Whether site is on a paid plan
  */
 const isSiteOnPaidPlan = ( state, siteId ) => {

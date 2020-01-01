@@ -38,7 +38,7 @@ export const setDate = ( transactionType, month, operator ) => ( {
 /**
  * Sets the page of the given transaction type table
  * @param {string} transactionType - transaction type: 'past' or 'upcoming'
- * @param {Number} page - page number, starting at 1
+ * @param {number} page - page number, starting at 1
  * @returns {object} action
  */
 export const setPage = ( transactionType, page ) => ( {

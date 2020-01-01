@@ -85,7 +85,7 @@ class MasterbarItemNotifications extends Component {
 	 * determine what state the notifications indicator
 	 * should be in: on, off, or animate-to-on
 	 *
-	 * @param {Number} currentUnseenCount Number of reported unseen notifications
+	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
 	setNotesIndicator = currentUnseenCount => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );

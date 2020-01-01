@@ -342,8 +342,8 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
  * Gets the "order" property of the last shipping method the zone currently being edited.
  * All new methods of that zone must use a higher "order" value than this.
  * @param {object} state The whole Redux state tree
- * @param {Number} siteId Site ID to check
- * @return {Number} The "order" property of the last zone method, or 0 if the zone has no methods.
+ * @param {number} siteId Site ID to check
+ * @return {number} The "order" property of the last zone method, or 0 if the zone has no methods.
  */
 const getLastZoneMethodOrder = ( state, siteId ) => {
 	const serverZones = getAPIShippingZones( state );

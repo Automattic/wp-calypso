@@ -19,7 +19,7 @@ const getRawSettings = ( state, siteId ) => {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we need to notify the user that account creation or connection completed
  */
 export function getNotifyCompleted( state, siteId = getSelectedSiteId( state ) ) {
@@ -28,7 +28,7 @@ export function getNotifyCompleted( state, siteId = getSelectedSiteId( state ) )
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {string} Error to present to the user, if any
  */
 export function getError( state, siteId = getSelectedSiteId( state ) ) {
@@ -37,7 +37,7 @@ export function getError( state, siteId = getSelectedSiteId( state ) ) {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently attempting to create an account
  */
 export function getIsCreating( state, siteId = getSelectedSiteId( state ) ) {
@@ -46,7 +46,7 @@ export function getIsCreating( state, siteId = getSelectedSiteId( state ) ) {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently attempting to deauthorize the connected account for the site
  */
 export function getIsDeauthorizing( state, siteId = getSelectedSiteId( state ) ) {
@@ -55,7 +55,7 @@ export function getIsDeauthorizing( state, siteId = getSelectedSiteId( state ) )
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently attempting to complete the OAuth connection
  */
 export function getIsOAuthConnecting( state, siteId = getSelectedSiteId( state ) ) {
@@ -64,7 +64,7 @@ export function getIsOAuthConnecting( state, siteId = getSelectedSiteId( state )
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently requesting oauth initialization
  */
 export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state ) ) {
@@ -73,7 +73,7 @@ export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {string} URL to which to navigate to kick off the OAuth flow at Stripe
  */
 export function getOAuthURL( state, siteId = getSelectedSiteId( state ) ) {
@@ -82,7 +82,7 @@ export function getOAuthURL( state, siteId = getSelectedSiteId( state ) ) {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently requesting connect account details from the server
  */
 export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
@@ -91,7 +91,7 @@ export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The details of the connect account for the site, if any
  */
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {

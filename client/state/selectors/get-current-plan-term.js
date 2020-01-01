@@ -9,7 +9,7 @@ import { getSitePlan } from 'state/sites/selectors';
  * of constant TERM_MONTHLY defined in lib/plans/constants
  *
  * @param {object} state Current state
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {string} Human-readable interval type
  */
 export default function getTermFromCurrentPlan( state, siteId ) {

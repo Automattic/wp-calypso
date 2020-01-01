@@ -23,7 +23,7 @@ export const isFailed = status =>
  * Indicates whether or not an automated transfer is failed for a given site
  *
  * @param {object} state app state
- * @param {Number} siteId site of interest
+ * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */
 export const isAutomatedTransferFailed = compose( isFailed, getAutomatedTransferStatus );

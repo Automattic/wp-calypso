@@ -11,7 +11,7 @@ import { statusWaitingPayment, statusWaitingFulfillment } from 'woocommerce/lib/
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the count data is already loaded for this site
  */
 export const areCountsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -21,7 +21,7 @@ export const areCountsLoaded = ( state, siteId = getSelectedSiteId( state ) ) =>
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the count data is currently being retrieved from the server
  */
 export const areCountsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -31,8 +31,8 @@ export const areCountsLoading = ( state, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} The total number of products on this site
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} The total number of products on this site
  */
 export const getCountProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const items = get( state, `extensions.woocommerce.sites[${ siteId }].data.counts.items`, {} );
@@ -41,8 +41,8 @@ export const getCountProducts = ( state, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} The total number of not-finished orders (awaiting payment & fulfullment) on this site
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} The total number of not-finished orders (awaiting payment & fulfullment) on this site
  */
 export const getCountNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const items = get( state, `extensions.woocommerce.sites[${ siteId }].data.counts.items`, {} );
@@ -52,8 +52,8 @@ export const getCountNewOrders = ( state, siteId = getSelectedSiteId( state ) ) 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} The number of pending reviews on this site
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} The number of pending reviews on this site
  */
 export const getCountPendingReviews = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const items = get( state, `extensions.woocommerce.sites[${ siteId }].data.counts.items`, {} );

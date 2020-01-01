@@ -14,7 +14,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
 import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
 /** @type {Map<String, Number>} stores most-recent polling times */

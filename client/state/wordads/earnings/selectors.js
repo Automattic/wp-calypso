@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Returns earnings object for a siteId
  * @param   {object} state  Global State
- * @param   {Number} siteId Site Id
+ * @param   {number} siteId Site Id
  * @returns {object}        WordAds Error
  */
 export function getWordAdsEarnings( state, siteId ) {

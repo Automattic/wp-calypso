@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * False otherwise.
  *
  * @param  {object}  state       Global state tree
- * @param  {Number}  siteId      The ID of the site we're querying
+ * @param  {number}  siteId      The ID of the site we're querying
  * @return {Boolean}             Whether monitor settings are currently being updated for that site.
  */
 export default function isUpdatingSiteMonitorSettings( state, siteId ) {

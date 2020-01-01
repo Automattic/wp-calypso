@@ -258,7 +258,7 @@ UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails
 /**
  * Returns a single site connection.
  *
- * @param  {Number}  connectionId The connection ID to get.
+ * @param  {number}  connectionId The connection ID to get.
  * @return {Promise}              A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.getConnection = function( connectionId ) {

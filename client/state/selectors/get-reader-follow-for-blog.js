@@ -8,7 +8,7 @@ import { find } from 'lodash';
  * Find the first follow for a given blog ID
  *
  * @param  {object}  state  Global state tree
- * @param  {Number} blogId  The blogId to find
+ * @param  {number} blogId  The blogId to find
  * @return {object} The subscription
  */
 export default ( state, blogId ) =>

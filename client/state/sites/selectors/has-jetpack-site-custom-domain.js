@@ -12,7 +12,7 @@ import isJetpackSite from './is-jetpack-site';
  * or has an undefined value for `domain` or `unmapped_url`.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {?Boolean} Whether site has custom domain
  */
 export default function hasJetpackSiteCustomDomain( state, siteId ) {

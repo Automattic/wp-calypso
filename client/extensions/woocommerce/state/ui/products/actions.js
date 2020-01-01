@@ -21,7 +21,7 @@ export function editProduct( siteId, product, data ) {
 /**
  * Action Creator: Clear All Product Edits
  *
- * @param {Number} siteId The site for which to clear all product edits.
+ * @param {number} siteId The site for which to clear all product edits.
  * @return {object} action
  */
 export function clearProductEdits( siteId ) {

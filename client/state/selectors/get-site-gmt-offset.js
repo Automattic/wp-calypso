@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns the site's UTC offset as a number.
  *
  * @param  {object}  state - Global state tree
- * @param  {Number}  siteId - Site ID
+ * @param  {number}  siteId - Site ID
  * @return {?Number} site UTC offset
  */
 export default function getSiteGmtOffset( state, siteId ) {

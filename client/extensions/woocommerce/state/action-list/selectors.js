@@ -33,7 +33,7 @@ export function getCurrentStepIndex( actionList ) {
  * Gets the number of steps in total in the action list.
  *
  * @param {object} actionList The action list to check.
- * @return {Number} The count of steps in total.
+ * @return {number} The count of steps in total.
  */
 export function getTotalStepCount( actionList ) {
 	const { prevSteps, currentStep, nextSteps } = actionList;
@@ -49,7 +49,7 @@ export function getTotalStepCount( actionList ) {
  * Gets the number of steps in the action list that have not been completed.
  *
  * @param {object} actionList The action list to check.
- * @return {Number} The number of steps remaining.
+ * @return {number} The number of steps remaining.
  */
 export function getStepCountRemaining( actionList ) {
 	const { currentStep, nextSteps } = actionList;

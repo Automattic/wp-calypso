@@ -14,7 +14,7 @@ import {
  * Returns an action object used in signalling that a set of templates has been
  * received for a site.
  *
- * @param  {Number}   siteId    Site ID
+ * @param  {number}   siteId    Site ID
  * @param  {Object[]} templates Array of template objects
  * @return {object}             Action object
  */
@@ -30,7 +30,7 @@ export function receivePageTemplates( siteId, templates ) {
  * Returns a function which, when invoked, triggers a network request to fetch
  * page templates for a site.
  *
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {Function}        Action thunk
  */
 export function requestPageTemplates( siteId ) {

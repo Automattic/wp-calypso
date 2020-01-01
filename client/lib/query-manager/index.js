@@ -93,7 +93,7 @@ export default class QueryManager {
 	 * @param  {object} query Query object
 	 * @param  {object} itemA First item
 	 * @param  {object} itemB Second item
-	 * @return {Number}       0 if equal, less than 0 if itemA is first,
+	 * @return {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
 	static compare( query, itemA, itemB ) {
@@ -219,7 +219,7 @@ export default class QueryManager {
 	 * @param  {Boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {Boolean}        options.mergeQuery Add to existing query set
-	 * @param  {Number}         options.found      Total found items for query
+	 * @param  {number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */

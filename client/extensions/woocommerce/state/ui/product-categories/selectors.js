@@ -18,7 +18,7 @@ import { getBucket } from '../helpers';
  * Gets all edits for product categories.
  *
  * @param {object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {object} All product category edits in the form of { creates: [], updates: [] }
  */
 export function getAllProductCategoryEdits( state, siteId = getSelectedSiteId( state ) ) {
@@ -34,7 +34,7 @@ export function getAllProductCategoryEdits( state, siteId = getSelectedSiteId( s
  *
  * @param {object} state Global state tree
  * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {object} The current accumulated edits
  */
 export function getProductCategoryEdits( state, categoryId, siteId = getSelectedSiteId( state ) ) {
@@ -50,7 +50,7 @@ export function getProductCategoryEdits( state, categoryId, siteId = getSelected
  *
  * @param {object} state Global state tree
  * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {object} The category data merged between the fetched data and edits
  */
 export function getProductCategoryWithLocalEdits(
@@ -73,7 +73,7 @@ export function getProductCategoryWithLocalEdits(
  * all categories in the creates list as well.
  *
  * @param {object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {object} The category list merged between the fetched data, edits, and creates
  */
 export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedSiteId( state ) ) {
@@ -90,7 +90,7 @@ export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedS
  * Gets the product category last edited in the UI.
  *
  * @param {object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {object} The category data merged between the fetched data and edits
  */
 export function getCurrentlyEditingProductCategory( state, siteId = getSelectedSiteId( state ) ) {
@@ -103,7 +103,7 @@ export function getCurrentlyEditingProductCategory( state, siteId = getSelectedS
  * Gets the id of the currently editing product category.
  *
  * @param {object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number|Object} Id of the currently editing product category.
  */
 export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {

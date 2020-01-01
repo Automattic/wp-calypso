@@ -13,7 +13,7 @@ import treeSelect from '@automattic/tree-select';
  * otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether invites are being requested
  */
 export function isRequestingInvitesForSite( state, siteId ) {
@@ -25,7 +25,7 @@ export function isRequestingInvitesForSite( state, siteId ) {
  * `null` if there is no data for that site.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {?Array}        The list of pending invites for the given site
  */
 export function getPendingInvitesForSite( state, siteId ) {
@@ -41,7 +41,7 @@ export function getPendingInvitesForSite( state, siteId ) {
  * `null` if there is no data for that site.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {?Array}        The list of accepted invites for the given site
  */
 export function getAcceptedInvitesForSite( state, siteId ) {
@@ -56,7 +56,7 @@ export function getAcceptedInvitesForSite( state, siteId ) {
  * Returns the total number of invites found for the given site, or `null`.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?Number}        The number of invites found for the given site
  */
 export function getNumberOfInvitesFoundForSite( state, siteId ) {
@@ -68,7 +68,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * invite with the given ID exists for the site.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
  * @return {?object}          Invite object (if found)
  */
@@ -91,7 +91,7 @@ export const getInviteForSite = treeSelect(
  * invite ID, or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
@@ -104,7 +104,7 @@ export function isRequestingInviteResend( state, siteId, inviteId ) {
  * invite ID was successful, or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invite resend was a success
  */
@@ -117,7 +117,7 @@ export function didInviteResendSucceed( state, siteId, inviteId ) {
  * invite ID, or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
@@ -130,7 +130,7 @@ export function isDeletingInvite( state, siteId, inviteId ) {
  * deleted, or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
@@ -143,7 +143,7 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  * or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
 
  * @return {Boolean}          Whether an invite is being deleted
  */

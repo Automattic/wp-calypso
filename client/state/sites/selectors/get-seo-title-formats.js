@@ -16,7 +16,7 @@ import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
  * @see client/components/seo/meta-title-editor
  *
  * @param  {object} state  Global app state
- * @param  {Number} siteId Selected site
+ * @param  {number} siteId Selected site
  * @return {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
 export default compose( getSeoTitleFormatsForSite, getRawSite );

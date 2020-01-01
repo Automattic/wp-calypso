@@ -17,7 +17,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
  * Caution! It _does not_ retrieve the ID from a purchase.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?Number}        Purchase ID if known
  */
 export default function getCurrentPlanPurchaseId( state, siteId ) {

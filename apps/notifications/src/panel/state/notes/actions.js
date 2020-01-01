@@ -41,7 +41,7 @@ export const likeNote = ( noteId, isLiked ) => ( {
  *
  * @see approveNote
  *
- * @param {Number} noteId
+ * @param {number} noteId
  * @returns {object} action object
  */
 export const resetLocalApproval = noteId => ( {
@@ -59,7 +59,7 @@ export const resetLocalApproval = noteId => ( {
  *
  * @see likeNote
  *
- * @param {Number} noteId
+ * @param {number} noteId
  * @returns {object} action object
  */
 export const resetLocalLike = noteId => ( {

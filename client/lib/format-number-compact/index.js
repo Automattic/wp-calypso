@@ -11,7 +11,7 @@ import { THOUSANDS } from './thousands';
 
 /**
  * Formats a number to a short format given a language code
- * @param   {Number}     number              number to format
+ * @param   {number}     number              number to format
  * @param   {string}     code                language code e.g. 'es'
  * @returns {?string}                        A formatted string.
  */

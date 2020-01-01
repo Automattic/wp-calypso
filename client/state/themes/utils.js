@@ -140,7 +140,7 @@ export function getNormalizedThemesQuery( query ) {
  * Returns a serialized themes query
  *
  * @param  {object} query  Themes query
- * @param  {Number} siteId Optional site ID
+ * @param  {number} siteId Optional site ID
  * @return {string}        Serialized themes query
  */
 export function getSerializedThemesQuery( query = {}, siteId ) {
@@ -179,7 +179,7 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
  * Returns a serialized themes query, excluding any page parameter
  *
  * @param  {object} query  Themes query
- * @param  {Number} siteId Optional site ID
+ * @param  {number} siteId Optional site ID
  * @return {string}        Serialized themes query
  */
 export function getSerializedThemesQueryWithoutPage( query, siteId ) {

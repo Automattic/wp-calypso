@@ -15,7 +15,7 @@ import {
  * has been received.
  *
  * @param  {object} mediaStorage received
- * @param  {Number} siteId       Site ID
+ * @param  {number} siteId       Site ID
  * @return {object}              Action object
  */
 export function receiveMediaStorage( mediaStorage, siteId ) {
@@ -28,7 +28,7 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
 
 /**
  * Triggers a network request to find media storage limits for a given site
- * @param   {Number}   siteId Site ID
+ * @param   {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
 export function requestMediaStorage( siteId ) {

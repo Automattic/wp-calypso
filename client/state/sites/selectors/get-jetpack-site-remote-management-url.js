@@ -10,7 +10,7 @@ import isJetpackSite from './is-jetpack-site';
  * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {?string} the remote management url for the site
  */
 export default function getJetpackSiteRemoteManagementUrl( state, siteId ) {

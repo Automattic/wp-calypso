@@ -11,7 +11,7 @@ import { getSerializedProductCategoriesQuery } from './utils';
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} State tree local to product categories reducer
  */
 function getRawCategoryState( state, siteId = getSelectedSiteId( state ) ) {
@@ -21,7 +21,7 @@ function getRawCategoryState( state, siteId = getSelectedSiteId( state ) ) {
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether product categories have been successfully loaded from the server
  */
 export function areProductCategoriesLoaded(
@@ -39,7 +39,7 @@ export function areProductCategoriesLoaded(
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether product categories are currently being retrieved from the server
  */
 export function areProductCategoriesLoading(
@@ -58,7 +58,7 @@ export function areProductCategoriesLoading(
  * Returns true if currently requesting product categories for any query, or false otherwise.
  *
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean}       Returns true if currently requesting product categories for any query
  */
 export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteId( state ) ) {
@@ -70,8 +70,8 @@ export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteI
  * Gets product category fetched from API data.
  *
  * @param {object} state Global state tree
- * @param {Number} categoryId The id of the category sought
- * @param {Number} siteId wpcom site id
+ * @param {number} categoryId The id of the category sought
+ * @param {number} siteId wpcom site id
  * @return {Object|null} Product category if found, otherwise null.
  */
 export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
@@ -89,7 +89,7 @@ export function getProductCategory( state, categoryId, siteId = getSelectedSiteI
  *
  * @param {object} state Global state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories
  */
 export function getProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
@@ -112,7 +112,7 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
  * be all the products on the remote site, if they haven't all been requested).
  *
  * @param {object} state Global state tree
- * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories
  */
 export function getAllProductCategories( state, siteId = getSelectedSiteId( state ) ) {
@@ -127,7 +127,7 @@ export function getAllProductCategories( state, siteId = getSelectedSiteId( stat
  *
  * @param {object} state Global state tree
  * @param {string} search Search term to filter responses
- * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories for a search query
  */
 export function getAllProductCategoriesBySearch(
@@ -156,7 +156,7 @@ export function getAllProductCategoriesBySearch(
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number|Null} Total number of pages available for a query, or null if not loaded yet.
  */
 export function getProductCategoriesLastPage(
@@ -174,8 +174,8 @@ export function getProductCategoriesLastPage(
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of product categories available for a query, or 0 if not loaded yet.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} Total number of product categories available for a query, or 0 if not loaded yet.
  */
 export function getTotalProductCategories(
 	state,
@@ -193,8 +193,8 @@ export function getTotalProductCategories(
  * Get the label for a given product, recursively including parent names.
  *
  * @param {object} state Global state tree
- * @param {Number} categoryId ID of the starting category.
- * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @param {number} categoryId ID of the starting category.
+ * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {string} Label of given category, with all parents included
  */
 function getProductCategoryLabel( state, categoryId, siteId = getSelectedSiteId( state ) ) {

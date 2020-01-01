@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns true if site is a Automated Transfer site, false if not and null if unknown
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is an Automated Transfer site
  */
 export default function isSiteAutomatedTransfer( state, siteId ) {

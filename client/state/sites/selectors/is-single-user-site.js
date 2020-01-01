@@ -13,7 +13,7 @@ import getSite from './get-site';
  * user site, or null if the site is unknown.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is a single user site
  */
 export default function isSingleUserSite( state, siteId ) {

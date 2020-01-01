@@ -16,7 +16,7 @@ export const initialReceiptState = {
  * Returns a new state with the given attributes for the given receipt ID.
  *
  * @param {object} state current state
- * @param {Number} receiptId identifier of the site
+ * @param {number} receiptId identifier of the site
  * @param {object} attributes list of attributes and their values
  * @returns {object} the new state
  */

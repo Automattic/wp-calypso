@@ -10,7 +10,7 @@ import isJetpackModuleActive from './is-jetpack-module-active';
  * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {?Boolean} if the site can be managed from calypso
  */
 export default function canJetpackSiteManage( state, siteId ) {

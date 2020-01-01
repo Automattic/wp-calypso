@@ -13,7 +13,7 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
  * Returns the status of the last Jetpack site settings save request
  *
  * @param  {object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {object}  settings  The settings we're updating
  * @return {string}            The request status (pending, success or error)
  */

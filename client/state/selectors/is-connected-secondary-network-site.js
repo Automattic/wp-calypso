@@ -17,7 +17,7 @@ import isMainSiteOf from 'state/selectors/is-main-site-of';
  * With selector isJetpackSiteSecondaryNetworkSite the main site does not need to be connected
  *
  * @param  {object}    state     Global state tree
- * @param  {Number}    siteId    The ID of the site we're querying
+ * @param  {number}    siteId    The ID of the site we're querying
  * @return {Boolean}             Whether site with id equal to siteId is a connected secondary network site
  */
 export default createSelector( ( state, siteId ) => {

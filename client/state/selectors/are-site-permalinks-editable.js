@@ -8,7 +8,7 @@ import { getSiteOption } from 'state/sites/selectors';
  * Determines if site's permalinks are editable
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {Boolean} true if the site's permalinks are editable
  */
 export default function areSitePermalinksEditable( state, siteId ) {

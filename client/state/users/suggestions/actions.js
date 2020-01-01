@@ -14,7 +14,7 @@ import {
  * Returns an action object to be used in signalling that user suggestions for a site
  * have been received.
  *
- * @param  {Number} siteId  	Site ID
+ * @param  {number} siteId  	Site ID
  * @param  {object} suggestions User suggestions
  * @return {object}         	Action object
  */
@@ -30,7 +30,7 @@ export function receiveUserSuggestions( siteId, suggestions ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve user suggestions for a site.
  *
- * @param  {Number}   siteId  Site ID
+ * @param  {number}   siteId  Site ID
  * @return {Function}         Action thunk
  */
 export function requestUserSuggestions( siteId ) {

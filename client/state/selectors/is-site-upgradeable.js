@@ -12,7 +12,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * determined.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is upgradeable
  */
 export default function( state, siteId ) {

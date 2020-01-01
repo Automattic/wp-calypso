@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * false otherwise.
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {Boolean}         Whether user suggestions are being requested
  */
 export function isRequestingUserSuggestions( state, siteId ) {
@@ -20,7 +20,7 @@ export function isRequestingUserSuggestions( state, siteId ) {
  * Returns the user suggestions for a site.
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {Array}           Site user suggestions
  */
 export function getUserSuggestions( state, siteId ) {

@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns The name of the import engine used for importing the site, null if no import has occurred.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?string}       The import engine used for importing the site
  */
 export default function getSiteImportEngine( state, siteId ) {

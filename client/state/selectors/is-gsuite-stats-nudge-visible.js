@@ -18,7 +18,7 @@ import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-d
  *   - A domain is eligible to GSuite (i.e. has not G Suite and no email forwards already)
  *
  * @param  {object} state - Global state tree
- * @param  {Number} siteId - The Id of the site
+ * @param  {number} siteId - The Id of the site
  * @param  {Array}  domains - list of domain objects
  * @return {Boolean} true if the nudge should be visible
  */

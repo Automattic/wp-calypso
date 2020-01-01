@@ -24,7 +24,7 @@ import { errorNotice } from 'state/notices/actions';
  * date milliseconds will do for that purpose.
  *
  * @param   {string}           commentText     text of the comment
- * @param   {Number}           postId          post identifier
+ * @param   {number}           postId          post identifier
  * @param   {Number|undefined} parentCommentId parent comment identifier
  * @returns {object}                           comment placeholder
  */

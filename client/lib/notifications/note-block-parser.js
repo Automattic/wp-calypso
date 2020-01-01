@@ -11,11 +11,11 @@ import { compact, find, initial } from 'lodash';
  *   - it starts before the other
  *   - it has the same start but ends before the other
  *
- * @param {Number} aStart start index of first range
- * @param {Number} aEnd end index of first range
- * @param {Number} bStart start index of second range
- * @param {Number} bEnd end index of second range
- * @returns {Number} -1/0/1 indicating sort order
+ * @param {number} aStart start index of first range
+ * @param {number} aEnd end index of first range
+ * @param {number} bStart start index of second range
+ * @param {number} bEnd end index of second range
+ * @returns {number} -1/0/1 indicating sort order
  */
 const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] } ) => {
 	// some "invisible" tokens appear as zero-length ranges
@@ -48,16 +48,16 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  *
  * The initial "invisible token" ranges are not enclosed
  *
- * @param {Number} innerStart start of possibly-inner range
- * @param {Number} innerEnd end of possibly-inner range
+ * @param {number} innerStart start of possibly-inner range
+ * @param {number} innerEnd end of possibly-inner range
  * @returns {function({indices: Number[]}): Boolean} performs the check
  */
 const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	/**
 	 * Indicates if the given range encloses the first "inner" range
 	 *
-	 * @param {Number} outerStart start of possibly-outer range
-	 * @param {Number} outerEnd end of possibly-outer range
+	 * @param {number} outerStart start of possibly-outer range
+	 * @param {number} outerEnd end of possibly-outer range
 	 * @returns {Boolean} whether the "outer" range encloses the "inner" range
 	 */
 	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
@@ -232,7 +232,7 @@ const joinResults = ( [ reduced, remainder ] ) =>
  *
  * @param {Array} accum.0 previously parsed results
  * @param {string} accum.1 remaining text to parse
- * @param {Number} accum.2 current index into text string
+ * @param {number} accum.2 current index into text string
  * @param {object} nextRange next range from formatted block
  * @returns {Array} parsed results: text and nodes
  */

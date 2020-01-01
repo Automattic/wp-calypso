@@ -25,7 +25,7 @@ const wpcom = injectHandler( wpcomBase );
  * an object containing the vouchers for
  * a given site have been received.
  *
- * @param {Number} siteId - identifier of the site
+ * @param {number} siteId - identifier of the site
  * @param {object} vouchers - vouchers array gotten from WP REST-API response
  * @returns {object} the action object
  */
@@ -40,7 +40,7 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  *
  * Return SITE_VOUCHERS_REQUEST action object
  *
- * @param {Number} siteId - side identifier
+ * @param {number} siteId - side identifier
  * @return {object} siteId - action object
  */
 export const vouchersRequestAction = siteId => ( {
@@ -90,7 +90,7 @@ export const vouchersAssignRequestFailureAction = ( siteId, serviceType, error )
 /**
  * Fetches vouchers for the given site.
  *
- * @param {Number} siteId - identifier of the site
+ * @param {number} siteId - identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function requestSiteVouchers( siteId ) {
@@ -117,7 +117,7 @@ export function requestSiteVouchers( siteId ) {
 /**
  * Assign a voucher to the given site.
  *
- * @param {Number} siteId - identifier of the site
+ * @param {number} siteId - identifier of the site
  * @param {string} serviceType - service type supported: 'google-credits', etc.
  * @returns {Function} a promise that will resolve once fetching is completed
  */

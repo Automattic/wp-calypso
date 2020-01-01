@@ -2,7 +2,7 @@
  * Returns a user object by user ID.
  *
  *
- * @param {Number} userId User ID
+ * @param {number} userId User ID
  * @return {object}        User object
  */
 

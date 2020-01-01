@@ -6,7 +6,7 @@ import { getUserPurchases } from 'state/purchases/selectors';
 /**
  * Return the details of any premium themes the user has purchased
  * @param  {object}  state       global state
- * @param  {Number}  userId      the user id
+ * @param  {number}  userId      the user id
  * @return {Array} Details of any premium themes the user has purchased
  */
 export const getUserPurchasedPremiumThemes = ( state, userId ) => {

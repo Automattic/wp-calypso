@@ -12,8 +12,8 @@ import {
 /**
  * Returns an action object to indicate that a request has been made to fetch the feed.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
  * @return {Action}        Action object
  */
 export const requestFeed = ( siteId, zoneId ) => ( {
@@ -25,8 +25,8 @@ export const requestFeed = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that an error was received when fetching a feed.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
  * @return {Action}        Action object
  */
 export const requestFeedError = ( siteId, zoneId ) => ( {
@@ -38,8 +38,8 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that the feed should be saved.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} zoneId  Zone ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} zoneId  Zone ID
  * @param  {string} form    Form name
  * @param  {Array}  posts   Feed posts
  * @return {object}         Action object
@@ -55,8 +55,8 @@ export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 /**
  * Returns an action object to indicate that a feed should be updated.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} zoneId  Zone ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} zoneId  Zone ID
  * @param  {Array}  posts   Feed posts
  * @return {object}         Action object
  */

@@ -12,7 +12,7 @@ import isVipSite from 'state/selectors/is-vip-site';
  * Returns true if the current user is eligible for a domain to paid plan upsell for the site
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {?Boolean} True if the user can participate in the domain to paid plan upsell
  */
 const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {

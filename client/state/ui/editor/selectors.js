@@ -40,8 +40,8 @@ export function isEditorNewPost( state ) {
  * Returns the editor URL for duplicating a given site ID, post ID pair.
  *
  * @param  {object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} postId      Post ID
+ * @param  {number} siteId      Site ID
+ * @param  {number} postId      Post ID
  * @param  {string} type        Post type
  * @return {string}             Editor URL path
  */
@@ -58,8 +58,8 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
  * Returns the editor new post URL path for the given site ID and type.
  *
  * @param  {object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} type        Post type
+ * @param  {number} siteId      Site ID
+ * @param  {number} type        Post type
  * @return {string}             Editor URL path
  */
 export function getEditorNewPostPath( state, siteId, type = 'post' ) {
@@ -90,8 +90,8 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * Returns the editor URL path for the given site ID, post ID pair.
  *
  * @param  {object} state       Global state tree
- * @param  {Number} siteId      Site ID
- * @param  {Number} postId      Post ID
+ * @param  {number} siteId      Site ID
+ * @param  {number} postId      Post ID
  * @param  {string} defaultType Fallback post type if post not found
  * @return {string}             Editor URL path
  */
@@ -114,7 +114,7 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  * Returns whether the confirmation sidebar is enabled for the given siteId
  *
  * @param  {object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @return {Boolean}           Whether or not the sidebar is enabled
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {

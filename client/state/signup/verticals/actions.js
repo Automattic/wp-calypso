@@ -10,7 +10,7 @@ import 'state/data-layer/wpcom/signup/verticals';
  *
  * @param {string} search The search term for requesting the matching verticals.
  * @param {string} siteType Site type relevant for given search term
- * @param {Number} limit The maximum number of vertical items.
+ * @param {number} limit The maximum number of vertical items.
  *
  * @return {object} The action object.
  */

@@ -53,7 +53,7 @@ const timeSinceUserRegistration = state => {
 /**
  * Returns a selector that tests if the user is newer than a given time
  *
- * @param {Number} age Number of milliseconds
+ * @param {number} age Number of milliseconds
  * @return {Function} Selector function
  */
 export const isUserNewerThan = age => state => {
@@ -84,7 +84,7 @@ export const isNotNewUser = state => {
 /**
  * Returns a selector that tests if the user is older than a given time
  *
- * @param {Number} age Number of milliseconds
+ * @param {number} age Number of milliseconds
  * @return {Function} Selector function
  */
 export const isUserOlderThan = age => state => {

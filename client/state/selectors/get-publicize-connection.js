@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Return the connection object accoring to the given connectionId.
  *
  * @param {object} state Global state tree
- * @param {Number} connectionId Connection ID
+ * @param {number} connectionId Connection ID
  * @return {object} post publicize connection
  */
 export default function getPublicizeConnection( state, connectionId ) {

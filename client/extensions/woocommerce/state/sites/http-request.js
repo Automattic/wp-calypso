@@ -10,7 +10,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
  * The resulting data will be in the form of `{ data: { API data } }`
  * @param {string} method HTTP Request Method
  * @param {string} path The WC API path to make a request to (after /wc/v#)
- * @param {Number} siteId Site ID to make the request to
+ * @param {number} siteId Site ID to make the request to
  * @param {object} body HTTP Body for POST and PUT Requests
  * @param {object} action The original requesting action
  * @param {string} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
@@ -73,7 +73,7 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
  * The resulting data will be in the form of `{ data: { status: <code>, body: { API data }, headers: { API response headers } } }`
  * @param {string} method HTTP Request Method
  * @param {string} path The WC API path to make a request to (after /wc/v#)
- * @param {Number} siteId Site ID to make the request to
+ * @param {number} siteId Site ID to make the request to
  * @param {object} body HTTP Body for POST and PUT Requests
  * @param {object} action The original requesting action
  * @param {string} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
@@ -86,7 +86,7 @@ const _requestWithHeaders = ( method, path, siteId, body, action, namespace ) =>
 /**
  * Provides a wrapper over the http data-layer, made specifically for making requests to
  * WooCommerce endpoints without repeating things like /wc/v3.
- * @param {Number} siteId Site ID to make the request to
+ * @param {number} siteId Site ID to make the request to
  * @param {object} action The original requesting action
  * @param {string} namespace Namespace to be pre-pended to path. Defaults to /wc/v3
  * @return {object} An object with the properties "get", "post", "put" and "del", which are functions to

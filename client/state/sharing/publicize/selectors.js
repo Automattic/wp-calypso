@@ -16,7 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns an array of known connections for the given site ID.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {Array}         Site connections
  */
 export function getConnectionsBySiteId( state, siteId ) {
@@ -28,8 +28,8 @@ export function getConnectionsBySiteId( state, siteId ) {
  * that are available to the specified user ID.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} userId User ID to filter
+ * @param  {number} siteId Site ID
+ * @param  {number} userId User ID to filter
  * @return {Array}         User connections
  */
 export const getSiteUserConnections = createSelector(
@@ -48,8 +48,8 @@ export const getSiteUserConnections = createSelector(
  * that are available to the specified user ID.
  *
  * @param  {object} state   Global state tree
- * @param  {Number} siteId  Site ID
- * @param  {Number} userId  User ID to filter
+ * @param  {number} siteId  Site ID
+ * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
  * @return {Array}          User connections
  */
@@ -61,8 +61,8 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * Returns true when there are broken connections for the specified service.
  *
  * @param  {object} state   Global state tree
- * @param  {Number} siteId  Site ID
- * @param  {Number} userId  User ID to filter
+ * @param  {number} siteId  Site ID
+ * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
  * @return {Array}          Broken user connections.
  */
@@ -106,7 +106,7 @@ export function getRemovableConnections( state, service ) {
  * Returns true if connections have been fetched for the given site ID.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {Array}         Site connections
  */
 export function hasFetchedConnections( state, siteId ) {
@@ -117,7 +117,7 @@ export function hasFetchedConnections( state, siteId ) {
  * Returns true if connections are currently fetching for the given site ID.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {Array}         Site connections
  */
 export function isFetchingConnections( state, siteId ) {
@@ -128,7 +128,7 @@ export function isFetchingConnections( state, siteId ) {
  * Returns true if a connection is currently fetching for the given ID.
  *
  * @param  {object}  state        Global state tree
- * @param  {Number}  connectionId Connection ID
+ * @param  {number}  connectionId Connection ID
  * @return {Boolean}              Whether the connection is being fetched.
  */
 export function isFetchingConnection( state, connectionId ) {

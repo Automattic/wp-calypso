@@ -11,7 +11,7 @@ import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 /**
  * Returns the editor of the selected site
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @return {string} "gutenberg-iframe", "gutenberg-redirect", "gutenberg-redirect-and-style" or "classic", or null if we
  * have no data yet
  */

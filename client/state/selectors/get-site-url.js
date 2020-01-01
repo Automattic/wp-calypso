@@ -13,7 +13,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * Returns a site's URL or null if the site doesn't exist or the URL is unknown
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?string}        URL of site if known
  */
 export default function getSiteUrl( state, siteId ) {

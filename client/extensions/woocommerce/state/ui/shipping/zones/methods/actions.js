@@ -26,7 +26,7 @@ import { updateField } from 'woocommerce/woocommerce-services/state/service-sett
 
 /**
  * Adds a new shipping method to the shipping zone currently being edited.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} methodType Type of shipping method to add. For example, "free_shipping", "local_pickup".
  * @param {string} title Title of the new method.
  * @return {object} Action object.
@@ -37,7 +37,7 @@ export const addMethodToShippingZone = ( siteId, methodType, title ) => {
 
 /**
  * Opens the shipping method for editing
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {Number|Object} methodId ID of the shipping method to open.
  * @return {object} Action object.
  */
@@ -47,7 +47,7 @@ export const openShippingZoneMethod = ( siteId, methodId ) => {
 
 /**
  * Closes the currently edited shipping method and discards the changes
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const cancelShippingZoneMethod = siteId => {
@@ -56,7 +56,7 @@ export const cancelShippingZoneMethod = siteId => {
 
 /**
  * Closes the currently edited shipping method and saves the changes
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @return {object} Action object.
  */
 export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
@@ -85,7 +85,7 @@ export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
 
 /**
  * Removes the given shipping method from the shipping zone currently being edited.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to delete.
  * @return {object} Action object.
  */
@@ -96,7 +96,7 @@ export const removeMethodFromShippingZone = ( siteId, methodId ) => {
 /**
  * Changes the opened shipping method into a shipping method of a new type. Note that, on save, this will remove the
  * shipping method from the shipping zone, and will create a new one of the given type.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} methodType New shipping method type to switch to. For example, "free_shipping", "local_pickup".
  * @param {string} title New method title.
  * @return {object} Action object.
@@ -107,7 +107,7 @@ export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
 
 /**
  * Changes the title of the opened shipping method.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {string} title New user-facing title for the shipping method.
  * @return {object} Action object.
  */
@@ -117,7 +117,7 @@ export const changeShippingZoneMethodTitle = ( siteId, title ) => {
 
 /**
  * Enables or disables the opened shipping zone method. Does not change the state of the actual method until saved
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {object} Action object.
  */
@@ -127,7 +127,7 @@ export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
 
 /**
  * Enables or disables the given shipping zone method.
- * @param {Number} siteId Site ID.
+ * @param {number} siteId Site ID.
  * @param {Number|Object} methodId ID of the shipping method.
  * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {object} Action object.

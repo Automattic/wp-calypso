@@ -13,8 +13,8 @@ import {
 /**
  * Action Creator: Fetch a product's variations.
  *
- * @param {Number} siteId The id of the site in which the variation's product exists.
- * @param {Number} productId The id of the product.
+ * @param {number} siteId The id of the site in which the variation's product exists.
+ * @param {number} productId The id of the product.
  * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {Object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
@@ -32,7 +32,7 @@ export function fetchProductVariations( siteId, productId, successAction, failur
 /**
  * Action Creator: Create a new product variation.
  *
- * @param {Number} siteId The id of the site in which the variation's product exists.
+ * @param {number} siteId The id of the site in which the variation's product exists.
  * @param {Number|Object} productId The id of the product for which this variation will be created
  *                                  (could be a placeholder id if product is not yet created).
  * @param {object} variation The complete variation object to be created.
@@ -60,8 +60,8 @@ export function createProductVariation(
 /**
  * Action Creator: Update an existing product variation.
  *
- * @param {Number} siteId The id of the site in which the variation's product exists.
- * @param {Number} productId The id of the product for which this variation.
+ * @param {number} siteId The id of the site in which the variation's product exists.
+ * @param {number} productId The id of the product for which this variation.
  * @param {object} variation The variation data to be updated (must include id).
  * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {Object|Function} [failureAction] Action with extra props { error }
@@ -87,8 +87,8 @@ export function updateProductVariation(
 /**
  * Action Creator: Delete an existing product variation.
  *
- * @param {Number} siteId The id of the site in which the variation's product exists.
- * @param {Number} productId The id of the product to which this variation belongs.
+ * @param {number} siteId The id of the site in which the variation's product exists.
+ * @param {number} productId The id of the product to which this variation belongs.
  * @param {object} variationId The id of the variation to be deleted.
  * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {Object|Function} [failureAction] Action with extra props { error }
@@ -116,8 +116,8 @@ export function deleteProductVariation(
  *
  * This action prompts the state to update itself after a variation has been updated.
  *
- * @param {Number} siteId The id of the site in which the variation's product exists.
- * @param {Number} productId The id of the product to which this variation belongs.
+ * @param {number} siteId The id of the site in which the variation's product exists.
+ * @param {number} productId The id of the product to which this variation belongs.
  * @param {object} data The complete variation object with which to update the state.
  * @param {object} originatingAction The action which was the source of this update.
  * @return {object} Action object

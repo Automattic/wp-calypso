@@ -42,7 +42,7 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
  * Returns the updated page state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {Number}        Updated state
+ * @return {number}        Updated state
  */
 export const page = ( state = 1, action ) => {
 	switch ( action.type ) {

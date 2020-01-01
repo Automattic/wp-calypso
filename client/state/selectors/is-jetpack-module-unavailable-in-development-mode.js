@@ -15,7 +15,7 @@ import getJetpackModulesRequiringConnection from './get-jetpack-modules-requirin
  * Returns null if the site modules are not known yet.
  *
  * @param  {object}  state       Global state tree
- * @param  {Number}  siteId      The ID of the site we're querying
+ * @param  {number}  siteId      The ID of the site we're querying
  * @param  {string}  moduleSlug  Module slug
  * @return {?Boolean}            Whether the module is unavailable in dev mode.
  */

@@ -26,9 +26,9 @@ import 'state/data-layer/wpcom/sites/media';
  * Returns an action object used in signalling that media item(s) for the site
  * have been received.
  *
- * @param  {Number}         siteId Site ID
+ * @param  {number}         siteId Site ID
  * @param  {(Array|Object)} media  Media item(s) received
- * @param  {Number}         found  Number of found media
+ * @param  {number}         found  Number of found media
  * @param  {object}         query  Query Object
  * @return {object}                Action object
  */
@@ -46,7 +46,7 @@ export function receiveMedia( siteId, media, found, query ) {
  * Returns an action object used in signalling that media item(s) for the site
  * have been requested.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} query  Query object
  * @return {object}        Action object
  */
@@ -62,7 +62,7 @@ export function requestMedia( siteId, query ) {
  * Returns an action object used in signalling that media item(s) for the site
  * are being requested.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} query  Query object
  * @return {object}        Action object
  */
@@ -78,7 +78,7 @@ export function requestingMedia( siteId, query ) {
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} query  Query object
  * @return {object}        Action object
  */
@@ -94,7 +94,7 @@ export function failMediaRequest( siteId, query ) {
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {object} query  Query object
  * @return {object}        Action object
  */
@@ -110,8 +110,8 @@ export function successMediaRequest( siteId, query ) {
  * Returns an action object used in signalling that a media item for the site
  * have been requested.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} mediaId Media ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} mediaId Media ID
  * @return {object}         Action object
  */
 export function requestMediaItem( siteId, mediaId ) {
@@ -126,8 +126,8 @@ export function requestMediaItem( siteId, mediaId ) {
  * Returns an action object used in signalling that a media item for the site
  * are being requested.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} mediaId Media ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} mediaId Media ID
  * @return {object}         Action object
  */
 export function requestingMediaItem( siteId, mediaId ) {
@@ -142,8 +142,8 @@ export function requestingMediaItem( siteId, mediaId ) {
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} mediaId Media ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} mediaId Media ID
  * @return {object}         Action object
  */
 export function failMediaItemRequest( siteId, mediaId ) {
@@ -158,8 +158,8 @@ export function failMediaItemRequest( siteId, mediaId ) {
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} mediaId Media ID
+ * @param  {number} siteId  Site ID
+ * @param  {number} mediaId Media ID
  * @return {object}         Action object
  */
 export function successMediaItemRequest( siteId, mediaId ) {
@@ -178,7 +178,7 @@ export function successMediaItemRequest( siteId, mediaId ) {
  * to ignore media IDs for "transient" items (upload in progress) by validating
  * numeric ID.
  *
- * @param  {Number}         siteId   Site ID
+ * @param  {number}         siteId   Site ID
  * @param  {(Array|Number)} mediaIds ID(s) of media to be deleted
  * @return {object}                  Action object
  */

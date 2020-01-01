@@ -13,7 +13,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * Returns a specific setting for the specified site ID
  *
  * @param  {object} state   Global state tree
- * @param  {Number} siteId  Site ID
+ * @param  {number} siteId  Site ID
  * @param  {string} setting Setting name
  * @return {object}         Site setting
  */

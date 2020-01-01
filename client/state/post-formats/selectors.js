@@ -3,7 +3,7 @@
  * false otherwise.
  *
  *
- * @param {Number}  siteId Site ID
+ * @param {number}  siteId Site ID
  * @return {Boolean}        Whether post formats are being requested
  */
 
@@ -15,7 +15,7 @@ export function isRequestingPostFormats( state, siteId ) {
  * Returns the supported post formats for a site.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?object}        Site post formats
  */
 export function getPostFormats( state, siteId ) {

@@ -31,7 +31,7 @@ export function productContainsString( product, textString ) {
  * Check if a string is found in a product name or attribute option
  *
  * @param {Array} value An array of existing values
- * @param {Number} productId The product ID to search for
+ * @param {number} productId The product ID to search for
  * @return {Boolean} Whether the product ID exists in the list of values
  */
 export function isProductSelected( value = [], productId ) {

@@ -59,7 +59,7 @@ const orderShippingZones = zones => {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} The list of shipping zones that the UI should show. That will be the list of zones returned by
  * the wc-api with the edits "overlayed" on top of them.
  */
@@ -100,7 +100,7 @@ export const getShippingZones = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|null} The shipping zone that's currently being edited, with all the edits
  * (including the non-committed changes). If no zone is being edited, this will return null.
  */
@@ -163,8 +163,8 @@ const generateZoneNameFromLocations = locations => {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} zoneId ID of the shipping zone.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} zoneId ID of the shipping zone.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {string} The auto-generated name for the zone, based in its locations. It doesn't include local edits.
  */
 export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
@@ -174,7 +174,7 @@ export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( sta
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {string} The auto-generated name for the zone currently being edited, based in its locations. It includes local edits.
  */
 export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -184,7 +184,7 @@ export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSit
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} Whether the user is currently editing a shipping zone.
  */
 export const isCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {

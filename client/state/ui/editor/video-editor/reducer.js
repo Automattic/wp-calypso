@@ -22,9 +22,9 @@ export const url = ( state = null, { type, posterUrl } ) =>
 /**
  * Tracks poster upload progress state.
  *
- * @param  {Number} state Current upload progress of the poster
+ * @param  {number} state Current upload progress of the poster
  * @param  {object} action Action object
- * @return {Number} Updated upload progress of the poster
+ * @return {number} Updated upload progress of the poster
  */
 export const uploadProgress = ( state = null, { type, percentage } ) => {
 	if ( VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS === type ) {

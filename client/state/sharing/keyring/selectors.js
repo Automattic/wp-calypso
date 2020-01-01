@@ -23,7 +23,7 @@ export function getKeyringConnections( state ) {
  * Returns a keyring connection object with a specified ID.
  *
  * @param  {object} state               Global state tree
- * @param  {Number} keyringConnectionId Keyring connection ID.
+ * @param  {number} keyringConnectionId Keyring connection ID.
  * @return {?object}                    Keyring connections, if known.
  */
 export function getKeyringConnectionById( state, keyringConnectionId ) {
@@ -59,7 +59,7 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
  * Returns an array of keyring connection objects for a specific user.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} userId User ID.
+ * @param  {number} userId User ID.
  * @return {Array}         Site connections, if known.
  */
 export function getUserConnections( state, userId ) {

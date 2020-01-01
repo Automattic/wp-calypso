@@ -177,7 +177,7 @@ export function subscribeIsDesktop( listener ) {
 /**
  * Returns the current window width.
  * Avoid using this method, as it triggers a layout recalc.
- * @returns {Number} The current window width, in pixels.
+ * @returns {number} The current window width, in pixels.
  */
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;

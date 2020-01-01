@@ -9,7 +9,7 @@ import getSite from './get-site';
  * Returns true if current user can see and use WordAds option in menu
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is previewable
  */
 export default function canCurrentUserUseAds( state, siteId = null ) {

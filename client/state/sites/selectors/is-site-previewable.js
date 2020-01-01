@@ -11,7 +11,7 @@ import getSiteOption from './get-site-option';
  * whether it is safe to embed iframe previews for the site.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is previewable
  */
 export default function isSitePreviewable( state, siteId ) {

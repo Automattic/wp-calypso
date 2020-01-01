@@ -12,9 +12,9 @@ import 'state/data-layer/wpcom/sites/stats/views/posts';
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve views for a post or posts.
  *
- * @param  {Number}   siteId   Site ID
+ * @param  {number}   siteId   Site ID
  * @param  {string}   postIds  Comma separated list of Post IDs
- * @param  {Number}   num      Number of days to include in the query
+ * @param  {number}   num      Number of days to include in the query
  * @param  {string}   date     The most recent day to include in results (YYYY-MM-DD format)
  * @return {object}  Action object
  */
@@ -32,7 +32,7 @@ export function requestRecentPostViews( siteId, postIds, num, date ) {
  * Returns an action object to be used in signalling that a post views object has
  * been received.
  *
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @return {object}  Action object
  */
 export function receiveRecentPostViews( siteId, { date, posts } ) {

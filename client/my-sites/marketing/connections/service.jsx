@@ -141,7 +141,7 @@ export class SharingService extends Component {
 	/**
 	 * Handle external access provided by the user.
 	 *
-	 * @param {Number} keyringConnectionId Keyring connection ID.
+	 * @param {number} keyringConnectionId Keyring connection ID.
 	 */
 	externalAccessProvided = keyringConnectionId => {}; // eslint-disable-line no-unused-vars
 
@@ -149,8 +149,8 @@ export class SharingService extends Component {
 	 * Establishes a new connection.
 	 *
 	 * @param {object} service             Service to connect to.
-	 * @param {Number} keyringConnectionId Keyring conneciton ID.
-	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
+	 * @param {number} keyringConnectionId Keyring conneciton ID.
+	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	addConnection = ( service, keyringConnectionId, externalUserId = 0 ) => {
 		this.setState( { isConnecting: true } );
@@ -214,8 +214,8 @@ export class SharingService extends Component {
 	/**
 	 * Create or update the connection
 	 *
-	 * @param {Number} keyringConnectionId Keyring conneciton ID.
-	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
+	 * @param {number} keyringConnectionId Keyring conneciton ID.
+	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
 		const existingConnection = find( this.props.siteUserConnections, {

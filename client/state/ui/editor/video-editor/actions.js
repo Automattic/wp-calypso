@@ -16,7 +16,7 @@ import 'state/data-layer/wpcom/videos/poster';
  *
  * @param {string} videoId  ID of the video
  * @param {object} params  Poster data
- * @param {Number} [params.atTime]  Number of seconds into the video at which to get the poster
+ * @param {number} [params.atTime]  Number of seconds into the video at which to get the poster
  * @param {object} [params.file]  An image to attach to the video
  * @return {object} Action object
  */

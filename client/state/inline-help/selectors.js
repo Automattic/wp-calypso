@@ -36,7 +36,7 @@ export function getSelectedResultIndex( state ) {
  * otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  searchQuery Search query
+ * @param  {number}  searchQuery Search query
  * @return {Boolean}        Whether search results are being requested
  */
 export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery ) {
@@ -49,7 +49,7 @@ export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery 
  * if there are no results for that query.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  searchQuery Search query
+ * @param  {number}  searchQuery Search query
  * @return {?Array}         List of results for a given search query
  */
 export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {

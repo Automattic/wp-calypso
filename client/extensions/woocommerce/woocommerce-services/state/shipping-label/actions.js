@@ -231,8 +231,8 @@ export const clearAvailableRates = ( orderId, siteId ) => {
 
 /**
  * Checks the form for errors, and if there are none, fetches the label rates. Otherwise expands the first erroneous step
- * @param {Number} orderId order ID
- * @param {Number} siteId site ID
+ * @param {number} orderId order ID
+ * @param {number} siteId site ID
  * @param {Function} dispatch dispatch function
  * @param {Function} getState getState function
  */

@@ -7,8 +7,8 @@ import getSitePlan from './get-site-plan';
  * Returns true if site is currently subscribed to supplied plan and false otherwise.
  *
  * @param  {object}   state         Global state tree
- * @param  {Number}   siteId        Site ID
- * @param  {Number}   planProductId Plan product_id
+ * @param  {number}   siteId        Site ID
+ * @param  {number}   planProductId Plan product_id
  * @return {?Boolean}               Whether site's plan matches supplied plan
  */
 export default function isCurrentSitePlan( state, siteId, planProductId ) {

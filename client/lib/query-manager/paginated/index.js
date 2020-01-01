@@ -114,7 +114,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {Boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {Boolean}        options.mergeQuery Add to existing query set
-	 * @param  {Number}         options.found      Total found items for query
+	 * @param  {number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */

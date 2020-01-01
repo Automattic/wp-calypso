@@ -12,7 +12,7 @@ function getSettingsState( state ) {
  * Returns true if we are requesting settings for the specified site ID, false otherwise.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean} Whether settings are being requested
  */
 export function isRequestingSettings( state, siteId ) {
@@ -23,7 +23,7 @@ export function isRequestingSettings( state, siteId ) {
  * Returns true if we are restoring settings for the specified site ID, false otherwise.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean} Whether settings are being restored
  */
 export function isRestoringSettings( state, siteId ) {
@@ -34,7 +34,7 @@ export function isRestoringSettings( state, siteId ) {
  * Returns true if we are saving settings for the specified site ID, false otherwise.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean} Whether settings are being saved
  */
 export function isSavingSettings( state, siteId ) {
@@ -49,7 +49,7 @@ export function isSavingSettings( state, siteId ) {
  * Returns true if the settings save request was successful.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean} Whether settings were saved successfully
  */
 export function isSettingsSaveSuccessful( state, siteId ) {
@@ -60,7 +60,7 @@ export function isSettingsSaveSuccessful( state, siteId ) {
  * Returns the settings for the specified site ID.
  *
  * @param  {object} state Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {object} Settings
  */
 export function getSettings( state, siteId ) {
@@ -71,7 +71,7 @@ export function getSettings( state, siteId ) {
  * Returns the status of the last settings save request.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {string}  Save request status (pending, success or error)
  */
 export function getSettingsSaveStatus( state, siteId ) {

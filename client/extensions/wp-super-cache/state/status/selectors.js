@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns true if we are requesting status for the specified site ID, false otherwise.
  *
  * @param  {object}  state Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean} Whether status are being requested
  */
 export function isRequestingStatus( state, siteId ) {
@@ -19,7 +19,7 @@ export function isRequestingStatus( state, siteId ) {
  * Returns the status for the specified site ID.
  *
  * @param  {object} state Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {object} Status
  */
 export function getStatus( state, siteId ) {

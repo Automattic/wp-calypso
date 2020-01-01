@@ -2,7 +2,7 @@
  * Returns the known post types for a site.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?object}        Site post types
  */
 export function getPostTypes( state, siteId ) {
@@ -13,7 +13,7 @@ export function getPostTypes( state, siteId ) {
  * Returns the known post type for a site, given the type slug.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @param  {string}  slug   Post type slug
  * @return {?object}        Post type
  */
@@ -32,7 +32,7 @@ export function getPostType( state, siteId, slug ) {
  * support cannot be determined.
  *
  * @param  {object}   state   Global state tree
- * @param  {Number}   siteId  Site ID
+ * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
  * @param  {string}   feature Feature slug
  * @return {?Boolean}         Whether post type supports feature
@@ -73,7 +73,7 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * not currently known).
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @param  {string}   slug   Post type slug
  * @return {?Boolean}        Whether site supports post type
  */

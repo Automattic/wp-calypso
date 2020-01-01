@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * @param {object} state Whole Redux state tree
  * @param {string} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term have been successfully loaded from the server.
  */
 export const isCustomerSearchLoaded = (
@@ -31,7 +31,7 @@ export const isCustomerSearchLoaded = (
 /**
  * @param {object} state Whole Redux state tree
  * @param {string} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term are currently being retrieved from the server.
  */
 export const isCustomerSearchLoading = (
@@ -50,7 +50,7 @@ export const isCustomerSearchLoading = (
 /**
  * @param {object} state Whole Redux state tree
  * @param {string} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array} List of customer results matching term
  */
 export const getCustomerSearchResults = (
@@ -73,8 +73,8 @@ export const getCustomerSearchResults = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} customerId Customer ID to get
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} customerId Customer ID to get
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|False} a customer object as stored in the API, false if not found
  */
 export const getCustomer = ( state, customerId, siteId = getSelectedSiteId( state ) ) => {

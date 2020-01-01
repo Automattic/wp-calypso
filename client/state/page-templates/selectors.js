@@ -3,7 +3,7 @@
  * the specified site, or false otherwise.
  *
  *
- * @param {Number}  siteId Site ID
+ * @param {number}  siteId Site ID
  * @return {Boolean}        Whether a request is in progress
  */
 
@@ -16,7 +16,7 @@ export function isRequestingPageTemplates( state, siteId ) {
  * if the page templates are not known for the site.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @return {?Array}        Page template objects, if known
  */
 export function getPageTemplates( state, siteId ) {

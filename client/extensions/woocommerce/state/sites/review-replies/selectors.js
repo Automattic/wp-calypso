@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [reviewId] Review to get data for.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array|false} Array of replies, or false if no list could be loaded.
  */
 export const getReviewReplies = ( state, reviewId, siteId = getSelectedSiteId( state ) ) => {
@@ -27,7 +27,7 @@ export const getReviewReplies = ( state, reviewId, siteId = getSelectedSiteId( s
  * @param {object} state Whole Redux state tree
  * @param {object} [reviewId] Review to fetch replies for.
  * @param {object} [replyId] Reply ID to get data for.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object|false} Reply object, or false if no reply could be loaded.
  */
 export const getReviewReply = ( state, reviewId, replyId, siteId = getSelectedSiteId( state ) ) => {

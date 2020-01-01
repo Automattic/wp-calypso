@@ -13,8 +13,8 @@ import getSiteComments from 'state/selectors/get-site-comments';
  * Returns a comment for the specified site and comment ID.
  *
  * @param {object} state Redux state
- * @param {Number} siteId Site identifier
- * @param {Number} commentId Comment identifier
+ * @param {number} siteId Site identifier
+ * @param {number} commentId Comment identifier
  * @returns {object} The requested comment
  */
 export const getSiteComment = ( state, siteId, commentId ) => {

@@ -60,8 +60,8 @@ export const counts = ( () => {
 	/**
 	 * Returns a serialized key to be used in tracking post status properties
 	 *
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
 	 * @return {string}        Serialized key
 	 */
 	function getPostStatusKey( siteId, postId ) {
@@ -73,8 +73,8 @@ export const counts = ( () => {
 	 * status.
 	 *
 	 * @param  {object} state  Current state
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
 	 * @param  {string} status Post status
 	 * @return {object}        Updated state
 	 */

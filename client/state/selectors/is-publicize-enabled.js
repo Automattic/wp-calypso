@@ -9,7 +9,7 @@ import { postTypeSupports } from 'state/post-types/selectors';
  * Returns true if Publicize is enabled for the post type and the given site.
  *
  * @param {object} state 	Global state tree
- * @param {Number} siteId 	Site ID
+ * @param {number} siteId 	Site ID
  * @param {string} postType Post type slug
  *
  * @return {Boolean} True when enabled

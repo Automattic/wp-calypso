@@ -25,7 +25,7 @@ import { getTerm, getTerms } from './selectors';
  * Returns an action thunk, dispatching progress of a request to add a new term
  * the site and taxonomy.
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {object} term     Object of new term attributes
  * @return {object}          Action object
@@ -63,9 +63,9 @@ export function addTerm( siteId, taxonomy, term ) {
 /**
  * Returns an action thunk, editing a term and dispatching the updated term to the store
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
- * @param  {Number} termId   term Id
+ * @param  {number} termId   term Id
  * @param  {string} termSlug term Slug
  * @param  {object} term     Object of new term attributes
  * @return {object}          Action object
@@ -121,7 +121,7 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
  * Queries wp/v2 /taxonomies for a custom taxonomies rest_base. The rest_base of a taxonomy slug may not match its slug
  * For example tags have a taxonomy slug of post_tag, but are modifiable at /wp/v2/tags/
  *
- * @param   {Number} siteId   Site ID
+ * @param   {number} siteId   Site ID
  * @param   {string} taxonomy Taxonomy Slug
  * @returns {Promise}         A promise that resolves to a wp/v2 taxonomy rest base string.
  */
@@ -207,9 +207,9 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 /**
  * Returns an action thunk, deleting a term and removing it from the store
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
- * @param  {Number} termId   term Id
+ * @param  {number} termId   term Id
  * @return {object}          Action object
  */
 export function deleteTerm( siteId, taxonomy, termId ) {
@@ -239,7 +239,7 @@ export function deleteTerm( siteId, taxonomy, termId ) {
 /**
  * Returns an action object signalling that a term has been received
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {object} term     Term object
  * @return {object}          Action object
@@ -252,11 +252,11 @@ export function receiveTerm( siteId, taxonomy, term ) {
  * Returns an action object signalling that terms have been received for
  * the site and taxonomy.
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {Array}  terms    An array of term objects
  * @param  {object} query    Query Options
- * @param  {Number} found    Total terms found for query
+ * @param  {number} found    Total terms found for query
  * @return {object}          Action object
  */
 export function receiveTerms( siteId, taxonomy, terms, query, found ) {
@@ -273,9 +273,9 @@ export function receiveTerms( siteId, taxonomy, terms, query, found ) {
 /**
  * Returns an action object signalling that a term is to be removed
  *
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
- * @param  {Number} termId   Term ID
+ * @param  {number} termId   Term ID
  * @return {object}          Action object
  */
 export function removeTerm( siteId, taxonomy, termId ) {
@@ -291,7 +291,7 @@ export function removeTerm( siteId, taxonomy, termId ) {
  * Returns an action thunk, dispatching progress of a request to retrieve terms
  * for a site and query options.
  *
- * @param  {Number}   siteId   Site ID
+ * @param  {number}   siteId   Site ID
  * @param  {string}   taxonomy Taxonomy Slug
  * @param  {object}   query    Query Options
  * @return {Function}        Action thunk

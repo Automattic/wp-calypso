@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * See also: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
  *
  * @param  {object}  state - Global state tree
- * @param  {Number}  siteId - Site ID
+ * @param  {number}  siteId - Site ID
  * @return {?string} site setting timezone
  */
 export default function getSiteTimezoneValue( state, siteId ) {

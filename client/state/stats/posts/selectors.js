@@ -9,8 +9,8 @@ import { get } from 'lodash';
  * post ID and stat key, or * false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post Id
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
  * @param  {object}  fields Stat fields
  * @return {Boolean}        Whether post stat is being requested
  */
@@ -23,8 +23,8 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * post ID and stat key
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post Id
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
  * @param  {string}  stat   Stat Key
  * @return {*}              Stat value
  */
@@ -36,8 +36,8 @@ export function getPostStat( state, siteId, postId, stat ) {
  * Returns the stats for the for the specified site ID, postId
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post Id
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
  * @return {object}         Stats
  */
 export function getPostStats( state, siteId, postId ) {

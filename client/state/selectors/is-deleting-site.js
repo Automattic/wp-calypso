@@ -3,7 +3,7 @@
  * false otherwise.
  *
  *
- * @param {Number}  siteId Site ID
+ * @param {number}  siteId Site ID
  * @return {Boolean}        Whether deletion is in progress
  */
 

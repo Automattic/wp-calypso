@@ -1,7 +1,7 @@
 /**
  * Returns media storage information for a given site.
  *
- * @param {Number}  siteId Site ID
+ * @param {number}  siteId Site ID
  * @returns {object}         Media Storage Information
  */
 
@@ -12,7 +12,7 @@ export function getMediaStorage( state, siteId ) {
 /**
  * Returns true, if we're currently requesting media storage limits.
  * @param   {object}  state  Global state tree
- * @param   {Number}  siteId Site ID
+ * @param   {number}  siteId Site ID
  * @returns {Boolean}        If media storage is requested
  */
 export function isRequestingMediaStorage( state, siteId ) {
@@ -22,7 +22,7 @@ export function isRequestingMediaStorage( state, siteId ) {
 /**
  * Returns true, if a site is over current plan limits
  * @param   {object}  state  Global state tree
- * @param   {Number}  siteId Site ID
+ * @param   {number}  siteId Site ID
  * @returns {?Boolean}       True if site is over storage limits, and null if
  *                           mediaStorage is unavailable.
  */

@@ -10,7 +10,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * If the site is missing returns null.
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is VIP
  */
 export default function isVipSite( state, siteId ) {

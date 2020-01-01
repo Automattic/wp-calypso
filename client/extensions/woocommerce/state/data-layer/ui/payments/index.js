@@ -29,7 +29,7 @@ import { getPaymentMethodsEdits } from 'woocommerce/state/ui/payments/methods/se
 /**
  * Creates a list of actions required to save the currency settings.
  * @param {object} state - Redux state
- * @param {Number} siteId - site ID
+ * @param {number} siteId - site ID
  * @returns {Array} - actions required to save the currency, or an empty array
  */
 const getSaveCurrencySteps = ( state, siteId ) => {
@@ -67,7 +67,7 @@ const getSaveCurrencySteps = ( state, siteId ) => {
 /**
  * Creates a list of actions required to save each payment method. Checks if the methods have changed before saving them
  * @param {object} state - Redux state
- * @param {Number} siteId - site ID
+ * @param {number} siteId - site ID
  * @returns {Array} - actions required to save each payment method, or an empty array
  */
 const getSavePaymentMethodsSteps = ( state, siteId ) => {

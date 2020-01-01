@@ -14,7 +14,7 @@ import isRequestingBillingTransactions from 'state/selectors/is-requesting-billi
  * transactions or fetching an individual transaction. False otherwise.
  *
  * @param  {object}   state         Global state tree
- * @param  {Number}   transactionId ID of the requested transaction
+ * @param  {number}   transactionId ID of the requested transaction
  * @return {Boolean}                Whether a billing transaction is being requested
  */
 export default ( state, transactionId ) =>

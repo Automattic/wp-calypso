@@ -25,7 +25,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {object} query Query object (unused).
 	 * @param  {object} itemA First item
 	 * @param  {object} itemB Second item
-	 * @return {Number}       0 if equal, less than 0 if itemA is first,
+	 * @return {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
 	static compare( query, a, b ) {

@@ -36,7 +36,7 @@ export function getSerializedTermsQuery( query = {} ) {
  * Returns a serialized terms query, excluding any page parameter
  *
  * @param  {object} query  Terms query
- * @param  {Number} siteId Optional site ID
+ * @param  {number} siteId Optional site ID
  * @return {string}        Serialized terms query
  */
 export function getSerializedTermsQueryWithoutPage( query ) {

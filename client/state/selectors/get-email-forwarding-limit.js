@@ -34,7 +34,7 @@ export const siteHasEligibleWpcomPlan = createSelector(
  *
  * @param  {object} state  Global state tree
  * @param  {string} siteId The Site ID
- * @return {Number} the number of email forwards to allow
+ * @return {number} the number of email forwards to allow
  */
 export default function getEmailForwardingLImit( state, siteId ) {
 	return siteHasEligibleWpcomPlan( state, siteId )

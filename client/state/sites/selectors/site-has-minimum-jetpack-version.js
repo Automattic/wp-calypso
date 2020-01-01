@@ -12,7 +12,7 @@ import isJetpackSite from './is-jetpack-site';
  * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param  {object} state - whole state tree
- * @param  {Number} siteId - site id
+ * @param  {number} siteId - site id
  * @return {?Boolean} true if the site has minimum jetpack version
  */
 export default function siteHasMinimumJetpackVersion( state, siteId ) {

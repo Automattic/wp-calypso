@@ -56,7 +56,7 @@ export function getKeyringServiceByName( state, name ) {
  *  4. the current user can publish posts in case of all publicize services.
  *
  * @param  {object} state  Global state tree
- * @param  {Number} siteId Site ID.
+ * @param  {number} siteId Site ID.
  * @param  {string} type   Type of service. 'publicize' or 'other'.
  * @return {Array}         Keyring services, if known.
  */

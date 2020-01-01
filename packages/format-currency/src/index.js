@@ -13,12 +13,12 @@ export { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code
- * @param   {Number}     number              number to format
+ * @param   {number}     number              number to format
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
  * @param   {string}     options.decimal     decimal symbol e.g. ','
  * @param   {string}     options.grouping    thousands separator
- * @param   {Number}     options.precision   decimal digits
+ * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?string}                        A formatted string.
@@ -45,12 +45,12 @@ export default function formatCurrency( number, code, options = {} ) {
 
 /**
  * Returns a formatted price object.
- * @param   {Number}     number              number to format
+ * @param   {number}     number              number to format
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
  * @param   {string}     options.decimal     decimal symbol e.g. ','
  * @param   {string}     options.grouping    thousands separator
- * @param   {Number}     options.precision   decimal digits
+ * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @returns {?string}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */

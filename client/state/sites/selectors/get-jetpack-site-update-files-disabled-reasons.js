@@ -16,7 +16,7 @@ import isJetpackSite from './is-jetpack-site';
  * Can return an empty array if no reason have been found
  *
  * @param {object} state Global state tree
- * @param {Number} siteId Site ID
+ * @param {number} siteId Site ID
  * @param {string} action The update action we wanted to perform on this site
  * @return {?Array<String>} The reasons why file update is disabled
  */

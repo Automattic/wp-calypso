@@ -2,7 +2,7 @@
  * Returns true if a site is known to be blocked
  *
  *
- * @param {Number}  siteId Site ID
+ * @param {number}  siteId Site ID
  * @return {Boolean}        Whether specified site is blocked
  */
 

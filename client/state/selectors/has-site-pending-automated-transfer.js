@@ -21,7 +21,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * reasons. That's where this selector comes handy.
  *
  * @param   {object}  state  App state.
- * @param   {Number}  siteId Site of interest.
+ * @param   {number}  siteId Site of interest.
  * @returns {Boolean}        Whether there might be a transfer process happening on the backend.
  */
 export default ( state, siteId ) => {

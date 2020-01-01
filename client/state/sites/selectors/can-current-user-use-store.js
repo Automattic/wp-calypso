@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns true if current user can see and use Store option in menu
  *
  * @param  {object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {number}   siteId Site ID
  * @return {?Boolean}        Whether site is previewable
  */
 export default function canCurrentUserUseStore( state, siteId = null ) {

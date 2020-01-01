@@ -12,7 +12,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * Returns WordPress version of currently selected site.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {?string}        WordPress version of selected site
  */
 export default function getWordPressVersion( state, siteId ) {

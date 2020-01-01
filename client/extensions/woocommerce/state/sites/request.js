@@ -56,7 +56,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
 /**
  * Higher-level layer on top of the WPCOM.JS library, made specifically for making requests to a
  * Jetpack-connected WooComemrce site.
- * @param {Number} siteId Site ID to make the request to
+ * @param {number} siteId Site ID to make the request to
  * @return {object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */

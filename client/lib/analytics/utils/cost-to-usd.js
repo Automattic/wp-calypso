@@ -189,7 +189,7 @@ function isSupportedCurrency( currency ) {
  *
  * @note Don't rely on this for precise conversions, it's meant to be an estimate for ad tracking purposes
  *
- * @param {Number} cost - The cost of the cart or product
+ * @param {number} cost - The cost of the cart or product
  * @param {string} currency - The currency such as `USD`, `JPY`, etc
  * @returns {string} Or null if the currency is not supported
  */

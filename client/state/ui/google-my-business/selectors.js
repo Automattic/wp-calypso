@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * default value, 'week'
  *
  * @param  {object} state Global state tree
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @return {string} interval 'week' | 'month' | 'quarter'
  */

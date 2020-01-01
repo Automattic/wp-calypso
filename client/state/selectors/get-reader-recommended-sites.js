@@ -2,7 +2,7 @@
  * Returns the recommended sites for a given seed.
  *
  *
- * @param {Number} seed the elasticsearch seed for which to grab recs
+ * @param {number} seed the elasticsearch seed for which to grab recs
  * @return {Array} array of recommended sites for a given seed
  */
 

@@ -22,7 +22,7 @@ import { getSiteTitle } from 'state/sites/selectors';
 /*
  * Retrieves stats for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests stats for a given site
  */
 export const generateStats = siteId => {
@@ -58,7 +58,7 @@ export const generateStats = siteId => {
 /*
  * Deletes a cached file for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @param  {string} url URL of cached file to delete
  * @param  {Boolean} isSupercache Whether this is a supercache file
  * @param  {Boolean} isCached Whether this is a cached file

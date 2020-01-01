@@ -14,7 +14,7 @@ import {
  * Returns an action object to be used in signalling that post type taxonomies
  * for a site have been received.
  *
- * @param  {Number} siteId     Site ID
+ * @param  {number} siteId     Site ID
  * @param  {string} postType   Post type
  * @param  {Array}  taxonomies Taxonomies received
  * @return {object}            Action object
@@ -32,7 +32,7 @@ export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post type taxonomies for a site.
  *
- * @param  {Number}   siteId   Site ID
+ * @param  {number}   siteId   Site ID
  * @param  {string}   postType Post type
  * @return {Function}          Action thunk
  */

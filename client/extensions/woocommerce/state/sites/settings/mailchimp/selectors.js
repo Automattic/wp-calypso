@@ -22,7 +22,7 @@ const basePath = siteId => [
  * Returns true if currently requesting MailChimp settings or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether settings are being requested
  */
 export const isRequestingSettings = ( state, siteId ) => {
@@ -35,7 +35,7 @@ export const isRequestingSettings = ( state, siteId ) => {
  * Returns settings request error object
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {object}          error object if present or null otherwise
  */
 export const requestingSettingsError = ( state, siteId ) => {
@@ -48,7 +48,7 @@ export const requestingSettingsError = ( state, siteId ) => {
  * Returns MailChimp settings
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {object}          MailChimp settings
  */
 export const mailChimpSettings = ( state, siteId ) => {
@@ -61,7 +61,7 @@ export const mailChimpSettings = ( state, siteId ) => {
  * Returns true if currently submitting MailChimp API key or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether api key is being submitted
  */
 export const isSubmittingApiKey = ( state, siteId ) => {
@@ -74,7 +74,7 @@ export const isSubmittingApiKey = ( state, siteId ) => {
  * Returns true if currently submitting MailChimp newsletter settings or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether newsletter settings are being submitted
  */
 export const isSubmittingNewsletterSetting = ( state, siteId ) => {
@@ -87,7 +87,7 @@ export const isSubmittingNewsletterSetting = ( state, siteId ) => {
  * Returns true if currently submitting MailChimp store information or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether store informations are being submitted
  */
 export const isSubmittingStoreInfo = ( state, siteId ) => {
@@ -100,7 +100,7 @@ export const isSubmittingStoreInfo = ( state, siteId ) => {
  * Returns newletter settings submit error object
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {object}          error object if present or null otherwise
  */
 export const newsletterSettingsSubmitError = ( state, siteId ) => {
@@ -115,7 +115,7 @@ export const newsletterSettingsSubmitError = ( state, siteId ) => {
  * We assume true until we verify correctnes - for UX purposes
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether api key is correct
  */
 export const isApiKeyCorrect = ( state, siteId ) => {
@@ -128,7 +128,7 @@ export const isApiKeyCorrect = ( state, siteId ) => {
  * Returns true if currently requesting MailChimp lists or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether lists are being requested
  */
 export const isRequestingLists = ( state, siteId ) => {
@@ -141,7 +141,7 @@ export const isRequestingLists = ( state, siteId ) => {
  * Returns MailChimp sync status
  *
  * @param  {object}  state   Global state tree
- * @param  {Number}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @return {object}          Sync status
  */
 export const syncStatus = ( state, siteId ) => {
@@ -154,7 +154,7 @@ export const syncStatus = ( state, siteId ) => {
  * Returns true if currently requesting MailChimp sync status or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether sync status is being requested
  */
 export const isRequestingSyncStatus = ( state, siteId ) => {
@@ -167,7 +167,7 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
  * Returns true if MailChimp plugin is configured correctly and has connection to server
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Wheter setup is compleate
  */
 export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -188,7 +188,7 @@ export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state
  * Returns true if currently requesting MailChimp resync procedure or false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether resync procedure is being requested
  */
 export const isRequestingResync = ( state, siteId ) => {
@@ -201,7 +201,7 @@ export const isRequestingResync = ( state, siteId ) => {
  * Returns true if user requested save action in MailChimp dashboard.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @return {Boolean}        Whether user requested save action.
  */
 export const isSavingMailChimpSettings = ( state, siteId ) => {

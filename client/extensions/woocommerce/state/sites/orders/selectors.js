@@ -13,7 +13,7 @@ import { getSerializedOrdersQuery } from './utils';
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the orders list has been successfully loaded from the server
  */
 export const areOrdersLoaded = ( state, query, siteId = getSelectedSiteId( state ) ) => {
@@ -34,7 +34,7 @@ export const areOrdersLoaded = ( state, query, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the orders list is currently being retrieved from the server
  */
 export const areOrdersLoading = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
@@ -54,8 +54,8 @@ export const areOrdersLoading = ( state, query = {}, siteId = getSelectedSiteId(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether this order has a pending invoice request sent to the remote site
  */
 export const isOrderInvoiceSending = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -75,8 +75,8 @@ export const isOrderInvoiceSending = ( state, orderId, siteId = getSelectedSiteI
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the orders list has been successfully loaded from the server
  */
 export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -95,8 +95,8 @@ export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether this order is currently being retrieved from the server
  */
 export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -115,8 +115,8 @@ export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( stat
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether this order is currently being updated on the server
  */
 export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -138,7 +138,7 @@ export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array|false} List of orders, or false if there was an error
  */
 export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
@@ -164,8 +164,8 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} orderId ID number of an order
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} orderId ID number of an order
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|Null} The requested order object, or null if not available
  */
 export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -179,8 +179,8 @@ export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of orders available on a site, or 0 if not loaded yet.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} Total number of orders available on a site, or 0 if not loaded yet.
  */
 export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedOrdersQuery( omit( query, 'page' ) );
@@ -193,7 +193,7 @@ export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( s
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array} List of new orders.
  */
 export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -216,7 +216,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array} List of new orders without PayPal Pending Orders.
  */
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -230,8 +230,8 @@ export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSit
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total from all new orders.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} Total from all new orders.
  */
 export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
@@ -240,8 +240,8 @@ export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) 
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total from all new orders without PayPal Pending Orders.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number} Total from all new orders without PayPal Pending Orders.
  */
 export const getNewOrdersWithoutPayPalPendingRevenue = (
 	state,

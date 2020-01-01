@@ -24,7 +24,7 @@ export function generateProductCategoryId() {
 /**
  * Action creator: Edit a product category
  *
- * @param {Number} siteId The id of the site to which the category belongs.
+ * @param {number} siteId The id of the site to which the category belongs.
  * @param {object} [category] The most recent version of the category object, or null if new.
  * @param {object} data An object containing the properties to be edited for the object, if null, the category will be removed.
  * @return {object} The action object.
@@ -41,7 +41,7 @@ export function editProductCategory( siteId, category, data ) {
 /**
  * Action Creator: Clear All Product Category Edits
  *
- * @param {Number} siteId The site for which to clear all product category edits.
+ * @param {number} siteId The site for which to clear all product category edits.
  * @return {object} action
  */
 export function clearProductCategoryEdits( siteId ) {

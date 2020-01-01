@@ -15,7 +15,7 @@ import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './u
  * otherwise.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {number}  siteId Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query  Taxonomy query object
  * @return {Boolean}        Whether terms are being requested
@@ -30,7 +30,7 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * queried pages, or false otherwise.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {Boolean}           Terms for the query
@@ -52,7 +52,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  * received.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Array}           Terms for the query
@@ -78,7 +78,7 @@ export const getTermsForQuery = createSelector(
  * queried pages, or null if the number of pages is unknown.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Array}           Terms for the query
@@ -104,7 +104,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * total number of queryable terms if unknown.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Number}          Last terms page
@@ -127,7 +127,7 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * Returns terms for a site, filtered by taxonomy.
  *
  * @param  {object} state    Global state tree
- * @param  {Number} siteId   Site ID
+ * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy slug
  * @return {?Array}          Terms
  */
@@ -144,9 +144,9 @@ export function getTerms( state, siteId, taxonomy ) {
  * Returns a term for a site taxonomy.
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {Number}  termId   Term ID
+ * @param  {number}  termId   Term ID
  * @return {?object}         Term
  */
 export function getTerm( state, siteId, taxonomy, termId ) {
@@ -168,7 +168,7 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * Returns the total count of terms for a specified query
  *
  * @param  {object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
+ * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Number}          Count terms
