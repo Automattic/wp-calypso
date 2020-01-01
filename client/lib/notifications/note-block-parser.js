@@ -50,7 +50,7 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  *
  * @param {number} innerStart start of possibly-inner range
  * @param {number} innerEnd end of possibly-inner range
- * @returns {function({indices: Number[]}): Boolean} performs the check
+ * @returns {function({indices: Number[]}): boolean} performs the check
  */
 const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	/**

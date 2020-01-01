@@ -42,7 +42,7 @@ export const isEnabled = feature => () => config.isEnabled( feature );
  * Returns milliseconds since registration date of the current user
  *
  * @param {object} state Global state tree
- * @return {number|Boolean} Milliseconds since registration, false if cannot be determined
+ * @return {number|boolean} Milliseconds since registration, false if cannot be determined
  */
 const timeSinceUserRegistration = state => {
 	const user = getCurrentUser( state );
