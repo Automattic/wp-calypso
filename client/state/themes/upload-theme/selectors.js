@@ -71,7 +71,7 @@ export function getUploadError( state, siteId ) {
  *
  * @param {object} state -- Global state tree
  * @param {number} siteId -- Site ID
- * @return {?Number} -- Total
+ * @return {?number} -- Total
  */
 export function getUploadProgressTotal( state, siteId ) {
 	return get( state.themes.uploadTheme.progressTotal, siteId );
@@ -83,7 +83,7 @@ export function getUploadProgressTotal( state, siteId ) {
  *
  * @param {object} state -- Global state tree
  * @param {number} siteId -- Site ID
- * @return {?Number} -- Loaded
+ * @return {?number} -- Loaded
  */
 export function getUploadProgressLoaded( state, siteId ) {
 	return get( state.themes.uploadTheme.progressLoaded, siteId );

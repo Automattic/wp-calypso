@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state - Global state tree
  * @param  {number}  siteId - Site ID
- * @return {?Number} site UTC offset
+ * @return {?number} site UTC offset
  */
 export default function getSiteGmtOffset( state, siteId ) {
 	const gmt = get( state.siteSettings.items, [ siteId, 'gmt_offset' ], null );

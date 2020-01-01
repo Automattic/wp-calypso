@@ -90,7 +90,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * query is not known.
 	 *
 	 * @param  {object}  query Query object
-	 * @return {?Number}       Pages for query
+	 * @return {?number}       Pages for query
 	 */
 	getNumberOfPages( query ) {
 		const found = this.getFound( query );

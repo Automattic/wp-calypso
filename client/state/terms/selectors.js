@@ -107,7 +107,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?Number}          Last terms page
+ * @return {?number}          Last terms page
  */
 export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
@@ -171,7 +171,7 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?Number}          Count terms
+ * @return {?number}          Count terms
  */
 export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );

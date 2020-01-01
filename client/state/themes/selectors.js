@@ -171,7 +171,7 @@ export function isRequestingThemesForQuery( state, siteId, query ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {object}  query  Theme query object
- * @return {?Number}        Total number of found items
+ * @return {?number}        Total number of found items
  */
 export function getThemesFoundForQuery( state, siteId, query ) {
 	if ( ! state.themes.queries[ siteId ] ) {
@@ -188,7 +188,7 @@ export function getThemesFoundForQuery( state, siteId, query ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {object}  query  Theme query object
- * @return {?Number}        Last themes page
+ * @return {?number}        Last themes page
  */
 export function getThemesLastPageForQuery( state, siteId, query ) {
 	if ( ! state.themes.queries[ siteId ] ) {
@@ -351,7 +351,7 @@ export function isWporgTheme( state, themeId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
+ * @param  {?number} siteId  Site ID to optionally use as context
  * @return {?string}         Theme details sheet URL
  */
 export function getThemeDetailsUrl( state, themeId, siteId ) {
@@ -383,7 +383,7 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
+ * @param  {?number} siteId  Site ID to optionally use as context
  * @return {?string}         Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, themeId, siteId ) {
@@ -405,7 +405,7 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
+ * @param  {?number} siteId  Site ID to optionally use as context
  * @return {?string}         Theme support page URL
  */
 export function getThemeHelpUrl( state, themeId, siteId ) {
@@ -441,7 +441,7 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
  *
  * @param  {object}   state   Global state tree
  * @param  {string}   themeId Theme ID
- * @param  {?Number}  siteId  Site ID to open the customizer for
+ * @param  {?number}  siteId  Site ID to open the customizer for
  * @return {?string}          Customizer URL
  */
 export function getThemeCustomizeUrl( state, themeId, siteId ) {

@@ -13,7 +13,7 @@ import { getUser } from 'state/users/selectors';
  * Returns the current user ID
  *
  * @param  {object}  state  Global state tree
- * @return {?Number}        Current user ID
+ * @return {?number}        Current user ID
  */
 export function getCurrentUserId( state ) {
 	return get( state, [ 'currentUser', 'id' ] );
@@ -82,7 +82,7 @@ export const getCurrentUserCountryCode = createCurrentUserSelector( 'user_ip_cou
  * Returns the number of sites for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?Number}        Current user site count
+ * @return {?number}        Current user site count
  */
 export function getCurrentUserSiteCount( state ) {
 	const user = getCurrentUser( state );
@@ -97,7 +97,7 @@ export function getCurrentUserSiteCount( state ) {
  * Returns the number of visible sites for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?Number}        Current user visible site count
+ * @return {?number}        Current user visible site count
  */
 export function getCurrentUserVisibleSiteCount( state ) {
 	const user = getCurrentUser( state );

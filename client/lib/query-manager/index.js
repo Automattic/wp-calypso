@@ -166,7 +166,7 @@ export default class QueryManager {
 	 * not known.
 	 *
 	 * @param  {object}  query Query object
-	 * @return {?Number}       Found items for query
+	 * @return {?number}       Found items for query
 	 */
 	getFound( query ) {
 		const queryKey = this.constructor.QueryKey.stringify( query );

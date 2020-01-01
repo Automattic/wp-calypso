@@ -49,7 +49,7 @@ const KEY_U = 85;
  *
  * @param {!Number} noteId id of note to search for
  * @param {!Array<Notification>} notes list of notes to search through
- * @returns {?Number} index into note list of note following that given by noteId
+ * @returns {?number} index into note list of note following that given by noteId
  */
 export const findNextNoteId = ( noteId, notes ) => {
 	if ( notes.length === 0 ) {

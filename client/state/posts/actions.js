@@ -129,7 +129,7 @@ export function requestAllSitesPosts( query = {} ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {?Number}  siteId Site ID
+ * @param  {?number}  siteId Site ID
  * @param  {string}   query  Post query
  * @return {Function}        Action thunk
  */

@@ -13,7 +13,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
  * Returns the current user's primary site's ID.
  *
  * @param  {object}  state Global state tree
- * @return {?Number}       The current user's primary site's ID
+ * @return {?number}       The current user's primary site's ID
  */
 export default function getPrimarySiteId( state ) {
 	const currentUser = getCurrentUser( state );

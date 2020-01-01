@@ -20,7 +20,7 @@ import { addQueryArgs } from 'lib/route';
  * Returns the current editor post ID, or `null` if a new post.
  *
  * @param  {object} state Global state tree
- * @return {?Number}      Current editor post ID
+ * @return {?number}      Current editor post ID
  */
 export function getEditorPostId( state ) {
 	return state.ui.editor.postId;

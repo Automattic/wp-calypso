@@ -64,7 +64,7 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  * @param   {string}          imageUrl Original image url
  * @param   {(Number|Object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
- * @param   {?Number}         height   Pixel height if specifying resize width
+ * @param   {?number}         height   Pixel height if specifying resize width
  * @param   {?Boolean}        makeSafe Should we make sure this is on a safe host?
  * @returns {?string}                  Resized image URL, or `null` if unable to resize
  */

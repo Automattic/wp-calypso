@@ -23,7 +23,7 @@ import {
 /**
  * Triggers a network request to fetch invites for the specified site.
  *
- * @param  {?Number}  siteId Site ID
+ * @param  {?number}  siteId Site ID
  * @return {Function}        Action thunk
  */
 export function requestSiteInvites( siteId ) {

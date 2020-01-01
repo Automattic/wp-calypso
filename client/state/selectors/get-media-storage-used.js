@@ -17,7 +17,7 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?Number}        Storage used in bytes
+ * @return {?number}        Storage used in bytes
  */
 export default function getMediaStorageUsed( state, siteId ) {
 	return get( getMediaStorage( state, siteId ), 'storage_used_bytes', null );

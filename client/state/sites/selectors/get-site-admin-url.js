@@ -10,7 +10,7 @@ import getSiteOption from './get-site-option';
  * @see https://developer.wordpress.org/reference/functions/get_admin_url/
  *
  * @param  {object}  state  Global state tree
- * @param  {?Number}  siteId Site ID
+ * @param  {?number}  siteId Site ID
  * @param  {?string} path   Admin screen path
  * @return {?string}        Admin URL
  */

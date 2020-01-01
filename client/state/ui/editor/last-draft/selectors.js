@@ -24,7 +24,7 @@ export function getEditorLastDraftPost( state ) {
  * Returns the last edited draft site ID, or null if there is no last draft.
  *
  * @param  {object}  state Global state tree
- * @return {?Number}       Last edited draft site ID
+ * @return {?number}       Last edited draft site ID
  */
 export function getEditorLastDraftSiteId( state ) {
 	return state.ui.editor.lastDraft.siteId;
@@ -34,7 +34,7 @@ export function getEditorLastDraftSiteId( state ) {
  * Returns the last edited draft post ID, or null if there is no last draft.
  *
  * @param  {object}  state Global state tree
- * @return {?Number}       Last edited draft post ID
+ * @return {?number}       Last edited draft post ID
  */
 export function getEditorLastDraftPostId( state ) {
 	return state.ui.editor.lastDraft.postId;

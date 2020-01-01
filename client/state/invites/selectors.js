@@ -57,7 +57,7 @@ export function getAcceptedInvitesForSite( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?Number}        The number of invites found for the given site
+ * @return {?number}        The number of invites found for the given site
  */
 export function getNumberOfInvitesFoundForSite( state, siteId ) {
 	return state.invites.counts[ siteId ] || null;

@@ -41,7 +41,7 @@ export function getPreviewSite( state ) {
  * Returns the site ID for SitePreview for use in "All My Sites".
  *
  * @param  {object}  state Global state tree
- * @return {?Number}       Selected preview site ID
+ * @return {?number}       Selected preview site ID
  */
 export function getPreviewSiteId( state ) {
 	const siteId = getSelectedSiteId( state );

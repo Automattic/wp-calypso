@@ -46,7 +46,7 @@ export const MODAL_VIEW_STATS = {
  * begin to edit the post with the specified post ID, or `null` as a new post.
  *
  * @param  {number}  siteId   Site ID
- * @param  {?Number} postId   Post ID
+ * @param  {?number} postId   Post ID
  * @return {Action}           Action object
  */
 export function startEditingPost( siteId, postId ) {
@@ -77,7 +77,7 @@ export function startEditingNewPost( siteId, post ) {
  * stop editing.
  *
  * @param  {number}  siteId Site ID
- * @param  {?Number} postId Post ID
+ * @param  {?number} postId Post ID
  * @return {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {

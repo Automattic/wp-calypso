@@ -12,7 +12,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * Returns a site option for a site
  *
  * @param  {object}  state  Global state tree
- * @param  {?Number}  siteId Site ID
+ * @param  {?number}  siteId Site ID
  * @param  {string}  optionName The option key
  * @return {*}  The value of that option or null
  */

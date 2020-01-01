@@ -8,7 +8,7 @@ import { get, isEmpty } from 'lodash';
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
  * @param  {object}   state  Global state tree
- * @return {?Number}         The user ID.
+ * @return {?number}         The user ID.
  */
 export const getTwoFactorUserId = state => {
 	return get( state, 'login.twoFactorAuth.user_id', null );
