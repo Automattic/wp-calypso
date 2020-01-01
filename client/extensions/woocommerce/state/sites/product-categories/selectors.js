@@ -157,7 +157,7 @@ export function getAllProductCategoriesBySearch(
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|Null} Total number of pages available for a query, or null if not loaded yet.
+ * @return {number|Null} Total number of pages available for a query, or null if not loaded yet.
  */
 export function getProductCategoriesLastPage(
 	state,

@@ -349,7 +349,7 @@ export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|undefined} The Zone ID that is the "owner" of the currently selected country, or "false-y" if the
+ * @return {number|undefined} The Zone ID that is the "owner" of the currently selected country, or "false-y" if the
  * currently selected country isn't owned by any other zone. If this returns a Zone ID, then the user shouldn't be able
  * to filter by "whole country", only by states / postcode.
  */

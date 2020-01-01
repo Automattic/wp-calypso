@@ -183,7 +183,7 @@ const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
 /**
  * Triggers a network request to fetch current MailChimp plugin settings.
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
 export const requestSettings = siteId => ( dispatch, getState ) => {
@@ -207,7 +207,7 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
 /**
  * Triggers a network request to set MailChimp api key in MailChimp plugin settings.
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @param  {string}        apiKey        MailChimp api key
  * @return {Function}                    Action thunk
  */
@@ -231,7 +231,7 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
 /**
  * Triggers a network request to set MailChimp store info in MailChimp plugin settings.
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @param  {object}        storeInfo     MailChimp store info settings object
  * @return {Function}                    Action thunk
  */
@@ -256,7 +256,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
  * Triggers a network request to set MailChimp campaign defaults
  * info in MailChimp plugin settings.
  *
- * @param  {Number|String} siteId           Jetpack site ID
+ * @param  {number|String} siteId           Jetpack site ID
  * @param  {object}        campaignDefaults MailChimp campaign defaults settings object
  * @return {Function}                       Action thunk
  */
@@ -281,7 +281,7 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
  * Triggers a network request to fetch current mailing list available created for account
  * associated with api key stored in plugin config..
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
 export const requestLists = siteId => ( dispatch, getState ) => {
@@ -305,7 +305,7 @@ export const requestLists = siteId => ( dispatch, getState ) => {
 /**
  * Triggers a network request to fetch current MailChimp plugin to MailChimp server sync status
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
 export const requestSyncStatus = siteId => ( dispatch, getState ) => {
@@ -328,7 +328,7 @@ export const requestSyncStatus = siteId => ( dispatch, getState ) => {
 /**
  * Triggers a network request that triggers store resync procedure in MailChimp plugin
  *
- * @param  {Number|String} siteId        Jetpack site ID
+ * @param  {number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
 export const requestResync = siteId => ( dispatch, getState ) => {
@@ -352,7 +352,7 @@ export const requestResync = siteId => ( dispatch, getState ) => {
  * Triggers a network request to set MailChimp newsletter settings
  * in MailChimp plugin settings.
  *
- * @param  {Number|String} siteId      Jetpack site ID
+ * @param  {number|String} siteId      Jetpack site ID
  * @param  {object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
@@ -378,7 +378,7 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
  * Components interested in this action will subscribe to store with
  * isSaveSettingsRequested
  *
- * @param  {Number|String} siteId      Jetpack site ID
+ * @param  {number|String} siteId      Jetpack site ID
  * @return {Function}                  Action thunk
  */
 export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {

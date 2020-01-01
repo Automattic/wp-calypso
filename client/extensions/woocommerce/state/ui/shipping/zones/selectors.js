@@ -198,26 +198,26 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Number|object} zoneId Zone ID (can be a temporal ID)
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
  * @return {boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
  * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
 const isEditableShippingZone = zoneId => ! isNumber( zoneId ) || 0 !== zoneId;
 
 /**
- * @param {Number|object} zoneId Zone ID (can be a temporal ID)
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
  * @return {boolean} Whether the name of this shipping zone can be changed by the user
  */
 export const canChangeShippingZoneTitle = isEditableShippingZone;
 
 /**
- * @param {Number|object} zoneId Zone ID (can be a temporal ID)
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
  * @return {boolean} Whether this shipping zone can be deleted
  */
 export const canRemoveShippingZone = isEditableShippingZone;
 
 /**
- * @param {Number|object} zoneId Zone ID (can be a temporal ID)
+ * @param {number|object} zoneId Zone ID (can be a temporal ID)
  * @return {boolean} Whether the locations this zone represents can be altered.
  */
 export const canEditShippingZoneLocations = isEditableShippingZone;

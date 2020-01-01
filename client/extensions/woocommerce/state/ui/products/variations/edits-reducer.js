@@ -51,7 +51,7 @@ export default withoutPersistence( ( state = null, action ) => {
  *
  * ```
  * {
- *   productId: <Number|object>,
+ *   productId: <number|object>,
  *   creates: [ {<new variation object>} ]
  *   updated: [ {<variation props to update>} ]
  *   deletes: [ <variation id> ]
@@ -59,7 +59,7 @@ export default withoutPersistence( ( state = null, action ) => {
  * ```
  *
  * @param {object} edits The state at `woocommerce.ui.products.variations.edits`
- * @param {Number|object} productId The id of product edits object to be updating.
+ * @param {number|object} productId The id of product edits object to be updating.
  * @param {Function} doUpdate ( productEdits ) Called with previous product edits, takes return as new product edits.
  * @return {object} The new, updated product edits to be used in state.
  */

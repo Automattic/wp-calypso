@@ -73,7 +73,7 @@ export function isVariableProduct( product ) {
  * Add a product ID (or list of IDs) to a list of values
  *
  * @param {Array} value An array of existing values
- * @param {Number|Array} productId The product ID(s) to add
+ * @param {number|Array} productId The product ID(s) to add
  * @return {Array} Updated list of values
  */
 export function addProductId( value = [], productId ) {
@@ -87,7 +87,7 @@ export function addProductId( value = [], productId ) {
  * Remove a product ID (or list of IDs) from a list of values
  *
  * @param {Array} value An array of existing values
- * @param {Number|Array} productId The product ID(s) to remove
+ * @param {number|Array} productId The product ID(s) to remove
  * @return {Array} Updated list of values
  */
 export function removeProductId( value = [], productId ) {

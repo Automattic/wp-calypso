@@ -33,7 +33,7 @@ export function fetchProductVariations( siteId, productId, successAction, failur
  * Action Creator: Create a new product variation.
  *
  * @param {number} siteId The id of the site in which the variation's product exists.
- * @param {Number|object} productId The id of the product for which this variation will be created
+ * @param {number|object} productId The id of the product for which this variation will be created
  *                                  (could be a placeholder id if product is not yet created).
  * @param {object} variation The complete variation object to be created.
  * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }

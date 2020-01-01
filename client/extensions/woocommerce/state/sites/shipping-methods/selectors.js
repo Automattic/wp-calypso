@@ -84,7 +84,7 @@ export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( st
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {Number|object} id Shipping method ID
+ * @param {number|object} id Shipping method ID
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {object} The shipping method definition, or an object with dummy (but valid) values if it wasn't found
  */

@@ -25,7 +25,7 @@ import { errorNotice } from 'state/notices/actions';
  *
  * @param   {string}           commentText     text of the comment
  * @param   {number}           postId          post identifier
- * @param   {Number|undefined} parentCommentId parent comment identifier
+ * @param   {number|undefined} parentCommentId parent comment identifier
  * @returns {object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {

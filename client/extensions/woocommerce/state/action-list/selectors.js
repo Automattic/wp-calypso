@@ -21,7 +21,7 @@ export function getActionList( rootState ) {
  * This selector returns the 1-indexed number of the step that is currently executing in the action list.
  *
  * @param {object} actionList The action list to check.
- * @return {Number|null} The index of the current step, or actionList.length if all steps are complete,
+ * @return {number|null} The index of the current step, or actionList.length if all steps are complete,
  */
 export function getCurrentStepIndex( actionList ) {
 	const { prevSteps, currentStep } = actionList;

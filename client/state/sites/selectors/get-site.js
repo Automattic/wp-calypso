@@ -15,7 +15,7 @@ let getSiteCache = new WeakMap();
  * Returns a normalized site object by its ID or site slug.
  *
  * @param  {object}  state  Global state tree
- * @param  {Number|String}  siteIdOrSlug Site ID or site slug
+ * @param  {number|String}  siteIdOrSlug Site ID or site slug
  * @return {?object}        Site object
  */
 export default function getSite( state, siteIdOrSlug ) {

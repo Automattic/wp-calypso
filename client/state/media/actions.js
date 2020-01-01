@@ -179,7 +179,7 @@ export function successMediaItemRequest( siteId, mediaId ) {
  * numeric ID.
  *
  * @param  {number}         siteId   Site ID
- * @param  {(Array|Number)} mediaIds ID(s) of media to be deleted
+ * @param  {(Array|number)} mediaIds ID(s) of media to be deleted
  * @return {object}                  Action object
  */
 export function deleteMedia( siteId, mediaIds ) {

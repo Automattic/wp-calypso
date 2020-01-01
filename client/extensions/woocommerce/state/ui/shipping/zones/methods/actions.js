@@ -38,7 +38,7 @@ export const addMethodToShippingZone = ( siteId, methodType, title ) => {
 /**
  * Opens the shipping method for editing
  * @param {number} siteId Site ID.
- * @param {Number|object} methodId ID of the shipping method to open.
+ * @param {number|object} methodId ID of the shipping method to open.
  * @return {object} Action object.
  */
 export const openShippingZoneMethod = ( siteId, methodId ) => {
@@ -128,7 +128,7 @@ export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
 /**
  * Enables or disables the given shipping zone method.
  * @param {number} siteId Site ID.
- * @param {Number|object} methodId ID of the shipping method.
+ * @param {number|object} methodId ID of the shipping method.
  * @param {boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {object} Action object.
  */

@@ -106,7 +106,7 @@ export const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
  * by the used through of an input element.
  *
  * @param {string} value - time value to check
- * @return {Number|Boolean} valid number or `false`
+ * @return {number|Boolean} valid number or `false`
  */
 export const parseAndValidateNumber = value => {
 	value = String( value );

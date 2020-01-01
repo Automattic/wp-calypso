@@ -15,7 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|object} The ID of the current order (or object placeholder, if a new order)
+ * @return {number|object} The ID of the current order (or object placeholder, if a new order)
  */
 export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
