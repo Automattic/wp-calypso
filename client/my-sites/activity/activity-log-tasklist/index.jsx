@@ -46,7 +46,7 @@ const isItemUpdating = updatables =>
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
  *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
- * @param {array}  updateQueue Collection of plugins or themes currently queued to be updated.
+ * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
  *
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
@@ -497,11 +497,11 @@ const getStatusForCore = ( siteId, coreVersion ) => {
 		state: PropTypes.oneOf( [ 'uninitialized', 'failure', 'success', 'pending' ] ),
 		error: PropTypes.object,
 	} )
- * @param {array}  itemList Collection of plugins/themes that will be updated.
+ * @param {Array}  itemList Collection of plugins/themes that will be updated.
  * @param {number} siteId   ID of the site where the plugin/theme is installed.
  * @param {object} state    App state tree.
  *
- * @returns {array} List of plugins/themes to update with their status.
+ * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
 	itemList.map( item => ( {

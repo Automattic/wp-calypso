@@ -351,7 +351,7 @@ export function getCreditCardType( number ) {
  * @param {string} field the name of the field
  * @param {value} value the value of the field
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @returns {array} array of errors found, if any
+ * @returns {Array} array of errors found, if any
  */
 function getErrors( field, value, paymentDetails ) {
 	return compact(

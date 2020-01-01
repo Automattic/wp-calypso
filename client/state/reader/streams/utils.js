@@ -28,8 +28,8 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 /**
  * Combine adjacent x-posts that refer to the same original post
  *
- * @param {array} postKeys Array of post key objects
- * @return {array} Array of post key objects
+ * @param {Array} postKeys Array of post key objects
+ * @return {Array} Array of post key objects
  */
 export const combineXPosts = postKeys =>
 	postKeys.reduce( ( accumulator, postKey ) => {

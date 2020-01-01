@@ -273,7 +273,7 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
  * Upload an external media item to the WordPress media library
  *
  * @param {string} service - external media service name (i.e 'google_photos')
- * @param {array} files - array of external media file IDs
+ * @param {Array} files - array of external media file IDs
  *
  * @return {object} promise - resolves on completion of the GET request
  */
@@ -402,7 +402,7 @@ UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 /**
  * Delete site invites
  *
- * @param {array}     inviteIds  An array of inviteIds for deletion.
+ * @param {Array}     inviteIds  An array of inviteIds for deletion.
  * @return {Promise}             A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.deleteInvites = function( inviteIds ) {

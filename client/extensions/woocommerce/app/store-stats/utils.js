@@ -166,10 +166,10 @@ export function formatValue( value, format, code, decimals ) {
 /**
  * Given a date, return the delta object for a specific stat
  *
- * @param {array} deltas - an array of delta objects
+ * @param {Array} deltas - an array of delta objects
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
- * @return {array} - array of delta objects matching selectedDate
+ * @return {Array} - array of delta objects matching selectedDate
  */
 export function getDelta( deltas, selectedDate, stat ) {
 	const selectedDeltas = find( deltas, item => item.period === selectedDate );
@@ -179,7 +179,7 @@ export function getDelta( deltas, selectedDate, stat ) {
 /**
  * Given a date, an array of data, and a stat, return a delta object for the specific stat.
  *
- * @param {array} data - an array of API data, must contain at least 3 rows
+ * @param {Array} data - an array of API data, must contain at least 3 rows
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
  * @param {string} unit - unit/period format for the data provided
@@ -209,8 +209,8 @@ export function getDeltaFromData( data, selectedDate, stat, unit ) {
 /**
  * Given visitor data and order data, get a list conversion rate by period.
  *
- * @param {array} visitorData - an array of API data from the 'visits' stat endpoint
- * @param {array} orderData -  an array of API data from the orders endpoint
+ * @param {Array} visitorData - an array of API data from the 'visits' stat endpoint
+ * @param {Array} orderData -  an array of API data from the orders endpoint
  * @param {string} unit - unit/period format for the data provided
  * @return {object} - Object containing data from calculateDelta
  */

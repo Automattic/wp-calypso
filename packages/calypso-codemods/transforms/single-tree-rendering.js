@@ -76,7 +76,7 @@ export default function transformer( file, api ) {
 	 * Check if `parameters` has `param` either as a string or as a name of
 	 * an object, which could be e.g. an `Identifier`.
 	 *
-	 * @param  {array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
+	 * @param  {Array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
 	 * @param  {string}  paramValue Parameter value
 	 * @return {boolean}            True if parameter is present
 	 */

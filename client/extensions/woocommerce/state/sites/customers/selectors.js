@@ -51,7 +51,7 @@ export const isCustomerSearchLoading = (
  * @param {object} state Whole Redux state tree
  * @param {string} searchTerm Search term to check
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of customer results matching term
+ * @return {Array} List of customer results matching term
  */
 export const getCustomerSearchResults = (
 	state,

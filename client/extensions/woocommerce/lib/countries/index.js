@@ -17,8 +17,8 @@ export const isStoreManagementSupportedInCalypsoForCountry = country => {
 /**
  * Return a "sorted" list of countries, with a subset pulled to the top,
  * and the rest sorted alphabetically.
- * @param {array} list  List of countries to sort
- * @return {array} sorted list of countries
+ * @param {Array} list  List of countries to sort
+ * @return {Array} sorted list of countries
  */
 export function sortPopularCountriesToTop( list ) {
 	const popularCodes = [ 'AU', 'BR', 'CA', 'FR', 'DE', 'IT', 'ES', 'SE', 'GB', 'US' ];

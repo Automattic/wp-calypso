@@ -376,9 +376,9 @@ export class SharingService extends Component {
 	/**
 	 * Get current connections
 	 *
-	 * @param  {array} overrides Optional. If it is passed, just return the argument
+	 * @param  {Array} overrides Optional. If it is passed, just return the argument
 	 *                           instead of the default connections.
-	 * @return {array} connections
+	 * @return {Array} connections
 	 */
 	getConnections( overrides ) {
 		return overrides || this.props.siteUserConnections;

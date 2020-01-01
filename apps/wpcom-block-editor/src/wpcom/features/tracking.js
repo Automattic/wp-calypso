@@ -60,7 +60,7 @@ const trackBlockInsertion = blocks => {
 /**
  * Track block replacement.
  *
- * @param {array} originalBlockIds ids or blocks that are being replaced
+ * @param {Array} originalBlockIds ids or blocks that are being replaced
  * @param {object|array} blocks block instance object or an array of such objects
  * @return {void}
  */

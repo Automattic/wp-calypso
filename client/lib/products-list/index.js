@@ -34,7 +34,7 @@ Emitter( ProductsList.prototype );
 /**
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
- * @return {array} The array of products
+ * @return {Array} The array of products
  * @api public
  */
 ProductsList.prototype.get = function() {

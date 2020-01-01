@@ -194,7 +194,7 @@ export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( s
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of new orders.
+ * @return {Array} List of new orders.
  */
 export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 	// TODO: fetchOrders right now loads max number of orders, as pagination won't be supported until post v1
@@ -217,7 +217,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of new orders without PayPal Pending Orders.
+ * @return {Array} List of new orders without PayPal Pending Orders.
  */
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );

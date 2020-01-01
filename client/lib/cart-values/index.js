@@ -214,7 +214,7 @@ export function canRemoveFromCart( cart, cartItem ) {
  *
  * @param {cartValue} [previousCartValue] - the previously loaded cart
  * @param {cartValue} [nextCartValue] - the new cart value
- * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
+ * @returns {Array} [nextCartMessages] - an array of messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
 	previousCartValue = previousCartValue || {};

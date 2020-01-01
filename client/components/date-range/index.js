@@ -520,7 +520,7 @@ export class DateRange extends Component {
 	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
 	 * http://react-day-picker.js.org/docs/matching-days
 	 *
-	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
+	 * @return {Array} configuration to be passed to DatePicker as disabledDays prop
 	 */
 	getDisabledDaysConfig() {
 		const { firstSelectableDate, lastSelectableDate } = this.props;

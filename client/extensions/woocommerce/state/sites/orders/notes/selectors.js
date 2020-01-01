@@ -55,7 +55,7 @@ export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of order notes
+ * @return {Array} List of order notes
  */
 export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areOrderNotesLoaded( state, orderId, siteId ) ) {

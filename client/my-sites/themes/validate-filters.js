@@ -72,8 +72,8 @@ export function validateVertical( context, next ) {
  * keep this prefix.
  *
  * @param {object} context Routing context
- * @param {array} terms Array of term strings
- * @return {array} Sorted array
+ * @param {Array} terms Array of term strings
+ * @return {Array} Sorted array
  */
 export function sortFilterTerms( context, terms ) {
 	return terms

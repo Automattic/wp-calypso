@@ -11,7 +11,7 @@ import { getSectionName } from 'state/ui/selectors';
  * Grab the group or groups for happychat based on siteId
  * @param {object} state Current state
  * @param {int} siteId The site id, if no siteId is present primary siteId will be used
- * @returns {array} of groups for site Id
+ * @returns {Array} of groups for site Id
  */
 export default ( state, siteId ) => {
 	const groups = [];

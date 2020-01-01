@@ -31,9 +31,9 @@ function getIncludedDomain( purchase ) {
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
  *
- * @param {array} purchases An array of purchase objects.
- * @param {array} sites An array of site objects
- * @return {array} An array of sites with purchases attached.
+ * @param {Array} purchases An array of purchase objects.
+ * @param {Array} sites An array of site objects
+ * @return {Array} An array of sites with purchases attached.
  */
 function getPurchasesBySite( purchases, sites ) {
 	return purchases
