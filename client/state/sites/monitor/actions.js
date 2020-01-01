@@ -55,7 +55,7 @@ export const requestSiteMonitorSettings = siteId => {
  * Update the Jetpack monitor settings for a certain site.
  *
  * @param  {Int}       siteId    ID of the site.
- * @param  {Object}    settings  Monitor settings.
+ * @param  {object}    settings  Monitor settings.
  * @return {Function}            Action thunk to update the Jetpack monitor settings when called.
  */
 export const updateSiteMonitorSettings = ( siteId, settings ) => {

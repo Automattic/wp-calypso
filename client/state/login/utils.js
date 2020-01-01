@@ -47,7 +47,7 @@ export class HTTPError extends Error {
 /**
  * Retrieves the first error message from the specified HTTP error.
  *
- * @param {Object} httpError HTTP error
+ * @param {object} httpError HTTP error
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 export function getErrorFromHTTPError( httpError ) {
@@ -123,7 +123,7 @@ export function getErrorFromHTTPError( httpError ) {
 /**
  * Transforms WPCOM error to the error object we use for login purposes
  *
- * @param {Object} wpcomError HTTP error
+ * @param {object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 export const getErrorFromWPCOMError = wpcomError => ( {

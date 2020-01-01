@@ -14,7 +14,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * Returns a ID to the media associated with a site's current site icon, or
  * null if not known or an icon is not assigned.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {?Number}        Media ID of site icon, if known and exists
  */

@@ -11,7 +11,7 @@ function getStatsState( state ) {
 /**
  * Returns true if we are generating stats for the specified site ID, false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether stats are being generated
  */
@@ -22,9 +22,9 @@ export function isGeneratingStats( state, siteId ) {
 /**
  * Returns the stats for the specified site ID.
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @param  {Number} siteId Site ID
- * @return {Object} Stats
+ * @return {object} Stats
  */
 export function getStats( state, siteId ) {
 	return get( getStatsState( state ), [ 'items', siteId ], null );
@@ -33,7 +33,7 @@ export function getStats( state, siteId ) {
 /**
  * Returns true if we are deleting a cached file for the specified site ID, false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether the cached file is being deleted
  */

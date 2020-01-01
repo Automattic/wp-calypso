@@ -12,7 +12,7 @@ import {
  * @param {Number} siteId Site ID.
  * @param {String} methodId ID of the shipping method to edit.
  * @param {Boolean} isTaxable Whether the shipping cost must be subject to taxes or not.
- * @return {Object} Action object.
+ * @return {object} Action object.
  */
 export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {
 	return {
@@ -29,7 +29,7 @@ export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {
  * @param {Number} siteId Site ID.
  * @param {String} methodId ID of the shipping method to edit.
  * @param {Number} cost Fixed cost the customer will pay for shipping.
- * @return {Object} Action object.
+ * @return {object} Action object.
  */
 export const setShippingCost = ( siteId, methodId, cost ) => {
 	return {

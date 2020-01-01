@@ -2,7 +2,7 @@
  * Mapping from Calypso panel slug to tuple of focus key and value.
  *
  *
- * @type {Object}
+ * @type {object}
  */
 
 export const PANEL_MAPPINGS = {

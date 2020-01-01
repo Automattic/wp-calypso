@@ -15,7 +15,7 @@ import {
  * has been received.
  *
  * @param  {Object[]} happinessEngineers Array of template objects
- * @return {Object}                      Action object
+ * @return {object}                      Action object
  */
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {

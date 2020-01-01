@@ -15,7 +15,7 @@ import {
  * @param  {Number}  zoneId          Zone ID
  * @param  {Number}  expires         Expiration time in milliseconds
  * @param  {Number}  maxLockPeriod   Maximum number of milliseconds to extend the lock to
- * @return {Object}                  Action object
+ * @return {object}                  Action object
  */
 export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
 	type: ZONINATOR_UPDATE_LOCK,
@@ -30,7 +30,7 @@ export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
  *
  * @param  {Number}  siteId    Site ID
  * @param  {Number}  zoneId    Zone ID
- * @return {Object}            Action object
+ * @return {object}            Action object
  */
 export const requestLock = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_LOCK,
@@ -43,7 +43,7 @@ export const requestLock = ( siteId, zoneId ) => ( {
  *
  * @param  {Number}  siteId  Site ID
  * @param  {Number}  zoneId  Zone ID
- * @return {Object}          Action object
+ * @return {object}          Action object
  */
 export const requestLockError = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_LOCK_ERROR,
@@ -56,7 +56,7 @@ export const requestLockError = ( siteId, zoneId ) => ( {
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
- * @return {Object}        Action object
+ * @return {object}        Action object
  */
 export const resetLock = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_RESET_LOCK,

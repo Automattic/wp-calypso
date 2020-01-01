@@ -9,7 +9,7 @@ import 'state/data-layer/wpcom/sites/users';
 /**
  * Action creator for receiving an array of users from REST response
  * @param {Array} users Users received
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function receivePostRevisionAuthors( users ) {
 	return {
@@ -23,7 +23,7 @@ export function receivePostRevisionAuthors( users ) {
  *
  * @param {String} siteId of the users
  * @param {Array}  ids of the users (array of integers)
- * @return {Object} action object
+ * @return {object} action object
  */
 export const requestPostRevisionAuthors = ( siteId, ids ) => ( {
 	type: POST_REVISIONS_AUTHORS_REQUEST,

@@ -19,9 +19,9 @@ import emitter from 'lib/mixins/emitter';
  * };
  * const CounterStore = createReducerStore( counterReducer, 0 );
  * @param {function} reducer - Function with type `(state, action) -> state`.
- * @param {Object} [initialState] - Initial state whose type matches that of `reducer`.
+ * @param {object} [initialState] - Initial state whose type matches that of `reducer`.
  * @param {array<string>} [waitFor] - See Flux Dispatcher's `waitFor`.
- * @return {Object} Store built from reducer.
+ * @return {object} Store built from reducer.
  */
 export const createReducerStore = ( reducer, initialState = {}, waitFor = [] ) => {
 	let state = initialState;

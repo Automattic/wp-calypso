@@ -29,8 +29,8 @@ import 'state/data-layer/wpcom/sites/media';
  * @param  {Number}         siteId Site ID
  * @param  {(Array|Object)} media  Media item(s) received
  * @param  {Number}         found  Number of found media
- * @param  {Object}         query  Query Object
- * @return {Object}                Action object
+ * @param  {object}         query  Query Object
+ * @return {object}                Action object
  */
 export function receiveMedia( siteId, media, found, query ) {
 	return {
@@ -47,8 +47,8 @@ export function receiveMedia( siteId, media, found, query ) {
  * have been requested.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} query  Query object
- * @return {Object}        Action object
+ * @param  {object} query  Query object
+ * @return {object}        Action object
  */
 export function requestMedia( siteId, query ) {
 	return {
@@ -63,8 +63,8 @@ export function requestMedia( siteId, query ) {
  * are being requested.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} query  Query object
- * @return {Object}        Action object
+ * @param  {object} query  Query object
+ * @return {object}        Action object
  */
 export function requestingMedia( siteId, query ) {
 	return {
@@ -79,8 +79,8 @@ export function requestingMedia( siteId, query ) {
  * has failed.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} query  Query object
- * @return {Object}        Action object
+ * @param  {object} query  Query object
+ * @return {object}        Action object
  */
 export function failMediaRequest( siteId, query ) {
 	return {
@@ -95,8 +95,8 @@ export function failMediaRequest( siteId, query ) {
  * has failed.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} query  Query object
- * @return {Object}        Action object
+ * @param  {object} query  Query object
+ * @return {object}        Action object
  */
 export function successMediaRequest( siteId, query ) {
 	return {
@@ -112,7 +112,7 @@ export function successMediaRequest( siteId, query ) {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} mediaId Media ID
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export function requestMediaItem( siteId, mediaId ) {
 	return {
@@ -128,7 +128,7 @@ export function requestMediaItem( siteId, mediaId ) {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} mediaId Media ID
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export function requestingMediaItem( siteId, mediaId ) {
 	return {
@@ -144,7 +144,7 @@ export function requestingMediaItem( siteId, mediaId ) {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} mediaId Media ID
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export function failMediaItemRequest( siteId, mediaId ) {
 	return {
@@ -160,7 +160,7 @@ export function failMediaItemRequest( siteId, mediaId ) {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} mediaId Media ID
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export function successMediaItemRequest( siteId, mediaId ) {
 	return {
@@ -180,7 +180,7 @@ export function successMediaItemRequest( siteId, mediaId ) {
  *
  * @param  {Number}         siteId   Site ID
  * @param  {(Array|Number)} mediaIds ID(s) of media to be deleted
- * @return {Object}                  Action object
+ * @return {object}                  Action object
  */
 export function deleteMedia( siteId, mediaIds ) {
 	return {

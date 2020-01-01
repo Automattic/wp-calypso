@@ -7,7 +7,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
 /**
  * Returns the Podcasting category ID for a given site ID.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {Number}          Category ID or null if not found
  */

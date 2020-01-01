@@ -9,7 +9,7 @@ import isJetpackSite from './is-jetpack-site';
  * Returns the remote management url for a Jetpack site.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {Number} siteId Site ID
  * @return {?String} the remote management url for the site
  */

@@ -13,7 +13,7 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site object by its slug.
  *
- * @param  {Object}  state     Global state tree
+ * @param  {object}  state     Global state tree
  * @param  {String}  siteSlug  Site URL
  * @return {?Object}           Site object
  */

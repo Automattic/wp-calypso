@@ -34,7 +34,7 @@ const ERROR_GLOBAL_ITEM_ID = 0;
  *     }
  * }
  *
- * @type {Object}
+ * @type {object}
  * @private
  */
 

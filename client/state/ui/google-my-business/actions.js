@@ -10,7 +10,7 @@ import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
  * @param  {Number} siteId Site ID
  * @param  {String} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @param  {String} interval 'week' | 'month' | 'quarter'
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,

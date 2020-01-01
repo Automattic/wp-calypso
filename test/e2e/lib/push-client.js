@@ -54,7 +54,7 @@ function filterPushDataKey( filter, addPersistentId, callback ) {
 
 /**
  * Listens to push notifications with push token
- * @param {Object} pushConfig GCM keys and tokens
+ * @param {object} pushConfig GCM keys and tokens
  * @param {Function} callback a function to call when we get a push token
  */
 export const subscribeToPush = ( pushConfig, callback ) => {

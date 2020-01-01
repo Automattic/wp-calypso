@@ -12,7 +12,7 @@ import 'state/data-layer/wpcom/sites/post-types';
  *
  * @param  {Number} siteId Site ID
  * @param  {Array}  types  Post types received
- * @return {Object}        Action object
+ * @return {object}        Action object
  */
 export function receivePostTypes( siteId, types ) {
 	return {
@@ -26,7 +26,7 @@ export function receivePostTypes( siteId, types ) {
  * Triggers a network request to retrieve post types for a site.
  *
  * @param  {Number} siteId Site ID
- * @return {Object}        Action object
+ * @return {object}        Action object
  */
 export function requestPostTypes( siteId ) {
 	return {

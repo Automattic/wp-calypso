@@ -6,8 +6,8 @@ import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
 
 /**
  * Gets the editor URL for the current site's home page
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
+ * @param {object} state  Global state tree
+ * @param {object} siteId Site ID
  * @return {(Boolean|String)} false if there is no homepage set, the editor URL if there is one
  */
 export default function getFrontPageEditorUrl( state, siteId ) {

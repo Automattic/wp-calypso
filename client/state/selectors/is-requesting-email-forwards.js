@@ -5,7 +5,7 @@ import { get } from 'lodash';
 
 /**
  *
- * @param  {Object} state  Global state tree
+ * @param  {object} state  Global state tree
  * @param  {String} domainName the domain name of the forwards
  * @return {Boolean} If the request is in progress
  */

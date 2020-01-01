@@ -16,7 +16,7 @@ import isSitePreviewable from './is-site-previewable';
 /**
  * Returns computed properties of the site object.
  *
- * @param    {Object}      state    Global state tree
+ * @param    {object}      state    Global state tree
  * @param    {Number}      siteId   Site ID
  * @returns  {?Object}              Site computed properties or null
  */

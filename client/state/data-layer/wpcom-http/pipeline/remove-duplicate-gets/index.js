@@ -36,7 +36,7 @@ export const clearQueue = () => {
 /**
  * Determines if a request object specifies the GET HTTP method
  *
- * @param {Object} request the HTTP request action
+ * @param {object} request the HTTP request action
  * @returns {Boolean} whether or not the method is GET
  */
 const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
@@ -57,7 +57,7 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
  * Joins a responder action into a unique list of responder actions
  *
  * @param {Object<String, Object[]>} list existing responder actions
- * @param {Object} item new responder action to add
+ * @param {object} item new responder action to add
  * @returns {Object<String, Object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {

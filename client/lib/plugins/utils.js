@@ -11,8 +11,8 @@ import { decodeEntities, parseHtml } from 'lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
- * @param  {Object} site       Site Object
- * @param  {Object} log        Notice log Object
+ * @param  {object} site       Site Object
+ * @param  {object} log        Notice log Object
  * @return {Bool} True if notice matches criteria
  */
 function isSameSiteNotice( site, log ) {
@@ -21,7 +21,7 @@ function isSameSiteNotice( site, log ) {
 
 /**
  * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
+ * @param  {object} log        Notice log Object
  * @return {Bool} True if notice matches criteria
  */
 function isSamePluginNotice( pluginSlug, log ) {
@@ -31,9 +31,9 @@ function isSamePluginNotice( pluginSlug, log ) {
 /**
  * Filter function that return notices that fit a certain criteria.
  *
- * @param  {Object} site       Site Object
+ * @param  {object} site       Site Object
  * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
+ * @param  {object} log        Notice log Object
  * @return {Bool} True if notice matches criteria
  */
 function filterNoticesBy( site, pluginSlug, log ) {
@@ -212,7 +212,7 @@ export function normalizePluginsList( pluginsList ) {
  * Return logs that match a certain critia.
  *
  * @param  {Array} logs        List of all notices
- * @param  {Object} site       Site Object
+ * @param  {object} site       Site Object
  * @param  {String} pluginSlug Plugin Slug
  *
  * @return {Array} Array of filtered logs that match the criteria

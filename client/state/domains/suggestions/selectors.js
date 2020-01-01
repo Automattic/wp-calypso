@@ -6,8 +6,8 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
  * Returns domains suggestions information for a query.
- * @param   {Object}   state                                Global state tree
- * @param   {Object}   queryObject                          domain suggestions queryObject
+ * @param   {object}   state                                Global state tree
+ * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {String}   queryObject.query                    domainQuery
  * @param   {Number}   queryObject.quantity                 max results
  * @param   {String}   queryObject.vendor                   vendor
@@ -24,8 +24,8 @@ export function getDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns true, if we're currently requesting domains suggestions.
- * @param   {Object}     state                                Global state tree
- * @param   {Object}     queryObject                          domain suggestions queryObject
+ * @param   {object}     state                                Global state tree
+ * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {String}     queryObject.query                    domainQuery
  * @param   {Number}     queryObject.quantity                 max results
  * @param   {String}     queryObject.vendor                   vendor
@@ -42,8 +42,8 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns an error for a given domains suggestions query.
- * @param   {Object}     state                                Global state tree
- * @param   {Object}     queryObject                          domain suggestions queryObject
+ * @param   {object}     state                                Global state tree
+ * @param   {object}     queryObject                          domain suggestions queryObject
  * @param   {String}     queryObject.query                    domainQuery
  * @param   {Number}     queryObject.quantity                 max results
  * @param   {String}     queryObject.vendor                   vendor

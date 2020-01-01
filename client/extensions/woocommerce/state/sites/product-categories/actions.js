@@ -27,10 +27,10 @@ export function fetchProductCategories( siteId, query = {} ) {
  * Action Creator: Create a new product category.
  *
  * @param {Number} siteId The id of the site upon which to create.
- * @param {Object} category The product category object (may include a placeholder id).
+ * @param {object} category The product category object (may include a placeholder id).
  * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {Object|Function} [failureAction] action with extra props { error }
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function createProductCategory( siteId, category, successAction, failureAction ) {
 	// TODO: Error action if not valid?
@@ -50,10 +50,10 @@ export function createProductCategory( siteId, category, successAction, failureA
  * Action Creator: Update a product category.
  *
  * @param {Number} siteId The id of the site upon which to create.
- * @param {Object} category The product category object.
+ * @param {object} category The product category object.
  * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {Object|Function} [failureAction] action with extra props { error }
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function updateProductCategory( siteId, category, successAction, failureAction ) {
 	const action = {
@@ -71,10 +71,10 @@ export function updateProductCategory( siteId, category, successAction, failureA
  * Action Creator: Delete a product category.
  *
  * @param {Number} siteId The id of the site upon which to delete.
- * @param {Object} category The product category object.
+ * @param {object} category The product category object.
  * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {Object|Function} [failureAction] action with extra props { error }
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function deleteProductCategory( siteId, category, successAction, failureAction ) {
 	return {
@@ -90,9 +90,9 @@ export function deleteProductCategory( siteId, category, successAction, failureA
  * Action Creator: This action prompts the state to update itself after a product category has changed.
  *
  * @param {Number} siteId The id of the site to which the category belongs.
- * @param {Object} data The complete product category object with which to update the state.
- * @param {Object} originatingAction The action that precipitated this update.
- * @return {Object} Action object
+ * @param {object} data The complete product category object with which to update the state.
+ * @param {object} originatingAction The action that precipitated this update.
+ * @return {object} Action object
  */
 export function productCategoryUpdated( siteId, data, originatingAction ) {
 	return {

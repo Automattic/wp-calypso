@@ -6,9 +6,9 @@ import { get, reduce } from 'lodash';
 
 /**
  * Returns a sync status object by site ID.
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @return {Object}          Sync status object
+ * @return {object}          Sync status object
  */
 function getSyncStatus( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'syncStatus', siteId ] );
@@ -16,9 +16,9 @@ function getSyncStatus( state, siteId ) {
 
 /**
  * Returns a full sync request object by site ID.
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @return {Object}          Full sync request object
+ * @return {object}          Full sync request object
  */
 function getFullSyncRequest( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'fullSyncRequest', siteId ] );
@@ -26,7 +26,7 @@ function getFullSyncRequest( state, siteId ) {
 
 /**
  * Returns a boolean for whether a full sync is pending start.
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @return {Boolean}         Whether a sync is pending start for site
  */
@@ -60,7 +60,7 @@ function isPendingSyncStart( state, siteId ) {
 
 /**
  * Returns a boolean for whether a site is in the process of a full sync.
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @return {Boolean}         Whether a sync is in the process of syncing
  */
@@ -78,7 +78,7 @@ function isFullSyncing( state, siteId ) {
 
 /**
  * Returns a rounded up percentage the amount of sync completed.
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @return {Number}          The percentage of sync completed, expressed as an integer
  */

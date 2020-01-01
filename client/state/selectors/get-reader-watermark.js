@@ -1,7 +1,7 @@
 /**
  * Get the high watermark for a Reader stream
  *
- * @param {Object} state -
+ * @param {object} state -
  * @param {String} streamKey -
  * @returns {Number} date in number form
  */

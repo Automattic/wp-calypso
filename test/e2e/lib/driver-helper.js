@@ -490,8 +490,8 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
  * @description
  * Scroll element on a page to desired position
  *
- * @param {Object} driver WebDriver
- * @param {Object} selector A element's selector
+ * @param {object} driver WebDriver
+ * @param {object} selector A element's selector
  * @param {String} position An element's position. Can be 'start', 'end' and 'center'
  * @returns {Promise<void>} Promise
  */

@@ -27,7 +27,7 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
 /**
  * Whether a given theme object is premium.
  *
- * @param  {Object} theme Theme object
+ * @param  {object} theme Theme object
  * @return {Boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
@@ -38,8 +38,8 @@ export function isPremium( theme ) {
 /**
  * Normalizes a theme obtained via the WordPress.com REST API from a Jetpack site
  *
- * @param  {Object} theme  Theme object
- * @return {Object}        Normalized theme object
+ * @param  {object} theme  Theme object
+ * @return {object}        Normalized theme object
  */
 export function normalizeJetpackTheme( theme = {} ) {
 	if ( ! theme.tags ) {
@@ -58,8 +58,8 @@ export function normalizeJetpackTheme( theme = {} ) {
 /**
  * Normalizes a theme obtained from the WordPress.com REST API
  *
- * @param  {Object} theme  Theme object
- * @return {Object}        Normalized theme object
+ * @param  {object} theme  Theme object
+ * @return {object}        Normalized theme object
  */
 export function normalizeWpcomTheme( theme ) {
 	const attributesMap = {
@@ -74,8 +74,8 @@ export function normalizeWpcomTheme( theme ) {
 /**
  * Normalizes a theme obtained from the WordPress.org REST API
  *
- * @param  {Object} theme  Theme object
- * @return {Object}        Normalized theme object
+ * @param  {object} theme  Theme object
+ * @return {object}        Normalized theme object
  */
 export function normalizeWporgTheme( theme ) {
 	const attributesMap = {
@@ -129,8 +129,8 @@ export function getThemeIdFromStylesheet( stylesheet ) {
  * Returns a normalized themes query, excluding any values which match the
  * default theme query.
  *
- * @param  {Object} query Themes query
- * @return {Object}       Normalized themes query
+ * @param  {object} query Themes query
+ * @return {object}       Normalized themes query
  */
 export function getNormalizedThemesQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_THEME_QUERY[ key ] === value );
@@ -139,7 +139,7 @@ export function getNormalizedThemesQuery( query ) {
 /**
  * Returns a serialized themes query
  *
- * @param  {Object} query  Themes query
+ * @param  {object} query  Themes query
  * @param  {Number} siteId Optional site ID
  * @return {String}        Serialized themes query
  */
@@ -159,7 +159,7 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * The object will include siteId and/or query object, if can be parsed.
  *
  * @param  {String} serializedQuery Serialized themes query
- * @return {Object}                 Deserialized themes query details
+ * @return {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
 	let siteId, query;
@@ -178,7 +178,7 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
 /**
  * Returns a serialized themes query, excluding any page parameter
  *
- * @param  {Object} query  Themes query
+ * @param  {object} query  Themes query
  * @param  {Number} siteId Optional site ID
  * @return {String}        Serialized themes query
  */
@@ -196,7 +196,7 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * field to contain 'wordpress.com' for Jetpack API
  * requests.
  *
- * @param  {Object} theme Theme object
+ * @param  {object} theme Theme object
  * @return {Boolean}      Whether theme is a wpcom theme
  */
 export function isThemeFromWpcom( theme ) {
@@ -206,8 +206,8 @@ export function isThemeFromWpcom( theme ) {
 /**
  * Returns true if the theme matches the given query, or false otherwise.
  *
- * @param  {Object}  query Query object
- * @param  {Object}  theme Item to consider
+ * @param  {object}  query Query object
+ * @param  {object}  theme Item to consider
  * @return {Boolean}       Whether theme matches query
  */
 export function isThemeMatchingQuery( query, theme ) {
@@ -258,7 +258,7 @@ export function isThemeMatchingQuery( query, theme ) {
 /**
  * Returns the slugs of the theme's given taxonomy.
  *
- * @param  {Object} theme    The theme object.
+ * @param  {object} theme    The theme object.
  * @param  {String} taxonomy The taxonomy items to get.
  * @return {Array}           An array of theme taxonomy slugs.
  */

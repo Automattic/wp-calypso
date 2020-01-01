@@ -10,7 +10,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 /**
  * Returns register date of the current user
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Number|Boolean} Timestamp registar date, false if cannot be determined
  */
 export default function getCurrentUserRegisterDate( state ) {

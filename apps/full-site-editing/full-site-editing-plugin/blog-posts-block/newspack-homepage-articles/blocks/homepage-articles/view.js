@@ -123,7 +123,7 @@ function getRenderedPostsIds() {
  * Wrapper for XMLHttpRequest that performs given number of retries when error
  * occurs.
  *
- * @param {Object} options XMLHttpRequest options
+ * @param {object} options XMLHttpRequest options
  * @param {Number} n retry count before throwing
  */
 function fetchWithRetry( options, n ) {
@@ -180,7 +180,7 @@ function fetchWithRetry( options, n ) {
  * 	"required": ["items", "next"]
  * }
  *
- * @param {Object} data posts endpoint payload
+ * @param {object} data posts endpoint payload
  */
 function isPostsDataValid( data ) {
 	let isValid = false;
@@ -228,7 +228,7 @@ function showEl( el ) {
 /**
  * Checks if object has own property.
  *
- * @param {Object} obj
+ * @param {object} obj
  * @param {String} prop
  */
 function hasOwnProp( obj, prop ) {

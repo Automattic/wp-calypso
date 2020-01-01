@@ -15,7 +15,7 @@ import 'state/data-layer/wpcom/sites/plugins/recommended';
  *
  * @param  {Number}  siteId  Site ID
  * @param  {Number}  limit   Number of desired plugin recommendations
- * @return {Object}          Action object
+ * @return {object}          Action object
  */
 export function fetchRecommendedPlugins( siteId, limit = 6 ) {
 	return { limit, siteId, type: PLUGINS_RECOMMENDED_REQUEST };
@@ -27,7 +27,7 @@ export function fetchRecommendedPlugins( siteId, limit = 6 ) {
  *
  * @param  {Number}         siteId  Site ID
  * @param  {Array<Object>}  data    List of recommended plugins
- * @return {Object}                 Action object
+ * @return {object}                 Action object
  */
 export function receiveRecommendedPlugins( siteId, data ) {
 	return { data, siteId, type: PLUGINS_RECOMMENDED_RECEIVE };
@@ -38,7 +38,7 @@ export function receiveRecommendedPlugins( siteId, data ) {
  * recommended plugins has failed.
  *
  * @param  {Number}  siteId  Site ID
- * @return {Object}          Action object
+ * @return {object}          Action object
  */
 export function dispatchRecommendPluginsRequestFailure( siteId ) {
 	return { siteId, type: PLUGINS_RECOMMENDED_REQUEST_FAILURE };

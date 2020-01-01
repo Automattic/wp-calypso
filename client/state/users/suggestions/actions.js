@@ -15,8 +15,8 @@ import {
  * have been received.
  *
  * @param  {Number} siteId  	Site ID
- * @param  {Object} suggestions User suggestions
- * @return {Object}         	Action object
+ * @param  {object} suggestions User suggestions
+ * @return {object}         	Action object
  */
 export function receiveUserSuggestions( siteId, suggestions ) {
 	return {

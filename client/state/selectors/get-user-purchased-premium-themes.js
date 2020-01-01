@@ -5,7 +5,7 @@ import { getUserPurchases } from 'state/purchases/selectors';
 
 /**
  * Return the details of any premium themes the user has purchased
- * @param  {Object}  state       global state
+ * @param  {object}  state       global state
  * @param  {Number}  userId      the user id
  * @return {Array} Details of any premium themes the user has purchased
  */

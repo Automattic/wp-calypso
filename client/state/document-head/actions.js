@@ -14,7 +14,7 @@ import {
  * should be assigned to the specified value.
  *
  * @param  {String} title Document title
- * @return {Object}       Action object
+ * @return {object}       Action object
  */
 export function setDocumentHeadTitle( title ) {
 	return {
@@ -28,7 +28,7 @@ export function setDocumentHeadTitle( title ) {
  * shown in the document title should be assigned to the specified value.
  *
  * @param  {Number} count Unread count
- * @return {Object}       Action object
+ * @return {object}       Action object
  */
 export function setDocumentHeadUnreadCount( count ) {
 	return {
@@ -41,8 +41,8 @@ export function setDocumentHeadUnreadCount( count ) {
  * Returns an action object used in signalling that the specified link object
  * should be included in the set of document head links.
  *
- * @param  {Object} link Link object
- * @return {Object}      Action object
+ * @param  {object} link Link object
+ * @return {object}      Action object
  */
 export function setDocumentHeadLink( link ) {
 	return {
@@ -55,8 +55,8 @@ export function setDocumentHeadLink( link ) {
  * Returns an action object used in signalling that the specified meta object
  * should be included in the set of document head metas.
  *
- * @param  {Object} meta Meta object
- * @return {Object}      Action object
+ * @param  {object} meta Meta object
+ * @return {object}      Action object
  */
 export function setDocumentHeadMeta( meta ) {
 	return {

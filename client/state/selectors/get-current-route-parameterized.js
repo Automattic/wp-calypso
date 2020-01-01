@@ -9,7 +9,7 @@ import { getSiteSlug } from 'state/sites/selectors';
  * replaced by :siteid. Note that other parameters such as :domain are not currently
  * supported.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {?String}        The current route with site parameters
  */

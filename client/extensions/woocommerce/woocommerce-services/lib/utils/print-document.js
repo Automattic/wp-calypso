@@ -48,7 +48,7 @@ const buildBlob = ( b64Content, mimeType ) => {
 /**
  * Opens the native printing dialog to print the given URL.
  * Falls back to opening the PDF in a new tab if opening the printing dialog is not supported.
- * @param {Object} fileData Object with the PDF contents. It needs to have at least these properties:
+ * @param {object} fileData Object with the PDF contents. It needs to have at least these properties:
  * - {String} b64Content The PDF binary content, encoded in Base64
  * - {String} mimeType The MIME Type of the file. Normally it will be "application/pdf"
  * @param {String} fileName URL of the document to print

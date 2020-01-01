@@ -14,7 +14,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
  * TinyMCE plugin for toggling an `is-pinned` class on the editor container
  * when the viewport scroll position exceeds the top edge of the container.
  *
- * @param {Object} editor TinyMCE editor instance
+ * @param {object} editor TinyMCE editor instance
  */
 function toolbarPin( editor ) {
 	let isMonitoringScroll = false,

@@ -23,7 +23,7 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 	}
  *
  * @param  {Array} state  Current state
- * @param  {Object} action Action payload
+ * @param  {object} action Action payload
  * @return {Array}        Updated state
  */
 export const items = keyedReducer(
@@ -54,7 +54,7 @@ export const items = keyedReducer(
 	}
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action Action payload
+ * @param  {object} action Action payload
  * @return {Array}         Updated state
  */
 export const total = keyedReducer(

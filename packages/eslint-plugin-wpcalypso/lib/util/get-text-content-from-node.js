@@ -14,7 +14,7 @@
  * Note that TemplateLiterals with expressions are not supported, because
  * they don't work in our translation system.
  *
- * @param  {Object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
+ * @param  {object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
  * @return {String|Boolean}   The concatenated string or the value false.
  */
 function getTextContentFromNode( node ) {

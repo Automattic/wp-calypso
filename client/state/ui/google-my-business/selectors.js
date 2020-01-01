@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns the current interval of a Google My Business stats chart or the
  * default value, 'week'
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @param  {Number} siteId Site ID
  * @param  {String} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @return {String} interval 'week' | 'month' | 'quarter'

@@ -24,7 +24,7 @@ const debug = debugFactory( 'calypso:user:settings' );
 
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
- * @returns {Object} Action object
+ * @returns {object} Action object
  */
 export const fetchUserSettings = () => ( {
 	type: USER_SETTINGS_REQUEST,
@@ -33,8 +33,8 @@ export const fetchUserSettings = () => ( {
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
  *
- * @param {Object} settingsOverride - default settings object
- * @return {Object} Action object
+ * @param {object} settingsOverride - default settings object
+ * @return {object} Action object
  */
 export const saveUserSettings = settingsOverride => ( {
 	type: USER_SETTINGS_SAVE,
@@ -44,8 +44,8 @@ export const saveUserSettings = settingsOverride => ( {
 /**
  * Returns an action object signalling the settings have been received from server.
  *
- * @param  {Object} settingValues Setting values (the subset of keys to be updated)
- * @return {Object}               Action object
+ * @param  {object} settingValues Setting values (the subset of keys to be updated)
+ * @return {object}               Action object
  */
 export const updateUserSettings = settingValues => ( {
 	type: USER_SETTINGS_UPDATE,

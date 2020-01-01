@@ -30,8 +30,8 @@ export default class QueryKey {
 	 * undefined values, but can be extended to omit null values or values
 	 * matching those in a default query.
 	 *
-	 * @param  {Object} query Query object
-	 * @return {Object}       Pruned query object
+	 * @param  {object} query Query object
+	 * @return {object}       Pruned query object
 	 */
 	static omit( query ) {
 		const { OMIT_NULL_VALUES, DEFAULT_QUERY } = this;
@@ -55,7 +55,7 @@ export default class QueryKey {
 	/**
 	 * Returns a serialized query, given a query object
 	 *
-	 * @param  {Object} query Query object
+	 * @param  {object} query Query object
 	 * @return {String}       Serialized query
 	 */
 	static stringify( query ) {
@@ -74,7 +74,7 @@ export default class QueryKey {
 	 * Returns a query object, given a serialized query
 	 *
 	 * @param  {String} key Serialized query
-	 * @return {Object}     Query object
+	 * @return {object}     Query object
 	 */
 	static parse( key ) {
 		return this.omit( fromPairs( JSON.parse( key ) ) );

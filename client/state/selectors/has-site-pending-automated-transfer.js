@@ -20,7 +20,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * However, the transfer process might not start immediately because of the transfer eligibility
  * reasons. That's where this selector comes handy.
  *
- * @param   {Object}  state  App state.
+ * @param   {object}  state  App state.
  * @param   {Number}  siteId Site of interest.
  * @returns {Boolean}        Whether there might be a transfer process happening on the backend.
  */

@@ -10,7 +10,7 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the note list for a given order has been successfully loaded from the server.
@@ -31,7 +31,7 @@ export const areOrderNotesLoaded = ( state, orderId, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the note list for a given order is currently being retrieved from the server.
@@ -52,7 +52,7 @@ export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array} List of order notes
@@ -76,7 +76,7 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we're currently saving a note for a given order on a site.

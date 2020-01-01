@@ -7,8 +7,8 @@ import { mapValues } from 'lodash';
 /**
  * Normalize settings for use in Redux.
  *
- * @param  {Object} settings Raw settings
- * @return {Object} Normalized settings
+ * @param  {object} settings Raw settings
+ * @return {object} Normalized settings
  */
 export const normalizeSettings = settings => {
 	return mapValues( settings, ( setting, key ) => {
@@ -26,8 +26,8 @@ export const normalizeSettings = settings => {
 /**
  * Sanitize settings before saving.
  *
- * @param  {Object} settings Normalized settings
- * @return {Object} Sanitized settings
+ * @param  {object} settings Normalized settings
+ * @return {object} Sanitized settings
  */
 export const sanitizeSettings = settings => {
 	return mapValues( settings, ( setting, key ) => {

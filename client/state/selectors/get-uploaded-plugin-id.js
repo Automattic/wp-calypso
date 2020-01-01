@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * null if no plugin has yet been successfully
  * uploaded.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {number} siteId the site ID
  * @return {?String} ID of uploaded plugin
  */

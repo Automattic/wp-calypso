@@ -41,7 +41,7 @@ export const isEnabled = feature => () => config.isEnabled( feature );
 /**
  * Returns milliseconds since registration date of the current user
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Number|Boolean} Milliseconds since registration, false if cannot be determined
  */
 const timeSinceUserRegistration = state => {
@@ -64,7 +64,7 @@ export const isUserNewerThan = age => state => {
 /**
  * Returns true if the user is considered "new" (less than a week since registration)
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
@@ -74,7 +74,7 @@ export const isNewUser = state => {
 /**
  * Returns true if the user is NOT considered "new" (less than a week since registration)
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if user is NOT new, false otherwise
  */
 export const isNotNewUser = state => {
@@ -130,7 +130,7 @@ export const hasAnalyticsEventFired = eventName => state => {
 /**
  * Returns true if the selected site can be previewed
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if selected site can be previewed, false otherwise.
  */
 export const isSelectedSitePreviewable = state =>
@@ -139,7 +139,7 @@ export const isSelectedSitePreviewable = state =>
 /**
  * Returns true if the current user can run customizer for the selected site
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if user can run customizer, false otherwise.
  */
 export const isSelectedSiteCustomizable = state =>
@@ -148,7 +148,7 @@ export const isSelectedSiteCustomizable = state =>
 /**
  * Returns true if the selected site has any media files.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if site has any media files, false otherwise.
  */
 export const doesSelectedSiteHaveMediaFiles = state => {
@@ -174,7 +174,7 @@ export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName
 /**
  * Returns true if the selected site has an unchanged site title
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if site title is default, false otherwise.
  */
 export const hasSelectedSiteDefaultSiteTitle = state => {
@@ -185,7 +185,7 @@ export const hasSelectedSiteDefaultSiteTitle = state => {
 /**
  * Returns true if the selected site has a paid plan
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if selected site is on a paid plan, false otherwise.
  */
 export const isSelectedSitePlanPaid = state => {
@@ -196,7 +196,7 @@ export const isSelectedSitePlanPaid = state => {
 /**
  * Returns true if the selected site has a free plan.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if selected site is on a free plan, false otherwise.
  */
 export const isSelectedSitePlanFree = state => {
@@ -207,7 +207,7 @@ export const isSelectedSitePlanFree = state => {
 /**
  * Returns true if user has just pasted something from Google Docs.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if user has just pasted something from Google Docs, false otherwise.
  */
 export const hasUserPastedFromGoogleDocs = state => {
@@ -219,7 +219,7 @@ export const hasUserPastedFromGoogleDocs = state => {
  * Returns true if the current user can edit settings of the selected site.
  * Used in the siteTitle tour.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if user can edit settings, false otherwise.
  */
 export const canUserEditSettingsOfSelectedSite = state => {
@@ -231,7 +231,7 @@ export const canUserEditSettingsOfSelectedSite = state => {
  * Returns true if the current site is a jetpack site.
  * Used in activity log tours.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True if site is Jetpack, false otherwise.
  */
 export const isSelectedSiteJetpack = state => {
@@ -243,7 +243,7 @@ export const isSelectedSiteJetpack = state => {
  * Returns true if the current site is not a jetpack site.
  * Used in activity log tours.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} True is not Jetpack, false otherwise.
  */
 export const isSelectedSiteNotJetpack = state => {

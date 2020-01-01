@@ -10,7 +10,7 @@ import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progre
  * Indicates whether a plugin upload has completed
  * for the given site.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {number} siteId the site ID
  * @return {boolean} true if plugin upload is complete
  */

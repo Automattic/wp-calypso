@@ -17,8 +17,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to delete a connected application for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const removeConnectedApplication = action =>
 	http(
@@ -33,8 +33,8 @@ export const removeConnectedApplication = action =>
 /**
  * Dispatches a user connected application removal success action and notice when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched user connected applications add action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched user connected applications add action
  */
 export const handleRemoveSuccess = ( { appId } ) => [
 	deleteConnectedApplicationSuccess( appId ),
@@ -50,7 +50,7 @@ export const handleRemoveSuccess = ( { appId } ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @returns {Object} Dispatched error notice action
+ * @returns {object} Dispatched error notice action
  */
 export const handleRemoveError = () =>
 	errorNotice( translate( 'The connected application was not disconnected. Please try again.' ), {

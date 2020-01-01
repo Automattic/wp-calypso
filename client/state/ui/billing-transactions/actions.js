@@ -12,7 +12,7 @@ import {
  * Sets the app filter on the given transactionType table
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {String} app - app filter value
- * @returns {Object} action
+ * @returns {object} action
  */
 export const setApp = ( transactionType, app ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_APP,
@@ -26,7 +26,7 @@ export const setApp = ( transactionType, app ) => ( {
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {String} month - month in format 'YYYY-MM'
  * @param {String} operator - operator for the month. One of: equal, before
- * @returns {Object} action
+ * @returns {object} action
  */
 export const setDate = ( transactionType, month, operator ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
@@ -39,7 +39,7 @@ export const setDate = ( transactionType, month, operator ) => ( {
  * Sets the page of the given transaction type table
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {Number} page - page number, starting at 1
- * @returns {Object} action
+ * @returns {object} action
  */
 export const setPage = ( transactionType, page ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_PAGE,
@@ -51,7 +51,7 @@ export const setPage = ( transactionType, page ) => ( {
  * Sets the search query by which to filter the transactions of the given type
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {String} query - string query
- * @returns {Object} action
+ * @returns {object} action
  */
 export const setQuery = ( transactionType, query ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,

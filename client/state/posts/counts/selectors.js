@@ -13,7 +13,7 @@ import { POST_STATUSES } from '../constants';
 /**
  * Returns true if post counts request is in progress, or false otherwise.
  *
- * @param  {Object}  state    Global state tree
+ * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
  * @param  {String}  postType Post type
  * @return {Boolean}          Whether request is in progress
@@ -25,10 +25,10 @@ export function isRequestingPostCounts( state, siteId, postType ) {
 /**
  * Returns post counts for all users on a site, filtered by post type.
  *
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
- * @return {Object}          Post counts, keyed by status
+ * @return {object}          Post counts, keyed by status
  */
 export function getAllPostCounts( state, siteId, postType ) {
 	return get( state.posts.counts.counts, [ siteId, postType, 'all' ], null );
@@ -38,7 +38,7 @@ export function getAllPostCounts( state, siteId, postType ) {
  * Returns post count for all users on a site, filtered by post type and
  * status.
  *
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
  * @param  {String} status   Post status
@@ -56,10 +56,10 @@ export function getAllPostCount( state, siteId, postType, status ) {
 /**
  * Returns post counts for current user on a site, filtered by post type.
  *
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
- * @return {Object}          Post counts, keyed by status
+ * @return {object}          Post counts, keyed by status
  */
 export function getMyPostCounts( state, siteId, postType ) {
 	return get( state.posts.counts.counts, [ siteId, postType, 'mine' ], null );
@@ -69,7 +69,7 @@ export function getMyPostCounts( state, siteId, postType ) {
  * Returns post count for current user on a site, filtered by post type and
  * status.
  *
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
  * @param  {String} status   Post status
@@ -88,7 +88,7 @@ export function getMyPostCount( state, siteId, postType, status ) {
  * Returns an object of normalized post counts, summing publish/private and
  * pending/draft counts.
  *
- * @param  {Object}   state         Global state tree
+ * @param  {object}   state         Global state tree
  * @param  {Number}   siteId        Site ID
  * @param  {String}   postType      Post type
  * @param  {Function} countSelector Selector from which to retrieve raw counts
@@ -132,7 +132,7 @@ export function getNormalizedPostCounts(
  * Returns an object of normalized post counts for current user, summing
  * publish/private and pending/draft counts.
  *
- * @param  {Object} state    Global state tree
+ * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
  * @return {Number}          Normalized post counts

@@ -232,7 +232,7 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
  * Triggers a network request to set MailChimp store info in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId        Jetpack site ID
- * @param  {Object}        storeInfo     MailChimp store info settings object
+ * @param  {object}        storeInfo     MailChimp store info settings object
  * @return {Function}                    Action thunk
  */
 export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
@@ -257,7 +257,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
  * info in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId           Jetpack site ID
- * @param  {Object}        campaignDefaults MailChimp campaign defaults settings object
+ * @param  {object}        campaignDefaults MailChimp campaign defaults settings object
  * @return {Function}                       Action thunk
  */
 export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => dispatch => {
@@ -353,7 +353,7 @@ export const requestResync = siteId => ( dispatch, getState ) => {
  * in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId      Jetpack site ID
- * @param  {Object}        newsLetter  MailChimp newsletter settings object
+ * @param  {object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
 export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispatch => {

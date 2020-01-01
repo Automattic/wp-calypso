@@ -15,7 +15,7 @@ export const SUPPORT_TICKET = 'SUPPORT_TICKET';
 export const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 /**
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {String} One of the exported support variation constants listed above
  */
 export default function getSupportVariation( state ) {

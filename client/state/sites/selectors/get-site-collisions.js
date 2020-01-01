@@ -11,7 +11,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site
  * exists in the set of sites with the same URL.
  *
- * @param  {Object}   state Global state tree
+ * @param  {object}   state Global state tree
  * @return {Number[]}       WordPress.com site IDs with collisions
  */
 export default createSelector(

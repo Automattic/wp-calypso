@@ -8,7 +8,7 @@ import { GOOGLE_CREDITS } from './service-types';
  * Return site vouchers getting from state object and
  * the given siteId
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @param {Number} siteId - site identificator
  * @return {Array} site vouchers
  */
@@ -24,8 +24,8 @@ export const getVouchersBySiteId = ( state, siteId ) => {
  * Return site vouchers getting from state object and
  * the given site object
  *
- * @param {Object} state - current state object
- * @param {Object} site - site object
+ * @param {object} state - current state object
+ * @param {object} site - site object
  * @return {Array} site vouchers
  */
 export const getVouchersBySite = ( state, site ) => {
@@ -42,8 +42,8 @@ export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) 
 /**
  * Return google-credits vouchers
  *
- * @param {Object} state - current state object
- * @param {Object} site - site object
+ * @param {object} state - current state object
+ * @param {object} site - site object
  * @return {Array} site vouchers
  */
 
@@ -55,7 +55,7 @@ export const getGoogleAdCredits = ( state, site ) => {
 /**
  * Return requesting state for the given site
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @param {Number} siteId - site identifier
  * @return {Boolean} is site-vouchers requesting?
  */
@@ -67,7 +67,7 @@ export const isRequestingSiteVouchers = ( state, siteId ) => {
  * Return assign requesting state for the given site
  * and serviceType
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @param {Number} siteId - site identifier
  * @param {String} serviceType - service type
  * @return {Boolean} true if a voucher is being assigned

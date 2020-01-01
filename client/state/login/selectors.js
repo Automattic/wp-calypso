@@ -7,7 +7,7 @@ import { get, isEmpty } from 'lodash';
  * Retrieve the user ID for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Number}         The user ID.
  */
 export const getTwoFactorUserId = state => {
@@ -18,7 +18,7 @@ export const getTwoFactorUserId = state => {
  * Retrieve the actual nonce for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
- * @param	{Object}	state  Global state tree
+ * @param	{object}	state  Global state tree
  * @param	{String}	nonceType nonce's type
  * @return {?String}         The nonce.
  */
@@ -30,7 +30,7 @@ export const getTwoFactorAuthNonce = ( state, nonceType ) => {
  * Retrieve the type of notification sent for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
  */
 export const getTwoFactorNotificationSent = state => {
@@ -40,7 +40,7 @@ export const getTwoFactorNotificationSent = state => {
 /***
  * Retrieve a token to be used for push notification auth polling
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Push notification token to be used for polling auth state
  */
 export const getTwoFactorPushToken = state =>
@@ -49,7 +49,7 @@ export const getTwoFactorPushToken = state =>
 /***
  * Retrieve the progress status of polling for push authentication
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}         Whether the polling for push authentication is in progress
  */
 export const getTwoFactorPushPollInProgress = state =>
@@ -58,7 +58,7 @@ export const getTwoFactorPushPollInProgress = state =>
 /***
  * Get whether user logged in successfully via push auth
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}         Whether the polling for push authentication completed successfully
  */
 export const getTwoFactorPushPollSuccess = state =>
@@ -67,7 +67,7 @@ export const getTwoFactorPushPollSuccess = state =>
 /**
  * Determines whether two factor authentication is enabled for the logging in user.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = state => {
@@ -79,7 +79,7 @@ export const isTwoFactorEnabled = state => {
 /**
  * Determines whether a request to authenticate 2FA is being made.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}         Whether a request to authenticate 2FA is being made.
  */
 export const isRequestingTwoFactorAuth = state => {
@@ -89,7 +89,7 @@ export const isRequestingTwoFactorAuth = state => {
 /**
  * Returns the error for a request to authenticate 2FA.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Error for the request.
  */
 export const getTwoFactorAuthRequestError = state => {
@@ -100,7 +100,7 @@ export const getTwoFactorAuthRequestError = state => {
  * Retrieves the supported auth types for the current login.
  * Returns null if there is no such information yet.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
  */
 export const getTwoFactorSupportedAuthTypes = state => {
@@ -111,7 +111,7 @@ export const getTwoFactorSupportedAuthTypes = state => {
  * Determines whether an auth type is supported for the current login.
  * Returns null if there is no such information yet.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @param  {String}   type   A 2FA auth type (of `authenticator`, `sms`, `push` ).
  * @return {?Boolean}        Whether the auth type `type` is supported
  */
@@ -123,7 +123,7 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 /**
  * Determines whether a login request is in-progress.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}         Whether a login request is in-progress.
  */
 export const isRequesting = state => {
@@ -133,7 +133,7 @@ export const isRequesting = state => {
 /**
  * Returns the error for a login request.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Object}         Error for the request.
  */
 export const getRequestError = state => {
@@ -143,7 +143,7 @@ export const getRequestError = state => {
 /**
  * Returns the notice for a login request.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Object}         Notice for the request.
  */
 export const getRequestNotice = state => {
@@ -154,7 +154,7 @@ export const getRequestNotice = state => {
  * Retrieves the last redirect url provided in the query parameters of any login page. This url must be sanitized by the
  * API before being used to avoid open redirection attacks.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Url to redirect the user to upon successful login
  * @see getRedirectToSanitized for the sanitized version
  */
@@ -166,7 +166,7 @@ export const getRedirectToOriginal = state => {
  * Retrieves the last redirect url provided in the query parameters of any login page that was sanitized by the API
  * during the authentication process.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Url to redirect the user to upon successful login
  */
 export const getRedirectToSanitized = state => {
@@ -176,7 +176,7 @@ export const getRedirectToSanitized = state => {
 /***
  * Retrieves whether the login form should be disabled due to actions.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {Boolean}         Login form disabled flag
  */
 export const isFormDisabled = state => {
@@ -186,7 +186,7 @@ export const isFormDisabled = state => {
 /**
  * Retrieves the authentication account type.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @returns {?String}        Authentication account type (e.g. 'regular', 'passwordless' ...)
  */
 export const getAuthAccountType = state => {
@@ -196,7 +196,7 @@ export const getAuthAccountType = state => {
 /***
  * Tells us if we're in a process of creating a social account
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Boolean}         Error for the request.
  */
 export const isSocialAccountCreating = state =>
@@ -205,7 +205,7 @@ export const isSocialAccountCreating = state =>
 /***
  * Gets Username of the created social account
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Username of the created social account
  */
 export const getCreatedSocialAccountUsername = state =>
@@ -214,7 +214,7 @@ export const getCreatedSocialAccountUsername = state =>
 /***
  * Gets Bearer token of the created social account
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Bearer token of the created social account
  */
 export const getCreatedSocialAccountBearerToken = state =>
@@ -223,7 +223,7 @@ export const getCreatedSocialAccountBearerToken = state =>
 /***
  * Gets error for the create social account request.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Object}         Error for the create social account request.
  */
 export const getCreateSocialAccountError = state =>
@@ -232,7 +232,7 @@ export const getCreateSocialAccountError = state =>
 /***
  * Gets error for the get social account request.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Object}         Error for the get social account request.
  */
 export const getRequestSocialAccountError = state =>
@@ -241,7 +241,7 @@ export const getRequestSocialAccountError = state =>
 /***
  * Gets social account linking status
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?Boolean}         Boolean describing social account linking status
  */
 export const getSocialAccountIsLinking = state =>
@@ -250,7 +250,7 @@ export const getSocialAccountIsLinking = state =>
 /***
  * Gets social account linking email
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         wpcom email that is being linked
  */
 export const getSocialAccountLinkEmail = state =>
@@ -259,7 +259,7 @@ export const getSocialAccountLinkEmail = state =>
 /***
  * Gets social account linking service
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         service name that is being linked
  */
 export const getSocialAccountLinkService = state =>
@@ -268,7 +268,7 @@ export const getSocialAccountLinkService = state =>
 /***
  * Gets the auth information of the social account to be linked.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @return {?String}         Email address of the social account.
  */
 export const getSocialAccountLinkAuthInfo = state =>

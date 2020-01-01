@@ -24,7 +24,7 @@ import { useSiteOptions } from './use-site-options';
  * used to update the option. `updateValue` will re-render the component with
  * the new `value`.
  *
- * @param {Object} options An object of site options to retrieve. Keys should be
+ * @param {object} options An object of site options to retrieve. Keys should be
  *                         option names you wish to have locally. They can be
  *                         named whatever makes sense in the context of your
  *                         component. Any key's value should be another object

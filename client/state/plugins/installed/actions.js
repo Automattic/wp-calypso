@@ -47,7 +47,7 @@ import {
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
- * @param {Object} siteId - site ID
+ * @param {object} siteId - site ID
  * @param {String} pluginId - plugin identifier
  * @return {SitePlugin} SitePlugin instance
  */

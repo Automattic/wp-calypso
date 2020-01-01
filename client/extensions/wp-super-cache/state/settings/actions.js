@@ -29,8 +29,8 @@ import { getSiteTitle } from 'state/sites/selectors';
  * Returns an action object to be used in signalling that settings have been received.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} settings Settings object
- * @return {Object} Action object
+ * @param  {object} settings Settings object
+ * @return {object} Action object
  */
 export const receiveSettings = ( siteId, settings ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -77,7 +77,7 @@ export const requestSettings = siteId => {
  * Saves settings for a site.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} settings Updated settings
+ * @param  {object} settings Updated settings
  * @returns {Function} Action thunk that updates the settings for a given site
  */
 export const saveSettings = ( siteId, settings ) => {

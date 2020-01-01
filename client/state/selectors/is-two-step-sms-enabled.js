@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Is two-step sms enabled for the current user?
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @return {Boolean} return true if two-step sms is enabled
  */
 export default function isTwoStepSmsEnabled( state ) {

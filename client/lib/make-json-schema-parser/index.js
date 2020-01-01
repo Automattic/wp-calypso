@@ -30,9 +30,9 @@ export class TransformerError extends Error {
 /**
  * Create a parser to validate and transform data
  *
- * @param {Object}   schema               JSON schema
+ * @param {object}   schema               JSON schema
  * @param {Function} transformer=identity Transformer function
- * @param {Object}   schemaOptions={}     Options to pass to schema validator
+ * @param {object}   schemaOptions={}     Options to pass to schema validator
  *
  * @return {Parser}                       Function to validate and transform data
  */

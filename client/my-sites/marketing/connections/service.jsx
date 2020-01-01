@@ -148,7 +148,7 @@ export class SharingService extends Component {
 	/**
 	 * Establishes a new connection.
 	 *
-	 * @param {Object} service             Service to connect to.
+	 * @param {object} service             Service to connect to.
 	 * @param {Number} keyringConnectionId Keyring conneciton ID.
 	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
@@ -250,7 +250,7 @@ export class SharingService extends Component {
 	/**
 	 * Sets a connection to be site-wide or not.
 	 *
-	 * @param  {Object}   connection Connection to update.
+	 * @param  {object}   connection Connection to update.
 	 * @param  {Boolean}  shared     Whether the connection can be used by other users.
 	 * @return {Function}            Action thunk
 	 */
@@ -303,7 +303,7 @@ export class SharingService extends Component {
 	/**
 	 * Fetch connections
 	 *
-	 * @param {Object} connection Connection to update.
+	 * @param {object} connection Connection to update.
 	 * @return {Function} Action thunk
 	 */
 	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );

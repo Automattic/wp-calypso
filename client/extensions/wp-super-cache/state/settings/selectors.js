@@ -11,7 +11,7 @@ function getSettingsState( state ) {
 /**
  * Returns true if we are requesting settings for the specified site ID, false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether settings are being requested
  */
@@ -22,7 +22,7 @@ export function isRequestingSettings( state, siteId ) {
 /**
  * Returns true if we are restoring settings for the specified site ID, false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether settings are being restored
  */
@@ -33,7 +33,7 @@ export function isRestoringSettings( state, siteId ) {
 /**
  * Returns true if we are saving settings for the specified site ID, false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether settings are being saved
  */
@@ -48,7 +48,7 @@ export function isSavingSettings( state, siteId ) {
 /**
  * Returns true if the settings save request was successful.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether settings were saved successfully
  */
@@ -59,9 +59,9 @@ export function isSettingsSaveSuccessful( state, siteId ) {
 /**
  * Returns the settings for the specified site ID.
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @param  {Number} siteId Site ID
- * @return {Object} Settings
+ * @return {object} Settings
  */
 export function getSettings( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'items', siteId ], null );
@@ -70,7 +70,7 @@ export function getSettings( state, siteId ) {
 /**
  * Returns the status of the last settings save request.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
  * @return {String}  Save request status (pending, success or error)
  */

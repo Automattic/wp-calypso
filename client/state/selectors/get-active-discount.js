@@ -50,7 +50,7 @@ const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
 /**
  * Returns info whether the site is eligible for spring discount or not.
  *
- * @param  {Object}  state Global state tree.
+ * @param  {object}  state Global state tree.
  * @return {Object|null}  Promo description
  */
 export default state => {

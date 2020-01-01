@@ -17,7 +17,7 @@ import {
  * @param  {Number} siteId     Site ID
  * @param  {String} postType   Post type
  * @param  {Array}  taxonomies Taxonomies received
- * @return {Object}            Action object
+ * @return {object}            Action object
  */
 export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
 	return {

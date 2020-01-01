@@ -13,8 +13,8 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns true if the site has unchanged site title
  *
- * @param {Object} state Global state tree
- * @param {Object} siteId Site ID
+ * @param {object} state Global state tree
+ * @param {object} siteId Site ID
  * @return {Boolean} True if site title is default, false otherwise.
  */
 export default function hasDefaultSiteTitle( state, siteId ) {

@@ -79,7 +79,7 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
  * A range is a parent of another if it "encloses" the range.
  *
  * @param {Object[]} ranges the tree of ranges
- * @param {Object} range the range to add
+ * @param {object} range the range to add
  * @returns {Object[]} the new tree
  */
 const addRange = ( ranges, range ) => {
@@ -196,7 +196,7 @@ const nodeMappings = type => {
  * extracted from text and range information
  *
  * @param {Object|String} text original text message
- * @param {Object} range contains type and meta information
+ * @param {object} range contains type and meta information
  * @returns {{children: *[]}} new node
  */
 const newNode = ( text, range = {} ) => ( {
@@ -233,7 +233,7 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * @param {Array} accum.0 previously parsed results
  * @param {String} accum.1 remaining text to parse
  * @param {Number} accum.2 current index into text string
- * @param {Object} nextRange next range from formatted block
+ * @param {object} nextRange next range from formatted block
  * @returns {Array} parsed results: text and nodes
  */
 const parse = ( [ prev, text, offset ], nextRange ) => {
@@ -267,7 +267,7 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  *
  * @see parse
  *
- * @param {Object} block the block to parse
+ * @param {object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */
 export const parseBlock = block =>

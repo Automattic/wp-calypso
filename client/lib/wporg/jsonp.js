@@ -30,7 +30,7 @@ function noop() {}
  * JSONP handler
  *
  * @param {String} url
- * @param {Object} query params
+ * @param {object} query params
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {

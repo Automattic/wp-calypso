@@ -17,7 +17,7 @@ import {
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post Id
  * @param  {Array}  stats  The received stats
- * @return {Object}        Action object
+ * @return {object}        Action object
  */
 export function receivePostStats( siteId, postId, stats ) {
 	return {

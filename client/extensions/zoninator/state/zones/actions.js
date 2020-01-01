@@ -32,8 +32,8 @@ export const requestError = siteId => ( { type: ZONINATOR_REQUEST_ERROR, siteId 
  * Returns an action object to indicate that all the zones should be updated.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} data   Zones
- * @return {Object}        Action object
+ * @param  {object} data   Zones
+ * @return {object}        Action object
  */
 export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES, siteId, data } );
 
@@ -42,8 +42,8 @@ export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES,
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
- * @param  {Object} data   Zone details
- * @return {Object}        Action object
+ * @param  {object} data   Zone details
+ * @return {object}        Action object
  */
 export const updateZone = ( siteId, zoneId, data ) => ( {
 	type: ZONINATOR_UPDATE_ZONE,
@@ -58,8 +58,8 @@ export const updateZone = ( siteId, zoneId, data ) => ( {
  * @param  {Number} siteId   Site ID
  * @param  {String} siteSlug Site slug
  * @param  {String} form     Form name
- * @param  {Object} data     Zone details
- * @return {Object}          Action object
+ * @param  {object} data     Zone details
+ * @return {object}          Action object
  */
 export const addZone = ( siteId, siteSlug, form, data ) => ( {
 	type: ZONINATOR_ADD_ZONE,
@@ -75,8 +75,8 @@ export const addZone = ( siteId, siteSlug, form, data ) => ( {
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
  * @param  {String} form   Form name
- * @param  {Object} data   Zone details
- * @return {Object}        Action object
+ * @param  {object} data   Zone details
+ * @return {object}        Action object
  */
 export const saveZone = ( siteId, zoneId, form, data ) => ( {
 	type: ZONINATOR_SAVE_ZONE,
@@ -91,7 +91,7 @@ export const saveZone = ( siteId, zoneId, form, data ) => ( {
  * @param  {Number} siteId   Site ID
  * @param  {String} siteSlug Site slug
  * @param  {Number} zoneId   Zone ID
- * @return {Object}          Action object
+ * @return {object}          Action object
  */
 export const deleteZone = ( siteId, siteSlug, zoneId ) => ( {
 	type: ZONINATOR_DELETE_ZONE,

@@ -22,9 +22,9 @@ export default class ActivityQueryManager extends QueryManager {
 	/**
 	 * Sort descending order, defaulting to end of list if unknown.
 	 *
-	 * @param  {Object} query Query object (unused).
-	 * @param  {Object} itemA First item
-	 * @param  {Object} itemB Second item
+	 * @param  {object} query Query object (unused).
+	 * @param  {object} itemA First item
+	 * @param  {object} itemB Second item
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
@@ -41,8 +41,8 @@ export default class ActivityQueryManager extends QueryManager {
 	/**
 	 * Returns true if the item matches the given query, or false otherwise.
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  item  Item to consider
+	 * @param  {object}  query Query object
+	 * @param  {object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query
 	 */
 	static matches = overEvery( [
@@ -53,8 +53,8 @@ export default class ActivityQueryManager extends QueryManager {
 	/**
 	 * Returns true if the item matches query.dateStart if provided
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  item  Item to consider
+	 * @param  {object}  query Query object
+	 * @param  {object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateStart
 	 */
 	static matchDateStart( query, { activityTs } ) {
@@ -64,8 +64,8 @@ export default class ActivityQueryManager extends QueryManager {
 	/**
 	 * Returns true if the item matches query.dateEnd if provided
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  item  Item to consider
+	 * @param  {object}  query Query object
+	 * @param  {object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateEnd
 	 */
 	static matchDateEnd( query, { activityTs } ) {

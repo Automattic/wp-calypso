@@ -27,7 +27,7 @@ export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
  *
  * @param {String} embedUrl the url of the embed for which the thumbnail was grabbed
  * @param {String} thumbnailUrl the url at which to find the thumbnail for the embed
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 	return {

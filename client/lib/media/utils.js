@@ -34,8 +34,8 @@ const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
  * Given a media object, returns a URL string to that media. Accepts
  * optional options to specify photon usage or a maximum image width.
  *
- * @param  {Object} media   Media object
- * @param  {Object} options Optional options, accepting a `photon` boolean,
+ * @param  {object} media   Media object
+ * @param  {object} options Optional options, accepting a `photon` boolean,
  *                          `maxWidth` pixel value, `resize` string, or `size`.
  * @return {string}         URL to the media
  */
@@ -235,7 +235,7 @@ export function sortItemsByDate( items ) {
  * Jetpack currently does not sync the allowed file types
  * option, so we must assume that all file types are supported.
  *
- * @param  {Object}  site Site object
+ * @param  {object}  site Site object
  * @return {Boolean}      Site allowed file types are accurate
  */
 export function isSiteAllowedFileTypesToBeTrusted( site ) {
@@ -245,7 +245,7 @@ export function isSiteAllowedFileTypesToBeTrusted( site ) {
 /**
  * Returns an array of supported file extensions for the specified site.
  *
- * @param  {Object} site Site object
+ * @param  {object} site Site object
  * @return {Array}      Supported file extensions
  */
 export function getAllowedFileTypesForSite( site ) {
@@ -260,8 +260,8 @@ export function getAllowedFileTypesForSite( site ) {
  * Returns true if the specified item is a valid file in a Premium plan,
  * or false otherwise.
  *
- * @param  {Object}  item Media object
- * @param  {Object}  site Site object
+ * @param  {object}  item Media object
+ * @param  {object}  site Site object
  * @return {Boolean}      Whether the Premium plan supports the item
  */
 export function isSupportedFileTypeInPremium( item, site ) {
@@ -283,8 +283,8 @@ export function isSupportedFileTypeInPremium( item, site ) {
  * or false otherwise. A file is valid if the sites allowable file types
  * contains the item's type.
  *
- * @param  {Object}  item Media object
- * @param  {Object}  site Site object
+ * @param  {object}  item Media object
+ * @param  {object}  site Site object
  * @return {Boolean}      Whether the site supports the item
  */
 export function isSupportedFileTypeForSite( item, site ) {
@@ -307,8 +307,8 @@ export function isSupportedFileTypeForSite( item, site ) {
  * size for the site is unknown or a video is being uploaded for a Jetpack
  * site with VideoPress enabled. Otherwise, returns true.
  *
- * @param  {Object}   item  Media object
- * @param  {Object}   site  Site object
+ * @param  {object}   item  Media object
+ * @param  {object}   site  Site object
  * @return {?Boolean}       Whether the size exceeds the site maximum
  */
 export function isExceedingSiteMaxUploadSize( item, site ) {
@@ -337,7 +337,7 @@ export function isExceedingSiteMaxUploadSize( item, site ) {
 /**
  * Returns true if the provided media object is a VideoPress video item.
  *
- * @param  {Object}  item Media object
+ * @param  {object}  item Media object
  * @return {Boolean}      Whether the media is a VideoPress video item
  */
 export function isVideoPressItem( item ) {
@@ -392,8 +392,8 @@ export function playtime( duration ) {
  * determined or a site is not passed, a fallback default value is used.
  *
  * @param  {String} size Thumbnail size
- * @param  {Object} site Site object
- * @return {Object}      Width and height dimensions
+ * @param  {object} site Site object
+ * @return {object}      Width and height dimensions
  */
 export function getThumbnailSizeDimensions( size, site ) {
 	let width, height;
@@ -415,7 +415,7 @@ export function getThumbnailSizeDimensions( size, site ) {
  * Given an array of media items, returns a gallery shortcode using an
  * optional set of parameters.
  *
- * @param  {Object} settings Gallery settings
+ * @param  {object} settings Gallery settings
  * @return {String}          Gallery shortcode
  */
 export function generateGalleryShortcode( settings ) {
@@ -465,9 +465,9 @@ export function generateGalleryShortcode( settings ) {
  * Returns true if the specified user is capable of deleting the media
  * item, or false otherwise.
  *
- * @param  {Object}  item Media item
- * @param  {Object}  user User object
- * @param  {Object}  site Site object
+ * @param  {object}  item Media item
+ * @param  {object}  user User object
+ * @param  {object}  site Site object
  * @return {Boolean}      Whether user can delete item
  */
 export function canUserDeleteItem( item, user, site ) {
@@ -482,7 +482,7 @@ export function canUserDeleteItem( item, user, site ) {
  * Wrapper method for the HTML canvas toBlob() function. Polyfills if the
  * function does not exist
  *
- * @param {Object} canvas the canvas element
+ * @param {object} canvas the canvas element
  * @param {Function} callback function to process the blob after it is extracted
  * @param {String} type image type to be extracted
  * @param {Number} quality extracted image quality
@@ -514,7 +514,7 @@ export function canvasToBlob( canvas, callback, type, quality ) {
 /**
  * Returns true if specified item is currently being uploaded (i.e. is transient).
  *
- * @param  {Object}  item Media item
+ * @param  {object}  item Media item
  * @return {Boolean}      Whether item is being uploaded
  */
 export function isItemBeingUploaded( item ) {
@@ -534,7 +534,7 @@ export function isTransientPreviewable( item ) {
  * optimistic rendering prior to media persistence to server.
  *
  * @param  {(String|Object|Blob|File)} file URL or File object
- * @return {Object}                         Transient media object
+ * @return {object}                         Transient media object
  */
 export function createTransientMedia( file ) {
 	const transientMedia = {

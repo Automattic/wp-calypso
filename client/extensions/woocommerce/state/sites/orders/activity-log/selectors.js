@@ -63,7 +63,7 @@ export const EVENT_TYPES = {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the activity log for a given order has been successfully loaded from the server.
@@ -85,7 +85,7 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the activity log for a given order is currently being retrieved from the server.
@@ -107,7 +107,7 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object[]} List of events to display. Each event will have at least these properties:

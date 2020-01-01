@@ -33,8 +33,8 @@ import 'state/data-layer/wpcom/sites/posts/replies';
  * Creates an action that requests a single comment for a given site.
  * @param {Number} siteId Site identifier
  * @param {Number} commentId Comment identifier
- * @param {Object} query API call parameters
- * @returns {Object} Action that requests a single comment
+ * @param {object} query API call parameters
+ * @returns {object} Action that requests a single comment
  */
 export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 	type: COMMENT_REQUEST,
@@ -49,7 +49,7 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
  * @param {Number} postId post identifier
  * @param {Array} comments the list of comments received
  * @param {Boolean} commentById were the comments retrieved by ID directly?
- * @returns {Object} Action for receiving comments
+ * @returns {object} Action for receiving comments
  */
 export const receiveComments = ( { siteId, postId, comments, commentById = false } ) => ( {
 	type: COMMENTS_RECEIVE,
@@ -63,7 +63,7 @@ export const receiveComments = ( { siteId, postId, comments, commentById = false
  * Creates an action for receiving comment errors.
  * @param {Number} siteId site identifier
  * @param {Number} commentId comment identifier
- * @returns {Object} Action for receiving comment errors
+ * @returns {object} Action for receiving comment errors
  */
 export const receiveCommentsError = ( { siteId, commentId } ) => ( {
 	type: COMMENTS_RECEIVE_ERROR,
@@ -109,10 +109,10 @@ export function requestPostComments( {
  * listed in the API docs:
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
  *
- * @param {Object} query API call parameters
+ * @param {object} query API call parameters
  * @param {String} query.listType Type of list to return (required as 'site')
  * @param {Number} query.siteId Site identifier
- * @returns {Object} Action that requests a comment list
+ * @returns {object} Action that requests a comment list
  */
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
@@ -121,10 +121,10 @@ export const requestCommentsList = query => ( {
 
 /**
  * Creates an action that requests the comments tree for a given site.
- * @param {Object} query API call parameters
+ * @param {object} query API call parameters
  * @param {Number} query.siteId Site identifier
  * @param {String} query.status Status filter
- * @returns {Object} Action that requests a comment tree
+ * @returns {object} Action that requests a comment tree
  */
 export const requestCommentsTreeForSite = query => ( {
 	type: COMMENTS_TREE_SITE_REQUEST,
@@ -135,7 +135,7 @@ export const requestCommentsTreeForSite = query => ( {
  * Creates an action that requests comment counts for a given site.
  * @param {Number} siteId Site identifier
  * @param {Number} [postId] Post identifier
- * @returns {Object} Action that requests comment counts by site.
+ * @returns {object} Action that requests comment counts by site.
  */
 export const requestCommentCounts = ( siteId, postId ) => ( {
 	type: COMMENT_COUNTS_REQUEST,
@@ -149,10 +149,10 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number|String} commentId comment or comment placeholder identifier
- * @param {Object} options Action options
+ * @param {object} options Action options
  * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
- * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
- * @returns {Object} action that deletes a comment
+ * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @returns {object} action that deletes a comment
  */
 export const deleteComment = (
 	siteId,
@@ -202,7 +202,7 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} parentCommentId parent comment identifier
- * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {Function} a thunk that creates a comment for a given post
  */
 export const replyComment = (
@@ -239,7 +239,7 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} commentId comment identifier
- * @returns {Object} Action that unlikes a comment
+ * @returns {object} Action that unlikes a comment
  */
 export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	type: COMMENTS_UNLIKE,
@@ -254,8 +254,8 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
  * @param {String} status New status
- * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
- * @returns {Object} Action that changes a comment status
+ * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @returns {object} Action that changes a comment status
  */
 export const changeCommentStatus = (
 	siteId,
@@ -286,7 +286,7 @@ export const changeCommentStatus = (
 };
 
 /**
- * @typedef {Object} Comment
+ * @typedef {object} Comment
  * @property {Number} ID specific API version for request
  * @property {Author} author comment author
  * @property {String} content comment content
@@ -295,7 +295,7 @@ export const changeCommentStatus = (
  */
 
 /**
- * @typedef {Object} Author
+ * @typedef {object} Author
  * @property {String} name Full name of the comment author
  * @property {String} url Address of the commenter site or blog
  */
@@ -306,7 +306,7 @@ export const changeCommentStatus = (
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
  * @param {Comment} comment New comment data
- * @returns {Object} Action that edits a comment
+ * @returns {object} Action that edits a comment
  */
 export const editComment = ( siteId, postId, commentId, comment ) => ( {
 	type: COMMENTS_EDIT,
@@ -321,13 +321,13 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
  * only get expanded and cannot unexpand from this action.
  * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
  *
- * @param {Object} options options object.
+ * @param {object} options options object.
  * @param {number} options.siteId siteId for the comments to expand.
  * @param {Array<number>} options.commentIds list of commentIds to expand.
  * @param {number} options.postId postId for the comments to expand.
  * @param {string} options.displayType which displayType to set the comment to.
  *
- * @returns {Object} reader expand comments action
+ * @returns {object} reader expand comments action
  */
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
 	type: READER_EXPAND_COMMENTS,
@@ -341,7 +341,7 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} commentId comment identifier
- * @returns {Object} Action to set active reply
+ * @returns {object} Action to set active reply
  */
 export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 	type: COMMENTS_SET_ACTIVE_REPLY,

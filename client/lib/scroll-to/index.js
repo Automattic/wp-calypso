@@ -142,7 +142,7 @@ function circularOutEasing( val ) {
 
 /**
  * Scrolls a container to the specified location
- * @param {Object} options - options object (see below)
+ * @param {object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate
  * @param {function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
@@ -150,7 +150,7 @@ function circularOutEasing( val ) {
  * @param {function} options.onStart - callback before start is called
  * @param {function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
- * @returns {Object} - the stepper
+ * @returns {object} - the stepper
  */
 export default function scrollTo( options ) {
 	const container = options.container || window;

@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns true if requesting user suggestions for the specified site ID, or
  * false otherwise.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         Whether user suggestions are being requested
  */
@@ -19,7 +19,7 @@ export function isRequestingUserSuggestions( state, siteId ) {
 /**
  * Returns the user suggestions for a site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {Array}           Site user suggestions
  */

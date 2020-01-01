@@ -31,7 +31,7 @@ export default class TermQueryKey extends PaginatedQueryKey {
 	/**
 	 * Returns a serialized query, given a query object
 	 *
-	 * @param  {Object} query Query object
+	 * @param  {object} query Query object
 	 * @return {String}       Serialized query
 	 */
 	static stringify( query ) {
@@ -42,7 +42,7 @@ export default class TermQueryKey extends PaginatedQueryKey {
 	 * Returns a query object, given a serialized query
 	 *
 	 * @param  {String} key Serialized query
-	 * @return {Object}     Query object
+	 * @return {object}     Query object
 	 */
 	static parse( key ) {
 		return omitBy( super.parse( key ), isDefaultOrNullQueryValue );

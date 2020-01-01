@@ -15,8 +15,8 @@ export const DEFAULT_QUERY = {
  * Returns a normalized product categories query, excluding any values which match the
  * default query.
  *
- * @param  {Object} query Product categories query
- * @return {Object}       Normalized query
+ * @param  {object} query Product categories query
+ * @return {object}       Normalized query
  */
 export function getNormalizedProductCategoriesQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_QUERY[ key ] === value );
@@ -25,7 +25,7 @@ export function getNormalizedProductCategoriesQuery( query ) {
 /**
  * Returns a serialized product categories query
  *
- * @param  {Object} query  Product categories query
+ * @param  {object} query  Product categories query
  * @return {String}        Serialized query
  */
 export function getSerializedProductCategoriesQuery( query = {} ) {

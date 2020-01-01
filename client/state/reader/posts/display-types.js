@@ -1,6 +1,6 @@
 /**
  * Feed post display types
- * @type {Object} Types of post for display
+ * @type {object} Types of post for display
  */
 export default {
 	UNCLASSIFIED: 0,

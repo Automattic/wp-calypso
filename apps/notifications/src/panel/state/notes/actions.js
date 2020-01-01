@@ -42,7 +42,7 @@ export const likeNote = ( noteId, isLiked ) => ( {
  * @see approveNote
  *
  * @param {Number} noteId
- * @returns {Object} action object
+ * @returns {object} action object
  */
 export const resetLocalApproval = noteId => ( {
 	type: types.RESET_LOCAL_APPROVAL,
@@ -60,7 +60,7 @@ export const resetLocalApproval = noteId => ( {
  * @see likeNote
  *
  * @param {Number} noteId
- * @returns {Object} action object
+ * @returns {object} action object
  */
 export const resetLocalLike = noteId => ( {
 	type: types.RESET_LOCAL_LIKE,

@@ -74,7 +74,7 @@ export function getLanguageGroupByCountryCode(
  * Assumes the following langSlug formats: xx, xx-yy, xx-yy_variant, xx_variant
  *
  * @param {String} langSlug value of config.language[ langSlug ].langSlug
- * @returns {Object} { langCode: 'xx', langSubcode: 'xx' } | {}
+ * @returns {object} { langCode: 'xx', langSubcode: 'xx' } | {}
  */
 export function getLanguageCodeLabels( langSlug ) {
 	const languageCodeLabels = {};

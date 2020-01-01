@@ -43,7 +43,7 @@ export default class EmailClient {
 	 * It's possible to pass a function to validate received emails. For example when you waiting for specific email - validator may check if expected email is present
 	 * @param {string} emailAddress - Email address from where to get emails
 	 * @param {function} validator - Optional function to validate received emails
-	 * @returns {Object} - Returns `object`
+	 * @returns {object} - Returns `object`
 	 */
 	async pollEmailsByRecipient( emailAddress, validator = emails => emails.length > 0 ) {
 		const intervalMS = 1500;

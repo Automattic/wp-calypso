@@ -11,7 +11,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
 /**
  * Returns WordPress version of currently selected site.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {?String}        WordPress version of selected site
  */

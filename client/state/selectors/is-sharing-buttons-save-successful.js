@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Returns true if the save sharing buttons requests is successful
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether the request is successful or not
  */

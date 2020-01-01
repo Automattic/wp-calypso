@@ -12,7 +12,7 @@
  * @see https://github.com/eslint/eslint/blob/v2.12.0/lib/eslint.js#L964-L971
  *
  * @param  {String} message Message template
- * @param  {Object} terms   Terms
+ * @param  {object} terms   Terms
  * @return {String}         Formatted message
  */
 function formatMessage( message, terms ) {

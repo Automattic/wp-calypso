@@ -31,7 +31,7 @@ export function editProductVariation( siteId, product, variation, data ) {
  * Action Creator: Clear All Product Variation Edits
  *
  * @param {Number} siteId The site for which to clear all product variation edits.
- * @return {Object} action
+ * @return {object} action
  */
 export function clearProductVariationEdits( siteId ) {
 	return {

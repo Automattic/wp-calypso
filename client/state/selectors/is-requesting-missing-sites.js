@@ -7,7 +7,7 @@ import getSites from 'state/selectors/get-sites';
 
 /**
  * Returns true if we are requesting sites we don't have yet.
- * @param {Object}    state  Global state tree
+ * @param {object}    state  Global state tree
  * @return {Boolean}        Request State
  */
 export default function isRequestingMissingSites( state ) {

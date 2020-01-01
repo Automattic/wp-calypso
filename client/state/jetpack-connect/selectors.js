@@ -55,7 +55,7 @@ export const getAuthAttempts = ( state, slug ) => {
 /**
  * Returns true if the user is already connected, otherwise false
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {boolean}       True if the user is connected otherwise false
  */
 export const getUserAlreadyConnected = state => {

@@ -8,7 +8,7 @@ import { getSitePurchases } from 'state/purchases/selectors';
  *
  * Note: there is an is_cancelable flag on the purchase object, but it returns true for premium themes.
  *
- * @param  {Object}  state       global state
+ * @param  {object}  state       global state
  * @param  {Number}  siteId      the site ID
  * @return {Boolean} if the site currently has any purchases that can be canceled.
  */

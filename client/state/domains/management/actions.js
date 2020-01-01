@@ -23,8 +23,8 @@ import {
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
  *
- * @param   {Object}   data   cached contact details object
- * @returns {Object}   Action object
+ * @param   {object}   data   cached contact details object
+ * @returns {object}   Action object
  */
 export function receiveContactDetailsCache( data ) {
 	return {
@@ -73,8 +73,8 @@ export function updateContactDetailsCache( data ) {
  * object has been received.
  *
  * @param	{String}   domain		domain queried
- * @param   {Object}   whoisData	contact details object
- * @returns {Object}   Action object
+ * @param   {object}   whoisData	contact details object
+ * @returns {object}   Action object
  */
 export function receiveWhois( domain, whoisData ) {
 	return {
@@ -122,7 +122,7 @@ export function requestWhois( domain ) {
  * at the domain's registrar.
  *
  * @param   {String}   domain		domain to query
- * @param   {Object}   whoisData	whois details object
+ * @param   {object}   whoisData	whois details object
  * @param	{Bool}     transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */

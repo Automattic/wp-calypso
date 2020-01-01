@@ -11,8 +11,8 @@ import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate
 import { retryOnFailure } from './retry-on-failure';
 
 /**
- * @typedef {Object} InboundData
- * @property {Object} originalRequest the Redux action describing the inbound request
+ * @typedef {object} InboundData
+ * @property {object} originalRequest the Redux action describing the inbound request
  * @property {ReduxStore} store Redux store
  * @property {*} originalData response data from returned network request
  * @property {*} originalError response error from returned network request
@@ -32,8 +32,8 @@ import { retryOnFailure } from './retry-on-failure';
  */
 
 /**
- * @typedef {Object} OutboundData
- * @property {Object} originalRequest the Redux action describing the outbound request
+ * @typedef {object} OutboundData
+ * @property {object} originalRequest the Redux action describing the outbound request
  * @property {ReduxStore} store Redux store
  * @property {?Object} nextRequest the processed request to pass along the chain
  */

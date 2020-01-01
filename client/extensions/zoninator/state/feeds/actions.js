@@ -42,7 +42,7 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
  * @param  {Number} zoneId  Zone ID
  * @param  {String} form    Form name
  * @param  {Array}  posts   Feed posts
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 	type: ZONINATOR_SAVE_FEED,
@@ -58,7 +58,7 @@ export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
  * @param  {Array}  posts   Feed posts
- * @return {Object}         Action object
+ * @return {object}         Action object
  */
 export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_UPDATE_FEED,

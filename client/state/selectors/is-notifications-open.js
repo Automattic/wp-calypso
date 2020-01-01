@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Returns true if the notifications panel is open.
  *
- * @param  {Object}  state - Global state tree
+ * @param  {object}  state - Global state tree
  * @return {Boolean} true  - if notifications is open.
  *
  */

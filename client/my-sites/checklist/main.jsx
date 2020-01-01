@@ -46,7 +46,7 @@ class ChecklistMain extends PureComponent {
 	 *
 	 * Guard for relevant props updated and correct conditions
 	 *
-	 * @param {Object}   prevProps           Optional. Previous props from componentDidUpdate.
+	 * @param {object}   prevProps           Optional. Previous props from componentDidUpdate.
 	 * @param {?boolean} prevProps.isAtomic  Previous isAtomic
 	 * @param {?boolean} prevProps.isJetpack Previous isJetpack
 	 * @param {?string}  prevProps.siteSlug  Previous siteSlug

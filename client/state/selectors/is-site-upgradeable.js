@@ -11,7 +11,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * site cannot be upgraded, or null if upgrade ability cannot be
  * determined.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @param  {Number}   siteId Site ID
  * @return {?Boolean}        Whether site is upgradeable
  */

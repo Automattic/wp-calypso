@@ -4,7 +4,7 @@
 import { get, filter } from 'lodash';
 
 /**
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} true if we are fetching site blocks
  */
 export default function isFetchingSiteBlocks( state ) {

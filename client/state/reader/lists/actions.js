@@ -28,7 +28,7 @@ import {
  * Returns an action object to signal that list objects have been received.
  *
  * @param  {Array}  lists Lists received
- * @return {Object}       Action object
+ * @return {object}       Action object
  */
 export function receiveLists( lists ) {
 	return {
@@ -192,7 +192,7 @@ export function unfollowList( owner, slug ) {
 /**
  * Triggers a network request to update a list's details.
  *
- * @param  {Object}  list List details to save
+ * @param  {object}  list List details to save
  * @return {Function} Action promise
  */
 export function updateListDetails( list ) {

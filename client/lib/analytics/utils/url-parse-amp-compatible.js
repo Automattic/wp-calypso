@@ -55,7 +55,7 @@ function parseAmpEncodedParams( value ) {
  * This function is used to support AMP-compatible tracking.
  *
  * @param {String} url URL to be parsed like `document.location.href`.
- * @return {Object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
+ * @return {object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
  */
 export default function urlParseAmpCompatible( url ) {
 	const parsedUrl = parseUrl( url, true );

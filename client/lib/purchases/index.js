@@ -92,7 +92,7 @@ function getSubscriptionEndDate( purchase ) {
 /**
  * Adds a purchase renewal to the cart and redirects to checkout.
  *
- * @param {Object} purchase - the purchase to be renewed
+ * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
  */
 function handleRenewNowClick( purchase, siteSlug ) {
@@ -121,7 +121,7 @@ function hasIncludedDomain( purchase ) {
  * Also returns true for purchases whether or not they are after the refund period.
  * Purchases included with a plan can't be cancelled.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} whether the purchase is cancelable
  */
 function isCancelable( purchase ) {
@@ -181,7 +181,7 @@ function isPendingTransfer( purchase ) {
  * Payments done via CC & Paygate can have their CC updated, but this
  * is not currently true for other providers such as EBANX.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} if the purchase card can be updated
  */
 function cardProcessorSupportsUpdates( purchase ) {
@@ -207,7 +207,7 @@ function cardProcessorSupportsUpdates( purchase ) {
  * to display or highlight general help text about the refund policy to users
  * who are likely to be eligible for one.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  *
  * @returns {Boolean} Whether in refund period.
  */
@@ -235,7 +235,7 @@ function maybeWithinRefundPeriod( purchase ) {
  * Checks if a purchase have a bound payment method that we can recharge.
  * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} if the purchase can be recharged by us through the bound payment method.
  */
 function isRechargeable( purchase ) {
@@ -252,7 +252,7 @@ function isRechargeable( purchase ) {
  * still be within its refund period (and therefore refundable if the user
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} if the purchase is refundable
  */
 function isRefundable( purchase ) {
@@ -262,7 +262,7 @@ function isRefundable( purchase ) {
 /**
  * Checks whether the specified purchase can be removed from a user account.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
@@ -297,7 +297,7 @@ function isPartnerPurchase( purchase ) {
  * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
  * manually checks all kinds of stuff
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase has cancelable flag, false otherwise
  */
 function isPurchaseCancelable( purchase ) {
@@ -309,7 +309,7 @@ function isPurchaseCancelable( purchase ) {
  * business logic like "have we captured an auth?", "are we within 90 days of expiry?",
  * "is this part of a bundle?", etc.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase is renewable per business logic, false otherwise
  */
 function isRenewable( purchase ) {
@@ -351,7 +351,7 @@ function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
  * action (eg, a button press by user). Some purchases (eg, .fr domains)
  * are only renewable via auto-renew.
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase is capable of explicit renew
  */
 function canExplicitRenew( purchase ) {
@@ -381,7 +381,7 @@ function subscribedWithinPastWeek( purchase ) {
 /**
  * Returns the payment logo to display based on the payment method
  *
- * @param {Object} purchase - the purchase with which we are concerned
+ * @param {object} purchase - the purchase with which we are concerned
  * @return {string|null} the payment logo type, or null if no payment type is set.
  */
 function paymentLogoType( purchase ) {

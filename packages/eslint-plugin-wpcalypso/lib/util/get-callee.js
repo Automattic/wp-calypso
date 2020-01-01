@@ -8,8 +8,8 @@
 /**
  * Returns the callee identifier node from a CallExpression.
  *
- * @param  {Object} node CallExpression node
- * @return {Object}      First non-sequence callee
+ * @param  {object} node CallExpression node
+ * @return {object}      First non-sequence callee
  */
 const getCallee = ( module.exports = function( node ) {
 	const callee = node.callee;

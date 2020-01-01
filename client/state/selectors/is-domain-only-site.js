@@ -13,7 +13,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * Returns true if site is a Domain-only site, false if the site is a regular site,
  * or null if the site is unknown.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @param  {Number}   siteId Site ID
  * @return {?Boolean}        Whether site is a Domain-only site
  */

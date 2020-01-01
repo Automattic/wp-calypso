@@ -9,7 +9,7 @@ const getLocksState = state => get( state, 'extensions.zoninator.locks', {} );
 /**
  * Returns true if a zone is currently blocked by another user.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  zoneId Zone ID
  * @return {Boolean}        Blocked status
@@ -20,7 +20,7 @@ export const blocked = ( state, siteId, zoneId ) =>
 /**
  * Returns the time when the lock was created
  *
- * @param  {Object} state  Global state tree
+ * @param  {object} state  Global state tree
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
  * @return {Number}        Lock creation date
@@ -31,7 +31,7 @@ export const created = ( state, siteId, zoneId ) =>
 /**
  * Returns the lock's expiration time in milliseconds
  *
- * @param  {Object} state  Global state tree
+ * @param  {object} state  Global state tree
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
  * @return {Number}        Lock expiration time
@@ -42,7 +42,7 @@ export const expires = ( state, siteId, zoneId ) =>
 /**
  * Returns the max lock period for a zone
  *
- * @param  {Object} state  Global state tree
+ * @param  {object} state  Global state tree
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
  * @return {Number}        Maximum lock period in miliseconds

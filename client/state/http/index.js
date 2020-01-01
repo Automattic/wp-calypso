@@ -40,7 +40,7 @@ const isAllHeadersValid = headers =>
  * {Action} onFailure action to dispatch on failure with error meta
  *
  * @param {Function} dispatch redux store dispatch
- * @param {Object} action dispatched action we need to handle
+ * @param {object} action dispatched action we need to handle
  */
 export const httpHandler = async ( { dispatch }, action ) => {
 	const {

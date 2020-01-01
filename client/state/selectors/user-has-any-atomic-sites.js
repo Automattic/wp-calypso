@@ -13,7 +13,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 /**
  * Whether the user currently has any Atomic sites
  *
- * @param {Object} state  Global state tree
+ * @param {object} state  Global state tree
  * @return {Boolean}
  */
 export default createSelector(

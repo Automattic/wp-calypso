@@ -2,7 +2,7 @@
  * Returns true if an error should be shown in the video editor.
  *
  *
- * @param {Object}  state Global state tree
+ * @param {object}  state Global state tree
  * @return {Boolean} true if an error should be shown.
  */
 

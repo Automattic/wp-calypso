@@ -18,7 +18,7 @@ import 'state/data-layer/wpcom/sites/posts/likes';
  *
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID
- * @return {Object}        Action
+ * @return {object}        Action
  */
 export function requestPostLikes( siteId, postId ) {
 	return {
@@ -33,7 +33,7 @@ export function requestPostLikes( siteId, postId ) {
  *
  * @param {Number} siteId Site ID
  * @param {Number} postId Post ID
- * @returns {Object} The like action
+ * @returns {object} The like action
  */
 export const like = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_LIKE,
@@ -47,7 +47,7 @@ export const like = ( siteId, postId, { source } = {} ) => ( {
  *
  * @param {Number} siteId Site ID
  * @param {Number} postId Post ID
- * @returns {Object} The unlike action
+ * @returns {object} The unlike action
  */
 export const unlike = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_UNLIKE,

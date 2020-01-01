@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Get the current step in the action list.
  *
- * @param {Object} rootState The root Calypso state.
+ * @param {object} rootState The root Calypso state.
  * @return {Array|null} The action list, or null if no action list is present.
  */
 export function getActionList( rootState ) {
@@ -20,7 +20,7 @@ export function getActionList( rootState ) {
  *
  * This selector returns the 1-indexed number of the step that is currently executing in the action list.
  *
- * @param {Object} actionList The action list to check.
+ * @param {object} actionList The action list to check.
  * @return {Number|null} The index of the current step, or actionList.length if all steps are complete,
  */
 export function getCurrentStepIndex( actionList ) {
@@ -32,7 +32,7 @@ export function getCurrentStepIndex( actionList ) {
 /**
  * Gets the number of steps in total in the action list.
  *
- * @param {Object} actionList The action list to check.
+ * @param {object} actionList The action list to check.
  * @return {Number} The count of steps in total.
  */
 export function getTotalStepCount( actionList ) {
@@ -48,7 +48,7 @@ export function getTotalStepCount( actionList ) {
 /**
  * Gets the number of steps in the action list that have not been completed.
  *
- * @param {Object} actionList The action list to check.
+ * @param {object} actionList The action list to check.
  * @return {Number} The number of steps remaining.
  */
 export function getStepCountRemaining( actionList ) {

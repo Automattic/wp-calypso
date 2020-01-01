@@ -478,8 +478,8 @@ function setUpLoggedInRoute( req, res, next ) {
 /**
  * Sets up a Content Security Policy header
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
- * @param {Object} req Express request object
- * @param {Object} res Express response object
+ * @param {object} req Express request object
+ * @param {object} res Express response object
  * @param {Function} next a callback to call when done
  */
 function setUpCSP( req, res, next ) {
@@ -594,8 +594,8 @@ function renderServerError( err, req, res, next ) {
  * Sets language properties to context if
  * a WordPress.com language slug is detected in the hostname
  *
- * @param {Object} req Express request object
- * @param {Object} res Express response object
+ * @param {object} req Express request object
+ * @param {object} res Express response object
  * @param {Function} next a callback to call when done
  * @returns {Function|Undefined} res.redirect if not logged in
  */

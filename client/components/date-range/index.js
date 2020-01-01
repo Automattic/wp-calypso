@@ -277,7 +277,7 @@ export class DateRange extends Component {
 	 * as required by Day Picker DateUtils
 	 * @param  {MomentJSDate} startDate the start date for the range
 	 * @param  {MomentJSDate} endDate   the end date for the range
-	 * @return {Object}           the date range object
+	 * @return {object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
 		return {

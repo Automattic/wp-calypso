@@ -24,10 +24,10 @@ const initialDomainState = {
 /**
  * @desc Updates name servers entry for given domain.
  *
- * @param {Object} [state] Current state.
+ * @param {object} [state] Current state.
  * @param {string} [domainName] Domain name.
- * @param {Object} [data] Domain name servers data.
- * @return {Object} New state
+ * @param {object} [data] Domain name servers data.
+ * @return {object} New state
  */
 function updateState( state, domainName, data ) {
 	const command = {

@@ -155,7 +155,7 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  * If the number starts does not start with a "1" but is a NANPA number, it will just use the national format with no
  * prefix. For everything else it will use the `nationalPrefix` for the given region.
  * @param {string} inputNumber - Unformatted number
- * @param {Object} numberRegion - The local/region for which we process the number
+ * @param {object} numberRegion - The local/region for which we process the number
  * @returns {{nationalNumber: string, prefix: string}} - Phone is the national phone number and prefix is to be
  *   shown before the phone number
  */
@@ -200,7 +200,7 @@ export function processNumber( inputNumber, numberRegion ) {
  * This function also supports partial formatting, i.e. it can format incomplete numbers as well.
  *
  * @param {string} inputNumber - Unformatted number
- * @param {Object} country - The region for which we are formatting
+ * @param {object} country - The region for which we are formatting
  * @returns {string} - Formatted number
  */
 export function formatNumber( inputNumber, country ) {

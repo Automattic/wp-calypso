@@ -71,8 +71,8 @@ const getRejectedPromise = errorToPass => {
 /**
  * Return plugin id depending if the site is a jetpack site
  *
- * @param {Object} site - site object
- * @param {Object} plugin - plugin object
+ * @param {object} site - site object
+ * @param {object} plugin - plugin object
  * @return {String} plugin if
  */
 const getPluginId = ( site, plugin ) => {
@@ -82,7 +82,7 @@ const getPluginId = ( site, plugin ) => {
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
- * @param {Object} site - site object
+ * @param {object} site - site object
  * @param {String} pluginId - plugin identifier
  * @return {SitePlugin} SitePlugin instance
  */
@@ -98,7 +98,7 @@ const getPluginHandler = ( site, pluginId ) => {
 /**
  * Return the bound plugin method
  *
- * @param {Object} site - site object
+ * @param {object} site - site object
  * @param {String} pluginId - plugin identifier
  * @param {String} method - plugin method to bind
  * @return {Function} bound function

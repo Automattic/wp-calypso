@@ -17,7 +17,7 @@ const UNREAD_COUNT_CAP = 40;
  * Returns the document title as set by the DocumentHead component or setTitle
  * action.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {?String}        Document title
  */
 export function getDocumentHeadTitle( state ) {
@@ -27,7 +27,7 @@ export function getDocumentHeadTitle( state ) {
 /**
  * Returns a count reflecting unread items.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {?String}        Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadUnreadCount( state ) {
@@ -39,7 +39,7 @@ export function getDocumentHeadUnreadCount( state ) {
  * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
  * '1', '20', '39', '40+'
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {String}         Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadCappedUnreadCount( state ) {
@@ -55,7 +55,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * Returns the formatted document title, based on the currently set title,
  * capped unreadCount, and selected site.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {String}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
@@ -85,7 +85,7 @@ export const getDocumentHeadFormattedTitle = createSelector(
  * Returns an array of document meta objects as set by the DocumentHead
  * component or setDocumentHeadMeta action.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Object[]}       Array of meta objects
  */
 export function getDocumentHeadMeta( state ) {
@@ -96,7 +96,7 @@ export function getDocumentHeadMeta( state ) {
  * Returns an array of document link objects as set by the DocumentHead
  * component or setDocumentHeadLink action.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Object[]}       Array of link objects
  */
 export function getDocumentHeadLink( state ) {

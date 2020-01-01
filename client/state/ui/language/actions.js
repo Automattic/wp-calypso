@@ -15,7 +15,7 @@ import { LOCALE_SET } from 'state/action-types';
  *
  * @param   {String} localeSlug the locale slug to change the locale to
  * @param   {String?} localeVariant the slug of the variant of localeSlug
- * @returns {Object} Action
+ * @returns {object} Action
  */
 export const setLocale = ( localeSlug, localeVariant = null ) => {
 	switchLocale( localeVariant || localeSlug );
@@ -29,8 +29,8 @@ export const setLocale = ( localeSlug, localeVariant = null ) => {
 /**
  * Set the ui locale using a raw (jed) translation object
  *
- * @param   {Object} localeData the locale data to be set
- * @returns {Object} Action
+ * @param   {object} localeData the locale data to be set
+ * @returns {object} Action
  */
 export const setLocaleRawData = localeData => {
 	i18n.setLocale( localeData );

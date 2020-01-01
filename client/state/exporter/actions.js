@@ -26,8 +26,8 @@ import 'state/data-layer/wpcom/sites/exports/media';
 /**
  * Sets the post type to export.
  *
- * @param  {Object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
- * @return {Object}            Action object
+ * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
+ * @return {object}            Action object
  */
 export function setPostType( postType ) {
 	return {

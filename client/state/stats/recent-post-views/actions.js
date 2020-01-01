@@ -16,7 +16,7 @@ import 'state/data-layer/wpcom/sites/stats/views/posts';
  * @param  {String}   postIds  Comma separated list of Post IDs
  * @param  {Number}   num      Number of days to include in the query
  * @param  {String}   date     The most recent day to include in results (YYYY-MM-DD format)
- * @return {Object}  Action object
+ * @return {object}  Action object
  */
 export function requestRecentPostViews( siteId, postIds, num, date ) {
 	return {
@@ -33,7 +33,7 @@ export function requestRecentPostViews( siteId, postIds, num, date ) {
  * been received.
  *
  * @param  {Number}  siteId   Site ID
- * @return {Object}  Action object
+ * @return {object}  Action object
  */
 export function receiveRecentPostViews( siteId, { date, posts } ) {
 	return {

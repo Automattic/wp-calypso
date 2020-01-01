@@ -10,7 +10,7 @@ import { READER_VIEW_STREAM } from 'state/action-types';
  *
  * @param {Date} mark  - date last viewed
  * @param {String} streamKey - stream being viewed
- * @returns {Object} action object for dispatch
+ * @returns {object} action object for dispatch
  */
 export const viewStream = ( { mark, streamKey } ) => {
 	return {

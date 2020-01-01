@@ -15,8 +15,8 @@ import {
  * has been received.
  *
  * @param   {Array}    suggestions              domain suggestions
- * @param   {Object}   queryObject              domain suggestions queryObject
- * @returns {Object}   Action object
+ * @param   {object}   queryObject              domain suggestions queryObject
+ * @returns {object}   Action object
  */
 export function receiveDomainsSuggestions( suggestions, queryObject ) {
 	return {
@@ -28,7 +28,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 
 /**
  * Triggers a network request to find domain suggestions
- * @param   {Object}   queryObject                          domain suggestions queryObject
+ * @param   {object}   queryObject                          domain suggestions queryObject
  * @param   {String}   queryObject.query                    domainQuery
  * @param   {Number}   queryObject.quantity                 max results
  * @param   {String}   queryObject.vendor                   vendor

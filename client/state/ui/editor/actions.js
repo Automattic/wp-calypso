@@ -92,7 +92,7 @@ export function stopEditingPost( siteId, postId ) {
  * some content from source.
  *
  * @param {String} source Identifier of the app the content was pasted from.
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function pasteEvent( source ) {
 	return {
@@ -106,7 +106,7 @@ export function pasteEvent( source ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @return {object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );
@@ -125,7 +125,7 @@ export function setEditorMediaModalView( view ) {
  *
  * @param  {Number}  siteId    Site ID
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
- * @return {Object}            Action object
+ * @return {object}            Action object
  */
 export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	return ( dispatch, getState ) => {

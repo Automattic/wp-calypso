@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Returns true if there is a pending email change, false if not.
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @return {Boolean} pending email state
  */
 export default function isPendingEmailChange( state ) {

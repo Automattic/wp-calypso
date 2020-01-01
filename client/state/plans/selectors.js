@@ -13,7 +13,7 @@ import { calculateMonthlyPriceForPlan } from 'lib/plans';
 /**
  * Return WordPress plans getting from state object
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @return {Array} WordPress plans
  */
 export const getPlans = state => {
@@ -23,7 +23,7 @@ export const getPlans = state => {
 /**
  * Return requesting state
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @return {Boolean} is plans requesting?
  */
 export const isRequestingPlans = state => {
@@ -32,9 +32,9 @@ export const isRequestingPlans = state => {
 
 /**
  * Returns a plan
- * @param  {Object} state      global state
+ * @param  {object} state      global state
  * @param  {Number} productId  the plan productId
- * @return {Object} the matching plan
+ * @return {object} the matching plan
  */
 export const getPlan = createSelector(
 	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
@@ -43,9 +43,9 @@ export const getPlan = createSelector(
 
 /**
  * Returns a plan searched by its slug
- * @param  {Object} state      global state
+ * @param  {object} state      global state
  * @param  {String} planSlug the plan slug
- * @return {Object} the matching plan
+ * @return {object} the matching plan
  */
 export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
@@ -54,7 +54,7 @@ export const getPlanBySlug = createSelector(
 
 /**
  * Returns a plan price
- * @param  {Object}  state     global state
+ * @param  {object}  state     global state
  * @param  {Number}  productId the plan productId
  * @param  {Boolean} isMonthly if true, returns monthly price
  * @return {Number}  plan price
@@ -73,7 +73,7 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  *
- * @param  {Object}  state     global state
+ * @param  {object}  state     global state
  * @param  {Number}  productId the plan productId
  * @return {String}  plan product_slug
  */

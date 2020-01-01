@@ -12,7 +12,7 @@ import { getPreference } from 'state/preferences/selectors';
  * Returns true if the eCommerce manage nudge has been dismissed by the current user.
  *
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId The Id of the site
  * @return {Boolean} True if the nudge has been dismissed
  */

@@ -7,7 +7,7 @@ import createSelector from 'lib/create-selector';
 /**
  * Returns a list of site IDs dismissed by the user
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Array}        Dimissed site IDs
  */
 export default createSelector(

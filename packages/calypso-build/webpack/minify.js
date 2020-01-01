@@ -31,7 +31,7 @@ function chooseTerserEcmaVersion( browsers ) {
  *
  * @see https://github.com/webpack-contrib/terser-webpack-plugin for complete descriptions of options.
  *
- * @param {Object} options Options passed to the terser plugin
+ * @param {object} options Options passed to the terser plugin
  * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
  */
 module.exports = options => {

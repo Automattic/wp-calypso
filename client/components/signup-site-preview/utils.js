@@ -43,7 +43,7 @@ export function revokeObjectURL( objectUrl ) {
 /**
  * Returns a WordPress page shell HTML
  *
- * @param  {Object}  content            Object containing `title`, `tagline` and `body` strings
+ * @param  {object}  content            Object containing `title`, `tagline` and `body` strings
  * @param  {String}  cssUrl             A URL to the theme CSS file
  * @param  {String}  fontUrl            A URL to the font CSS file
  * @param  {String}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.

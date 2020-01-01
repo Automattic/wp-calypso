@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Returns the number of views for a given post, or `null`.
  *
- * @param   {Object}  state    Global state tree
+ * @param   {object}  state    Global state tree
  * @param   {Number}  siteId   Site ID
  * @param   {Number}  postId   Post ID
  * @returns {?String}          Post views.

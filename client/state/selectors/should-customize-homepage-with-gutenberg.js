@@ -9,7 +9,7 @@ import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
  *
  * Used to open the block editor instead of the customizer for some themes.
  *
- * @param {Object} state  The global state object.
+ * @param {object} state  The global state object.
  * @param {String} siteId The ID of the selected site.
  * @return {Boolean} True if Gutenberg should be opened.
  */

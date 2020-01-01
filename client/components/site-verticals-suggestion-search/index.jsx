@@ -125,7 +125,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * Callback to be passed to consuming component when the search value is updated.
 	 * TODO: once the siteVertical state got simplified, this can be removed.
 	 *
-	 * @param {Object} verticalData An object from the vertical results array
+	 * @param {object} verticalData An object from the vertical results array
 	 * @param {String} value Search query array
 	 */
 	updateVerticalData = ( verticalData, value = '' ) => {

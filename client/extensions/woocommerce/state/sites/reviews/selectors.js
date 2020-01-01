@@ -11,8 +11,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
+ * @param {object} state Whole Redux state tree
+ * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether reviews have been successfully loaded from the server
  */
@@ -27,8 +27,8 @@ export const areReviewsLoaded = ( state, query, siteId = getSelectedSiteId( stat
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
+ * @param {object} state Whole Redux state tree
+ * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether reviews are currently being retrieved from the server
  */
@@ -48,8 +48,8 @@ export const areReviewsLoading = ( state, query = {}, siteId = getSelectedSiteId
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
+ * @param {object} state Whole Redux state tree
+ * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array|false} Array of reviews, or false if there was an error
  */
@@ -75,7 +75,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} reviewId ID number of a review
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|Null} The requested review object, or null if not available
@@ -89,8 +89,8 @@ export const getReview = ( state, reviewId, siteId = getSelectedSiteId( state ) 
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
+ * @param {object} state Whole Redux state tree
+ * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of reviews available on a site, or 0 if not loaded yet.
  */

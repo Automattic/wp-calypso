@@ -15,7 +15,7 @@ export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( 
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} zoneId Shipping Zone ID to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone have been successfully loaded from the server
@@ -30,7 +30,7 @@ export const areShippingZoneLocationsLoaded = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
+ * @param {object} state Whole Redux state tree
  * @param {Number} zoneId Shipping Zone ID to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone are currently being retrieved from the server
@@ -50,7 +50,7 @@ export const areShippingZoneLocationsLoading = (
  * in WP-Admin (which doesn't have as many restrictions), then it could be that he configured the zones in a way
  * that can't be reliably represented in Calypso, and as such the UI must forbid him to add new zones or edit
  * existing zones locations.
- * @param {Object} appState Whole Redux state tree
+ * @param {object} appState Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zones have valid locations to be edited in Calypso
  */

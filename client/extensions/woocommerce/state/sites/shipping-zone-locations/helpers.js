@@ -5,7 +5,7 @@
 import { isEmpty } from 'lodash';
 
 /**
- * @param {Object} locations The set of locations for the shipping zone.
+ * @param {object} locations The set of locations for the shipping zone.
  * @return {Number} The priority that this shipping zone should have on the list. More specific zones (states, postcode ranges)
  * should appear first in the list. This is the list of priorities:
  * - No locations: Priority 0, it doesn't matter where in the list this zone is

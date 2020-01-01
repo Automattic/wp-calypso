@@ -16,8 +16,8 @@ import {
  *
  * @param  {Number} siteId   Site ID
  * @param  {String} postType Post type
- * @param  {Object} counts   Mapping of post status to count
- * @return {Object}          Action object
+ * @param  {object} counts   Mapping of post status to count
+ * @return {object}          Action object
  */
 export function receivePostCounts( siteId, postType, counts ) {
 	return {

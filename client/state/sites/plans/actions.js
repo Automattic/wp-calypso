@@ -76,7 +76,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
  * Returns an action object to be used in signalling that plans for the given site has been cleared.
  *
  * @param {Number} siteId identifier of the site
- * @returns {Object} the corresponding action object
+ * @returns {object} the corresponding action object
  */
 export function clearSitePlans( siteId ) {
 	return {
@@ -129,8 +129,8 @@ export function fetchSitePlans( siteId ) {
  * the plans for a given site have been received.
  *
  * @param {Number} siteId - identifier of the site
- * @param {Object} plans - list of plans received from the API
- * @returns {Object} the corresponding action object
+ * @param {object} plans - list of plans received from the API
+ * @returns {object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, plans ) {
 	return {
@@ -159,7 +159,7 @@ export function refreshSitePlans( siteId ) {
  *
  * @param {Number} siteId - ID of the site
  * @param {Number} newOwnerUserId - ID of the new owner user
- * @returns {Object} the corresponding action object
+ * @returns {object} the corresponding action object
  */
 export const transferPlanOwnership = ( siteId, newOwnerUserId ) => ( {
 	type: SITE_PLAN_OWNERSHIP_TRANSFER,

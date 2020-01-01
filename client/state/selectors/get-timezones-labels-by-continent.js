@@ -15,7 +15,7 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  * Return the timezones by continent data
  * gotten from state.timezones subtree.
  *
- * @param  {Object} state - Global state tree
+ * @param  {object} state - Global state tree
  * @param {String} continent - continent value
  * @return {Array} Continent timezones array
  */

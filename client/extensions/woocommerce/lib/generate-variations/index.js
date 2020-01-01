@@ -12,7 +12,7 @@ import formattedVariationName from '../formatted-variation-name';
 /**
  * Generates variation objects based on a product's attributes.
  *
- * @param {Object} product Product object.
+ * @param {object} product Product object.
  * @param {Array} existingVariations Existing variations for this product.
  * @return {Array} Array of variation objects.
  */

@@ -2,7 +2,7 @@
  * Returns the current layout focus area
  *
  *
- * @param {Object}  state Global state tree
+ * @param {object}  state Global state tree
  * @return {?String}  The current layout focus area
  */
 

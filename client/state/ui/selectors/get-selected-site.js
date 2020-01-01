@@ -7,7 +7,7 @@ import getSelectedSiteId from './get-selected-site-id';
 /**
  * Returns the site object for the currently selected site.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {?Object}        Selected site
  */
 export default function getSelectedSite( state ) {

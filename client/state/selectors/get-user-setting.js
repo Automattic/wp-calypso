@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Given a settingName, returns that setting if it exists or null
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @param  {String} settingName - setting name
  * @return {*} setting name value
  */

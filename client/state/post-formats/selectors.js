@@ -14,7 +14,7 @@ export function isRequestingPostFormats( state, siteId ) {
 /**
  * Returns the supported post formats for a site.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {?Object}        Site post formats
  */

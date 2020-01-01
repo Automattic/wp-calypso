@@ -15,7 +15,7 @@ export { CURRENCIES } from './currencies';
  * Formats money with a given currency code
  * @param   {Number}     number              number to format
  * @param   {String}     code                currency code e.g. 'USD'
- * @param   {Object}     options             options object
+ * @param   {object}     options             options object
  * @param   {String}     options.decimal     decimal symbol e.g. ','
  * @param   {String}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
@@ -47,7 +47,7 @@ export default function formatCurrency( number, code, options = {} ) {
  * Returns a formatted price object.
  * @param   {Number}     number              number to format
  * @param   {String}     code                currency code e.g. 'USD'
- * @param   {Object}     options             options object
+ * @param   {object}     options             options object
  * @param   {String}     options.decimal     decimal symbol e.g. ','
  * @param   {String}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits

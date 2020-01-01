@@ -16,23 +16,23 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * Gutenberg Block.
- * @typedef {Object} GutenbergBlock
+ * @typedef {object} GutenbergBlock
  * @property {String} clientId A unique id of the block.
  * @property {String} name A block name, like "core/paragraph".
  * @property {Array<GutenbergBlock>} innerBlocks Nested blocks.
- * @property {Object} attributes An object with attributes, different for each block type.
+ * @property {object} attributes An object with attributes, different for each block type.
  */
 
 /**
  * Usage object contains an info that certain property is used inside another object.
- * @typedef {Object} Usage
+ * @typedef {object} Usage
  * @property {String} prop Name of the property.
  * @property {Array<String|Number>} path A path inside an object where prop is, defined as list of keys.
  */
 
 /**
  * An asset file that is referenced in blocks.
- * @typedef {Object} Asset
+ * @typedef {object} Asset
  * @property {URL} url A full URL of the asset.
  * @property {Array<Usage>} usages A list of {@link Usage} objects.
  */
@@ -44,7 +44,7 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * FetchSession describes a set of blocks and their assets.
- * @typedef {Object} FetchSession
+ * @typedef {object} FetchSession
  * @property {Array<GutenbergBlock>} blocks List of Gutenberg blocks.
  * @property {Object<String, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
  * @property {Assets} assets A list of assets detected in blocks.

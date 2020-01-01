@@ -14,7 +14,7 @@ import { getContextResults } from 'blocks/inline-help/contextual-help';
 /**
  * Returns the current search query.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {String}        The current search query
  */
 export function getSearchQuery( state ) {
@@ -24,7 +24,7 @@ export function getSearchQuery( state ) {
 /**
  * Returns the index of the currently selected search result.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Integer}        The index of the currently selected search result
  */
 export function getSelectedResultIndex( state ) {
@@ -35,7 +35,7 @@ export function getSelectedResultIndex( state ) {
  * Returns true if currently requesting search results for a given query; false
  * otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  searchQuery Search query
  * @return {Boolean}        Whether search results are being requested
  */
@@ -48,7 +48,7 @@ export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery 
  * Returns an array of all search results for a given search query or `null`
  * if there are no results for that query.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  searchQuery Search query
  * @return {?Array}         List of results for a given search query
  */
@@ -59,7 +59,7 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 
 /**
  * Returns an array of contextual results
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Array}          List of contextual results based on route
  */
 export const getContextualHelpResults = flow(
@@ -72,8 +72,8 @@ export const getContextualHelpResults = flow(
 
 /**
  * Returns the selected search result item
- * @param  {Object}  state  Global state tree
- * @return {Object}         The selected search result
+ * @param  {object}  state  Global state tree
+ * @return {object}         The selected search result
  */
 export function getInlineHelpCurrentlySelectedResult( state ) {
 	const query = getSearchQuery( state );
@@ -85,7 +85,7 @@ export function getInlineHelpCurrentlySelectedResult( state ) {
 
 /**
  * Returns the link / href of the selected search result item
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {String}         The href of the selected link target
  */
 export function getInlineHelpCurrentlySelectedLink( state ) {
@@ -96,7 +96,7 @@ export function getInlineHelpCurrentlySelectedLink( state ) {
 /**
  * Returns a bool indicating if the contact form UI is showing the Q&A suggestions.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Boolean}        Is the contact form UI showing the questions
  */
 export function isShowingQandAInlineHelpContactForm( state ) {
@@ -106,7 +106,7 @@ export function isShowingQandAInlineHelpContactForm( state ) {
 /**
  * Returns a bool indicating if the inline help popover is currently showing.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Boolean}        Is the inline help popover is showing.
  */
 export function isInlineHelpPopoverVisible( state ) {
@@ -116,7 +116,7 @@ export function isInlineHelpPopoverVisible( state ) {
 /**
  * Returns a bool indicating if the inline help popover is currently showing the checklist prompt.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Boolean}        Is the inline help popover showing the checklist prompt.
  */
 export function isInlineHelpChecklistPromptVisible( state ) {
@@ -126,7 +126,7 @@ export function isInlineHelpChecklistPromptVisible( state ) {
 /**
  * Returns a bool indicating if the inline help popover is currently showing the onboarding welcome message.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {Boolean}        Is the inline help popover showing the onboarding welcome prompt.
  */
 export function isOnboardingWelcomePromptVisible( state ) {
@@ -136,7 +136,7 @@ export function isOnboardingWelcomePromptVisible( state ) {
 /**
  * Returns the task ID that should show up in the inline help popover.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @return {String}         The task ID
  */
 export function getChecklistPromptTaskId( state ) {

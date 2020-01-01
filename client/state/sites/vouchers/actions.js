@@ -26,8 +26,8 @@ const wpcom = injectHandler( wpcomBase );
  * a given site have been received.
  *
  * @param {Number} siteId - identifier of the site
- * @param {Object} vouchers - vouchers array gotten from WP REST-API response
- * @returns {Object} the action object
+ * @param {object} vouchers - vouchers array gotten from WP REST-API response
+ * @returns {object} the action object
  */
 export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
 	type: SITE_VOUCHERS_RECEIVE,
@@ -41,7 +41,7 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  * Return SITE_VOUCHERS_REQUEST action object
  *
  * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @return {object} siteId - action object
  */
 export const vouchersRequestAction = siteId => ( {
 	type: SITE_VOUCHERS_REQUEST,

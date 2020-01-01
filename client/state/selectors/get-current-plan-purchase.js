@@ -7,7 +7,7 @@ import { getByPurchaseId } from 'state/purchases/selectors';
 /**
  * Return the purchase object for a site's current plan or null if not found.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {?Object}        Purchase object or null if not found
  */

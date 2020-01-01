@@ -57,7 +57,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
  * Higher-level layer on top of the WPCOM.JS library, made specifically for making requests to a
  * Jetpack-connected WooComemrce site.
  * @param {Number} siteId Site ID to make the request to
- * @return {Object} An object with the properties "get", "post", "put" and "del", which are functions to
+ * @return {object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
 export default siteId => ( {
@@ -81,7 +81,7 @@ export default siteId => ( {
 	/**
 	 * Sends a POST request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @param {Object} body Payload to send
+	 * @param {object} body Payload to send
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
@@ -92,7 +92,7 @@ export default siteId => ( {
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a PUT request.
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @param {Object} body Payload to send
+	 * @param {object} body Payload to send
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */

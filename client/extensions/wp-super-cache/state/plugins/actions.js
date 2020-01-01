@@ -23,8 +23,8 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
  * Returns an action object to be used in signalling that WPSC plugins have been received.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} plugins Plugins object
- * @return {Object} Action object
+ * @param  {object} plugins Plugins object
+ * @return {object} Action object
  */
 export const receivePlugins = ( siteId, plugins ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_PLUGINS,

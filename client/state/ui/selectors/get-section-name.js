@@ -11,7 +11,7 @@ import getSection from './get-section';
 /**
  * Returns the current section name.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {?String}       Current section name
  */
 export default function getSectionName( state ) {

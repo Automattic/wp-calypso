@@ -29,7 +29,7 @@ export function isEmptyContent( content ) {
  * Returns true if the edited post has content
  * (title, excerpt or content not empty)
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
  * @return {Boolean}        Whether the edited post has content or not

@@ -14,7 +14,7 @@ import { withoutPersistence } from './without-persistence';
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
- * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
+ * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
  * @return {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.

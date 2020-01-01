@@ -54,10 +54,10 @@ export const getCurrentPlan = ( state, siteId ) => {
 
 /**
  * Returns a site specific plan
- * @param  {Object} state        global state
+ * @param  {object} state        global state
  * @param  {Number} siteId       the site id
  * @param  {String} productSlug  the plan product slug
- * @return {Object} the matching plan
+ * @return {object} the matching plan
  */
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {
@@ -73,7 +73,7 @@ export const getSitePlan = createSelector(
 /**
  * Returns true if a plan is discounted
  *
- * @param  {Object}   state         global state
+ * @param  {object}   state         global state
  * @param  {Number}   siteId        the site id
  * @param  {String}   productSlug   the plan product slug
  * @return {?Boolean}              true if a plan has a discount
@@ -91,7 +91,7 @@ export function isSitePlanDiscounted( state, siteId, productSlug ) {
 /**
  * Returns a plan price, including any applied discounts
  *
- * @param  {Object}  state         global state
+ * @param  {object}  state         global state
  * @param  {Number}  siteId        the site id
  * @param  {String}  productSlug   the plan product slug
  * @param  {Boolean} isMonthly     if true, returns monthly price
@@ -115,7 +115,7 @@ export function getPlanDiscountedRawPrice(
 /**
  * Returns a plan price before discount
  *
- * @param  {Object}  state         global state
+ * @param  {object}  state         global state
  * @param  {Number}  siteId        the site id
  * @param  {String}  productSlug   the plan product slug
  * @param  {Boolean} isMonthly     if true, returns monthly price
@@ -137,7 +137,7 @@ export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = f
  * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
  * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
  *
- * @param  {Object}  state        global state
+ * @param  {object}  state        global state
  * @param  {Number}  siteId       the site id
  * @param  {String}  productSlug  the plan product slug
  * @param  {Boolean} isMonthly    if true, returns monthly price
@@ -177,7 +177,7 @@ export function isCurrentPlanExpiring( state, siteId ) {
 /**
  * Returns true if current user is also a current plan owner.
  *
- * @param  {Object}  state        global state
+ * @param  {object}  state        global state
  * @param  {Number}  siteId       the site id
  * @return {Boolean}			  True when user is a plan owner
  */
@@ -190,7 +190,7 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
 /**
  * Returns a site's current plan's product slug
  *
- * @param  {Object}  state   Global State tree
+ * @param  {object}  state   Global State tree
  * @param  {Number}  siteId  Site ID
  * @return {?String}          The site's current plan's product slug
  */
@@ -204,7 +204,7 @@ export function getSitePlanSlug( state, siteId ) {
  * DO NOT USE THIS FOR FEATURE GATES, this is only to be used for deciding
  * if nudge should be shown.
  * If you want a feature gate, you should make it backend-side.
- * @param  {Object}  state   Global State tree
+ * @param  {object}  state   Global State tree
  * @param  {Number}  siteId  Site ID
  * @param  {String}  feature The feature we're looking for
  * @return {Boolean}         True if the site's current plan includes the feature

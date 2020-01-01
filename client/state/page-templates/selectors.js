@@ -15,7 +15,7 @@ export function isRequestingPageTemplates( state, siteId ) {
  * Returns an array of page template objects for the specified site ID, or null
  * if the page templates are not known for the site.
  *
- * @param  {Object} state  Global state tree
+ * @param  {object} state  Global state tree
  * @param  {Number} siteId Site ID
  * @return {?Array}        Page template objects, if known
  */

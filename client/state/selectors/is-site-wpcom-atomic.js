@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Retruns true if the questioned site is a WPCOM Atomic site.
  *
- * @param {Object} state the global state tree
+ * @param {object} state the global state tree
  * @param {Number} siteId the questioned site ID.
  * @return {Boolean} Whether the site is a WPCOM Atomic site.
  */

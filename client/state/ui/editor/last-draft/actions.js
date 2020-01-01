@@ -10,7 +10,7 @@ import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post ID
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function setEditorLastDraft( siteId, postId ) {
 	return {
@@ -24,7 +24,7 @@ export function setEditorLastDraft( siteId, postId ) {
  * Returns an action object signalling that the editor last draft should be
  * unassigned.
  *
- * @return {Object} Action object
+ * @return {object} Action object
  */
 export function resetEditorLastDraft() {
 	return setEditorLastDraft( null, null );

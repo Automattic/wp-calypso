@@ -20,10 +20,10 @@ import { includes } from 'lodash';
  *
  * @param  {Number} siteId   Site ID
  * @param  {String} statType Stat Key
- * @param  {Object} query    Stats query
+ * @param  {object} query    Stats query
  * @param  {Array}  data     Stat Data
- * @param  {Object} date	 Date
- * @return {Object}          Action object
+ * @param  {object} date	 Date
+ * @return {object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
@@ -42,7 +42,7 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  *
  * @param  {Number} siteId   Site ID
  * @param  {String} statType Type of stats
- * @param  {Object} query    Stats Query
+ * @param  {object} query    Stats Query
  * @return {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {

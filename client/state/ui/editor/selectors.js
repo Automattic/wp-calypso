@@ -19,7 +19,7 @@ import { addQueryArgs } from 'lib/route';
 /**
  * Returns the current editor post ID, or `null` if a new post.
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @return {?Number}      Current editor post ID
  */
 export function getEditorPostId( state ) {
@@ -29,7 +29,7 @@ export function getEditorPostId( state ) {
 /**
  * Returns whether editing a new post in the post editor.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {Boolean}       Whether editing new post in editor
  */
 export function isEditorNewPost( state ) {
@@ -39,7 +39,7 @@ export function isEditorNewPost( state ) {
 /**
  * Returns the editor URL for duplicating a given site ID, post ID pair.
  *
- * @param  {Object} state       Global state tree
+ * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} postId      Post ID
  * @param  {String} type        Post type
@@ -57,7 +57,7 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
 /**
  * Returns the editor new post URL path for the given site ID and type.
  *
- * @param  {Object} state       Global state tree
+ * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} type        Post type
  * @return {String}             Editor URL path
@@ -89,7 +89,7 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 /**
  * Returns the editor URL path for the given site ID, post ID pair.
  *
- * @param  {Object} state       Global state tree
+ * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} postId      Post ID
  * @param  {String} defaultType Fallback post type if post not found
@@ -113,7 +113,7 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 /**
  * Returns whether the confirmation sidebar is enabled for the given siteId
  *
- * @param  {Object}  state     Global state tree
+ * @param  {object}  state     Global state tree
  * @param  {Number}  siteId    Site ID
  * @return {Boolean}           Whether or not the sidebar is enabled
  */

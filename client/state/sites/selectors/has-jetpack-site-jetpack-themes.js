@@ -8,7 +8,7 @@ import isJetpackSite from './is-jetpack-site';
  * Determines if the Jetpack plugin of a Jetpack Site has themes.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {Number} siteId Site ID
  * @return {?Boolean} true if the site has Jetpack themes management
  */

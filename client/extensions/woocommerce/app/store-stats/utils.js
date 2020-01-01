@@ -14,7 +14,7 @@ import moment from 'moment'; // No localization needed in this file.
 import { UNITS } from './constants';
 
 /**
- * @typedef {Object} Delta
+ * @typedef {object} Delta
  * @property {string} classes - CSS classes to be used to render arrows
  * @property {string} since - Use of labels to create a phrase, "Since May 2"
  * @property {Array} value - Value as a percent
@@ -23,7 +23,7 @@ import { UNITS } from './constants';
 /**
  * Calculate all elements needed to render a delta on a time series.
  *
- * @param {Object} item - data point from a time series
+ * @param {object} item - data point from a time series
  * @param {Object|undefined} previousItem - the previous data point, if it exists
  * @param {string} attr - the property name to compare
  * @param {string} unit - day, week, month, or year
@@ -291,7 +291,7 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  *
  * @param {string} unit - day, week, month, or year
  * @param {string} slug - site slug
- * @param {Object} urlQuery - url query params represented as an object
+ * @param {object} urlQuery - url query params represented as an object
  * @return {string} - widget path url portion
  */
 export function getWidgetPath( unit, slug, urlQuery ) {

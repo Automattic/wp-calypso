@@ -14,8 +14,8 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  * Returns the updated requests state after an action has been dispatched.
  * The state is a Boolean - true if a transaction is being requested
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
  * @return {Boolean}        Updated state
  */
 export const requesting = withoutPersistence( ( state = false, action ) => {
@@ -35,8 +35,8 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * Returns the updated error state after an action has been dispatched.
  * The state is a Boolean - true if a transaction request has failed
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
  * @return {Boolean}        Updated state
  */
 export const error = withoutPersistence( ( state = false, action ) => {
@@ -56,9 +56,9 @@ export const error = withoutPersistence( ( state = false, action ) => {
  * Returns the updated data state after an action has been dispatched.
  * The state contains the transaction data after a successful fetch
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @return {object}        Updated state
  */
 export const data = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

@@ -22,7 +22,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns true if the specified query is an object containing one or more
 	 * query pagination keys.
 	 *
-	 * @param  {Object}  query Query object to check
+	 * @param  {object}  query Query object to check
 	 * @return {Boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
@@ -66,7 +66,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns items tracked by the instance, ignoring pagination for the given
 	 * query.
 	 *
-	 * @param  {Object}   query         Query object
+	 * @param  {object}   query         Query object
 	 * @param  {Boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
 	 *                                  items yet to be received as `undefined`
@@ -89,7 +89,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns the number of pages for the specified query, or null if the
 	 * query is not known.
 	 *
-	 * @param  {Object}  query Query object
+	 * @param  {object}  query Query object
 	 * @return {?Number}       Pages for query
 	 */
 	getNumberOfPages( query ) {
@@ -110,9 +110,9 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
 	 * @param  {(Array|Object)} items              Item(s) to be received
-	 * @param  {Object}         options            Options for receive
+	 * @param  {object}         options            Options for receive
 	 * @param  {Boolean}        options.patch      Apply changes as partial
-	 * @param  {Object}         options.query      Query set to set or replace
+	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {Boolean}        options.mergeQuery Add to existing query set
 	 * @param  {Number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or

@@ -3,7 +3,7 @@
  *
  *
  * @param {Number} userId User ID
- * @return {Object}        User object
+ * @return {object}        User object
  */
 
 export function getUser( state, userId ) {

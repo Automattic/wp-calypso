@@ -16,7 +16,7 @@ import {
  *
  * @param  {Number}   siteId    Site ID
  * @param  {Object[]} templates Array of template objects
- * @return {Object}             Action object
+ * @return {object}             Action object
  */
 export function receivePageTemplates( siteId, templates ) {
 	return {

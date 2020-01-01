@@ -10,7 +10,7 @@ import { combineReducers } from 'state/utils';
  * dispatched.
  *
  * @param  {?Number} state  Current state
- * @param  {Object}  action Action payload
+ * @param  {object}  action Action payload
  * @return {?Number}        Updated state
  */
 export function siteId( state = null, action ) {
@@ -27,7 +27,7 @@ export function siteId( state = null, action ) {
  * dispatched.
  *
  * @param  {?Number} state  Current state
- * @param  {Object}  action Action payload
+ * @param  {object}  action Action payload
  * @return {?Number}        Updated state
  */
 export function postId( state = null, action ) {

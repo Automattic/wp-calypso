@@ -8,7 +8,7 @@ import { find } from 'lodash';
  * Returns a Boolean indicating if a site has a particular plugin that
  * is active. This is useful for jetpack connected sites.
  *
- * @param {Object} state - Global state tree
+ * @param {object} state - Global state tree
  * @param {Number} siteId - Site ID
  * @param {String} pluginSlug - Plugin slug
  * @return {Boolean} - truthiness of a site having an active plugin

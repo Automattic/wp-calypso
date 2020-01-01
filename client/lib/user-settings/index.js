@@ -54,7 +54,7 @@ function deleteUnsavedSetting( settings, settingName ) {
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
  *
  * @param  {String}  languageSettingValue the newly-set language slug string.
- * @param  {Object}  settings user settings object.
+ * @param  {object}  settings user settings object.
  * @return {Boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {
@@ -101,7 +101,7 @@ UserSettings.prototype.hasSettings = function() {
 /**
  * Get user settings. If not already initialized, then fetch settings
  *
- * @return {Object} user setting object
+ * @return {object} user setting object
  */
 UserSettings.prototype.getSettings = function() {
 	if ( ! this.settings ) {
@@ -144,7 +144,7 @@ UserSettings.prototype.fetchSettings = function() {
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {Function} callback - callback function
- * @param {Object} settingsOverride - default settings object
+ * @param {object} settingsOverride - default settings object
  * @return {Null} null
  */
 UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {

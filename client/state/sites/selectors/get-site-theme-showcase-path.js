@@ -13,7 +13,7 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site's theme showcase path.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId SiteId
  * @return {?String}        Theme showcase path
  */

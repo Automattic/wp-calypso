@@ -37,7 +37,7 @@ function MailingList( category, wpcom ) {
  *
  * @param {String} emailAddress
  * @param {String} hmac
- * @param {Object} [context]
+ * @param {object} [context]
  * @param {Function} callback
  * @public
  */
@@ -73,7 +73,7 @@ MailingList.prototype.subscribe = function( emailAddress, hmac, context, callbac
  *
  * @param {String} emailAddress
  * @param {String} hmac
- * @param {Object} [context]
+ * @param {object} [context]
  * @param {Function} callback
  * @public
  */

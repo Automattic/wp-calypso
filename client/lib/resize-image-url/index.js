@@ -37,7 +37,7 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 /**
  * Mappings of supported safe services to patterns by which they can be matched
  *
- * @type {Object}
+ * @type {object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
 	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,

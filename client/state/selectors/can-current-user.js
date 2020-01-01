@@ -12,7 +12,7 @@ import { isValidCapability } from 'state/current-user/selectors';
  *
  * @see https://codex.wordpress.org/Function_Reference/current_user_can
  *
- * @param  {Object}   state      Global state tree
+ * @param  {object}   state      Global state tree
  * @param  {Number}   siteId     Site ID
  * @param  {String}   capability Capability label
  * @return {?Boolean}            Whether current user has capability

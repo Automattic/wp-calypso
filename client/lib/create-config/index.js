@@ -59,7 +59,7 @@ const config = data => key => {
  * Checks whether a specific feature is enabled.
  *
  * @param {String} feature Feature name
- * @param {Object} data the json environment configuration to use for getting config values
+ * @param {object} data the json environment configuration to use for getting config values
  * @return {Boolean} True when feature is enabled.
  * @api public
  */

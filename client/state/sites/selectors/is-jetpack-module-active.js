@@ -13,7 +13,7 @@ import getSiteOption from './get-site-option';
  * or false if the module is not active. Returns null if the site is not known
  * or is not a Jetpack site.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @param  {Number}   siteId Site ID
  * @param  {String}   slug   Module slug
  * @return {?Boolean}        Whether site has Jetpack module active

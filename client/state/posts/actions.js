@@ -76,9 +76,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns an action object to be used in signalling that a post object has
  * been received.
  *
- * @param  {Object}  post       Post received
+ * @param  {object}  post       Post received
  * @param  {?String} saveMarker Save marker in the edits log
- * @return {Object}             Action object
+ * @return {object}             Action object
  */
 export function receivePost( post, saveMarker ) {
 	return receivePosts( [ post ], saveMarker );
@@ -90,7 +90,7 @@ export function receivePost( post, saveMarker ) {
  *
  * @param  {Array}   posts      Posts received
  * @param  {?String} saveMarker Save marker in the edits log
- * @return {Object}             Action object
+ * @return {object}             Action object
  */
 export function receivePosts( posts, saveMarker ) {
 	const action = { type: POSTS_RECEIVE, posts };
@@ -210,8 +210,8 @@ export function requestSitePost( siteId, postId ) {
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post ID
- * @param  {Object} post   Post attribute updates
- * @return {Object}        Action object
+ * @param  {object} post   Post attribute updates
+ * @return {object}        Action object
  */
 export function editPost( siteId, postId = null, post ) {
 	return {
@@ -261,9 +261,9 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
  *
  * @param  {Number}   siteId     Site ID
  * @param  {Number}   postId     Post ID
- * @param  {Object}   savedPost  Updated post
- * @param  {Object}   post       Post attributes
- * @return {Object}              Action thunk
+ * @param  {object}   savedPost  Updated post
+ * @param  {object}   post       Post attributes
+ * @return {object}              Action thunk
  */
 export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 	return {
@@ -281,7 +281,7 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
  *
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID
- * @param  {Object}   post   Post attributes
+ * @param  {object}   post   Post attributes
  * @return {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
@@ -462,7 +462,7 @@ export function restorePost( siteId, postId ) {
  *
  * @param  {Number}   siteId   Site ID
  * @param  {String}   taxonomy Taxonomy Slug
- * @param  {Object}   term     Object of new term attributes
+ * @param  {object}   term     Object of new term attributes
  * @param  {Number}   postId   ID of post to which term is associated
  * @return {Function}          Action thunk
  */
@@ -542,7 +542,7 @@ function normalizeApiAttributes( attributes ) {
 /**
  * Load an existing post and keep track of edits to it
  *
- * @param {Object} siteId Site ID
+ * @param {object} siteId Site ID
  * @param {Number} postId Post ID to load
  * @return {Promise<?Object>} The edited post object
  */

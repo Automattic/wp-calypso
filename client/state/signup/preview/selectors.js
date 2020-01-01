@@ -5,7 +5,7 @@ import { get } from 'lodash';
 
 /**
  * Whether the signup site preview is visible
- * @param   {Object}  state The current client state
+ * @param   {object}  state The current client state
  * @return  {Boolean}       Whether the signup site preview is visible
  */
 export const isSitePreviewVisible = state =>

@@ -203,7 +203,7 @@ export function retryAuth( url, attemptNumber, fromParam ) {
  *
  * !! Must have same return shape as createAccount !!
  *
- * @param  {Object}  socialInfo              …
+ * @param  {object}  socialInfo              …
  * @param  {string}  socialInfo.service      The name of the social service
  * @param  {string}  socialInfo.access_token An OAuth2 acccess token
  * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
@@ -243,7 +243,7 @@ export function createSocialAccount( socialInfo ) {
  *
  * !! Must have same return shape as createSocialAccount !!
  *
- * @param  {Object} userData          …
+ * @param  {object} userData          …
  * @param  {string} userData.username Username
  * @param  {string} userData.password Password
  * @param  {string} userData.email    Email

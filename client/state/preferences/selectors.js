@@ -16,7 +16,7 @@ export const isFetchingPreferences = state => !! state.preferences.fetching;
  * find in local and remote preferences, then any applicable default value,
  * otherwise returning null.
  *
- * @param  {Object} state Global state tree
+ * @param  {object} state Global state tree
  * @param  {String} key   Preference key
  * @return {*}            Preference value
  */
@@ -36,8 +36,8 @@ export function getPreference( state, key ) {
  * of the object are each preference key and the values are the preference
  * values.
  *
- * @param  {Object} state Global state tree
- * @return {Object}       Preference value
+ * @param  {object} state Global state tree
+ * @return {object}       Preference value
  */
 export function getAllRemotePreferences( state ) {
 	return state.preferences.remoteValues;
@@ -49,7 +49,7 @@ export const preferencesLastFetchedTimestamp = state => state.preferences.lastFe
  * Returns true if preferences have been received from the remote source, or
  * false otherwise.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {Boolean}       Whether preferences have been received
  */
 export function hasReceivedRemotePreferences( state ) {

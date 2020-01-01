@@ -21,7 +21,7 @@ export function getCountryStates( state, countryCode ) {
  * Returns true if a request is in progress to retrieve states for
  * the specified country, or false otherwise.
  *
- * @param  {Object}  state       Global state tree
+ * @param  {object}  state       Global state tree
  * @param  {String}  countryCode Country code to check.
  * @return {Boolean}             Whether a request is in progress
  */

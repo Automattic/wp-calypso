@@ -48,7 +48,7 @@ export const getABTestVariation = name => new ABTest( name ).getVariation();
 /**
  * Returns a user's variations from localStorage.
  *
- * @returns {Object} - The user's variations, or an empty object if the user is not a participant
+ * @returns {object} - The user's variations, or an empty object if the user is not a participant
  */
 export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || {};
 

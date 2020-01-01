@@ -14,9 +14,9 @@ import {
  * Returns an action object to be used in signalling that a mediaStorage object
  * has been received.
  *
- * @param  {Object} mediaStorage received
+ * @param  {object} mediaStorage received
  * @param  {Number} siteId       Site ID
- * @return {Object}              Action object
+ * @return {object}              Action object
  */
 export function receiveMediaStorage( mediaStorage, siteId ) {
 	return {

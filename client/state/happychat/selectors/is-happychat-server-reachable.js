@@ -10,7 +10,7 @@ import { HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT } from 'state/happychat/constan
 
 /**
  * Returns true if Happychat server is reachable
- * @param {Object} state - global redux state
+ * @param {object} state - global redux state
  * @return {Boolean} Whether Happychat server is reachable
  */
 export default function( state ) {

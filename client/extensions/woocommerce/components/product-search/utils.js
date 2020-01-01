@@ -6,7 +6,7 @@ import { difference, filter, intersection, isArray, uniq } from 'lodash';
 /**
  * Check if a string is found in a product name or attribute option
  *
- * @param {Object} product A given product to search
+ * @param {object} product A given product to search
  * @param {String} textString A string to search for
  * @return {Boolean} Whether the string was found in the product
  */
@@ -45,7 +45,7 @@ export function isProductSelected( value = [], productId ) {
  * Check if any variations of a product are selected
  *
  * @param {Array} value An array of existing values
- * @param {Object} product The product to check
+ * @param {object} product The product to check
  * @return {Boolean} Whether any variations exist in the values list
  */
 export function areVariationsSelected( value = [], product ) {
@@ -62,7 +62,7 @@ export function areVariationsSelected( value = [], product ) {
 /**
  * Check if a product is `variable` (has selectable variations)
  *
- * @param {Object} product A product to check
+ * @param {object} product A product to check
  * @return {Boolean} Whether the product has variations
  */
 export function isVariableProduct( product ) {

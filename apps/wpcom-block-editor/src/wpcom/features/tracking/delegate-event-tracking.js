@@ -38,7 +38,7 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * Matches an event against list of known events
  * and for each match fires an appropriate handler function.
  *
- * @param  {Object} event DOM event for the click event.
+ * @param  {object} event DOM event for the click event.
  * @return {void}
  */
 export default event => {

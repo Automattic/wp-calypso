@@ -14,7 +14,7 @@ import isDirectlyReady from 'state/selectors/is-directly-ready';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 
 /**
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @return {Boolean} Have each of the required async checks been made?
  */
 export default function isSupportVariationDetermined( state ) {

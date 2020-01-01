@@ -38,8 +38,8 @@ const wpcom = wp.undocumented();
  * a given site have been received.
  *
  * @param {Number} siteId - identifier of the site
- * @param {Object} domains - domains array gotten from WP REST-API response
- * @returns {Object} the action object
+ * @param {object} domains - domains array gotten from WP REST-API response
+ * @returns {object} the action object
  */
 export const domainsReceiveAction = ( siteId, domains ) => {
 	const action = {
@@ -58,7 +58,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * Return SITE_DOMAINS_REQUEST action object
  *
  * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @return {object} siteId - action object
  */
 export const domainsRequestAction = siteId => {
 	const action = {
@@ -76,7 +76,7 @@ export const domainsRequestAction = siteId => {
  * Return SITE_DOMAINS_REQUEST_SUCCESS action object
  *
  * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @return {object} siteId - action object
  */
 export const domainsRequestSuccessAction = siteId => {
 	const action = {
@@ -94,8 +94,8 @@ export const domainsRequestSuccessAction = siteId => {
  * Return SITE_DOMAINS_REQUEST_FAILURE action object
  *
  * @param {Number} siteId - site identifier
- * @param {Object} error - error message according to REST-API error response
- * @return {Object} action object
+ * @param {object} error - error message according to REST-API error response
+ * @return {object} action object
  */
 export const domainsRequestFailureAction = ( siteId, error ) => {
 	const action = {

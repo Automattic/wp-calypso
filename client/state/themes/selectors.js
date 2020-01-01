@@ -36,7 +36,7 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 /**
  * Returns a theme object by site ID, theme ID pair.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @param  {String}  themeId Theme ID
  * @return {?Object}         Theme object
@@ -59,7 +59,7 @@ export const getTheme = createSelector(
  * and multiple screenshots, and a preview URL) first, then WP.org (which has a
  * preview URL), then the given JP site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Jetpack Site ID to fall back to
  * @param  {String}  themeId Theme ID
  * @return {?Object}         Theme object
@@ -76,7 +76,7 @@ export function getCanonicalTheme( state, siteId, themeId ) {
  * suffix if the site is jetpack and the theme is not yet
  * installed on the site.
  *
- * @param {Object} state	Global state tree
+ * @param {object} state	Global state tree
  * @param {String} themeId	Theme ID
  * @param {Number} siteId	Site ID
  * @return {String} 		Potentially suffixed theme ID
@@ -92,10 +92,10 @@ const getSuffixedThemeId = ( state, themeId, siteId ) => {
 /**
  * Returns theme request error object
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
- * @return {Object}          error object if present or null otherwise
+ * @return {object}          error object if present or null otherwise
  */
 export function getThemeRequestErrors( state, themeId, siteId ) {
 	return get( state.themes.themeRequestErrors, [ siteId, themeId ], null );
@@ -105,9 +105,9 @@ export function getThemeRequestErrors( state, themeId, siteId ) {
  * Returns an array of normalized themes for the themes query, or null if no
  * themes have been received.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {?Array}         Themes for the theme query
  */
 export const getThemesForQuery = createSelector(
@@ -142,9 +142,9 @@ export const getThemesForQuery = createSelector(
 /**
  * Returns last query used.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Object}         Last query
+ * @return {object}         Last query
  */
 export function getLastThemeQuery( state, siteId ) {
 	return get( state.themes.lastQuery, siteId, {} );
@@ -154,9 +154,9 @@ export function getLastThemeQuery( state, siteId ) {
  * Returns true if currently requesting themes for the themes query, or false
  * otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {Boolean}        Whether themes are being requested
  */
 export function isRequestingThemesForQuery( state, siteId, query ) {
@@ -168,9 +168,9 @@ export function isRequestingThemesForQuery( state, siteId, query ) {
  * Returns the total number of items reported to be found for the given query,
  * or null if the total number of queryable themes if unknown.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {?Number}        Total number of found items
  */
 export function getThemesFoundForQuery( state, siteId, query ) {
@@ -185,9 +185,9 @@ export function getThemesFoundForQuery( state, siteId, query ) {
  * Returns the last queryable page of themes for the given query, or null if the
  * total number of queryable themes if unknown.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {?Number}        Last themes page
  */
 export function getThemesLastPageForQuery( state, siteId, query ) {
@@ -212,9 +212,9 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable themes if unknown.
  *
- * @param  {Object}   state  Global state tree
+ * @param  {object}   state  Global state tree
  * @param  {Number}   siteId Site ID
- * @param  {Object}   query  Theme query object
+ * @param  {object}   query  Theme query object
  * @return {?Boolean}        Whether last themes page has been reached
  */
 export function isThemesLastPageForQuery( state, siteId, query = {} ) {
@@ -230,9 +230,9 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {?Array}         Themes for the theme query
  */
 export const getThemesForQueryIgnoringPage = createSelector(
@@ -270,9 +270,9 @@ export const getThemesForQueryIgnoringPage = createSelector(
  * Returns true if currently requesting themes for the themes query, regardless
  * of page, or false otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @return {Boolean}        Whether themes are being requested
  */
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
@@ -299,7 +299,7 @@ export const isRequestingThemesForQueryIgnoringPage = createSelector(
  * Returns true if a request is in progress for the specified site theme, or
  * false otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}        Whether request is in progress
@@ -316,7 +316,7 @@ export function isRequestingTheme( state, siteId, themeId ) {
  * Returns true if a request is in progress for the site active theme, or
  * false otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether request is in progress
  */
@@ -327,7 +327,7 @@ export function isRequestingActiveTheme( state, siteId ) {
 /**
  * Whether a theme is present in the WordPress.com Theme Directory
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}         Whether theme is in WP.com theme directory
  */
@@ -338,7 +338,7 @@ export function isWpcomTheme( state, themeId ) {
 /**
  * Whether a theme is present in the WordPress.org Theme Directory
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}         Whether theme is in WP.org theme directory
  */
@@ -349,7 +349,7 @@ export function isWporgTheme( state, themeId ) {
 /**
  * Returns the URL for a given theme's details sheet.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme details sheet URL
@@ -381,7 +381,7 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for a given theme's setup instructions
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme setup instructions URL
@@ -403,7 +403,7 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for a given theme's support page.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme support page URL
@@ -424,7 +424,7 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for purchasing the given theme for the given site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID for which to buy the theme
  * @return {?String}         Theme purchase URL
@@ -439,7 +439,7 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.
  *
- * @param  {Object}   state   Global state tree
+ * @param  {object}   state   Global state tree
  * @param  {String}   themeId Theme ID
  * @param  {?Number}  siteId  Site ID to open the customizer for
  * @return {?String}          Customizer URL
@@ -470,7 +470,7 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @return {?String}         Signup URL
  */
@@ -491,7 +491,7 @@ export function getThemeSignupUrl( state, themeId ) {
 /**
  * Returns the URL for a theme's demo.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
@@ -505,7 +505,7 @@ export function getThemeDemoUrl( state, themeId, siteId ) {
  * Returns the URL for a premium theme's dedicated forum, or for the general themes
  * forum for a free theme.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
@@ -534,7 +534,7 @@ export function getThemeForumUrl( state, themeId ) {
  * the checkout-thank-you component always redirects to the theme showcase for the current site.
  * One possible fix would be to get rid of that redirect (related: https://github.com/Automattic/wp-calypso/issues/8262).
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {?String}         Theme ID
  */
@@ -549,7 +549,7 @@ export function getActiveTheme( state, siteId ) {
 /**
  * Returns whether the theme is currently active on the given site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme is active on the site
@@ -561,7 +561,7 @@ export function isThemeActive( state, themeId, siteId ) {
 /**
  * Returns whether the theme activation action is currently ongoing on the site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme activation is ongoing
  */
@@ -572,7 +572,7 @@ export function isActivatingTheme( state, siteId ) {
 /**
  * Returns whether the theme activation action has finished on the site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme activation has finished
  */
@@ -583,7 +583,7 @@ export function hasActivatedTheme( state, siteId ) {
 /**
  * Whether the theme is currently being installed on the (Jetpack) site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check installing state
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme installation is ongoing
@@ -596,8 +596,8 @@ export function isInstallingTheme( state, themeId, siteId ) {
 /**
  * Whether a WPCOM theme given by its ID is premium.
  *
- * @param  {Object} state   Global state tree
- * @param  {Object} themeId Theme ID
+ * @param  {object} state   Global state tree
+ * @param  {object} themeId Theme ID
  * @return {Boolean}        True if the theme is premium
  */
 export function isThemePremium( state, themeId ) {
@@ -608,7 +608,7 @@ export function isThemePremium( state, themeId ) {
 /**
  * Whether a WPCOM premium theme can be activated on a site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check availability
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the premium theme is available for the given site
@@ -623,7 +623,7 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 /**
  * Whether a given theme is installed or can be installed on a Jetpack site.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check availability
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
@@ -641,7 +641,7 @@ export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme has been purchased for the site
@@ -658,7 +658,7 @@ export function getThemePreviewThemeOptions( state ) {
 /**
  * Returns the ThemePreview state
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {?String}  ThemePreview state
  */
 export function themePreviewVisibility( state ) {
@@ -668,7 +668,7 @@ export function themePreviewVisibility( state ) {
 /**
  * Returns id of the parent theme, if any, for a wpcom theme.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {string} themeId Child theme ID
  *
  * @return {?string} Parent theme id if it exists
@@ -681,7 +681,7 @@ export function getWpcomParentThemeId( state, themeId ) {
  * Determine whether a zip of a given theme is hosted on
  * wpcom for download.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {string} themeId Theme ID
  * @return {boolean} true if zip is available on wpcom
  */
@@ -696,7 +696,7 @@ export function isDownloadableFromWpcom( state, themeId ) {
  * required capabilities, we hide wpcom themes from the
  * list of locally installed themes.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {number} siteId The Site ID
  * @returns {boolean} true if wpcom themes should be removed
  */
@@ -711,7 +711,7 @@ export function shouldFilterWpcomThemes( state, siteId ) {
 /**
  * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme to check whether it's premium.¡
  * @param  {Number}  siteId  Site ID for which to purchase the plan
  * @return {?String}         Plan purchase URL
@@ -731,7 +731,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
  * Returns the price string to display for a given theme on a given site:
  * @TODO Add tests!
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
  * @return {String}          Price
@@ -758,7 +758,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
  * Examples include Template First Themes, which can be determined by the feature
  * global-styles or auto-loading-homepage.
  *
- * @param {Object} state   Global state tree
+ * @param {object} state   Global state tree
  * @param {String} themeId An identifier for the theme - like
  *                         `independent-publisher-2` or `maywood`.
  * @return {Boolean} True if the theme should be edited with gutenberg.

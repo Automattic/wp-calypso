@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Returns the site's UTC offset as a number.
  *
- * @param  {Object}  state - Global state tree
+ * @param  {object}  state - Global state tree
  * @param  {Number}  siteId - Site ID
  * @return {?Number} site UTC offset
  */

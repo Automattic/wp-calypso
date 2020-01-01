@@ -10,7 +10,7 @@ import getSiteOption from './get-site-option';
  * minimum, or false if the Jetpack site is running an older version. Returns
  * null if the version cannot be determined or if not a Jetpack site.
  *
- * @param  {Object}   state   Global state tree
+ * @param  {object}   state   Global state tree
  * @param  {Number}   siteId  Site ID
  * @param  {String}   version Minimum version
  * @return {?Boolean}         Whether running minimum version

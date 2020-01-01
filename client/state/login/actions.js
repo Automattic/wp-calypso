@@ -280,7 +280,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 /**
  * Logs a user in from a third-party social account (Google ...).
  *
- * @param  {Object}   socialInfo     Object containing { service, access_token, id_token }
+ * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
  *           {String}   service      The external social service name
  *           {String}   access_token OAuth2 access token provided by the social service
  *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect.
@@ -333,7 +333,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 /**
  * Creates a WordPress.com account from a third-party social account (Google ...).
  *
- * @param  {Object}   socialInfo     Object containing { service, access_token, id_token }
+ * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
  *           {String}   service      The external social service name
  *           {String}   access_token OAuth2 access token provided by the social service
  *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect
@@ -376,7 +376,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 /**
  * Connects the current WordPress.com account with a third-party social account (Google ...).
  *
- * @param  {Object}   socialInfo     Object containing { service, access_token, id_token, redirectTo }
+ * @param  {object}   socialInfo     Object containing { service, access_token, id_token, redirectTo }
  *           {String}   service      The external social service name
  *           {String}   access_token OAuth2 access token provided by the social service
  *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect
@@ -551,7 +551,7 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 /**
  * Resets the type of authentication of the account of the current user.
  *
- * @return {Object} An action that can be dispatched
+ * @return {object} An action that can be dispatched
  */
 export const resetAuthAccountType = () => ( {
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
