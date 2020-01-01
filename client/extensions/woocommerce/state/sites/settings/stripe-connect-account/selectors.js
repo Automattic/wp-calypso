@@ -29,7 +29,7 @@ export function getNotifyCompleted( state, siteId = getSelectedSiteId( state ) )
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} Error to present to the user, if any
+ * @return {string} Error to present to the user, if any
  */
 export function getError( state, siteId = getSelectedSiteId( state ) ) {
 	return get( getRawSettings( state, siteId ), [ 'error' ], '' );
@@ -74,7 +74,7 @@ export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} URL to which to navigate to kick off the OAuth flow at Stripe
+ * @return {string} URL to which to navigate to kick off the OAuth flow at Stripe
  */
 export function getOAuthURL( state, siteId = getSelectedSiteId( state ) ) {
 	return get( getRawSettings( state, siteId ), [ 'oauthUrl' ], '' );

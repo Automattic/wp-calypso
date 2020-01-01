@@ -16,7 +16,7 @@ import QueryKey from './key';
  * Object key name for property used in indicating that an item is intended to
  * be removed during patched `mergeItem`.
  *
- * @type {String}
+ * @type {string}
  */
 export const DELETE_PATCH_KEY = '__DELETE';
 
@@ -33,7 +33,7 @@ export default class QueryManager {
 	 *
 	 * @param {object} data            Initial data
 	 * @param {object} options         Manager options
-	 * @param {String} options.itemKey Field to key items by
+	 * @param {string} options.itemKey Field to key items by
 	 */
 	constructor( data, options ) {
 		this.data = Object.assign(
@@ -131,7 +131,7 @@ export default class QueryManager {
 	/**
 	 * Returns a single item by key.
 	 *
-	 * @param  {String} itemKey Item key
+	 * @param  {string} itemKey Item key
 	 * @return {object}         Item
 	 */
 	getItem( itemKey ) {
@@ -178,7 +178,7 @@ export default class QueryManager {
 	 * QueryManager if the tracked items have changed, or the current instance
 	 * otherwise.
 	 *
-	 * @param  {String}       itemKey Key of item to remove
+	 * @param  {string}       itemKey Key of item to remove
 	 * @return {QueryManager}         New instance if changed, or same instance
 	 *                                otherwise
 	 */

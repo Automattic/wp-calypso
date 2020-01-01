@@ -14,7 +14,7 @@ export function getPostTypes( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {String}  slug   Post type slug
+ * @param  {string}  slug   Post type slug
  * @return {?object}        Post type
  */
 export function getPostType( state, siteId, slug ) {
@@ -33,8 +33,8 @@ export function getPostType( state, siteId, slug ) {
  *
  * @param  {object}   state   Global state tree
  * @param  {Number}   siteId  Site ID
- * @param  {String}   slug    Post type slug
- * @param  {String}   feature Feature slug
+ * @param  {string}   slug    Post type slug
+ * @param  {string}   feature Feature slug
  * @return {?Boolean}         Whether post type supports feature
  */
 export function postTypeSupports( state, siteId, slug, feature ) {
@@ -74,7 +74,7 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  *
  * @param  {object}   state  Global state tree
  * @param  {Number}   siteId Site ID
- * @param  {String}   slug   Post type slug
+ * @param  {string}   slug   Post type slug
  * @return {?Boolean}        Whether site supports post type
  */
 export function isPostTypeSupported( state, siteId, slug ) {

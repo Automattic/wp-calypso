@@ -19,7 +19,7 @@ export const getTwoFactorUserId = state => {
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
  * @param	{object}	state  Global state tree
- * @param	{String}	nonceType nonce's type
+ * @param	{string}	nonceType nonce's type
  * @return {?String}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state, nonceType ) => {
@@ -112,7 +112,7 @@ export const getTwoFactorSupportedAuthTypes = state => {
  * Returns null if there is no such information yet.
  *
  * @param  {object}   state  Global state tree
- * @param  {String}   type   A 2FA auth type (of `authenticator`, `sms`, `push` ).
+ * @param  {string}   type   A 2FA auth type (of `authenticator`, `sms`, `push` ).
  * @return {?Boolean}        Whether the auth type `type` is supported
  */
 export const isTwoFactorAuthTypeSupported = ( state, type ) => {

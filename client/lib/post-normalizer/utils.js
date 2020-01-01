@@ -265,7 +265,7 @@ export const safeLinkRe = /^https?:\/\//;
 /**
  * Only accept links that start with http or https. Reject others.
  *
- * @param {String} link the link to check
+ * @param {string} link the link to check
  * @returns {String|undefined} the safe link or undefined
  */
 export function safeLink( link ) {

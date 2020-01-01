@@ -36,7 +36,7 @@ export const receiveApplicationPasswords = appPasswords => ( {
 /**
  * Returns an action object to signal the creation of an application password.
  *
- * @param  {String} applicationName Name of the application password.
+ * @param  {string} applicationName Name of the application password.
  * @return {object}                 Action object.
  */
 export const createApplicationPassword = applicationName => ( {

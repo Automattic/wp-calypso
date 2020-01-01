@@ -6,8 +6,8 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
 /**
  * @typedef {object} RequestDescription
- * @property {String}   [apiVersion] specific API version for request
- * @property {String}   [apiNamespace] specific API namespace for request (preferred over version)
+ * @property {string}   [apiVersion] specific API version for request
+ * @property {string}   [apiNamespace] specific API namespace for request (preferred over version)
  * @property {object}   [body] JSON-serializable body for POST requests
  * @property {string}   method name of HTTP method to use
  * @property {string}   path WordPress.com API path with %s and %d placeholders, e.g. /sites/%s

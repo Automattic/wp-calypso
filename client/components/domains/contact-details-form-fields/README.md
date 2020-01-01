@@ -50,7 +50,7 @@ The form model, consisting of key/value pairs. Keys must be **camelCase**.
 
 ```
 
-### eventFormName {String} (optional)
+### eventFormName {string} (optional)
 
 Passed to child field components for tracking purposes.
 
@@ -69,7 +69,7 @@ Executed at render time providing the parent component with an opportunity to di
 
 #### Arguments
 
-{String} name of form field to be disabled
+{string} name of form field to be disabled
 
 Usage:
 

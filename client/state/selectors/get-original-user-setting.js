@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Given a settingName, returns that original setting if it exists or null
  *
  * @param  {object} state Global state tree
- * @param  {String} settingName - setting name
+ * @param  {string} settingName - setting name
  * @return {*} setting key value
  */
 export default function getOriginalUserSetting( state, settingName ) {

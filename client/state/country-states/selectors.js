@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * if there are not states for the country.
  *
  *
- * @param {String} countryCode Country code to check.
+ * @param {string} countryCode Country code to check.
  * @return {?Array}             States objects, if known.
  */
 
@@ -22,7 +22,7 @@ export function getCountryStates( state, countryCode ) {
  * the specified country, or false otherwise.
  *
  * @param  {object}  state       Global state tree
- * @param  {String}  countryCode Country code to check.
+ * @param  {string}  countryCode Country code to check.
  * @return {Boolean}             Whether a request is in progress
  */
 export function isCountryStatesFetching( state, countryCode ) {

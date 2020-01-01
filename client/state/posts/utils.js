@@ -77,7 +77,7 @@ export function getNormalizedPostsQuery( query ) {
  *
  * @param  {object} query  Posts query
  * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized posts query
+ * @return {string}        Serialized posts query
  */
 export function getSerializedPostsQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedPostsQuery( query );
@@ -94,7 +94,7 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
  * Returns an object with details related to the specified serialized query.
  * The object will include siteId and/or query object, if can be parsed.
  *
- * @param  {String} serializedQuery Serialized posts query
+ * @param  {string} serializedQuery Serialized posts query
  * @return {object}                 Deserialized posts query details
  */
 export function getDeserializedPostsQueryDetails( serializedQuery ) {
@@ -116,7 +116,7 @@ export function getDeserializedPostsQueryDetails( serializedQuery ) {
  *
  * @param  {object} query  Posts query
  * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized posts query
+ * @return {string}        Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 	return getSerializedPostsQuery( omit( query, 'page' ), siteId );

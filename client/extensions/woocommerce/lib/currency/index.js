@@ -8,7 +8,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * This is a work-around for fraction-cents, meant to be used like `wc_format_decimal`
  *
  * @param {Number|String} number A floating point number (or integer), or string that converts to a number
- * @param {String} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
+ * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
  * @return {Number} The original number rounded to a decimal point
  */
 export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
@@ -27,8 +27,8 @@ export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
  * This is different from `formatCurrency` by not returning the currency symbol.
  *
  * @param {Number|String} number A floating point number (or integer), or string that converts to a number
- * @param {String} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
- * @return {String} The original number rounded to a decimal point
+ * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
+ * @return {string} The original number rounded to a decimal point
  */
 export function getCurrencyFormatString( number, currency = 'USD' ) {
 	const { precision } = getCurrencyDefaults( currency );

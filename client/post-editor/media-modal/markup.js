@@ -73,7 +73,7 @@ const Markup = {
 	 *
 	 * @param  {object} site           A site object
 	 * @param  {(Object|String)} media A media object or markup string
-	 * @return {String}                A caption React element, or null if not
+	 * @return {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {

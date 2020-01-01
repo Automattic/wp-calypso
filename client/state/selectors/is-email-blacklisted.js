@@ -13,7 +13,7 @@ import getSiteSetting from 'state/selectors/get-site-setting';
  *
  * @param {object} state Global state tree
  * @param {Number} siteId Site ID
- * @param {String} email An email address.
+ * @param {string} email An email address.
  * @returns {Boolean} If the blacklist contains the email address.
  */
 export const isEmailBlacklisted = ( state, siteId, email = '' ) => {

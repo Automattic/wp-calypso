@@ -27,8 +27,8 @@ import { updateField } from 'woocommerce/woocommerce-services/state/service-sett
 /**
  * Adds a new shipping method to the shipping zone currently being edited.
  * @param {Number} siteId Site ID.
- * @param {String} methodType Type of shipping method to add. For example, "free_shipping", "local_pickup".
- * @param {String} title Title of the new method.
+ * @param {string} methodType Type of shipping method to add. For example, "free_shipping", "local_pickup".
+ * @param {string} title Title of the new method.
  * @return {object} Action object.
  */
 export const addMethodToShippingZone = ( siteId, methodType, title ) => {
@@ -86,7 +86,7 @@ export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
 /**
  * Removes the given shipping method from the shipping zone currently being edited.
  * @param {Number} siteId Site ID.
- * @param {String} methodId ID of the shipping method to delete.
+ * @param {string} methodId ID of the shipping method to delete.
  * @return {object} Action object.
  */
 export const removeMethodFromShippingZone = ( siteId, methodId ) => {
@@ -97,8 +97,8 @@ export const removeMethodFromShippingZone = ( siteId, methodId ) => {
  * Changes the opened shipping method into a shipping method of a new type. Note that, on save, this will remove the
  * shipping method from the shipping zone, and will create a new one of the given type.
  * @param {Number} siteId Site ID.
- * @param {String} methodType New shipping method type to switch to. For example, "free_shipping", "local_pickup".
- * @param {String} title New method title.
+ * @param {string} methodType New shipping method type to switch to. For example, "free_shipping", "local_pickup".
+ * @param {string} title New method title.
  * @return {object} Action object.
  */
 export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
@@ -108,7 +108,7 @@ export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
 /**
  * Changes the title of the opened shipping method.
  * @param {Number} siteId Site ID.
- * @param {String} title New user-facing title for the shipping method.
+ * @param {string} title New user-facing title for the shipping method.
  * @return {object} Action object.
  */
 export const changeShippingZoneMethodTitle = ( siteId, title ) => {

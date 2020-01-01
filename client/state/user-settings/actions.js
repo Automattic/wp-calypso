@@ -77,7 +77,7 @@ export const removeUnsavedUserSetting = settingName => ( {
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
  *
- * @param  {String} settingName - setting name
+ * @param  {string} settingName - setting name
  * @param  {*} value - setting value
  * @return {Function} Action thunk that returns updating successful response
  */

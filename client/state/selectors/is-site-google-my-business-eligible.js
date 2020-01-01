@@ -14,7 +14,7 @@ import { FEATURE_GOOGLE_MY_BUSINESS, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/pl
  * Returns true if site has business/ecommerce plan
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  siteId The Site ID
+ * @param  {string}  siteId The Site ID
  * @return {Boolean} True if site has business plan
  */
 export const siteHasEligibleWpcomPlan = createSelector(
@@ -30,7 +30,7 @@ export const siteHasEligibleWpcomPlan = createSelector(
  * Returns true if site has Jetpack premium/business plan
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  siteId The Site ID
+ * @param  {string}  siteId The Site ID
  * @return {Boolean} True if site has business plan
  */
 export const siteHasEligibleJetpackPlan = createSelector(
@@ -48,7 +48,7 @@ export const siteHasEligibleJetpackPlan = createSelector(
  * It should be visible if:
  * - site has a business plan on wpcom or Jetpack premium/business
  * @param  {object}  state  Global state tree
- * @param  {String}  siteId The Site ID
+ * @param  {string}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
  */
 export default function isSiteGoogleMyBusinessEligible( state, siteId ) {

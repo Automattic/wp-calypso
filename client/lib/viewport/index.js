@@ -103,7 +103,7 @@ function getMediaQueryList( breakpoint ) {
 
 /**
  * Returns whether the current window width matches a breakpoint.
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
  * @returns {Boolean} Whether the provided breakpoint is matched.
  */
@@ -114,7 +114,7 @@ export function isWithinBreakpoint( breakpoint ) {
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  *
  * @returns {Function} The function to be called when unsubscribing.

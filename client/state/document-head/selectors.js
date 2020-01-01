@@ -40,7 +40,7 @@ export function getDocumentHeadUnreadCount( state ) {
  * '1', '20', '39', '40+'
  *
  * @param  {object}  state  Global state tree
- * @return {String}         Unread count (string because it can be e.g. '40+')
+ * @return {string}         Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadCappedUnreadCount( state ) {
 	const unreadCount = getDocumentHeadUnreadCount( state );
@@ -56,7 +56,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * capped unreadCount, and selected site.
  *
  * @param  {object}  state  Global state tree
- * @return {String}         Formatted title
+ * @return {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	state => {

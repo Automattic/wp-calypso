@@ -18,7 +18,7 @@ require( '../server/config/validate-config-keys' );
 /**
  * Parses the output of a git diff command into file paths.
  *
- * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
+ * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
  */
 function parseGitDiffToPathArray( command ) {

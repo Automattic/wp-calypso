@@ -14,12 +14,12 @@ export { CURRENCIES } from './currencies';
 /**
  * Formats money with a given currency code
  * @param   {Number}     number              number to format
- * @param   {String}     code                currency code e.g. 'USD'
+ * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
- * @param   {String}     options.decimal     decimal symbol e.g. ','
- * @param   {String}     options.grouping    thousands separator
+ * @param   {string}     options.decimal     decimal symbol e.g. ','
+ * @param   {string}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
- * @param   {String}     options.symbol      currency symbol e.g. 'A$'
+ * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?String}                        A formatted string.
  */
@@ -46,12 +46,12 @@ export default function formatCurrency( number, code, options = {} ) {
 /**
  * Returns a formatted price object.
  * @param   {Number}     number              number to format
- * @param   {String}     code                currency code e.g. 'USD'
+ * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
- * @param   {String}     options.decimal     decimal symbol e.g. ','
- * @param   {String}     options.grouping    thousands separator
+ * @param   {string}     options.decimal     decimal symbol e.g. ','
+ * @param   {string}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
- * @param   {String}     options.symbol      currency symbol e.g. 'A$'
+ * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @returns {?String}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 export function getCurrencyObject( number, code, options = {} ) {
@@ -86,9 +86,9 @@ export function getCurrencyObject( number, code, options = {} ) {
 
 /**
  * Remove trailing zero cents
- * @param {String}  number  formatted number
- * @param {String}  decimal decimal symbol
- * @returns {String}
+ * @param {string}  number  formatted number
+ * @param {string}  decimal decimal symbol
+ * @returns {string}
  */
 
 function stripZeros( number, decimal ) {

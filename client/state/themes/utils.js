@@ -114,7 +114,7 @@ export function normalizeWporgTheme( theme ) {
 /**
  * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
  *
- * @param  {String}  stylesheet Theme stylesheet
+ * @param  {string}  stylesheet Theme stylesheet
  * @return {?String}            Theme ID
  */
 export function getThemeIdFromStylesheet( stylesheet ) {
@@ -141,7 +141,7 @@ export function getNormalizedThemesQuery( query ) {
  *
  * @param  {object} query  Themes query
  * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized themes query
+ * @return {string}        Serialized themes query
  */
 export function getSerializedThemesQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedThemesQuery( query );
@@ -158,7 +158,7 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * Returns an object with details related to the specified serialized query.
  * The object will include siteId and/or query object, if can be parsed.
  *
- * @param  {String} serializedQuery Serialized themes query
+ * @param  {string} serializedQuery Serialized themes query
  * @return {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
@@ -180,7 +180,7 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
  *
  * @param  {object} query  Themes query
  * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized themes query
+ * @return {string}        Serialized themes query
  */
 export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 	return getSerializedThemesQuery( omit( query, 'page' ), siteId );
@@ -259,7 +259,7 @@ export function isThemeMatchingQuery( query, theme ) {
  * Returns the slugs of the theme's given taxonomy.
  *
  * @param  {object} theme    The theme object.
- * @param  {String} taxonomy The taxonomy items to get.
+ * @param  {string} taxonomy The taxonomy items to get.
  * @return {Array}           An array of theme taxonomy slugs.
  */
 export function getThemeTaxonomySlugs( theme, taxonomy ) {

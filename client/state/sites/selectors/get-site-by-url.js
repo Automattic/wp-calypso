@@ -8,7 +8,7 @@ import getSiteBySlug from './get-site-by-slug';
  * Returns a site object by its URL.
  *
  * @param  {object}  state Global state tree
- * @param  {String}  url   Site URL
+ * @param  {string}  url   Site URL
  * @return {?object}       Site object
  */
 export default function getSiteByUrl( state, url ) {

@@ -92,7 +92,7 @@ const getCountriesOwnedByOtherZone = createSelector(
  * That information will be used to mark them as "disabled" in the UI.
  * @param {object} state Whole Redux state tree
  * @param {Number} siteId Site ID
- * @param {String} countryCode 2-letter ISO country code
+ * @param {string} countryCode 2-letter ISO country code
  * @return {object} A map with the form { stateCode: zoneId }. If a state doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */

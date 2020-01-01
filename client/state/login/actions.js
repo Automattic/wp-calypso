@@ -110,10 +110,10 @@ export const remoteLoginUser = loginLinks => {
 /**
  * Logs a user in.
  *
- * @param  {String}   usernameOrEmail Username or email of the user
- * @param  {String}   password        Password of the user
- * @param  {String}   redirectTo      Url to redirect the user to upon successful login
- * @param  {String}   domain          A domain to reverse login to
+ * @param  {string}   usernameOrEmail Username or email of the user
+ * @param  {string}   password        Password of the user
+ * @param  {string}   redirectTo      Url to redirect the user to upon successful login
+ * @param  {string}   domain          A domain to reverse login to
  * @return {Function}                 A thunk that can be dispatched
  */
 export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
@@ -235,8 +235,8 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 /**
  * Logs a user in with a two factor verification code.
  *
- * @param  {String}   twoStepCode       Verification code received by the user
- * @param  {String}   twoFactorAuthType Two factor authentication method (sms, push ...)
+ * @param  {string}   twoStepCode       Verification code received by the user
+ * @param  {string}   twoFactorAuthType Two factor authentication method (sms, push ...)
  * @return {Function}                   A thunk that can be dispatched
  */
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => (
@@ -281,10 +281,10 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
  * Logs a user in from a third-party social account (Google ...).
  *
  * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
- *           {String}   service      The external social service name
- *           {String}   access_token OAuth2 access token provided by the social service
- *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect.
- * @param  {String}   redirectTo     Url to redirect the user to upon successful login
+ *           {string}   service      The external social service name
+ *           {string}   access_token OAuth2 access token provided by the social service
+ *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect.
+ * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @return {Function}                A thunk that can be dispatched
  */
 export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
@@ -334,10 +334,10 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * Creates a WordPress.com account from a third-party social account (Google ...).
  *
  * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
- *           {String}   service      The external social service name
- *           {String}   access_token OAuth2 access token provided by the social service
- *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect
- * @param  {String}   flowName       The name of the current signup flow
+ *           {string}   service      The external social service name
+ *           {string}   access_token OAuth2 access token provided by the social service
+ *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
+ * @param  {string}   flowName       The name of the current signup flow
  * @return {Function}                A thunk that can be dispatched
  */
 export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
@@ -377,10 +377,10 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
  * Connects the current WordPress.com account with a third-party social account (Google ...).
  *
  * @param  {object}   socialInfo     Object containing { service, access_token, id_token, redirectTo }
- *           {String}   service      The external social service name
- *           {String}   access_token OAuth2 access token provided by the social service
- *           {String}   id_token     JWT ID token such as the one provided by Google OpenID Connect
- * @param  {String}   redirectTo     Url to redirect the user to upon successful login
+ *           {string}   service      The external social service name
+ *           {string}   access_token OAuth2 access token provided by the social service
+ *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
+ * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @return {Function}                A thunk that can be dispatched
  */
 export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
@@ -418,7 +418,7 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 /**
  * Disconnects the current WordPress.com account from a third-party social account (Google ...).
  *
- * @param  {String}   socialService The social service name
+ * @param  {string}   socialService The social service name
  * @return {Function}               A thunk that can be dispatched
  */
 export const disconnectSocialUser = socialService => dispatch => {
@@ -507,7 +507,7 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
 /**
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.
  *
- * @param  {String}   usernameOrEmail Identifier of the user
+ * @param  {string}   usernameOrEmail Identifier of the user
  * @return {Function}                 A thunk that can be dispatched
  */
 export const getAuthAccountType = usernameOrEmail => dispatch => {

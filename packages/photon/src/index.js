@@ -26,9 +26,9 @@ const mappings = {
  *
  * Photon documentation: http://developer.wordpress.com/docs/photon/
  *
- * @param {String} imageUrl - the URL of the image to run through Photon
+ * @param {string} imageUrl - the URL of the image to run through Photon
  * @param {object} [opts] - optional options object with Photon options
- * @return {String} The generated Photon URL string
+ * @return {string} The generated Photon URL string
  * @api public
  */
 export default function photon( imageUrl, opts ) {

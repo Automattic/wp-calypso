@@ -44,7 +44,7 @@ export const getPlan = createSelector(
 /**
  * Returns a plan searched by its slug
  * @param  {object} state      global state
- * @param  {String} planSlug the plan slug
+ * @param  {string} planSlug the plan slug
  * @return {object} the matching plan
  */
 export const getPlanBySlug = createSelector(
@@ -75,7 +75,7 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
  *
  * @param  {object}  state     global state
  * @param  {Number}  productId the plan productId
- * @return {String}  plan product_slug
+ * @return {string}  plan product_slug
  */
 export function getPlanSlug( state, productId ) {
 	const plan = getPlan( state, productId );

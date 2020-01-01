@@ -15,7 +15,7 @@ import getThemeFilters from 'state/selectors/get-theme-filters';
  * than one taxonomy.
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  term   The term to check for ambiguity
+ * @param  {string}  term   The term to check for ambiguity
  * @return {Bool}           True if term is ambiguous
  */
 export default createSelector(

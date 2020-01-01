@@ -14,7 +14,7 @@ import { getSerializedStatsQuery } from 'state/stats/lists/utils';
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  statType Type of stat
+ * @param  {string}  statType Type of stat
  * @param  {object}  query    Stats query object
  * @return {Date}             Date of the last site stats query
  */

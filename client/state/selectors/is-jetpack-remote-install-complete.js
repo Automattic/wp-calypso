@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * of the jetpack plugin to the .org site at the given url.
  *
  * @param {object} state Global state tree
- * @param {String} url .org site URL
+ * @param {string} url .org site URL
  * @return {bool} True if installation and activation was successful
  */
 export default function isJetpackRemoteInstallComplete( state, url ) {

@@ -131,7 +131,7 @@ export const getCurrentlyEditingShippingZone = createSelector(
 
 /**
  * @param {Array} locations List of locations for the zone.
- * @return {String} The auto-generated name for the zone.
+ * @return {string} The auto-generated name for the zone.
  */
 const generateZoneNameFromLocations = locations => {
 	if ( ! locations || ! locations.length ) {
@@ -165,7 +165,7 @@ const generateZoneNameFromLocations = locations => {
  * @param {object} state Whole Redux state tree
  * @param {Number} zoneId ID of the shipping zone.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The auto-generated name for the zone, based in its locations. It doesn't include local edits.
+ * @return {string} The auto-generated name for the zone, based in its locations. It doesn't include local edits.
  */
 export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsList( state, zoneId, 20, siteId );
@@ -175,7 +175,7 @@ export const generateZoneName = ( state, zoneId, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The auto-generated name for the zone currently being edited, based in its locations. It includes local edits.
+ * @return {string} The auto-generated name for the zone currently being edited, based in its locations. It includes local edits.
  */
 export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getCurrentlyEditingShippingZoneLocationsList( state, 20, siteId );

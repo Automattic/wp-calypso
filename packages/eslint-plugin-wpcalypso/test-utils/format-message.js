@@ -11,9 +11,9 @@
  *
  * @see https://github.com/eslint/eslint/blob/v2.12.0/lib/eslint.js#L964-L971
  *
- * @param  {String} message Message template
+ * @param  {string} message Message template
  * @param  {object} terms   Terms
- * @return {String}         Formatted message
+ * @return {string}         Formatted message
  */
 function formatMessage( message, terms ) {
 	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function( fullMatch, term ) {

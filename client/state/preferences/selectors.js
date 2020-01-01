@@ -17,7 +17,7 @@ export const isFetchingPreferences = state => !! state.preferences.fetching;
  * otherwise returning null.
  *
  * @param  {object} state Global state tree
- * @param  {String} key   Preference key
+ * @param  {string} key   Preference key
  * @return {*}            Preference value
  */
 export function getPreference( state, key ) {

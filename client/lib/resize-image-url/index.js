@@ -61,7 +61,7 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  * URL containing query string arguments is passed to this function, it will
  * return `null`.
  *
- * @param   {String}          imageUrl Original image url
+ * @param   {string}          imageUrl Original image url
  * @param   {(Number|Object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
  * @param   {?Number}         height   Pixel height if specifying resize width

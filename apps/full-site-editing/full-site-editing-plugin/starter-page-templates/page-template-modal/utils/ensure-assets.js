@@ -11,14 +11,14 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * A full asset URL.
- * @typedef {String} URL
+ * @typedef {string} URL
  */
 
 /**
  * Gutenberg Block.
  * @typedef {object} GutenbergBlock
- * @property {String} clientId A unique id of the block.
- * @property {String} name A block name, like "core/paragraph".
+ * @property {string} clientId A unique id of the block.
+ * @property {string} name A block name, like "core/paragraph".
  * @property {Array<GutenbergBlock>} innerBlocks Nested blocks.
  * @property {object} attributes An object with attributes, different for each block type.
  */
@@ -26,7 +26,7 @@ import { removeQueryArgs } from '@wordpress/url';
 /**
  * Usage object contains an info that certain property is used inside another object.
  * @typedef {object} Usage
- * @property {String} prop Name of the property.
+ * @property {string} prop Name of the property.
  * @property {Array<String|Number>} path A path inside an object where prop is, defined as list of keys.
  */
 

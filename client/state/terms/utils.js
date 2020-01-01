@@ -25,7 +25,7 @@ export function getNormalizedTermsQuery( query ) {
  * `state.terms.queries` state object.
  *
  * @param  {object} query    Terms query
- * @return {String}          Serialized terms query
+ * @return {string}          Serialized terms query
  */
 export function getSerializedTermsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
@@ -37,7 +37,7 @@ export function getSerializedTermsQuery( query = {} ) {
  *
  * @param  {object} query  Terms query
  * @param  {Number} siteId Optional site ID
- * @return {String}        Serialized terms query
+ * @return {string}        Serialized terms query
  */
 export function getSerializedTermsQueryWithoutPage( query ) {
 	return getSerializedTermsQuery( omit( query, 'page' ) );

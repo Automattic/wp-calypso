@@ -66,10 +66,10 @@ export const clearError = siteId => ( dispatch, getState ) => {
  * Action Creator: Create (and connect) a Stripe Connect Account.
  *
  * @param {Number} siteId The id of the site for which to create an account.
- * @param {String} email Email address (i.e. of the logged in WordPress.com user) to pass to Stripe.
- * @param {String} country Two character country code to pass to Stripe (e.g. US).
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} email Email address (i.e. of the logged in WordPress.com user) to pass to Stripe.
+ * @param {string} country Two character country code to pass to Stripe (e.g. US).
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const createAccount = (
@@ -146,8 +146,8 @@ function createFailure( siteId, action, { message } ) {
  * Action Creator: Fetch Stripe Connect Account Details.
  *
  * @param {Number} siteId The id of the site for which to fetch connected account details.
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const fetchAccountDetails = ( siteId, successAction = null, failureAction = null ) => (
@@ -225,8 +225,8 @@ function fetchFailure( siteId, action, { message } ) {
  * Action Creator: Disconnect Account.
  *
  * @param {Number} siteId The id of the site to disconnect from Stripe Connect.
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const deauthorizeAccount = ( siteId, successAction = null, failureAction = null ) => (
@@ -297,9 +297,9 @@ function deauthorizeFailure( siteId, action, errorMessage ) {
  * Action Creator: Get the initial OAuth URL for connecting a Stripe Account.
  *
  * @param {Number} siteId The id of the site for which to create an account.
- * @param {String} returnUrl The URL for Stripe to return the user to (to complete the setup)
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} returnUrl The URL for Stripe to return the user to (to complete the setup)
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const oauthInit = ( siteId, returnUrl, successAction = null, failureAction = null ) => (
@@ -371,10 +371,10 @@ function oauthInitFailure( siteId, action, { message } ) {
  * Action Creator: Complete the OAuth flow and connect the Stripe Account.
  *
  * @param {Number} siteId The id of the site for which to create an account.
- * @param {String} stripeCode The code which Stripe will exchange for the account id.
- * @param {String} stripeState An arbitrary string passed throughout the flow as a CSRF protection.
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} stripeCode The code which Stripe will exchange for the account id.
+ * @param {string} stripeState An arbitrary string passed throughout the flow as a CSRF protection.
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const oauthConnect = (

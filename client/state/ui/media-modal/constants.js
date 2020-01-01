@@ -2,7 +2,7 @@
  * Media modal views
  *
  *
- * @enum {String}
+ * @enum {string}
  * @type {object}
  */
 

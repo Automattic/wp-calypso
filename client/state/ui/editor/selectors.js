@@ -42,8 +42,8 @@ export function isEditorNewPost( state ) {
  * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} postId      Post ID
- * @param  {String} type        Post type
- * @return {String}             Editor URL path
+ * @param  {string} type        Post type
+ * @return {string}             Editor URL path
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
 	return addQueryArgs(
@@ -60,7 +60,7 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
  * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} type        Post type
- * @return {String}             Editor URL path
+ * @return {string}             Editor URL path
  */
 export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 	let path;
@@ -92,8 +92,8 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * @param  {object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} postId      Post ID
- * @param  {String} defaultType Fallback post type if post not found
- * @return {String}             Editor URL path
+ * @param  {string} defaultType Fallback post type if post not found
+ * @return {string}             Editor URL path
  */
 export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	if ( ! siteId ) {

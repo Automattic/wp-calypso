@@ -112,7 +112,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Searches the API results for a direct match on the user search query.
 	 *
-	 * @param {String} value       Search query array
+	 * @param {string} value       Search query array
 	 * @returns {Object|undefined} An object from the vertical results array
 	 */
 	searchForVerticalMatches = ( value = '' ) =>
@@ -126,7 +126,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * TODO: once the siteVertical state got simplified, this can be removed.
 	 *
 	 * @param {object} verticalData An object from the vertical results array
-	 * @param {String} value Search query array
+	 * @param {string} value Search query array
 	 */
 	updateVerticalData = ( verticalData, value = '' ) => {
 		const trimmedValue = value.trim();
@@ -145,7 +145,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Callback to be passed to consuming component when the search field is updated.
 	 *
-	 * @param {String}  value                The new search value
+	 * @param {string}  value                The new search value
 	 */
 	onSiteTopicChange = value => {
 		const newState = {

@@ -94,7 +94,7 @@ export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state
  *
  * @param {object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} Current product list search term (defaul: '')
+ * @return {string} Current product list search term (defaul: '')
  */
 export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( state ) ) {
 	return get(

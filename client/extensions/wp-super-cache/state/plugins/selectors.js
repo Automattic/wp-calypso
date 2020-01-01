@@ -24,7 +24,7 @@ export function isRequestingPlugins( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {String}  plugin WPSC Plugin ID
+ * @param  {string}  plugin WPSC Plugin ID
  * @return {Boolean} Whether plugin is being enabled/disabled
  */
 export function isTogglingPlugin( state, siteId, plugin ) {

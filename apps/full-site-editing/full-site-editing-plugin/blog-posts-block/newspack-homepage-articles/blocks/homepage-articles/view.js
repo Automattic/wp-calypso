@@ -229,7 +229,7 @@ function showEl( el ) {
  * Checks if object has own property.
  *
  * @param {object} obj
- * @param {String} prop
+ * @param {string} prop
  */
 function hasOwnProp( obj, prop ) {
 	return Object.prototype.hasOwnProperty.call( obj, prop );

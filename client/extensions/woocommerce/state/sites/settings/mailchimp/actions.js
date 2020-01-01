@@ -208,7 +208,7 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
  * Triggers a network request to set MailChimp api key in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId        Jetpack site ID
- * @param  {String}        apiKey        MailChimp api key
+ * @param  {string}        apiKey        MailChimp api key
  * @return {Function}                    Action thunk
  */
 export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {

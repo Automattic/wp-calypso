@@ -91,7 +91,7 @@ export const getAllCountries = ( state, siteId = getSelectedSiteId( state ) ) =>
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} continentCode 2-letter continent code
+ * @param {string} continentCode 2-letter continent code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of countries in the given continent, represented by { code, name } pairs. Sorted alphabetically by name.
  */
@@ -112,9 +112,9 @@ export const getCountriesByContinent = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
+ * @param {string} countryCode 2-letter ISO country code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The country name. If it can't be found, it will default to returning the country ISO code.
+ * @return {string} The country name. If it can't be found, it will default to returning the country ISO code.
  */
 export const getCountryName = createSelector(
 	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
@@ -152,7 +152,7 @@ export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
+ * @param {string} countryCode 2-letter ISO country code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of states in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
  */
@@ -174,10 +174,10 @@ export const getStates = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
- * @param {String} stateCode 2-letter code of the country's state
+ * @param {string} countryCode 2-letter ISO country code
+ * @param {string} stateCode 2-letter code of the country's state
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The readable name of the given state. It falls back to returning the state code if its name wasn't found
+ * @return {string} The readable name of the given state. It falls back to returning the state code if its name wasn't found
  */
 export const getStateName = createSelector(
 	( state, countryCode, stateCode, siteId = getSelectedSiteId( state ) ) => {
@@ -198,7 +198,7 @@ export const getStateName = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} countryCode code 2-letter ISO country code
+ * @param {string} countryCode code 2-letter ISO country code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the country has a list of states or not. Note that even if the result is "false", that only
  * means WooCommerce doesn't have a list of states for the country, but the country may still have states (or provinces,

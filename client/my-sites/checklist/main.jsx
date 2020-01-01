@@ -70,7 +70,7 @@ class ChecklistMain extends PureComponent {
 
 	/**
 	 * Get subheader text to be shown for Checklist
-	 * @return {String} The translated string
+	 * @return {string} The translated string
 	 */
 	getSubHeaderText() {
 		const { displayMode, currentTheme, translate } = this.props;

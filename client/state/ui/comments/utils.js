@@ -8,10 +8,10 @@ import { includes } from 'lodash';
  * E.g. `ui.comments.queries.${ siteId }.${ postId }.${ 'approved?s=foo' }.${ page }`
  *
  * @param {object} query Filter parameters.
- * @param {String} [query.order] Query order ('ASC' or 'DESC').
- * @param {String} [query.search] Search query.
- * @param {String} query.status Comments status.
- * @returns {String} Filter key.
+ * @param {string} [query.order] Query order ('ASC' or 'DESC').
+ * @param {string} [query.search] Search query.
+ * @param {string} query.status Comments status.
+ * @returns {string} Filter key.
  */
 export const getFiltersKey = ( { order = 'DESC', search, status = 'all' } ) => {
 	const caseInsensitiveOrder = order.toUpperCase();

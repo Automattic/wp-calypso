@@ -20,7 +20,7 @@ export function nextBucketIndex( bucketEdits ) {
 /**
  * Returns which bucket should be used when saving edits for a particular object.
  * @param {object} object Data object such as product or variation.
- * @return {String} 'updates' for existing objects, 'creates' for new objects.
+ * @return {string} 'updates' for existing objects, 'creates' for new objects.
  */
 export function getBucket( object ) {
 	return ( object && ! isObject( object.id ) && 'updates' ) || 'creates';

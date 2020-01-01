@@ -62,7 +62,7 @@ export const getExcerptForPost = post => {
  * @param {object} post A post object.
  * @param {Function} translate The i18n-calypso function.
  * @param {Number} maxWords Approximation of the truncation logic performed by our servers.
- * @returns {String} Post summary
+ * @returns {string} Post summary
  */
 export const getSummaryForPost = ( post, translate, maxWords = 60 ) => {
 	if ( ! post ) {

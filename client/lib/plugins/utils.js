@@ -20,7 +20,7 @@ function isSameSiteNotice( site, log ) {
 }
 
 /**
- * @param  {String} pluginSlug Plugin Slug
+ * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
  * @return {Bool} True if notice matches criteria
  */
@@ -32,7 +32,7 @@ function isSamePluginNotice( pluginSlug, log ) {
  * Filter function that return notices that fit a certain criteria.
  *
  * @param  {object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
+ * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
  * @return {Bool} True if notice matches criteria
  */
@@ -213,7 +213,7 @@ export function normalizePluginsList( pluginsList ) {
  *
  * @param  {Array} logs        List of all notices
  * @param  {object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
+ * @param  {string} pluginSlug Plugin Slug
  *
  * @return {Array} Array of filtered logs that match the criteria
  */

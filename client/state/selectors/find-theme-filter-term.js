@@ -15,7 +15,7 @@ import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
  * Returns a theme filter term object that corresponds to a given filter term slug
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  search The term to search for
+ * @param  {string}  search The term to search for
  * @return {object}         A filter term object
  */
 export default createSelector(

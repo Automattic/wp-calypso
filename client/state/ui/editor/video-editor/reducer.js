@@ -12,9 +12,9 @@ import { combineReducers } from 'state/utils';
 /**
  * Tracks poster URL state.
  *
- * @param  {String} state Current poster URL
+ * @param  {string} state Current poster URL
  * @param  {object} action Action object
- * @return {String} Updated poster URL
+ * @return {string} Updated poster URL
  */
 export const url = ( state = null, { type, posterUrl } ) =>
 	VIDEO_EDITOR_SET_POSTER_URL === type ? posterUrl : state;

@@ -18,7 +18,7 @@ import { getKeyringServiceByName } from './services/selectors';
  * service for which a connection can be created.
  *
  * @param  {object} state       Global state tree
- * @param  {String} serviceName The name of the service to check
+ * @param  {string} serviceName The name of the service to check
  * @return {Array}              Flattened array of all possible accounts for the service
  */
 export function getAvailableExternalAccounts( state, serviceName ) {

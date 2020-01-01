@@ -163,7 +163,7 @@ const inferNode = range => {
 /**
  * Returns function to map range to node
  *
- * @param {String} type type of node specified in range
+ * @param {string} type type of node specified in range
  * @returns {function(Object): Object} maps block to meta data
  */
 const nodeMappings = type => {
@@ -231,7 +231,7 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * as the use of a "trampoline".
  *
  * @param {Array} accum.0 previously parsed results
- * @param {String} accum.1 remaining text to parse
+ * @param {string} accum.1 remaining text to parse
  * @param {Number} accum.2 current index into text string
  * @param {object} nextRange next range from formatted block
  * @returns {Array} parsed results: text and nodes

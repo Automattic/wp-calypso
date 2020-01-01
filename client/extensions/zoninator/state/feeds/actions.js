@@ -40,7 +40,7 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
- * @param  {String} form    Form name
+ * @param  {string} form    Form name
  * @param  {Array}  posts   Feed posts
  * @return {object}         Action object
  */

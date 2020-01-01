@@ -12,7 +12,7 @@ import { getPost } from 'state/posts/selectors';
  * Returns whether the current user can edit the post with the given global ID.
  *
  * @param  {object}  state    Global state tree
- * @param  {String}  globalId Post global ID
+ * @param  {string}  globalId Post global ID
  * @return {Boolean}          Whether the current user can edit the given post
  */
 export default function canCurrentUserEditPost( state, globalId ) {

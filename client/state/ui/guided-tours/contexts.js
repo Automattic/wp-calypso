@@ -25,7 +25,7 @@ export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 /**
  * Returns a selector that tests if the current user is in a given section
  *
- * @param {String} sectionName Name of section
+ * @param {string} sectionName Name of section
  * @return {Function} Selector function
  */
 export const inSection = sectionName => state => getSectionName( state ) === sectionName;
@@ -33,7 +33,7 @@ export const inSection = sectionName => state => getSectionName( state ) === sec
 /**
  * Returns a selector that tests if a feature is enabled in config
  *
- * @param {String} feature Name of feature
+ * @param {string} feature Name of feature
  * @return {Function} Selector function
  */
 export const isEnabled = feature => () => config.isEnabled( feature );
@@ -116,7 +116,7 @@ export const hasUserInteractedWithComponent = () => () => false;
  *
  * @see client/state/analytics
  *
- * @param {String} eventName Name of analytics event
+ * @param {string} eventName Name of analytics event
  * @return {Function} Selector function
  */
 export const hasAnalyticsEventFired = eventName => state => {
@@ -165,8 +165,8 @@ export const doesSelectedSiteHaveMediaFiles = state => {
  *
  * @see client/lib/abtest
  *
- * @param {String} testName Name of A/B test
- * @param {String} variant Variant identifier
+ * @param {string} testName Name of A/B test
+ * @param {string} variant Variant identifier
  * @return {Function} Selector function
  */
 export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName ) === variant;

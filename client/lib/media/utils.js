@@ -391,7 +391,7 @@ export function playtime( duration ) {
  * the thumbnail size, optionally for a given site. If the size cannot be
  * determined or a site is not passed, a fallback default value is used.
  *
- * @param  {String} size Thumbnail size
+ * @param  {string} size Thumbnail size
  * @param  {object} site Site object
  * @return {object}      Width and height dimensions
  */
@@ -416,7 +416,7 @@ export function getThumbnailSizeDimensions( size, site ) {
  * optional set of parameters.
  *
  * @param  {object} settings Gallery settings
- * @return {String}          Gallery shortcode
+ * @return {string}          Gallery shortcode
  */
 export function generateGalleryShortcode( settings ) {
 	let attrs;
@@ -484,7 +484,7 @@ export function canUserDeleteItem( item, user, site ) {
  *
  * @param {object} canvas the canvas element
  * @param {Function} callback function to process the blob after it is extracted
- * @param {String} type image type to be extracted
+ * @param {string} type image type to be extracted
  * @param {Number} quality extracted image quality
  */
 export function canvasToBlob( canvas, callback, type, quality ) {

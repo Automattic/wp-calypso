@@ -58,8 +58,8 @@ export const hideMagicLoginRequestNotice = () => {
 /**
  * Sends an email with a magic link to the specified email address.
  *
- * @param  {String}   email      Email address of the user
- * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @param  {string}   email      Email address of the user
+ * @param  {string}   redirectTo Url to redirect the user to upon successful login
  * @return {Function}            A thunk that can be dispatched
  */
 export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => {
@@ -106,8 +106,8 @@ async function postMagicLoginRequest( url, bodyObj ) {
 /**
  * Logs a user in from a token included in a magic link.
  *
- * @param  {String}   token      Security token
- * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @param  {string}   token      Security token
+ * @param  {string}   redirectTo Url to redirect the user to upon successful login
  * @return {Function}            A thunk that can be dispatched
  */
 export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {

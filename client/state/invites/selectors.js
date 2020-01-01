@@ -69,7 +69,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  inviteId Invite ID
+ * @param  {string}  inviteId Invite ID
  * @return {?object}          Invite object (if found)
  */
 export const getInviteForSite = treeSelect(
@@ -92,7 +92,7 @@ export const getInviteForSite = treeSelect(
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  inviteId Invite ID
+ * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
 export function isRequestingInviteResend( state, siteId, inviteId ) {
@@ -105,7 +105,7 @@ export function isRequestingInviteResend( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  inviteId Invite ID
+ * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invite resend was a success
  */
 export function didInviteResendSucceed( state, siteId, inviteId ) {
@@ -118,7 +118,7 @@ export function didInviteResendSucceed( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  inviteId Invite ID
+ * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
 export function isDeletingInvite( state, siteId, inviteId ) {
@@ -131,7 +131,7 @@ export function isDeletingInvite( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  inviteId Invite ID
+ * @param  {string}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
 export function didInviteDeletionSucceed( state, siteId, inviteId ) {

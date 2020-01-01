@@ -17,7 +17,7 @@ import {
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.
  *
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
  * @returns {Boolean} The current status for the breakpoint.
  */
@@ -70,7 +70,7 @@ export function useDesktopBreakpoint() {
  * React higher order component for getting the status for a breakpoint and
  * keeping it updated.
  *
- * @param {String} breakpoint The breakpoint to consider.
+ * @param {string} breakpoint The breakpoint to consider.
  *
  * @returns {Function} A function that given a component returns the
  * wrapped component.

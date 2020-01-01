@@ -166,7 +166,7 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
  * @param  {object} connection         Connection to be updated.
  * @param  {Number} connection.site_ID Site ID for which the connection is updated.
  * @param  {Number} connection.ID      ID of the connection to be updated.
- * @param  {String} connection.label   Name of the connected service.
+ * @param  {string} connection.label   Name of the connected service.
  * @param  {object} attributes         The update request body.
  * @return {Function}                  Action thunk
  */
@@ -195,7 +195,7 @@ export function updateSiteConnection( connection, attributes ) {
  * @param  {object} connection         Connection to be deleted.
  * @param  {Number} connection.site_ID Site ID for which the connection is deleted.
  * @param  {Number} connection.ID      ID of the connection to be deleted.
- * @param  {String} connection.label   Name of the service that was connected.
+ * @param  {string} connection.label   Name of the service that was connected.
  * @return {Function}                  Action thunk
  */
 export function deleteSiteConnection( connection ) {

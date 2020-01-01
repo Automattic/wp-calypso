@@ -44,8 +44,8 @@ export default function wpcomSupport( wpcom ) {
 	return Object.assign( wpcom, {
 		addSupportParams,
 		/**
-		 * @param {String} supportUser  Support username
-		 * @param {String} supportToken Support token
+		 * @param {string} supportUser  Support username
+		 * @param {string} supportToken Support token
 		 * @returns {bool}  true if the user and token were changed, false otherwise
 		 */
 		setSupportUserToken: function( newUser = '', newToken = '', newTokenErrorCallback ) {

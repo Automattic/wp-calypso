@@ -90,7 +90,7 @@ class CalendarCard extends Component {
 	 * language like "Today" or "Tomorrow" instead of the name of the day.
 	 *
 	 * @param {Number} date Timestamp of the date
-	 * @returns {String} The name for the day of the week
+	 * @returns {string} The name for the day of the week
 	 */
 	getDayOfWeekString( date ) {
 		const { translate } = this.props;

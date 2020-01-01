@@ -10,7 +10,7 @@ import { postTypeSupports } from 'state/post-types/selectors';
  *
  * @param {object} state 	Global state tree
  * @param {Number} siteId 	Site ID
- * @param {String} postType Post type slug
+ * @param {string} postType Post type slug
  *
  * @return {Boolean} True when enabled
  */

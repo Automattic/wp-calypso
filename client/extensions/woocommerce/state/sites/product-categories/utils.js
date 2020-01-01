@@ -26,7 +26,7 @@ export function getNormalizedProductCategoriesQuery( query ) {
  * Returns a serialized product categories query
  *
  * @param  {object} query  Product categories query
- * @return {String}        Serialized query
+ * @return {string}        Serialized query
  */
 export function getSerializedProductCategoriesQuery( query = {} ) {
 	const normalizedQuery = getNormalizedProductCategoriesQuery( query );

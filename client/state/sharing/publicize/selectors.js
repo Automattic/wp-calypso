@@ -50,7 +50,7 @@ export const getSiteUserConnections = createSelector(
  * @param  {object} state   Global state tree
  * @param  {Number} siteId  Site ID
  * @param  {Number} userId  User ID to filter
- * @param  {String} service The name of the service to check
+ * @param  {string} service The name of the service to check
  * @return {Array}          User connections
  */
 export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
@@ -63,7 +63,7 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @param  {object} state   Global state tree
  * @param  {Number} siteId  Site ID
  * @param  {Number} userId  User ID to filter
- * @param  {String} service The name of the service to check
+ * @param  {string} service The name of the service to check
  * @return {Array}          Broken user connections.
  */
 export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {

@@ -8,9 +8,9 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * Returns domains suggestions information for a query.
  * @param   {object}   state                                Global state tree
  * @param   {object}   queryObject                          domain suggestions queryObject
- * @param   {String}   queryObject.query                    domainQuery
+ * @param   {string}   queryObject.query                    domainQuery
  * @param   {Number}   queryObject.quantity                 max results
- * @param   {String}   queryObject.vendor                   vendor
+ * @param   {string}   queryObject.vendor                   vendor
  * @param   {?Boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
  */
@@ -26,9 +26,9 @@ export function getDomainsSuggestions( state, queryObject ) {
  * Returns true, if we're currently requesting domains suggestions.
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
- * @param   {String}     queryObject.query                    domainQuery
+ * @param   {string}     queryObject.query                    domainQuery
  * @param   {Number}     queryObject.quantity                 max results
- * @param   {String}     queryObject.vendor                   vendor
+ * @param   {string}     queryObject.vendor                   vendor
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {Boolean}   true if requesting
  */
@@ -44,9 +44,9 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
  * Returns an error for a given domains suggestions query.
  * @param   {object}     state                                Global state tree
  * @param   {object}     queryObject                          domain suggestions queryObject
- * @param   {String}     queryObject.query                    domainQuery
+ * @param   {string}     queryObject.query                    domainQuery
  * @param   {Number}     queryObject.quantity                 max results
- * @param   {String}     queryObject.vendor                   vendor
+ * @param   {string}     queryObject.vendor                   vendor
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {?object}    error or null
  */

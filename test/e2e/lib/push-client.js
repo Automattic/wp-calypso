@@ -6,8 +6,8 @@ import request from 'request-promise';
 
 // /**
 //  * Marks a push token as approved on WPCOM API
-//  * @param {String} pushToken push token that recieved via a push notification on an app
-//  * @param {String} bearerToken user bearer token to be used with the API
+//  * @param {string} pushToken push token that recieved via a push notification on an app
+//  * @param {string} bearerToken user bearer token to be used with the API
 //  * @returns {Boolean} true if token approved
 //  */
 export const approvePushToken = async ( pushToken, bearerToken ) => {
@@ -35,7 +35,7 @@ export const approvePushToken = async ( pushToken, bearerToken ) => {
 
 /**
  * Extracts specific appData value and notification's persistent id
- * @param {String} filter appData key to match
+ * @param {string} filter appData key to match
  * @param {Function} addPersistentId a function to call with notification's persistent id
  * @param {Function} callback a function to call with a matching appData pair's value when filter matches
  * @returns {Function} a funciton that can be used as a notifications callback

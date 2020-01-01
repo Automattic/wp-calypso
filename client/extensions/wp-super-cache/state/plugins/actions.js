@@ -71,7 +71,7 @@ export const requestPlugins = siteId => {
  * Toggle WPSC plugin activation status on a given site.
  *
  * @param  {Number}    siteId Site ID
- * @param  {String}    plugin Plugin to enable or disable
+ * @param  {string}    plugin Plugin to enable or disable
  * @param  {Boolean}   activationStatus True to enable, false to disable
  * @returns {Function} Action thunk that toggles the plugin on a given site
  */

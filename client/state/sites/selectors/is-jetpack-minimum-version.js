@@ -12,7 +12,7 @@ import getSiteOption from './get-site-option';
  *
  * @param  {object}   state   Global state tree
  * @param  {Number}   siteId  Site ID
- * @param  {String}   version Minimum version
+ * @param  {string}   version Minimum version
  * @return {?Boolean}         Whether running minimum version
  */
 export default function isJetpackMinimumVersion( state, siteId, version ) {

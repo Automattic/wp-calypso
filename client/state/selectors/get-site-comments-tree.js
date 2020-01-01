@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
  *
  * @param {object} state Redux state
  * @param {Number} siteId Site for whose comments to find
- * @param {String} [status] Status to filter comments
+ * @param {string} [status] Status to filter comments
  * @returns {Array<Object>} Comments tree for site, filtered by status
  */
 export const getSiteCommentsTree = createSelector(

@@ -13,7 +13,7 @@ import getBillingTransactionsByType from 'state/selectors/get-billing-transactio
  * Based on the transactions list, returns metadata for rendering the app filters with counts
  *
  * @param  {object}  state           Global state tree
- * @param  {String}  transactionType Transaction type
+ * @param  {string}  transactionType Transaction type
  * @return {Array}                   App filter metadata
  */
 export default createSelector(

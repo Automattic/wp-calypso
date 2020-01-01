@@ -13,7 +13,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 /**
  * Maps automated transfer status value to indication if transfer is active
  *
- * @param {String} status name of current state in automated transfer
+ * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently active? null if unknown
  */
 export const isActive = status => ( status ? status === transferStates.START : null );

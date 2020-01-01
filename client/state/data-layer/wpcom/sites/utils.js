@@ -23,7 +23,7 @@ import { errorNotice } from 'state/notices/actions';
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param   {String}           commentText     text of the comment
+ * @param   {string}           commentText     text of the comment
  * @param   {Number}           postId          post identifier
  * @param   {Number|undefined} parentCommentId parent comment identifier
  * @returns {object}                           comment placeholder
@@ -46,7 +46,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * date milliseconds will do for that purpose.
  *
  * @param {object}   action   redux action
- * @param {String}   path     comments resource path
+ * @param {string}   path     comments resource path
  * @return {Array}	actions
  */
 export const dispatchNewCommentRequest = ( action, path ) => {

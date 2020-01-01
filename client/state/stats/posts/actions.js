@@ -34,7 +34,7 @@ export function receivePostStats( siteId, postId, stats ) {
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post Id
- * @param  {String} fields Stat Fields to fetch
+ * @param  {string} fields Stat Fields to fetch
  * @return {Function}      Action thunk
  */
 export function requestPostStats( siteId, postId, fields = [] ) {

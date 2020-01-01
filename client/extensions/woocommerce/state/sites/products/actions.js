@@ -89,8 +89,8 @@ export function productUpdated( siteId, data, originatingAction ) {
  *
  * @param {Number} siteId The id of the site upon which to deletethe product.
  * @param {Number} productId The ID of the product to remove.
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {object} Action object
  */
 export const deleteProduct = ( siteId, productId, successAction = null, failureAction = null ) => (

@@ -24,7 +24,7 @@ export function getNormalizedProductsQuery( query ) {
  * Returns a serialized products query
  *
  * @param  {object} query  Products query
- * @return {String}        Serialized products query
+ * @return {string}        Serialized products query
  */
 export function getSerializedProductsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedProductsQuery( query );

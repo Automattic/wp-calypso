@@ -22,7 +22,7 @@ const getAllShippingZoneMethodSettingsLoadState = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} instanceId Shipping method instance ID
+ * @param {string} instanceId Shipping method instance ID
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the settings for the giving shipping zone method have been successfully loaded from the server
  */
@@ -36,7 +36,7 @@ export const isShippingZoneMethodSettingsLoaded = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} instanceId Shipping method instance ID
+ * @param {string} instanceId Shipping method instance ID
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zone method settings currently being retrieved from the server
  */

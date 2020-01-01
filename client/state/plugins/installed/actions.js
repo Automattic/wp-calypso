@@ -48,7 +48,7 @@ import {
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {object} siteId - site ID
- * @param {String} pluginId - plugin identifier
+ * @param {string} pluginId - plugin identifier
  * @return {SitePlugin} SitePlugin instance
  */
 const getPluginHandler = ( siteId, pluginId ) => {

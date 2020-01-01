@@ -9,8 +9,8 @@ import { get } from 'lodash';
  *
  * @param  {object} state Global state tree
  * @param  {Number} siteId Site ID
- * @param  {String} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
- * @return {String} interval 'week' | 'month' | 'quarter'
+ * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
+ * @return {string} interval 'week' | 'month' | 'quarter'
  */
 export function getStatsInterval( state, siteId, statType ) {
 	return get( state.ui.googleMyBusiness, [ siteId, 'statsInterval', statType ], 'week' );

@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
+ * @param {string} searchTerm Search term to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term have been successfully loaded from the server.
  */
@@ -30,7 +30,7 @@ export const isCustomerSearchLoaded = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
+ * @param {string} searchTerm Search term to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term are currently being retrieved from the server.
  */
@@ -49,7 +49,7 @@ export const isCustomerSearchLoading = (
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
+ * @param {string} searchTerm Search term to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array} List of customer results matching term
  */

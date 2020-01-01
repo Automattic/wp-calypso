@@ -15,7 +15,7 @@ import { getContextResults } from 'blocks/inline-help/contextual-help';
  * Returns the current search query.
  *
  * @param  {object}  state  Global state tree
- * @return {String}        The current search query
+ * @return {string}        The current search query
  */
 export function getSearchQuery( state ) {
 	return get( state, 'inlineHelp.searchResults.search.searchQuery', '' );
@@ -86,7 +86,7 @@ export function getInlineHelpCurrentlySelectedResult( state ) {
 /**
  * Returns the link / href of the selected search result item
  * @param  {object}  state  Global state tree
- * @return {String}         The href of the selected link target
+ * @return {string}         The href of the selected link target
  */
 export function getInlineHelpCurrentlySelectedLink( state ) {
 	const result = getInlineHelpCurrentlySelectedResult( state );
@@ -137,7 +137,7 @@ export function isOnboardingWelcomePromptVisible( state ) {
  * Returns the task ID that should show up in the inline help popover.
  *
  * @param  {object}  state  Global state tree
- * @return {String}         The task ID
+ * @return {string}         The task ID
  */
 export function getChecklistPromptTaskId( state ) {
 	return get( state, 'inlineHelp.checklistPrompt.taskId', null );

@@ -26,11 +26,11 @@ See the [example](./example/example.jsx).
 
 ## Props
 
-### `{String} id`
+### `{string} id`
 
 It's common that this component is used in a form. This `id` prop is passed to the underlying FormTextInput so that you can associate a FormLabel with it easily.
 
-### `{String} placeholder`
+### `{string} placeholder`
 
 The placeholder text to show if nothing has been entered yet.
 

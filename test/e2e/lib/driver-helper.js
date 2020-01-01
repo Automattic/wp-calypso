@@ -492,7 +492,7 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
  *
  * @param {object} driver WebDriver
  * @param {object} selector A element's selector
- * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @param {string} position An element's position. Can be 'start', 'end' and 'center'
  * @returns {Promise<void>} Promise
  */
 export async function scrollIntoView( driver, selector, position = 'center' ) {

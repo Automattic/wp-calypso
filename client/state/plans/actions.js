@@ -34,7 +34,7 @@ export const plansRequestSuccessAction = () => {
 /**
  * Action creator function: REQUEST_FAILURE
  *
- * @param {String} error - error message
+ * @param {string} error - error message
  * @return {object} action object
  */
 export const plansRequestFailureAction = error => {

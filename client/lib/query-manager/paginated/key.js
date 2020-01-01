@@ -18,7 +18,7 @@ export default class PaginatedQueryKey extends QueryKey {
 	 * Returns a serialized query, given a query object
 	 *
 	 * @param  {object} query Query object
-	 * @return {String}       Serialized query
+	 * @return {string}       Serialized query
 	 */
 	static stringify( query ) {
 		return super.stringify( omit( query, PAGINATION_QUERY_KEYS ) );
@@ -27,7 +27,7 @@ export default class PaginatedQueryKey extends QueryKey {
 	/**
 	 * Returns a query object, given a serialized query
 	 *
-	 * @param  {String} key Serialized query
+	 * @param  {string} key Serialized query
 	 * @return {object}     Query object
 	 */
 	static parse( key ) {

@@ -8,7 +8,7 @@ import 'state/data-layer/wpcom/sites/stats/visits';
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve visitor counts for StatsChartTabs.
  *
- * @param  {String}  date  			   The most recent day to include in results (YYYY-MM-DD format)
+ * @param  {string}  date  			   The most recent day to include in results (YYYY-MM-DD format)
  * @param  {string}  period   		 Type of duration to include in the query (such as daily)
  * @param  {Number}  quantity      Number of periods to include in the query
  * @param  {Number}  siteId        Site ID

@@ -72,8 +72,8 @@ export function requestSubscribedLists() {
 /**
  * Triggers a network request to fetch a single Reader list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
  * @return {Function}        Action thunk
  */
 export function requestList( owner, slug ) {
@@ -118,8 +118,8 @@ export function requestList( owner, slug ) {
 /**
  * Triggers a network request to follow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
  * @return {Function} Action promise
  */
 export function followList( owner, slug ) {
@@ -155,8 +155,8 @@ export function followList( owner, slug ) {
 /**
  * Triggers a network request to unfollow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
  * @return {Function} Action promise
  */
 export function unfollowList( owner, slug ) {
@@ -251,7 +251,7 @@ export function dismissListNotice( listId ) {
  * Trigger an action to update a list title.
  *
  * @param  {Integer}  listId List ID
- * @param  {String}  newTitle List title
+ * @param  {string}  newTitle List title
  * @return {Function} Action thunk
  */
 export function updateTitle( listId, newTitle ) {
@@ -268,7 +268,7 @@ export function updateTitle( listId, newTitle ) {
  * Trigger an action to update a list description.
  *
  * @param  {Integer}  listId List ID
- * @param  {String}  newDescription List description
+ * @param  {string}  newDescription List description
  * @return {Function} Action thunk
  */
 export function updateDescription( listId, newDescription ) {

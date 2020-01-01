@@ -56,7 +56,7 @@ export const cancelEditingShippingZone = siteId => {
 /**
  * Changes the name of the Shipping Zone currently being edited.
  * @param {Number} siteId Site ID.
- * @param {String} name New name for the Shipping Zone.
+ * @param {string} name New name for the Shipping Zone.
  * @return {object} Action object.
  */
 export const changeShippingZoneName = ( siteId, name ) => {

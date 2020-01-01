@@ -16,7 +16,7 @@ import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './u
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query  Taxonomy query object
  * @return {Boolean}        Whether terms are being requested
  */
@@ -31,7 +31,7 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {Boolean}           Terms for the query
  */
@@ -53,7 +53,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Array}           Terms for the query
  */
@@ -79,7 +79,7 @@ export const getTermsForQuery = createSelector(
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Array}           Terms for the query
  */
@@ -105,7 +105,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Number}          Last terms page
  */
@@ -128,7 +128,7 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} taxonomy Taxonomy slug
+ * @param  {string} taxonomy Taxonomy slug
  * @return {?Array}          Terms
  */
 export function getTerms( state, siteId, taxonomy ) {
@@ -145,7 +145,7 @@ export function getTerms( state, siteId, taxonomy ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {Number}  termId   Term ID
  * @return {?object}         Term
  */
@@ -169,7 +169,7 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
+ * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
  * @return {?Number}          Count terms
  */

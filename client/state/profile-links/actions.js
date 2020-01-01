@@ -106,7 +106,7 @@ export const resetUserProfileLinkErrors = () => ( {
 /**
  * Returns an action object to signal a request for the deletion of a user profile link.
  *
- * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @param  {string} linkSlug Slug of the user profile link to delete.
  * @return {object}          Action object
  */
 export const deleteUserProfileLink = linkSlug => ( {
@@ -117,7 +117,7 @@ export const deleteUserProfileLink = linkSlug => ( {
 /**
  * Returns an action object to signal that request for the deletion of a user profile link was successful.
  *
- * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @param  {string} linkSlug Slug of the user profile link to delete.
  * @return {object}          Action object
  */
 export const deleteUserProfileLinkSuccess = linkSlug => ( {
@@ -128,7 +128,7 @@ export const deleteUserProfileLinkSuccess = linkSlug => ( {
 /**
  * Returns an action object to signal that request for the deletion of a user profile link was not successful.
  *
- * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @param  {string} linkSlug Slug of the user profile link to delete.
  * @param  {object} error    Error received
  * @return {object}          Action object
  */

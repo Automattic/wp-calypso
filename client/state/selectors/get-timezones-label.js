@@ -8,8 +8,8 @@ import getTimezonesLabels from 'state/selectors/get-timezones-labels';
  * Return timezone `label` according to the given timezone key (value)
  *
  * @param {object}  state - Global state tree
- * @param {String} key - timezone value
- * @return {String} the timezone label
+ * @param {string} key - timezone value
+ * @return {string} the timezone label
  */
 export default function getTimezonesLabel( state, key ) {
 	const labels = getTimezonesLabels( state );

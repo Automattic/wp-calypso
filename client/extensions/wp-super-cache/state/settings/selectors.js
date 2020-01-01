@@ -72,7 +72,7 @@ export function getSettings( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}  Save request status (pending, success or error)
+ * @return {string}  Save request status (pending, success or error)
  */
 export function getSettingsSaveStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'status' ] );

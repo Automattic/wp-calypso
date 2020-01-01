@@ -26,7 +26,7 @@ import { getSiteTitle } from 'state/sites/selectors';
  * Tests the cache for a site.
  *
  * @param  {Number} siteId Site ID
- * @param  {String} siteTitle Site title
+ * @param  {string} siteTitle Site title
  * @param  {Boolean} httpOnly Whether to send a non-secure request for the homepage
  * @returns {Function} Action thunk that tests the cache for a given site
  */

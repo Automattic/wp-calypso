@@ -9,7 +9,7 @@ import { omit } from 'lodash';
  * that is used as a unique identifier for the query.
  *
  * @param  {object} query A list of query parameters
- * @return {String}       Alphabetically ordered string of query parameters and values
+ * @return {string}       Alphabetically ordered string of query parameters and values
  */
 export function getSerializedQuery( query ) {
 	return deterministicStringify( omit( query, [ 'page', 'max' ] ) );

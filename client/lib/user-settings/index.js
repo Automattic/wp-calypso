@@ -53,7 +53,7 @@ function deleteUnsavedSetting( settings, settingName ) {
  * Checks if an incoming change to settings.language is a change to the existing settings
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
  *
- * @param  {String}  languageSettingValue the newly-set language slug string.
+ * @param  {string}  languageSettingValue the newly-set language slug string.
  * @param  {object}  settings user settings object.
  * @return {Boolean} if the language setting has been changed.
  */
@@ -208,7 +208,7 @@ UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
 /**
  * Given a settingName, returns that original setting if it exists or null
  *
- * @param {String} settingName - setting name
+ * @param {string} settingName - setting name
  * @return {*} setting key value
  */
 UserSettings.prototype.getOriginalSetting = function( settingName ) {
@@ -249,7 +249,7 @@ UserSettings.prototype.isPendingEmailChange = function() {
 /**
  * Given a settingName, returns that setting if it exists or null
  *
- * @param {String}  settingName - setting name
+ * @param {string}  settingName - setting name
  * @return {*} setting name value
  */
 UserSettings.prototype.getSetting = function( settingName ) {
@@ -269,7 +269,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
  *
- * @param {String} settingName - setting name
+ * @param {string} settingName - setting name
  * @param {*} value - setting value
  * @return {Boolean} updating successful response
  */

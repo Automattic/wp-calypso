@@ -19,7 +19,7 @@ import { includes } from 'lodash';
  * have been received.
  *
  * @param  {Number} siteId   Site ID
- * @param  {String} statType Stat Key
+ * @param  {string} statType Stat Key
  * @param  {object} query    Stats query
  * @param  {Array}  data     Stat Data
  * @param  {object} date	 Date
@@ -41,7 +41,7 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * retrieve site stats.
  *
  * @param  {Number} siteId   Site ID
- * @param  {String} statType Type of stats
+ * @param  {string} statType Type of stats
  * @param  {object} query    Stats Query
  * @return {Function}        Action thunk
  */

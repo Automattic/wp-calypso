@@ -25,7 +25,7 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post Id
- * @param  {String}  stat   Stat Key
+ * @param  {string}  stat   Stat Key
  * @return {*}              Stat value
  */
 export function getPostStat( state, siteId, postId, stat ) {

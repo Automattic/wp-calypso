@@ -136,7 +136,7 @@ export const getPostOldestCommentDate = treeSelect(
  * @param {object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
- * @param {String} status String representing the comment status to show. Defaults to 'approved'.
+ * @param {string} status String representing the comment status to show. Defaults to 'approved'.
  * @param {Number} authorId - when specified we only return pending comments that match this id
  * @return {object} comments tree, and in addition a children array
  */

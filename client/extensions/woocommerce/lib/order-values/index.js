@@ -56,7 +56,7 @@ export function getOrderFeeTotalTax( order ) {
  * Get the method title for the shipping value
  *
  * @param {object} order An order as returned from API
- * @return {String} Shipping method title
+ * @return {string} Shipping method title
  */
 export function getOrderShippingMethod( order ) {
 	return get( order, 'shipping_lines[0].method_title', false );

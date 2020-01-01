@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns the all images available for a given tag.
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  tag 	Tag
+ * @param  {string}  tag 	Tag
  * @return {object} Image
  */
 export function getTagImages( state, tag ) {
@@ -24,7 +24,7 @@ export function getTagImages( state, tag ) {
  * Returns true if we need to request tag images
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  tag 	Tag
+ * @param  {string}  tag 	Tag
  * @return {Boolean} Whether a request is in progress or we already have tags
  */
 export function shouldRequestTagImages( state, tag ) {

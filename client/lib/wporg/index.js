@@ -150,7 +150,7 @@ export function fetchThemeInformation( themeId ) {
  * Get information about a given theme from the WordPress.org API.
  *
  * @param  {object}        options         Theme query
- * @param  {String}        options.search  Search string
+ * @param  {string}        options.search  Search string
  * @param  {Number}        options.number  How many themes to return per page
  * @param  {Number}        options.page    Which page of matching themes to return
  * @returns {Promise.<Object>}             A promise that returns an object containing a `themes` array and an `info` object

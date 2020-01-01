@@ -34,7 +34,7 @@ export function getNormalizedOrdersQuery( query ) {
  * Returns a serialized orders query
  *
  * @param  {object} query  Orders query
- * @return {String}        Serialized orders query
+ * @return {string}        Serialized orders query
  */
 export function getSerializedOrdersQuery( query = {} ) {
 	const normalizedQuery = getNormalizedOrdersQuery( query );

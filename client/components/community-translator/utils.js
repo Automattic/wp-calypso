@@ -19,7 +19,7 @@ import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
- * @param {String} locale user's localeSlug
+ * @param {string} locale user's localeSlug
  * @param {object} localeVariant user's localeVariant slug (if any)
  * @returns {Boolean} whether the CT can be displayed
  */
@@ -70,8 +70,8 @@ export function isCommunityTranslatorEnabled() {
  * Prepares and triggers a request to get GP string
  * @param {object} locale and item from `languages` array in config/_shared.json
  * @param {object} originalStringData GP string information { singular, context, plural }
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {String} project GP project
+ * @param {string} apiBaseUrl Base API url to get translations
+ * @param {string} project GP project
  * @param {Function} post see postRequest()
  * @returns {object} request object
  */
@@ -97,11 +97,11 @@ export function getSingleTranslationData(
 
 /**
  * Prepares and triggers a request to get GP string
- * @param {String} originalId GP original string id
+ * @param {string} originalId GP original string id
  * @param {object} translationObject GP string information { singular, context, plural }
  * @param {object} locale and item from `languages` array in config/_shared.json
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {String} project GP project
+ * @param {string} apiBaseUrl Base API url to get translations
+ * @param {string} project GP project
  * @param {Function} post see postRequest()
  * @returns {object} request object
  */
@@ -151,10 +151,10 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 
 /**
  * Normalizes raw data from GP API
- * @param {String} originalId GP original string id
+ * @param {string} originalId GP original string id
  * @param {object} locale and item from `languages` array in config/_shared.json
- * @param {String} project GP project
- * @returns {String} the permalink to the translation on GlotPress
+ * @param {string} project GP project
+ * @returns {string} the permalink to the translation on GlotPress
  */
 export function getTranslationPermaLink( originalId, locale, project = GP_PROJECT ) {
 	if ( ! originalId || ! locale ) {

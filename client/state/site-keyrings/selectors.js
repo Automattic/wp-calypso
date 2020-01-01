@@ -53,7 +53,7 @@ export function getSiteKeyrings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {String}  service The service name to filter with
+ * @param  {string}  service The service name to filter with
  * @return {Array}   Site keyrings list
  */
 export function getSiteKeyringsForService( state, siteId, service ) {
@@ -66,7 +66,7 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @param  {object}  state          Global state tree
  * @param  {Number}  siteId         Site ID
  * @param  {Number}  keyringId      Keyring Id
- * @param  {String}  externalUserId External User Id on the keyring
+ * @param  {string}  externalUserId External User Id on the keyring
  *
  * @return {?object}                Site Keyring connection
  */

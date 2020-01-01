@@ -82,7 +82,7 @@ export function unfollow( feedUrl ) {
  * Returns an action object to signal that an error was encountered
  * when following a URL.
  *
- * @param  {String} feedUrl Feed URL
+ * @param  {string} feedUrl Feed URL
  * @param  {object} error Error response (contains keys 'info' and 'subscribed')
  * @return {object} Action
  */
@@ -98,7 +98,7 @@ export function recordFollowError( feedUrl, error ) {
 /**
  * Returns an action object to signal that a URL has been followed.
  *
- * @param  {String} url Followed URL
+ * @param  {string} url Followed URL
  * @return {Function} Action thunk
  */
 export function recordFollow( url ) {
@@ -114,7 +114,7 @@ export function recordFollow( url ) {
 /**
  * Returns an action object to signal that a URL has been unfollowed.
  *
- * @param  {String} url Unfollowed URL
+ * @param  {string} url Unfollowed URL
  * @return {Function} Action thunk
  */
 export function recordUnfollow( url ) {

@@ -460,7 +460,7 @@ export class DateRange extends Component {
 	 * Formats a given date to the appropriate format for the
 	 * current locale
 	 * @param  {Date|MomentJSDate} date the date to be converted
-	 * @return {String}      the date as a formatted locale string
+	 * @return {string}      the date as a formatted locale string
 	 */
 	formatDateToLocale( date ) {
 		return this.props.moment( date ).format( 'L' );
@@ -468,7 +468,7 @@ export class DateRange extends Component {
 
 	/**
 	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
-	 * @return {String} date format as a string
+	 * @return {string} date format as a string
 	 */
 	getLocaleDateFormat() {
 		return this.props.moment.localeData().longDateFormat( 'L' );

@@ -514,7 +514,7 @@ export const isCustomsFormStepSubmitted = (
  * @param {object} orderId order Id
  * @param {object} siteId site Id
  *
- * @returns {String} erroneous step name or null
+ * @returns {string} erroneous step name or null
  */
 export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
@@ -610,8 +610,8 @@ export const getDestinationCountryNames = createSelector(
 
 /**
  * @param {object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
- * @param {String} stateCode 2-letter code of the country's state
+ * @param {string} countryCode 2-letter ISO country code
+ * @param {string} stateCode 2-letter code of the country's state
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
  * the country doesn't have a list of states

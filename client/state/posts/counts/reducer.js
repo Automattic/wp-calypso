@@ -62,7 +62,7 @@ export const counts = ( () => {
 	 *
 	 * @param  {Number} siteId Site ID
 	 * @param  {Number} postId Post ID
-	 * @return {String}        Serialized key
+	 * @return {string}        Serialized key
 	 */
 	function getPostStatusKey( siteId, postId ) {
 		return [ siteId, postId ].join();
@@ -75,7 +75,7 @@ export const counts = ( () => {
 	 * @param  {object} state  Current state
 	 * @param  {Number} siteId Site ID
 	 * @param  {Number} postId Post ID
-	 * @param  {String} status Post status
+	 * @param  {string} status Post status
 	 * @return {object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {

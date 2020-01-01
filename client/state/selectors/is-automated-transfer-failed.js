@@ -13,7 +13,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 /**
  * Maps automated transfer status value to indication if transfer is failed
  *
- * @param {String} status name of current state in automated transfer
+ * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently failed? null if unknown
  */
 export const isFailed = status =>

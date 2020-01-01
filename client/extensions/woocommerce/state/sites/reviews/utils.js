@@ -26,7 +26,7 @@ export function getNormalizedReviewsQuery( query ) {
  * Returns a serialized reviews query
  *
  * @param  {object} query  Reviews query
- * @return {String}        Serialized reviews query
+ * @return {string}        Serialized reviews query
  */
 export function getSerializedReviewsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedReviewsQuery( query );

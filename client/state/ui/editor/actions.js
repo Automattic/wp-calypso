@@ -91,7 +91,7 @@ export function stopEditingPost( siteId, postId ) {
  * Returns an action object to be used in signalling that the user has pasted
  * some content from source.
  *
- * @param {String} source Identifier of the app the content was pasted from.
+ * @param {string} source Identifier of the app the content was pasted from.
  * @return {object} Action object
  */
 export function pasteEvent( source ) {

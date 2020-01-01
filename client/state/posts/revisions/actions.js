@@ -16,10 +16,10 @@ import 'state/data-layer/wpcom/posts/revisions';
 /**
  * Action creator function: POST_REVISIONS_REQUEST
  *
- * @param {String} siteId of the revisions
- * @param {String} postId of the revisions
- * @param {String} postType of the parent post
- * @param {String} [comparisons=[]] list of revision objects to compare in format:
+ * @param {string} siteId of the revisions
+ * @param {string} postId of the revisions
+ * @param {string} postType of the parent post
+ * @param {string} [comparisons=[]] list of revision objects to compare in format:
  * 					[
  * 						{ from: 6, to: 8 },
  * 						{ from: 4, to: 5 },

@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Retrieves the list of countries from the specified type.
  *
  * @param {object} state - global state tree
- * @param {String} type - type of list ('domains, 'payments', or 'sms)
+ * @param {string} type - type of list ('domains, 'payments', or 'sms)
  * @return {Array?} the list of countries
  */
 export default function getCountries( state, type ) {

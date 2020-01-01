@@ -8,8 +8,8 @@ import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
  * Google My Business stats chart should change
  *
  * @param  {Number} siteId Site ID
- * @param  {String} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
- * @param  {String} interval 'week' | 'month' | 'quarter'
+ * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
+ * @param  {string} interval 'week' | 'month' | 'quarter'
  * @return {object} Action object
  */
 export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {

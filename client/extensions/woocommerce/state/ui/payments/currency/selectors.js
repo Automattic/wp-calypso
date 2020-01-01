@@ -20,7 +20,7 @@ export const getCurrencyEdits = ( state, siteId ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} Returns the currently set currency with any local edits.
+ * @return {string} Returns the currently set currency with any local edits.
  */
 export const getCurrencyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {

@@ -43,7 +43,7 @@ const normalizePluginInstructions = data => {
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {object} site - site object
- * @param {String} plugin - plugin identifier
+ * @param {string} plugin - plugin identifier
  * @return {SitePlugin} SitePlugin instance
  */
 const getPluginHandler = ( site, plugin ) => {

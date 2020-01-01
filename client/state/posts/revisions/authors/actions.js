@@ -21,7 +21,7 @@ export function receivePostRevisionAuthors( users ) {
 /**
  * Action creator function: POST_REVISIONS_AUTHORS_REQUEST
  *
- * @param {String} siteId of the users
+ * @param {string} siteId of the users
  * @param {Array}  ids of the users (array of integers)
  * @return {object} action object
  */

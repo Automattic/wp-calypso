@@ -80,8 +80,8 @@ function getInitialServerState( serializedServerState ) {
 
 /**
  * Checks whether a user agent is included in the browser list for an environment.
- * @param {String} userAgentString The user agent string.
- * @param {String} environment The `browserslist` environment.
+ * @param {string} userAgentString The user agent string.
+ * @param {string} environment The `browserslist` environment.
  *
  * @returns {Boolean} Whether the user agent is included in the browser list.
  */

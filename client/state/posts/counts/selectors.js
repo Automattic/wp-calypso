@@ -15,7 +15,7 @@ import { POST_STATUSES } from '../constants';
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  postType Post type
+ * @param  {string}  postType Post type
  * @return {Boolean}          Whether request is in progress
  */
 export function isRequestingPostCounts( state, siteId, postType ) {
@@ -27,7 +27,7 @@ export function isRequestingPostCounts( state, siteId, postType ) {
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} postType Post type
+ * @param  {string} postType Post type
  * @return {object}          Post counts, keyed by status
  */
 export function getAllPostCounts( state, siteId, postType ) {
@@ -40,8 +40,8 @@ export function getAllPostCounts( state, siteId, postType ) {
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} postType Post type
- * @param  {String} status   Post status
+ * @param  {string} postType Post type
+ * @param  {string} status   Post status
  * @return {Number}          Post count
  */
 export function getAllPostCount( state, siteId, postType, status ) {
@@ -58,7 +58,7 @@ export function getAllPostCount( state, siteId, postType, status ) {
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} postType Post type
+ * @param  {string} postType Post type
  * @return {object}          Post counts, keyed by status
  */
 export function getMyPostCounts( state, siteId, postType ) {
@@ -71,8 +71,8 @@ export function getMyPostCounts( state, siteId, postType ) {
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} postType Post type
- * @param  {String} status   Post status
+ * @param  {string} postType Post type
+ * @param  {string} status   Post status
  * @return {Number}          Post count
  */
 export function getMyPostCount( state, siteId, postType, status ) {
@@ -90,7 +90,7 @@ export function getMyPostCount( state, siteId, postType, status ) {
  *
  * @param  {object}   state         Global state tree
  * @param  {Number}   siteId        Site ID
- * @param  {String}   postType      Post type
+ * @param  {string}   postType      Post type
  * @param  {Function} countSelector Selector from which to retrieve raw counts
  * @return {Number}                 Normalized post counts
  */
@@ -134,7 +134,7 @@ export function getNormalizedPostCounts(
  *
  * @param  {object} state    Global state tree
  * @param  {Number} siteId   Site ID
- * @param  {String} postType Post type
+ * @param  {string} postType Post type
  * @return {Number}          Normalized post counts
  */
 export function getNormalizedMyPostCounts( state, siteId, postType ) {

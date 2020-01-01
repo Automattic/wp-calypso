@@ -63,16 +63,16 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
 export default siteId => ( {
 	/**
 	 * Sends a GET request to the API
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
+	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
+	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	get: ( path, namespace ) => _request( 'get', path, siteId, undefined, namespace ),
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
+	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
+	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	getWithHeaders: ( path, namespace ) =>
@@ -80,9 +80,9 @@ export default siteId => ( {
 
 	/**
 	 * Sends a POST request to the API
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
+	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {object} body Payload to send
-	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
+	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	post: ( path, body, namespace ) => _request( 'post', path, siteId, body || {}, namespace ),
@@ -91,9 +91,9 @@ export default siteId => ( {
 	 * Sends a PUT request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a PUT request.
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
+	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {object} body Payload to send
-	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
+	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	put: ( path, body, namespace ) => _request( 'put', path, siteId, body || {}, namespace ),
@@ -102,8 +102,8 @@ export default siteId => ( {
 	 * Sends a DELETE request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a DELETE request.
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
+	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
+	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	del: ( path, namespace ) => _request( 'delete', path, siteId, undefined, namespace ),

@@ -13,7 +13,7 @@ import { keyToString, keyForPost } from 'reader/post-key';
  * Returns a single post.
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  postGlobalId Post global ID
+ * @param  {string}  postGlobalId Post global ID
  * @return {object} Post
  */
 export function getPostById( state, postGlobalId ) {

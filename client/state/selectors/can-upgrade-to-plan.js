@@ -18,7 +18,7 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
  *
  * @param  {object}   state      Global state tree
  * @param  {Number}   siteId     The site we're interested in upgrading
- * @param  {String}   planKey    The plan we want to upgrade to
+ * @param  {string}   planKey    The plan we want to upgrade to
  * @return {Boolean}             True if the site can be upgraded
  */
 export default function( state, siteId, planKey ) {

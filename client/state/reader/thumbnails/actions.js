@@ -25,8 +25,8 @@ export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
 /**
  * Returns an action object to signal that a thumbnailUrl has been received.
  *
- * @param {String} embedUrl the url of the embed for which the thumbnail was grabbed
- * @param {String} thumbnailUrl the url at which to find the thumbnail for the embed
+ * @param {string} embedUrl the url of the embed for which the thumbnail was grabbed
+ * @param {string} thumbnailUrl the url at which to find the thumbnail for the embed
  * @return {object} Action object
  */
 export function receiveThumbnail( embedUrl, thumbnailUrl ) {
@@ -56,7 +56,7 @@ function requestFailure( embedUrl, error ) {
  * Either instantly returns an action for the thumbnail info or
  * triggers a network request to fetch a thumbnailUrl if necessary
  *
- * @param  {String} embedUrl -  the url of the embed for which to get the thumbnail
+ * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
  * @return {Function|Object} Action thunk | Action object
  */
 export const requestThumbnail = embedUrl => dispatch => {

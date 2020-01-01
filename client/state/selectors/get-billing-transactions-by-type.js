@@ -9,7 +9,7 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * Returns null if the billing transactions have not been fetched yet.
  *
  * @param  {object}  state           Global state tree
- * @param  {String}  transactionType Type of transactions to retrieve
+ * @param  {string}  transactionType Type of transactions to retrieve
  * @return {?Array}                  An array of past transactions
  */
 export default ( state, transactionType ) =>

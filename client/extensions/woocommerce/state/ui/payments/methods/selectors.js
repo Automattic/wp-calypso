@@ -106,7 +106,7 @@ export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) =
  * Gets group of payment methods. (offline, off-site, on-site)
  *
  * @param {object} state Global state tree
- * @param {String} type type of payment method
+ * @param {string} type type of payment method
  * @param {Number} siteId wpcom site id
  * @return {Array} Array of Payment Methods of requested type
  */

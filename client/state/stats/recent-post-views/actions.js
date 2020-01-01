@@ -13,9 +13,9 @@ import 'state/data-layer/wpcom/sites/stats/views/posts';
  * retrieve views for a post or posts.
  *
  * @param  {Number}   siteId   Site ID
- * @param  {String}   postIds  Comma separated list of Post IDs
+ * @param  {string}   postIds  Comma separated list of Post IDs
  * @param  {Number}   num      Number of days to include in the query
- * @param  {String}   date     The most recent day to include in results (YYYY-MM-DD format)
+ * @param  {string}   date     The most recent day to include in results (YYYY-MM-DD format)
  * @return {object}  Action object
  */
 export function requestRecentPostViews( siteId, postIds, num, date ) {

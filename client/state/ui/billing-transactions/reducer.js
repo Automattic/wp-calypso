@@ -13,7 +13,7 @@ import { combineReducers, keyedReducer } from 'state/utils';
  * Returns the updated app filter state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {String}        Updated state
+ * @return {string}        Updated state
  */
 export const app = ( state = null, action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
@@ -61,7 +61,7 @@ export const page = ( state = 1, action ) => {
  * Returns the updated string search filter state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {String}        Updated state
+ * @return {string}        Updated state
  */
 export const query = ( state = '', action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {

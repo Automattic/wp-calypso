@@ -14,7 +14,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  * Returns the last time the banner was dismissed by the current user or 0 if it was never dismissed
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  location The Id of the banner
+ * @param  {string}  location The Id of the banner
  * @return {Number}  Timestamp marking the last time the banner was dismissed
  */
 const getLastDismissTime = ( state, location ) => {
@@ -33,7 +33,7 @@ const getLastDismissTime = ( state, location ) => {
  * - The last time it was dismissed must be less than 2 weeks ago
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  location The location of the banner
+ * @param  {string}  location The location of the banner
  * @return {Boolean} True if the banner has been dismissed
  */
 export default function isUpworkBannerDismissed( state, location ) {

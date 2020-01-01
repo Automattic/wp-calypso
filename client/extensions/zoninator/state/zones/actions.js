@@ -56,8 +56,8 @@ export const updateZone = ( siteId, zoneId, data ) => ( {
  * Returns an action object to indicate that a new zone should be created.
  *
  * @param  {Number} siteId   Site ID
- * @param  {String} siteSlug Site slug
- * @param  {String} form     Form name
+ * @param  {string} siteSlug Site slug
+ * @param  {string} form     Form name
  * @param  {object} data     Zone details
  * @return {object}          Action object
  */
@@ -74,7 +74,7 @@ export const addZone = ( siteId, siteSlug, form, data ) => ( {
  *
  * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
- * @param  {String} form   Form name
+ * @param  {string} form   Form name
  * @param  {object} data   Zone details
  * @return {object}        Action object
  */
@@ -89,7 +89,7 @@ export const saveZone = ( siteId, zoneId, form, data ) => ( {
 /**
  * Returns an action object to indicate that a zone should be deleted.
  * @param  {Number} siteId   Site ID
- * @param  {String} siteSlug Site slug
+ * @param  {string} siteSlug Site slug
  * @param  {Number} zoneId   Zone ID
  * @return {object}          Action object
  */

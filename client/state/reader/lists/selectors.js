@@ -81,8 +81,8 @@ export function hasError( state, listId ) {
  * Returns information about a single Reader list.
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  owner  List owner
- * @param  {String}  slug  List slug
+ * @param  {string}  owner  List owner
+ * @param  {string}  slug  List slug
  * @return {?object}        Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
@@ -102,8 +102,8 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
  * Check if the user is subscribed to the specified list
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  owner  List owner
- * @param  {String}  slug  List slug
+ * @param  {string}  owner  List owner
+ * @param  {string}  slug  List slug
  * @return {Boolean} Is the user subscribed?
  */
 export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
@@ -118,8 +118,8 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
  * Check if the requested list is missing (i.e. API 404ed when requesting it)
  *
  * @param  {object}  state  Global state tree
- * @param  {String}  owner  List owner
- * @param  {String}  slug  List slug
+ * @param  {string}  owner  List owner
+ * @param  {string}  slug  List slug
  * @return {Boolean} Is the list missing?
  */
 export function isMissingByOwnerAndSlug( state, owner, slug ) {

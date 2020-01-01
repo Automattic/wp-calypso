@@ -16,8 +16,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * Dispatches returned post revisions
  *
  * @param {object} action Redux action
- * @param {String} action.siteId of the revisions
- * @param {String} action.postId of the revisions
+ * @param {string} action.siteId of the revisions
+ * @param {string} action.postId of the revisions
  * @param {object} response from the server
  * @param {object} response.diffs raw data containing a set of diffs for the site & post
  *

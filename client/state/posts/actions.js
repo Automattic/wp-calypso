@@ -104,7 +104,7 @@ export function receivePosts( posts, saveMarker ) {
  * Triggers a network request to fetch posts for the specified site and query.
  *
  * @param  {Number}   siteId Site ID
- * @param  {String}   query  Post query
+ * @param  {string}   query  Post query
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
@@ -119,7 +119,7 @@ export function requestSitePosts( siteId, query = {} ) {
  * Returns a function which, when invoked, triggers a network request to fetch
  * posts across all of the current user's sites for the specified query.
  *
- * @param  {String}   query Post query
+ * @param  {string}   query Post query
  * @return {Function}       Action thunk
  */
 export function requestAllSitesPosts( query = {} ) {
@@ -130,7 +130,7 @@ export function requestAllSitesPosts( query = {} ) {
  * Triggers a network request to fetch posts for the specified site and query.
  *
  * @param  {?Number}  siteId Site ID
- * @param  {String}   query  Post query
+ * @param  {string}   query  Post query
  * @return {Function}        Action thunk
  */
 function requestPosts( siteId, query = {} ) {
@@ -461,7 +461,7 @@ export function restorePost( siteId, postId ) {
  * Returns an action thunk which, when dispatched, adds a term to the current edited post
  *
  * @param  {Number}   siteId   Site ID
- * @param  {String}   taxonomy Taxonomy Slug
+ * @param  {string}   taxonomy Taxonomy Slug
  * @param  {object}   term     Object of new term attributes
  * @param  {Number}   postId   ID of post to which term is associated
  * @return {Function}          Action thunk

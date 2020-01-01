@@ -13,7 +13,7 @@ export function userCan( capability, site ) {
  * site's timezone getter
  *
  * @param {object} site - site object
- * @return {String} timezone
+ * @return {string} timezone
  */
 export function timezone( site ) {
 	return site && site.options ? site.options.timezone : null;
@@ -23,7 +23,7 @@ export function timezone( site ) {
  * site's gmt_offset getter
  *
  * @param {object} site - site object
- * @return {String} gmt_offset
+ * @return {string} gmt_offset
  */
 export function gmtOffset( site ) {
 	return site && site.options ? site.options.gmt_offset : null;

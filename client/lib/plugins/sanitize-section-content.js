@@ -10,7 +10,7 @@ import validUrl from 'valid-url';
  * This only looks at the name of the tag to
  * determine if it's white-listed.
  *
- * @param {String} tagName name of tag under inspection
+ * @param {string} tagName name of tag under inspection
  * @returns {Boolean} whether the tag is allowed
  */
 const isAllowedTag = tagName => {
@@ -51,8 +51,8 @@ const isAllowedTag = tagName => {
  *       snippet of code to execute, such
  *       as `onclick` or `onmouseover`
  *
- * @param {String} tagName name of tag on which attribute is found
- * @param {String} attrName name of attribute under inspection
+ * @param {string} tagName name of tag on which attribute is found
+ * @param {string} attrName name of attribute under inspection
  * @returns {Boolean} whether the attribute is allowed
  */
 const isAllowedAttr = ( tagName, attrName ) => {
@@ -124,7 +124,7 @@ const replacementFor = node => {
 /**
  * Sanitizes input HTML for security and styling
  *
- * @param {String} content unverified HTML
+ * @param {string} content unverified HTML
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = content => {

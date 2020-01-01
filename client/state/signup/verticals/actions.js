@@ -8,8 +8,8 @@ import 'state/data-layer/wpcom/signup/verticals';
 /**
  * Action creator: Request verticals data.
  *
- * @param {String} search The search term for requesting the matching verticals.
- * @param {String} siteType Site type relevant for given search term
+ * @param {string} search The search term for requesting the matching verticals.
+ * @param {string} siteType Site type relevant for given search term
  * @param {Number} limit The maximum number of vertical items.
  *
  * @return {object} The action object.
@@ -24,8 +24,8 @@ export const requestVerticals = ( search, siteType, limit ) => ( {
 /**
  * Action creator: Store verticals found for a given search term in the state tree.
  *
- * @param {String} search The search term which the verticals data matching with.
- * @param {String} siteType Site type relevant for given search term
+ * @param {string} search The search term which the verticals data matching with.
+ * @param {string} siteType Site type relevant for given search term
  * @param {Array} verticals The verticals data matches with the given search term.
  *
  * @return {object} The action object.

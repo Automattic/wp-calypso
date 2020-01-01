@@ -39,7 +39,7 @@ export function isCacheDeleteSuccessful( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}  Delete request status (pending, success or error)
+ * @return {string}  Delete request status (pending, success or error)
  */
 export function getCacheDeleteStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'deleteStatus', siteId, 'status' ] );

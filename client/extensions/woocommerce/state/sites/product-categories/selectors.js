@@ -126,7 +126,7 @@ export function getAllProductCategories( state, siteId = getSelectedSiteId( stat
  * be all the products on the remote site, if they haven't all been requested).
  *
  * @param {object} state Global state tree
- * @param {String} search Search term to filter responses
+ * @param {string} search Search term to filter responses
  * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories for a search query
  */
@@ -195,7 +195,7 @@ export function getTotalProductCategories(
  * @param {object} state Global state tree
  * @param {Number} categoryId ID of the starting category.
  * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
- * @return {String} Label of given category, with all parents included
+ * @return {string} Label of given category, with all parents included
  */
 function getProductCategoryLabel( state, categoryId, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );

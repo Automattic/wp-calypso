@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state Global state tree
- * @return {String}  URL of the poster.
+ * @return {string}  URL of the poster.
  */
 
 export default function getPosterUrl( state ) {

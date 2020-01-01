@@ -25,7 +25,7 @@ export const getReviewsCurrentPage = ( state, siteId = getSelectedSiteId( state 
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current product being viewed. Defaults to null.
+ * @return {string} The current product being viewed. Defaults to null.
  */
 export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -38,7 +38,7 @@ export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current search term being viewed. Defaults to an empty string.
+ * @return {string} The current search term being viewed. Defaults to an empty string.
  */
 export const getReviewsCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

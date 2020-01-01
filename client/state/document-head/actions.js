@@ -13,7 +13,7 @@ import {
  * Returns an action object used in signalling that the document head title
  * should be assigned to the specified value.
  *
- * @param  {String} title Document title
+ * @param  {string} title Document title
  * @return {object}       Action object
  */
 export function setDocumentHeadTitle( title ) {

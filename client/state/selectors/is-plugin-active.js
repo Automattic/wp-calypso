@@ -10,7 +10,7 @@ import { find } from 'lodash';
  *
  * @param {object} state - Global state tree
  * @param {Number} siteId - Site ID
- * @param {String} pluginSlug - Plugin slug
+ * @param {string} pluginSlug - Plugin slug
  * @return {Boolean} - truthiness of a site having an active plugin
  */
 export default function isPluginActive( state, siteId, pluginSlug ) {

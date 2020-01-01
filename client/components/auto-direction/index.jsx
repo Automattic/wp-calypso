@@ -24,14 +24,14 @@ const SPACE_CHARACTERS = {
 
 /***
  * Checks whether a character is a space character
- * @param {String} character character to examine
+ * @param {string} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
 
 /***
  * Get index of the first character that is not within a tag
- * @param {String} text text to examine
+ * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
 const getTaglessIndex = text => {

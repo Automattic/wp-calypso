@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * and notify the front end save is in progress (for dialog
  * submit button management).
  *
- * @param 	{String} action saveDomainIpsTag action
+ * @param 	{string} action saveDomainIpsTag action
  * @returns {Array} array of further actions
  */
 export const saveDomainIpsTag = action => {

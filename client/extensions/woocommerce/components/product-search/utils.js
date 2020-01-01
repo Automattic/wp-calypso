@@ -7,7 +7,7 @@ import { difference, filter, intersection, isArray, uniq } from 'lodash';
  * Check if a string is found in a product name or attribute option
  *
  * @param {object} product A given product to search
- * @param {String} textString A string to search for
+ * @param {string} textString A string to search for
  * @return {Boolean} Whether the string was found in the product
  */
 export function productContainsString( product, textString ) {

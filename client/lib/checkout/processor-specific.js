@@ -15,7 +15,7 @@ import CartStore from 'lib/cart/store';
 
 /**
  * Returns whether we should Ebanx credit card processing for a particular country
- * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {Boolean} Whether the country code requires ebanx payment processing
  */
 export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' ) {
@@ -27,7 +27,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
 
 /**
  * Returns whether
- * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {Boolean} Whether the country requires additional fields
  */
 export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
@@ -41,7 +41,7 @@ export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
  * CPF number (Cadastrado de Pessoas Físicas) is the Brazilian tax identification number.
  * Total of 11 digits: 9 numbers followed by 2 verification numbers . E.g., 188.247.019-22
  *
- * @param {String} cpf - a Brazilian tax identification number
+ * @param {string} cpf - a Brazilian tax identification number
  * @returns {Boolean} Whether the cpf is valid or not
  */
 export function isValidCPF( cpf = '' ) {
@@ -52,7 +52,7 @@ export function isValidCPF( cpf = '' ) {
  * CNPJ number (Cadastro Nacional da Pessoa Jurídica ) is the Brazilian tax identification number for companies.
  * Total of 14 digits: 8 digits identify the company, a slash, 4 digit to identify the branch, followed by 2 verification numbers . E.g., 67.762.675/0001-49
  *
- * @param {String} cnpj - a Brazilian company tax identification number
+ * @param {string} cnpj - a Brazilian company tax identification number
  * @returns {Boolean} Whether the cnpj is valid or not
  */
 export function isValidCNPJ( cnpj = '' ) {

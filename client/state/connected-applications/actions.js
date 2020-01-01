@@ -34,7 +34,7 @@ export const receiveConnectedApplications = apps => ( {
 /**
  * Returns an action object to signal the deletion of a connected application.
  *
- * @param  {String} appId ID of the connected application.
+ * @param  {string} appId ID of the connected application.
  * @return {object} Action object.
  */
 export const deleteConnectedApplication = appId => ( {
@@ -45,7 +45,7 @@ export const deleteConnectedApplication = appId => ( {
 /**
  * Returns an action object to signal the successful deletion of a connected application.
  *
- * @param  {String} appId ID of the connected application.
+ * @param  {string} appId ID of the connected application.
  * @return {object} Action object.
  */
 export const deleteConnectedApplicationSuccess = appId => ( {

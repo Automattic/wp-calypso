@@ -10,7 +10,7 @@ import { find, get } from 'lodash';
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  postType Post type
+ * @param  {string}  postType Post type
  * @return {Boolean}          Whether request is in-progress
  */
 export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
@@ -23,7 +23,7 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  postType Post type
+ * @param  {string}  postType Post type
  * @return {Array?}           Post type taxonomies
  */
 export function getPostTypeTaxonomies( state, siteId, postType ) {
@@ -36,8 +36,8 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  *
  * @param  {object}  state        Global state tree
  * @param  {Number}  siteId       Site ID
- * @param  {String}  postType     Post type
- * @param  {String}  taxonomyName Taxonomy name
+ * @param  {string}  postType     Post type
+ * @param  {string}  taxonomyName Taxonomy name
  * @return {Object?}              Post type taxonomy
  */
 export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {

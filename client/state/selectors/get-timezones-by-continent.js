@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * gotten from state.timezones subtree.
  *
  * @param  {object} state - Global state tree
- * @param {String} continent - continent value
+ * @param {string} continent - continent value
  * @return {Array} Continent timezones array
  */
 export default function getTimezonesByContinent( state, continent ) {

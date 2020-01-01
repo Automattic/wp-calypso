@@ -14,7 +14,7 @@ import getJetpackSettings from 'state/selectors/get-jetpack-settings';
  *
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   The ID of the site we're querying
- * @param  {String}  setting  Name of the setting
+ * @param  {string}  setting  Name of the setting
  * @return {*}                Value of the Jetpack setting
  */
 export default function getJetpackSetting( state, siteId, setting ) {

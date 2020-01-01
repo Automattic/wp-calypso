@@ -31,7 +31,7 @@ export function isSavingSiteSettings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}         The request status (peding, success or error)
+ * @return {string}         The request status (peding, success or error)
  */
 export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 	return get( state.siteSettings.saveRequests, [ siteId, 'status' ] );
@@ -64,7 +64,7 @@ export function isSiteSettingsSaveSuccessful( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}         The request error
+ * @return {string}         The request error
  */
 export function getSiteSettingsSaveError( state, siteId ) {
 	return get( state.siteSettings.saveRequests, [ siteId, 'error' ], false );

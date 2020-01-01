@@ -178,7 +178,7 @@ export const parse = function( shortcode ) {
  * 6. The closing tag.
  * 7. An extra `]` to allow for escaping shortcodes with double `[[]]`
  *
- * @param {String} tag - shortcode name
+ * @param {string} tag - shortcode name
  * @return {RegExp} regular expression
  */
 export const regexp = memoize( function( tag ) {
@@ -199,8 +199,8 @@ export const regexp = memoize( function( tag ) {
  * Shortcodes are formatted as an object that contains the match
  * `content`, the matching `index`, and the parsed `shortcode` object.
  *
- * @param {String} tag - shortcode tagName (e.g. gallery)
- * @param {String} text - text to search for next shortcode
+ * @param {string} tag - shortcode tagName (e.g. gallery)
+ * @param {string} text - text to search for next shortcode
  * @param {Number} index - last index
  *
  * @return {Object|void} next match

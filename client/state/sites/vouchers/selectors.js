@@ -69,7 +69,7 @@ export const isRequestingSiteVouchers = ( state, siteId ) => {
  *
  * @param {object} state - current state object
  * @param {Number} siteId - site identifier
- * @param {String} serviceType - service type
+ * @param {string} serviceType - service type
  * @return {Boolean} true if a voucher is being assigned
  */
 export const isAssigningSiteVoucher = ( state, siteId, serviceType ) => {

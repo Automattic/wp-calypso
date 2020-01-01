@@ -75,7 +75,7 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
  * Creates an action that requests comments for a given post
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {String} status status filter. Defaults to approved posts
+ * @param {string} status status filter. Defaults to approved posts
  * @returns {Function} action that requests comments for a given post
  */
 export function requestPostComments( {
@@ -110,7 +110,7 @@ export function requestPostComments( {
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
  *
  * @param {object} query API call parameters
- * @param {String} query.listType Type of list to return (required as 'site')
+ * @param {string} query.listType Type of list to return (required as 'site')
  * @param {Number} query.siteId Site identifier
  * @returns {object} Action that requests a comment list
  */
@@ -123,7 +123,7 @@ export const requestCommentsList = query => ( {
  * Creates an action that requests the comments tree for a given site.
  * @param {object} query API call parameters
  * @param {Number} query.siteId Site identifier
- * @param {String} query.status Status filter
+ * @param {string} query.status Status filter
  * @returns {object} Action that requests a comment tree
  */
 export const requestCommentsTreeForSite = query => ( {
@@ -184,7 +184,7 @@ export const deleteComment = (
 
 /***
  * Creates a write comment action for a siteId and postId
- * @param {String} commentText text of the comment
+ * @param {string} commentText text of the comment
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @returns {Function} a thunk that creates a comment for a given post
@@ -198,7 +198,7 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
 
 /***
  * Creates a reply to comment action for a siteId, postId and commentId
- * @param {String} commentText text of the comment
+ * @param {string} commentText text of the comment
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} parentCommentId parent comment identifier
@@ -253,7 +253,7 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} siteId Site identifier
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
- * @param {String} status New status
+ * @param {string} status New status
  * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {object} Action that changes a comment status
  */
@@ -289,15 +289,15 @@ export const changeCommentStatus = (
  * @typedef {object} Comment
  * @property {Number} ID specific API version for request
  * @property {Author} author comment author
- * @property {String} content comment content
+ * @property {string} content comment content
  * @property {Date} date date the comment was created
- * @property {String} status status of the comment
+ * @property {string} status status of the comment
  */
 
 /**
  * @typedef {object} Author
- * @property {String} name Full name of the comment author
- * @property {String} url Address of the commenter site or blog
+ * @property {string} name Full name of the comment author
+ * @property {string} url Address of the commenter site or blog
  */
 
 /**

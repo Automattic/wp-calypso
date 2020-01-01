@@ -89,8 +89,8 @@ const phpToMomentMapping = {
  * Convert a PHP datetime format string into a Moment.js one.
  *
  * @param {object} momentDate A Moment.js object of the current date and time.
- * @param {String} formatString A PHP datetime format string
- * @return {String} A Moment.js datetime format string
+ * @param {string} formatString A PHP datetime format string
+ * @return {string} A Moment.js datetime format string
  */
 export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 	const mappedFormat = formatString

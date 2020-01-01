@@ -26,7 +26,7 @@ export function getKeyringServices( state ) {
  * Returns an object of service objects with the specified type.
  *
  * @param  {object} state Global state tree
- * @param  {String} type  Type of service. 'publicize' or 'other'.
+ * @param  {string} type  Type of service. 'publicize' or 'other'.
  * @return {Array}        Keyring services, if known.
  */
 export function getKeyringServicesByType( state, type ) {
@@ -37,7 +37,7 @@ export function getKeyringServicesByType( state, type ) {
  * Returns an object for the specified service name
  *
  * @param  {object} state Global state tree
- * @param  {String} name  Service name
+ * @param  {string} name  Service name
  * @return {object}        Keyring service, if known, or false.
  */
 export function getKeyringServiceByName( state, name ) {
@@ -57,7 +57,7 @@ export function getKeyringServiceByName( state, name ) {
  *
  * @param  {object} state  Global state tree
  * @param  {Number} siteId Site ID.
- * @param  {String} type   Type of service. 'publicize' or 'other'.
+ * @param  {string} type   Type of service. 'publicize' or 'other'.
  * @return {Array}         Keyring services, if known.
  */
 export function getEligibleKeyringServices( state, siteId, type ) {

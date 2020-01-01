@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state       Global state tree
  * @param  {Number}  siteId      The ID of the site we're querying
- * @param  {String}  moduleSlug  Slug of the module
+ * @param  {string}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module is currently being deactivated
  */
 export default function isDeactivatingJetpackModule( state, siteId, moduleSlug ) {

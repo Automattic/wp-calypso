@@ -30,8 +30,8 @@ const isAllHeadersValid = headers =>
 
 /***
  * Handler to perform an http request based on `HTTP_REQUEST` action parameters:
- * {String} url the url to request
- * {String} method the method we should use in the request: GET, POST etc.
+ * {string} url the url to request
+ * {string} method the method we should use in the request: GET, POST etc.
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
  * {Object|String} body data send as body

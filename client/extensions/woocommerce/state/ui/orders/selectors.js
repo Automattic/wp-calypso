@@ -41,7 +41,7 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
 /**
  * @param {object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current search term being shown to the user. Defaults to "".
+ * @return {string} The current search term being shown to the user. Defaults to "".
  */
 export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

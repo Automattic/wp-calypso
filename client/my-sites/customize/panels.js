@@ -19,7 +19,7 @@ export const PANEL_MAPPINGS = {
  * the section or panel to be used in autofocus. Returns null if the panel is
  * not recognized.
  *
- * @param  {String}  panel Calypso panel slug
+ * @param  {string}  panel Calypso panel slug
  * @return {?object}       WordPress autofocus argument object
  */
 export function getCustomizerFocus( panel ) {
