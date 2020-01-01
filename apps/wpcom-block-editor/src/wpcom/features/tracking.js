@@ -45,7 +45,7 @@ const getBlocksTracker = eventName => blockIds => {
 /**
  * Track block insertion.
  *
- * @param {object|array} blocks block instance object or an array of such objects
+ * @param {object|Array} blocks block instance object or an array of such objects
  * @return {void}
  */
 const trackBlockInsertion = blocks => {
@@ -61,7 +61,7 @@ const trackBlockInsertion = blocks => {
  * Track block replacement.
  *
  * @param {Array} originalBlockIds ids or blocks that are being replaced
- * @param {object|array} blocks block instance object or an array of such objects
+ * @param {object|Array} blocks block instance object or an array of such objects
  * @return {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {

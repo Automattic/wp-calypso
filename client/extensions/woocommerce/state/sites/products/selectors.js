@@ -92,7 +92,7 @@ export const areProductsLoading = ( state, params = {}, siteId = getSelectedSite
  * @param {object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
  *                          defaults to first page, all products
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of products, or false if there was an error
+ * @return {Array|false} List of products, or false if there was an error
  */
 export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areProductsLoaded( state, params, siteId ) ) {

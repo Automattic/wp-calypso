@@ -51,7 +51,7 @@ export const areReviewsLoading = ( state, query = {}, siteId = getSelectedSiteId
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} Array of reviews, or false if there was an error
+ * @return {Array|false} Array of reviews, or false if there was an error
  */
 export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areReviewsLoaded( state, query, siteId ) ) {

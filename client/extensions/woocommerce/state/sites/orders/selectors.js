@@ -139,7 +139,7 @@ export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( sta
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of orders, or false if there was an error
+ * @return {Array|false} List of orders, or false if there was an error
  */
 export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areOrdersLoaded( state, query, siteId ) ) {
