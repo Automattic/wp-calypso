@@ -48,7 +48,7 @@ export function getCurrentUser( state ) {
  * Returns a selector that fetches a property from the current user object
  * @param {string} path Path to the property in the user object
  * @param {?Any} otherwise A default value that is returned if no user or property is found
- * @returns {function} A selector which takes the state as a parameter
+ * @returns {Function} A selector which takes the state as a parameter
  */
 export const createCurrentUserSelector = ( path, otherwise = null ) => state => {
 	const user = getCurrentUser( state );

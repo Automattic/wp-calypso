@@ -301,7 +301,7 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} redirect_to - The URL to redirect to after connecting.
- * @param {function} fn - The callback for the request.
+ * @param {Function} fn - The callback for the request.
  *
  * @return {Promise} A promise for the request
  */

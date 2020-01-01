@@ -93,7 +93,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
 /**
  * If the backup creation progress request fails, an error notice will be shown.
  *
- * @returns {function}          The dispatched action.
+ * @returns {Function}          The dispatched action.
  */
 export const announceError = () =>
 	errorNotice(
@@ -135,7 +135,7 @@ export const backupSilentlyDismissed = ( action, data ) =>
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const backupDismissFailed = () =>
 	errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) );

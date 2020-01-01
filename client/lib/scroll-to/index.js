@@ -145,10 +145,10 @@ function circularOutEasing( val ) {
  * @param {object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate
- * @param {function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
+ * @param {Function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
  * @param {number} options.duration - duration in ms, default 500
- * @param {function} options.onStart - callback before start is called
- * @param {function} options.onComplete - callback when scroll is finished
+ * @param {Function} options.onStart - callback before start is called
+ * @param {Function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
  * @returns {object} - the stepper
  */

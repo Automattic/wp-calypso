@@ -603,7 +603,7 @@ export class SharingService extends Component {
  * Connect a SharingService component to a Redux store.
  *
  * @param  {component} sharingService     A SharingService component
- * @param  {function}  mapStateToProps    Optional. A function to pick props from the state.
+ * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
  * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @return {component} A highter-order service component

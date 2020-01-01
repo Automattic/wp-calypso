@@ -129,7 +129,7 @@ export function addReducer( origReducer, reducers ) {
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  *
  * @param {object} reducers - object containing the reducers to merge
- * @returns {function} - Returns the combined reducer function
+ * @returns {Function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
 	// set up persistence of reducers passed from app and then create a combined one

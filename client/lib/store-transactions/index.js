@@ -40,7 +40,7 @@ const wpcom = wp.undocumented();
  * @returns {Readable} A stream of transaction flow steps.
  *
  * @param {object} params - Includes the cart, domainDetails etc...
- * @param {function} onStep - Callback
+ * @param {Function} onStep - Callback
  */
 export function submit( params, onStep ) {
 	return new TransactionFlow( params, onStep );
