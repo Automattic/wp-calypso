@@ -9,7 +9,7 @@ import { getByPurchaseId } from 'state/purchases/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?Object}        Purchase object or null if not found
+ * @return {?object}        Purchase object or null if not found
  */
 export default function getCurrentPlanPurchase( state, siteId ) {
 	const result = getByPurchaseId( state, getCurrentPlanPurchaseId( state, siteId ) );

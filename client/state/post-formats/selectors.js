@@ -16,7 +16,7 @@ export function isRequestingPostFormats( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?Object}        Site post formats
+ * @return {?object}        Site post formats
  */
 export function getPostFormats( state, siteId ) {
 	return state.postFormats.items[ siteId ] || null;

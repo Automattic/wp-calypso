@@ -58,10 +58,10 @@ export default class QueryManager {
 	 * new. Optionally patch the item to merge, not replace. Returning
 	 * undefined indicates that item should be removed from known set.
 	 *
-	 * @param  {?Object} item        Existing item, if exists
+	 * @param  {?object} item        Existing item, if exists
 	 * @param  {object}  revisedItem Incoming revision of item
 	 * @param  {Boolean} patch       Use patching application
-	 * @return {?Object}             Item to track, or undefined to omit
+	 * @return {?object}             Item to track, or undefined to omit
 	 */
 	static mergeItem( item, revisedItem, patch = false ) {
 		if ( patch ) {
@@ -143,7 +143,7 @@ export default class QueryManager {
 	 * items specific to that query, or null if no items have been received for
 	 * the query.
 	 *
-	 * @param  {?Object}       query Optional query object
+	 * @param  {?object}       query Optional query object
 	 * @return {Object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {

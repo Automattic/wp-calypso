@@ -20,7 +20,7 @@ export const PANEL_MAPPINGS = {
  * not recognized.
  *
  * @param  {String}  panel Calypso panel slug
- * @return {?Object}       WordPress autofocus argument object
+ * @return {?object}       WordPress autofocus argument object
  */
 export function getCustomizerFocus( panel ) {
 	if ( PANEL_MAPPINGS.hasOwnProperty( panel ) ) {

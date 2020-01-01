@@ -26,7 +26,7 @@ export function isRequestingWordAdsApprovalForSite( state, site ) {
  * Returns true if the WordAds approval request has failed for a siteId
  * @param   {object} state  Global State
  * @param   {Number} siteId Site Id
- * @returns {?Object}       WordAds Error
+ * @returns {?object}       WordAds Error
  */
 export function getWordAdsError( state, siteId ) {
 	return state.wordads.approve.requestErrors[ siteId ];
@@ -36,7 +36,7 @@ export function getWordAdsError( state, siteId ) {
  * Sanitizes site object and returns true if the WordAds approval request has failed for a siteId
  * @param   {object} state  Global State
  * @param   {object} site   Site
- * @returns {?Object}       WordAds Error
+ * @returns {?object}       WordAds Error
  */
 export function getWordAdsErrorForSite( state, site ) {
 	if ( ! site || ! site.ID ) {
@@ -49,7 +49,7 @@ export function getWordAdsErrorForSite( state, site ) {
  * Returns true if the WordAds approval request was successful for a siteId
  * @param   {object} state  Global State
  * @param   {Number} siteId Site Id
- * @returns {?Object}       WordAds Error
+ * @returns {?object}       WordAds Error
  */
 export function getWordAdsSuccess( state, siteId ) {
 	return state.wordads.approve.requestSuccess[ siteId ];
@@ -59,7 +59,7 @@ export function getWordAdsSuccess( state, siteId ) {
  * Sanitizes site object and returns true if the WordAds approval request was successful
  * @param   {object} state  Global State
  * @param   {object} site   Site
- * @returns {?Object}       WordAds Error
+ * @returns {?object}       WordAds Error
  */
 export function getWordAdsSuccessForSite( state, site ) {
 	if ( ! site || ! site.ID ) {

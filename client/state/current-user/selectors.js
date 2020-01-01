@@ -33,7 +33,7 @@ export function isUserLoggedIn( state ) {
  * Returns the user object for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?Object}        Current user
+ * @return {?object}        Current user
  */
 export function getCurrentUser( state ) {
 	const userId = getCurrentUserId( state );

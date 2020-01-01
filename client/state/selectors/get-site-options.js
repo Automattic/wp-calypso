@@ -11,7 +11,7 @@ const EMPTY_OPTIONS = Object.freeze( {} );
  *
  * @param    {object}    state    Global state tree
  * @param    {Number}    siteId   Site ID
- * @returns  {?Object}            Site options or null
+ * @returns  {?object}            Site options or null
  */
 export default ( state, siteId ) => {
 	const site = getRawSite( state, siteId );

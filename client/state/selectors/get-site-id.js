@@ -17,7 +17,7 @@ import { getSite } from 'state/sites/selectors';
  *
  * @param  {object}  state       Global state tree
  * @param  {Number|String|null}  siteIdOrSlug Site ID
- * @return {?Object}             Site object
+ * @return {?object}             Site object
  */
 export default function getSiteId( state, siteIdOrSlug ) {
 	if ( ! siteIdOrSlug ) {

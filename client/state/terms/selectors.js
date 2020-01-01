@@ -147,7 +147,7 @@ export function getTerms( state, siteId, taxonomy ) {
  * @param  {Number}  siteId   Site ID
  * @param  {String}  taxonomy Taxonomy slug
  * @param  {Number}  termId   Term ID
- * @return {?Object}         Term
+ * @return {?object}         Term
  */
 export function getTerm( state, siteId, taxonomy, termId ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );

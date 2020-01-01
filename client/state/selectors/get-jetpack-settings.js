@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  The ID of the site we're querying
- * @return {?Object}         Jetpack settings
+ * @return {?object}         Jetpack settings
  */
 export default function getJetpackSettings( state, siteId ) {
 	return get( state.jetpack.settings, [ siteId ], null );

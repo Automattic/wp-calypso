@@ -24,7 +24,7 @@ export function getKeyringConnections( state ) {
  *
  * @param  {object} state               Global state tree
  * @param  {Number} keyringConnectionId Keyring connection ID.
- * @return {?Object}                    Keyring connections, if known.
+ * @return {?object}                    Keyring connections, if known.
  */
 export function getKeyringConnectionById( state, keyringConnectionId ) {
 	return state.sharing.keyring.items[ keyringConnectionId ] || null;

@@ -39,7 +39,7 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
  * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @param  {String}  themeId Theme ID
- * @return {?Object}         Theme object
+ * @return {?object}         Theme object
  */
 export const getTheme = createSelector(
 	( state, siteId, themeId ) => {
@@ -62,7 +62,7 @@ export const getTheme = createSelector(
  * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Jetpack Site ID to fall back to
  * @param  {String}  themeId Theme ID
- * @return {?Object}         Theme object
+ * @return {?object}         Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {
 	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );

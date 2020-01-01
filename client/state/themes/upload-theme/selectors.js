@@ -60,7 +60,7 @@ export function getUploadedThemeId( state, siteId ) {
  *
  * @param {object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Object} -- Error details
+ * @return {?object} -- Error details
  */
 export function getUploadError( state, siteId ) {
 	return get( state.themes.uploadTheme.uploadError, siteId );

@@ -34,7 +34,7 @@ export function isRequestingSubscribedLists( state ) {
  * Returns the user's subscribed Reader lists.
  *
  * @param  {object}  state  Global state tree
- * @return {?Object}        Reader lists
+ * @return {?object}        Reader lists
  */
 export const getSubscribedLists = createSelector(
 	state =>
@@ -83,7 +83,7 @@ export function hasError( state, listId ) {
  * @param  {object}  state  Global state tree
  * @param  {String}  owner  List owner
  * @param  {String}  slug  List slug
- * @return {?Object}        Reader list
+ * @return {?object}        Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
 	if ( ! has( state, 'reader.lists.items' ) || ! owner || ! slug ) {

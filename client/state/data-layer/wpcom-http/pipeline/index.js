@@ -35,7 +35,7 @@ import { retryOnFailure } from './retry-on-failure';
  * @typedef {object} OutboundData
  * @property {object} originalRequest the Redux action describing the outbound request
  * @property {ReduxStore} store Redux store
- * @property {?Object} nextRequest the processed request to pass along the chain
+ * @property {?object} nextRequest the processed request to pass along the chain
  */
 
 /**

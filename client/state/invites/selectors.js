@@ -70,7 +70,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @param  {object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
  * @param  {String}  inviteId Invite ID
- * @return {?Object}          Invite object (if found)
+ * @return {?object}          Invite object (if found)
  */
 export const getInviteForSite = treeSelect(
 	( state, siteId ) => [ state.invites.items[ siteId ] ],

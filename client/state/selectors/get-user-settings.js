@@ -3,7 +3,7 @@
  *
  *
  * @param {object} state Global state tree
- * @return {?Object} dictionary with the setting names and values
+ * @return {?object} dictionary with the setting names and values
  */
 
 export default function getUserSettings( state ) {

@@ -21,7 +21,7 @@ import { HTTP_REQUEST } from 'state/action-types';
  * Creates a raw http action request
  *
  * @param {RequestDescription} request HTTP request description
- * @param {?Object} action default action to dispatch on HTTP success/failure
+ * @param {?object} action default action to dispatch on HTTP success/failure
  * @returns {object} raw http action
  */
 export const http = (

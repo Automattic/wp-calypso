@@ -3,7 +3,7 @@
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?Object}        Site post types
+ * @return {?object}        Site post types
  */
 export function getPostTypes( state, siteId ) {
 	return state.postTypes.items[ siteId ] || null;
@@ -15,7 +15,7 @@ export function getPostTypes( state, siteId ) {
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {String}  slug   Post type slug
- * @return {?Object}        Post type
+ * @return {?object}        Post type
  */
 export function getPostType( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );

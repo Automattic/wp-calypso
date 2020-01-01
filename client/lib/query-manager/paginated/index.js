@@ -39,7 +39,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns items tracked by the instance. If a query is specified, returns
 	 * items specific to that query.
 	 *
-	 * @param  {?Object}  query Optional query object
+	 * @param  {?object}  query Optional query object
 	 * @return {Object[]}       Items tracked
 	 */
 	getItems( query ) {

@@ -12,7 +12,7 @@ export default class QueryKey {
 	 * If defined in extending class, will omit all parameters where values
 	 * match that of the default query
 	 *
-	 * @type {?Object}
+	 * @type {?object}
 	 */
 	static DEFAULT_QUERY = null;
 

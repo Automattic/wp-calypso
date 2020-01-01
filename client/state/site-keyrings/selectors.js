@@ -68,7 +68,7 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @param  {Number}  keyringId      Keyring Id
  * @param  {String}  externalUserId External User Id on the keyring
  *
- * @return {?Object}                Site Keyring connection
+ * @return {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
 	return find( getSiteKeyrings( state, siteId ), siteKeyring => {

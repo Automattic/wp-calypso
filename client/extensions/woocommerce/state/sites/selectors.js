@@ -12,7 +12,7 @@ import { getSite } from 'state/sites/selectors';
  * just one site, returns the user's primary site as a fallback
  *
  * @param {object} state Global state tree
- * @return {?Object} Site
+ * @return {?object} Site
  */
 export function getSelectedSiteWithFallback( state ) {
 	let siteId = getSelectedSiteId( state );

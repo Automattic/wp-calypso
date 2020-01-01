@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {Number|String} siteId the site ID
- * @return {?Object} Progress object, null if no data
+ * @return {?object} Progress object, null if no data
  */
 export default function getRestoreProgress( state, siteId ) {
 	return get( state, [ 'activityLog', 'restoreProgress', siteId ], null );

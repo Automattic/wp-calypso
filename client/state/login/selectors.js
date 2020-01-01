@@ -134,7 +134,7 @@ export const isRequesting = state => {
  * Returns the error for a login request.
  *
  * @param  {object}   state  Global state tree
- * @return {?Object}         Error for the request.
+ * @return {?object}         Error for the request.
  */
 export const getRequestError = state => {
 	return get( state, 'login.requestError', null );
@@ -144,7 +144,7 @@ export const getRequestError = state => {
  * Returns the notice for a login request.
  *
  * @param  {object}   state  Global state tree
- * @return {?Object}         Notice for the request.
+ * @return {?object}         Notice for the request.
  */
 export const getRequestNotice = state => {
 	return get( state, 'login.requestNotice', null );
@@ -224,7 +224,7 @@ export const getCreatedSocialAccountBearerToken = state =>
  * Gets error for the create social account request.
  *
  * @param  {object}   state  Global state tree
- * @return {?Object}         Error for the create social account request.
+ * @return {?object}         Error for the create social account request.
  */
 export const getCreateSocialAccountError = state =>
 	get( state, 'login.socialAccount.createError', null );
@@ -233,7 +233,7 @@ export const getCreateSocialAccountError = state =>
  * Gets error for the get social account request.
  *
  * @param  {object}   state  Global state tree
- * @return {?Object}         Error for the get social account request.
+ * @return {?object}         Error for the get social account request.
  */
 export const getRequestSocialAccountError = state =>
 	get( state, 'login.socialAccount.requestError', null );

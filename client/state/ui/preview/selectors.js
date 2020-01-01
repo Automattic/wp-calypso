@@ -26,7 +26,7 @@ export function getPreviewUrl( state ) {
  * Returns the site object for the current site set for SitePreview.
  *
  * @param  {object}  state  Global state tree
- * @return {?Object}        Selected site
+ * @return {?object}        Selected site
  */
 export function getPreviewSite( state ) {
 	const siteId = getPreviewSiteId( state );

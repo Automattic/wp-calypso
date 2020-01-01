@@ -23,7 +23,7 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  * Returns a valid WordPress.com API HTTP Request action object
  *
  * @param {RequestDescription} HTTP request description
- * @param {?Object} action default action to call on HTTP events
+ * @param {?object} action default action to call on HTTP events
  * @returns {object} Redux action describing WordPress.com API HTTP request
  */
 export const http = (
