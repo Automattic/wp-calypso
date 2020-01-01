@@ -7,6 +7,7 @@ Buttons express what action will occur when the user clicks or taps it. Buttons 
 ```jsx
 import Gridicon from 'components/gridicons';
 import { Button } from '@automattic/components';
+import '@automattic/calypso-color-schemes/dist/calypso-color-schemes.css';
 
 export default function RockOnButton() {
 	return (

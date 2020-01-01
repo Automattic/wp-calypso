@@ -1,8 +1,10 @@
 // ==========================================================================
 // Buttons
 // ==========================================================================
+@import '../typography.scss';
 
 .button {
+	font-family: $aui-fontFamily-sans;
 	background: transparent;
 	border-style: solid;
 	border-width: 1px 1px 2px;
@@ -21,6 +23,10 @@
 	border-radius: 4px;
 	padding: 7px 14px 9px;
 	appearance: none;
+
+	.rtl & {
+		font-family: $aui-fontFamily-sans-rtl;
+	}
 
 	&.hidden {
 		display: none;
