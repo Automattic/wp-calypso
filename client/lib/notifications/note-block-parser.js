@@ -50,7 +50,7 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  *
  * @param {number} innerStart start of possibly-inner range
  * @param {number} innerEnd end of possibly-inner range
- * @returns {function({indices: Number[]}): boolean} performs the check
+ * @returns {Function({indices: Number[]}): boolean} performs the check
  */
 const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	/**
@@ -164,7 +164,7 @@ const inferNode = range => {
  * Returns function to map range to node
  *
  * @param {string} type type of node specified in range
- * @returns {function(object): object} maps block to meta data
+ * @returns {Function(object): object} maps block to meta data
  */
 const nodeMappings = type => {
 	switch ( type ) {
