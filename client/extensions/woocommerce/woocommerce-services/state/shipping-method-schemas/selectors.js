@@ -35,7 +35,7 @@ export const isShippingMethodSchemaLoaded = (
  * @param {object} state Whole Redux state tree
  * @param {string} methodId Shipping method ID
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The shipping method schema object, or "null" if the schema hasn't been retrieved yet
+ * @return {object|null} The shipping method schema object, or "null" if the schema hasn't been retrieved yet
  */
 export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
 	return isShippingMethodSchemaLoaded( state, methodId, siteId )

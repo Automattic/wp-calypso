@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|Object} The ID of the review reply (or object placeholder, if a new reply)
+ * @return {Number|object} The ID of the review reply (or object placeholder, if a new reply)
  */
 export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -26,7 +26,7 @@ export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSit
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|Object} The ID of the review that a reply edit is associated with.
+ * @return {Number|object} The ID of the review that a reply edit is associated with.
  */
 export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

@@ -174,7 +174,7 @@ export function currentUserHasFlag( state, flagName ) {
 /**
  * Returns true if the current user is email-verified.
  *
- * @param   {Object } state Global state tree
+ * @param   {object } state Global state tree
  * @returns {boolean}       Whether the current user is email-verified.
  */
 export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_verified', false );

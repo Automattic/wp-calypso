@@ -30,7 +30,7 @@ function urlSafeBase64DecodeString( str ) {
  * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
  *
  * @param {string} value Value to be decoded
- * @return {null|Object} null or and object containing key/value pairs
+ * @return {null|object} null or and object containing key/value pairs
  */
 function parseAmpEncodedParams( value ) {
 	value = value

@@ -19,7 +19,7 @@ const parsedTimestamp = ( { timestamp } ) => Date.parse( timestamp );
  * code until more formal refactorings.
  *
  * @param {object} notesState
- * @returns {Object[]} list of notification objects
+ * @returns {object[]} list of notification objects
  */
 export const getAllNotes = notesState => {
 	const nextAllNotes = notesState.allNotes;

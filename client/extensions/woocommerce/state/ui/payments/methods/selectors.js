@@ -117,7 +117,7 @@ export const getPaymentMethodsGroup = ( state, type, siteId = getSelectedSiteId(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The payment methods that's currently being edited, with all the edits
+ * @return {object|null} The payment methods that's currently being edited, with all the edits
  * (including the non-committed changes). If no method is being edited, this will return null.
  */
 export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSiteId( state ) ) => {

@@ -39,14 +39,14 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * A collection of {@link Asset} objects, keyed by their URLs.
- * @typedef {Object.<String, Asset>} Assets URLs as keys, {@link Asset}.as a values.
+ * @typedef {object.<String, Asset>} Assets URLs as keys, {@link Asset}.as a values.
  */
 
 /**
  * FetchSession describes a set of blocks and their assets.
  * @typedef {object} FetchSession
  * @property {Array<GutenbergBlock>} blocks List of Gutenberg blocks.
- * @property {Object<String, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
+ * @property {object<String, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
  * @property {Assets} assets A list of assets detected in blocks.
  */
 
@@ -166,7 +166,7 @@ const fetchAssets = async assets => {
  * their new local copies.
  *
  * @param {FetchSession} session A current session.
- * @param {Object<String,Object>} fetchedAssets Fetched assets.
+ * @param {object<String,Object>} fetchedAssets Fetched assets.
  * @returns {Array<GutenbergBlock>} A promise resolving into an array of blocks.
  */
 const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {

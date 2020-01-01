@@ -15,8 +15,8 @@ import {
  *
  * @param {number} siteId The id of the site in which the variation's product exists.
  * @param {number} productId The id of the product.
- * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function fetchProductVariations( siteId, productId, successAction, failureAction ) {
@@ -33,11 +33,11 @@ export function fetchProductVariations( siteId, productId, successAction, failur
  * Action Creator: Create a new product variation.
  *
  * @param {number} siteId The id of the site in which the variation's product exists.
- * @param {Number|Object} productId The id of the product for which this variation will be created
+ * @param {Number|object} productId The id of the product for which this variation will be created
  *                                  (could be a placeholder id if product is not yet created).
  * @param {object} variation The complete variation object to be created.
- * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function createProductVariation(
@@ -63,8 +63,8 @@ export function createProductVariation(
  * @param {number} siteId The id of the site in which the variation's product exists.
  * @param {number} productId The id of the product for which this variation.
  * @param {object} variation The variation data to be updated (must include id).
- * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function updateProductVariation(
@@ -90,8 +90,8 @@ export function updateProductVariation(
  * @param {number} siteId The id of the site in which the variation's product exists.
  * @param {number} productId The id of the product to which this variation belongs.
  * @param {object} variationId The id of the variation to be deleted.
- * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function deleteProductVariation(

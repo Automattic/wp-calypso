@@ -95,7 +95,7 @@ export function url( media, options ) {
  * getFileExtension( new window.File( [''], 'example.gif' ) );
  * // All examples return 'gif'
  *
- * @param  {(string|File|Object)} media Media object or string
+ * @param  {(string|File|object)} media Media object or string
  * @return {string}                     File extension
  */
 export function getFileExtension( media ) {
@@ -138,7 +138,7 @@ export function getFileExtension( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image'
  *
- * @param  {(string|File|Object)} media Media object or mime type string
+ * @param  {(string|File|object)} media Media object or mime type string
  * @return {string}       The MIME type prefix
  */
 export function getMimePrefix( media ) {
@@ -165,7 +165,7 @@ export function getMimePrefix( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image/gif'
  *
- * @param  {(string|File|Object)} media Media object or string
+ * @param  {(string|File|object)} media Media object or string
  * @return {string}                     Mime type of the media, if known
  */
 export function getMimeType( media ) {
@@ -533,7 +533,7 @@ export function isTransientPreviewable( item ) {
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
  *
- * @param  {(String|Object|Blob|File)} file URL or File object
+ * @param  {(String|object|Blob|File)} file URL or File object
  * @return {object}                         Transient media object
  */
 export function createTransientMedia( file ) {

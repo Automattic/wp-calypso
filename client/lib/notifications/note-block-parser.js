@@ -78,9 +78,9 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
  *
  * A range is a parent of another if it "encloses" the range.
  *
- * @param {Object[]} ranges the tree of ranges
+ * @param {object[]} ranges the tree of ranges
  * @param {object} range the range to add
- * @returns {Object[]} the new tree
+ * @returns {object[]} the new tree
  */
 const addRange = ( ranges, range ) => {
 	const parent = find( ranges, encloses( range ) );
@@ -164,7 +164,7 @@ const inferNode = range => {
  * Returns function to map range to node
  *
  * @param {string} type type of node specified in range
- * @returns {function(Object): Object} maps block to meta data
+ * @returns {function(object): object} maps block to meta data
  */
 const nodeMappings = type => {
 	switch ( type ) {
@@ -195,7 +195,7 @@ const nodeMappings = type => {
  * Creates a node with appropriate properties
  * extracted from text and range information
  *
- * @param {Object|String} text original text message
+ * @param {object|String} text original text message
  * @param {object} range contains type and meta information
  * @returns {{children: *[]}} new node
  */

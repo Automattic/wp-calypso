@@ -61,7 +61,7 @@ export const fetchPostRevisionAuthors = action => {
  *
  * @param {object} action The `POST_REVISIONS_AUTHORS_REQUEST` action with response data as meta
  * @param {Array} users raw data from post revisions API
- * @returns {Object|Function} Action or action thunk that handles the response
+ * @returns {object|Function} Action or action thunk that handles the response
  */
 export const receivePostRevisionAuthorsSuccess = ( action, users ) => dispatch => {
 	// receive users from response into Redux state

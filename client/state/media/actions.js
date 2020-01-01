@@ -27,7 +27,7 @@ import 'state/data-layer/wpcom/sites/media';
  * have been received.
  *
  * @param  {number}         siteId Site ID
- * @param  {(Array|Object)} media  Media item(s) received
+ * @param  {(Array|object)} media  Media item(s) received
  * @param  {number}         found  Number of found media
  * @param  {object}         query  Query Object
  * @return {object}                Action object

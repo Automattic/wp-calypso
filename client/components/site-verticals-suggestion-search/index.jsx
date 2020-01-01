@@ -113,7 +113,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * Searches the API results for a direct match on the user search query.
 	 *
 	 * @param {string} value       Search query array
-	 * @returns {Object|undefined} An object from the vertical results array
+	 * @returns {object|undefined} An object from the vertical results array
 	 */
 	searchForVerticalMatches = ( value = '' ) =>
 		find(

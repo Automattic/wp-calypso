@@ -24,7 +24,7 @@ import { UNITS } from './constants';
  * Calculate all elements needed to render a delta on a time series.
  *
  * @param {object} item - data point from a time series
- * @param {Object|undefined} previousItem - the previous data point, if it exists
+ * @param {object|undefined} previousItem - the previous data point, if it exists
  * @param {string} attr - the property name to compare
  * @param {string} unit - day, week, month, or year
  * @return {Delta} - An object used to render the UI element

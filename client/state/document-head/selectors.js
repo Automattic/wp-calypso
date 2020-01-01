@@ -86,7 +86,7 @@ export const getDocumentHeadFormattedTitle = createSelector(
  * component or setDocumentHeadMeta action.
  *
  * @param  {object}  state  Global state tree
- * @return {Object[]}       Array of meta objects
+ * @return {object[]}       Array of meta objects
  */
 export function getDocumentHeadMeta( state ) {
 	return state.documentHead.meta;
@@ -97,7 +97,7 @@ export function getDocumentHeadMeta( state ) {
  * component or setDocumentHeadLink action.
  *
  * @param  {object}  state  Global state tree
- * @return {Object[]}       Array of link objects
+ * @return {object[]}       Array of link objects
  */
 export function getDocumentHeadLink( state ) {
 	return state.documentHead.link;

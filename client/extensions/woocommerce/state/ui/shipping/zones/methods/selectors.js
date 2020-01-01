@@ -202,7 +202,7 @@ export const getCurrentlyEditingShippingZoneMethods = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The currently open shipping method or null
+ * @return {object|null} The currently open shipping method or null
  */
 export const getCurrentlyOpenShippingZoneMethod = (
 	state,

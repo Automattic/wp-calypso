@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns an object of localized language names
  *
  * @param  {object}  state Global state tree
- * @returns {Object|Null} an object of localized language names or null if no names are found
+ * @returns {object|Null} an object of localized language names or null if no names are found
  */
 export default function getLocalizedLanguageNames( state ) {
 	return get( state, 'i18n.languageNames.items', null );

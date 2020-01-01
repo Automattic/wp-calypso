@@ -40,7 +40,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * items specific to that query.
 	 *
 	 * @param  {?object}  query Optional query object
-	 * @return {Object[]}       Items tracked
+	 * @return {object[]}       Items tracked
 	 */
 	getItems( query ) {
 		if ( ! query ) {
@@ -70,7 +70,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
 	 *                                  items yet to be received as `undefined`
-	 * @return {Object[]}               Items tracked, ignoring page
+	 * @return {object[]}               Items tracked, ignoring page
 	 */
 	getItemsIgnoringPage( query, includeFiller = false ) {
 		if ( ! query ) {
@@ -109,7 +109,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|Object)} items              Item(s) to be received
+	 * @param  {(Array|object)} items              Item(s) to be received
 	 * @param  {object}         options            Options for receive
 	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace

@@ -57,7 +57,7 @@ function requestFailure( embedUrl, error ) {
  * triggers a network request to fetch a thumbnailUrl if necessary
  *
  * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
- * @return {Function|Object} Action thunk | Action object
+ * @return {Function|object} Action thunk | Action object
  */
 export const requestThumbnail = embedUrl => dispatch => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};

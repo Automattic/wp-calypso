@@ -28,8 +28,8 @@ export function fetchProductCategories( siteId, query = {} ) {
  *
  * @param {number} siteId The id of the site upon which to create.
  * @param {object} category The product category object (may include a placeholder id).
- * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
- * @param {Object|Function} [failureAction] action with extra props { error }
+ * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {object|Function} [failureAction] action with extra props { error }
  * @return {object} Action object
  */
 export function createProductCategory( siteId, category, successAction, failureAction ) {
@@ -51,8 +51,8 @@ export function createProductCategory( siteId, category, successAction, failureA
  *
  * @param {number} siteId The id of the site upon which to create.
  * @param {object} category The product category object.
- * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
- * @param {Object|Function} [failureAction] action with extra props { error }
+ * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {object|Function} [failureAction] action with extra props { error }
  * @return {object} Action object
  */
 export function updateProductCategory( siteId, category, successAction, failureAction ) {
@@ -72,8 +72,8 @@ export function updateProductCategory( siteId, category, successAction, failureA
  *
  * @param {number} siteId The id of the site upon which to delete.
  * @param {object} category The product category object.
- * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
- * @param {Object|Function} [failureAction] action with extra props { error }
+ * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {object|Function} [failureAction] action with extra props { error }
  * @return {object} Action object
  */
 export function deleteProductCategory( siteId, category, successAction, failureAction ) {

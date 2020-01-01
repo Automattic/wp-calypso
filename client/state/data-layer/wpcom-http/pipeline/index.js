@@ -20,8 +20,8 @@ import { retryOnFailure } from './retry-on-failure';
  * @property {*} nextData transformed response data
  * @property {*} nextError transformed response error
  * @property {*} nextHeaders transformed repsonse headers
- * @property {Object[]} failures list of `onFailure` actions to dispatch
- * @property {Object[]} successes list of `onSuccess` actions to dispatch
+ * @property {object[]} failures list of `onFailure` actions to dispatch
+ * @property {object[]} successes list of `onSuccess` actions to dispatch
  * @property {boolean} [shouldAbort] whether or not no further processing should occur for request
  */
 

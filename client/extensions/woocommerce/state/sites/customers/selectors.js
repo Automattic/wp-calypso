@@ -75,7 +75,7 @@ export const getCustomerSearchResults = (
  * @param {object} state Whole Redux state tree
  * @param {number} customerId Customer ID to get
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|False} a customer object as stored in the API, false if not found
+ * @return {object|False} a customer object as stored in the API, false if not found
  */
 export const getCustomer = ( state, customerId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

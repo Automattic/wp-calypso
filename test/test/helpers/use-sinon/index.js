@@ -43,7 +43,7 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
  *
  * See http://sinonjs.org/docs/#sandbox
  *
- * @param  {Object|Function} config The configuration to use, or a callback that is invoked with the sandbox instance
+ * @param  {object|Function} config The configuration to use, or a callback that is invoked with the sandbox instance
  * @param  {Function} sandboxCallback A callback function that is invoked with the sandbox instance
  * @deprecated Use Jest's mock functions instead (https://facebook.github.io/jest/docs/mock-functions.html)
  */

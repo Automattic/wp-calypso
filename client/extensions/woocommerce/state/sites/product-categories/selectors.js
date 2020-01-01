@@ -72,7 +72,7 @@ export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteI
  * @param {object} state Global state tree
  * @param {number} categoryId The id of the category sought
  * @param {number} siteId wpcom site id
- * @return {Object|null} Product category if found, otherwise null.
+ * @return {object|null} Product category if found, otherwise null.
  */
 export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );

@@ -38,7 +38,7 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  * @param  {number}  siteId       Site ID
  * @param  {string}  postType     Post type
  * @param  {string}  taxonomyName Taxonomy name
- * @return {Object?}              Post type taxonomy
+ * @return {object?}              Post type taxonomy
  */
 export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
 	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );

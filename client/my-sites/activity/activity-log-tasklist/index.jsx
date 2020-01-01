@@ -475,7 +475,7 @@ const getStatusForTheme = ( siteId, themeId ) => {
  * Get data about the status of a core update.
  * @param {number} siteId      Site Id.
  * @param {string} coreVersion Version of core that the WP installation will be updated to.
- * @returns {boolean|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForCore = ( siteId, coreVersion ) => {

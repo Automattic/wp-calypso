@@ -110,7 +110,7 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object[]} List of events to display. Each event will have at least these properties:
+ * @return {object[]} List of events to display. Each event will have at least these properties:
  * - {string} type The type of the event. See the EVENT_TYPES enum.
  * - {number} key A unique ID for the event. The combination of "type + key" must be unique in the whole list.
  * - {number} timestamp The time of the event.

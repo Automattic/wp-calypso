@@ -26,8 +26,8 @@ import {
  *
  * @param {number} siteId The id of the site upon which to create the product.
  * @param {object} product The complete product object (may include a placeholder id)
- * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function createProduct( siteId, product, successAction, failureAction ) {
@@ -47,8 +47,8 @@ export function createProduct( siteId, product, successAction, failureAction ) {
  *
  * @param {number} siteId The id of the site upon which to create the product.
  * @param {object} product The complete product object (must have real id)
- * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
- * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @param {object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {object|Function} [failureAction] Action with extra props { error }
  * @return {object} Action object
  */
 export function updateProduct( siteId, product, successAction, failureAction ) {

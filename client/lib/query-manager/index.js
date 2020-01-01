@@ -144,7 +144,7 @@ export default class QueryManager {
 	 * the query.
 	 *
 	 * @param  {?object}       query Optional query object
-	 * @return {Object[]|null}       Items tracked, if known
+	 * @return {object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {
 		if ( ! query ) {
@@ -214,7 +214,7 @@ export default class QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|Object)} items              Item(s) to be received
+	 * @param  {(Array|object)} items              Item(s) to be received
 	 * @param  {object}         options            Options for receive
 	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace

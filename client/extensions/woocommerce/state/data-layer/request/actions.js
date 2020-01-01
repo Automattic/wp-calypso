@@ -28,8 +28,8 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
  * Performs HTTP GET in data-layer handlers and dispatches appropriate success/failure actions.
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
- * @param {Object|Function} [onSuccessAction] Action with extra props { data }
- * @param {Object|Function} [onFailureAction] Action with extra props { error }
+ * @param {object|Function} [onSuccessAction] Action with extra props { data }
+ * @param {object|Function} [onFailureAction] Action with extra props { error }
  * @return {Promise<Object>} A promise to the action (only used for testing)
  */
 export function get( siteId, path, onSuccessAction, onFailureAction ) {
@@ -41,8 +41,8 @@ export function get( siteId, path, onSuccessAction, onFailureAction ) {
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
- * @param {Object|Function} [onSuccessAction] Action with extra props { data }
- * @param {Object|Function} [onFailureAction] Action with extra props { error }
+ * @param {object|Function} [onSuccessAction] Action with extra props { data }
+ * @param {object|Function} [onFailureAction] Action with extra props { error }
  * @return {Promise<Object>} A promise to the action (only used for testing)
  */
 export function post( siteId, path, body, onSuccessAction, onFailureAction ) {
@@ -54,8 +54,8 @@ export function post( siteId, path, body, onSuccessAction, onFailureAction ) {
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
  * @param {object} body JS Object that will be converted to JSON for the HTTP Body
- * @param {Object|Function} [onSuccessAction] Action with extra props { data }
- * @param {Object|Function} [onFailureAction] Action with extra props { error }
+ * @param {object|Function} [onSuccessAction] Action with extra props { data }
+ * @param {object|Function} [onFailureAction] Action with extra props { error }
  * @return {Promise<Object>} A promise to the action (only used for testing)
  */
 export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
@@ -66,8 +66,8 @@ export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
  * Performs HTTP DELETE in data-layer handlers and dispatches appropriate success/failure actions.
  * @param {number} siteId id for the WooCommerce site.
  * @param {string} path API endpoint
- * @param {Object|Function} [onSuccessAction] Action with extra props { data }
- * @param {Object|Function} [onFailureAction] Action with extra props { error }
+ * @param {object|Function} [onSuccessAction] Action with extra props { data }
+ * @param {object|Function} [onFailureAction] Action with extra props { error }
  * @return {Promise<Object>} A promise to the action (only used for testing)
  */
 export function del( siteId, path, onSuccessAction, onFailureAction ) {

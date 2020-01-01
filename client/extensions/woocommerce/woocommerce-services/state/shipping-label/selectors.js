@@ -613,7 +613,7 @@ export const getDestinationCountryNames = createSelector(
  * @param {string} countryCode 2-letter ISO country code
  * @param {string} stateCode 2-letter code of the country's state
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
+ * @return {object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
  * the country doesn't have a list of states
  */
 export const getStateNames = createSelector(

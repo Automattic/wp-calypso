@@ -203,7 +203,7 @@ export const regexp = memoize( function( tag ) {
  * @param {string} text - text to search for next shortcode
  * @param {number} index - last index
  *
- * @return {Object|void} next match
+ * @return {object|void} next match
  */
 export const next = function( tag, text, index = 0 ) {
 	const re = regexp( tag );

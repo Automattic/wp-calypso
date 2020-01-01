@@ -192,7 +192,7 @@ function mergeMetadataEdits( edits, nextEdits ) {
  * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
  * @param  {Array<Object>} postEditsLog Edits objects to be merged
- * @return {Object?}                    Merged edits object with changes from all sources
+ * @return {object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
 	reduce(
