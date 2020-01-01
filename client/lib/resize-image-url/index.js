@@ -66,7 +66,7 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  *                                     arguments (assuming Photon or Gravatar)
  * @param   {?Number}         height   Pixel height if specifying resize width
  * @param   {?Boolean}        makeSafe Should we make sure this is on a safe host?
- * @returns {?String}                  Resized image URL, or `null` if unable to resize
+ * @returns {?string}                  Resized image URL, or `null` if unable to resize
  */
 export default function resizeImageUrl( imageUrl, resize, height, makeSafe = true ) {
 	if ( 'string' !== typeof imageUrl ) {

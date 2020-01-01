@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state Global state tree
- * @return {?String}  The current layout focus area
+ * @return {?string}  The current layout focus area
  */
 
 export function getCurrentLayoutFocus( state ) {

@@ -59,14 +59,14 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => state => 
  * Returns the locale slug for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Current user locale
+ * @return {?string}        Current user locale
  */
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
 
 /**
  * Returns the locale variant slug for the current user.
  * @param  {object}  state  Global state tree
- * @return {?String}        Current user locale variant
+ * @return {?string}        Current user locale variant
  */
 export const getCurrentUserLocaleVariant = createCurrentUserSelector( 'localeVariant' );
 
@@ -74,7 +74,7 @@ export const getCurrentUserLocaleVariant = createCurrentUserSelector( 'localeVar
  * Returns the country code for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Current user country code
+ * @return {?string}        Current user country code
  */
 export const getCurrentUserCountryCode = createCurrentUserSelector( 'user_ip_country_code' );
 
@@ -112,7 +112,7 @@ export function getCurrentUserVisibleSiteCount( state ) {
  * Returns the currency code for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Current currency code
+ * @return {?string}        Current currency code
  */
 export function getCurrentUserCurrencyCode( state ) {
 	return state.currentUser.currencyCode;
@@ -122,7 +122,7 @@ export function getCurrentUserCurrencyCode( state ) {
  * Returns the date (of registration) for the current user.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Date of registration for user
+ * @return {?string}        Date of registration for user
  */
 export const getCurrentUserDate = createCurrentUserSelector( 'date' );
 
@@ -130,7 +130,7 @@ export const getCurrentUserDate = createCurrentUserSelector( 'date' );
  *  Returns the username of the current user.
  *
  *  @param {object} state Global state tree
- *  @returns {?String} The username of the current user.
+ *  @returns {?string} The username of the current user.
  */
 export const getCurrentUserName = createCurrentUserSelector( 'username' );
 
@@ -138,7 +138,7 @@ export const getCurrentUserName = createCurrentUserSelector( 'username' );
  *  Returns the primary email of the current user.
  *
  *  @param {object} state Global state tree
- *  @returns {?String} The primary email of the current user.
+ *  @returns {?string} The primary email of the current user.
  */
 export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 

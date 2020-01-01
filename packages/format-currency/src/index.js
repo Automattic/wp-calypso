@@ -21,7 +21,7 @@ export { CURRENCIES } from './currencies';
  * @param   {Number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
- * @returns {?String}                        A formatted string.
+ * @returns {?string}                        A formatted string.
  */
 export default function formatCurrency( number, code, options = {} ) {
 	const currencyDefaults = getCurrencyDefaults( code );
@@ -52,7 +52,7 @@ export default function formatCurrency( number, code, options = {} ) {
  * @param   {string}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
- * @returns {?String}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
+ * @returns {?string}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 export function getCurrencyObject( number, code, options = {} ) {
 	const currencyDefaults = getCurrencyDefaults( code );

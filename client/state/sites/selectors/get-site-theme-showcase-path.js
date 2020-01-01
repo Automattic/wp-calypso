@@ -15,7 +15,7 @@ import getSiteSlug from './get-site-slug';
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId SiteId
- * @return {?String}        Theme showcase path
+ * @return {?string}        Theme showcase path
  */
 export default function getSiteThemeShowcasePath( state, siteId ) {
 	const site = getRawSite( state, siteId );

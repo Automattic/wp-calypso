@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns the URL if SitePreview currently has one.
  *
  * @param  {object}  state Global state tree
- * @return {?String}  The url or null
+ * @return {?string}  The url or null
  *
  * @see client/blocks/site-preview
  */

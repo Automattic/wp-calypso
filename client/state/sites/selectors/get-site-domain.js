@@ -12,7 +12,7 @@ import isSiteConflicting from './is-site-conflicting';
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?String}        Site domain
+ * @return {?string}        Site domain
  */
 export default function getSiteDomain( state, siteId ) {
 	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {

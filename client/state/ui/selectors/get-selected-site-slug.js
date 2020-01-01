@@ -9,7 +9,7 @@ import getSelectedSiteId from './get-selected-site-id';
  * or null if no site is selected.
  *
  * @param  {object}  state Global state tree
- * @return {?String}       Selected site slug
+ * @return {?string}       Selected site slug
  */
 export default function getSelectedSiteSlug( state ) {
 	const siteId = getSelectedSiteId( state );

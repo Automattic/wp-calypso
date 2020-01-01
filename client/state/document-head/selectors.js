@@ -18,7 +18,7 @@ const UNREAD_COUNT_CAP = 40;
  * action.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Document title
+ * @return {?string}        Document title
  */
 export function getDocumentHeadTitle( state ) {
 	return state.documentHead.title;
@@ -28,7 +28,7 @@ export function getDocumentHeadTitle( state ) {
  * Returns a count reflecting unread items.
  *
  * @param  {object}  state  Global state tree
- * @return {?String}        Unread count (string because it can be e.g. '40+')
+ * @return {?string}        Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadUnreadCount( state ) {
 	return state.documentHead.unreadCount;

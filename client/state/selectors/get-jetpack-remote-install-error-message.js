@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {string} url .org site URL
- * @return {?String} Error message, if any
+ * @return {?string} Error message, if any
  */
 export default function getJetpackRemoteInstallErrorMessage( state, url ) {
 	return get( state.jetpackRemoteInstall.errorMessage, url, null );

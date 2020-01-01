@@ -352,7 +352,7 @@ export function isWporgTheme( state, themeId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme details sheet URL
+ * @return {?string}         Theme details sheet URL
  */
 export function getThemeDetailsUrl( state, themeId, siteId ) {
 	if ( ! themeId ) {
@@ -384,7 +384,7 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme setup instructions URL
+ * @return {?string}         Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, themeId, siteId ) {
 	if ( ! themeId || ! isThemePremium( state, themeId ) ) {
@@ -406,7 +406,7 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme support page URL
+ * @return {?string}         Theme support page URL
  */
 export function getThemeHelpUrl( state, themeId, siteId ) {
 	if ( ! themeId ) {
@@ -427,7 +427,7 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {Number}  siteId  Site ID for which to buy the theme
- * @return {?String}         Theme purchase URL
+ * @return {?string}         Theme purchase URL
  */
 export function getThemePurchaseUrl( state, themeId, siteId ) {
 	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
@@ -442,7 +442,7 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
  * @param  {object}   state   Global state tree
  * @param  {string}   themeId Theme ID
  * @param  {?Number}  siteId  Site ID to open the customizer for
- * @return {?String}          Customizer URL
+ * @return {?string}          Customizer URL
  */
 export function getThemeCustomizeUrl( state, themeId, siteId ) {
 	const customizerUrl = getCustomizerUrl( state, siteId );
@@ -472,7 +472,7 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
- * @return {?String}         Signup URL
+ * @return {?string}         Signup URL
  */
 export function getThemeSignupUrl( state, themeId ) {
 	if ( ! themeId ) {
@@ -494,7 +494,7 @@ export function getThemeSignupUrl( state, themeId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {string}  siteId  Site ID
- * @return {?String}         Theme forum URL
+ * @return {?string}         Theme forum URL
  */
 export function getThemeDemoUrl( state, themeId, siteId ) {
 	const theme = getCanonicalTheme( state, siteId, themeId );
@@ -508,7 +508,7 @@ export function getThemeDemoUrl( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {string}  siteId  Site ID
- * @return {?String}         Theme forum URL
+ * @return {?string}         Theme forum URL
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isThemePremium( state, themeId ) ) {
@@ -536,7 +536,7 @@ export function getThemeForumUrl( state, themeId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @return {?String}         Theme ID
+ * @return {?string}         Theme ID
  */
 export function getActiveTheme( state, siteId ) {
 	const activeTheme = get( state.themes.activeThemes, siteId, null );
@@ -659,7 +659,7 @@ export function getThemePreviewThemeOptions( state ) {
  * Returns the ThemePreview state
  *
  * @param  {object}  state Global state tree
- * @return {?String}  ThemePreview state
+ * @return {?string}  ThemePreview state
  */
 export function themePreviewVisibility( state ) {
 	return get( state.themes, 'themePreviewVisibility', null );
@@ -714,7 +714,7 @@ export function shouldFilterWpcomThemes( state, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme to check whether it's premium.¡
  * @param  {Number}  siteId  Site ID for which to purchase the plan
- * @return {?String}         Plan purchase URL
+ * @return {?string}         Plan purchase URL
  */
 export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 	if (

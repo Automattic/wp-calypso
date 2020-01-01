@@ -115,7 +115,7 @@ export function normalizeWporgTheme( theme ) {
  * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
  *
  * @param  {string}  stylesheet Theme stylesheet
- * @return {?String}            Theme ID
+ * @return {?string}            Theme ID
  */
 export function getThemeIdFromStylesheet( stylesheet ) {
 	const [ , slug ] = split( stylesheet, '/', 2 );

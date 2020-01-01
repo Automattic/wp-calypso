@@ -11,7 +11,7 @@ import isSiteConflicting from './is-site-conflicting';
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?String}        Site Url
+ * @return {?string}        Site Url
  */
 export default function getSiteUrl( state, siteId ) {
 	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {

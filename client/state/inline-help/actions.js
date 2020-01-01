@@ -24,7 +24,7 @@ import {
 /**
  * Triggers a network request to fetch search results for a query string.
  *
- * @param  {?String}  searchQuery Search query
+ * @param  {?string}  searchQuery Search query
  * @return {Function}        Action thunk
  */
 export function requestInlineHelpSearchResults( searchQuery ) {

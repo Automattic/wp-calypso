@@ -43,7 +43,7 @@ export const wasImmediateLoginSuccessfulAccordingToClient = state => {
  * immediate login request.
  *
  * @param  {object} state - Global state tree
- * @return {?String} - Reason for immediate login, or null
+ * @return {?string} - Reason for immediate login, or null
  */
 export const getImmediateLoginReason = state => {
 	return get( state, 'immediateLogin.reason', null );
@@ -54,7 +54,7 @@ export const getImmediateLoginReason = state => {
  * to query parameters provided in the client request.
  *
  * @param  {object} state - Global state tree
- * @return {?String} - Email address used for the immediate login attempt, or
+ * @return {?string} - Email address used for the immediate login attempt, or
  *                     null
  */
 export const getImmediateLoginEmail = state => {
@@ -66,7 +66,7 @@ export const getImmediateLoginEmail = state => {
  * to query parameters provided in the client request.
  *
  * @param  {object} state - Global state tree
- * @return {?String} - Two-letter code for the preferred language of the user
+ * @return {?string} - Two-letter code for the preferred language of the user
  *                     attempting to log in, or null
  */
 export const getImmediateLoginLocale = state => {

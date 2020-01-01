@@ -11,7 +11,7 @@ import getSiteDomain from './get-site-domain';
  *
  * @param  {object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?String}        Site title
+ * @return {?string}        Site title
  */
 export default function getSiteTitle( state, siteId ) {
 	const site = getRawSite( state, siteId );

@@ -192,7 +192,7 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
  *
  * @param  {object}  state   Global State tree
  * @param  {Number}  siteId  Site ID
- * @return {?String}          The site's current plan's product slug
+ * @return {?string}          The site's current plan's product slug
  */
 export function getSitePlanSlug( state, siteId ) {
 	return get( getCurrentPlan( state, siteId ), 'productSlug', null );

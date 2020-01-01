@@ -4,7 +4,7 @@
  *
  *
  * @param {object} queryObject   DomainsSuggestions query
- * @return {?String}              Serialized DomainsSuggestions query
+ * @return {?string}              Serialized DomainsSuggestions query
  */
 
 export function getSerializedDomainsSuggestionsQuery( queryObject ) {

@@ -77,7 +77,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * been received.
  *
  * @param  {object}  post       Post received
- * @param  {?String} saveMarker Save marker in the edits log
+ * @param  {?string} saveMarker Save marker in the edits log
  * @return {object}             Action object
  */
 export function receivePost( post, saveMarker ) {
@@ -89,7 +89,7 @@ export function receivePost( post, saveMarker ) {
  * been received.
  *
  * @param  {Array}   posts      Posts received
- * @param  {?String} saveMarker Save marker in the edits log
+ * @param  {?string} saveMarker Save marker in the edits log
  * @return {object}             Action object
  */
 export function receivePosts( posts, saveMarker ) {

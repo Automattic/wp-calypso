@@ -11,7 +11,7 @@ import getMediaItem from 'state/selectors/get-media-item';
  * @param  {object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @param  {Number}  mediaId Media ID
- * @return {?String}         Media URL, if known
+ * @return {?string}         Media URL, if known
  */
 export default function getMediaUrl( state, siteId, mediaId ) {
 	const media = getMediaItem( state, siteId, mediaId );

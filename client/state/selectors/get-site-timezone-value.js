@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state - Global state tree
  * @param  {Number}  siteId - Site ID
- * @return {?String} site setting timezone
+ * @return {?string} site setting timezone
  */
 export default function getSiteTimezoneValue( state, siteId ) {
 	const timezone = get( state.siteSettings.items, [ siteId, 'timezone_string' ], null );
