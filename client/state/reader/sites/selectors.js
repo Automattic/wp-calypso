@@ -10,7 +10,7 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The site ID
- * @return {Boolean}        Whether site should be fetched
+ * @return {boolean}        Whether site should be fetched
  */
 
 export function shouldSiteBeFetched( state, siteId ) {

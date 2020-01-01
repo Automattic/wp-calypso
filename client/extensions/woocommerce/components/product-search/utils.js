@@ -8,7 +8,7 @@ import { difference, filter, intersection, isArray, uniq } from 'lodash';
  *
  * @param {object} product A given product to search
  * @param {string} textString A string to search for
- * @return {Boolean} Whether the string was found in the product
+ * @return {boolean} Whether the string was found in the product
  */
 export function productContainsString( product, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
@@ -32,7 +32,7 @@ export function productContainsString( product, textString ) {
  *
  * @param {Array} value An array of existing values
  * @param {number} productId The product ID to search for
- * @return {Boolean} Whether the product ID exists in the list of values
+ * @return {boolean} Whether the product ID exists in the list of values
  */
 export function isProductSelected( value = [], productId ) {
 	if ( isArray( value ) && value.length ) {
@@ -46,7 +46,7 @@ export function isProductSelected( value = [], productId ) {
  *
  * @param {Array} value An array of existing values
  * @param {object} product The product to check
- * @return {Boolean} Whether any variations exist in the values list
+ * @return {boolean} Whether any variations exist in the values list
  */
 export function areVariationsSelected( value = [], product ) {
 	const variations = product.variations;
@@ -63,7 +63,7 @@ export function areVariationsSelected( value = [], product ) {
  * Check if a product is `variable` (has selectable variations)
  *
  * @param {object} product A product to check
- * @return {Boolean} Whether the product has variations
+ * @return {boolean} Whether the product has variations
  */
 export function isVariableProduct( product ) {
 	return 'variable' === product.type && ! product.isVariation;

@@ -209,7 +209,7 @@ function cardProcessorSupportsUpdates( purchase ) {
  *
  * @param {object} purchase - the purchase with which we are concerned
  *
- * @returns {Boolean} Whether in refund period.
+ * @returns {boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
 	if ( isRefundable( purchase ) ) {

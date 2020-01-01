@@ -53,9 +53,9 @@ const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => 
 /**
  * Tracks whether happychat.io is accepting new chats.
  *
- * @param  {Boolean} state  Current happychat status
+ * @param  {boolean} state  Current happychat status
  * @param  {object}  action Action playload
- * @return {Boolean}        Updated happychat status
+ * @return {boolean}        Updated happychat status
  */
 const isAvailable = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -69,9 +69,9 @@ const isAvailable = ( state = false, action ) => {
  * Tracks whether happychat.io is accepting fully localized chats.
  * Customers locale and HE locale should be an exact match ( doesn't default routing to english speaker HEs )
  *
- * @param  {Boolean} state  Current happychat status
+ * @param  {boolean} state  Current happychat status
  * @param  {object}  action Action playload
- * @return {Boolean}        Updated happychat status
+ * @return {boolean}        Updated happychat status
  */
 export const localizedSupport = ( state = false, action ) => {
 	switch ( action.type ) {

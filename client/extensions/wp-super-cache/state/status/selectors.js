@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether status are being requested
+ * @return {boolean} Whether status are being requested
  */
 export function isRequestingStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'status', 'requesting', siteId ], false );

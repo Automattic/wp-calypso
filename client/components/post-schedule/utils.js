@@ -15,7 +15,7 @@ import moment from 'moment-timezone';
  * @see https://wikipedia.org/wiki/12-hour_clock
  *
  * @param  {string}  timeFormat Time format.
- * @return {Boolean}            Whether it's a 12-hour time format.
+ * @return {boolean}            Whether it's a 12-hour time format.
  */
 export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
@@ -24,7 +24,7 @@ export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat 
  * Basically it should be a number.
  *
  * @param  {*}  gmtOffset - gmt offset
- * @return {Boolean} is it a valid gtm offset?
+ * @return {boolean} is it a valid gtm offset?
  */
 export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
 

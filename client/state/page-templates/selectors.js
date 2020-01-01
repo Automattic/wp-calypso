@@ -4,7 +4,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {Boolean}        Whether a request is in progress
+ * @return {boolean}        Whether a request is in progress
  */
 
 export function isRequestingPageTemplates( state, siteId ) {

@@ -55,7 +55,7 @@ export const cancelEditLocations = siteId => {
  * Selects or un-selects a continent.
  * @param {number} siteId Site ID.
  * @param {string} continentCode 2-letter continent code, such as EU (Europe) or NA (North America).
- * @param {Boolean} selected Whether the action was to select the continent (true), or to un-select it (false).
+ * @param {boolean} selected Whether the action was to select the continent (true), or to un-select it (false).
  * @return {object} Action object.
  */
 export const toggleContinentSelected = ( siteId, continentCode, selected ) => {
@@ -71,7 +71,7 @@ export const toggleContinentSelected = ( siteId, continentCode, selected ) => {
  * Selects or un-selects a country.
  * @param {number} siteId Site ID.
  * @param {string} countryCode 2-letter ISO country code.
- * @param {Boolean} selected Whether the action was to select the country (true), or to un-select it (false).
+ * @param {boolean} selected Whether the action was to select the country (true), or to un-select it (false).
  * @return {object} Action object.
  */
 export const toggleCountrySelected = ( siteId, countryCode, selected ) => {
@@ -87,7 +87,7 @@ export const toggleCountrySelected = ( siteId, countryCode, selected ) => {
  * Selects or un-selects a state.
  * @param {number} siteId Site ID.
  * @param {string} stateCode 2-letter state code, such as CA (California).
- * @param {Boolean} selected Whether the action was to select the state (true), or to un-select it (false).
+ * @param {boolean} selected Whether the action was to select the state (true), or to un-select it (false).
  * @return {object} Action object.
  */
 export const toggleStateSelected = ( siteId, stateCode, selected ) => {

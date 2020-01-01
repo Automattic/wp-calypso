@@ -9,7 +9,7 @@ import { get, filter, find } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether site keyrings is being requested
+ * @return {boolean}        Whether site keyrings is being requested
  */
 export function isRequestingSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.requesting, [ siteId ], false );
@@ -20,7 +20,7 @@ export function isRequestingSiteKeyrings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether site keyrings is being requested
+ * @return {boolean}        Whether site keyrings is being requested
  */
 export function isSavingSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.saveRequests, [ siteId, 'saving' ], false );

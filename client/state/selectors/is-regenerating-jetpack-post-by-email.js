@@ -14,7 +14,7 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
  *
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
- * @return {Boolean}             Whether Post by Email address is currently being updated
+ * @return {boolean}             Whether Post by Email address is currently being updated
  */
 export default function isRegeneratingJetpackPostByEmail( state, siteId ) {
 	return get(

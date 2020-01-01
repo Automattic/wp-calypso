@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param {object} state the global state tree
  * @param {number} siteId the questioned site ID.
- * @return {Boolean} Whether the site is a WPCOM Atomic site.
+ * @return {boolean} Whether the site is a WPCOM Atomic site.
  */
 export default ( state, siteId ) =>
 	get( state, [ 'sites', 'items', siteId, 'options', 'is_wpcom_atomic' ], false );

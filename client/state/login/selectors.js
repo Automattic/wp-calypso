@@ -50,7 +50,7 @@ export const getTwoFactorPushToken = state =>
  * Retrieve the progress status of polling for push authentication
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Whether the polling for push authentication is in progress
+ * @return {boolean}         Whether the polling for push authentication is in progress
  */
 export const getTwoFactorPushPollInProgress = state =>
 	get( state, 'login.twoFactorAuthPushPoll.inProgress', false );
@@ -59,7 +59,7 @@ export const getTwoFactorPushPollInProgress = state =>
  * Get whether user logged in successfully via push auth
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Whether the polling for push authentication completed successfully
+ * @return {boolean}         Whether the polling for push authentication completed successfully
  */
 export const getTwoFactorPushPollSuccess = state =>
 	get( state, 'login.twoFactorAuthPushPoll.success', false );
@@ -68,7 +68,7 @@ export const getTwoFactorPushPollSuccess = state =>
  * Determines whether two factor authentication is enabled for the logging in user.
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}        Whether 2FA is enabled
+ * @return {boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = state => {
 	const twoFactorAuth = get( state, 'login.twoFactorAuth' );
@@ -80,7 +80,7 @@ export const isTwoFactorEnabled = state => {
  * Determines whether a request to authenticate 2FA is being made.
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Whether a request to authenticate 2FA is being made.
+ * @return {boolean}         Whether a request to authenticate 2FA is being made.
  */
 export const isRequestingTwoFactorAuth = state => {
 	return get( state, 'login.isRequestingTwoFactorAuth', false );
@@ -124,7 +124,7 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
  * Determines whether a login request is in-progress.
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Whether a login request is in-progress.
+ * @return {boolean}         Whether a login request is in-progress.
  */
 export const isRequesting = state => {
 	return get( state, 'login.isRequesting', false );
@@ -177,7 +177,7 @@ export const getRedirectToSanitized = state => {
  * Retrieves whether the login form should be disabled due to actions.
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Login form disabled flag
+ * @return {boolean}         Login form disabled flag
  */
 export const isFormDisabled = state => {
 	return get( state, 'login.isFormDisabled', false );

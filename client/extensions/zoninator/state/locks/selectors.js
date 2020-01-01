@@ -12,7 +12,7 @@ const getLocksState = state => get( state, 'extensions.zoninator.locks', {} );
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  zoneId Zone ID
- * @return {Boolean}        Blocked status
+ * @return {boolean}        Blocked status
  */
 export const blocked = ( state, siteId, zoneId ) =>
 	get( getLocksState( state ), [ siteId, zoneId, 'blocked' ], false );

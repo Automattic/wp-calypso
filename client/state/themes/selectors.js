@@ -157,7 +157,7 @@ export function getLastThemeQuery( state, siteId ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {object}  query  Theme query object
- * @return {Boolean}        Whether themes are being requested
+ * @return {boolean}        Whether themes are being requested
  */
 export function isRequestingThemesForQuery( state, siteId, query ) {
 	const serializedQuery = getSerializedThemesQuery( query, siteId );
@@ -273,7 +273,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {object}  query  Theme query object
- * @return {Boolean}        Whether themes are being requested
+ * @return {boolean}        Whether themes are being requested
  */
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
@@ -302,7 +302,7 @@ export const isRequestingThemesForQueryIgnoringPage = createSelector(
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  themeId Theme ID
- * @return {Boolean}        Whether request is in progress
+ * @return {boolean}        Whether request is in progress
  */
 export function isRequestingTheme( state, siteId, themeId ) {
 	if ( ! state.themes.themeRequests[ siteId ] ) {
@@ -318,7 +318,7 @@ export function isRequestingTheme( state, siteId, themeId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether request is in progress
+ * @return {boolean}        Whether request is in progress
  */
 export function isRequestingActiveTheme( state, siteId ) {
 	return get( state.themes.activeThemeRequests, siteId, false );
@@ -329,7 +329,7 @@ export function isRequestingActiveTheme( state, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  themeId Theme ID
- * @return {Boolean}         Whether theme is in WP.com theme directory
+ * @return {boolean}         Whether theme is in WP.com theme directory
  */
 export function isWpcomTheme( state, themeId ) {
 	return !! getTheme( state, 'wpcom', themeId );
@@ -340,7 +340,7 @@ export function isWpcomTheme( state, themeId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  themeId Theme ID
- * @return {Boolean}         Whether theme is in WP.org theme directory
+ * @return {boolean}         Whether theme is in WP.org theme directory
  */
 export function isWporgTheme( state, themeId ) {
 	return !! getTheme( state, 'wporg', themeId );
@@ -552,7 +552,7 @@ export function getActiveTheme( state, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if the theme is active on the site
+ * @return {boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
 	return getActiveTheme( state, siteId ) === themeId;
@@ -563,7 +563,7 @@ export function isThemeActive( state, themeId, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if theme activation is ongoing
+ * @return {boolean}         True if theme activation is ongoing
  */
 export function isActivatingTheme( state, siteId ) {
 	return get( state.themes.activationRequests, siteId, false );
@@ -574,7 +574,7 @@ export function isActivatingTheme( state, siteId ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if the theme activation has finished
+ * @return {boolean}         True if the theme activation has finished
  */
 export function hasActivatedTheme( state, siteId ) {
 	return get( state.themes.completedActivationRequests, siteId, false );
@@ -586,7 +586,7 @@ export function hasActivatedTheme( state, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check installing state
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if theme installation is ongoing
+ * @return {boolean}         True if theme installation is ongoing
  */
 export function isInstallingTheme( state, themeId, siteId ) {
 	const suffixedThemeId = getSuffixedThemeId( state, themeId, siteId );
@@ -598,7 +598,7 @@ export function isInstallingTheme( state, themeId, siteId ) {
  *
  * @param  {object} state   Global state tree
  * @param  {object} themeId Theme ID
- * @return {Boolean}        True if the theme is premium
+ * @return {boolean}        True if the theme is premium
  */
 export function isThemePremium( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
@@ -611,7 +611,7 @@ export function isThemePremium( state, themeId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check availability
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if the premium theme is available for the given site
+ * @return {boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return (
@@ -626,7 +626,7 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check availability
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
+ * @return {boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
  */
 export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
 	return (
@@ -644,7 +644,7 @@ export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         True if the theme has been purchased for the site
+ * @return {boolean}         True if the theme has been purchased for the site
  */
 export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
@@ -761,7 +761,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
  * @param {object} state   Global state tree
  * @param {string} themeId An identifier for the theme - like
  *                         `independent-publisher-2` or `maywood`.
- * @return {Boolean} True if the theme should be edited with gutenberg.
+ * @return {boolean} True if the theme should be edited with gutenberg.
  */
 export function isThemeGutenbergFirst( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );

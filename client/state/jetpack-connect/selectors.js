@@ -69,7 +69,7 @@ export const getUserAlreadyConnected = state => {
  * authorization code, and if the error message contains the string 'error'.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       True if there's an xmlrpc error otherwise false
+ * @return {boolean}       True if there's an xmlrpc error otherwise false
  */
 export const hasXmlrpcError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
@@ -84,7 +84,7 @@ export const hasXmlrpcError = function( state ) {
  * Returns true if there is an expired secret error.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       True if there's an xmlrpc error otherwise false
+ * @return {boolean}       True if there's an xmlrpc error otherwise false
  */
 export const hasExpiredSecretError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
@@ -99,7 +99,7 @@ export const hasExpiredSecretError = function( state ) {
  * Returns true if the authorization error indicates that site has been blacklisted.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       True if there's a blacklisted site error, false otherwise
+ * @return {boolean}       True if there's a blacklisted site error, false otherwise
  */
 export const isSiteBlacklistedError = function( state ) {
 	const authorizeData = getAuthorizationData( state );

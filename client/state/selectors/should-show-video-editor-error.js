@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state Global state tree
- * @return {Boolean} true if an error should be shown.
+ * @return {boolean} true if an error should be shown.
  */
 
 export default function shouldShowVideoEditorError( state ) {

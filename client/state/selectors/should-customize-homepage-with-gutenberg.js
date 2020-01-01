@@ -11,7 +11,7 @@ import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
  *
  * @param {object} state  The global state object.
  * @param {string} siteId The ID of the selected site.
- * @return {Boolean} True if Gutenberg should be opened.
+ * @return {boolean} True if Gutenberg should be opened.
  */
 export default function shouldCustomizeHomepageWithGutenberg( state, siteId ) {
 	const theme = getActiveTheme( state, siteId );

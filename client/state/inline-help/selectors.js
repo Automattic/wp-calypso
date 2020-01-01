@@ -37,7 +37,7 @@ export function getSelectedResultIndex( state ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  searchQuery Search query
- * @return {Boolean}        Whether search results are being requested
+ * @return {boolean}        Whether search results are being requested
  */
 export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery ) {
 	const allRequesting = get( state, 'inlineHelp.searchResults.requesting' );
@@ -97,7 +97,7 @@ export function getInlineHelpCurrentlySelectedLink( state ) {
  * Returns a bool indicating if the contact form UI is showing the Q&A suggestions.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Is the contact form UI showing the questions
+ * @return {boolean}        Is the contact form UI showing the questions
  */
 export function isShowingQandAInlineHelpContactForm( state ) {
 	return get( state, 'inlineHelp.contactForm.isShowingQandASuggestions', false );
@@ -107,7 +107,7 @@ export function isShowingQandAInlineHelpContactForm( state ) {
  * Returns a bool indicating if the inline help popover is currently showing.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Is the inline help popover is showing.
+ * @return {boolean}        Is the inline help popover is showing.
  */
 export function isInlineHelpPopoverVisible( state ) {
 	return get( state, 'inlineHelp.popover.isVisible', false );
@@ -117,7 +117,7 @@ export function isInlineHelpPopoverVisible( state ) {
  * Returns a bool indicating if the inline help popover is currently showing the checklist prompt.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Is the inline help popover showing the checklist prompt.
+ * @return {boolean}        Is the inline help popover showing the checklist prompt.
  */
 export function isInlineHelpChecklistPromptVisible( state ) {
 	return get( state, 'inlineHelp.checklistPrompt.isVisible', false );
@@ -127,7 +127,7 @@ export function isInlineHelpChecklistPromptVisible( state ) {
  * Returns a bool indicating if the inline help popover is currently showing the onboarding welcome message.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Is the inline help popover showing the onboarding welcome prompt.
+ * @return {boolean}        Is the inline help popover showing the onboarding welcome prompt.
  */
 export function isOnboardingWelcomePromptVisible( state ) {
 	return get( state, 'inlineHelp.onboardingWelcomePrompt.isVisible', false );

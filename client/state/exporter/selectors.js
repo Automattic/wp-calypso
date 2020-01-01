@@ -30,7 +30,7 @@ export function shouldShowProgress( state, siteId ) {
  * Indicates whether the export is in progress on the server
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The site ID for which to check export progress
- * @return {Boolean}        true if an export is in progress
+ * @return {boolean}        true if an export is in progress
  */
 export function isExporting( state, siteId ) {
 	const exportingState = getExportingState( state, siteId );

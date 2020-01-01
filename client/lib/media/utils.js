@@ -236,7 +236,7 @@ export function sortItemsByDate( items ) {
  * option, so we must assume that all file types are supported.
  *
  * @param  {object}  site Site object
- * @return {Boolean}      Site allowed file types are accurate
+ * @return {boolean}      Site allowed file types are accurate
  */
 export function isSiteAllowedFileTypesToBeTrusted( site ) {
 	return ! site || ! site.jetpack;
@@ -262,7 +262,7 @@ export function getAllowedFileTypesForSite( site ) {
  *
  * @param  {object}  item Media object
  * @param  {object}  site Site object
- * @return {Boolean}      Whether the Premium plan supports the item
+ * @return {boolean}      Whether the Premium plan supports the item
  */
 export function isSupportedFileTypeInPremium( item, site ) {
 	if ( ! site || ! item ) {
@@ -285,7 +285,7 @@ export function isSupportedFileTypeInPremium( item, site ) {
  *
  * @param  {object}  item Media object
  * @param  {object}  site Site object
- * @return {Boolean}      Whether the site supports the item
+ * @return {boolean}      Whether the site supports the item
  */
 export function isSupportedFileTypeForSite( item, site ) {
 	if ( ! site || ! item ) {
@@ -338,7 +338,7 @@ export function isExceedingSiteMaxUploadSize( item, site ) {
  * Returns true if the provided media object is a VideoPress video item.
  *
  * @param  {object}  item Media object
- * @return {Boolean}      Whether the media is a VideoPress video item
+ * @return {boolean}      Whether the media is a VideoPress video item
  */
 export function isVideoPressItem( item ) {
 	if ( ! item || ! item.videopress_guid ) {
@@ -468,7 +468,7 @@ export function generateGalleryShortcode( settings ) {
  * @param  {object}  item Media item
  * @param  {object}  user User object
  * @param  {object}  site Site object
- * @return {Boolean}      Whether user can delete item
+ * @return {boolean}      Whether user can delete item
  */
 export function canUserDeleteItem( item, user, site ) {
 	if ( user.ID === item.author_ID ) {
@@ -515,7 +515,7 @@ export function canvasToBlob( canvas, callback, type, quality ) {
  * Returns true if specified item is currently being uploaded (i.e. is transient).
  *
  * @param  {object}  item Media item
- * @return {Boolean}      Whether item is being uploaded
+ * @return {boolean}      Whether item is being uploaded
  */
 export function isItemBeingUploaded( item ) {
 	if ( ! item ) {

@@ -72,7 +72,7 @@ export const requestPlugins = siteId => {
  *
  * @param  {number}    siteId Site ID
  * @param  {string}    plugin Plugin to enable or disable
- * @param  {Boolean}   activationStatus True to enable, false to disable
+ * @param  {boolean}   activationStatus True to enable, false to disable
  * @returns {Function} Action thunk that toggles the plugin on a given site
  */
 export const togglePlugin = ( siteId, plugin, activationStatus ) => {

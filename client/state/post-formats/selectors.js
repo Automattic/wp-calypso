@@ -4,7 +4,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {Boolean}        Whether post formats are being requested
+ * @return {boolean}        Whether post formats are being requested
  */
 
 export function isRequestingPostFormats( state, siteId ) {

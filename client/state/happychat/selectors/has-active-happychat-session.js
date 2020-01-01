@@ -19,7 +19,7 @@ import createSelector from 'lib/create-selector';
  * the status `new`, `default`, or `closed` are considered inactive, as the session
  * is not connected to an operator.
  * @param {object} state - global redux state
- * @return {Boolean} Whether there's an active Happychat session happening
+ * @return {boolean} Whether there's an active Happychat session happening
  */
 export default createSelector(
 	state =>

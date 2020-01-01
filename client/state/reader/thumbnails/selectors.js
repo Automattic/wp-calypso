@@ -23,7 +23,7 @@ export function getThumbnailForIframe( state, iframeSrc ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  iframeSrc iframeSrc
- * @return {Boolean} Whether a request is in progress
+ * @return {boolean} Whether a request is in progress
  */
 export function isRequestingThumbnailUrl( state, iframeSrc ) {
 	return !! state.reader.thumbnails.requesting[ iframeSrc ];

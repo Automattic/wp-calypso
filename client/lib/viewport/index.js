@@ -105,7 +105,7 @@ function getMediaQueryList( breakpoint ) {
  * Returns whether the current window width matches a breakpoint.
  * @param {string} breakpoint The breakpoint to consider.
  *
- * @returns {Boolean} Whether the provided breakpoint is matched.
+ * @returns {boolean} Whether the provided breakpoint is matched.
  */
 export function isWithinBreakpoint( breakpoint ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
@@ -139,7 +139,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 /**
  * Returns whether the current window width matches the mobile breakpoint.
  *
- * @returns {Boolean} Whether the mobile breakpoint is matched.
+ * @returns {boolean} Whether the mobile breakpoint is matched.
  */
 export function isMobile() {
 	return isWithinBreakpoint( MOBILE_BREAKPOINT );
@@ -158,7 +158,7 @@ export function subscribeIsMobile( listener ) {
 /**
  * Returns whether the current window width matches the desktop breakpoint.
  *
- * @returns {Boolean} Whether the desktop breakpoint is matched.
+ * @returns {boolean} Whether the desktop breakpoint is matched.
  */
 export function isDesktop() {
 	return isWithinBreakpoint( DESKTOP_BREAKPOINT );

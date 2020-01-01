@@ -41,9 +41,9 @@ export const uploadProgress = ( state = null, { type, percentage } ) => {
 /**
  * Tracks whether or not an error should be shown.
  *
- * @param  {Boolean} state Whether or not an error was to be shown
+ * @param  {boolean} state Whether or not an error was to be shown
  * @param  {object} action Action object
- * @return {Boolean} Whether or not an error should now be shown
+ * @return {boolean} Whether or not an error should now be shown
  */
 export const showError = ( state, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 

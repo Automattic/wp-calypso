@@ -3,7 +3,7 @@
  *
  *
  * @param {object} state Global state tree
- * @return {Boolean} true is the user has settings object
+ * @return {boolean} true is the user has settings object
  */
 
 export default function hasUserSettings( state ) {

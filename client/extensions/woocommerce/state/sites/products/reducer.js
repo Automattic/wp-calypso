@@ -65,7 +65,7 @@ function updateCachedProduct( products, product ) {
  *
  * @param  {object}  state     The current state
  * @param  {object}  params    Params of the query to update
- * @param  {Boolean} newStatus The new value to save
+ * @param  {boolean} newStatus The new value to save
  * @return {object}            Updated isLoading state
  */
 function setLoading( state, params, newStatus ) {

@@ -13,7 +13,7 @@ import isVipSite from 'state/selectors/is-vip-site';
  * Indicates if the classic editor should be always loaded even if the selected editor for the given site is Gutenberg.
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {Boolean} Whether the classic editor is forced.
+ * @return {boolean} Whether the classic editor is forced.
  */
 export const isClassicEditorForced = ( state, siteId ) => {
 	const selectedEditor = get( state, [ 'selectedEditor', siteId ], null );

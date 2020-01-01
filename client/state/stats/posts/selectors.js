@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
  * @param  {object}  fields Stat fields
- * @return {Boolean}        Whether post stat is being requested
+ * @return {boolean}        Whether post stat is being requested
  */
 export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
 	return get( state.stats.posts.requesting, [ siteId, postId, fields.join() ], false );

@@ -23,7 +23,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * query pagination keys.
 	 *
 	 * @param  {object}  query Query object to check
-	 * @return {Boolean}       Whether query contains pagination key
+	 * @return {boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
 		if ( ! query ) {
@@ -67,7 +67,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * query.
 	 *
 	 * @param  {object}   query         Query object
-	 * @param  {Boolean}  includeFiller Whether page structure should be left
+	 * @param  {boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
 	 *                                  items yet to be received as `undefined`
 	 * @return {Object[]}               Items tracked, ignoring page
@@ -111,9 +111,9 @@ export default class PaginatedQueryManager extends QueryManager {
 	 *
 	 * @param  {(Array|Object)} items              Item(s) to be received
 	 * @param  {object}         options            Options for receive
-	 * @param  {Boolean}        options.patch      Apply changes as partial
+	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
-	 * @param  {Boolean}        options.mergeQuery Add to existing query set
+	 * @param  {boolean}        options.mergeQuery Add to existing query set
 	 * @param  {number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise

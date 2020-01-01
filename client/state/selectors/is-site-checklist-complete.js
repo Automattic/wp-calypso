@@ -35,7 +35,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		Any other case leads to a pending task.
 
 		@param   {object}  task The task that we'll check to see if it's completed.
-		@returns {Boolean}      Whether the task is considered to be completed or not.
+		@returns {boolean}      Whether the task is considered to be completed or not.
 	*/
 	const isTaskComplete = task => {
 		if ( task.isCompleted ) {

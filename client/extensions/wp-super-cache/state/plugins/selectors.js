@@ -13,7 +13,7 @@ function getPluginsState( state ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether plugins are being requested
+ * @return {boolean} Whether plugins are being requested
  */
 export function isRequestingPlugins( state, siteId ) {
 	return get( getPluginsState( state ), [ 'requesting', siteId ], false );
@@ -25,7 +25,7 @@ export function isRequestingPlugins( state, siteId ) {
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  plugin WPSC Plugin ID
- * @return {Boolean} Whether plugin is being enabled/disabled
+ * @return {boolean} Whether plugin is being enabled/disabled
  */
 export function isTogglingPlugin( state, siteId, plugin ) {
 	return get( getPluginsState( state ), [ 'toggling', siteId, plugin ], false );

@@ -35,7 +35,7 @@ const isAllHeadersValid = headers =>
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
  * {Object|String} body data send as body
- * {Boolean} withCredentials allows the remote server to view & set cookies (for its domain)
+ * {boolean} withCredentials allows the remote server to view & set cookies (for its domain)
  * {Action} onSuccess action to dispatch on success with data meta
  * {Action} onFailure action to dispatch on failure with error meta
  *

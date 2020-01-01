@@ -16,7 +16,7 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {Boolean}        Updated state
+ * @return {boolean}        Updated state
  */
 export const requesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -37,7 +37,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {Boolean}        Updated state
+ * @return {boolean}        Updated state
  */
 export const error = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {

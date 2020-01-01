@@ -21,7 +21,7 @@ import { canBeTranslated } from 'lib/i18n-utils';
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
  * @param {string} locale user's localeSlug
  * @param {object} localeVariant user's localeVariant slug (if any)
- * @returns {Boolean} whether the CT can be displayed
+ * @returns {boolean} whether the CT can be displayed
  */
 export function canDisplayCommunityTranslator(
 	locale = userSettings.getSetting( 'language' ),

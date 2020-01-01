@@ -5,7 +5,7 @@
  *
  * @see lib/directly for more about Directly
  * @param {object}  state  Global state tree
- * @return {Boolean}        Whether the widget is waiting to be initialized
+ * @return {boolean}        Whether the widget is waiting to be initialized
  */
 
 /**

@@ -58,7 +58,7 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	 *
 	 * @param {number} outerStart start of possibly-outer range
 	 * @param {number} outerEnd end of possibly-outer range
-	 * @returns {Boolean} whether the "outer" range encloses the "inner" range
+	 * @returns {boolean} whether the "outer" range encloses the "inner" range
 	 */
 	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
 		innerStart !== 0 && innerEnd !== 0 && outerStart <= innerStart && outerEnd >= innerEnd;

@@ -74,7 +74,7 @@ export function getUserConnections( state, userId ) {
  * or false otherwise.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       Whether a request is in progress
+ * @return {boolean}       Whether a request is in progress
  */
 export function isKeyringConnectionsFetching( state ) {
 	return state.sharing.keyring.isFetching;

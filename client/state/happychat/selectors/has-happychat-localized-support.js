@@ -11,7 +11,7 @@ import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-c
 /**
  * Returns true if Happychat client is connected and server is available to take new localized chats
  * @param {object} state - global redux state
- * @return {Boolean} Whether new localized chats can be taken by matching operators
+ * @return {boolean} Whether new localized chats can be taken by matching operators
  */
 export default function( state ) {
 	return (

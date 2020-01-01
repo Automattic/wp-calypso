@@ -10,7 +10,7 @@ import { isFreePlan } from 'lib/plans';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {Boolean} Whether site is on a paid plan
+ * @return {boolean} Whether site is on a paid plan
  */
 const isSiteOnPaidPlan = ( state, siteId ) => {
 	const currentPlan = getCurrentPlan( state, siteId );

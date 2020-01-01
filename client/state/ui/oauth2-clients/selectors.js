@@ -39,6 +39,6 @@ export const getCurrentOAuth2Client = state => {
  * Determines if the OAuth2 layout should be used.
  *
  * @param  {object}   state  Global state tree
- * @return {Boolean}         Whether the OAuth2 layout should be used.
+ * @return {boolean}         Whether the OAuth2 layout should be used.
  */
 export const showOAuth2Layout = state => !! getCurrentOAuth2ClientId( state );

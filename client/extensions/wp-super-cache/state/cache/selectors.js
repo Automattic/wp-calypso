@@ -13,7 +13,7 @@ function getCacheState( state ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether the cache is being deleted
+ * @return {boolean} Whether the cache is being deleted
  */
 export function isDeletingCache( state, siteId ) {
 	return get(
@@ -28,7 +28,7 @@ export function isDeletingCache( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether the cache delete request was successful
+ * @return {boolean} Whether the cache delete request was successful
  */
 export function isCacheDeleteSuccessful( state, siteId ) {
 	return getCacheDeleteStatus( state, siteId ) === 'success';
@@ -50,7 +50,7 @@ export function getCacheDeleteStatus( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether the cache is being tested
+ * @return {boolean} Whether the cache is being tested
  */
 export function isTestingCache( state, siteId ) {
 	return get( getCacheState( state ), [ 'testing', siteId ], false );
@@ -72,7 +72,7 @@ export function getCacheTestResults( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether the cache is being preloaded
+ * @return {boolean} Whether the cache is being preloaded
  */
 export function isPreloadingCache( state, siteId ) {
 	return get( getCacheState( state ), [ 'preloading', siteId ], false );

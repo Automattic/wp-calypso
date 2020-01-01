@@ -34,7 +34,7 @@ const getLastDismissTime = ( state, location ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  location The location of the banner
- * @return {Boolean} True if the banner has been dismissed
+ * @return {boolean} True if the banner has been dismissed
  */
 export default function isUpworkBannerDismissed( state, location ) {
 	const lastDismissTime = getLastDismissTime( state, location );

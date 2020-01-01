@@ -178,7 +178,7 @@ const EXCHANGE_RATES = {
  * Returns whether a currency is supported
  *
  * @param {string} currency - `USD`, `JPY`, etc
- * @returns {Boolean} Whether there's an exchange rate for the currency
+ * @returns {boolean} Whether there's an exchange rate for the currency
  */
 function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;

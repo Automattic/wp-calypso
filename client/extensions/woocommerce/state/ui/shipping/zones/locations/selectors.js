@@ -173,7 +173,7 @@ export const getShippingZoneLocations = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @param {Boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
+ * @param {boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
  * or just use the committed edits.
  * @return {object} The list of locations for the shipping zone, including any edits made, in the form
  * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
@@ -318,7 +318,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Edit Locations" modal is opened or not.
+ * @return {boolean} Whether the "Edit Locations" modal is opened or not.
  */
 export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if (
@@ -335,7 +335,7 @@ export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
+ * @return {boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
  * is only one country selected (and no continents).
  */
 export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -367,7 +367,7 @@ export const getCurrentSelectedCountryZoneOwner = (
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
+ * @return {boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
  * is only one country selected and it has a list of available states.
  */
 export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -382,7 +382,7 @@ export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Filter by postcode range" option is selected.
+ * @return {boolean} Whether the "Filter by postcode range" option is selected.
  */
 export const areLocationsFilteredByPostcode = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -424,7 +424,7 @@ export const areLocationsFilteredByPostcode = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Filter by state" option is selected.
+ * @return {boolean} Whether the "Filter by state" option is selected.
  */
 export const areLocationsFilteredByState = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -470,7 +470,7 @@ export const areLocationsFilteredByState = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Ship to the whole country" option is selected.
+ * @return {boolean} Whether the "Ship to the whole country" option is selected.
  */
 export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return (
@@ -732,7 +732,7 @@ export const getCurrentlyEditingShippingZoneStates = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
+ * @return {boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
  * temporary edits, as it's designed to be used for enabling / disabling the "Save Changes" button.
  */
 export const areCurrentlyEditingShippingZoneLocationsValid = (

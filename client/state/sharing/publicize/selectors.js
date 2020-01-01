@@ -129,7 +129,7 @@ export function isFetchingConnections( state, siteId ) {
  *
  * @param  {object}  state        Global state tree
  * @param  {number}  connectionId Connection ID
- * @return {Boolean}              Whether the connection is being fetched.
+ * @return {boolean}              Whether the connection is being fetched.
  */
 export function isFetchingConnection( state, connectionId ) {
 	return state.sharing.publicize.fetchingConnection[ connectionId ] || false;

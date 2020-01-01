@@ -24,7 +24,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  media Item to consider
-	 * @return {Boolean}       Whether media item matches query
+	 * @return {boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
 		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {

@@ -20,7 +20,7 @@ export { CURRENCIES } from './currencies';
  * @param   {string}     options.grouping    thousands separator
  * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
- * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
+ * @param   {boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?string}                        A formatted string.
  */
 export default function formatCurrency( number, code, options = {} ) {

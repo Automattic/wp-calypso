@@ -21,7 +21,7 @@ export default class MediaQueryKey extends PaginatedQueryKey {
 	 * Controls omission to remove all null values from stringified or parsed
 	 * query objects
 	 *
-	 * @type {Boolean}
+	 * @type {boolean}
 	 */
 	static OMIT_NULL_VALUES = true;
 }

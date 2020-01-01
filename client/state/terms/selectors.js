@@ -18,7 +18,7 @@ import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './u
  * @param  {number}  siteId Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query  Taxonomy query object
- * @return {Boolean}        Whether terms are being requested
+ * @return {boolean}        Whether terms are being requested
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query );
@@ -33,7 +33,7 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {Boolean}           Terms for the query
+ * @return {boolean}           Terms for the query
  */
 export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
 	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );

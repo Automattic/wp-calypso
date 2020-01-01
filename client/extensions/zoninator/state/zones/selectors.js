@@ -11,7 +11,7 @@ const getZonesState = state => state.extensions.zoninator.zones;
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {Boolean}       Whether zones are being requested
+ * @return {boolean}       Whether zones are being requested
  */
 export const isRequestingZones = ( state, siteId ) =>
 	get( getZonesState( state ), [ 'requesting', siteId ], false );

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Returns true if we're currently uploading a Gravatar
  * @param {object} state - The state
- * @returns {Boolean} - If uploading a Gravatar
+ * @returns {boolean} - If uploading a Gravatar
  */
 export function isCurrentUserUploadingGravatar( state ) {
 	return get( state, 'currentUser.gravatarStatus.isUploading', false );

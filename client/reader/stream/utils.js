@@ -20,7 +20,7 @@ export const RECS_PER_BLOCK = 2;
  *
  * @param {object} postKey1 First post key
  * @param {object} postKey2 Second post key
- * @returns {Boolean} Returns true if two postKeys are for the same siteId or feedId
+ * @returns {boolean} Returns true if two postKeys are for the same siteId or feedId
  */
 export function sameSite( postKey1, postKey2 ) {
 	return (

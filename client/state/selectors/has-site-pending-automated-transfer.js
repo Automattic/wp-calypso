@@ -22,7 +22,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  *
  * @param   {object}  state  App state.
  * @param   {number}  siteId Site of interest.
- * @returns {Boolean}        Whether there might be a transfer process happening on the backend.
+ * @returns {boolean}        Whether there might be a transfer process happening on the backend.
  */
 export default ( state, siteId ) => {
 	const siteOptions = getSiteOptions( state, siteId );

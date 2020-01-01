@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
  * false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Whether lists are being requested
+ * @return {boolean}        Whether lists are being requested
  */
 export function isRequestingList( state ) {
 	return !! state.reader.lists.isRequestingList;
@@ -24,7 +24,7 @@ export function isRequestingList( state ) {
  * false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @return {Boolean}        Whether lists are being requested
+ * @return {boolean}        Whether lists are being requested
  */
 export function isRequestingSubscribedLists( state ) {
 	return !! state.reader.lists.isRequestingLists;
@@ -53,7 +53,7 @@ export const getSubscribedLists = createSelector(
  *
  * @param  {object}  state  Global state tree
  * @param  {Integer}  listId  List ID
- * @return {Boolean}        Whether lists are being requested
+ * @return {boolean}        Whether lists are being requested
  */
 export function isUpdatedList( state, listId ) {
 	if ( ! has( state, 'reader.lists.updatedLists' ) ) {
@@ -67,7 +67,7 @@ export function isUpdatedList( state, listId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Integer}  listId  List ID
- * @return {Boolean}        Whether list has an error
+ * @return {boolean}        Whether list has an error
  */
 export function hasError( state, listId ) {
 	if ( ! has( state, 'reader.lists.errors' ) ) {
@@ -104,7 +104,7 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @return {Boolean} Is the user subscribed?
+ * @return {boolean} Is the user subscribed?
  */
 export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 	const list = getListByOwnerAndSlug( state, owner, slug );
@@ -120,7 +120,7 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @return {Boolean} Is the list missing?
+ * @return {boolean} Is the list missing?
  */
 export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();

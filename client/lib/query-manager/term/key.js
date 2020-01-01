@@ -15,7 +15,7 @@ import { DEFAULT_TERM_QUERY } from './constants';
  *
  * @param  {*}       value Value to check
  * @param  {string}  key   Key to check
- * @return {Boolean}       Whether key value matches default query or is null
+ * @return {boolean}       Whether key value matches default query or is null
  */
 function isDefaultOrNullQueryValue( value, key ) {
 	return (

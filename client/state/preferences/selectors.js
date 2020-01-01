@@ -50,7 +50,7 @@ export const preferencesLastFetchedTimestamp = state => state.preferences.lastFe
  * false otherwise.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       Whether preferences have been received
+ * @return {boolean}       Whether preferences have been received
  */
 export function hasReceivedRemotePreferences( state ) {
 	return !! state.preferences.remoteValues;

@@ -11,7 +11,7 @@ const MINUTE_IN_MS = 60 * 1000;
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether site is newly created.
+ * @return {boolean}        Whether site is newly created.
  */
 export default function isNewSite( state, siteId ) {
 	const createdAt = getSiteOption( state, siteId, 'created_at' );

@@ -94,7 +94,7 @@ export function isSitePlanDiscounted( state, siteId, productSlug ) {
  * @param  {object}  state         global state
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
- * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @param  {boolean} isMonthly     if true, returns monthly price
  * @return {number}                plan discounted raw price
  */
 export function getPlanDiscountedRawPrice(
@@ -118,7 +118,7 @@ export function getPlanDiscountedRawPrice(
  * @param  {object}  state         global state
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
- * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @param  {boolean} isMonthly     if true, returns monthly price
  * @return {number}                plan raw price
  */
 export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = false } = {} ) {
@@ -140,7 +140,7 @@ export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = f
  * @param  {object}  state        global state
  * @param  {number}  siteId       the site id
  * @param  {string}  productSlug  the plan product slug
- * @param  {Boolean} isMonthly    if true, returns monthly price
+ * @param  {boolean} isMonthly    if true, returns monthly price
  * @return {number}               plan raw discount
  */
 export function getPlanRawDiscount( state, siteId, productSlug, { isMonthly = false } = {} ) {
@@ -179,7 +179,7 @@ export function isCurrentPlanExpiring( state, siteId ) {
  *
  * @param  {object}  state        global state
  * @param  {number}  siteId       the site id
- * @return {Boolean}			  True when user is a plan owner
+ * @return {boolean}			  True when user is a plan owner
  */
 export function isCurrentUserCurrentPlanOwner( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
@@ -207,7 +207,7 @@ export function getSitePlanSlug( state, siteId ) {
  * @param  {object}  state   Global State tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  feature The feature we're looking for
- * @return {Boolean}         True if the site's current plan includes the feature
+ * @return {boolean}         True if the site's current plan includes the feature
  */
 export function hasFeature( state, siteId, feature ) {
 	return planHasFeature( getSitePlanSlug( state, siteId ), feature );

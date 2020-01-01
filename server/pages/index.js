@@ -83,7 +83,7 @@ function getInitialServerState( serializedServerState ) {
  * @param {string} userAgentString The user agent string.
  * @param {string} environment The `browserslist` environment.
  *
- * @returns {Boolean} Whether the user agent is included in the browser list.
+ * @returns {boolean} Whether the user agent is included in the browser list.
  */
 function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 	return matchesUA( userAgentString, {

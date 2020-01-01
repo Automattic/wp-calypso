@@ -11,7 +11,7 @@ import { find } from 'lodash';
  * @param {object} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {string} pluginSlug - Plugin slug
- * @return {Boolean} - truthiness of a site having an active plugin
+ * @return {boolean} - truthiness of a site having an active plugin
  */
 export default function isPluginActive( state, siteId, pluginSlug ) {
 	const sitePlugins = state.plugins.installed.plugins[ siteId ];

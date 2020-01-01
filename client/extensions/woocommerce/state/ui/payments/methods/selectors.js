@@ -94,7 +94,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
  *
  * @param {object} state Global state tree
  * @param {number} siteId wpcom site id
- * @return {Boolean} Bool indicating if payments are setup
+ * @return {boolean} Bool indicating if payments are setup
  */
 export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function( method ) {
@@ -150,7 +150,7 @@ export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSit
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the user is currently editing a payment method.
+ * @return {boolean} Whether the user is currently editing a payment method.
  */
 export const isCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingPaymentMethod( state, siteId ) );

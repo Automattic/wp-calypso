@@ -12,7 +12,7 @@ import { postTypeSupports } from 'state/post-types/selectors';
  * @param {number} siteId 	Site ID
  * @param {string} postType Post type slug
  *
- * @return {Boolean} True when enabled
+ * @return {boolean} True when enabled
  */
 export default function isPublicizeEnabled( state, siteId, postType ) {
 	return (

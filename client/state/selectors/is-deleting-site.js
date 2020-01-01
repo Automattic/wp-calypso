@@ -4,7 +4,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {Boolean}        Whether deletion is in progress
+ * @return {boolean}        Whether deletion is in progress
  */
 
 export default function isDeletingSite( state, siteId ) {

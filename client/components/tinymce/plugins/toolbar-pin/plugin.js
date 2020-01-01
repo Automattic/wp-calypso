@@ -31,7 +31,7 @@ function toolbarPin( editor ) {
 	/**
 	 * Updates the pinned state, toggling the container class as appropriate.
 	 *
-	 * @param {Boolean} toBePinned Whether toolbar should be pinned
+	 * @param {boolean} toBePinned Whether toolbar should be pinned
 	 */
 	function togglePinned( toBePinned ) {
 		isPinned = toBePinned;

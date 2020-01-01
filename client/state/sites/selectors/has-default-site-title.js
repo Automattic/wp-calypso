@@ -15,7 +15,7 @@ import getSiteSlug from './get-site-slug';
  *
  * @param {object} state Global state tree
  * @param {object} siteId Site ID
- * @return {Boolean} True if site title is default, false otherwise.
+ * @return {boolean} True if site title is default, false otherwise.
  */
 export default function hasDefaultSiteTitle( state, siteId ) {
 	const site = getRawSite( state, siteId );

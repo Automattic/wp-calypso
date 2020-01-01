@@ -40,7 +40,7 @@ export function getLanguageGroupFromTerritoryId(
  *
  * @param {string} langSlug  language slug
  * @param {Array} languages collection of language data in config
- * @param {Boolean} openInPopular  if langSlug is popular return popular language group id
+ * @param {boolean} openInPopular  if langSlug is popular return popular language group id
  * @returns {string} language group id
  */
 export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular = false ) {

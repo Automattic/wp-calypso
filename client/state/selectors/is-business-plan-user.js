@@ -11,7 +11,7 @@ import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
  * Returns a boolean flag indicating if the current user is a business plan user.
  *
  * @param {object}   state Global state tree
- * @return {Boolean} If the current user is a business plan user.
+ * @return {boolean} If the current user is a business plan user.
  */
 export default state => {
 	const userId = getCurrentUserId( state );

@@ -24,7 +24,7 @@ export const getPlans = state => {
  * Return requesting state
  *
  * @param {object} state - current state object
- * @return {Boolean} is plans requesting?
+ * @return {boolean} is plans requesting?
  */
 export const isRequestingPlans = state => {
 	return state.plans.requesting;
@@ -56,7 +56,7 @@ export const getPlanBySlug = createSelector(
  * Returns a plan price
  * @param  {object}  state     global state
  * @param  {number}  productId the plan productId
- * @param  {Boolean} isMonthly if true, returns monthly price
+ * @param  {boolean} isMonthly if true, returns monthly price
  * @return {number}  plan price
  */
 export function getPlanRawPrice( state, productId, isMonthly = false ) {

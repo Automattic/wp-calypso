@@ -30,7 +30,7 @@ export function getEditorPostId( state ) {
  * Returns whether editing a new post in the post editor.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       Whether editing new post in editor
+ * @return {boolean}       Whether editing new post in editor
  */
 export function isEditorNewPost( state ) {
 	return ! getEditorPostId( state );
@@ -115,7 +115,7 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  *
  * @param  {object}  state     Global state tree
  * @param  {number}  siteId    Site ID
- * @return {Boolean}           Whether or not the sidebar is enabled
+ * @return {boolean}           Whether or not the sidebar is enabled
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;

@@ -60,8 +60,8 @@ export const generateStats = siteId => {
  *
  * @param  {number} siteId Site ID
  * @param  {string} url URL of cached file to delete
- * @param  {Boolean} isSupercache Whether this is a supercache file
- * @param  {Boolean} isCached Whether this is a cached file
+ * @param  {boolean} isSupercache Whether this is a supercache file
+ * @param  {boolean} isCached Whether this is a cached file
  * @returns {Function} Action thunk that deletes the cached file for a given site
  */
 export const deleteFile = ( siteId, url, isSupercache, isCached ) => {

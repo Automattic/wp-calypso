@@ -185,7 +185,7 @@ export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSit
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the user is currently editing a shipping zone.
+ * @return {boolean} Whether the user is currently editing a shipping zone.
  */
 export const isCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingShippingZone( state, siteId ) );
@@ -199,25 +199,25 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
 
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
+ * @return {boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
  * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
 const isEditableShippingZone = zoneId => ! isNumber( zoneId ) || 0 !== zoneId;
 
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether the name of this shipping zone can be changed by the user
+ * @return {boolean} Whether the name of this shipping zone can be changed by the user
  */
 export const canChangeShippingZoneTitle = isEditableShippingZone;
 
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether this shipping zone can be deleted
+ * @return {boolean} Whether this shipping zone can be deleted
  */
 export const canRemoveShippingZone = isEditableShippingZone;
 
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
- * @return {Boolean} Whether the locations this zone represents can be altered.
+ * @return {boolean} Whether the locations this zone represents can be altered.
  */
 export const canEditShippingZoneLocations = isEditableShippingZone;

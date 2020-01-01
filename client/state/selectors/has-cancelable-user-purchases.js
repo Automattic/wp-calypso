@@ -10,7 +10,7 @@ import { getUserPurchases } from 'state/purchases/selectors';
  *
  * @param  {object}  state       global state
  * @param  {number}  userId      the user id
- * @return {Boolean} if the user currently has any purchases that can be canceled.
+ * @return {boolean} if the user currently has any purchases that can be canceled.
  */
 export const hasCancelableUserPurchases = ( state, userId ) => {
 	if ( ! state.purchases.hasLoadedUserPurchasesFromServer ) {

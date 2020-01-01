@@ -74,7 +74,7 @@ export const getReviewReplyWithEdits = ( state, siteId = getSelectedSiteId( stat
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} True if there is a reply ID tracked as "editing"
+ * @return {boolean} True if there is a reply ID tracked as "editing"
  */
 export const isCurrentlyEditingReviewReply = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return !! getCurrentlyEditingReviewReplyId( state, siteId );

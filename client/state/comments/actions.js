@@ -48,7 +48,7 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {Array} comments the list of comments received
- * @param {Boolean} commentById were the comments retrieved by ID directly?
+ * @param {boolean} commentById were the comments retrieved by ID directly?
  * @returns {object} Action for receiving comments
  */
 export const receiveComments = ( { siteId, postId, comments, commentById = false } ) => ( {
@@ -150,7 +150,7 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
  * @param {number} postId post identifier
  * @param {Number|String} commentId comment or comment placeholder identifier
  * @param {object} options Action options
- * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
+ * @param {boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {object} action that deletes a comment
  */

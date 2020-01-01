@@ -27,7 +27,7 @@ import { getSiteTitle } from 'state/sites/selectors';
  *
  * @param  {number} siteId Site ID
  * @param  {string} siteTitle Site title
- * @param  {Boolean} httpOnly Whether to send a non-secure request for the homepage
+ * @param  {boolean} httpOnly Whether to send a non-secure request for the homepage
  * @returns {Function} Action thunk that tests the cache for a given site
  */
 export const testCache = ( siteId, siteTitle, httpOnly ) => {

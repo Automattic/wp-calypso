@@ -13,7 +13,7 @@ function getSettingsState( state ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether settings are being requested
+ * @return {boolean} Whether settings are being requested
  */
 export function isRequestingSettings( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'requesting', siteId ], false );
@@ -24,7 +24,7 @@ export function isRequestingSettings( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether settings are being restored
+ * @return {boolean} Whether settings are being restored
  */
 export function isRestoringSettings( state, siteId ) {
 	return get( getSettingsState( state ), [ 'restoring', siteId ], false );
@@ -35,7 +35,7 @@ export function isRestoringSettings( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether settings are being saved
+ * @return {boolean} Whether settings are being saved
  */
 export function isSavingSettings( state, siteId ) {
 	return get(
@@ -50,7 +50,7 @@ export function isSavingSettings( state, siteId ) {
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean} Whether settings were saved successfully
+ * @return {boolean} Whether settings were saved successfully
  */
 export function isSettingsSaveSuccessful( state, siteId ) {
 	return getSettingsSaveStatus( state, siteId ) === 'success';

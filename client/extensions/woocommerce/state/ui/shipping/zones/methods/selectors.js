@@ -274,7 +274,7 @@ export const getCurrentlyOpenShippingZoneMethod = (
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the opened method is new or not
+ * @return {boolean} Whether the opened method is new or not
  */
 export const isCurrentlyOpenShippingZoneMethodNew = (
 	state,

@@ -2,7 +2,7 @@
  * Returns a theme base CSS URI.
  *
  * @param  {string}  themeSlug A theme slug, e.g., `pub/business`
- * @param  {Boolean} isRtl     If the current locale is a right-to-left language
+ * @param  {boolean} isRtl     If the current locale is a right-to-left language
  * @return {string}            The theme CSS URI.
  */
 export const getThemeCssUri = ( themeSlug, isRtl ) =>

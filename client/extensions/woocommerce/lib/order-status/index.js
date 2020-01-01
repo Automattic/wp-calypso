@@ -84,7 +84,7 @@ export function getOrderStatusGroup( status ) {
  * Checks if this status (from an order) is in the "waiting for payment" group
  *
  * @param {string} status Order status
- * @return {Boolean} true if the status is awaiting payment
+ * @return {boolean} true if the status is awaiting payment
  */
 export function isOrderWaitingPayment( status ) {
 	return -1 !== statusWaitingPayment.indexOf( status );
@@ -94,7 +94,7 @@ export function isOrderWaitingPayment( status ) {
  * Checks if this status (from an order) is editable
  *
  * @param {string} status Order status
- * @return {Boolean} true if the status is editable
+ * @return {boolean} true if the status is editable
  */
 export function isOrderEditable( { id, status } ) {
 	return isObject( id ) || -1 !== statusEditable.indexOf( status );
@@ -104,7 +104,7 @@ export function isOrderEditable( { id, status } ) {
  * Checks if this status (from an order) is in the "waiting for fulfillment" group
  *
  * @param {string} status Order status
- * @return {Boolean} true if the status is awaiting fulfillment
+ * @return {boolean} true if the status is awaiting fulfillment
  */
 export function isOrderWaitingFulfillment( status ) {
 	return -1 !== statusWaitingFulfillment.indexOf( status );
@@ -114,7 +114,7 @@ export function isOrderWaitingFulfillment( status ) {
  * Checks if this status (from an order) is in the "finished" group
  *
  * @param {string} status Order status
- * @return {Boolean} true if the status is completed, cancelled, or otherwise has no further action
+ * @return {boolean} true if the status is completed, cancelled, or otherwise has no further action
  */
 export function isOrderFinished( status ) {
 	return -1 !== statusFinished.indexOf( status );
@@ -124,7 +124,7 @@ export function isOrderFinished( status ) {
  * Checks if this status (from an order) is in the "failed" group
  *
  * @param {string} status Order status
- * @return {Boolean} true if the status is cancelled or failed– not a successful order
+ * @return {boolean} true if the status is cancelled or failed– not a successful order
  */
 export function isOrderFailed( status ) {
 	return -1 !== statusFailed.indexOf( status );

@@ -10,7 +10,7 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  feedId The feed ID
- * @return {Boolean}        Whether feed should be fetched
+ * @return {boolean}        Whether feed should be fetched
  */
 
 export function shouldFeedBeFetched( state, feedId ) {

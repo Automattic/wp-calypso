@@ -34,7 +34,7 @@ const getLastDismissTime = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {Boolean} True if the nudge has been dismissed
+ * @return {boolean} True if the nudge has been dismissed
  */
 export default function isGSuiteStatsNudgeDismissed( state, siteId ) {
 	const lastDismissTime = getLastDismissTime( state, siteId );

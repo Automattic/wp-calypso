@@ -6,7 +6,7 @@ import { forEach, isEmpty, mapValues } from 'lodash';
 /**
  * Checks the address object for the required fields
  * @param {object} address the address object
- * @returns {Boolean} true if all required fields are not empty
+ * @returns {boolean} true if all required fields are not empty
  */
 const addressFilled = address =>
 	Boolean(

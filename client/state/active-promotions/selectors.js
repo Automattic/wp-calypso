@@ -23,7 +23,7 @@ export const hasActivePromotion = ( state, name ) => {
  * Return requesting state
  *
  * @param {object} state - current state object
- * @return {Boolean} is activePromotions requesting?
+ * @return {boolean} is activePromotions requesting?
  */
 export const isRequestingActivePromotions = state => {
 	return state.activePromotions.requesting;

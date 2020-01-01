@@ -55,7 +55,7 @@ function deleteUnsavedSetting( settings, settingName ) {
  *
  * @param  {string}  languageSettingValue the newly-set language slug string.
  * @param  {object}  settings user settings object.
- * @return {Boolean} if the language setting has been changed.
+ * @return {boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {
 	if ( ! languageSettingValue ) {
@@ -92,7 +92,7 @@ emitterClass( UserSettings.prototype );
 /**
  * Returns a boolean signifying whether there are settings or not
  *
- * @return {Boolean} true is the user has settings object
+ * @return {boolean} true is the user has settings object
  */
 UserSettings.prototype.hasSettings = function() {
 	return !! this.settings;
@@ -218,7 +218,7 @@ UserSettings.prototype.getOriginalSetting = function( settingName ) {
 /**
  * Is two-step enabled for the current user?
  *
- * @return {Boolean} return true if two-step is enabled
+ * @return {boolean} return true if two-step is enabled
  */
 UserSettings.prototype.isTwoStepEnabled = function() {
 	return this.settings ? this.settings.two_step_enabled : false;
@@ -227,7 +227,7 @@ UserSettings.prototype.isTwoStepEnabled = function() {
 /**
  * Is two-step sms enabled for the current user?
  *
- * @return {Boolean} return true if two-step sms is enabled
+ * @return {boolean} return true if two-step sms is enabled
  */
 UserSettings.prototype.isTwoStepSMSEnabled = function() {
 	return this.settings ? this.settings.two_step_sms_enabled : false;
@@ -236,7 +236,7 @@ UserSettings.prototype.isTwoStepSMSEnabled = function() {
 /**
  * Returns true if there is a pending email change, false if not.
  *
- * @return {Boolean} pending email state
+ * @return {boolean} pending email state
  */
 UserSettings.prototype.isPendingEmailChange = function() {
 	if ( this.settings ) {
@@ -271,7 +271,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
  *
  * @param {string} settingName - setting name
  * @param {*} value - setting value
- * @return {Boolean} updating successful response
+ * @return {boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
 	if ( has( this.settings, settingName ) ) {

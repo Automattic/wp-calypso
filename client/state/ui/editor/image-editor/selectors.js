@@ -25,7 +25,7 @@ export function getImageEditorFileInfo( state ) {
  * Returns true if there were any changes made to the editor
  *
  * @param  {object}  state Global state tree
- * @return {Boolean} true if editor has changes
+ * @return {boolean} true if editor has changes
  *
  */
 export function imageEditorHasChanges( state ) {
@@ -36,7 +36,7 @@ export function imageEditorHasChanges( state ) {
  * Returns true if image has been loaded.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean} true if image has been loaded
+ * @return {boolean} true if image has been loaded
  *
  */
 export function isImageEditorImageLoaded( state ) {

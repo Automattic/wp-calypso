@@ -9,7 +9,7 @@ import { getSiteOption } from 'state/sites/selectors';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {Boolean} true if the site's permalinks are editable
+ * @return {boolean} true if the site's permalinks are editable
  */
 export default function areSitePermalinksEditable( state, siteId ) {
 	const permalinkStructure = getSiteOption( state, siteId, 'permalink_structure' );

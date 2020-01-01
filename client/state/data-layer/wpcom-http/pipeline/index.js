@@ -22,7 +22,7 @@ import { retryOnFailure } from './retry-on-failure';
  * @property {*} nextHeaders transformed repsonse headers
  * @property {Object[]} failures list of `onFailure` actions to dispatch
  * @property {Object[]} successes list of `onSuccess` actions to dispatch
- * @property {Boolean} [shouldAbort] whether or not no further processing should occur for request
+ * @property {boolean} [shouldAbort] whether or not no further processing should occur for request
  */
 
 /**

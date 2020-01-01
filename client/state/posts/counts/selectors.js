@@ -16,7 +16,7 @@ import { POST_STATUSES } from '../constants';
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  postType Post type
- * @return {Boolean}          Whether request is in progress
+ * @return {boolean}          Whether request is in progress
  */
 export function isRequestingPostCounts( state, siteId, postType ) {
 	return get( state.posts.counts.requesting, [ siteId, postType ], false );

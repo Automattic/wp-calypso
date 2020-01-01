@@ -123,7 +123,7 @@ export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} True if there is an order ID tracked as "editing"
+ * @return {boolean} True if there is an order ID tracked as "editing"
  */
 export const isCurrentlyEditingOrder = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return !! getCurrentlyEditingOrderId( state, siteId );

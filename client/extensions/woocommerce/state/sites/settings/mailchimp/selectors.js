@@ -23,7 +23,7 @@ const basePath = siteId => [
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether settings are being requested
+ * @return {boolean}        Whether settings are being requested
  */
 export const isRequestingSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settingsRequest' ];
@@ -62,7 +62,7 @@ export const mailChimpSettings = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether api key is being submitted
+ * @return {boolean}        Whether api key is being submitted
  */
 export const isSubmittingApiKey = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'apiKeySubmit' ];
@@ -75,7 +75,7 @@ export const isSubmittingApiKey = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether newsletter settings are being submitted
+ * @return {boolean}        Whether newsletter settings are being submitted
  */
 export const isSubmittingNewsletterSetting = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmit' ];
@@ -88,7 +88,7 @@ export const isSubmittingNewsletterSetting = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether store informations are being submitted
+ * @return {boolean}        Whether store informations are being submitted
  */
 export const isSubmittingStoreInfo = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'storeInfoSubmit' ];
@@ -116,7 +116,7 @@ export const newsletterSettingsSubmitError = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether api key is correct
+ * @return {boolean}        Whether api key is correct
  */
 export const isApiKeyCorrect = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settings', 'mailchimp_account_info_id' ];
@@ -129,7 +129,7 @@ export const isApiKeyCorrect = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether lists are being requested
+ * @return {boolean}        Whether lists are being requested
  */
 export const isRequestingLists = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'listsRequest' ];
@@ -155,7 +155,7 @@ export const syncStatus = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether sync status is being requested
+ * @return {boolean}        Whether sync status is being requested
  */
 export const isRequestingSyncStatus = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'syncStatusRequest' ];
@@ -168,7 +168,7 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Wheter setup is compleate
+ * @return {boolean}        Wheter setup is compleate
  */
 export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const path = [ ...basePath( siteId ), 'syncStatus', 'mailchimp_list_name' ];
@@ -189,7 +189,7 @@ export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether resync procedure is being requested
+ * @return {boolean}        Whether resync procedure is being requested
  */
 export const isRequestingResync = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'resyncRequest' ];
@@ -202,7 +202,7 @@ export const isRequestingResync = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @return {boolean}        Whether user requested save action.
  */
 export const isSavingMailChimpSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'saveSettings' ];

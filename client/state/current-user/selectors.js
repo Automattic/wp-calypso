@@ -23,7 +23,7 @@ export function getCurrentUserId( state ) {
  * Is the current user logged in?
  *
  * @param {object} state Global state tree
- * @return {Boolean}	True if logged in, False if not
+ * @return {boolean}	True if logged in, False if not
  */
 export function isUserLoggedIn( state ) {
 	return getCurrentUserId( state ) !== null;

@@ -43,7 +43,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query
+	 * @return {boolean}       Whether item matches query
 	 */
 	static matches = overEvery( [
 		ActivityQueryManager.matchDateStart,
@@ -55,7 +55,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query.dateStart
+	 * @return {boolean}       Whether item matches query.dateStart
 	 */
 	static matchDateStart( query, { activityTs } ) {
 		return get( query, 'dateStart', -Infinity ) <= activityTs;
@@ -66,7 +66,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query.dateEnd
+	 * @return {boolean}       Whether item matches query.dateEnd
 	 */
 	static matchDateEnd( query, { activityTs } ) {
 		return activityTs <= get( query, 'dateEnd', Infinity );

@@ -22,7 +22,7 @@ export function getCSSLinkHtml( url ) {
  * Returns Gutenberg theme.css URL based on a style.css URL
  *
  * @param  {string}  url	The css file path of Gutenberg's style.css
- * @param  {Boolean} isRtl	If the current locale is a right-to-left language
+ * @param  {boolean} isRtl	If the current locale is a right-to-left language
  * @return {string}			The Gutenberg theme.css URL
  */
 export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
@@ -47,9 +47,9 @@ export function revokeObjectURL( objectUrl ) {
  * @param  {string}  cssUrl             A URL to the theme CSS file
  * @param  {string}  fontUrl            A URL to the font CSS file
  * @param  {string}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.
- * @param  {Boolean} isRtl              If the current locale is a right-to-left language
+ * @param  {boolean} isRtl              If the current locale is a right-to-left language
  * @param  {string}  langSlug           The slug of the current locale
- * @param  {Boolean} scrolling          Whether to allow scrolling on the body
+ * @param  {boolean} scrolling          Whether to allow scrolling on the body
  * @return {string}                     The HTML source.
  */
 export function getIframeSource(

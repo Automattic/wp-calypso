@@ -53,7 +53,7 @@ const getField = field => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @return {boolean}        Whether user requested save action.
  */
 export const emailSettingsSaveRequest = getField( 'save' );
 
@@ -62,7 +62,7 @@ export const emailSettingsSaveRequest = getField( 'save' );
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @return {boolean}        Whether user requested save action.
  */
 export const isSavingEmailSettings = getField( 'isSaving' );
 
@@ -71,6 +71,6 @@ export const isSavingEmailSettings = getField( 'isSaving' );
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @return {boolean}        Whether user requested save action.
  */
 export const emailSettingsSubmitSettingsError = getField( 'error' );

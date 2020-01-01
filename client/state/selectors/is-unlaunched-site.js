@@ -9,7 +9,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  *
  * @param {object} state Global state tree
  * @param {object} siteId Site ID
- * @return {Boolean} True if site is unlaunched
+ * @return {boolean} True if site is unlaunched
  */
 export default function isUnlaunchedSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

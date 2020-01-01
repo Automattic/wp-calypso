@@ -30,7 +30,7 @@ export function getDomainsSuggestions( state, queryObject ) {
  * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
- * @returns {Boolean}   true if requesting
+ * @returns {boolean}   true if requesting
  */
 export function isRequestingDomainsSuggestions( state, queryObject ) {
 	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );

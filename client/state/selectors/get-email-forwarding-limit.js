@@ -18,7 +18,7 @@ const EXTENDED_EMAIL_FORWARDING_LIMIT = 100;
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
- * @return {Boolean} True if site has a plan with extended email forwarding limit
+ * @return {boolean} True if site has a plan with extended email forwarding limit
  */
 export const siteHasEligibleWpcomPlan = createSelector(
 	( state, siteId ) => {

@@ -8,7 +8,7 @@ import request from 'request-promise';
 //  * Marks a push token as approved on WPCOM API
 //  * @param {string} pushToken push token that recieved via a push notification on an app
 //  * @param {string} bearerToken user bearer token to be used with the API
-//  * @returns {Boolean} true if token approved
+//  * @returns {boolean} true if token approved
 //  */
 export const approvePushToken = async ( pushToken, bearerToken ) => {
 	const responseString = await request( {

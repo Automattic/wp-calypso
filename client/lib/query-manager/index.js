@@ -60,7 +60,7 @@ export default class QueryManager {
 	 *
 	 * @param  {?object} item        Existing item, if exists
 	 * @param  {object}  revisedItem Incoming revision of item
-	 * @param  {Boolean} patch       Use patching application
+	 * @param  {boolean} patch       Use patching application
 	 * @return {?object}             Item to track, or undefined to omit
 	 */
 	static mergeItem( item, revisedItem, patch = false ) {
@@ -80,7 +80,7 @@ export default class QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query
+	 * @return {boolean}       Whether item matches query
 	 */
 	static matches( query, item ) {
 		return !! item;
@@ -216,9 +216,9 @@ export default class QueryManager {
 	 *
 	 * @param  {(Array|Object)} items              Item(s) to be received
 	 * @param  {object}         options            Options for receive
-	 * @param  {Boolean}        options.patch      Apply changes as partial
+	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
-	 * @param  {Boolean}        options.mergeQuery Add to existing query set
+	 * @param  {boolean}        options.mergeQuery Add to existing query set
 	 * @param  {number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise

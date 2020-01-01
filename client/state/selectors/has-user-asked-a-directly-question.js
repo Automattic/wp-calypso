@@ -5,7 +5,7 @@
  *
  * @see lib/directly for more about Directly
  * @param {object}  state  Global state tree
- * @return {Boolean}        Whether a question has been asked
+ * @return {boolean}        Whether a question has been asked
  */
 
 export default function hasUserAskedADirectlyQuestion( state ) {

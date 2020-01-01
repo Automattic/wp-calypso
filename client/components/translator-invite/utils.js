@@ -20,7 +20,7 @@ const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
  * starts with 'en', the defaultLanguageSlug.
  *
  * @param {string} locale An language slug
- * @returns {Boolean} The locale slug of the language, if any found.
+ * @returns {boolean} The locale slug of the language, if any found.
  */
 export function isDefaultLocale( locale ) {
 	return startsWith( locale, defaultLanguageSlug );

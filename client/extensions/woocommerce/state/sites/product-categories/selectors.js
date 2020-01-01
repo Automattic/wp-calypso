@@ -59,7 +59,7 @@ export function areProductCategoriesLoading(
  *
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean}       Returns true if currently requesting product categories for any query
+ * @return {boolean}       Returns true if currently requesting product categories for any query
  */
 export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );

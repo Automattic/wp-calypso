@@ -7,7 +7,7 @@ const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslu
  * to tell general admin and site-specific activities apart.
  *
  * @param {string} path The tracked path.
- * @returns {Boolean} If the report should null `blog_id`.
+ * @returns {boolean} If the report should null `blog_id`.
  */
 export default path => {
 	if ( ! path ) {

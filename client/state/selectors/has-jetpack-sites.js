@@ -10,7 +10,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * Returns true if the user has one or more Jetpack sites, and false otherwise.
  *
  * @param {object} state  Global state tree
- * @return {Boolean} Whether Jetpack sites exist or not
+ * @return {boolean} Whether Jetpack sites exist or not
  */
 export default createSelector( state => {
 	const siteIds = Object.keys( getSitesItems( state ) );

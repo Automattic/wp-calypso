@@ -181,7 +181,7 @@ export class DateRange extends Component {
 	 * and special configuration component config props
 	 *
 	 * @param  {moment}  date MomentJS date object
-	 * @return {Boolean}      whether date is considered valid or not
+	 * @return {boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;

@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state     Global state tree
  * @param  {number}  siteId    Site ID
- * @return {Boolean}           Whether that shortcode is being requested
+ * @return {boolean}           Whether that shortcode is being requested
  */
 export const isRequestingSiteRoles = ( state, siteId ) => {
 	return get( state.siteRoles.requesting, [ siteId ], false );

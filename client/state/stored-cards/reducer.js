@@ -46,7 +46,7 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
  *
  * @param {Array} state - current state
  * @param {object} action - action payload
- * @return {Boolean} - updated state
+ * @return {boolean} - updated state
  */
 export const hasLoadedFromServer = ( state = false, action ) => {
 	switch ( action.type ) {

@@ -28,7 +28,7 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
  * Whether a given theme object is premium.
  *
  * @param  {object} theme Theme object
- * @return {Boolean}      True if the theme is premium
+ * @return {boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
 	const themeStylesheet = get( theme, 'stylesheet', false );
@@ -197,7 +197,7 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * requests.
  *
  * @param  {object} theme Theme object
- * @return {Boolean}      Whether theme is a wpcom theme
+ * @return {boolean}      Whether theme is a wpcom theme
  */
 export function isThemeFromWpcom( theme ) {
 	return includes( theme.theme_uri, 'wordpress.com' );
@@ -208,7 +208,7 @@ export function isThemeFromWpcom( theme ) {
  *
  * @param  {object}  query Query object
  * @param  {object}  theme Item to consider
- * @return {Boolean}       Whether theme matches query
+ * @return {boolean}       Whether theme matches query
  */
 export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };

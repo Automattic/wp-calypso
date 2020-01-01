@@ -14,7 +14,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
  * Returns true if user can manage plugins for at least one site and returns false otherwise
  *
  * @param {object} state  Global state tree
- * @return {Boolean} Whether the user can manage plugins or not
+ * @return {boolean} Whether the user can manage plugins or not
  */
 export default createSelector(
 	state => {

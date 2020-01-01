@@ -11,7 +11,7 @@ import {
  * Changes the "tax_status" setting.
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
- * @param {Boolean} isTaxable Whether the shipping cost must be subject to taxes or not.
+ * @param {boolean} isTaxable Whether the shipping cost must be subject to taxes or not.
  * @return {object} Action object.
  */
 export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {

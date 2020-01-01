@@ -25,7 +25,7 @@ export function getTagImages( state, tag ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  tag 	Tag
- * @return {Boolean} Whether a request is in progress or we already have tags
+ * @return {boolean} Whether a request is in progress or we already have tags
  */
 export function shouldRequestTagImages( state, tag ) {
 	return ! ( getTagImages( state, tag ) || state.reader.tags.images.requesting[ tag ] );

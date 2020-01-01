@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether site settings is being requested
+ * @return {boolean}        Whether site settings is being requested
  */
 export function isRequestingSiteSettings( state, siteId ) {
 	return get( state.siteSettings.requesting, [ siteId ], false );
@@ -20,7 +20,7 @@ export function isRequestingSiteSettings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}        Whether site settings is being requested
+ * @return {boolean}        Whether site settings is being requested
  */
 export function isSavingSiteSettings( state, siteId ) {
 	return get( state.siteSettings.saveRequests, [ siteId, 'saving' ], false );
@@ -53,7 +53,7 @@ export function getSiteSettings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Boolean}         Whether the requests is successful or not
+ * @return {boolean}         Whether the requests is successful or not
  */
 export function isSiteSettingsSaveSuccessful( state, siteId ) {
 	return getSiteSettingsSaveRequestStatus( state, siteId ) === 'success';

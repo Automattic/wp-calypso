@@ -11,7 +11,7 @@ import validUrl from 'valid-url';
  * determine if it's white-listed.
  *
  * @param {string} tagName name of tag under inspection
- * @returns {Boolean} whether the tag is allowed
+ * @returns {boolean} whether the tag is allowed
  */
 const isAllowedTag = tagName => {
 	switch ( tagName ) {
@@ -53,7 +53,7 @@ const isAllowedTag = tagName => {
  *
  * @param {string} tagName name of tag on which attribute is found
  * @param {string} attrName name of attribute under inspection
- * @returns {Boolean} whether the attribute is allowed
+ * @returns {boolean} whether the attribute is allowed
  */
 const isAllowedAttr = ( tagName, attrName ) => {
 	switch ( tagName ) {

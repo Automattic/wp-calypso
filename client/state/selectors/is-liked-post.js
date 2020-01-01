@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post ID
- * @return {Boolean} Is the post liked
+ * @return {boolean} Is the post liked
  */
 export default function isLikedPost( state, siteId, postId ) {
 	return get( state.posts.likes.items, [ siteId, postId, 'iLike' ], false );

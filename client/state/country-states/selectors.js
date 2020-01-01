@@ -23,7 +23,7 @@ export function getCountryStates( state, countryCode ) {
  *
  * @param  {object}  state       Global state tree
  * @param  {string}  countryCode Country code to check.
- * @return {Boolean}             Whether a request is in progress
+ * @return {boolean}             Whether a request is in progress
  */
 export function isCountryStatesFetching( state, countryCode ) {
 	return get( state.countryStates, [ 'isFetching', countryCode.toLowerCase() ], false );

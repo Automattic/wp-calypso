@@ -17,7 +17,7 @@ import { isRequestingSiteKeyrings, getSiteKeyrings } from 'state/site-keyrings/s
  * - site has NOT been connected to a location
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
- * @return {Boolean} True if we should show the nudge
+ * @return {boolean} True if we should show the nudge
  */
 export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	// We don't want to show the nudge, and then hide it when it's obvious

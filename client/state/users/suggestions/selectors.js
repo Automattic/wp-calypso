@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {Boolean}         Whether user suggestions are being requested
+ * @return {boolean}         Whether user suggestions are being requested
  */
 export function isRequestingUserSuggestions( state, siteId ) {
 	return get( state.users.suggestions.requesting, [ siteId ], false );

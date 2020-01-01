@@ -20,7 +20,7 @@ export default class QueryKey {
 	 * If defined in extending class as true, will omit all null values from
 	 * stringified or parsed query objects
 	 *
-	 * @type {Boolean}
+	 * @type {boolean}
 	 */
 	static OMIT_NULL_VALUES = false;
 

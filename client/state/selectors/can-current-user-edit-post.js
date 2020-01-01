@@ -13,7 +13,7 @@ import { getPost } from 'state/posts/selectors';
  *
  * @param  {object}  state    Global state tree
  * @param  {string}  globalId Post global ID
- * @return {Boolean}          Whether the current user can edit the given post
+ * @return {boolean}          Whether the current user can edit the given post
  */
 export default function canCurrentUserEditPost( state, globalId ) {
 	const post = getPost( state, globalId );

@@ -134,7 +134,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
  * or false otherwise.
  *
  * @param  {object}  state Global state tree
- * @return {Boolean}       Whether a request is in progress
+ * @return {boolean}       Whether a request is in progress
  */
 export function isKeyringServicesFetching( state ) {
 	return state.sharing.services.isFetching;

@@ -251,7 +251,7 @@ export class SharingService extends Component {
 	 * Sets a connection to be site-wide or not.
 	 *
 	 * @param  {object}   connection Connection to update.
-	 * @param  {Boolean}  shared     Whether the connection can be used by other users.
+	 * @param  {boolean}  shared     Whether the connection can be used by other users.
 	 * @return {Function}            Action thunk
 	 */
 	toggleSitewideConnection = ( connection, shared ) =>
@@ -419,7 +419,7 @@ export class SharingService extends Component {
 	 * authorization attempt succeeded in creating new Keyring account options.
 	 *
 	 * @param {Array} externalAccounts Props to check on if a keyring connection succeeded.
-	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 * @return {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( externalAccounts ) {
 		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );

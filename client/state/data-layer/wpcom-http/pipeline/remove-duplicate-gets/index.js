@@ -37,7 +37,7 @@ export const clearQueue = () => {
  * Determines if a request object specifies the GET HTTP method
  *
  * @param {object} request the HTTP request action
- * @returns {Boolean} whether or not the method is GET
+ * @returns {boolean} whether or not the method is GET
  */
 const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 

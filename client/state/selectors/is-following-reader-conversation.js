@@ -17,7 +17,7 @@ import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-st
  *
  * @param  {object}  state  Global state tree
  * @param  {object} params Params including siteId and postId
- * @return {Boolean} Is the user following this conversation?
+ * @return {boolean} Is the user following this conversation?
  */
 export default function isFollowingReaderConversation( state, { siteId, postId } ) {
 	return (

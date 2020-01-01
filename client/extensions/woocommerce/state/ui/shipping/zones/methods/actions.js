@@ -118,7 +118,7 @@ export const changeShippingZoneMethodTitle = ( siteId, title ) => {
 /**
  * Enables or disables the opened shipping zone method. Does not change the state of the actual method until saved
  * @param {number} siteId Site ID.
- * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
+ * @param {boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {object} Action object.
  */
 export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
@@ -129,7 +129,7 @@ export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
  * Enables or disables the given shipping zone method.
  * @param {number} siteId Site ID.
  * @param {Number|Object} methodId ID of the shipping method.
- * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
+ * @param {boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {object} Action object.
  */
 export const toggleShippingZoneMethodEnabled = ( siteId, methodId, enabled ) => {

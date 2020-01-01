@@ -392,7 +392,7 @@ export function normalizeTermsForApi( post ) {
  *
  * @param  {object}  localTermEdits local state of term edits
  * @param  {object}  savedTerms     term object returned from API POST
- * @return {Boolean}                are there differences in local edits vs saved terms
+ * @return {boolean}                are there differences in local edits vs saved terms
  */
 export function isTermsEqual( localTermEdits, savedTerms ) {
 	return every( localTermEdits, ( terms, taxonomy ) => {
@@ -411,7 +411,7 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
  *
  * @param  {object}  localDiscussionEdits local state of discussion edits
  * @param  {object}  savedDiscussion      discussion property returned from API POST
- * @return {Boolean}                      are there differences in local edits vs saved values?
+ * @return {boolean}                      are there differences in local edits vs saved values?
  */
 export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
 	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
@@ -423,7 +423,7 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
  *
  * @param  {object}  localAuthorEdit locally edited author object
  * @param  {object}  savedAuthor     author property returned from API POST
- * @return {Boolean}                 are the locally edited and saved values equal?
+ * @return {boolean}                 are the locally edited and saved values equal?
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );

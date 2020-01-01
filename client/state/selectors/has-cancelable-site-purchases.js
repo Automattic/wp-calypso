@@ -10,7 +10,7 @@ import { getSitePurchases } from 'state/purchases/selectors';
  *
  * @param  {object}  state       global state
  * @param  {number}  siteId      the site ID
- * @return {Boolean} if the site currently has any purchases that can be canceled.
+ * @return {boolean} if the site currently has any purchases that can be canceled.
  */
 export const hasCancelableSitePurchases = ( state, siteId ) => {
 	if ( ! state.purchases.hasLoadedSitePurchasesFromServer ) {
