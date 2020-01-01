@@ -215,7 +215,7 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {object}   query  Theme query object
- * @return {?Boolean}        Whether last themes page has been reached
+ * @return {?boolean}        Whether last themes page has been reached
  */
 export function isThemesLastPageForQuery( state, siteId, query = {} ) {
 	const lastPage = getThemesLastPageForQuery( state, siteId, query );

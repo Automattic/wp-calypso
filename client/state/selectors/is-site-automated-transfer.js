@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?Boolean}        Whether site is an Automated Transfer site
+ * @return {?boolean}        Whether site is an Automated Transfer site
  */
 export default function isSiteAutomatedTransfer( state, siteId ) {
 	return get( state, [ 'sites', 'items', siteId, 'options', 'is_automated_transfer' ], null );

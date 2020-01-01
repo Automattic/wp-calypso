@@ -150,7 +150,7 @@ export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
  * @param  {object}   state      Global state tree
  * @param  {number}   siteId     Site ID
  * @param  {string}   capability Capability name
- * @return {?Boolean}            Whether capability name is valid
+ * @return {?boolean}            Whether capability name is valid
  */
 export function isValidCapability( state, siteId, capability ) {
 	const capabilities = state.currentUser.capabilities[ siteId ];

@@ -11,7 +11,7 @@ import isJetpackModuleActive from './is-jetpack-module-active';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?Boolean} if the site can be managed from calypso
+ * @return {?boolean} if the site can be managed from calypso
  */
 export default function canJetpackSiteManage( state, siteId ) {
 	// for versions 3.4 and higher, canManage can be determined by the state of the Manage Module

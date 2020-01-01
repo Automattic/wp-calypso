@@ -12,7 +12,7 @@ import getSiteOption from './get-site-option';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?Boolean}        Whether site is previewable
+ * @return {?boolean}        Whether site is previewable
  */
 export default function isSitePreviewable( state, siteId ) {
 	const site = getRawSite( state, siteId );

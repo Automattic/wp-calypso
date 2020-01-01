@@ -15,7 +15,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?Boolean}        Whether site is a Domain-only site
+ * @return {?boolean}        Whether site is a Domain-only site
  */
 export default function isDomainOnlySite( state, siteId ) {
 	const site = getRawSite( state, siteId );

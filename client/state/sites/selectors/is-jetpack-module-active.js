@@ -16,7 +16,7 @@ import getSiteOption from './get-site-option';
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {string}   slug   Module slug
- * @return {?Boolean}        Whether site has Jetpack module active
+ * @return {?boolean}        Whether site has Jetpack module active
  */
 export default function isJetpackModuleActive( state, siteId, slug ) {
 	const modules = getSiteOption( state, siteId, 'active_modules' );

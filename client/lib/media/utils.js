@@ -309,7 +309,7 @@ export function isSupportedFileTypeForSite( item, site ) {
  *
  * @param  {object}   item  Media object
  * @param  {object}   site  Site object
- * @return {?Boolean}       Whether the size exceeds the site maximum
+ * @return {?boolean}       Whether the size exceeds the site maximum
  */
 export function isExceedingSiteMaxUploadSize( item, site ) {
 	const bytes = item.size;

@@ -76,7 +76,7 @@ export const getSitePlan = createSelector(
  * @param  {object}   state         global state
  * @param  {number}   siteId        the site id
  * @param  {string}   productSlug   the plan product slug
- * @return {?Boolean}              true if a plan has a discount
+ * @return {?boolean}              true if a plan has a discount
  */
 export function isSitePlanDiscounted( state, siteId, productSlug ) {
 	const plan = getSitePlan( state, siteId, productSlug );

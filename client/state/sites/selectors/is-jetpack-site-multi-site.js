@@ -10,7 +10,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?Boolean}        true if the site is multi-site
+ * @return {?boolean}        true if the site is multi-site
  */
 export default function isJetpackSiteMultiSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

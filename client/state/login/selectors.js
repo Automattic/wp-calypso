@@ -113,7 +113,7 @@ export const getTwoFactorSupportedAuthTypes = state => {
  *
  * @param  {object}   state  Global state tree
  * @param  {string}   type   A 2FA auth type (of `authenticator`, `sms`, `push` ).
- * @return {?Boolean}        Whether the auth type `type` is supported
+ * @return {?boolean}        Whether the auth type `type` is supported
  */
 export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 	const supportedAuthTypes = getTwoFactorSupportedAuthTypes( state );
@@ -197,7 +197,7 @@ export const getAuthAccountType = state => {
  * Tells us if we're in a process of creating a social account
  *
  * @param  {object}   state  Global state tree
- * @return {?Boolean}         Error for the request.
+ * @return {?boolean}         Error for the request.
  */
 export const isSocialAccountCreating = state =>
 	get( state, 'login.socialAccount.isCreating', null );
@@ -242,7 +242,7 @@ export const getRequestSocialAccountError = state =>
  * Gets social account linking status
  *
  * @param  {object}   state  Global state tree
- * @return {?Boolean}         Boolean describing social account linking status
+ * @return {?boolean}         Boolean describing social account linking status
  */
 export const getSocialAccountIsLinking = state =>
 	get( state, 'login.socialAccountLink.isLinking', null );

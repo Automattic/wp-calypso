@@ -15,7 +15,7 @@ import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-s
  *
  * @param  {object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
- * @return {?Boolean}          Whether the site is connected.
+ * @return {?boolean}          Whether the site is connected.
  */
 export default function isJetpackSiteConnected( state, siteId ) {
 	return get( getJetpackConnectionStatus( state, siteId ), [ 'isActive' ], null );

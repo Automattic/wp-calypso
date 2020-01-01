@@ -23,7 +23,7 @@ export function isRequestingMediaStorage( state, siteId ) {
  * Returns true, if a site is over current plan limits
  * @param   {object}  state  Global state tree
  * @param   {number}  siteId Site ID
- * @returns {?Boolean}       True if site is over storage limits, and null if
+ * @returns {?boolean}       True if site is over storage limits, and null if
  *                           mediaStorage is unavailable.
  */
 export function isOverMediaLimit( state, siteId ) {

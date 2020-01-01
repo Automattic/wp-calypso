@@ -14,7 +14,7 @@ import { getAutomatedTransfer } from 'state/automated-transfer/selectors';
  *
  * @param {object} state global app state
  * @param {number} siteId requested site for transfer info
- * @returns {?Boolean} whether we are fetching transfer status for given siteId
+ * @returns {?boolean} whether we are fetching transfer status for given siteId
  */
 export default ( state, siteId ) => {
 	if ( ! siteId ) {

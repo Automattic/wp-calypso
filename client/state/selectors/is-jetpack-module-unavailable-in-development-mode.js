@@ -17,7 +17,7 @@ import getJetpackModulesRequiringConnection from './get-jetpack-modules-requirin
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @param  {string}  moduleSlug  Module slug
- * @return {?Boolean}            Whether the module is unavailable in dev mode.
+ * @return {?boolean}            Whether the module is unavailable in dev mode.
  */
 const isJetpackModuleUnavailableInDevelopmentMode = createSelector(
 	( state, siteId, moduleSlug ) => {

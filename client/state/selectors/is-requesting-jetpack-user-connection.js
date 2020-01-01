@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
- * @return {?Boolean}          Whether the connection data is being requested
+ * @return {?boolean}          Whether the connection data is being requested
  */
 export default function isRequestingJetpackUserConnection( state, siteId ) {
 	return get( state.jetpack.connection.dataRequests, [ siteId ], null );

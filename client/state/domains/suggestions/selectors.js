@@ -11,7 +11,7 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * @param   {string}   queryObject.query                    domainQuery
  * @param   {number}   queryObject.quantity                 max results
  * @param   {string}   queryObject.vendor                   vendor
- * @param   {?Boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
+ * @param   {?boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
  */
 export function getDomainsSuggestions( state, queryObject ) {
@@ -29,7 +29,7 @@ export function getDomainsSuggestions( state, queryObject ) {
  * @param   {string}     queryObject.query                    domainQuery
  * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
- * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
+ * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {boolean}   true if requesting
  */
 export function isRequestingDomainsSuggestions( state, queryObject ) {
@@ -47,7 +47,7 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
  * @param   {string}     queryObject.query                    domainQuery
  * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
- * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
+ * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {?object}    error or null
  */
 export function getDomainsSuggestionsError( state, queryObject ) {

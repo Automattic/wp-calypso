@@ -12,7 +12,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?Boolean} true if the site is a secondary network site
+ * @return {?boolean} true if the site is a secondary network site
  */
 export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

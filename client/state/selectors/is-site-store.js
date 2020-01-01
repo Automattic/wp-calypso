@@ -12,7 +12,7 @@ import { isJetpackSite } from 'state/sites/selectors';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?Boolean}        Whether site is an Jetpack and has WooCommerce active
+ * @return {?boolean}        Whether site is an Jetpack and has WooCommerce active
  */
 export default function isSiteStore( state, siteId ) {
 	return (
