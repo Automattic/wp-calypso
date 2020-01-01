@@ -22,12 +22,12 @@ export default function PaymentRequestButton( {
 	disabledReason,
 } ) {
 	const localize = useLocalize();
-	const [ formStatus, setFormStatus ] = useFormStatus();
+	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
-		setFormStatus( 'submitting' );
-		paymentRequest.on( 'cancel', () => setFormStatus( 'ready' ) );
+		setFormSubmitting();
+		paymentRequest.on( 'cancel', setFormReady );
 		paymentRequest.show();
 	};
 	if ( ! paymentRequest ) {

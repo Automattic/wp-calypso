@@ -28,7 +28,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 
 	return (
 		<>
-			<VerticalBackground id={ siteVertical?.id } onLoad={ () => setHasBackground( true ) } />
+			<VerticalBackground onLoad={ () => setHasBackground( true ) } />
 			<Switch>
 				<Route exact path={ Step.IntentGathering }>
 					<div

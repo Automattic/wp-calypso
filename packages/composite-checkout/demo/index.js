@@ -10,15 +10,15 @@ import ReactDOM from 'react-dom';
 import {
 	Checkout,
 	CheckoutProvider,
+	createApplePayMethod,
+	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
-	createPayPalMethod,
-	createApplePayMethod,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	usePaymentData,
-	getDefaultPaymentMethodStep,
-	getDefaultOrderSummaryStep,
-	getDefaultOrderReviewStep,
 } from '../src/public-api';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
@@ -39,9 +39,13 @@ const initialItems = [
 	},
 ];
 
-const onPaymentComplete = () => window.alert( 'Payment succeeded!' );
-const onEvent = event => window.console.log( 'Event', event );
+const successRedirectUrl = '/complete.html';
+const failureRedirectUrl = window.location.href;
 
+const onPaymentComplete = () => {
+	window.location.href = successRedirectUrl;
+};
+const onEvent = event => window.console.log( 'Event', event );
 const showErrorMessage = error => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
@@ -55,11 +59,9 @@ const showSuccessMessage = message => {
 	window.alert( message );
 };
 
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
 async function fetchStripeConfiguration() {
+	// This simulates the network request time
+	await asyncTimeout( 2000 );
 	return {
 		public_key: stripeKey,
 		js_url: 'https://js.stripe.com/v3/',
@@ -68,6 +70,8 @@ async function fetchStripeConfiguration() {
 
 async function sendStripeTransaction( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return {
 		success: true,
 	};
@@ -75,6 +79,8 @@ async function sendStripeTransaction( data ) {
 
 async function makePayPalExpressRequest( data ) {
 	window.console.log( 'Processing paypal transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
 	return window.location.href;
 }
 
@@ -325,6 +331,11 @@ function formatValueForCurrency( currency, value ) {
 	}
 	const floatValue = value / 100;
 	return '$' + floatValue.toString();
+}
+
+// Simulate network request time
+async function asyncTimeout( timeout ) {
+	return new Promise( resolve => setTimeout( resolve, timeout ) );
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );

@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -22,14 +23,13 @@ import {
 import {
 	useSelect,
 	useDispatch,
-	usePaymentComplete,
 	useMessages,
 	useLineItems,
 	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 	useEvents,
 } from '../../public-api';
-import useLocalize, { sprintf } from '../localize';
+import { sprintf, useLocalize } from '../localize';
 import {
 	VisaLogo,
 	AmexLogo,
@@ -46,6 +46,8 @@ import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
 import { useFormStatus } from '../form-status';
 
+const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
+
 export function createStripeMethod( {
 	getSiteId,
 	getCountry,
@@ -57,6 +59,7 @@ export function createStripeMethod( {
 	fetchStripeConfiguration,
 	sendStripeTransaction,
 } ) {
+	debug( 'creating a new stripe payment method' );
 	const actions = {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
@@ -94,6 +97,7 @@ export function createStripeMethod( {
 						phoneNumber: getPhoneNumber(),
 					},
 				};
+				debug( 'stripe payment token created' );
 				stripeResponse = yield {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
@@ -106,19 +110,20 @@ export function createStripeMethod( {
 						paymentMethodToken,
 					},
 				};
+				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
+				debug( 'stripe transaction had an error', error );
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
-			if (
-				stripeResponse &&
-				stripeResponse.message &&
-				stripeResponse.message.payment_intent_client_secret
-			) {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'stripe transaction requires auth' );
 				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
 			}
-			if ( stripeResponse && stripeResponse.redirect_url ) {
+			if ( stripeResponse?.redirect_url ) {
+				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
+			debug( 'stripe transaction requires is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
@@ -622,7 +627,6 @@ function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
-	const onPaymentComplete = usePaymentComplete();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
@@ -630,7 +634,7 @@ function StripePayButton( { disabled } ) {
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
-	const [ formStatus, setFormStatus ] = useFormStatus();
+	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -638,9 +642,11 @@ function StripePayButton( { disabled } ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
+			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			onPaymentComplete();
+			debug( 'stripe transaction is complete' );
+			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -650,11 +656,13 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
+				setFormReady();
 				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
-		onPaymentComplete,
+		setFormReady,
+		setFormComplete,
 		showErrorMessage,
 		transactionStatus,
 		transactionError,
@@ -681,7 +689,7 @@ function StripePayButton( { disabled } ) {
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
-					setFormStatus,
+					setFormSubmitting,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -716,10 +724,12 @@ async function submitStripePayment( {
 	successUrl,
 	cancelUrl,
 	beginStripeTransaction,
-	setFormStatus,
+	setFormSubmitting,
+	setFormReady,
 } ) {
+	debug( 'submitting stripe payment' );
 	try {
-		setFormStatus( 'submitting' );
+		setFormSubmitting();
 		beginStripeTransaction( {
 			stripe,
 			name,
@@ -730,7 +740,7 @@ async function submitStripePayment( {
 			cancelUrl,
 		} );
 	} catch ( error ) {
-		setFormStatus( 'ready' );
+		setFormReady();
 		showErrorMessage( error );
 		return;
 	}

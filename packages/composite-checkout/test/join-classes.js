@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import joinClasses from '../../src/lib/join-classes';
+import joinClasses from '../src/lib/join-classes';
 
 describe( 'joinClasses', function() {
 	it( 'returns an empty string when passed an empty array', function() {

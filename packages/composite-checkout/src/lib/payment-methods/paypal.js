@@ -10,12 +10,7 @@ import styled from '@emotion/styled';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect, usePaymentData } from '../../lib/registry';
-import {
-	useMessages,
-	usePaymentComplete,
-	useCheckoutRedirects,
-	useLineItems,
-} from '../../public-api';
+import { useMessages, useCheckoutRedirects, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -65,9 +60,9 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 		reducer( state = {}, action ) {
 			switch ( action.type ) {
 				case 'PAYPAL_TRANSACTION_BEGIN':
-					return { ...state, paypalStatus: 'submitting', paypalExpressUrl: action.payload };
+					return { ...state, paypalStatus: 'submitting' };
 				case 'PAYPAL_TRANSACTION_END':
-					return { ...state, paypalStatus: 'complete', paypalExpressUrl: action.payload };
+					return { ...state, paypalStatus: 'redirecting', paypalExpressUrl: action.payload };
 				case 'PAYPAL_TRANSACTION_ERROR':
 					return { ...state, paypalStatus: 'error', paypalError: action.payload };
 			}
@@ -116,7 +111,7 @@ export function PaypalSubmitButton( { disabled } ) {
 	const [ paymentData ] = usePaymentData();
 	const { billing = {} } = paymentData;
 	useTransactionStatusHandler();
-	const [ formStatus ] = useFormStatus();
+	const { formStatus } = useFormStatus();
 
 	const onClick = () =>
 		submitPaypalPayment( {
@@ -143,36 +138,34 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
-	const onPaymentComplete = usePaymentComplete();
 	const { showErrorMessage } = useMessages();
 	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
-	const [ , setFormStatus ] = useFormStatus();
+	const { setFormReady, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
-		if ( transactionStatus === 'complete' ) {
-			onPaymentComplete();
+		if ( transactionStatus === 'redirecting' ) {
+			// TODO: redirect to url
 			return;
 		}
 		if ( transactionStatus === 'error' ) {
-			setFormStatus( 'ready' );
+			setFormReady();
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
 			return;
 		}
 		if ( transactionStatus === 'submitting' ) {
-			setFormStatus( 'submitting' );
+			setFormSubmitting();
 			return;
 		}
-		setFormStatus( status => ( status === 'submitting' ? 'ready' : status ) );
 	}, [
 		localize,
-		onPaymentComplete,
 		showErrorMessage,
 		transactionStatus,
 		transactionError,
-		setFormStatus,
+		setFormReady,
+		setFormSubmitting,
 	] );
 }
 

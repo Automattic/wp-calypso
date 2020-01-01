@@ -7,7 +7,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import CheckoutStep from '../../src/components/checkout-step';
+import CheckoutStep from '../src/components/checkout-step';
 
 describe( 'CheckoutStep', function() {
 	describe( 'inactive and incomplete', function() {

@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { useLocalize, LocalizeProvider } from '../../src/lib/localize';
+import { useLocalize, LocalizeProvider } from '../src/lib/localize';
 
 // React writes to console.error when a component throws before re-throwing
 // but we don't want to see that here so we mock console.error.

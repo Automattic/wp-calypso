@@ -7,17 +7,18 @@ import { connect } from 'react-redux';
 import page from 'page';
 import { get, isEmpty, includes } from 'lodash';
 import moment from 'moment';
+import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import MigrateButton from './migrate-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
@@ -47,6 +48,12 @@ class SectionMigrate extends Component {
 		this.updateFromAPI();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.targetSiteId !== prevProps.targetSiteId ) {
+			this.updateFromAPI();
+		}
+	}
+
 	getImportHref = () => {
 		const { isTargetSiteJetpack, targetSiteImportAdminUrl, targetSiteSlug } = this.props;
 
@@ -62,9 +69,13 @@ class SectionMigrate extends Component {
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
-		wpcom.resetMigration( targetSiteId ).then( () => {
+		wpcom.resetMigration( targetSiteId ).finally( () => {
 			page( `/migrate/${ targetSiteSlug }` );
-			this.updateFromAPI();
+			/**
+			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
+			 * Call to updateFromAPI will update both local and non-local state.
+			 */
+			this.setState( { migrationStatus: 'inactive' }, this.updateFromAPI );
 		} );
 	};
 
@@ -86,9 +97,10 @@ class SectionMigrate extends Component {
 			return;
 		}
 
-		this.setMigrationState( { migrationStatus: 'backing-up', startTime: '' } );
-
-		wpcom.startMigration( sourceSiteId, targetSiteId ).then( () => this.updateFromAPI() );
+		wpcom
+			.startMigration( sourceSiteId, targetSiteId )
+			.then( () => this.updateFromAPI() )
+			.catch( () => this.setMigrationState( { migrationStatus: 'error' } ) );
 	};
 
 	updateFromAPI = () => {
@@ -235,9 +247,7 @@ class SectionMigrate extends Component {
 							</li>
 						</ul>
 					</div>
-					<Button primary onClick={ this.startMigration }>
-						Migrate site
-					</Button>
+					<MigrateButton onClick={ this.startMigration } />
 					<Button className="migrate__cancel" href={ backHref }>
 						Cancel
 					</Button>
@@ -281,6 +291,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<>
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
@@ -453,7 +464,6 @@ class SectionMigrate extends Component {
 
 		return (
 			<Main>
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 				<DocumentHead title="Migrate" />
 				<SidebarNavigation />
 				{ migrationElement }
