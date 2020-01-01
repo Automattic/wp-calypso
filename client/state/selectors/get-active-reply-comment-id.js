@@ -14,7 +14,7 @@ import { getStateKey } from 'state/comments/utils';
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  The ID of the site we're querying
  * @param  {number}  postId  The ID of the post we're querying
- * @return {number|String}	commentId 	Can be a string if the comment is a placeholder
+ * @return {number|string}	commentId 	Can be a string if the comment is a placeholder
  */
 export default function getActiveReplyCommentId( { state, siteId, postId } ) {
 	return get( state.comments.activeReplies, getStateKey( siteId, postId ), null );

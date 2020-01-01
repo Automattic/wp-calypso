@@ -16,7 +16,7 @@ import { getSite } from 'state/sites/selectors';
  * const numericID = getSiteId( state, siteIdentifierOfUnknownFormat );
  *
  * @param  {object}  state       Global state tree
- * @param  {number|String|null}  siteIdOrSlug Site ID
+ * @param  {number|string|null}  siteIdOrSlug Site ID
  * @return {?object}             Site object
  */
 export default function getSiteId( state, siteIdOrSlug ) {

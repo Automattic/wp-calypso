@@ -148,7 +148,7 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
  * or removes a comment placeholder from the state
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
- * @param {number|String} commentId comment or comment placeholder identifier
+ * @param {number|string} commentId comment or comment placeholder identifier
  * @param {object} options Action options
  * @param {boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.

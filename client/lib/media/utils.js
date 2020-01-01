@@ -533,7 +533,7 @@ export function isTransientPreviewable( item ) {
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
  *
- * @param  {(String|object|Blob|File)} file URL or File object
+ * @param  {(string|object|Blob|File)} file URL or File object
  * @return {object}                         Transient media object
  */
 export function createTransientMedia( file ) {

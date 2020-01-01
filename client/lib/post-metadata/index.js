@@ -86,7 +86,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {String|undefined} ThemeId on success.
+	 * @return {string|undefined} ThemeId on success.
 	 */
 	homepageTemplate: function( post ) {
 		if ( ! post ) {

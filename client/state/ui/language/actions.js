@@ -14,7 +14,7 @@ import { LOCALE_SET } from 'state/action-types';
  * Set the ui locale
  *
  * @param   {string} localeSlug the locale slug to change the locale to
- * @param   {String?} localeVariant the slug of the variant of localeSlug
+ * @param   {string?} localeVariant the slug of the variant of localeSlug
  * @returns {object} Action
  */
 export const setLocale = ( localeSlug, localeVariant = null ) => {

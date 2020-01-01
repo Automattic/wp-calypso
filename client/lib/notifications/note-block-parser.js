@@ -195,7 +195,7 @@ const nodeMappings = type => {
  * Creates a node with appropriate properties
  * extracted from text and range information
  *
- * @param {object|String} text original text message
+ * @param {object|string} text original text message
  * @param {object} range contains type and meta information
  * @returns {{children: *[]}} new node
  */

@@ -15,7 +15,7 @@
  * they don't work in our translation system.
  *
  * @param  {object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
- * @return {String|boolean}   The concatenated string or the value false.
+ * @return {string|boolean}   The concatenated string or the value false.
  */
 function getTextContentFromNode( node ) {
 	// We need to handle two cases:

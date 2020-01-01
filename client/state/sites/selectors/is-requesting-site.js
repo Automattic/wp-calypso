@@ -3,7 +3,7 @@
  * false otherwise.
  *
  * @param  {object}           state  Global state tree
- * @param  {(number|String)}  siteId Site ID or slug
+ * @param  {(number|string)}  siteId Site ID or slug
  * @return {boolean}          Whether request is in progress
  */
 export default function isRequestingSite( state, siteId ) {

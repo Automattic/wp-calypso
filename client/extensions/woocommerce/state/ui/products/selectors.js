@@ -124,7 +124,7 @@ export function getProductsRequestedPage( state, siteId = getSelectedSiteId( sta
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String|null} Requested product list term
+ * @return {string|null} Requested product list term
  */
 export function getProductsRequestedSearch( state, siteId = getSelectedSiteId( state ) ) {
 	return get(

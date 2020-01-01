@@ -30,7 +30,7 @@ const IMAGE_SCALE_FACTOR =
 /**
  * Query parameters to be treated as image dimensions
  *
- * @type {String[]}
+ * @type {string[]}
  */
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 

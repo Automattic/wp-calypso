@@ -191,7 +191,7 @@ export default class QueryManager {
 	 * instance of QueryManager if the tracked items have changed, or the
 	 * current instance otherwise.
 	 *
-	 * @param  {String[]}     itemKeys Keys of items to remove
+	 * @param  {string[]}     itemKeys Keys of items to remove
 	 * @return {QueryManager}          New instance if changed, or same
 	 *                                 instance otherwise
 	 */

@@ -37,7 +37,7 @@ import 'state/data-layer/wpcom/sites/rewind/restores';
 /**
  * Turn the 'rewind' feature on for a site.
  *
- * @param  {String|number} siteId      Site ID
+ * @param  {string|number} siteId      Site ID
  * @param  {bool}          isVpMigrate Whether this is a VaultPress migration.
  * @return {object}        Action object
  */
@@ -66,7 +66,7 @@ export function rewindActivateFailure( siteId ) {
 /**
  * Turn the 'rewind' feature off for a site.
  *
- * @param {String|number} siteId site ID
+ * @param {string|number} siteId site ID
  * @return {object} action object
  */
 export function deactivateRewind( siteId ) {
@@ -121,7 +121,7 @@ export function rewindRequestDismiss( siteId ) {
 /**
  * Restore a site to the given timestamp.
  *
- * @param {String|number} siteId the site ID
+ * @param {string|number} siteId the site ID
  * @param {number} timestamp Unix timestamp to restore site to
  * @param {object} args Additional request params, such as `types`
  * @return {object} action object

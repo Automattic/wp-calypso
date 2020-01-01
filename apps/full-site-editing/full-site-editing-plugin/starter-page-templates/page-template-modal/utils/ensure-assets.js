@@ -27,7 +27,7 @@ import { removeQueryArgs } from '@wordpress/url';
  * Usage object contains an info that certain property is used inside another object.
  * @typedef {object} Usage
  * @property {string} prop Name of the property.
- * @property {Array<String|number>} path A path inside an object where prop is, defined as list of keys.
+ * @property {Array<string|number>} path A path inside an object where prop is, defined as list of keys.
  */
 
 /**
