@@ -12,7 +12,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 import { CompactCard as Card } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 
-const DATE_FORMAT = 'dddd, MMMM Do LT';
+const DATE_FORMAT = 'MMMM Do h:mm A z';
 
 const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 	const translate = useTranslate();
