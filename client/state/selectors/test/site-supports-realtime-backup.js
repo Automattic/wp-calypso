@@ -56,7 +56,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 			purchases: {
 				data: [
 					{
-						active: false,
+						active: true,
 						blog_id: siteId,
 						product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
 					},
