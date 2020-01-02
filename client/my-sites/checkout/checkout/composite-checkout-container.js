@@ -187,11 +187,7 @@ export default function CompositeCheckoutContainer( {
 
 	// Payment methods must be created inside the component so their stores are
 	// re-created when the checkout unmounts and remounts.
-	const { stripeMethod, paypalMethod, applePayMethod } = useCreatePaymentMethods();
-	const availablePaymentMethods = useMemo(
-		() => [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ),
-		[ applePayMethod, stripeMethod, paypalMethod ]
-	);
+	const availablePaymentMethods = useCreatePaymentMethods();
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
@@ -273,5 +269,9 @@ function useCreatePaymentMethods() {
 				: null,
 		[]
 	);
-	return { stripeMethod, paypalMethod, applePayMethod };
+	return useMemo( () => [ stripeMethod, paypalMethod, applePayMethod ].filter( Boolean ), [
+		stripeMethod,
+		paypalMethod,
+		applePayMethod,
+	] );
 }
