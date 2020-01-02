@@ -88,7 +88,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import {
 	persistSignupDestination,
@@ -474,13 +473,11 @@ export class Checkout extends React.Component {
 		return;
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
 		const { cart, selectedSiteSlug } = this.props;
 
-		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}
+		if ( hasPersonalPlan( cart ) ) {
+			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 		}
 
 		return;
