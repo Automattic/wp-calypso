@@ -9,6 +9,10 @@ import deepFreeze from 'deep-freeze';
 import reducer, { siteItems, urlItems } from '../reducer';
 import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'state/action-types';
 
+jest.mock( 'state/embeds/utils', () => ( {
+	normalizeEmbeds: embeds => embeds,
+} ) );
+
 describe( 'reducer', () => {
 	const siteId = 12345678;
 
@@ -18,8 +22,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'siteItems', () => {
-		const sourceEmbeds = [ 'something' ];
-		const resultEmbeds = [ /something/ ];
+		const embeds = [ 'something' ];
 
 		test( 'should default to an empty object', () => {
 			const state = siteItems( undefined, {} );
@@ -30,49 +33,48 @@ describe( 'reducer', () => {
 			const state = siteItems( deepFreeze( {} ), {
 				type: EMBEDS_RECEIVE,
 				siteId,
-				embeds: sourceEmbeds,
+				embeds,
 			} );
 
 			expect( state ).toEqual( {
-				[ siteId ]: resultEmbeds,
+				[ siteId ]: embeds,
 			} );
 		} );
 
 		test( 'should overwrite embeds of the site if they already exist', () => {
 			const state = siteItems(
 				deepFreeze( {
-					[ siteId ]: [ /old-embeds-pattern/ ],
+					[ siteId ]: [ 'old-embeds-pattern' ],
 				} ),
 				{
 					type: EMBEDS_RECEIVE,
 					siteId,
-					embeds: sourceEmbeds,
+					embeds,
 				}
 			);
 
 			expect( state ).toEqual( {
-				[ siteId ]: resultEmbeds,
+				[ siteId ]: embeds,
 			} );
 		} );
 
 		test( 'should add embeds of another site, keeping the existing ones', () => {
 			const otherSiteId = 87654321;
-			const otherSourceEmbeds = [ 'something-else' ];
-			const otherResultEmbeds = [ /something-else/ ];
+			const otherEmbeds = [ 'something-else' ];
 			const state = siteItems(
 				deepFreeze( {
-					[ siteId ]: resultEmbeds,
+					[ siteId ]: embeds,
 				} ),
 				{
 					type: EMBEDS_RECEIVE,
 					siteId: otherSiteId,
-					embeds: otherSourceEmbeds,
+					embeds: otherEmbeds,
 				}
 			);
 
 			expect( state ).toEqual( {
 				...state,
-				[ otherSiteId ]: otherResultEmbeds,
+				[ otherSiteId ]: otherEmbeds,
 			} );
 		} );
 	} );
