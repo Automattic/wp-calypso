@@ -21,6 +21,6 @@
 
 		"forceConsistentCasingInFileNames": true
 	},
-	"files": [ "src/index" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }
