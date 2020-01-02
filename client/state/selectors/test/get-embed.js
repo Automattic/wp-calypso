@@ -26,7 +26,7 @@ describe( 'getEmbed()', () => {
 	} );
 
 	test( 'should return null if the URL is unknown', () => {
-		expect( getEmbed( state, 123, 'something' ) ).toBeNull();
+		expect( getEmbed( state, siteId, 'something' ) ).toBeNull();
 	} );
 
 	test( 'should return the embed if it exists for that site and URL', () => {
