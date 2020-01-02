@@ -50,175 +50,111 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
 	} );
 
-	test( 'should return false when there is a yearly daily backup purchase for that site', () => {
+	test( 'should return false when there is a daily backup purchase for that site', () => {
 		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [
-					{
-						active: true,
-						blog_id: siteId,
-						product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
-					},
-				],
-			},
-			sites: {
-				plans: {},
-			},
-		};
+		const dailyBackupProductSlugs = [
+			PRODUCT_JETPACK_BACKUP_DAILY,
+			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+		];
 
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
-	} );
+		dailyBackupProductSlugs.map( productSlug => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							active: true,
+							blog_id: siteId,
+							product_slug: productSlug,
+						},
+					],
+				},
+				sites: {
+					plans: {},
+				},
+			};
 
-	test( 'should return false when there is a monthly daily backup purchase for that site', () => {
-		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [
-					{
-						active: true,
-						blog_id: siteId,
-						product_slug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-					},
-				],
-			},
-			sites: {
-				plans: {},
-			},
-		};
-
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
+			expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
+		} );
 	} );
 
 	test( 'should return true when there is a yearly real time backup purchase for that site', () => {
 		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [
-					{
-						active: true,
-						blog_id: siteId,
-						product_slug: PRODUCT_JETPACK_BACKUP_REALTIME,
-					},
-				],
-			},
-			sites: {
-				plans: {},
-			},
-		};
+		const realtimeBackupProductSlugs = [
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		];
 
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
-	} );
+		realtimeBackupProductSlugs.map( productSlug => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							active: true,
+							blog_id: siteId,
+							product_slug: productSlug,
+						},
+					],
+				},
+				sites: {
+					plans: {},
+				},
+			};
 
-	test( 'should return true when there is a monthly real time backup purchase for that site', () => {
-		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [
-					{
-						active: true,
-						blog_id: siteId,
-						product_slug: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-					},
-				],
-			},
-			sites: {
-				plans: {},
-			},
-		};
-
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
+			expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
+		} );
 	} );
 
 	test( 'should return false when site is on a Jetpack Premium yearly plan', () => {
 		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [],
-			},
-			sites: {
-				plans: {
-					[ siteId ]: {
-						data: [
-							{
-								currentPlan: true,
-								productSlug: PLAN_JETPACK_PREMIUM,
-							},
-						],
+		const premiumPlanSlugs = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+
+		premiumPlanSlugs.map( productSlug => {
+			const state = {
+				purchases: {
+					data: [],
+				},
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: productSlug,
+								},
+							],
+						},
 					},
 				},
-			},
-		};
+			};
 
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
-	} );
-
-	test( 'should return false when site is on a Jetpack Premium monthly plan', () => {
-		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [],
-			},
-			sites: {
-				plans: {
-					[ siteId ]: {
-						data: [
-							{
-								currentPlan: true,
-								productSlug: PLAN_JETPACK_PREMIUM_MONTHLY,
-							},
-						],
-					},
-				},
-			},
-		};
-
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
+			expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( false );
+		} );
 	} );
 
 	test( 'should return true when site is on a Jetpack Professional yearly plan', () => {
 		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [],
-			},
-			sites: {
-				plans: {
-					[ siteId ]: {
-						data: [
-							{
-								currentPlan: true,
-								productSlug: PLAN_JETPACK_BUSINESS,
-							},
-						],
+		const professionalPlanSlugs = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
+
+		professionalPlanSlugs.map( productSlug => {
+			const state = {
+				purchases: {
+					data: [],
+				},
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: productSlug,
+								},
+							],
+						},
 					},
 				},
-			},
-		};
+			};
 
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
-	} );
-
-	test( 'should return true when site is on a Jetpack Professional monthly plan', () => {
-		const siteId = 123456;
-		const state = {
-			purchases: {
-				data: [],
-			},
-			sites: {
-				plans: {
-					[ siteId ]: {
-						data: [
-							{
-								currentPlan: true,
-								productSlug: PLAN_JETPACK_BUSINESS_MONTHLY,
-							},
-						],
-					},
-				},
-			},
-		};
-
-		expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
+			expect( siteSupportsRealtimeBackup( state, siteId ) ).toBe( true );
+		} );
 	} );
 } );
