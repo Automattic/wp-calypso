@@ -147,4 +147,14 @@ export default {
 		localeTargets: 'any',
 		localeExceptions: [ 'en' ],
 	},
+	readerFreeToPaidPlanNudge: {
+		datestamp: '20200102',
+		variations: {
+			display: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+	},
 };
