@@ -68,6 +68,7 @@ module.exports = {
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
+		browser: true,
 	},
 	globals: {
 		// allow the browser globals. ESLint's `browser` env is too permissive and allows referencing
