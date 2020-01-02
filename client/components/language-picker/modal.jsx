@@ -33,6 +33,7 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Style dependencies
@@ -330,6 +331,7 @@ export class LanguagePickerModal extends PureComponent {
 						pinned
 						fitsContainer
 						isOpen={ isSearchOpen }
+						autoFocus={ ! isMobile() } // eslint-disable-line jsx-a11y/no-autofocus
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
