@@ -3,6 +3,12 @@
  */
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
+import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -136,7 +142,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 						data: [
 							{
 								currentPlan: true,
-								productSlug: 'jetpack_premium',
+								productSlug: PLAN_JETPACK_PREMIUM,
 							},
 						],
 					},
@@ -159,7 +165,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 						data: [
 							{
 								currentPlan: true,
-								productSlug: 'jetpack_premium_monthly',
+								productSlug: PLAN_JETPACK_PREMIUM_MONTHLY,
 							},
 						],
 					},
@@ -182,7 +188,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 						data: [
 							{
 								currentPlan: true,
-								productSlug: 'jetpack_business',
+								productSlug: PLAN_JETPACK_BUSINESS,
 							},
 						],
 					},
@@ -205,7 +211,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 						data: [
 							{
 								currentPlan: true,
-								productSlug: 'jetpack_business_monthly',
+								productSlug: PLAN_JETPACK_BUSINESS_MONTHLY,
 							},
 						],
 					},
