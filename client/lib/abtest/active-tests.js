@@ -154,7 +154,7 @@ export default {
 			control: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 		localeTargets: 'any',
 	},
 };
