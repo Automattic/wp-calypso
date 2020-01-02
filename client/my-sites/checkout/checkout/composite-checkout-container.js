@@ -115,21 +115,8 @@ export function createCartFromLineItems( {
 }
 
 function getDomainDetails() {
-	const isDomainContactSame = select( 'wpcom' )?.isDomainContactSame?.() ?? false;
-	const {
-		firstName,
-		lastName,
-		email,
-		phoneNumber,
-		address,
-		city,
-		state,
-		country,
-		postalCode,
-	} = isDomainContactSame
-		? select( 'wpcom' )?.getContactInfo?.() ?? {}
-		: select( 'wpcom' )?.getDomainContactInfo?.() ?? {};
-	// TODO: what is getContactInfo for other than the domainDetails?
+	const { firstName, lastName, email, phoneNumber, address, city, state, country, postalCode } =
+		select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return {
 		firstName,
 		lastName,
