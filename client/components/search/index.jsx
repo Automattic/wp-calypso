@@ -126,7 +126,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 

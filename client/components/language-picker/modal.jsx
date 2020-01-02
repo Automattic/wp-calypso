@@ -66,6 +66,7 @@ export class LanguagePickerModal extends PureComponent {
 			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
 			showingDefaultFilter: true,
 			search: false,
+			isSearchOpen: true,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
 		};
@@ -189,6 +190,14 @@ export class LanguagePickerModal extends PureComponent {
 		this.setState( { search } );
 	};
 
+	handleSearchOpen = () => {
+		this.setState( { isSearchOpen: true } );
+	};
+
+	handleSearchClose = () => {
+		this.setState( { isSearchOpen: false } );
+	};
+
 	handleLanguageItemClick = ( selectedLanguageSlug, event ) => {
 		event.preventDefault();
 		this.setState( { selectedLanguageSlug } );
@@ -289,7 +298,7 @@ export class LanguagePickerModal extends PureComponent {
 
 	render() {
 		const { isVisible, translate } = this.props;
-		const { filter } = this.state;
+		const { filter, isSearchOpen } = this.state;
 
 		if ( ! isVisible ) {
 			return null;
@@ -320,7 +329,10 @@ export class LanguagePickerModal extends PureComponent {
 					<Search
 						pinned
 						fitsContainer
+						isOpen={ isSearchOpen }
 						onSearch={ this.handleSearch }
+						onSearchOpen={ this.handleSearchOpen }
+						onSearchClose={ this.handleSearchClose }
 						placeholder={ translate( 'Search languages…' ) }
 					/>
 				</SectionNav>

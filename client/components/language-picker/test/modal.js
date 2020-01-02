@@ -341,4 +341,19 @@ describe( 'LanguagePickerModal', () => {
 			} );
 		} );
 	} );
+
+	describe( 'language search', () => {
+		test( 'should update isSearchOpen state properly when search fires onOnSearchClose and onSearchOpen', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+			const searchWrapper = wrapper.find( 'Search' );
+
+			expect( wrapper.state().isSearchOpen ).toBe( true );
+
+			searchWrapper.prop( 'onSearchClose' )();
+			expect( wrapper.state().isSearchOpen ).toBe( false );
+
+			searchWrapper.prop( 'onSearchOpen' )();
+			expect( wrapper.state().isSearchOpen ).toBe( true );
+		} );
+	} );
 } );
