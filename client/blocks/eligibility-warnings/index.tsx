@@ -12,7 +12,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import hasLocalizedText from './has-localized-text';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -116,33 +115,23 @@ function getSiteIsEligibleMessage(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ]
 ) {
-	const defaultCopy = translate( 'This site is eligible to install plugins and upload themes.' );
 	switch ( context ) {
 		case 'plugins':
 		case 'themes':
-			return hasLocalizedText( 'This site is eligible to install plugins and upload themes.' )
-				? translate( 'This site is eligible to install plugins and upload themes.' )
-				: defaultCopy;
+			return translate( 'This site is eligible to install plugins and upload themes.' );
 		case 'hosting':
-			return hasLocalizedText( 'This site is eligible to activate hosting access.' )
-				? translate( 'This site is eligible to activate hosting access.' )
-				: defaultCopy;
+			return translate( 'This site is eligible to activate hosting access.' );
 		default:
-			return hasLocalizedText( 'This site is eligible to continue.' )
-				? translate( 'This site is eligible to continue.' )
-				: defaultCopy;
+			return translate( 'This site is eligible to continue.' );
 	}
 }
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
-	const defaultCopy = translate( 'Proceed' );
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
-		return hasLocalizedText( 'Upgrade and continue' )
-			? translate( 'Upgrade and continue' )
-			: defaultCopy;
+		return translate( 'Upgrade and continue' );
 	}
 
-	return hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
+	return translate( 'Continue' );
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {

@@ -9,7 +9,6 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import hasLocalizedText from './has-localized-text';
 import ExternalLink from 'components/external-link';
 import ActionPanelLink from 'components/action-panel/link';
 
@@ -50,24 +49,14 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 
 		<div className="eligibility-warnings__warning">
 			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-title">
-					{ hasLocalizedText( 'Questions?' )
-						? translate( 'Questions?' )
-						: translate( 'Any Questions?' ) }
-				</span>
+				<span className="eligibility-warnings__message-title">{ translate( 'Questions?' ) }</span>
 				:&nbsp;
 				<span className="eligibility-warnings__message-description">
-					{ hasLocalizedText( '{{a}}Contact support{{/a}} for help.' ) ? (
-						translate( '{{a}}Contact support{{/a}} for help.', {
-							components: {
-								a: <ActionPanelLink href="/help/contact" />,
-							},
-						} )
-					) : (
-						<ActionPanelLink href="/help/contact">
-							{ translate( 'Contact support' ) }
-						</ActionPanelLink>
-					) }
+					{ translate( '{{a}}Contact support{{/a}} for help.', {
+						components: {
+							a: <ActionPanelLink href="/help/contact" />,
+						},
+					} ) }
 				</span>
 			</div>
 		</div>
@@ -79,56 +68,36 @@ function getWarningDescription(
 	warningCount: number,
 	translate: LocalizeProps[ 'translate' ]
 ) {
-	const defaultCopy = translate(
-		"By proceeding you'll lose %d feature:",
-		"By proceeding you'll lose these %d features:",
-		{
-			count: warningCount,
-			args: warningCount,
-		}
-	);
 	switch ( context ) {
 		case 'plugins':
-			return hasLocalizedText(
-				"This feature isn't (yet) compatible with plugin uploads and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
-						"These features aren't (yet) compatible with plugin uploads and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with plugin uploads and will be disabled:",
+				"These features aren't (yet) compatible with plugin uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		case 'themes':
-			return hasLocalizedText(
-				"This feature isn't (yet) compatible with theme uploads and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with theme uploads and will be disabled:",
-						"These features aren't (yet) compatible with theme uploads and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with theme uploads and will be disabled:",
+				"These features aren't (yet) compatible with theme uploads and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		case 'hosting':
-			return hasLocalizedText(
-				"This feature isn't (yet) compatible with hosting access and will be disabled:"
-			)
-				? translate(
-						"This feature isn't (yet) compatible with hosting access and will be disabled:",
-						"These features aren't (yet) compatible with hosting access and will be disabled:",
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: defaultCopy;
+			return translate(
+				"This feature isn't (yet) compatible with hosting access and will be disabled:",
+				"These features aren't (yet) compatible with hosting access and will be disabled:",
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		default:
 			return null;
