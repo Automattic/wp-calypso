@@ -19,7 +19,7 @@ const debug = debugFactory( 'composite-checkout:paypal' );
 
 export function createPayPalMethod( {
 	registerStore,
-	makePayPalExpressRequest,
+	submitTransaction,
 	getSiteId,
 	getCountry,
 	getPostalCode,
@@ -31,7 +31,7 @@ export function createPayPalMethod( {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
 				const { items, successUrl, cancelUrl } = action.payload;
-				return makePayPalExpressRequest( {
+				return submitTransaction( {
 					successUrl,
 					cancelUrl,
 					siteId: getSiteId(),

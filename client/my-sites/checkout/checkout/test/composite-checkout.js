@@ -109,7 +109,7 @@ test( 'When we enter checkout, the line items and total are rendered', async () 
 				availablePaymentMethods={ [
 					createPayPalMethod( {
 						registerStore: registerStore,
-						makePayPalExpressRequest: mockPayPalExpressRequest,
+						submitTransaction: mockPayPalExpressRequest,
 					} ),
 				] }
 				registry={ registry }

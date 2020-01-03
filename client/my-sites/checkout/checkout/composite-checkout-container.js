@@ -295,7 +295,7 @@ function useCreatePaymentMethods() {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				getDomainDetails,
 				registerStore: registerStore,
-				makePayPalExpressRequest,
+				submitTransaction: submitData => makePayPalExpressRequest( submitData ),
 			} ),
 		[]
 	);
