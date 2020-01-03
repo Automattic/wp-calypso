@@ -1757,7 +1757,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	describe.skip( 'Passwordless signup @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		let verificationLink;
 
 		before( async function() {
@@ -1803,16 +1803,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				// );
+				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+					expectedBlogAddresses,
+					blogName
+				);
+				const actualAddress = await findADomainComponent.freeBlogAddress();
+				assert(
+					expectedBlogAddresses.indexOf( actualAddress ) > -1,
+					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				);
 				return await findADomainComponent.selectFreeAddress();
 			}
 		);
