@@ -42,6 +42,7 @@ class SectionMigrate extends Component {
 		migrationStatus: 'unknown',
 		percent: 0,
 		startTime: '',
+		errorMessage: '',
 	};
 
 	componentDidMount() {
