@@ -33,17 +33,12 @@ import { useFormStatus } from '../form-status';
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
 export function createExistingCardMethod( {
-	getSiteId,
 	getCountry,
 	getPostalCode,
 	getSubdivisionCode,
-	getDomainDetails,
 	registerStore,
 	submit,
 	id,
-	storedDetailsId,
-	paymentMethodToken,
-	paymentPartnerProcessorId,
 	cardholderName,
 	cardExpiry,
 	brand,
@@ -59,14 +54,9 @@ export function createExistingCardMethod( {
 					type: 'EXISTING_CARD_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
-						siteId: getSiteId(),
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
-						domainDetails: getDomainDetails(),
-						storedDetailsId,
-						paymentMethodToken,
-						paymentPartnerProcessorId,
 					},
 				};
 				debug( 'existing card transaction complete', response );

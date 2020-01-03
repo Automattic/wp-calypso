@@ -286,21 +286,24 @@ function useCreatePaymentMethods() {
 			storedCards.map( storedDetails =>
 				createExistingCardMethod( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
-					storedDetailsId: storedDetails.stored_details_id,
-					paymentMethodToken: storedDetails.mp_ref,
-					paymentPartnerProcessorId: storedDetails.payment_partner,
 					cardholderName: storedDetails.name,
 					cardExpiry: storedDetails.expiry,
 					brand: storedDetails.card_type,
 					last4: storedDetails.card,
-					submit: submitExistingCardPayment,
+					submit: submitData =>
+						submitExistingCardPayment( {
+							...submitData,
+							getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
+							storedDetailsId: storedDetails.stored_details_id,
+							paymentMethodToken: storedDetails.mp_ref,
+							paymentPartnerProcessorId: storedDetails.payment_partner,
+							getDomainDetails,
+						} ),
 					registerStore,
-					getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
 					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-					getDomainDetails,
 				} )
 			),
 		[ storedCards ]
