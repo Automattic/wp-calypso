@@ -44,7 +44,13 @@ export function createExistingCardMethod( {
 	brand,
 	last4,
 } ) {
-	debug( 'creating a new existing credit card payment method', {} );
+	debug( 'creating a new existing credit card payment method', {
+		id,
+		cardholderName,
+		cardExpiry,
+		brand,
+		last4,
+	} );
 
 	const actions = {
 		*beginCardTransaction( payload ) {
