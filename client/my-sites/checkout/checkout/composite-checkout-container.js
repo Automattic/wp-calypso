@@ -37,7 +37,12 @@ async function fetchStripeConfiguration( requestArgs ) {
 }
 
 async function sendStripeTransaction( transactionData ) {
-	const formattedTransactionData = formatDataForTransactionsEndpoint( transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodToken: transactionData.paymentMethodToken.id,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
 }
@@ -53,16 +58,20 @@ function formatDataForTransactionsEndpoint( {
 	name,
 	items,
 	total,
-	stripeConfiguration,
 	successUrl,
 	cancelUrl,
+	paymentMethodType,
+	paymentPartnerProcessorId,
+	storedDetailsId,
 } ) {
 	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: paymentMethodToken.id,
-		payment_partner: stripeConfiguration.processor_id,
+		paymentMethod: paymentMethodType,
+		paymentKey: paymentMethodToken,
+		paymentPartner: paymentPartnerProcessorId,
+		storedDetailsId,
 		name,
-		zip: postalCode,
+		zip: postalCode, // TODO: do we need this in addition to postalCode?
+		postalCode,
 		country,
 		successUrl,
 		cancelUrl,
@@ -278,6 +287,8 @@ function useCreatePaymentMethods() {
 				createExistingCardMethod( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
 					storedDetailsId: storedDetails.stored_details_id,
+					paymentMethodToken: storedDetails.mp_ref,
+					paymentPartnerProcessorId: storedDetails.payment_partner,
 					cardholderName: storedDetails.name,
 					cardExpiry: storedDetails.expiry,
 					brand: storedDetails.card_type,
@@ -322,7 +333,10 @@ function useStoredCards() {
 }
 
 async function submitExistingCardPayment( transactionData ) {
-	const formattedTransactionData = formatDataForTransactionsEndpoint( transactionData ); // TODO: do different formatting for a stored card?
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
+	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return wpcom.transactions( formattedTransactionData ); // TODO: use a different endpoint for a stored card?
+	return wpcom.transactions( formattedTransactionData );
 }

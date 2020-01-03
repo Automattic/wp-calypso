@@ -9,7 +9,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import { useStripe, createStripePaymentMethod, confirmStripePaymentIntent } from '../stripe';
 import {
 	useSelect,
 	useDispatch,
@@ -37,56 +36,27 @@ export function createExistingCardMethod( {
 	getSiteId,
 	getCountry,
 	getPostalCode,
-	getPhoneNumber,
 	getSubdivisionCode,
 	getDomainDetails,
 	registerStore,
-	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submit,
 	id,
-	labelText,
+	storedDetailsId,
+	paymentMethodToken,
+	paymentPartnerKey,
+	cardholderName,
+	cardExpiry,
+	brand,
+	last4,
 } ) {
-	debug( 'creating a new existing credit card payment method' );
+	debug( 'creating a new existing credit card payment method', {} );
+
 	const actions = {
-		changeBrand( payload ) {
-			return { type: 'BRAND_SET', payload };
-		},
-		setCardDataError( type, message ) {
-			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
-		},
-		setCardDataComplete( type, complete ) {
-			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
-		},
-		changeCardholderName( payload ) {
-			return { type: 'CARDHOLDER_NAME_SET', payload };
-		},
-		setStripeError( payload ) {
-			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
-		},
-		*getConfiguration( payload ) {
-			let configuration;
+		*beginCardTransaction( payload ) {
+			let response;
 			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
-		},
-		*beginStripeTransaction( payload ) {
-			let stripeResponse;
-			try {
-				const paymentMethodToken = yield {
-					type: 'STRIPE_CREATE_PAYMENT_METHOD_TOKEN',
-					payload: {
-						...payload,
-						country: getCountry(),
-						postalCode: getPostalCode(),
-						phoneNumber: getPhoneNumber(),
-					},
-				};
-				debug( 'stripe payment token created' );
-				stripeResponse = yield {
-					type: 'STRIPE_TRANSACTION_BEGIN',
+				response = yield {
+					type: 'EXISTING_CARD_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
 						siteId: getSiteId(),
@@ -94,37 +64,30 @@ export function createExistingCardMethod( {
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
 						domainDetails: getDomainDetails(),
+						storedDetailsId,
 						paymentMethodToken,
+						paymentPartnerKey,
 					},
 				};
-				debug( 'stripe transaction complete', stripeResponse );
+				debug( 'existing card transaction complete', response );
 			} catch ( error ) {
-				debug( 'stripe transaction had an error', error );
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+				debug( 'existing card transaction had an error', error );
+				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error };
 			}
-			if ( stripeResponse?.message?.payment_intent_client_secret ) {
-				debug( 'stripe transaction requires auth' );
-				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
+			if ( response?.message?.payment_intent_client_secret ) {
+				debug( 'existing card transaction requires auth' );
+				return { type: 'EXISTING_CARD_TRANSACTION_AUTH', payload: response };
 			}
-			if ( stripeResponse?.redirect_url ) {
-				debug( 'stripe transaction requires redirect' );
-				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
+			if ( response?.redirect_url ) {
+				debug( 'existing card transaction requires redirect' );
+				return { type: 'EXISTING_CARD_TRANSACTION_REDIRECT', payload: response };
 			}
-			debug( 'stripe transaction requires is successful' );
-			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
+			debug( 'existing card transaction requires is successful' );
+			return { type: 'EXISTING_CARD_TRANSACTION_END', payload: response };
 		},
 	};
 
 	const selectors = {
-		getStripeConfiguration( state ) {
-			return state.stripeConfiguration;
-		},
-		getBrand( state ) {
-			return state.brand || '';
-		},
-		getCardholderName( state ) {
-			return state.cardholderName || '';
-		},
 		getTransactionError( state ) {
 			return state.transactionError;
 		},
@@ -134,85 +97,39 @@ export function createExistingCardMethod( {
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
 		},
-		getCardDataErrors( state ) {
-			return state.cardDataErrors;
-		},
-		areAllFieldsComplete( state ) {
-			return Object.keys( state.cardDataComplete ).every( key => state.cardDataComplete[ key ] );
-		},
 	};
-
-	function cardDataCompleteReducer(
-		state = {
-			cardNumber: false,
-			cardCvc: false,
-			cardExpiry: false,
-		},
-		action
-	) {
-		switch ( action?.type ) {
-			case 'CARD_DATA_COMPLETE_SET':
-				return { ...state, [ action.payload.type ]: action.payload.complete };
-			default:
-				return state;
-		}
-	}
-
-	function cardDataErrorsReducer( state = {}, action ) {
-		switch ( action?.type ) {
-			case 'CARD_DATA_ERROR_SET':
-				return { ...state, [ action.payload.type ]: action.payload.message };
-			default:
-				return state;
-		}
-	}
 
 	registerStore( 'existing-card', {
 		reducer(
 			state = {
-				cardDataErrors: cardDataErrorsReducer(),
-				cardDataComplete: cardDataCompleteReducer(),
+				transactionStatus: null,
+				transactionError: null,
+				transactionAuthData: null,
 			},
 			action
 		) {
 			switch ( action.type ) {
-				case 'STRIPE_TRANSACTION_END':
+				case 'EXISTING_CARD_TRANSACTION_END':
 					return {
 						...state,
 						transactionStatus: 'complete',
 					};
-				case 'STRIPE_TRANSACTION_ERROR':
+				case 'EXISTING_CARD_TRANSACTION_ERROR':
 					return {
 						...state,
 						transactionStatus: 'error',
 						transactionError: action.payload,
 					};
-				case 'STRIPE_TRANSACTION_AUTH':
+				case 'EXISTING_CARD_TRANSACTION_AUTH':
 					return {
 						...state,
 						transactionStatus: 'auth',
 						transactionAuthData: action.payload,
 					};
-				case 'STRIPE_TRANSACTION_REDIRECT':
+				case 'EXISTING_CARD_TRANSACTION_REDIRECT':
 					return {
 						...state,
 						transactionStatus: 'redirect',
-					};
-				case 'STRIPE_CONFIGURATION_SET':
-					return { ...state, stripeConfiguration: action.payload };
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
-				case 'BRAND_SET':
-					return { ...state, brand: action.payload };
-				case 'CARD_DATA_COMPLETE_SET':
-					return {
-						...state,
-						cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
-					};
-				case 'CARD_DATA_ERROR_SET':
-					return {
-						...state,
-						cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 					};
 			}
 			return state;
@@ -220,31 +137,39 @@ export function createExistingCardMethod( {
 		actions,
 		selectors,
 		controls: {
-			STRIPE_CONFIGURATION_FETCH( action ) {
-				return fetchStripeConfiguration( action.payload );
-			},
-			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
-				return createStripePaymentMethodToken( action.payload );
-			},
-			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( action.payload );
+			EXISTING_CARD_TRANSACTION_BEGIN( action ) {
+				return submit( action.payload );
 			},
 		},
 	} );
 
 	return {
 		id,
-		label: <ExistingCardLabel labelText={ labelText } />,
+		label: (
+			<ExistingCardLabel
+				last4={ last4 }
+				cardExpiry={ cardExpiry }
+				cardholderName={ cardholderName }
+				brand={ brand }
+			/>
+		),
 		submitButton: <ExistingCardPayButton />,
-		inactiveContent: <ExistingCardSummary />,
-		getAriaLabel: () => labelText,
+		inactiveContent: <ExistingCardSummary cardholderName={ cardholderName } brand={ brand } />,
+		getAriaLabel: () => `${ brand } ${ last4 } ${ cardholderName }`,
 	};
 }
 
-export function ExistingCardLabel( { labelText } ) {
+export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
 	return (
 		<React.Fragment>
-			<span>{ labelText }</span>
+			<div>
+				<span>{ brand.toUpperCase() }</span>
+				<span>****{ last4 }</span>
+			</div>
+			<div>
+				<span>{ cardholderName }</span>
+				<span>{ cardExpiry }</span>
+			</div>
 		</React.Fragment>
 	);
 }
@@ -358,39 +283,28 @@ function ExistingCardPayButton( { disabled } ) {
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
-	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'existing-card' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'existing-card' ).getTransactionError() );
 	const transactionAuthData = useSelect( select =>
 		select( 'existing-card' ).getTransactionAuthData()
 	);
-	const { beginStripeTransaction } = useDispatch( 'existing-card' );
+	const { beginCardTransaction } = useDispatch( 'existing-card' );
 	const name = useSelect( select => select( 'existing-card' ).getCardholderName() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			// TODO: clear this after showing it
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			debug( 'stripe transaction is complete' );
+			debug( 'existing card transaction is complete' );
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
-		}
-		if ( transactionStatus === 'auth' ) {
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionAuthData,
-			} ).catch( error => {
-				setFormReady();
-				showErrorMessage( error.stripeError || error.message );
-			} );
 		}
 	}, [
 		setFormReady,
@@ -399,7 +313,6 @@ function ExistingCardPayButton( { disabled } ) {
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
-		stripeConfiguration,
 		localize,
 	] );
 
@@ -411,16 +324,14 @@ function ExistingCardPayButton( { disabled } ) {
 		<Button
 			disabled={ disabled }
 			onClick={ () =>
-				submitStripePayment( {
+				submitExistingCardPayment( {
 					name,
 					items,
 					total,
-					stripe,
-					stripeConfiguration,
 					showErrorMessage,
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
-					beginStripeTransaction,
+					beginCardTransaction,
 					setFormSubmitting,
 				} )
 			}
@@ -432,10 +343,7 @@ function ExistingCardPayButton( { disabled } ) {
 	);
 }
 
-function ExistingCardSummary() {
-	const cardholderName = useSelect( select => select( 'existing-card' ).getCardholderName() );
-	const brand = useSelect( select => select( 'existing-card' ).getBrand() );
-
+function ExistingCardSummary( { cardholderName, brand } ) {
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
@@ -446,28 +354,24 @@ function ExistingCardSummary() {
 	);
 }
 
-async function submitStripePayment( {
+async function submitExistingCardPayment( {
 	name,
 	items,
 	total,
-	stripe,
-	stripeConfiguration,
 	showErrorMessage,
 	successUrl,
 	cancelUrl,
-	beginStripeTransaction,
+	beginCardTransaction,
 	setFormSubmitting,
 	setFormReady,
 } ) {
-	debug( 'submitting stripe payment' );
+	debug( 'submitting existing card payment' );
 	try {
 		setFormSubmitting();
-		beginStripeTransaction( {
-			stripe,
+		beginCardTransaction( {
 			name,
 			items,
 			total,
-			stripeConfiguration,
 			successUrl,
 			cancelUrl,
 		} );
@@ -475,27 +379,5 @@ async function submitStripePayment( {
 		setFormReady();
 		showErrorMessage( error );
 		return;
-	}
-}
-
-function createStripePaymentMethodToken( { stripe, name, country, postalCode, phoneNumber } ) {
-	return createStripePaymentMethod( stripe, {
-		name,
-		address: {
-			country,
-			postal_code: postalCode,
-		},
-		...( phoneNumber ? { phone: phoneNumber } : {} ),
-	} );
-}
-
-async function showStripeModalAuth( { stripeConfiguration, response } ) {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse ) {
-		// TODO: what do we do here?
 	}
 }
