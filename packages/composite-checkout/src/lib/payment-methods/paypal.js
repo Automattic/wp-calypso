@@ -17,14 +17,7 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod( {
-	registerStore,
-	submitTransaction,
-	getCountry,
-	getPostalCode,
-	getSubdivisionCode,
-	getPhoneNumber,
-} ) {
+export function createPayPalMethod( { registerStore, submitTransaction } ) {
 	registerStore( 'paypal', {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
@@ -32,10 +25,6 @@ export function createPayPalMethod( {
 				return submitTransaction( {
 					successUrl,
 					cancelUrl,
-					country: getCountry(),
-					postalCode: getPostalCode(),
-					subdivisionCode: getSubdivisionCode(),
-					phoneNumber: getPhoneNumber(),
 					items,
 				} );
 			},

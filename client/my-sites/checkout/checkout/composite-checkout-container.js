@@ -288,10 +288,6 @@ function useCreatePaymentMethods() {
 	const paypalMethod = useMemo(
 		() =>
 			createPayPalMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
 					makePayPalExpressRequest( {
@@ -299,6 +295,10 @@ function useCreatePaymentMethods() {
 						siteId: select( 'wpcom' )?.getSiteId?.(),
 						domainDetails: getDomainDetails(),
 						couponId: null, // TODO: get couponId
+						country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+						postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+						subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+						phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 					} ),
 			} ),
 		[]
