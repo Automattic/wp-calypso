@@ -293,11 +293,11 @@ function useCreatePaymentMethods() {
 					submit: submitData =>
 						submitExistingCardPayment( {
 							...submitData,
-							getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
+							siteId: select( 'wpcom' )?.getSiteId?.(),
 							storedDetailsId: storedDetails.stored_details_id,
 							paymentMethodToken: storedDetails.mp_ref,
 							paymentPartnerProcessorId: storedDetails.payment_partner,
-							getDomainDetails,
+							domainDetails: getDomainDetails(),
 						} ),
 					registerStore,
 					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
