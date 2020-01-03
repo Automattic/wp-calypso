@@ -31,6 +31,7 @@ import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fie
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';
+import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import { useActiveStep, useIsStepActive } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
@@ -56,6 +57,7 @@ export {
 	OrderReviewTotal,
 	createApplePayMethod,
 	createCreditCardMethod,
+	createExistingCardMethod,
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
