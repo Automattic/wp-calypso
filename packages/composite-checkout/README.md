@@ -223,7 +223,6 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
-- `getDomainDetails: () => object`. A function that returns the domain details for the the transaction.
 - `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
 - `cardholderName: string`. The cardholder's name. Used for display only.
 - `cardExpiry: string`. The card's expiry date. Used for display only.
