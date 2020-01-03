@@ -57,7 +57,7 @@ export function createStripeMethod( {
 	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction,
 } ) {
 	debug( 'creating a new stripe payment method' );
 	const actions = {
@@ -240,7 +240,7 @@ export function createStripeMethod( {
 				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( action.payload );
+				return submitTransaction( action.payload );
 			},
 		},
 	} );

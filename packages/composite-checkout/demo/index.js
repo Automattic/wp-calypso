@@ -96,7 +96,7 @@ const stripeMethod = createStripeMethod( {
 	getDomainDetails: () => ( {} ),
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction: sendStripeTransaction,
 } );
 
 const applePayMethod = isApplePayAvailable()

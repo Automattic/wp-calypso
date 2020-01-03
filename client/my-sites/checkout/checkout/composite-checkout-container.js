@@ -249,7 +249,7 @@ function useCreatePaymentMethods() {
 				getDomainDetails,
 				registerStore,
 				fetchStripeConfiguration,
-				sendStripeTransaction,
+				submitTransaction: sendStripeTransaction,
 			} ),
 		[]
 	);
