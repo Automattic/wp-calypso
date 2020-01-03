@@ -216,19 +216,15 @@ Creates a [data store](#data-stores) registry to be passed (optionally) to [Chec
 
 ### createExistingCardMethod
 
-Creates a [Payment Method](#payment-methods) object for an existing credit card. This is specific to WordPress.com and many of the options required should come from WordPress.com. Requires passing an object with the following properties:
+Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
 - `submit: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `getSiteId: () => string`. A function that returns the WordPress.com site id.
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
 - `getDomainDetails: () => object`. A function that returns the domain details for the the transaction.
 - `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
-- `storedDetailsId: string`. The stored details id to send to the transactions endpoint. Comes from WordPress.com.
-- `paymentMethodToken: string`. The token for this stored card to send to the transactions endpoint. Comes from WordPress.com.
-- `paymentPartnerProcessorId: string`. The payment partner name (eg: `stripe`). Comes from WordPress.com.
 - `cardholderName: string`. The cardholder's name. Used for display only.
 - `cardExpiry: string`. The card's expiry date. Used for display only.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
