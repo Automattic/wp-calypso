@@ -599,10 +599,7 @@ export class Checkout extends React.Component {
 			return redirectPathForGSuiteUpsell;
 		}
 
-		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
-			pendingOrReceiptId,
-			stepResult
-		);
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}
