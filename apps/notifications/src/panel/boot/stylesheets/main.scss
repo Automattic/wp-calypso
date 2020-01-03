@@ -149,7 +149,7 @@
 	}
 
 	span.wpnc__post {
-		font-style: italic;
+		font-weight: 600;
 	}
 
 	%headertext {
@@ -265,7 +265,7 @@
 			height: $wpnc__icon-size;
 			position: relative;
 			float: left;
-			margin: 0 $wpnc__padding-medium 0 $wpnc__padding-medium;
+			margin: 0 $wpnc__padding-large 0 $wpnc__padding-large;
 		}
 
 		.wpnc__note-icon img {
@@ -278,10 +278,10 @@
 			align-items: center;
 			justify-content: center;
 			color: white;
-			height: 22px;
-			width: 22px;
+			height: 16px;
+			width: 16px;
 			border: {
-				width: 2px;
+				width: 1px;
 				style: solid;
 				radius: 50%;
 			}
@@ -395,7 +395,7 @@
 		}
 
 		.wpnc__text-summary {
-			padding: 0 $wpnc__padding-medium 0 1.6 * $wpnc__icon-size;
+			padding: 0 $wpnc__padding-large 0 2 * $wpnc__padding-large + $wpnc__icon-size;
 			word-wrap: break-word;
 			text-align: left;
 
@@ -403,6 +403,9 @@
 				max-height: 3em;
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
+				font-size: 16px;
+				letter-spacing: 0.15px;
+
 			}
 
 			.wpnc__subject .wpnc__gridicon {
@@ -413,7 +416,7 @@
 			}
 
 			.wpnc__subject .wpnc__comment {
-				font-style: italic;
+				font-weight: 600;
 			}
 
 			.wpnc__subject .wpnc__user__site {
@@ -425,6 +428,8 @@
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
 				color: var( --color-text-subtle );
+				font-size: 14px;
+				letter-spacing: 0.25px;
 			}
 		}
 
@@ -560,6 +565,7 @@
 			}
 
 			.wpnc__excerpt {
+				color: var( --color-secondary );
 				-webkit-line-clamp: 1;
 				@extend %ellipsy-box;
 				white-space: nowrap;
@@ -572,9 +578,9 @@
 		}
 
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
-			color: var( --color-primary );
-			font-style: italic;
+			color: var( --color-secondary );
 			max-height: 1.5em;
+			font-size: 14px;
 		}
 
 		.wpnc__reply {
@@ -654,7 +660,7 @@
 
 	.wpnc__summary {
 		@extend %container;
-		padding: $wpnc__padding-medium 0;
+		padding: $wpnc__padding-large 0;
 	}
 
 	.time-notification {
