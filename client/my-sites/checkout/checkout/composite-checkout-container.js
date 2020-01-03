@@ -336,6 +336,7 @@ function useStoredCards() {
 }
 
 async function submitExistingCardPayment( transactionData ) {
+	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = formatDataForTransactionsEndpoint( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
