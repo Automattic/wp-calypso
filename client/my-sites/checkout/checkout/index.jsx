@@ -88,7 +88,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import {
 	persistSignupDestination,
@@ -474,19 +473,7 @@ export class Checkout extends React.Component {
 		return;
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
-		const { cart, selectedSiteSlug } = this.props;
-
-		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}
-		}
-
-		return;
-	}
-
-	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
+	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
 		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
@@ -500,9 +487,8 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
-			if ( upgradePath ) {
-				return upgradePath;
+			if ( hasPersonalPlan( cart ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
 			}
 
 			// A user just purchased one of the qualifying plans
@@ -613,10 +599,7 @@ export class Checkout extends React.Component {
 			return redirectPathForGSuiteUpsell;
 		}
 
-		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
-			pendingOrReceiptId,
-			stepResult
-		);
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}

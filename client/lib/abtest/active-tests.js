@@ -88,15 +88,6 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	showPlanUpsellConcierge: {
-		datestamp: '20191106',
-		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
