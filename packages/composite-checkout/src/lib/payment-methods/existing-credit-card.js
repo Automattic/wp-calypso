@@ -96,7 +96,7 @@ export function createExistingCardMethod( {
 		},
 	};
 
-	registerStore( 'existing-card', {
+	registerStore( `existing-card-${ id }`, {
 		reducer(
 			state = {
 				transactionStatus: null,
@@ -282,12 +282,16 @@ function ExistingCardPayButton( { disabled, id } ) {
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
-	const transactionStatus = useSelect( select => select( 'existing-card' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'existing-card' ).getTransactionError() );
-	const transactionAuthData = useSelect( select =>
-		select( 'existing-card' ).getTransactionAuthData()
+	const transactionStatus = useSelect( select =>
+		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
-	const { beginCardTransaction } = useDispatch( 'existing-card' );
+	const transactionError = useSelect( select =>
+		select( `existing-card-${ id }` ).getTransactionError()
+	);
+	const transactionAuthData = useSelect( select =>
+		select( `existing-card-${ id }` ).getTransactionAuthData()
+	);
+	const { beginCardTransaction } = useDispatch( `existing-card-${ id }` );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
