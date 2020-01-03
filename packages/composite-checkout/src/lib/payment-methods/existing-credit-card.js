@@ -37,7 +37,7 @@ export function createExistingCardMethod( {
 	getPostalCode,
 	getSubdivisionCode,
 	registerStore,
-	submit,
+	submitTransaction,
 	id,
 	cardholderName,
 	cardExpiry,
@@ -135,7 +135,7 @@ export function createExistingCardMethod( {
 		selectors,
 		controls: {
 			EXISTING_CARD_TRANSACTION_BEGIN( action ) {
-				return submit( action.payload );
+				return submitTransaction( action.payload );
 			},
 		},
 	} );

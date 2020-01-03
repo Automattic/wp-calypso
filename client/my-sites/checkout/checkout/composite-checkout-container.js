@@ -290,7 +290,7 @@ function useCreatePaymentMethods() {
 					cardExpiry: storedDetails.expiry,
 					brand: storedDetails.card_type,
 					last4: storedDetails.card,
-					submit: submitData =>
+					submitTransaction: submitData =>
 						submitExistingCardPayment( {
 							...submitData,
 							siteId: select( 'wpcom' )?.getSiteId?.(),

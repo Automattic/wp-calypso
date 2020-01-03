@@ -219,7 +219,7 @@ Creates a [data store](#data-stores) registry to be passed (optionally) to [Chec
 Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submit: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
 - `getCountry: () => string`. A function that returns the country to use for the transaction.
 - `getPostalCode: () => string`. A function that returns the postal code for the transaction.
 - `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
