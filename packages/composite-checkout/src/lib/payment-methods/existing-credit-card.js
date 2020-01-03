@@ -150,7 +150,7 @@ export function createExistingCardMethod( {
 				brand={ brand }
 			/>
 		),
-		submitButton: <ExistingCardPayButton />,
+		submitButton: <ExistingCardPayButton id={ id } />,
 		inactiveContent: (
 			<ExistingCardSummary cardholderName={ cardholderName } brand={ brand } last4={ last4 } />
 		),
@@ -277,7 +277,7 @@ function LockIcon( { className } ) {
 	);
 }
 
-function ExistingCardPayButton( { disabled } ) {
+function ExistingCardPayButton( { disabled, id } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
@@ -323,6 +323,7 @@ function ExistingCardPayButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ () =>
 				submitExistingCardPayment( {
+					id,
 					items,
 					total,
 					showErrorMessage,
@@ -353,6 +354,7 @@ function ExistingCardSummary( { cardholderName, brand, last4 } ) {
 }
 
 async function submitExistingCardPayment( {
+	id,
 	items,
 	total,
 	showErrorMessage,
@@ -362,7 +364,7 @@ async function submitExistingCardPayment( {
 	setFormSubmitting,
 	setFormReady,
 } ) {
-	debug( 'submitting existing card payment' );
+	debug( 'submitting existing card payment with the id', id );
 	try {
 		setFormSubmitting();
 		beginCardTransaction( {
