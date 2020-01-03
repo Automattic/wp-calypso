@@ -43,7 +43,7 @@ export function createExistingCardMethod( {
 	id,
 	storedDetailsId,
 	paymentMethodToken,
-	paymentPartnerKey,
+	paymentPartnerProcessorId,
 	cardholderName,
 	cardExpiry,
 	brand,
@@ -66,7 +66,7 @@ export function createExistingCardMethod( {
 						domainDetails: getDomainDetails(),
 						storedDetailsId,
 						paymentMethodToken,
-						paymentPartnerKey,
+						paymentPartnerProcessorId,
 					},
 				};
 				debug( 'existing card transaction complete', response );
