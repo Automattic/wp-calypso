@@ -20,12 +20,10 @@ const debug = debugFactory( 'composite-checkout:paypal' );
 export function createPayPalMethod( {
 	registerStore,
 	submitTransaction,
-	getSiteId,
 	getCountry,
 	getPostalCode,
 	getSubdivisionCode,
 	getPhoneNumber,
-	getDomainDetails,
 } ) {
 	registerStore( 'paypal', {
 		controls: {
@@ -34,14 +32,11 @@ export function createPayPalMethod( {
 				return submitTransaction( {
 					successUrl,
 					cancelUrl,
-					siteId: getSiteId(),
 					country: getCountry(),
 					postalCode: getPostalCode(),
 					subdivisionCode: getSubdivisionCode(),
 					phoneNumber: getPhoneNumber(),
-					couponId: null, // TODO: get couponId
 					items,
-					domainDetails: getDomainDetails(),
 				} );
 			},
 		},

@@ -288,14 +288,18 @@ function useCreatePaymentMethods() {
 	const paypalMethod = useMemo(
 		() =>
 			createPayPalMethod( {
-				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
 				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				getDomainDetails,
 				registerStore: registerStore,
-				submitTransaction: submitData => makePayPalExpressRequest( submitData ),
+				submitTransaction: submitData =>
+					makePayPalExpressRequest( {
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails(),
+						couponId: null, // TODO: get couponId
+					} ),
 			} ),
 		[]
 	);
