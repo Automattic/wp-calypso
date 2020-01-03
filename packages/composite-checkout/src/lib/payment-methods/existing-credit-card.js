@@ -54,6 +54,7 @@ export function createExistingCardMethod( {
 					type: 'EXISTING_CARD_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
+						name: cardholderName,
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
@@ -279,7 +280,6 @@ function ExistingCardPayButton( { disabled } ) {
 		select( 'existing-card' ).getTransactionAuthData()
 	);
 	const { beginCardTransaction } = useDispatch( 'existing-card' );
-	const name = useSelect( select => select( 'existing-card' ).getCardholderName() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
@@ -315,7 +315,6 @@ function ExistingCardPayButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ () =>
 				submitExistingCardPayment( {
-					name,
 					items,
 					total,
 					showErrorMessage,
@@ -345,7 +344,6 @@ function ExistingCardSummary( { cardholderName, brand } ) {
 }
 
 async function submitExistingCardPayment( {
-	name,
 	items,
 	total,
 	showErrorMessage,
@@ -359,7 +357,6 @@ async function submitExistingCardPayment( {
 	try {
 		setFormSubmitting();
 		beginCardTransaction( {
-			name,
 			items,
 			total,
 			successUrl,
