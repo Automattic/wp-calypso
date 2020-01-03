@@ -24,7 +24,13 @@ export function getEmailAddress( prefix, inboxId ) {
 }
 
 export function getExpectedFreeAddresses( searchTerm ) {
-	const suffixes = [ '.wordpress.com', 'blog.wordpress.com', 'site.wordpress.com', '.home.blog' ];
+	const suffixes = [
+		'.wordpress.com',
+		'blog.wordpress.com',
+		'site.wordpress.com',
+		'.home.blog',
+		'drive.car.blog',
+	];
 	return map( suffixes, suffix => {
 		return searchTerm + suffix;
 	} );
