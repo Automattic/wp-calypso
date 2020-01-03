@@ -151,7 +151,9 @@ export function createExistingCardMethod( {
 			/>
 		),
 		submitButton: <ExistingCardPayButton />,
-		inactiveContent: <ExistingCardSummary cardholderName={ cardholderName } brand={ brand } />,
+		inactiveContent: (
+			<ExistingCardSummary cardholderName={ cardholderName } brand={ brand } last4={ last4 } />
+		),
 		getAriaLabel: () => `${ brand } ${ last4 } ${ cardholderName }`,
 	};
 }
@@ -338,12 +340,13 @@ function ExistingCardPayButton( { disabled } ) {
 	);
 }
 
-function ExistingCardSummary( { cardholderName, brand } ) {
+function ExistingCardSummary( { cardholderName, brand, last4 } ) {
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <CardFieldIcon brand={ brand } isSummary={ true } />
+				{ brand !== 'unknown' && `****${ last4 }` }{ ' ' }
+				<CardFieldIcon brand={ brand } isSummary={ true } />
 			</SummaryLine>
 		</SummaryDetails>
 	);
