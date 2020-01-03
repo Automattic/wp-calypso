@@ -213,6 +213,7 @@ class SectionMigrate extends Component {
 		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
+		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
@@ -247,7 +248,7 @@ class SectionMigrate extends Component {
 							</li>
 						</ul>
 					</div>
-					<MigrateButton onClick={ this.startMigration } />
+					<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
 					<Button className="migrate__cancel" href={ backHref }>
 						Cancel
 					</Button>
