@@ -473,17 +473,7 @@ export class Checkout extends React.Component {
 		return;
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
-
-		if ( hasPersonalPlan( cart ) ) {
-			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-		}
-
-		return;
-	}
-
-	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
+	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
 		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
@@ -497,9 +487,8 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
-			if ( upgradePath ) {
-				return upgradePath;
+			if ( hasPersonalPlan( cart ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
 			}
 
 			// A user just purchased one of the qualifying plans
