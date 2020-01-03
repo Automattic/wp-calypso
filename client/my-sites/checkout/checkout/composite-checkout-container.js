@@ -249,7 +249,12 @@ function useCreatePaymentMethods() {
 				getDomainDetails,
 				registerStore,
 				fetchStripeConfiguration,
-				submitTransaction: sendStripeTransaction,
+				submitTransaction: submitData =>
+					sendStripeTransaction( {
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails(),
+					} ),
 			} ),
 		[]
 	);

@@ -49,12 +49,10 @@ import { useFormStatus } from '../form-status';
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
 export function createStripeMethod( {
-	getSiteId,
 	getCountry,
 	getPostalCode,
 	getPhoneNumber,
 	getSubdivisionCode,
-	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
 	submitTransaction,
@@ -102,11 +100,9 @@ export function createStripeMethod( {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
-						siteId: getSiteId(),
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
-						domainDetails: getDomainDetails(),
 						paymentMethodToken,
 					},
 				};
