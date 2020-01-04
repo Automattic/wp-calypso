@@ -111,12 +111,13 @@ class PodcastingDetails extends Component {
 
 		return (
 			<Button
-				compact={ true }
+				compact
 				onClick={ handleSubmitForm }
-				primary={ true }
+				primary
 				type="submit"
 				disabled={ saveButtonDisabled }
 				busy={ isSavingSettings }
+				className="podcasting-details__save-button"
 			>
 				{ saveButtonText }
 			</Button>
@@ -370,6 +371,7 @@ class PodcastingDetails extends Component {
 					key: 'podcasting_keywords',
 					label: translate( 'Keywords' ),
 				} ) }
+				{ isPodcastingEnabled && this.renderSaveButton() }
 			</Fragment>
 		);
 	}
