@@ -5,7 +5,7 @@ This module contains the code for generating the JavaScript files that are sent 
 
 ### Glossary
 
-__Code Splitting__ - [Code splitting](https://webpack.js.org/guides/code-splitting) is the term that webpack uses to describe the process of splitting the dependency graph for the application into chunks. Assets (JavaScript files) are then created for the chunks and loaded as part of the initial HTML request via `<script />` tags if the chunk is created as a section and asynchronously via `require.ensure` calls.
+__Code Splitting__ - [Code splitting](https://webpack.js.org/guides/code-splitting) is the term that webpack uses to describe the process of splitting the dependency graph for the application into chunks. Assets (JavaScript files) are then created for the chunks and loaded as part of the initial HTML request via `<script />` tags if the chunk is created as a section and asynchronously via dynamic `import()` calls.
 
 __File Watching__ - File watching is the process by which files are monitered for changes. If a file changes, the JavaScript assets are regenerated.
 
@@ -24,7 +24,7 @@ The concept of sections is something that is unique to Calypso. It was created t
 
 #### Client
 
-The sections module `client/sections.js` is transformed via a custom webpack loader `server/bundler/loader.js` into a series of `page.js` route handlers that use `require.ensure` to asynchronously load the JavaScript code needed for the route.
+The sections module `client/sections.js` is augmented via a custom webpack loader `server/bundler/sections-loader.js` to include dynamic `import()` statments, stored in `section.load`. The load statements get executed in `client/pages/index.js` to set up rendering and isomorphic routing.
 
 __before__:
 
@@ -33,38 +33,27 @@ var sections = [
 	{
 		name: 'me',
 		paths: [ '/me' ],
-		module: 'me'
+		module: 'me',
+		group: "me",
+		secondary: true,
 	}
 ];
 ```
 
 __after__:
-
 ```js
-page( /^\/me(\/.*)?$/, function( context, next ) {
-	if ( _loadedSections[ 'me' ] ) {
-		// section is already loaded so go ahead with things
-		return next();
+var sections = [
+	{
+			name: "me",
+			paths: [ "/me" ],
+			module: "me",
+			group: "me",
+			secondary: true,
+			load: function() { return import( /* webpackChunkName: 'me' */ 'me'); }
 	}
-
-	require.ensure( 'me', function( require, error ) {
-		if ( error ) {
-			// error handling
-			return;
-		}
-		if ( !_loadedSections[ 'me' ] ) {
-			require( 'me' )();
-			_loadedSections[ 'me' ] = true;
-		}
-
-		// continue working through all the route handlers looking for matches
-		// the array of routes will include those that were just required above
-		next();
-	} );
-} );
+];
 ```
 
-Webpack then turns `require.ensure` into a jsonp function call that loads the script and then executes the callback `onload`. If there is an error loading the chunk, we append `?retry=1` and try refreshing. This should catch any situations where a user has an old version of the application running and for whatever reason the old version of the JavaScript file is no longer available (e.g. due to the static file cache being flushed).
 
 #### Server
 
