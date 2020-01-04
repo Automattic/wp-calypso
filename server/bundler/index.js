@@ -99,8 +99,7 @@ function middleware( app ) {
 	app.use(
 		webpackMiddleware( compiler, {
 			mode: 'development',
-			// Development is always evergreen.
-			publicPath: '/calypso/evergreen/',
+			publicPath: '/calypso/',
 			stats: {
 				colors: true,
 				hash: true,

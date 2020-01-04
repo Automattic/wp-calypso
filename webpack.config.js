@@ -121,25 +121,18 @@ if ( isDevelopment || isDesktop ) {
 	outputChunkFilename = '[name].js';
 }
 
+// Prefix the JS and CSS paths with the target (evergreen/fallback) in production mode
+if ( ! isDevelopment ) {
+	outputFilename = `${ extraPath }/${ outputFilename }`;
+	outputChunkFilename = `${ extraPath }/${ outputChunkFilename }`;
+}
+
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const fileLoader = FileConfig.loader(
-	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
-	// This is required so that running calypso via `npm start` doesn't break.
-	isDevelopment
-		? {
-				outputPath: 'images',
-				publicPath: '/calypso/evergreen/images/',
-		  }
-		: {
-				// File-loader does not understand absolute paths so __dirname won't work.
-				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
-				outputPath: path.join( '..', 'images' ),
-				publicPath: '/calypso/images/',
-				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
-		  }
-);
+const fileLoader = FileConfig.loader( {
+	emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+} );
 
 const webpackConfig = {
 	bail: ! isDevelopment,
@@ -155,7 +148,7 @@ const webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public', extraPath ),
 		pathinfo: false,
-		publicPath: `/calypso/${ extraPath }/`,
+		publicPath: `/calypso/`,
 		filename: outputFilename,
 		chunkFilename: outputChunkFilename,
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
