@@ -88,6 +88,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"signup/social": true,
+		"storybook": true,
 		"support-user": true,
 		"2fa/keys-support": true,
 		"upgrades/checkout": true,
