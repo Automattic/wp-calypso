@@ -16,8 +16,8 @@ const analytics = require( '../lib/analytics' ).default;
 
 /**
  * Returns the server HTTP request handler "app".
+ *
  * @returns {object} The express app
- * @api public
  */
 function setup() {
 	const app = express();
@@ -99,6 +99,10 @@ function setup() {
 
 	if ( config.isEnabled( 'devdocs' ) ) {
 		app.use( require( 'devdocs' )() );
+	}
+
+	if ( config.isEnabled( 'storybook' ) ) {
+		app.use( require( 'storybook' ) );
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
