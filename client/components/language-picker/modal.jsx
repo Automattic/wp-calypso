@@ -67,7 +67,7 @@ export class LanguagePickerModal extends PureComponent {
 			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
 			showingDefaultFilter: true,
 			search: false,
-			isSearchOpen: true,
+			isSearchOpen: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
 		};
