@@ -45,8 +45,6 @@ describe( 'Checkout', () => {
 						showErrorMessage={ noop }
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
-						successRedirectUrl="#"
-						failureRedirectUrl="#"
 						paymentMethods={ [ mockMethod ] }
 					>
 						<Checkout />
@@ -112,8 +110,6 @@ describe( 'Checkout', () => {
 						showErrorMessage={ noop }
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
-						successRedirectUrl="#"
-						failureRedirectUrl="#"
 						paymentMethods={ [ mockMethod ] }
 						registry={ registry }
 					>
@@ -179,8 +175,6 @@ describe( 'Checkout', () => {
 						showErrorMessage={ noop }
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
-						successRedirectUrl="#"
-						failureRedirectUrl="#"
 						paymentMethods={ [ mockMethod ] }
 					>
 						<Checkout />
@@ -225,8 +219,6 @@ describe( 'Checkout', () => {
 						showErrorMessage={ noop }
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
-						successRedirectUrl="#"
-						failureRedirectUrl="#"
 						paymentMethods={ [ mockMethod ] }
 					>
 						<Checkout />
@@ -268,8 +260,6 @@ describe( 'Checkout', () => {
 					showErrorMessage={ noop }
 					showInfoMessage={ noop }
 					showSuccessMessage={ noop }
-					successRedirectUrl="#"
-					failureRedirectUrl="#"
 					paymentMethods={ [ mockMethod ] }
 				>
 					<Checkout steps={ props.steps || steps } />
