@@ -113,7 +113,7 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									{ this.props.siteToBeDeleted.length > 0 && (
+									{ this.props.sitesToBeDeleted.length > 0 && (
 										<Fragment>
 											<ActionPanelFigureListItem className="account-close__sites-item">
 												{ translate( 'Sites' ) }
@@ -124,10 +124,10 @@ class AccountSettingsClose extends Component {
 												/>
 												{ this.state.showSiteDropdown && (
 													<ul className="account-close__sites-list">
-														{ this.props.siteToBeDeleted.map( siteToBeDeleted => (
-															<li key={ siteToBeDeleted.slug }>
-																{ [ siteToBeDeleted.name ] }
-																<span>{ [ siteToBeDeleted.slug ] }</span>
+														{ this.props.sitesToBeDeleted.map( sitesToBeDeleted => (
+															<li key={ sitesToBeDeleted.slug }>
+																{ [ sitesToBeDeleted.name ] }
+																<span>{ [ sitesToBeDeleted.slug ] }</span>
 															</li>
 														) ) }
 													</ul>
@@ -288,6 +288,6 @@ export default connect( state => {
 		purchasedPremiumThemes,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
-		siteToBeDeleted: getAccountClosureSites( state ),
+		sitesToBeDeleted: getAccountClosureSites( state ),
 	};
 } )( localize( AccountSettingsClose ) );
