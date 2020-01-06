@@ -40,7 +40,6 @@ const initialItems = [
 ];
 
 const successRedirectUrl = '/complete.html';
-const failureRedirectUrl = window.location.href;
 
 const onPaymentComplete = () => {
 	window.location.href = successRedirectUrl;
@@ -315,8 +314,6 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
