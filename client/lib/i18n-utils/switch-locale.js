@@ -4,12 +4,12 @@
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
+import { parse as parseUrl, format as formatUrl } from 'url';
 
 /**
  * Internal dependencies
  */
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts } from 'lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -18,7 +18,6 @@ const getPromises = {};
 /**
  * De-duplicates repeated GET fetches of the same URL while one is taking place.
  * Once it's finished, it'll allow for the same request to be done again.
- *
  * @param {string} url The URL to fetch
  *
  * @returns {Promise} The fetch promise.
@@ -36,7 +35,7 @@ function dedupedGet( url ) {
  * Normally it should only serve as a helper function for `getLanguageFileUrl`,
  * but we export it here still in help with the test suite.
  *
- * @returns {string} The path URL to the language files.
+ * @return {String} The path URL to the language files.
  */
 export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
@@ -48,11 +47,11 @@ export function getLanguageFilePathUrl() {
  * Get the language file URL for the given locale and file type, js or json.
  * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
  *
- * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} fileType The desired file type, js or json. Default to json.
- * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
+ * @param {String} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {String} fileType The desired file type, js or json. Default to json.
+ * @param {Object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
  *
- * @returns {string} A language file URL.
+ * @return {String} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
 	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
@@ -145,16 +144,11 @@ export default function switchLocale( localeSlug ) {
 }
 
 export function loadUserUndeployedTranslations( currentLocaleSlug ) {
-	if ( typeof window === 'undefined' || ! window.location || ! window.location.search ) {
+	if ( ! location || ! location.search ) {
 		return;
 	}
 
-	const search = new URLSearchParams( window.location.search );
-	// TODO: replace with Object.fromEntries when available (core-js@3).
-	const params = {};
-	for ( const [ key, value ] of search.entries() ) {
-		params[ key ] = value;
-	}
+	const parsedURL = parseUrl( location.search, true );
 
 	const {
 		'load-user-translations': username,
@@ -162,7 +156,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		translationSet = 'default',
 		translationStatus = 'current',
 		locale = currentLocaleSlug,
-	} = params;
+	} = parsedURL.query;
 
 	if ( ! username ) {
 		return;
@@ -192,18 +186,17 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		format: 'json',
 	};
 
-	const requestUrl = getUrlFromParts( {
+	const requestUrl = formatUrl( {
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
 		query,
 	} );
 
-	return window
-		.fetch( requestUrl.href, {
-			headers: { Accept: 'application/json' },
-			credentials: 'include',
-		} )
+	return fetch( requestUrl, {
+		headers: { Accept: 'application/json' },
+		credentials: 'include',
+	} )
 		.then( res => res.json() )
 		.then( translations => i18n.addTranslations( translations ) );
 }
@@ -244,8 +237,8 @@ function switchWebpackCSS( isRTL ) {
  * Loads a CSS stylesheet into the page.
  *
  * @param {string} cssUrl URL of a CSS stylesheet to be loaded into the page
- * @param {window.Element} currentLink an existing <link> DOM element before which we want to insert the new one
- * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
+ * @param {Element} currentLink an existing <link> DOM element before which we want to insert the new one
+ * @returns {Promise<String>} the new <link> DOM element after the CSS has been loaded
  */
 function loadCSS( cssUrl, currentLink ) {
 	return new Promise( resolve => {
