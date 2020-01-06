@@ -73,6 +73,14 @@ export class LanguagePickerModal extends PureComponent {
 		};
 	}
 
+	componentDidMount() {
+		window.addEventListener( 'keydown', this.handleKeyPress );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'keydown', this.handleKeyPress );
+	}
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
 			this.setState( {
@@ -188,6 +196,18 @@ export class LanguagePickerModal extends PureComponent {
 
 		return suggestedLanguages;
 	}
+
+	handleKeyPress = event => {
+		const { isSearchOpen } = this.state;
+
+		// A key press of a printable character should only have a single character
+		const isPrintableCharacter = event.key && event.key.length === 1;
+
+		// Handle character input
+		if ( isPrintableCharacter && ! isSearchOpen ) {
+			this.handleSearchOpen();
+		}
+	};
 
 	handleSearch = search => {
 		this.setState( { search } );
