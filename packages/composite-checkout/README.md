@@ -282,6 +282,12 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 A React Hook that will return the currently active [Step object](#steps). Only works within a step.
 
+The step object that is returned will include some additional properties:
+
+- `isComplete: boolean`. True if the `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
+- `stepNumber: number | null`. The step's visible number. If the step has no number (because `hasStepNumber` is false), this will be `null`.
+- `stepIndex: number`. The index of the step in the array of steps.
+
 ### useAllPaymentMethods
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
