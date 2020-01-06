@@ -25,6 +25,7 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const activeStep = useActiveStep();
+	// TODO: check this step's isComplete, not the active step's isComplete
 	const isComplete = isActive === false && activeStep.isComplete;
 	return isComplete
 		? translate( 'Contact information' )
