@@ -109,7 +109,7 @@ export default function Checkout( { steps, className } ) {
 		throw new Error( 'No steps found' );
 	}
 
-	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
+	let activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
 	if ( ! activeStep ) {
 		throw new Error( 'There is no active step' );
 	}
@@ -123,6 +123,12 @@ export default function Checkout( { steps, className } ) {
 				step.isCompleteCallback( { paymentData, activeStep, activePaymentMethod } ),
 		};
 	} );
+
+	// Re-assign activeStep so useActiveStep has isComplete available
+	activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
+	if ( ! activeStep ) {
+		throw new Error( 'The active step was lost' );
+	}
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps );
