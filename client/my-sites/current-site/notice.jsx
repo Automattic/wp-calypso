@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,7 +16,6 @@ import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getActiveDiscount from 'state/selectors/get-active-discount';
-import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit, isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -53,33 +51,6 @@ export class SiteNotice extends React.Component {
 	};
 
 	static defaultProps = {};
-
-	getSiteRedirectNotice( site ) {
-		if ( ! site || this.props.isDomainOnly ) {
-			return null;
-		}
-		if ( ! ( site.options && site.options.is_redirect ) ) {
-			return null;
-		}
-		const { hostname } = url.parse( site.URL );
-		const { translate } = this.props;
-
-		return (
-			<Notice
-				icon="info-outline"
-				isCompact
-				showDismiss={ false }
-				text={ translate( 'Redirects to {{a}}%(url)s{{/a}}', {
-					args: { url: hostname },
-					components: { a: <a href={ site.URL } /> },
-				} ) }
-			>
-				<NoticeAction href={ domainManagementList( site.domain ) }>
-					{ translate( 'Edit' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
 
 	domainCreditNotice() {
 		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
@@ -279,7 +250,6 @@ export class SiteNotice extends React.Component {
 		}
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
-		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
 		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
 
@@ -295,7 +265,6 @@ export class SiteNotice extends React.Component {
 							template="sidebar-banner"
 						/>
 					) ) }
-				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.pendingPaymentNotice() }
 				{ ! hasJITM && domainCreditNotice }
