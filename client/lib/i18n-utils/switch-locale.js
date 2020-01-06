@@ -24,7 +24,7 @@ const getPromises = {};
  */
 function dedupedGet( url ) {
 	if ( ! ( url in getPromises ) ) {
-		getPromises[ url ] = fetch( url ).finally( () => delete getPromises[ url ] );
+		getPromises[ url ] = globalThis.fetch( url ).finally( () => delete getPromises[ url ] );
 	}
 
 	return getPromises[ url ];
