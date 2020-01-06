@@ -94,10 +94,6 @@ function setup() {
 		app.use( require( 'server/devdocs' )() );
 	}
 
-	if ( config.isEnabled( 'storybook' ) ) {
-		app.use( require( 'storybook' ) );
-	}
-
 	if ( config.isEnabled( 'desktop' ) ) {
 		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) ) );
 	}

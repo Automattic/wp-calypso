@@ -155,7 +155,6 @@
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/wpcc": true,
-		"storybook": true,
 		"memberships": true,
 		"support-user": true,
 		"tools/migrate": true,

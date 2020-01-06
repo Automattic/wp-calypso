@@ -214,5 +214,10 @@ module.exports = function() {
 
 	app.use( '/devdocs/service/selectors', selectors.router );
 
+	app.use(
+		'/devdocs/storybook',
+		express.static( fspath.join( __dirname, '../../packages/components/storybook-static' ) )
+	);
+
 	return app;
 };
