@@ -49,15 +49,13 @@ import { useFormStatus } from '../form-status';
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
 export function createStripeMethod( {
-	getSiteId,
 	getCountry,
 	getPostalCode,
 	getPhoneNumber,
 	getSubdivisionCode,
-	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction,
 } ) {
 	debug( 'creating a new stripe payment method' );
 	const actions = {
@@ -102,11 +100,9 @@ export function createStripeMethod( {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
-						siteId: getSiteId(),
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
-						domainDetails: getDomainDetails(),
 						paymentMethodToken,
 					},
 				};
@@ -240,7 +236,7 @@ export function createStripeMethod( {
 				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( action.payload );
+				return submitTransaction( action.payload );
 			},
 		},
 	} );

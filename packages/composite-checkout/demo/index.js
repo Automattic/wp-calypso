@@ -88,15 +88,13 @@ const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
 const stripeMethod = createStripeMethod( {
-	getSiteId: () => 5555,
 	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
 	getPostalCode: () => 90210,
 	getPhoneNumber: () => 5555555555,
 	getSubdivisionCode: () => 'CA',
-	getDomainDetails: () => ( {} ),
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction: sendStripeTransaction,
 } );
 
 const applePayMethod = isApplePayAvailable()

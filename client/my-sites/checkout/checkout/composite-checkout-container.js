@@ -234,15 +234,18 @@ function useCreatePaymentMethods() {
 	const stripeMethod = useMemo(
 		() =>
 			createStripeMethod( {
-				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
 				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				getDomainDetails,
 				registerStore,
 				fetchStripeConfiguration,
-				sendStripeTransaction,
+				submitTransaction: submitData =>
+					sendStripeTransaction( {
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails(),
+					} ),
 			} ),
 		[]
 	);
