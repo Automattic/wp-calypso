@@ -39,9 +39,8 @@ const initialItems = [
 	},
 ];
 
-const successRedirectUrl = '/complete.html';
-
 const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
 	window.location.href = successRedirectUrl;
 };
 const onEvent = event => window.console.log( 'Event', event );
