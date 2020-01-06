@@ -137,12 +137,6 @@ $deisgn-selector-selection-space: 175px;
 	overflow: hidden;
 	padding: 2px;
 
-	&:hover,
-	&:focus {
-		border: 3px solid var( --color-neutral-dark );
-		padding: 0;
-	}
-
 	&.is-selected {
 		border: 3px solid $blue-medium-focus;
 		padding: 0;
@@ -150,6 +144,20 @@ $deisgn-selector-selection-space: 175px;
 			top: -2px;
 			right: -2px;
 			transform: translate3d( 0, 0, 0 );
+		}
+	}
+
+	&:hover,
+	&:focus {
+		border: 3px solid var( --color-neutral-dark );
+		padding: 0;
+		.page-layout-selector__selected-indicator {
+			background: linear-gradient(
+				to bottom left,
+				var( --color-neutral-dark ),
+				var( --color-neutral-dark ) 50%,
+				transparent 51% /* 1% difference helps prevent a rough edge */
+			);
 		}
 	}
 }
