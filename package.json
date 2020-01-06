@@ -34,11 +34,11 @@
 		]
 	},
 	"dependencies": {
-		"@automattic/data-stores": "file:./packages/data-stores",
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/components": "file:./packages/components",
 		"@automattic/composite-checkout": "file:./packages/composite-checkout",
 		"@automattic/composite-checkout-wpcom": "file:./packages/composite-checkout-wpcom",
+		"@automattic/data-stores": "file:./packages/data-stores",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
@@ -186,6 +186,7 @@
 		"react-stripe-elements": "4.0.2",
 		"react-transition-group": "4.3.0",
 		"react-virtualized": "9.21.2",
+		"reakit": "1.0.0-beta.14",
 		"redux": "4.0.4",
 		"redux-form": "8.2.6",
 		"redux-thunk": "2.3.0",

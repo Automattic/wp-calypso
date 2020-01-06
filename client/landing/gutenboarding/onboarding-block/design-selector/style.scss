@@ -76,33 +76,42 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-show();
 }
 
-.page-layout-selector__container {
+.design-selector__page-layout-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
+	width: 100%;
+	background: $white;
+	box-shadow: $dark-gray-300 0 0 12px;
+	padding: 2em 4em;
+
+	@include design-selector-transition();
+	transition-timing-function: ease-out;
 
 	&,
 	&.enter,
-	&.exit-active.exit-active, // duplicate selector to override `.exit` below
+	&.exit-active.exit-active , // duplicate selector to override `.exit` below
 	&.exit-done {
-		.page-layout-selector {
-			@include design-selector-hide();
-		}
+		@include design-selector-hide();
 	}
 
 	&.exit,
 	&.enter-active,
 	&.enter-done {
-		.page-layout-selector {
-			@include design-selector-show();
-			transform: translate3d( 0, 0, 0 );
-		}
+		@include design-selector-show();
 	}
 }
+
 .page-layout-selector {
-	@include design-selector-transition();
-	background: $white;
-	box-shadow: gray 0 0 12px; // use a sass variable
-	padding: 2em 4em;
+	max-width: $design-selector-max-width;
+	margin: 0 auto;
 }
 
 .design-selector__header-container {
@@ -117,7 +126,7 @@ $deisgn-selector-selection-space: 175px;
 
 .page-layout-selector__grid {
 	display: grid;
-	grid-gap: 0.75em;
+	grid-gap: 1.25em;
 	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
@@ -135,6 +144,20 @@ $deisgn-selector-selection-space: 175px;
 			top: -2px;
 			right: -2px;
 			transform: translate3d( 0, 0, 0 );
+		}
+	}
+
+	&:hover,
+	&:focus {
+		border: 3px solid var( --color-neutral-dark );
+		padding: 0;
+		.page-layout-selector__selected-indicator {
+			background: linear-gradient(
+				to bottom left,
+				var( --color-neutral-dark ),
+				var( --color-neutral-dark ) 50%,
+				transparent 51% /* 1% difference helps prevent a rough edge */
+			);
 		}
 	}
 }
@@ -165,4 +188,31 @@ $deisgn-selector-selection-space: 175px;
 .design-selector__design-option {
 	transform: translate3d( 0, 0, 0 );
 	@include design-selector-transition();
+
+	.design-selector__option-overlay {
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: 400ms;
+
+		.design-selector__option-overlay-text {
+			font-size: 24px;
+			color: $white;
+			border-bottom: 2px solid $white;
+		}
+	}
+
+	&:hover,
+	&:focus {
+		.design-selector__option-overlay {
+			opacity: 1;
+		}
+	}
 }
