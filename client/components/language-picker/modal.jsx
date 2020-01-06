@@ -158,6 +158,7 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	getSuggestedLanguages() {
+		// eslint-disable-next-line no-undef
 		if ( ! ( typeof navigator === 'object' && 'languages' in navigator ) ) {
 			return null;
 		}
@@ -165,6 +166,7 @@ export class LanguagePickerModal extends PureComponent {
 		const { languages, currentUserLocale } = this.props;
 		const suggestedLanguages = [];
 
+		// eslint-disable-next-line no-undef
 		for ( const langSlug of navigator.languages ) {
 			// Find the language first by its full code (e.g. en-US), and when it fails
 			// try only the base code (en). Don't add duplicates.
