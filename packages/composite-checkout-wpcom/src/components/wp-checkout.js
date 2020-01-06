@@ -25,7 +25,7 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	return isActive && isComplete
+	return ! isActive && isComplete
 		? translate( 'Contact information' )
 		: translate( 'Enter your contact information' );
 };
