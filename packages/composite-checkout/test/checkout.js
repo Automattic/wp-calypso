@@ -23,6 +23,7 @@ import {
 	useRegisterStore,
 	usePaymentData,
 	useActiveStep,
+	useIsStepComplete,
 } from '../src/public-api';
 
 const noop = () => {};

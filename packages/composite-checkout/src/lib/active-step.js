@@ -43,3 +43,17 @@ export const useIsStepActive = () => {
 	}
 	return stepId === activeStep.id;
 };
+
+const useThisStep = () => {
+	const stepId = useContext( RenderedStepContext );
+	if ( ! stepId ) {
+		throw new Error( 'useThisStep can only be used inside an RenderedStepProvider' );
+	}
+	const steps = useSteps();
+	return steps.find( step => step.id === stepId );
+};
+
+export const useIsStepComplete = () => {
+	const thisStep = useThisStep();
+	return !! thisStep.isComplete;
+};
