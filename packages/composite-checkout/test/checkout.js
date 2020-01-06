@@ -464,15 +464,15 @@ describe( 'Checkout', () => {
 
 		it( 'provides the active step through useActiveStep to components in the step', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
-			expect( getByText( 'Possibly Complete id custom-contact-step' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete hasStepNumber true' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active id custom-contact-step' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active hasStepNumber true' ) ).toBeInTheDocument();
 		} );
 
 		it( 'provides the active step with additional fields through useActiveStep to components in the step', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
-			expect( getByText( 'Possibly Complete step number 1' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete step index 0' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active step number 1' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active step index 0' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active isComplete true' ) ).toBeInTheDocument();
 		} );
 
 		it( 'provides the active step through useActiveStep with isComplete that changes based on isCompleteCallback', () => {
@@ -481,9 +481,20 @@ describe( 'Checkout', () => {
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			fireEvent.click( firstStepContinue );
-			expect( getByText( 'Possibly Complete step number 2' ) ).toBeInTheDocument();
-			expect( getByText( 'Possibly Complete step index 1' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active step number 2' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active step index 1' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete active isComplete false' ) ).toBeInTheDocument();
+		} );
+
+		it( 'provides the currently rendering step isComplete through useIsStepComplete', () => {
+			const { getAllByText, getByText, getByLabelText } = render(
+				<MyCheckout steps={ [ steps[ 4 ], steps[ 1 ] ] } />
+			);
 			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			fireEvent.click( firstStepContinue );
+			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
@@ -644,14 +655,18 @@ function createMockSteps() {
 
 function PossiblyCompleteTitle() {
 	const activeStep = useActiveStep();
+	const isComplete = useIsStepComplete();
 	return (
 		<div>
 			<span>Custom Step - Possibly Complete Title</span>
-			<span>Possibly Complete id { activeStep.id }</span>
-			<span>Possibly Complete hasStepNumber { activeStep.hasStepNumber ? 'true' : 'false' }</span>
-			<span>Possibly Complete step number { activeStep.stepNumber }</span>
-			<span>Possibly Complete step index { activeStep.stepIndex }</span>
-			<span>Possibly Complete isComplete { activeStep.isComplete ? 'true' : 'false' }</span>
+			<span>Possibly Complete active id { activeStep.id }</span>
+			<span>
+				Possibly Complete active hasStepNumber { activeStep.hasStepNumber ? 'true' : 'false' }
+			</span>
+			<span>Possibly Complete active step number { activeStep.stepNumber }</span>
+			<span>Possibly Complete active step index { activeStep.stepIndex }</span>
+			<span>Possibly Complete active isComplete { activeStep.isComplete ? 'true' : 'false' }</span>
+			<span>Possibly Complete isComplete { isComplete ? 'true' : 'false' }</span>
 		</div>
 	);
 }
