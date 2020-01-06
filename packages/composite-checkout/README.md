@@ -25,7 +25,7 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), and [createExistingCardMethod](#createExistingCardMethod).
 
 Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
@@ -213,6 +213,21 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 ### createRegistry
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
+
+### createExistingCardMethod
+
+Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
+- `cardholderName: string`. The cardholder's name. Used for display only.
+- `cardExpiry: string`. The card's expiry date. Used for display only.
+- `brand: string`. The card's brand (eg: `visa`). Used for display only.
+- `last4: string`. The card's last four digits. Used for display only.
 
 ### createPayPalMethod
 

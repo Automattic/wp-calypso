@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import {
 	createRegistry,
 	createPayPalMethod,
 	createStripeMethod,
 	createApplePayMethod,
+	createExistingCardMethod,
 } from '@automattic/composite-checkout';
 import { mockPayPalExpressRequest } from '@automattic/composite-checkout-wpcom';
 import { useTranslate } from 'i18n-calypso';
@@ -36,7 +37,12 @@ async function fetchStripeConfiguration( requestArgs ) {
 }
 
 async function sendStripeTransaction( transactionData ) {
-	const formattedTransactionData = formatDataForTransactionsEndpoint( transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodToken: transactionData.paymentMethodToken.id,
+		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
+		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
 }
@@ -52,16 +58,20 @@ function formatDataForTransactionsEndpoint( {
 	name,
 	items,
 	total,
-	stripeConfiguration,
 	successUrl,
 	cancelUrl,
+	paymentMethodType,
+	paymentPartnerProcessorId,
+	storedDetailsId,
 } ) {
 	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: paymentMethodToken.id,
-		payment_partner: stripeConfiguration.processor_id,
+		paymentMethod: paymentMethodType,
+		paymentKey: paymentMethodToken,
+		paymentPartner: paymentPartnerProcessorId,
+		storedDetailsId,
 		name,
-		zip: postalCode,
+		zip: postalCode, // TODO: do we need this in addition to postalCode?
+		postalCode,
 		country,
 		successUrl,
 		cancelUrl,
@@ -174,11 +184,7 @@ export default function CompositeCheckoutContainer( {
 
 	// Payment methods must be created inside the component so their stores are
 	// re-created when the checkout unmounts and remounts.
-	const { stripeMethod, paypalMethod, applePayMethod } = useCreatePaymentMethods();
-	const availablePaymentMethods = useMemo(
-		() => [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ),
-		[ applePayMethod, stripeMethod, paypalMethod ]
-	);
+	const availablePaymentMethods = useCreatePaymentMethods();
 
 	const onPaymentComplete = useCallback( () => {
 		debug( 'payment completed successfully' );
@@ -260,5 +266,68 @@ function useCreatePaymentMethods() {
 				: null,
 		[]
 	);
-	return { stripeMethod, paypalMethod, applePayMethod };
+
+	const storedCards = useStoredCards();
+	const existingCardMethods = useMemo(
+		() =>
+			storedCards.map( storedDetails =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					submitTransaction: submitData =>
+						submitExistingCardPayment( {
+							...submitData,
+							siteId: select( 'wpcom' )?.getSiteId?.(),
+							storedDetailsId: storedDetails.stored_details_id,
+							paymentMethodToken: storedDetails.mp_ref,
+							paymentPartnerProcessorId: storedDetails.payment_partner,
+							domainDetails: getDomainDetails(),
+						} ),
+					registerStore,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				} )
+			),
+		[ storedCards ]
+	);
+
+	return useMemo(
+		() => [ stripeMethod, paypalMethod, applePayMethod, ...existingCardMethods ].filter( Boolean ),
+		[ existingCardMethods, stripeMethod, paypalMethod, applePayMethod ]
+	);
+}
+
+function useStoredCards() {
+	const [ storedCards, setStoredCards ] = useState( [] );
+	useEffect( () => {
+		let isSubscribed = true;
+		async function fetchStoredCards() {
+			debug( 'fetching stored cards' );
+			return wpcom.getStoredCards();
+		}
+
+		// TODO: handle errors
+		fetchStoredCards().then( cards => {
+			debug( 'stored cards fetched', cards );
+			isSubscribed && setStoredCards( cards );
+		} );
+
+		return () => ( isSubscribed = false );
+	}, [] );
+	return storedCards;
+}
+
+async function submitExistingCardPayment( transactionData ) {
+	debug( 'formatting existing card transaction', transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
+	} );
+	debug( 'submitting existing card transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
 }

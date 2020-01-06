@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,11 +20,17 @@ import {
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
+const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
+
 export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
 	const localize = useLocalize();
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
+	const onClickPaymentMethod = newMethod => {
+		debug( 'setting payment method to', newMethod );
+		setPaymentMethod( newMethod );
+	};
 	const paymentMethods = useAllPaymentMethods();
 
 	if ( summary && isComplete && paymentMethod ) {
@@ -60,7 +67,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 						<PaymentMethod
 							{ ...method }
 							checked={ paymentMethod.id === method.id }
-							onClick={ setPaymentMethod }
+							onClick={ onClickPaymentMethod }
 							ariaLabel={ method.getAriaLabel( localize ) }
 						/>
 					</CheckoutErrorBoundary>

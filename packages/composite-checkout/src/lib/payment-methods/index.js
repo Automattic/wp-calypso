@@ -20,7 +20,7 @@ export function usePaymentMethod() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
 	const allPaymentMethods = useAllPaymentMethods();
 	if ( ! setPaymentMethodId ) {
-		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+		throw new Error( 'usePaymentMethod can only be used inside a CheckoutProvider' );
 	}
 	if ( ! paymentMethodId ) {
 		return null;
