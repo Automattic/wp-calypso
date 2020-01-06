@@ -265,11 +265,6 @@ class SectionMigrate extends Component {
 	renderMigrationError() {
 		return (
 			<Card className="migrate__pane">
-				<img
-					className="migrate__illustration"
-					src={ '/calypso/images/illustrations/waitTime.svg' }
-					alt=""
-				/>
 				<FormattedHeader
 					className="migrate__section-header"
 					headerText="Import failed"
@@ -281,7 +276,7 @@ class SectionMigrate extends Component {
 					{ this.state.errorMessage }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
-					Try again
+					Back to your site
 				</Button>
 			</Card>
 		);
