@@ -34,8 +34,6 @@ export const CheckoutProvider = props => {
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
-		successRedirectUrl,
-		failureRedirectUrl,
 		theme,
 		paymentMethods,
 		registry,
@@ -73,14 +71,11 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
-			successRedirectUrl,
-			failureRedirectUrl,
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
 		} ),
 		[
-			failureRedirectUrl,
 			formStatus,
 			onEvent,
 			paymentMethodId,
@@ -89,7 +84,6 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
-			successRedirectUrl,
 		]
 	);
 
@@ -199,11 +193,3 @@ export function useMessages() {
 	}
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
 }
-
-export const useCheckoutRedirects = () => {
-	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
-	if ( ! successRedirectUrl || ! failureRedirectUrl ) {
-		throw new Error( 'useCheckoutRedirects can only be used inside a CheckoutProvider' );
-	}
-	return { successRedirectUrl, failureRedirectUrl };
-};
