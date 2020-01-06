@@ -40,8 +40,6 @@ export default function WPCheckout( { removeItem, changePlanLength, siteId } ) {
 	);
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const domainContactInfo = useSelect( sel => sel( 'wpcom' ).getDomainContactInfo() ) || {};
-	const isDomainContactSame = useSelect( sel => sel( 'wpcom' ).isDomainContactSame() ) || false;
 	const { setSiteId } = useDispatch( 'wpcom' );
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
@@ -70,10 +68,8 @@ export default function WPCheckout( { removeItem, changePlanLength, siteId } ) {
 			titleContent: <ContactFormTitle />,
 			activeStepContent: <WPContactForm isComplete={ false } isActive={ true } />,
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,
-			isCompleteCallback: () =>
-				isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
-			isEditableCallback: () =>
-				isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, itemsWithTax ),
+			isCompleteCallback: () => isFormComplete( contactInfo, itemsWithTax ),
+			isEditableCallback: () => isFormEditable( contactInfo, itemsWithTax ),
 			getEditButtonAriaLabel: () => translate( 'Edit the billing details' ),
 			getNextStepButtonAriaLabel: () => translate( 'Continue with the entered billing details' ),
 		},
@@ -98,7 +94,7 @@ function isElligibleForVat() {
 	return false;
 }
 
-function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, items ) {
+function isFormComplete( contactInfo, items ) {
 	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
 	const contactFields = [
 		contactInfo.firstName,
@@ -109,21 +105,9 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, it
 		contactInfo.state,
 		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
 	];
-	const domainFields = [
-		domainContactInfo.firstName,
-		domainContactInfo.lastName,
-		domainContactInfo.email,
-		domainContactInfo.address,
-		domainContactInfo.city,
-		domainContactInfo.state,
-		domainContactInfo.phoneNumber,
-	];
 	let allFields = taxFields;
 	if ( areDomainsInLineItems( items ) ) {
 		allFields = allFields.concat( contactFields );
-		if ( ! isDomainContactSame ) {
-			allFields = allFields.concat( domainFields );
-		}
 	}
 
 	if ( ! allFields.every( field => field ) ) {
@@ -134,7 +118,7 @@ function isFormComplete( contactInfo, domainContactInfo, isDomainContactSame, it
 	return allFields.every( ( { isValid } ) => isValid );
 }
 
-function isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, items ) {
+function isFormEditable( contactInfo, items ) {
 	const taxFields = [ contactInfo.country, contactInfo.postalCode ];
 	const contactFields = [
 		contactInfo.firstName,
@@ -145,21 +129,9 @@ function isFormEditable( contactInfo, domainContactInfo, isDomainContactSame, it
 		contactInfo.state,
 		...( isElligibleForVat() ? [ contactInfo.vatId ] : [] ),
 	];
-	const domainFields = [
-		domainContactInfo.firstName,
-		domainContactInfo.lastName,
-		domainContactInfo.email,
-		domainContactInfo.address,
-		domainContactInfo.city,
-		domainContactInfo.state,
-		domainContactInfo.phoneNumber,
-	];
 	let allFields = taxFields;
 	if ( areDomainsInLineItems( items ) ) {
 		allFields = allFields.concat( contactFields );
-		if ( ! isDomainContactSame ) {
-			allFields = allFields.concat( domainFields );
-		}
 	}
 
 	if ( ! allFields.every( field => field ) ) {
