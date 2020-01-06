@@ -13,6 +13,7 @@ import { partition } from 'lodash';
  * Internal dependencies
  */
 import { SiteVertical } from '../../stores/onboard/types';
+import { STORE_KEY } from '../../stores/onboard';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -23,8 +24,10 @@ type Template = VerticalsTemplates.Template;
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
+    const temporaryBlog = useSelect( select => select( STORE_KEY ).getTemporaryBlog() );
+    
 	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
+		select => select( STORE_KEY ).getState().siteVertical as SiteVertical
 	);
 
 	const templates =

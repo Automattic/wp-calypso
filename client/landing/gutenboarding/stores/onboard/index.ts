@@ -11,6 +11,7 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import * as resolvers from './resolvers';
 import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 export { STORE_KEY };
@@ -21,8 +22,9 @@ registerStore< State >( STORE_KEY, {
 	actions,
 	controls,
 	reducer,
-	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical' ],
+    resolvers,
+    selectors,
+	persist: [ 'domain', 'siteTitle', 'siteVertical', 'temporaryAccount' ],
 } );
 
 declare module '@wordpress/data' {

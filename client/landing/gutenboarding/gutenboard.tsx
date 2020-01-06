@@ -49,7 +49,14 @@ export function Gutenboard() {
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical, temporaryAccount } = useSelect( select => select( STORE_KEY ).getState() );
+
+    // @TODO: Temporary site/account creation hacking
+    // We should check if an account has already been created for this user.
+    // Or if we have saved account details, whether it still exists in WordPress.com
+    if ( temporaryAccount?.userId ) {
+        const temporaryAccount = useSelect( select => select( STORE_KEY ).getTemporaryAccount() );
+    }
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation

@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, SiteVertical } from './types';
+import { ActionType, SiteVertical, TemporaryAccount, TemporaryBlog } from './types';
 import * as Actions from './actions';
 
 const domain: Reducer<
@@ -43,7 +43,29 @@ const siteVertical: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { domain, siteTitle, siteVertical } );
+const temporaryBlog: Reducer<
+    TemporaryBlog | undefined,
+    ReturnType< typeof Actions[ 'setTemporaryBlog' ] >
+> = ( state = undefined, action ) => {
+    if ( action.type === ActionType.SET_TEMPORARY_BLOG ) {
+        console.log( 'action', action );
+        return action.temporaryBlog;
+    }
+    return state;
+};
+
+const temporaryAccount: Reducer<
+    TemporaryAccount | undefined,
+    ReturnType< typeof Actions[ 'setTemporaryAccount' ] >
+    > = ( state = undefined, action ) => {
+    if ( action.type === ActionType.SET_TEMPORARY_ACCOUNT ) {
+        console.log( 'action', action );
+        return action.temporaryAccount;
+    }
+    return state;
+};
+
+const reducer = combineReducers( { domain, siteTitle, siteVertical, temporaryAccount, temporaryBlog } );
 
 export type State = ReturnType< typeof reducer >;
 

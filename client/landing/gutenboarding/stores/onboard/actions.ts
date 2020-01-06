@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteVertical } from './types';
+import { ActionType, SiteVertical, TemporaryAccount, TemporaryBlog } from './types';
 
 export const setDomain = (
 	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
@@ -23,3 +23,14 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
 } );
+
+export const setTemporaryBlog = ( temporaryBlog: TemporaryBlog ) => ( {
+    type: ActionType.SET_TEMPORARY_BLOG as const,
+    temporaryBlog,
+} );
+
+export const setTemporaryAccount = ( temporaryAccount: TemporaryAccount ) => ( {
+    type: ActionType.SET_TEMPORARY_ACCOUNT as const,
+    temporaryAccount,
+} );
+
