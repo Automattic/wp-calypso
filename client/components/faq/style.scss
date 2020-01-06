@@ -3,11 +3,11 @@ $faq-gutter-width: 24px;
 .faq {
 	padding: 0 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 0 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }
@@ -35,15 +35,15 @@ $faq-gutter-width: 24px;
 	padding-left: ($faq-gutter-width / 2);
 	padding-right: ($faq-gutter-width / 2);
 
-	@include breakpoint( '480px-660px' ) {
+	@include a8c-breakpoint( '480px-660px' ) {
 		width: 50%;
 	}
 
-	@include breakpoint( '800px-1040px' ) {
+	@include a8c-breakpoint( '800px-1040px' ) {
 		width: 50%;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		width: (100% / 3);
 	}
 }

@@ -10,7 +10,7 @@
 
 .reader-landing__button-wrapper {
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		text-align: center;
 	}
 }
@@ -18,7 +18,7 @@
 .reader-landing__button {
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		width: inherit;
 		text-align: center;
 	}
@@ -31,7 +31,7 @@
 .reader-landing__feature {
 	margin-bottom: 30px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: flex;
 	}
 
@@ -39,13 +39,13 @@
 		flex-direction: row-reverse;
 
 		.reader-landing__feature-detail {
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				padding-left: 0;
 			}
 		}
 
 		.reader-landing__feature-image {
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				margin-left: 25px;
 				margin-right: 0;
 			}
@@ -56,7 +56,7 @@
 .reader-landing__feature-image,
 .reader-landing__feature-detail {
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex: 50%;
 	}
 }
@@ -66,7 +66,7 @@
 	border-radius: 5px;
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		align-self: center;
 		margin: 0 25px 0 0;
 		width: 48%;
@@ -81,7 +81,7 @@
 	font-size: 1.2em;
 	font-weight: bold;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 1.6em;
 	}
 }
@@ -91,7 +91,7 @@
 	font-size: 1em;
 	margin-top: 4px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-top: 10px;
 		font-size: 1.1em;
 	}

@@ -1,7 +1,7 @@
 .me-profile-settings .edit-gravatar {
 	text-align: center;
 
-	@include breakpoint('>960px') {
+	@include a8c-breakpoint('>960px') {
 		float: left;
 		margin-right: 40px;
 		margin-bottom: 20px;
@@ -16,7 +16,7 @@
 
 .me-profile-settings .form-fieldset:nth-child( 1 ),
 .me-profile-settings .form-fieldset:nth-child( 2 ) {
-	@include breakpoint('>960px') {
+	@include a8c-breakpoint('>960px') {
 		clear: right;
 	}
 }

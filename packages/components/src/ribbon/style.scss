@@ -1,4 +1,7 @@
+@import '../styles/typography.scss';
+
 .ribbon {
+	font-family: $a8c-fontFamily-sans;
 	position: absolute;
 	right: -5px;
 	top: -5px;

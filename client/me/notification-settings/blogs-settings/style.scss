@@ -22,7 +22,7 @@
 	display: flex;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		cursor: pointer;
 	}
 

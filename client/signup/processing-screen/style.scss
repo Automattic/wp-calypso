@@ -36,21 +36,21 @@
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		left: 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		transform: scale( 0.8 );
 		left: 130px;
 		top: -120px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		transform: scale( 1.2 );
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		transform: scale( 1.5 );
 	}
 

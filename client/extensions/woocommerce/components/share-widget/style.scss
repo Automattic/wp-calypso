@@ -1,5 +1,5 @@
 .share-widget__container {
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-top: 48px;
 	}
 

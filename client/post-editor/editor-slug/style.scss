@@ -2,7 +2,7 @@
 	margin-left: 10px;
 	margin-top: -4px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin-left: 0;
 	}
 }
@@ -33,7 +33,7 @@
 	margin-right: 0;
 	cursor: pointer;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		word-wrap: break-word;
 	}
 }

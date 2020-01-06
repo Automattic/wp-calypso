@@ -18,7 +18,7 @@
 		border-radius: 4px;
 		// Side by side layout uses flexbox to show
 		// both mockups next to each other.
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			margin-right: 16px;
 
 			// Forces the desktop preview to take up
@@ -26,7 +26,7 @@
 			flex-grow: 1;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			width: 100%;
 			max-width: 480px;
 			border-radius: 12px;
@@ -41,12 +41,12 @@
 		padding: 0 0 24px;
 		@include elevation( 4dp );
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			min-width: 280px;
 		}
 		// Grouped layout shows a fixed-height mobile mockup
 		// overlaid on top of the desktop mockup.
-		@include breakpoint( '660px-960px' ) {
+		@include a8c-breakpoint( '660px-960px' ) {
 			position: absolute;
 			top: 48px;
 			right: 8px;
@@ -56,7 +56,7 @@
 
 		// Only show one iframe at small
 		// breakpoints.
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -73,7 +73,7 @@
 	.is-desktop & {
 		border-radius: 4px;
 		@include elevation( 3dp );
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			border-radius: 12px 12px 0 0;
 		}
 	}
@@ -114,7 +114,7 @@
 		top: 8px;
 		left: 8px;
 		fill: var( --color-neutral );
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -138,7 +138,7 @@
 
 		// At small screen sizes "hide" the label
 		// text as its mostly redundant.
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			color: var( --color-neutral-0 );
 			width: 96%;
 			border-radius: 16px;

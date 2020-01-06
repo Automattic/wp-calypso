@@ -42,7 +42,7 @@
 .mce-container .wpcom-insert-menu__menu-label {
 	color: var( --color-neutral-50 );
 	display: inline-block;
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 	font-size: 13px;
 	margin-left: 4px;
 	margin-top: 3px;
@@ -71,7 +71,7 @@
 }
 
 .mce-container .mce-wpcom-insert-menu .wpcom-insert-menu__menu-label {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }

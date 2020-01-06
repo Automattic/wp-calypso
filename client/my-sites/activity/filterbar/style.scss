@@ -33,7 +33,7 @@
 		color: var( --color-neutral );
 		white-space: nowrap;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin: 0 8px 0 16px;
 		}
 	}
@@ -54,7 +54,7 @@
 		background: var( --color-neutral-60 );
 		color: var( --color-text-inverted );
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-right: 0;
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
@@ -80,7 +80,7 @@
 		border: 1px solid var( --color-neutral-60 );
 		display: none;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			display: inline;
 		}
 	}
@@ -95,7 +95,7 @@
 	min-width: 200px;
 	padding: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding: 24px 24px 18px;
 	}
 
@@ -105,7 +105,7 @@
 		text-align: left;
 		cursor: pointer;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-bottom: 5px;
 			font-size: 14px;
 		}
@@ -143,7 +143,7 @@
 	width: 280px;
 	margin: 0 auto;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding: 16px;
 	}
 

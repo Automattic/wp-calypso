@@ -4,7 +4,7 @@
 	display: flex;
 	margin-bottom: 9px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		flex-direction: row;
 		margin-bottom: 17px;
 	}
@@ -22,7 +22,7 @@
 	margin-bottom: 9px;
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-bottom: 17px;
 	}
 
@@ -32,21 +32,21 @@
 		}
 
 		&:last-child {
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				margin-right: 15px;
 			}
 		}
 
 		.gridicon {
 			margin-right: 0;
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				margin-right: 4px;
 			}
 		}
 
 		.plugins-browser__button-text {
 			display: none;
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				display: inline-block;
 			}
 		}

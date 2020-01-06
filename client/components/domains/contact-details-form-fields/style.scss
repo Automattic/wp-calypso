@@ -16,7 +16,7 @@
 		margin-top: 15px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		.contact-details-form-fields__field.last-name,
 		.contact-details-form-fields__field.phone {
 			margin-left: 7px;
@@ -27,7 +27,7 @@
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		.contact-details-form-fields__field.postal-code,
 		.contact-details-form-fields__field.state {
 			margin-left: 7px;
@@ -57,13 +57,13 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.contact-details-form-fields__row {
 			flex-direction: column;
 		}
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		.custom-form-fieldsets__address-fields,
 		.g-apps-fieldset {
 			flex-direction: column;

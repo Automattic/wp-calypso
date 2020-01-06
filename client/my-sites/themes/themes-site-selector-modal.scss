@@ -4,7 +4,7 @@
 
 	.site-selector-modal__content {
 		.theme {
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				width: 300px;
 			}
 			margin-left: auto;

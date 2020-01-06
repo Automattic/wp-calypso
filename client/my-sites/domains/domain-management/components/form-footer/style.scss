@@ -5,12 +5,12 @@
 	display: flex;
 	justify-content: flex-start;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 24px;
 		margin: 24px -24px -24px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 
@@ -20,16 +20,16 @@
 		&.is-primary {
 			margin: 0 0 15px;
 
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				margin: 0;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				order: 1;
 			}
 		}
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 100%;
 			order: 2;
 		}

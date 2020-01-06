@@ -16,7 +16,7 @@
 
 	.dashboard-widget__title, .stats-widget__footer {
 		padding: 16px;
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -35,7 +35,7 @@
 		justify-content: space-between;
 		align-items: center;
 
-		@include breakpoint( '<1040px' ) {
+		@include a8c-breakpoint( '<1040px' ) {
 			flex-direction: column;
 
 			a {
@@ -73,7 +73,7 @@
 	.table.is-compact-table .table-heading:nth-child( 3 ), .table.is-compact-table .table-item:nth-child( 3 ) {
 		padding-left: 32px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			padding-left: 48px;
 		}
 	}
@@ -86,7 +86,7 @@
 		padding: 32px;
 		text-align: left;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			padding: 16px;
 		}
 
@@ -94,7 +94,7 @@
 			display: flex;
 			height: 120px;
 
-			@include breakpoint( '<960px' ) {
+			@include a8c-breakpoint( '<960px' ) {
 				flex-direction: column;
 				height: 140px;
 			}
@@ -108,11 +108,11 @@
 		&.stats-type-list {
 			height: 200px;
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				height: 175px;
 			}
 
-			@include breakpoint( '<960px' ) {
+			@include a8c-breakpoint( '<960px' ) {
 				max-width: 100%;
 				min-width: 100%;
 
@@ -143,7 +143,7 @@
 		}
 
 		.stats-widget__more {
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				margin-top: -8px;
 			}
 		}

@@ -32,7 +32,7 @@
 		@include long-content-fade();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		font-size: 18px;
 		max-width: none;
 	}

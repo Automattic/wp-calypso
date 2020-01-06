@@ -5,7 +5,7 @@
 	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
 		padding-bottom: 28px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			padding-top: 18px;
 		}
 	}

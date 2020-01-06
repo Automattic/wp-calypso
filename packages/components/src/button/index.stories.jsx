@@ -4,8 +4,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
 
-import '@automattic/calypso-color-schemes/dist/calypso-color-schemes.css';
-
 import Button from '.';
 
 export default { title: 'Button' };

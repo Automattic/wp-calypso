@@ -7,7 +7,7 @@
 	max-width: 960px;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		background: transparent;
 		padding: 14px;
 	}
@@ -18,7 +18,7 @@
 	padding: 12px 24px 48px;
 	text-align: center;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-bottom: 72px;
 	}
 }
@@ -64,12 +64,12 @@
 }
 
 .activity-log-switch__feature-content {
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex-basis: 66%;
 		text-align: left;
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		order: 2;
 	}
 
@@ -84,7 +84,7 @@
 	margin-bottom: 8px;
 	width: 100%;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		order: 1;
 	}
 }
@@ -94,7 +94,7 @@
 	max-height: 110px;
 	box-sizing: border-box;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		order: 0;
 		max-width: none;
 		height: 90px;

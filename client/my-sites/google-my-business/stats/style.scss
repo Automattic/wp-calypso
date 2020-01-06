@@ -42,7 +42,7 @@
 .gmb-stats__chart-interval {
 	margin-top: 10px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		width: 100%;
 	}
 }

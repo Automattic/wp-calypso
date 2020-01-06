@@ -14,7 +14,7 @@
 	line-height: 16px;
 	padding: 4px 2px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 14px;
 		line-height: 18px;
 		padding: 8px 12px;

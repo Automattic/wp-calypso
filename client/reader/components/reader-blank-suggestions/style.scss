@@ -15,7 +15,7 @@
 		color: var( --color-primary-light );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 }

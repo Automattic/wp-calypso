@@ -26,7 +26,7 @@
 	min-width: rem( 200px );
 	margin: rem( 16px ) auto 0;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		min-width: rem( 160px );
 	}
 }
@@ -51,7 +51,7 @@
 	margin-bottom: auto;
 	line-height: 48px;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		line-height: 38px;
 	}
 }

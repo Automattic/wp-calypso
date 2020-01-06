@@ -13,7 +13,7 @@
 		transform: none;
 	}
 
-	@include breakpoint( '<800px' ) {
+	@include a8c-breakpoint( '<800px' ) {
 		position: fixed;
 		z-index: 999;
 		width: 100%;
@@ -94,7 +94,7 @@
 	line-height: 24px;
 	font-size: 16px;
 
-	@include breakpoint( '<800px' ) {
+	@include a8c-breakpoint( '<800px' ) {
 		display: none;
 		padding-top: 24px;
 	}

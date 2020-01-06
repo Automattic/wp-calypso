@@ -14,7 +14,7 @@
 .mce-toolbar .mce-advanced.mce-btn button {
 	display: none;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		display: block;
 	}
 }

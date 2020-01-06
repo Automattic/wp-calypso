@@ -21,7 +21,7 @@
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
-	@include clear-fix;
+	@include a8c-clearFix;
 	position: relative;
 	margin: 0;
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );
@@ -48,7 +48,7 @@
 	}
 
 	// Tablets
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		padding: 71px 24px 24px ( $sidebar-width-min + 24px + 1px );
 
 		.has-no-sidebar & {
@@ -67,7 +67,7 @@
 	}
 
 	// Mobile (Full Width)
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
 		padding-top: 47px;
@@ -95,11 +95,11 @@
 	width: $sidebar-width-max;
 	overflow: hidden;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		width: $sidebar-width-min;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 
@@ -135,7 +135,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 		transform: translateX( -100% );
 	}
@@ -217,7 +217,7 @@
 .layout.focus-sites:not( .is-section-post-editor ),
 .layout.focus-sidebar:not( .is-section-post-editor ) {
 	.layout__primary .main {
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			pointer-events: none;
 			overflow: hidden;
 			max-height: calc( 100vh - 47px );
@@ -240,13 +240,13 @@
 		pointer-events: none;
 		transform: translateX( $sidebar-width-max );
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			transform: translateX( 100% );
 		}
 	}
 
 	.layout__primary .main {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			pointer-events: none;
 			opacity: 0.25;
 		}
@@ -256,7 +256,7 @@
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.layout__secondary {
 			transform: translateX( -100% );
 		}
@@ -275,7 +275,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;

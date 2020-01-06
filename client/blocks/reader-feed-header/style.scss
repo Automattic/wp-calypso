@@ -44,7 +44,7 @@
 		top: auto;
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		max-height: 16px * 5.9;
 	}
 }
@@ -55,7 +55,7 @@
 	position: relative;
 	z-index: z-index( 'root', '.reader-feed-header' );
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 20px 13px;
 	}
 
@@ -65,7 +65,7 @@
 		height: 0;
 		margin-left: auto;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin-left: 0;
 		}
 	}
@@ -80,7 +80,7 @@
 			position: relative;
 				top: -4px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin-bottom: 10px;
 		}
 	}
@@ -90,7 +90,7 @@
 		font-size: 14px;
 		margin-right: 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			display: none;
 		}
 	}
@@ -105,11 +105,11 @@
 
 		.follow-button__label {
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				display: none;
 			}
 		}
@@ -137,7 +137,7 @@
 			display: block;
 			position: relative;
 
-			@include breakpoint ( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				max-height: 16px * 4;
 				overflow: hidden;
 
@@ -164,7 +164,7 @@
 	box-shadow: none;
 	padding: 0;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		box-sizing: border-box;
 		padding: 16px;
 	}
@@ -177,18 +177,18 @@
 
 .reader-feed-header__email-settings .reader-site-notification-settings .gridicons-cog {
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		left: -4px;
 	}
 }
 
 .reader-feed-header__email-settings .reader-site-notification-settings__button-label {
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: inline;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: none;
 	}
 }

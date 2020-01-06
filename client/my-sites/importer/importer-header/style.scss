@@ -9,7 +9,7 @@
 	.importer-header__service-title {
 		line-height: 40px;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			line-height: 56px;
 		}
 	}
@@ -29,7 +29,7 @@
 	color: var( --color-text-subtle );
 	clear: none;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		line-height: 1;
 		margin-bottom: 0.25em;
 	}

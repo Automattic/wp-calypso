@@ -9,11 +9,11 @@
 		width: 720px;
 		margin-bottom: 8px;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( '660px-960px' ) {
+		@include a8c-breakpoint( '660px-960px' ) {
 			width: 620px;
 		}
 
@@ -39,7 +39,7 @@
 	margin-bottom: 16px;
 
 	.foldable-card__header {
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -76,7 +76,7 @@
 .products__product-form-details-wrapper {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -93,7 +93,7 @@
 		margin-right: 8px;
 		margin-left: 8px;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			margin-left: 0;
 			margin-right: 16px;
 		}
@@ -148,13 +148,13 @@
 		justify-content: center;
 		width: 100%;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			justify-content: flex-start;
 		}
 
 		.products__product-form-images-item.thumb {
 			&:nth-child( 3n ) {
-				@include breakpoint( '>960px' ) {
+				@include a8c-breakpoint( '>960px' ) {
 					margin-right: 0;
 				}
 			}
@@ -166,7 +166,7 @@
 		height: 70px;
 		overflow: hidden;
 
-		@include breakpoint( '>1040px' ) {
+		@include a8c-breakpoint( '>1040px' ) {
 			width: 100px;
 			height: 100px;
 		}
@@ -218,12 +218,12 @@
 	width: 100%;
 	margin-bottom: 16px;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-bottom: 0;
 		width: 250px;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		width: 339px;
 	}
 }
@@ -238,7 +238,7 @@
 
 .products__product-form-images-wrapper,
 .products__product-form-details-basic {
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-right: 24px;
 	}
 
@@ -277,7 +277,7 @@
 		}
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		display: flex;
 
 		> .form-fieldset {
@@ -464,7 +464,7 @@
 			rgba( var( --color-surface-rgb ), 0 ) 90%
 		);
 
-		@include breakpoint( '>1280px' ) {
+		@include a8c-breakpoint( '>1280px' ) {
 			display: none;
 		}
 	}
@@ -674,7 +674,7 @@
 	border-top: 0;
 	margin-top: -10px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-top: -16px;
 	}
 
@@ -685,19 +685,19 @@
 	.foldable-card__header {
 		padding: 16px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 
 		.foldable-card__expand {
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				width: 63px;
 			}
 		}
 	}
 
 	.foldable-card__content {
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -723,7 +723,7 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-top: 1em;
 		flex-direction: row;
 	}
@@ -732,7 +732,7 @@
 .products__additional-details-form-group {
 	width: 100%;
 	padding: 16px 0;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		width: 60%;
 		margin-right: 1.5em;
 		padding: 0;
@@ -744,7 +744,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	padding: 16px 0 0;
 	margin-bottom: 8px;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-bottom: 16px;
 	}
 
@@ -757,7 +757,7 @@
 		.button {
 			padding: 4px 6px 7px;
 
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				padding-left: 12px;
 				padding-right: 12px;
 			}
@@ -767,7 +767,7 @@
 
 .products__additional-details-preview-container {
 	width: 100%;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		width: 30%;
 	}
 }
@@ -865,7 +865,7 @@
 		width: 342px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex-direction: row;
 
 		.form-fieldset.products__product-dimensions-input {
@@ -881,7 +881,7 @@
 			flex-grow: 0;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			.form-text-input {
 				min-width: 60px;
 			}
@@ -903,7 +903,7 @@
 	.card {
 		margin-top: -10px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			margin-top: -16px;
 		}
 	}
@@ -915,7 +915,7 @@
 	.products__product-manage-stock {
 		margin-bottom: 12px;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			margin-bottom: 0;
 		}
 	}
@@ -964,7 +964,7 @@
 			}
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			flex-direction: row;
 
 			.products__product-manage-stock-wrapper {

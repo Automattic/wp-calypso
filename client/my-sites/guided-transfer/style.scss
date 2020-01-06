@@ -27,7 +27,7 @@
 		margin-bottom: 10px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		.host-credentials-page__account-username-fieldset,
 		.host-credentials-page__account-password-fieldset,
 		.host-credentials-page__account-email-fieldset {

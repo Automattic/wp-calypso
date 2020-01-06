@@ -1,10 +1,10 @@
 .gsuite-new-user-list__new-user-remove-user-button {
 	width: 100%;
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		width: 75px;
 	}
 
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		span {
 			display: none;
 		}
@@ -16,29 +16,29 @@
 	flex-direction: column;
 	justify-content: space-between;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex-direction: column;
 	}
 
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		flex-direction: row;
 	}
 }
 
 .gsuite-new-user-list__add-another-user-button {
 	width: 100%;
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		width: auto;
 	}
 }
 
 .gsuite-new-user-list__domain-select {
 	width: 100%;
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		width: auto;
 	}
 }
@@ -49,7 +49,7 @@
 }
 
 .gsuite-new-user-list__new-user-name {
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		display: flex;
 		justify-content: space-between;
 	}
@@ -64,7 +64,7 @@
 		width: 100%;
 	}
 
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		flex-direction: row;
 
 		input {
@@ -85,7 +85,7 @@
 	flex-direction: column;
 	margin: 0 0 15px;
 
-	@include breakpoint( '>800px' ) {
+	@include a8c-breakpoint( '>800px' ) {
 		margin: 0 15px 0 0;
 		width: 42%;
 	}

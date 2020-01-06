@@ -26,7 +26,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-wrap: wrap;
-	@include clear-fix;
+	@include a8c-clearFix;
 }
 
 // List item styles for all links

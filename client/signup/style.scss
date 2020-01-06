@@ -82,7 +82,7 @@ body.is-section-signup .layout.gravatar {
 		@include elevation ( 2dp );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		button {
 			font-size: 16px;
 			padding-top: 12px;
@@ -118,7 +118,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 
 	// On small screens remove the margin from the
 	// bottom of the cards.
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.card {
 			margin-bottom: 0;
 		}

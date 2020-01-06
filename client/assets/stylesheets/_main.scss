@@ -57,7 +57,7 @@ body {
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		cursor: pointer;
 	}
 }
@@ -79,7 +79,7 @@ textarea,
 .button,
 #footer,
 #footer a.readmore {
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 }
 
 /*!rtl:ignore*/
@@ -91,7 +91,7 @@ body.rtl,
 .rtl .button,
 .rtl #footer,
 .rtl #footer a.readmore {
-	font-family: $sans-rtl;
+	font-family: $a8c-fontFamily-sans-rtl;
 }
 
 /*!rtl:ignore*/
@@ -103,7 +103,7 @@ body.rtl,
 :lang( he ) .rtl .button,
 :lang( he ) .rtl #footer,
 :lang( he ) .rtl #footer a.readmore {
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 }
 
 /*!rtl:ignore*/

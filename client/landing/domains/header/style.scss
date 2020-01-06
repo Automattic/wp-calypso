@@ -5,7 +5,7 @@
 		font-weight: 400;
 		margin: 0;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			font-size: 16px;
 		}
 	}
@@ -14,12 +14,12 @@
 .header__logo {
 	fill: var( --color-primary );
 
-	@include breakpoint('<960px') {
+	@include a8c-breakpoint('<960px') {
 		width: 39px;
 		height: 39px;
 	}
 
-	@include breakpoint('<660px') {
+	@include a8c-breakpoint('<660px') {
 		width: 24px;
 		height: 24px;
 	}

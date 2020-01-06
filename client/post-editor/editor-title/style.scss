@@ -13,11 +13,11 @@
 	}
 
 	.focus-sidebar & {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-left: 52px;
 		}
 
-		@include breakpoint( '>1040px' ) {
+		@include a8c-breakpoint( '>1040px' ) {
 			margin-left: 0;
 		}
 	}
@@ -29,7 +29,7 @@
 		top: 18px;
 	display: none;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: block;
 	}
 }
@@ -50,7 +50,7 @@
 		box-shadow: none;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		font-size: 32px;
 	}
 }

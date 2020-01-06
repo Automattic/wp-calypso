@@ -24,7 +24,7 @@
 		line-height: 1.425;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		&.is-split {
 			.editor-diff-viewer__scrollable {
 				display: flex;
@@ -65,7 +65,7 @@
 	color: #fff;
 	font-size: 13px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }

@@ -4,7 +4,7 @@
 	background: var( --color-primary-0 );
 	min-height: 200px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex-direction: column;
 	}
 }
@@ -20,7 +20,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -40,7 +40,7 @@
 	display: none;
 	margin-bottom: 16px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: block;
 	}
 
@@ -63,15 +63,15 @@
 	flex: 1 1;
 	padding: 0 330px 0 24px;
 
-	@include breakpoint( '1040px-1280px' ) {
+	@include a8c-breakpoint( '1040px-1280px' ) {
 		padding-right: calc( 40% - 20px );
 	}
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		padding-right: 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding-left: 0;
 	}
 }
@@ -110,7 +110,7 @@
 	right: 10px;
 	top: 10px;
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		display: none;
 	}
 }
@@ -118,7 +118,7 @@
 .checklist-banner__close {
 	display: none;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: block;
 		position: absolute;
 		top: -5px;
@@ -131,7 +131,7 @@
 	margin-top: -13px; /* line up with baseline of copy */
 	margin-left: 5px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: none;
 	}
 }

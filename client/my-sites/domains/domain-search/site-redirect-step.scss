@@ -25,7 +25,7 @@
 		margin-bottom: 20px;
 		min-width: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			float: right;
 			margin-top: -5px;
 			margin-bottom: 0;
@@ -36,7 +36,7 @@
 .site-redirect-step__domain-description {
 	word-break: break-word;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
@@ -44,7 +44,7 @@
 }
 
 input.site-redirect-step__external-domain {
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		float: left;
 		width: calc( 100% - 90px );
 	}
@@ -54,7 +54,7 @@ input.site-redirect-step__external-domain {
 	margin: 10px 0 0;
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		float: right;
 		margin: 0;
 		width: 80px;

@@ -11,7 +11,7 @@
 		flex-direction: column;
 		max-width: none;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			top: 5%;
 			bottom: 5%;
 			left: 5%;
@@ -19,7 +19,7 @@
 			width: 90%;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			left: 12.5%;
 			right: 12.5%;
 			width: 75%;
@@ -27,7 +27,7 @@
 	}
 
 	.header-cake.card {
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			margin-top: 0;
 		}
 	}
@@ -60,7 +60,7 @@
 		overflow-y: auto;
 		padding: 16px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -78,7 +78,7 @@
 		flex-shrink: 0;
 		text-align: left;
 	}
-	
+
 	.empty-content__line {
 		margin: 8px;
 	}
@@ -171,11 +171,11 @@
 	flex: auto;
 	overflow-y: auto;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: flex;
 	}
 
@@ -195,14 +195,14 @@
 	background-color: var( --color-neutral-0 );
 	box-shadow: inset 0 0 0 1px var( --color-neutral-5 );
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex: none;
 		margin-right: 24px;
 	}
 }
 
 .editor-simple-payments-modal__form-fields {
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex: auto;
 	}
 }

@@ -10,7 +10,7 @@
 	.preview-upgrade-nudge__features {
 		padding: 0 24px 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			display: flex;
 		}
 
@@ -18,7 +18,7 @@
 		.feature-example {
 			margin: 0 0 16px;
 
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				width: 50%;
 				margin: 0 16px 0 0;
 			}
@@ -27,7 +27,7 @@
 
 	.preview-upgrade-nudge__features-details {
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			width: 50%;
 		}
 	}

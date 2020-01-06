@@ -4,7 +4,7 @@
 	font-size: 14px;
 	height: 100%;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 }
@@ -38,12 +38,12 @@
 	flex-direction: column;
 	min-width: 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		min-width: 90px;
 	}
 
 	.button.follow-button {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			display: flex;
 		}
 	}
@@ -124,16 +124,16 @@
 	max-height: 16px * 3.2;
 	min-width: 100%;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		height: auto;
 		flex-direction: column;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex-direction: row;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 
@@ -157,24 +157,24 @@
 	word-break: break-all;
 	max-height: 16px * 1.3;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		height: 20px;
 		flex: 1 1 auto;
 		max-width: none;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex: 0 1 auto;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex: 1 1 auto;
 		max-width: none;
 	}
 }
 
 .reader-list-item .follow-button .gridicon {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		left: 3px;
 	}
 }
@@ -210,7 +210,7 @@
 		width: 20px;
 		height: 20px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			width: 16px * 1.5 * 3;
 		}
 	}

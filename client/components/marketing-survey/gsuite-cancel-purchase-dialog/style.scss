@@ -8,7 +8,7 @@
 	content: '';
 	display: block;
 	height: 1em;
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		content: none;
 	}
 }

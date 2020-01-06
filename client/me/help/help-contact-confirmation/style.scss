@@ -14,7 +14,7 @@
 	.form-section-heading {
 		margin: 13px 0 7px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			margin: 7px 0 3px;
 			font-size: 24px;
 			line-height: 32px;
@@ -23,7 +23,7 @@
 
 	min-height: calc( 100vh - 150px );
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		min-height: auto;
 		height: 556px;
 	}
@@ -33,7 +33,7 @@
 	display: table-cell;
 	vertical-align: middle;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: block;
 		margin-top: 100px;
 	}
@@ -43,7 +43,7 @@
 	display: none;
 }
 
-@include breakpoint( '>660px' ) {
+@include a8c-breakpoint( '>660px' ) {
 	.help-contact-confirmation__large-gridicon {
 		display: block;
 	}
@@ -54,7 +54,7 @@
 }
 
 .help-contact-confirmation__message {
-	font: 14px/21px $sans;
+	font: 14px/21px $a8c-fontFamily-sans;
 	color: var( --color-neutral-light );
 	max-width: 340px;
 	display: inline-block;

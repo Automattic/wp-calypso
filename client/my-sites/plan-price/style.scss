@@ -16,7 +16,7 @@
 		vertical-align: super;
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		font-size: 24px;
 	}
 }

@@ -65,7 +65,7 @@
 
 		.follow-button__label,
 		.conversation-follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

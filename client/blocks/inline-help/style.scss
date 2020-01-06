@@ -36,7 +36,7 @@
 		border-color: var( --color-accent );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.button.is-borderless.inline-help__button {
 			padding: 1px;
 		}
@@ -106,7 +106,7 @@
 }
 
 .inline-help__popover.popover {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		top: 0 !important;
 		right: 0 !important;
 		bottom: 0 !important;
@@ -130,7 +130,7 @@
 	p {
 		font-size: 12px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			font-size: 14px;
 		}
 	}
@@ -139,12 +139,12 @@
 	button {
 		font-size: 12px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			font-size: 14px;
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		width: 320px;
 
 		position: fixed;
@@ -175,7 +175,7 @@
 			&.is-open.has-focus {
 				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
 
-				@include breakpoint( '>660px' ) {
+				@include a8c-breakpoint( '>660px' ) {
 					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 				}
 			}
@@ -185,7 +185,7 @@
 				padding: 12px 0;
 				color: var( --color-text );
 
-				@include breakpoint( '>660px' ) {
+				@include a8c-breakpoint( '>660px' ) {
 					font-size: 15px;
 					padding: 16px 0;
 				}
@@ -376,7 +376,7 @@
 	margin: 0;
 	font-size: 14px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 18px;
 		line-height: 1.3;
 	}
@@ -427,7 +427,7 @@
 	color: var( --color-text-subtle );
 	font-style: italic;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 16px;
 	}
 }

@@ -65,7 +65,7 @@ $deisgn-selector-selection-space: 175px;
 	display: grid;
 	grid-gap: $design-selector-grid-gap;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr;
 	}
 
@@ -123,7 +123,7 @@ $deisgn-selector-selection-space: 175px;
 .page-layout-selector__grid {
 	display: grid;
 	grid-gap: 1.25em;
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 }

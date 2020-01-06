@@ -3,7 +3,7 @@
 }
 
 .plugins-list .plugin-item {
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		width: 100%;
 
 		&:nth-last-child( n + 2 ) {
@@ -11,7 +11,7 @@
 		}
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		flex-direction: column;
 		width: 33.33%;
 		border-right-width: 1px;

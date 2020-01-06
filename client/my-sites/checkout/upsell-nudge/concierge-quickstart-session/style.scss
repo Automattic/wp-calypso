@@ -31,7 +31,7 @@ main.concierge-quickstart-session.main {
 
 	&__column-content {
 		padding-right: 10px;
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			padding-right: 0;
 		}
 	}
@@ -39,7 +39,7 @@ main.concierge-quickstart-session.main {
 	&__column-doodle {
 		width: 120px;
 		flex-shrink: 0;
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -61,7 +61,7 @@ main.concierge-quickstart-session.main {
 		margin-top: 0.5em;
 		margin-bottom: 1.4em;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			font-size: 21px;
 		}
 	}
@@ -75,7 +75,7 @@ main.concierge-quickstart-session.main {
 			align-items: flex-start;
 			margin-bottom: 4px;
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				align-items: flex-start;
 			}
 		}
@@ -94,22 +94,22 @@ main.concierge-quickstart-session.main {
 	&__footer &__decline-offer-button {
 		color: var( --color-primary );
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			float: left;
 		}
 	}
 
 	&__footer &__accept-offer-button {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			float: right;
 		}
 	}

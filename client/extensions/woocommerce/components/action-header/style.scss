@@ -16,11 +16,11 @@
 	top: 47px;
 	left: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 8px 24px 8px 0;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding: 5px 16px;
 		padding-left: 0;
 		margin: 0;
@@ -44,7 +44,7 @@
 	display: flex;
 	justify-content: flex-start;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-left: -32px;
 	}
 
@@ -84,7 +84,7 @@
 	overflow: hidden;
 	text-align: right;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-right: 40px;
 	}
 

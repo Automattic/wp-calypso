@@ -7,7 +7,7 @@
 		flex-direction: row;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 
@@ -64,7 +64,7 @@
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		:not( .no-wrap ) > & {
 			border-bottom: none;
 		}
@@ -74,7 +74,7 @@
 		@include no-prefix-wrap();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		@include no-prefix-wrap();
 	}
 
@@ -94,7 +94,7 @@
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		:not( .no-wrap ) > & {
 			border-top: none;
 		}
@@ -104,7 +104,7 @@
 		@include no-suffix-wrap();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		@include no-suffix-wrap();
 	}
 }

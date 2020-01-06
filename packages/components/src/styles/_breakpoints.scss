@@ -6,7 +6,7 @@
 
 $breakpoints: 480px, 660px, 800px, 960px, 1040px, 1280px, 1400px; // Think very carefully before adding a new breakpoint
 
-@mixin breakpoint( $sizes... ) {
+@mixin a8c-breakpoint( $sizes... ) {
 	@each $size in $sizes {
 		@if type-of( $size ) == string {
 			$approved-value: 0;

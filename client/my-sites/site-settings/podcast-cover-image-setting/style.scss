@@ -50,7 +50,7 @@
 .podcast-cover-image-setting {
 	width: 208px;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		width: 98px;
 	}
 }
@@ -67,7 +67,7 @@
 		color: var( --color-neutral-20 );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin: 6px 0 0;
 	}
 }

@@ -64,7 +64,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		.comments__comment-actions-approve,
 		.comments__comment-actions-trash,
 		.comments__comment-actions-spam,
@@ -77,7 +77,7 @@
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}

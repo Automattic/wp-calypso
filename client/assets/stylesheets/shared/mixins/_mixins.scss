@@ -1,8 +1,8 @@
 
 @import 'banner';
-@import 'breakpoints';
+@import '~@automattic/components/src/styles/_breakpoints.scss';
 @import 'calc';
-@import 'clear-fix';
+@import '~@automattic/components/src/styles/_clear-fix.scss';
 @import 'clear-text';
 @import 'dropdown-menu';
 @import 'elevation';

@@ -29,7 +29,7 @@
 	transition: all 0.2s ease-in;
 	z-index: 1;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 

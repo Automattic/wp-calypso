@@ -19,7 +19,7 @@
 .payment-methods__methods {
 	margin-top: 5px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-top: 0;
 	}
 }

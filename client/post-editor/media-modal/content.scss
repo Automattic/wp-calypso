@@ -8,7 +8,7 @@
 		left: 0;
 	overflow-y: auto;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex-direction: row;
 		top: 74px;
 		overflow-y: visible;

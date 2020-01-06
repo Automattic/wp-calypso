@@ -17,7 +17,7 @@
 .button.google-voucher__setup-google-adwords:not( .is-compact ) {
 	margin-top: 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		text-align: center;
 	}
 }
@@ -32,7 +32,7 @@
 		list-style-position: inside;
 		margin: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			list-style-position: outside;
 			margin: 0 3em 1.5em;
 		}
@@ -92,7 +92,7 @@ li.google-voucher__terms-and-conditions {
 	margin-top: 16px;
 	display: block;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		max-width: none;
 	}
 }

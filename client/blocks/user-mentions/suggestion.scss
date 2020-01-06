@@ -26,7 +26,7 @@ $user-mentions-avatar-margin: 10px;
 	margin-left: $user-mentions-avatar-size + $user-mentions-avatar-margin;
 	font-size: 11px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		float: right;
 		clear: none;
 		margin-left: 0;

@@ -16,7 +16,7 @@
 	overflow: auto;
 
 	// Not sure this is needed.
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
 

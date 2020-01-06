@@ -24,7 +24,7 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 16px;
 	display: block;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: none;
 	}
 
@@ -97,11 +97,11 @@ $plan-features-sidebar-width: 272px;
 	display: none;
 	table-layout: fixed;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: table;
 	}
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		border-spacing: 0;
 		margin-left: 15px;
 		margin-right: 15px;
@@ -146,7 +146,7 @@ $plan-features-sidebar-width: 272px;
 		bottom: 0;
 		margin: 0 24px;
 
-		@include breakpoint( '<1040px' ) {
+		@include a8c-breakpoint( '<1040px' ) {
 			margin: 0 12px;
 			width: calc( 100% - 24px );
 		}
@@ -186,7 +186,7 @@ $plan-features-sidebar-width: 272px;
 	border-bottom: solid 2px var( --color-neutral-10 );
 	background-color: var( --color-surface );
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		padding: 12px 12px 0;
 	}
 
@@ -236,7 +236,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .is-section-plans .plan-features__header-figure {
-	@include breakpoint( '<1280px' ) {
+	@include a8c-breakpoint( '<1280px' ) {
 		width: 24px;
 		height: 24px;
 		margin-right: 10px;
@@ -246,7 +246,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-figure,
 .plan-features__table.has-1-cols .plan-features__header-figure,
 .plan-features__table.has-2-cols .plan-features__header-figure {
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		display: none;
 	}
 }
@@ -261,7 +261,7 @@ $plan-features-sidebar-width: 272px;
 	color: var( --color-primary );
 	line-height: 0.7;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		font-size: 20px;
 	}
 }
@@ -281,7 +281,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-price-group {
 	width: calc( 100% + 20px );
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		width: calc( 100% + 10px );
 	}
 }
@@ -289,12 +289,12 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-price-group-prices {
 	max-width: calc( 100% - 20px );
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		max-width: calc( 100% - 10px );
 	}
 
 	.plan-price.is-discounted {
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			margin-right: 0;
 		}
 	}
@@ -312,10 +312,10 @@ $plan-features-sidebar-width: 272px;
 	padding: 0 8px;
 	margin-bottom: 4px;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
-	@include breakpoint( '>1280px' ) {
+	@include a8c-breakpoint( '>1280px' ) {
 		margin-left: 8px;
 	}
 }
@@ -334,7 +334,7 @@ $plan-features-sidebar-width: 272px;
 		height: 12px;
 		margin-bottom: 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin-bottom: 9px;
 		}
 	}
@@ -344,7 +344,7 @@ $plan-features-sidebar-width: 272px;
 	max-width: 520px;
 	margin: 8px auto 16px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-wrap: wrap;
 		border-radius: 0;
 
@@ -380,7 +380,7 @@ $plan-features-sidebar-width: 272px;
 			margin-top: 5px;
 			margin-bottom: 5px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			height: 26px;
 		}
 	}
@@ -392,7 +392,7 @@ $plan-features-sidebar-width: 272px;
 	&.is-placeholder {
 		height: 28px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			height: auto;
 		}
 	}
@@ -422,11 +422,11 @@ $plan-features-sidebar-width: 272px;
 	margin: 0;
 	padding: 24px 24px 0;
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		padding: 12px 12px 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding: 20px 20px 0;
 	}
 }
@@ -443,11 +443,11 @@ $plan-features-sidebar-width: 272px;
 	font-size: 14px;
 	color: var( --color-neutral-70 );
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		font-size: 12px;
 	}
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		margin: 0 12px;
 	}
 }
@@ -476,11 +476,11 @@ $plan-features-sidebar-width: 272px;
 .plan-features__actions {
 	padding: 0 24px 24px;
 
-	@include breakpoint( '<1040px' ) {
+	@include a8c-breakpoint( '<1040px' ) {
 		padding: 0 12px 12px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding: 0 20px 20px;
 		border-bottom: solid 1px var( --color-neutral-0 );
 	}
@@ -494,7 +494,7 @@ $plan-features-sidebar-width: 272px;
 	width: 100%;
 	margin-top: 8px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-top: 20px;
 	}
 }
@@ -555,7 +555,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		// This adds a little pointer arrow to the bottom
 		// of the selected segment item. It relies on the
 		// relative positioning above.
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			&::after {
 				display: block;
 				content: '';
@@ -573,7 +573,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		a,
 		a:hover,
 		a:focus {
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				flex-wrap: wrap;
 			}
 			cursor: default;
@@ -597,7 +597,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.jetpack-connect__plans & {
 		width: auto;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			max-width: 1000px;
 		}
 	}
@@ -605,7 +605,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.signup__steps & {
 		width: auto;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			max-width: 1100px;
 		}
 	}
@@ -613,14 +613,14 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__table {
 		display: none;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			display: table;
 			width: 100%;
 			margin: 0 auto;
 			padding: 0 16px;
 		}
 
-		@include breakpoint( '>1040px' ) {
+		@include a8c-breakpoint( '>1040px' ) {
 			border-spacing: 15px 0;
 			padding: 0;
 		}
@@ -654,7 +654,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		height: 50px;
 		margin: 16px 20px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			float: none;
 			width: 100px;
 			height: 100px;
@@ -671,7 +671,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		margin: 20px 20px -12px;
 		padding: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-bottom: 0;
 			padding: 0 12px;
 		}
@@ -726,7 +726,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			padding-top: 0;
 		}
 	}
@@ -748,7 +748,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			margin-left: -280px;
 		}
 
-		@include breakpoint( '<1040px' ) {
+		@include a8c-breakpoint( '<1040px' ) {
 			padding-top: 12px;
 		}
 	}
@@ -758,7 +758,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		width: calc( 100vw - 278px );
 		margin-left: calc( 50% - 50vw + 138px );
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			margin-left: 0;
 			width: 100%;
 		}
@@ -1033,7 +1033,7 @@ button.plan-features__scroll-button {
 	.plan-features__scroll-right & {
 		margin-left: 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			margin-left: 5px;
 		}
 	}
@@ -1041,7 +1041,7 @@ button.plan-features__scroll-button {
 	.plan-features__scroll-left & {
 		margin-right: 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			margin-right: 5px;
 		}
 	}
@@ -1079,7 +1079,7 @@ button.plan-features__scroll-button {
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include a8c-breakpoint( '<480px' ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
 	}

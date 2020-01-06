@@ -10,7 +10,7 @@
 	right: 0;
 	z-index: z-index( 'root', '.editor-ground-control' );
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding-top: 0;
 	}
 }
@@ -27,7 +27,7 @@
 	flex: 0 0 auto;
 	max-width: $sidebar-width-max;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -59,7 +59,7 @@
 	display: flex;
 
 	// Hide the ground-control save buttons on mobile
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -75,7 +75,7 @@
 		padding: 12px 16px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: block;
 	}
 }
@@ -87,7 +87,7 @@
 	position: relative;
 	padding-left: 16px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -104,7 +104,7 @@
 	padding: 0 8px;
 	line-height: 46px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding: 0 12px;
 	}
 }
@@ -118,7 +118,7 @@
 	flex-grow: 1;
 	padding: 7px 12px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		min-width: 100px;
 		padding: 7px 16px;
 	}
@@ -166,7 +166,7 @@
 	padding: 7px 12px;
 	margin: 0 0 0 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		min-width: 120px;
 		padding: 7px 16px;
 		margin: 0 8px;
@@ -269,7 +269,7 @@
 	border-radius: 0;
 	color: var( --color-primary );
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		padding: 6px 32px;
 	}
 

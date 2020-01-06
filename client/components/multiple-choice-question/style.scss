@@ -5,7 +5,7 @@
 
 .form-text-input.multiple-choice-question__answer-item-text-input::placeholder {
 	color: var( --color-text-inverted );
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		color: var( --color-neutral );
 	}
 }

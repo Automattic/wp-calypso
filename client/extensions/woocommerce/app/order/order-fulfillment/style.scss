@@ -17,7 +17,7 @@
 	display: flex;
 	align-items: center;
 	margin-top: 16px;
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-top: 0;
 	}
 }

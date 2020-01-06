@@ -59,7 +59,7 @@ $devdocs-max-width: 720px;
 		column-gap: 24px;
 
 		// Show 2 columns for big screens
-		@include breakpoint( '>1280px' ) {
+		@include a8c-breakpoint( '>1280px' ) {
 			column-count: 2;
 		}
 
@@ -176,7 +176,7 @@ $devdocs-max-width: 720px;
 
 		// When we only have room for one column we
 		// set the max-width to line up with search
-		@include breakpoint( '<1280px' ) {
+		@include a8c-breakpoint( '<1280px' ) {
 			max-width: $devdocs-max-width;
 		}
 
@@ -346,7 +346,7 @@ $devdocs-max-width: 720px;
 	font-size: 16px;
 	font-family: $serif;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin: 32px auto;
 	}
 
@@ -453,7 +453,7 @@ $devdocs-max-width: 720px;
 }
 
 .design__typography-interface-example {
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 
 	h2 {
 		margin-top: 16px;
@@ -483,7 +483,7 @@ a.devdocs__doc-edit-link {
 	text-decoration: underline;
 	float: right;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-right: 12px;
 	}
 }

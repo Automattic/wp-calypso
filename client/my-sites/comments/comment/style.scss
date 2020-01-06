@@ -16,7 +16,7 @@
 			0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin: 10px auto;
 	}
 }
@@ -308,7 +308,7 @@
 	padding-top: 8px;
 	padding-bottom: 8px;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		justify-content: flex-start;
 		margin-left: 40px;
 		padding-top: 0;
@@ -346,13 +346,13 @@
 		color: var( --color-primary );
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		span {
 			display: block;
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex-basis: auto;
 		flex-grow: 0;
 		padding: 8px 16px;
@@ -439,7 +439,7 @@
 		padding: 0 8px;
 		width: 50%;
 
-		@include breakpoint( '>1280px' ) {
+		@include a8c-breakpoint( '>1280px' ) {
 			width: 33%;
 		}
 	}
@@ -596,7 +596,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 90%;
 		.dialog__content {
 			min-width: none;

@@ -5,7 +5,7 @@
 	margin-bottom: 5px;
 	margin-top: 5px;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-bottom: 10px;
 		margin-top: 10px;
 	}
@@ -15,23 +15,23 @@
 .gmb-select-location__help-actions {
 	display: flex;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 }
 
 .gmb-new-account__actions .button,
 .gmb-select-location__help-actions .button {
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		text-align: center;
 	}
 
 	&:not( :last-child ) {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			margin-bottom: 10px;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			margin-right: 10px;
 		}
 	}

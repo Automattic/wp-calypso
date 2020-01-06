@@ -55,11 +55,11 @@
 .following-manage__subscriptions-controls {
 	display: flex;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		flex-wrap: wrap;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -72,7 +72,7 @@
 		font-weight: 600;
 		padding: 4px 0 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			flex: 0 0 auto;
 			width: 100%;
 		}
@@ -82,7 +82,7 @@
 		position: relative;
 
 		&::before {
-			@include breakpoint( '<960px' ) {
+			@include a8c-breakpoint( '<960px' ) {
 				@include long-content-fade( $size: 20% );
 				height: 30px;
 				right: 30px;
@@ -93,7 +93,7 @@
 
 	.following-manage__subscriptions-sort,
 	.following-manage__subscriptions-search {
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			flex: 1;
 		}
 	}
@@ -105,7 +105,7 @@
 		padding-top: 8px;
 		width: 100%;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			min-width: 200px;
 		}
 	}
@@ -113,7 +113,7 @@
 	.following-manage__subscriptions-search {
 		margin-top: 1px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			margin-right: 0;
 		}
 	}
@@ -124,7 +124,7 @@
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				min-width: 0;
 			}
 		}
@@ -138,7 +138,7 @@
 	.following-manage__subscriptions-import-export {
 		margin-right: 0;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			display: none;
 		}
 
@@ -178,7 +178,7 @@
 }
 
 .following-manage__search-followed-input {
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		min-width: 200px;
 	}
 }
@@ -202,12 +202,12 @@
 	flex-direction: column;
 	min-width: 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		min-width: 90px;
 	}
 
 	.button.follow-button {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			display: flex;
 		}
 	}
@@ -254,7 +254,7 @@
 		.follow-button__label {
 			color: var( --color-primary );
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}

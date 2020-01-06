@@ -29,7 +29,7 @@
 	.post-edit-button__label {
 		color: var( --color-text-subtle );
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -39,7 +39,7 @@
 	font-size: 14px;
 	margin-left: 4px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: none;
 	}
 }

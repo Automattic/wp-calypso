@@ -3,7 +3,7 @@
 }
 
 .search-stream__intro {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-left: 16px;
 	}
 }
@@ -21,7 +21,7 @@
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
 	// Below 660px we show the MobileBackToSidebar header so no padding needed
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-top: 30px;
 	}
 
@@ -47,7 +47,7 @@
 
 // Top margin for site results
 .main.search-stream {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
 }
@@ -57,16 +57,16 @@
 	display: flex;
 	flex-flow: row wrap;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		flex-flow: column wrap;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex-flow: row wrap;
 		padding: 15px 5px 15px 15px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-flow: column wrap;
 	}
 }
@@ -91,26 +91,26 @@
 	margin: 0 0 0 15px;
 	padding: 20px 0;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		margin: 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 0 0 15px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin: 0 5px 0 0;
 	}
 
 	&:nth-child( 2n ) {
 		margin: 0 15px 0 0;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin: 0;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			margin: 0 5px 0 0;
 		}
 	}
@@ -118,7 +118,7 @@
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			max-height: 16px * 1.6 * 8;
 		}
 	}
@@ -157,7 +157,7 @@
 			position: relative;
 			top: -2px;
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				margin-right: 0;
 			}
 		}
@@ -225,7 +225,7 @@
 	margin-bottom: 0;
 	padding-bottom: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		height: 58px;
 	}
 }
@@ -299,7 +299,7 @@
 	min-width: 0;
 	max-width: 25px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		align-items: flex-start;
 		min-width: 90px;
 	}
@@ -324,13 +324,13 @@
 	width: calc( 100% - 300px );
 
 	.reader-post-card__post {
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			flex-direction: column;
 		}
 	}
 
 	.reader-post-card.card.has-thumbnail .reader-featured-image {
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			height: 80px;
 			margin: 0 0 20px;
 			max-width: 100%;
@@ -342,7 +342,7 @@
 	}
 
 	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			display: block;
 		}
 	}
@@ -365,7 +365,7 @@
 }
 
 .card.reader-search-card.is-photo {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		z-index: z-index( 'root', '.reader-search-card' );
 	}
 }
@@ -387,7 +387,7 @@
 		.follow-button__label {
 			color: var( --color-primary );
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}

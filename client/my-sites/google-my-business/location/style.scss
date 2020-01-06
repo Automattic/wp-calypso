@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: space-between;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		flex-direction: column;
 	}
 

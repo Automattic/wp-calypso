@@ -7,7 +7,7 @@
 	margin-top: 24px;
 	padding: 0 14px 14px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-left: 0;
 		padding-right: 0;
 		margin-top: 0;
@@ -44,7 +44,7 @@
 	margin: 0 10px;
 	width: calc( 100% - 15px );
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		width: calc( 100% - 165px );
 	}
 }

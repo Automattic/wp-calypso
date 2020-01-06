@@ -12,7 +12,7 @@
 			margin: 18px 16px 0 0;
 		}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin: 0;
 		position: relative;
 

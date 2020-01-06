@@ -6,7 +6,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 
 			&:focus {
 				color: var( --color-link-dark );

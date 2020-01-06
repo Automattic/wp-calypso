@@ -29,13 +29,13 @@
 .reader-share__button-label {
 	margin-left: 6px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: none;
 	}
 }
 
 .reader-share__popover {
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		width: 152px;
 		padding-right: 2px;
 	}
@@ -47,7 +47,7 @@
 		line-height: 24px;
 		margin-left: 34px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			margin-left: 27px;
 		}
 	}
@@ -62,7 +62,7 @@
 		padding: 0;
 		fill: var( --color-neutral-light );
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			left: 11px;
 		}
 	}

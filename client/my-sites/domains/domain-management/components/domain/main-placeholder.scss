@@ -2,7 +2,7 @@
 	.domain-management-header__children {
 		@include placeholder( --color-neutral-10 );
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			max-width: 60%;
 			margin: 0 auto;
 		}

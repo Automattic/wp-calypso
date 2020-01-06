@@ -29,7 +29,7 @@
 		right: 0;
 		top: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		height: 88px;
 		padding: 20px 25px;
 	}
@@ -71,7 +71,7 @@
 	text-transform: uppercase;
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		font-size: 12px;
 	}
 }
@@ -79,7 +79,7 @@
 .masterbar__crowdsignal-wide-screen-only {
 	display: none;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: inline;
 	}
 }
