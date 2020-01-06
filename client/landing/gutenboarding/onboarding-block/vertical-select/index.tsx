@@ -42,10 +42,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		NO__( 'Real Estate Agent' ),
 	];
 
-	const [ inputValue, setInputValue ] = useState( '' );
-
-	const normalizedInputValue = inputValue.trim().toLowerCase();
-
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
 	 *
@@ -68,6 +64,10 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 
 	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
+
+	const [ inputValue, setInputValue ] = useState( siteVertical?.label ?? '' );
+
+	const normalizedInputValue = inputValue.trim().toLowerCase();
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		setInputValue( e.target.value );
