@@ -22,8 +22,15 @@ export class FormCountrySelect extends Component {
 		translate: PropTypes.func.isRequired,
 		ariaLabelledBy: PropTypes.string,
 		ariaDescribedBy: PropTypes.string,
-		selectedValue: PropTypes.string,
+		initialValue: PropTypes.string,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			currentValue: props.initialValue,
+		};
+	}
 
 	getOptions() {
 		const { countriesList, translate } = this.props;
@@ -58,11 +65,14 @@ export class FormCountrySelect extends Component {
 					'numberFormat',
 				] ) }
 				className={ classnames( this.props.className, 'form-country-select' ) }
-				onChange={ this.props.onChange }
+				onChange={ event => {
+					this.setState( { currentValue: event.target.value } );
+					this.props.onChange( event );
+				} }
 				disabled={ this.props.disabled }
 				aria-labelledby={ this.props.ariaLabelledBy }
 				aria-describedby={ this.props.ariaDescribedBy }
-				value={ this.props.selectedValue }
+				value={ this.state.currentValue }
 			>
 				{ options.map( function( option ) {
 					return (
