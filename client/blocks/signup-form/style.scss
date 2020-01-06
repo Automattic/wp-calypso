@@ -21,7 +21,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			white-space: pre;
 		}
 	}

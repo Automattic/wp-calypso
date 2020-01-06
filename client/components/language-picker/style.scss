@@ -13,7 +13,7 @@
 	text-align: left;
 	line-height: inherit;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 

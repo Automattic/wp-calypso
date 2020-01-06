@@ -2,7 +2,7 @@
 	line-height: 40px;
 	display: block;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		line-height: 48px;
 	}
 
@@ -20,7 +20,7 @@
 		position: relative;
 
 		// Hover state
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
 				border-top-color: var( --color-border-inverted );
@@ -33,7 +33,7 @@
 			border-top-color: var( --color-border-inverted );
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			.stats__module-list & {
 				font-size: 12px;
 			}

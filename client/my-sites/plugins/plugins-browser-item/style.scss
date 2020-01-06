@@ -18,7 +18,7 @@
 		display: block;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		width: 33.33%;
 
 		&:nth-child( 3n + 1 ) {
@@ -30,7 +30,7 @@
 		}
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		width: 100%;
 
 		&:nth-child( n + 2 ) {

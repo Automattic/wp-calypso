@@ -2,7 +2,7 @@
 	max-width: 100%;
 
 	.media-library__list {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			padding: 0;
 		}
 	}

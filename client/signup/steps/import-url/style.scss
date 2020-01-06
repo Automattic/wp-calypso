@@ -18,7 +18,7 @@
 	border-radius: 3px;
 	padding: 10px 14px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding: 14px;
 	}
 }
@@ -39,7 +39,7 @@
 		top: 2px;
 		right: 2px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			top: 1px;
 			right: 1px;
 		}

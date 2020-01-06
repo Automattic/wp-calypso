@@ -6,7 +6,7 @@
 .post-type-filter__multi-select-button {
 	background-color: var( --color-neutral-0 );
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		position: absolute;
 		top: 8px;
 		right: 50px;

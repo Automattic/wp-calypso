@@ -3,7 +3,7 @@
 	font-size: 11px;
 	color: var( --color-text-subtle );
 	line-height: 18px;
-	@include clear-fix;
+	@include a8c-clearFix;
 
 	.gridicon {
 		float: left;

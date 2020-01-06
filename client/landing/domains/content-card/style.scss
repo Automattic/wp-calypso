@@ -8,7 +8,7 @@
 		font-weight: 300;
 		margin-bottom: 1em;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			font-size: 24px;
 		}
 	}
@@ -24,7 +24,7 @@
 			text-align: center;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			font-size: 16px;
 		}
 	}
@@ -35,7 +35,7 @@
 		font-weight: 300;
 		margin-bottom: 16px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			font-size: 16px;
 		}
 	}
@@ -57,7 +57,7 @@
 			margin-left: auto;
 			margin-right: auto;
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				display: none;
 			}
 		}

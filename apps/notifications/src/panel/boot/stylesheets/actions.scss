@@ -4,7 +4,7 @@
 	}
 
 	.wpnc__reply-box {
-		font-family: $sans;
+		font-family: $a8c-fontFamily-sans;
 		display: block;
 		position: relative;
 		padding: $wpnc__padding-medium;
@@ -28,7 +28,7 @@
 		}
 
 		button {
-			font-family: $sans;
+			font-family: $a8c-fontFamily-sans;
 			color: var( --color-neutral-light );
 			display: none;
 			position: absolute;

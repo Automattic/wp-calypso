@@ -17,7 +17,7 @@
 .address-view__editable-city-state-postcode {
 	display: flex;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		align-items: flex-end;
 	}
 
@@ -30,7 +30,7 @@
 		}
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		flex-direction: column;
 
 		label + select {

@@ -7,7 +7,7 @@
 
 	// At small screen sizes make the step
 	// full width. -shaun
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 }
@@ -21,7 +21,7 @@
 	@include elevation ( 0 );
 	border-bottom: 1px solid var( --color-neutral-5 );
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-right: 24px;
 	}
 
@@ -58,7 +58,7 @@
 	}
 
 	.card__link-indicator {
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			opacity: 0.5;
 			transform: translateX( -4px );
 			transition: all 200ms cubic-bezier( 0.08, 0.74, 0.44, 1.07 );

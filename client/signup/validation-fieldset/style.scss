@@ -14,7 +14,7 @@
 .validation-fieldset + .logged-out-form__footer {
 	margin-top: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-top: 20px;
 	}
 }

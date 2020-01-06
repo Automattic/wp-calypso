@@ -185,7 +185,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;

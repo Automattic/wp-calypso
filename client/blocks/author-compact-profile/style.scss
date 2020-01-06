@@ -27,7 +27,7 @@
 		.follow-button__label {
 			color: var( --color-primary );
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}
@@ -99,7 +99,7 @@
 }
 
 .author-compact-profile__site-link.is-placeholder {
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-left: 50px;
 		margin-right: 50px;
 	}

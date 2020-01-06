@@ -47,7 +47,7 @@
 	margin: 0 auto;
 	// max-width: 90%;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		max-width: 300px;
 	}
 }
@@ -58,7 +58,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -83,7 +83,7 @@
 	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
 	white-space: pre-wrap;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin-bottom: 0.5em;
 	}
 

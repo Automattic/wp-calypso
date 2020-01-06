@@ -83,7 +83,7 @@
 		margin: 24px auto !important;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		.alignleft {
 			max-width: 100%;
 			float: left;
@@ -101,7 +101,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.alignleft,
 		.alignright {
 			clear: both;
@@ -140,7 +140,7 @@
 		&.alignleft {
 			max-width: 100%;
 
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				max-width: 50%;
 			}
 
@@ -183,7 +183,7 @@
 		line-height: 1.4285;
 		animation: appear 0.3s ease-in-out;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			padding: 13px 48px;
 			font-size: inherit;
 		}

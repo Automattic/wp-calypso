@@ -1,5 +1,5 @@
 .security-2fa-backup-codes-list {
-	@include clear-fix;
+	@include a8c-clearFix;
 }
 
 .security-2fa-backup-codes-list__print-agreement {
@@ -15,12 +15,12 @@
 		display: inline-block;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include a8c-breakpoint( '<480px' ) {
 	.security-2fa-backup-codes-list__btn-group .button {
 		display: inline-block;
 	}

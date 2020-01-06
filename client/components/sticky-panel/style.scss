@@ -17,7 +17,7 @@
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 }
 
-@include breakpoint( '<960px' ) {
+@include a8c-breakpoint( '<960px' ) {
 	.sticky-panel.is-sticky .sticky-panel__content {
 		margin-top: 8px;
 	}

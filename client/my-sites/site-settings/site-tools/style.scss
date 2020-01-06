@@ -30,7 +30,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		&.is-compact {
 			padding: 24px;
 		}

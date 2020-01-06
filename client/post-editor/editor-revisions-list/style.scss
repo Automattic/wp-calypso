@@ -5,13 +5,13 @@
 	flex-grow: 0;
 	flex-shrink: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		border-left: 1px solid var( --color-neutral-5 );
 		z-index: 1; // Put the list above the action-buttons::before overlay gradient. -shaun
 		flex-basis: 230px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		&::after {
 			$editor-revisions-list-fade-height: 20px;
 			content: '';
@@ -41,7 +41,7 @@
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-5 );
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		height: 40px;
 		border-bottom: 0;
 	}
@@ -62,7 +62,7 @@
 	align-self: center;
 }
 
-@include breakpoint( '>1040px' ) {
+@include a8c-breakpoint( '>1040px' ) {
 	.editor-revisions-list.is-loading {
 		.editor-revisions-list__header::before {
 			align-self: flex-end;
@@ -76,7 +76,7 @@
 // Diff View Buttons
 .editor-revisions-list__view-buttons {
 	display: none;
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		display: flex;
 		height: 60px;
 		align-items: center;
@@ -105,7 +105,7 @@
 		border-radius: 0;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex-direction: row;
 		height: 24px;
 	}
@@ -130,7 +130,7 @@
 		transform: rotate( -90deg );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		height: 24px;
 		.gridicon {
 			transform: none;
@@ -159,7 +159,7 @@
 	}
 }
 
-@include breakpoint( '<660px' ) {
+@include a8c-breakpoint( '<660px' ) {
 	.editor-revisions-list__next-button,
 	.editor-revisions-list__next-button:hover,
 	.editor-revisions-list__next-button:active {
@@ -167,7 +167,7 @@
 	}
 }
 
-@include breakpoint( '>660px' ) {
+@include a8c-breakpoint( '>660px' ) {
 	.editor-revisions-list__prev-button,
 	.editor-revisions-list__prev-button:hover {
 		border-right: 1px solid var( --color-neutral-5 );
@@ -189,12 +189,12 @@
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		top: 88px;
 		overflow-y: hidden;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 		top: 124px;
 	}
 }
@@ -203,7 +203,7 @@
 	list-style: none;
 	margin: 0;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: inline;
 		white-space: nowrap;
 	}
@@ -238,7 +238,7 @@
 	min-height: 73px;
 	width: 45vw;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: block;
 		width: 100%;
 		border-right: none;

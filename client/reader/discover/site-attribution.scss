@@ -3,7 +3,7 @@
 	display: flex;
 	color: var( --color-text-subtle );
 	font-size: 13px;
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 	margin-bottom: 8px;
 	margin-top: 13px;
 	position: relative;
@@ -75,7 +75,7 @@
 		}
 
 		.follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

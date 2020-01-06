@@ -7,7 +7,7 @@
 		padding-top: 24px;
 		padding-bottom: 24px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			flex-wrap: wrap;
 		}
 	}
@@ -20,14 +20,14 @@
 	width: 22%;
 	padding-right: 10px;
 	box-sizing: border-box;
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 }
 
 .settings-group-card__content {
 	width: 78%;
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 	}
 

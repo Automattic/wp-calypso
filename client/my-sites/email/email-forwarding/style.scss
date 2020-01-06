@@ -32,7 +32,7 @@
 .email-forwarding__form {
 	margin-top: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-top: 15px;
 	}
 }
@@ -52,7 +52,7 @@ ul.email-forwarding__list {
 			font-size: 14px;
 			line-height: 40px;
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				font-size: 12px;
 				line-height: 150%;
 			}
@@ -62,12 +62,12 @@ ul.email-forwarding__list {
 				font-weight: normal;
 
 				&:first-child {
-					@include breakpoint( '<660px' ) {
+					@include a8c-breakpoint( '<660px' ) {
 						display: block;
 					}
 				}
 
-				@include breakpoint( '>660px' ) {
+				@include a8c-breakpoint( '>660px' ) {
 					font-weight: 600;
 				}
 			}

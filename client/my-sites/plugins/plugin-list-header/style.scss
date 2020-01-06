@@ -31,10 +31,10 @@
 		display: inherit;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		padding-right: 16px;
 	}
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		&.is-action-bar-visible {
 			.plugin-list-header__actions-dropdown {
 				display: none;

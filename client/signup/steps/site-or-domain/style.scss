@@ -51,7 +51,7 @@
 	color: var( --color-neutral-70 );
 }
 
-@include breakpoint( '>480px' ) {
+@include a8c-breakpoint( '>480px' ) {
 	.site-or-domain__choice-button {
 		margin-bottom: 1.5em;
 	}
@@ -67,7 +67,7 @@
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include a8c-breakpoint( '<480px' ) {
 	.site-or-domain__choice-text {
 		display: flex;
 		flex-direction: column-reverse;

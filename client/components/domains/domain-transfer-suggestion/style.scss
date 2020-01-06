@@ -9,13 +9,13 @@
 	  width: 100%;
 
 	  .is-section-signup & {
-		  @include breakpoint( '>480px' ) {
+		  @include a8c-breakpoint( '>480px' ) {
 		  	width: auto;
 		  }
 		}
 
 		.is-section-domains & {
-			@include breakpoint( '>800px' ) {
+			@include a8c-breakpoint( '>800px' ) {
 		  	width: auto;
 		  }
 		}
@@ -25,7 +25,7 @@
 .domain-transfer-suggestion__domain-description {
 	padding-right: 1em;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		width: 75%;
 	}
 
@@ -38,7 +38,7 @@
 		font-size: 12px;
 		margin-bottom: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			margin-bottom: 8px;
 		}
 	}

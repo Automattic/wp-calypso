@@ -111,7 +111,7 @@
 }
 
 .billing-history__trans-wrap {
-	@include clear-fix;
+	@include a8c-clearFix;
 }
 
 .billing-history__service-name {
@@ -125,7 +125,7 @@
 		font-size: 12px;
 		font-style: italic;
 
-		@include breakpoint( '660px-800px' ) {
+		@include a8c-breakpoint( '660px-800px' ) {
 			max-width: 220px;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -153,7 +153,7 @@
 	position: relative;
 	overflow: auto;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding: 10px 20px;
 	}
 
@@ -162,7 +162,7 @@
 		min-height: 65px;
 		float: left;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			left: 20px;
 		}
 	}
@@ -172,7 +172,7 @@
 		float: left;
 		padding: 10px 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			padding-top: 0;
 		}
 
@@ -187,7 +187,7 @@
 		font-style: italic;
 		padding: 5px 0 0;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			position: absolute;
 			top: 10px;
 			right: 40px;
@@ -220,7 +220,7 @@ textarea.billing-history__billing-details-editable {
 	margin: 20px 0 0;
 	overflow: auto;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding: 20px;
 	}
 
@@ -253,7 +253,7 @@ textarea.billing-history__billing-details-editable {
 .billing-history__receipt {
 	padding: 30px 40px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding: 30px 20px;
 	}
 
@@ -336,7 +336,7 @@ textarea.billing-history__billing-details-editable {
 	.button {
 		margin: 16px 0;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			float: right;
 			margin: 0 1%;
 		}

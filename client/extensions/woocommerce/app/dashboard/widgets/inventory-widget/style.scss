@@ -7,7 +7,7 @@
 			overflow: auto;
 			max-height: 190px;
 
-			@include breakpoint( '<660px' ) {
+			@include a8c-breakpoint( '<660px' ) {
 				overflow: visible;
 				max-height: none;
 			}
@@ -28,7 +28,7 @@
 			margin-bottom: 0;
 			width: 25%;
 
-			@include breakpoint( '<960px' ) {
+			@include a8c-breakpoint( '<960px' ) {
 				display: none;
 			}
 		}
@@ -36,7 +36,7 @@
 		.dashboard-widget__children {
 			width: 75%;
 
-			@include breakpoint( '<960px' ) {
+			@include a8c-breakpoint( '<960px' ) {
 				width: 100%;
 			}
 		}

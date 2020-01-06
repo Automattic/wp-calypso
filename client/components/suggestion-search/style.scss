@@ -12,14 +12,14 @@
 
 		// On smaller screens the input gets bigger,
 		// so this icon needs to move down a bit.
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			top: 16px;
 		}
 	}
 
 	.spinner {
 		top: 12px;
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			top: 17px;
 		}
 	}

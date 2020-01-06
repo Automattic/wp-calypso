@@ -3,7 +3,7 @@
 		margin: 0 auto;
 		max-width: 500px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			display: none;
 		}
 	}

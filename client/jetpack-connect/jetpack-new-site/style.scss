@@ -8,7 +8,7 @@
 .jetpack-new-site__header {
 	margin-bottom: 3em;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 2em 2em;
 	}
 }
@@ -40,7 +40,7 @@
 	width: 360px;
 	margin: 0;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -155,7 +155,7 @@
 	width: 100%;
 	padding: 36px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: block;
 	}
 }
@@ -198,7 +198,7 @@
 		background: var( --color-surface );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		display: block;
 	}
 }

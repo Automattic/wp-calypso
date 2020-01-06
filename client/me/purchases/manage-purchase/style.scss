@@ -2,7 +2,7 @@
 	font-size: 13px;
 	padding: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 14px;
 		padding: 0;
 	}
@@ -22,7 +22,7 @@
 	&.is-expired + .notice {
 		margin-top: -10px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			margin-top: -16px;
 		}
 	}
@@ -71,7 +71,7 @@
 			width: 60%;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			.manage-purchase__description,
 			.manage-purchase__detail,
 			.manage-purchase__detail-label {
@@ -79,7 +79,7 @@
 			}
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			.manage-purchase__detail {
 				width: 25%;
 			}
@@ -95,7 +95,7 @@
 .manage-purchase__content {
 	padding: 16px 24px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 }
@@ -151,7 +151,7 @@
 	font-weight: 400;
 	clear: none;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 22px;
 		padding-right: 100px;
 	}
@@ -184,7 +184,7 @@
 	padding: 0 24px;
 	border-top: 1px solid var( --color-neutral-0 );
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex-direction: column;
 		padding: 0 16px 16px;
 	}
@@ -193,13 +193,13 @@
 		color: var( --color-neutral-60 );
 		font-size: 13px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			clear: both;
 			overflow: auto;
 			margin-top: 15px;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
 			font-size: 14px;
@@ -219,7 +219,7 @@
 		}
 
 		+ li {
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				border-left: 1px solid var( --color-neutral-0 );
 			}
 		}
@@ -236,15 +236,15 @@
 	font-style: normal;
 	font-weight: 600;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		flex-direction: row;
 		float: left;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		color: var( --color-text-subtle );
 		display: block;
-		font-family: $sans;
+		font-family: $a8c-fontFamily-sans;
 		font-size: 12px;
 		font-weight: 400;
 		margin: 0 0 12px;
@@ -252,7 +252,7 @@
 }
 
 .manage-purchase__detail {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		text-align: right;
 	}
 
@@ -276,18 +276,18 @@
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-bottom: 16px;
 	}
 }
 
 .manage-purchase__renew-button {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-top: 16px;
 		width: 100%;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		position: absolute;
 		right: 24px;
 		top: 16px;
@@ -301,7 +301,7 @@
 	padding: 16px;
 	background: var( --color-surface );
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
 }

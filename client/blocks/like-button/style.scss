@@ -61,7 +61,7 @@
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		.like-button__label-status {
 			display: none;
 		}

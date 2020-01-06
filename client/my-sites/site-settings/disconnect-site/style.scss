@@ -2,16 +2,16 @@
 	position: relative;
 	padding: 24px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		max-width: 300px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin-top: 2em;
 		max-width: 500px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-top: 17px;
 		max-width: 800px;
 	}

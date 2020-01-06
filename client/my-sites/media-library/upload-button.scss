@@ -17,7 +17,7 @@
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include a8c-breakpoint( '<480px' ) {
 	.media-library__upload-button {
 		margin-left: 0;
 	}

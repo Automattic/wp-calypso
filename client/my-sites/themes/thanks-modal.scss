@@ -1,7 +1,7 @@
 .themes__thanks-modal {
 	min-height: 90px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		box-sizing: border-box;
 		max-width: 100%;
 	}
@@ -19,7 +19,7 @@
 			}
 		}
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			.button,
 			.button:first-child {
 				display: block;

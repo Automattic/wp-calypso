@@ -2,7 +2,7 @@
 	width: 100%;
 	margin-bottom: 0.5em;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		width: auto;
 		margin-left: 0.75em;
 		margin-bottom: 0;
@@ -16,7 +16,7 @@
 	margin-top: 1.5em;
 	margin-bottom: 1em;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		flex-direction: row;
 		justify-content: flex-end;
 	}

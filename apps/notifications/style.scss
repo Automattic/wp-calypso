@@ -11,7 +11,7 @@
 	bottom: 0;
 	min-width: 400px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		width: 100%;
 		min-width: 0;
 	}
@@ -40,13 +40,13 @@
 			left: inherit;
 			width: 400px;
 
-			@include breakpoint( '<800px' ) {
+			@include a8c-breakpoint( '<800px' ) {
 		    	left: 0;
 				width: auto;
 		  }
 	}
 
-	@include breakpoint( '<800px' ) {
+	@include a8c-breakpoint( '<800px' ) {
 		&.wpnc__main header {
 			top: 47px;
 		}

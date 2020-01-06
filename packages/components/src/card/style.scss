@@ -1,3 +1,6 @@
+@import '../styles/breakpoints';
+@import '../styles/clear-fix';
+
 .card {
 	display: block;
 	position: relative;
@@ -7,9 +10,9 @@
 	background: var( --color-surface );
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 
-	@include clear-fix;
+	@include a8c-clearFix;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-bottom: 16px;
 		padding: 24px;
 	}
@@ -18,7 +21,7 @@
 	&.is-compact {
 		margin-bottom: 1px;
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			margin-bottom: 1px;
 			padding: 16px 24px;
 		}

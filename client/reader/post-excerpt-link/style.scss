@@ -5,7 +5,7 @@
 	margin: 20px 0 8px;
 	position: relative;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding-left: 16px;
 	}
 
@@ -20,7 +20,7 @@
 		height: 20px;
 		transition: all 0.15s ease-in-out;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			right: 8px;
 		}
 

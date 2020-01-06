@@ -2,7 +2,7 @@
 	display: flex;
 	position: relative;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin-left: 8px;
 
 		.is-expanded & {
@@ -36,7 +36,7 @@
 }
 
 .activity-log-item .foldable-card__header {
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding: 12px;
 		display: block;
 	}
@@ -65,7 +65,7 @@
 	padding: 4px 0 6px;
 	z-index: 1;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin: -2px 8px 0 0;
 	}
 
@@ -86,7 +86,7 @@
 	text-transform: uppercase;
 	white-space: nowrap;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		letter-spacing: -1px;
 	}
 }
@@ -100,7 +100,7 @@
 	padding: 12px;
 	margin-top: 2px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding: 7px;
 		box-sizing: border-box;
 		width: 32px;
@@ -135,7 +135,7 @@
 		padding: 0;
 		background-color: var( --color-neutral-10 );
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 32px;
 			height: 32px;
 			margin: 2px 0 0 2px;
@@ -149,7 +149,7 @@
 	.foldable-card__main {
 		min-width: 0;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			max-width: none;
 			margin: 0;
 		}
@@ -173,13 +173,13 @@
 	min-width: 0;
 	padding-left: 56px;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		flex-direction: column;
 		align-items: flex-start;
 		padding-left: 0;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 }
@@ -189,7 +189,7 @@
 	margin-right: 32px;
 	align-items: center;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex: 0 0 180px;
 		margin-left: -56px;
 	}
@@ -203,12 +203,12 @@
 		margin-right: 16px;
 		fill: var( --color-neutral-40 );
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			width: 32px;
 			height: 32px;
 			margin-right: 8px;
 		}
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
@@ -237,7 +237,7 @@
 		margin-top: 2px;
 		fill: var( --color-text-inverted );
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			padding: 7px;
 			box-sizing: border-box;
 			width: 32px;
@@ -261,12 +261,12 @@
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		margin-top: 2px;
 		line-height: 1;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: inline-block;
 	}
 }
@@ -274,7 +274,7 @@
 .activity-log-item__actor-role {
 	text-transform: capitalize;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: inline-block;
 		margin-left: 8px;
 	}
@@ -285,7 +285,7 @@
 	font-size: 12px;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		font-size: 14px;
 	}
 }
@@ -295,7 +295,7 @@
 	font-size: 14px;
 	word-break: break-word;
 
-	@include breakpoint( '<960px' ) {
+	@include a8c-breakpoint( '<960px' ) {
 		margin-top: 8px;
 	}
 }
@@ -312,7 +312,7 @@
 	display: flex;
 	justify-content: flex-end;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		margin-top: 16px;
 		text-align: left;
 	}
@@ -343,7 +343,7 @@
 	white-space: nowrap;
 	padding: 2px 7px 3px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: block;
 		margin-top: rem( 15px );
 	}
@@ -357,7 +357,7 @@
 	font-size: 13px;
 	white-space: nowrap;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: table;
 		margin-top: rem( 15px );
 	}
@@ -409,7 +409,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		&.is-mobile {
 			display: none;
 		}
@@ -433,7 +433,7 @@
 }
 
 .activity-log-item.is-aggregated > .foldable-card > .foldable-card__header {
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		padding-right: 44px;
 	}
 }

@@ -11,7 +11,7 @@
 	margin-bottom: 0;
 	padding: 6px 0 30px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -22,7 +22,7 @@
 
 .following {
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		-webkit-perspective: none;
 		perspective: none;
 	}
@@ -55,7 +55,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 16px 24px 24px;
 		margin-bottom: 24px;
 	}
@@ -73,7 +73,7 @@
 			top: -3px;
 			right: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
 		}
 	}
@@ -114,7 +114,7 @@
 			position: relative;
 			font-size: 14px;
 
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				font-size: 13px;
 			}
 		}
@@ -122,7 +122,7 @@
 
 	&.is-headerless {
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding-top: 25px;
 		}
 
@@ -233,7 +233,7 @@
 		margin: 0 15px;
 		padding: 20px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin: 0;
 			padding: 20px 42px;
 		}
@@ -280,7 +280,7 @@
 	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-20-rgb ), 0.1 );
 	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		left: -24px;
 		width: calc( 100% + 48px );
 		margin-bottom: 24px;
@@ -340,13 +340,13 @@
 
 		// Inline Reblog Tweaks
 		p.reblog-from {
-			@include breakpoint( '>480px' ) {
+			@include a8c-breakpoint( '>480px' ) {
 				margin-left: -24px;
 				margin-right: -24px;
 				padding-left: 24px;
 				padding-right: 24px;
 			}
-			@include breakpoint( '<480px' ) {
+			@include a8c-breakpoint( '<480px' ) {
 				margin-left: -16px;
 				margin-right: -16px;
 				padding-left: 16px;
@@ -370,7 +370,7 @@
 .reader__x-post,
 .reader__x-post-to {
 	font-size: 13px;
-	font-family: $sans;
+	font-family: $a8c-fontFamily-sans;
 	color: var( --color-text-subtle );
 	position: relative;
 }
@@ -398,7 +398,7 @@
 	padding: 0;
 	position: relative;
 	line-height: 16px;
-	@include clear-fix;
+	@include a8c-clearFix;
 }
 
 .reader__post-byline {
@@ -415,7 +415,7 @@
 	border-bottom: 1px solid var( --color-neutral-10 );
 	padding-bottom: 12px;
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 }
@@ -444,7 +444,7 @@
 	margin: 0;
 	padding: 0;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 }
@@ -455,7 +455,7 @@
 	list-style-type: none;
 	width: 100%;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		flex-direction: column;
 		margin-top: -40px;
 		width: 50%;
@@ -464,7 +464,7 @@
 	.reader-stream__recommended-post-dismiss {
 		height: 30px;
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin-right: 15px;
 		}
 
@@ -502,7 +502,7 @@
 				margin-top: 0;
 				max-height: 108px;
 
-				@include breakpoint( '<480px' ) {
+				@include a8c-breakpoint( '<480px' ) {
 					max-height: 125px;
 				}
 			}
@@ -512,7 +512,7 @@
 	&:first-child {
 		margin-right: 10px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-right: 15px;
 		}
 	}
@@ -520,7 +520,7 @@
 	&:last-child {
 		margin-left: 10px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin-left: 15px;
 		}
 	}
@@ -528,7 +528,7 @@
 	&:first-child,
 	&:last-child {
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			margin: 0 0 20px;
 		}
 	}
@@ -545,7 +545,7 @@
 		margin-top: -2px;
 		max-height: 208px;
 
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			max-height: 207px;
 		}
 

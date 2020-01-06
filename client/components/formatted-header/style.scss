@@ -2,7 +2,7 @@
 	margin: 16px 0 24px;
 	text-align: center;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		margin-bottom: 35px;
 
 		&.is-without-subhead {
@@ -14,7 +14,7 @@
 	&.is-right-align {
 		margin: 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			margin: 0 0 16px;
 		}
 	}
@@ -34,7 +34,7 @@
 	padding: 0 10px;
 	line-height: 1.2em;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		font-size: 24px;
 		padding: 0;
 		margin: 0 0 5px;
@@ -52,7 +52,7 @@
 	font-size: 14px;
 	padding: 0 20px 24px;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		padding: 0;
 	}
 
@@ -64,7 +64,7 @@
 
 // Compact header on small screens
 .formatted-header.is-compact-on-mobile {
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		text-align: left;
 
 		.formatted-header__title {

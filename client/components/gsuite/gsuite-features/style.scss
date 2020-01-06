@@ -3,14 +3,14 @@
 	justify-content: space-between;
 	margin: 1em 0;
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 		display: flex;
 		flex-flow: row wrap;
 	}
 
 	.gsuite-features__feature-block {
 		p {
-			@include breakpoint( '>960px' ) {
+			@include a8c-breakpoint( '>960px' ) {
 				max-width: 200px;
 			}
 		}
@@ -42,7 +42,7 @@
 	flex-basis: 50%;
 	justify-content: flex-start;
 
-	&:not(:last-of-type) {
+	&:not( :last-of-type ) {
 		margin-bottom: 1em;
 	}
 }

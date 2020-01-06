@@ -9,7 +9,7 @@
 	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-20-rgb ), 0.1 );
 	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		left: -24px;
 		width: calc( 100% + 48px );
 		margin-top: -24px;
@@ -28,7 +28,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -50,7 +50,7 @@
 		@include long-content-fade( $size: 20% );
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		font-size: 24px;
 	}
 
@@ -98,7 +98,7 @@
 		right: inherit;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		min-width: 22%;
 		border: none;
 		margin: 0;
@@ -120,25 +120,25 @@
 	.plugin-activate-toggle__disabled,
 	.plugin-activate-toggle__link,
 	.plugin-remove-button__remove-link .plugin-action__children {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			width: 100%;
 		}
 	}
 
 	.plugin-activate-toggle__link {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			justify-content: space-between;
 		}
 	}
 
 	.form-toggle__label-content {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			margin-left: 0;
 		}
 	}
 
 	.plugin-action__label {
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			flex-flow: row;
 			font-size: 11px;
 			margin-right: auto;
@@ -149,7 +149,7 @@
 .plugin-meta__version-notice {
 	margin-top: -9px;
 
-	@include breakpoint ( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		margin-top: -15px;
 	}
 }
@@ -158,7 +158,7 @@
 	justify-content: space-between;
 	padding: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include a8c-breakpoint( '>480px' ) {
 		justify-content: flex-end;
 	}
 }

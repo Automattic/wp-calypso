@@ -6,7 +6,7 @@
 	margin-left: 8px;
 	margin-top: 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-top: 0;
 	}
 }

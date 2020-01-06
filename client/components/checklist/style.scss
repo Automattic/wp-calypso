@@ -15,7 +15,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	order: 3;
 	margin: 40px 0 8px 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-left: 0;
 	}
 }
@@ -60,7 +60,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		background: var( --color-surface );
 		z-index: z-index( '.checklist__task', '.checklist__task-icon' );
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			left: 24px;
 		}
 

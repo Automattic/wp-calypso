@@ -7,19 +7,19 @@
 	.button, .gmb-select-location__status {
 		align-self: stretch;
 
-		@include breakpoint( '<480px' ) {
+		@include a8c-breakpoint( '<480px' ) {
 			text-align: center;
 		}
 
-		@include breakpoint( '480px-960px' ) {
+		@include a8c-breakpoint( '480px-960px' ) {
 			align-self: flex-start;
 		}
 
-		@include breakpoint( '<960px' ) {
+		@include a8c-breakpoint( '<960px' ) {
 			margin-top: 10px;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include a8c-breakpoint( '>960px' ) {
 			align-self: center;
 			flex-shrink: 0;
 			margin-left: 15px;

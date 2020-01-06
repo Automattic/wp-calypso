@@ -17,7 +17,7 @@
 	font-size: 13px;
 	margin: 0 8px;
 
-	@include breakpoint( '<480px' ) {
+	@include a8c-breakpoint( '<480px' ) {
 		display: none;
 	}
 }

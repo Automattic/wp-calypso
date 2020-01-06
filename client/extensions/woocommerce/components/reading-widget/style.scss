@@ -52,11 +52,11 @@
 		margin-left: -16px;
 		margin-right: -16px;
 
-		@include breakpoint( '>660px' ) {
+		@include a8c-breakpoint( '>660px' ) {
 			flex-direction: row;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include a8c-breakpoint( '>480px' ) {
 			padding: 24px 24px 0;
 			margin-left: -24px;
 			margin-right: -24px;
@@ -67,7 +67,7 @@
 			font-size: 14px;
 			margin-bottom: 24px;
 
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				padding-right: 16px;
 			}
 
@@ -83,7 +83,7 @@
 		.reading-widget__subscription-form-fields {
 			flex: 1 0 0;
 
-			@include breakpoint( '>660px' ) {
+			@include a8c-breakpoint( '>660px' ) {
 				padding-left: 16px;
 			}
 

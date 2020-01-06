@@ -86,7 +86,7 @@
 	margin-top: 30px;
 	max-width: 650px;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		margin-top: 70px;
 	}
 }

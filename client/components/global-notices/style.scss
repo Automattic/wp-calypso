@@ -9,7 +9,7 @@
 		bottom: 0;
 		left: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 			top: 47px + 16px;
 			right: 16px;
 			bottom: auto;
@@ -17,13 +17,13 @@
 		max-width: calc( 100% - 32px );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include a8c-breakpoint( '>960px' ) {
 			top: 47px + 24px;
 			right: 24px;
 		max-width: calc( 100% - 48px );
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include a8c-breakpoint( '>1040px' ) {
 			right: 32px;
 		max-width: calc( 100% - 64px );
 	}
@@ -42,7 +42,7 @@
 		border-radius: 0;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include a8c-breakpoint( '>660px' ) {
 		display: flex;
 		overflow: hidden;
 		margin-bottom: 24px;

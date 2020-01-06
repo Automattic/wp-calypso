@@ -1,3 +1,4 @@
+@import '~@automattic/components/src/styles/_typography.scss';
 
 // Typeface Variables
 
@@ -7,11 +8,7 @@ $code: Monaco, Consolas, 'Andale Mono', 'DejaVu Sans Mono', $monospace;
 $serif-fallback: Georgia, 'Times New Roman', Times, serif;
 $serif: 'Noto Serif', $serif-fallback;
 
-$sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell',
-	'Helvetica Neue', sans-serif;
-$sans-rtl: Tahoma, $sans;
-
-$signup-sans: 'Noto Sans', $sans;
+$signup-sans: 'Noto Sans', $a8c-fontFamily-sans;
 
 %content-font {
 	font-family: $serif;

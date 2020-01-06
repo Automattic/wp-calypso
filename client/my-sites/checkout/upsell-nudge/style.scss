@@ -18,7 +18,7 @@
     height: 50px;
     width: 100%;
 
-    @include breakpoint( '>480px' ) {
+    @include a8c-breakpoint( '>480px' ) {
         width: 80px;
         height: 40px;
     }

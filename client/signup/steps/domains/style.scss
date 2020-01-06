@@ -33,7 +33,7 @@
 		box-shadow: 0 0 0 3px var( --color-accent-light );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include a8c-breakpoint( '<660px' ) {
 		.register-domain-step__search-card,
 		.search.is-open.has-focus {
 			border-radius: 0;

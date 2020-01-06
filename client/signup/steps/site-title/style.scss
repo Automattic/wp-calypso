@@ -32,7 +32,7 @@
 
 		// On smaller screens the buttons get bigger,
 		// so this input needs to get bigger, too.
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			padding-top: 15px;
 			padding-bottom: 15px;
 			padding-right: 100px;
@@ -97,7 +97,7 @@
 /* We need specificity here to overwrite client/signup/style.scss */
 body.is-section-signup {
 	.site-title__wrapper .site-title__field-control button.button {
-		@include breakpoint( '<660px' ) {
+		@include a8c-breakpoint( '<660px' ) {
 			padding: 12px;
 		}
 	}
