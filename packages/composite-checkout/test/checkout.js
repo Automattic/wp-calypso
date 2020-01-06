@@ -22,6 +22,7 @@ import {
 	createRegistry,
 	useRegisterStore,
 	usePaymentData,
+	useActiveStep,
 } from '../src/public-api';
 
 const noop = () => {};
@@ -459,6 +460,30 @@ describe( 'Checkout', () => {
 			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
 			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
 		} );
+
+		it( 'provides the active step through useActiveStep to components in the step', () => {
+			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
+			expect( getByText( 'Possibly Complete id custom-contact-step' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete hasStepNumber true' ) ).toBeInTheDocument();
+		} );
+
+		it( 'provides the active step with additional fields through useActiveStep to components in the step', () => {
+			const { getByText } = render( <MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } /> );
+			expect( getByText( 'Possibly Complete step number 1' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete step index 0' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
+		} );
+
+		it( 'provides the active step through useActiveStep with isComplete that changes based on isCompleteCallback', () => {
+			const { getAllByText, getByText } = render(
+				<MyCheckout steps={ [ steps[ 1 ], steps[ 4 ] ] } />
+			);
+			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
+			fireEvent.click( firstStepContinue );
+			expect( getByText( 'Possibly Complete step number 2' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete step index 1' ) ).toBeInTheDocument();
+			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
+		} );
 	} );
 } );
 
@@ -587,7 +612,7 @@ function createMockSteps() {
 			id: 'custom-possibly-complete-step',
 			className: 'custom-possibly-complete-step-class',
 			hasStepNumber: true,
-			titleContent: <span>Custom Step - Possibly Complete Title</span>,
+			titleContent: <PossiblyCompleteTitle />,
 			activeStepContent: <StepWithEditableField />,
 			incompleteStepContent: <span>Custom Step - Possibly Complete Incomplete</span>,
 			completeStepContent: <span>Custom Step - Possibly Complete Complete</span>,
@@ -614,6 +639,20 @@ function createMockSteps() {
 			getNextStepButtonAriaLabel: () => 'Custom Step - Uneditable next button label',
 		},
 	];
+}
+
+function PossiblyCompleteTitle() {
+	const activeStep = useActiveStep();
+	return (
+		<div>
+			<span>Custom Step - Possibly Complete Title</span>
+			<span>Possibly Complete id { activeStep.id }</span>
+			<span>Possibly Complete hasStepNumber { activeStep.hasStepNumber ? 'true' : 'false' }</span>
+			<span>Possibly Complete step number { activeStep.stepNumber }</span>
+			<span>Possibly Complete step index { activeStep.stepIndex }</span>
+			<span>Possibly Complete isComplete { activeStep.isComplete ? 'true' : 'false' }</span>
+		</div>
+	);
 }
 
 function StepWithEditableField() {
