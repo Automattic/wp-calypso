@@ -36,11 +36,16 @@ async function fetchStripeConfiguration( requestArgs ) {
 }
 
 async function sendStripeTransaction( transactionData ) {
+	// TODO: figure out what these should be
+	const successRedirectUrl = window.location.href;
+	const failureRedirectUrl = window.location.href;
 	const formattedTransactionData = formatDataForTransactionsEndpoint( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+		successUrl: successRedirectUrl,
+		cancelUrl: failureRedirectUrl,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
@@ -372,9 +377,14 @@ function useStoredCards() {
 
 async function submitExistingCardPayment( transactionData ) {
 	debug( 'formatting existing card transaction', transactionData );
+	// TODO: figure out what these should be
+	const successRedirectUrl = window.location.href;
+	const failureRedirectUrl = window.location.href;
 	const formattedTransactionData = formatDataForTransactionsEndpoint( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
+		successUrl: successRedirectUrl,
+		cancelUrl: failureRedirectUrl,
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
 	return wpcom.transactions( formattedTransactionData );
