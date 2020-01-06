@@ -203,16 +203,22 @@ export class LanguagePickerModal extends PureComponent {
 		// A key press of a printable character should only have a single character
 		const isPrintableCharacter = event.key && event.key.length === 1;
 
-		// Handle character input
-		if ( isPrintableCharacter && ! isSearchOpen ) {
-			this.handleSearchOpen();
+		// Prevent search expand with space key as it's used for language select
+		if ( event.key === ' ' && ! isSearchOpen ) {
+			return;
 		}
 
 		// Handle enter key language selection
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
-
 			this.handleSelectLanguage();
+			return;
+		}
+
+		// Handle character input
+		if ( isPrintableCharacter && ! isSearchOpen ) {
+			this.handleSearchOpen();
+			return;
 		}
 	};
 
