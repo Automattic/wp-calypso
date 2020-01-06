@@ -1,0 +1,122 @@
+/**
+ * @jest-environment jsdom
+ */
+
+/**
+ * External dependencies
+ */
+import React from 'react';
+import {
+	render,
+	getAllByLabelText as getAllByLabelTextInNode,
+	getByText as getByTextInNode,
+	queryByText as queryByTextInNode,
+	fireEvent,
+} from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import { matchers } from 'jest-emotion';
+import { ThemeProvider } from 'emotion-theming';
+
+/**
+ * Internal dependencies
+ */
+import { FormFieldAnnotation } from '../src/components/form-field-annotation';
+
+// Add the custom matchers provided by 'jest-emotion'
+expect.extend( matchers );
+
+const theme = {
+	colors: {
+		textColor: 'blue',
+		textColorLight: 'lightblue',
+		borderColor: 'black',
+		error: 'red',
+	},
+	weights: { bold: '15pt' },
+};
+
+describe( 'FormFieldAnnotation', () => {
+	describe( 'with no error and not disabled', () => {
+		let MyFormFieldAnnotation = null;
+
+		beforeEach( () => {
+			MyFormFieldAnnotation = () => (
+				<ThemeProvider theme={ theme }>
+					<FormFieldAnnotation
+						formFieldId={ 'fieldId' }
+						labelText={ 'A Label' }
+						labelId={ 'labelId' }
+						descriptionText={ 'A description' }
+						descriptionId={ 'descriptionId' }
+						errorMessage={ 'An Error Message' }
+						isError={ false }
+						isDisabled={ false }
+						className={ 'annotation_class' }
+					>
+						<span id={ 'fieldId' }>{ 'child contents' }</span>
+					</FormFieldAnnotation>
+				</ThemeProvider>
+			);
+		} );
+
+		it( 'renders the description string', () => {
+			const { getAllByText } = render( <MyFormFieldAnnotation /> );
+			expect( getAllByText( 'A description' )[ 0 ] ).toBeInTheDocument();
+		} );
+
+		it( 'does not render the error string', () => {
+			const { queryAllByText } = render( <MyFormFieldAnnotation /> );
+			expect( queryAllByText( 'An Error Message' )[ 0 ] ).toBeUndefined();
+		} );
+
+		it( 'does not have a highlighted border', () => {
+			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
+			expect( getAllByTestId( 'annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
+				'border',
+				'1px solid black'
+			);
+		} );
+	} );
+
+	describe( 'with error and not disabled', () => {
+		let MyFormFieldAnnotation = null;
+
+		beforeEach( () => {
+			MyFormFieldAnnotation = () => (
+				<ThemeProvider theme={ theme }>
+					<FormFieldAnnotation
+						formFieldId={ 'fieldId' }
+						labelText={ 'A Label' }
+						labelId={ 'labelId' }
+						descriptionText={ 'A description' }
+						descriptionId={ 'descriptionId' }
+						errorMessage={ 'An Error Message' }
+						isError={ true }
+						isDisabled={ false }
+						className={ 'annotation_class' }
+					>
+						<span id={ 'fieldId' }>{ 'child contents' }</span>
+					</FormFieldAnnotation>
+				</ThemeProvider>
+			);
+		} );
+
+		it( 'does not render the description string', () => {
+			const { queryAllByText } = render( <MyFormFieldAnnotation /> );
+			expect( queryAllByText( 'A description' )[ 0 ] ).toBeUndefined();
+		} );
+
+		it( 'renders the error string', () => {
+			const { getAllByText } = render( <MyFormFieldAnnotation /> );
+			expect( getAllByText( 'An Error Message' )[ 0 ] ).toBeInTheDocument();
+		} );
+
+		it( 'does not have a highlighted border', () => {
+			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
+			expect( getAllByTestId( 'annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
+				'border',
+				'1px solid red'
+			);
+		} );
+	} );
+} );

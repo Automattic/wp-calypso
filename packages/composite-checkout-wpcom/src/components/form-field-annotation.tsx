@@ -39,7 +39,9 @@ export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > 
 				{ labelText }
 			</Label>
 		) }
-		<FormFieldWrapper isError={ isError }>{ children }</FormFieldWrapper>
+		<FormFieldWrapper data-testid={ `${ className }_wrapper` } isError={ isError }>
+			{ children }
+		</FormFieldWrapper>
 		<RenderedDescription
 			descriptionText={ descriptionText }
 			descriptionId={ descriptionId }
