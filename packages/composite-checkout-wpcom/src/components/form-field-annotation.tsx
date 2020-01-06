@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 
 type FormFieldAnnotationProps = {
-	formField: Component;
-
 	// Semantic props
 	labelText: string;
-	descriptionText: string;
+	descriptionText?: string;
 	errorMessage: string;
 
 	// Functional props
@@ -24,7 +22,6 @@ type FormFieldAnnotationProps = {
 };
 
 export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
-	formField,
 	formFieldId,
 	labelText,
 	labelId,
@@ -34,6 +31,7 @@ export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > 
 	isError,
 	isDisabled,
 	className,
+	children,
 } ) => (
 	<div className={ className }>
 		{ labelText && (
@@ -41,7 +39,7 @@ export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > 
 				{ labelText }
 			</Label>
 		) }
-		<FormFieldWrapper isError={ isError }>{ formField }</FormFieldWrapper>
+		<FormFieldWrapper isError={ isError }>{ children }</FormFieldWrapper>
 		<RenderedDescription
 			descriptionText={ descriptionText }
 			descriptionId={ descriptionId }
