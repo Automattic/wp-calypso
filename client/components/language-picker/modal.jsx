@@ -207,6 +207,13 @@ export class LanguagePickerModal extends PureComponent {
 		if ( isPrintableCharacter && ! isSearchOpen ) {
 			this.handleSearchOpen();
 		}
+
+		// Handle enter key language selection
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+
+			this.handleSelectLanguage();
+		}
 	};
 
 	handleSearch = search => {
