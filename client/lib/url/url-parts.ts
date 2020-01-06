@@ -24,20 +24,6 @@ interface UrlParts {
 	password: string;
 }
 
-interface OptionalUrlParts {
-	protocol?: string;
-	host?: string;
-	hostname?: string;
-	port?: string;
-	origin?: string;
-	pathname?: string;
-	hash?: string;
-	search?: string;
-	searchParams?: URLSearchParams;
-	username?: string;
-	password?: string;
-}
-
 type UrlPartKey = keyof UrlParts;
 
 const EMPTY_URL: Readonly< UrlParts > = Object.freeze( {
@@ -113,33 +99,4 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	}
 
 	return pathParts;
-}
-
-/**
- * Returns a URL object built from the provided URL parts.
- *
- * @param parts the provided URL parts.
- *
- * @returns the generated URL object.
- */
-export function getUrlFromParts( parts: OptionalUrlParts ): URL {
-	if ( ! parts?.protocol ) {
-		throw new Error( 'getUrlFromParts: protocol missing.' );
-	}
-
-	if ( ! parts.host && ! parts.hostname ) {
-		throw new Error( 'getUrlFromParts: host missing.' );
-	}
-
-	const result = new URL( BASE_URL );
-
-	// Apply 'host' first, since it includes both hostname and port.
-	result.host = parts.host ?? result.host;
-
-	for ( const part of URL_PART_KEYS ) {
-		if ( part !== 'host' && part !== 'origin' && part !== 'searchParams' ) {
-			result[ part ] = parts[ part ] ?? result[ part ];
-		}
-	}
-	return result;
 }
