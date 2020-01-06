@@ -14,7 +14,6 @@ import {
 	useDispatch,
 	useMessages,
 	useLineItems,
-	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
@@ -281,7 +280,6 @@ function ExistingCardPayButton( { disabled, id } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const transactionStatus = useSelect( select =>
 		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
@@ -331,8 +329,6 @@ function ExistingCardPayButton( { disabled, id } ) {
 					items,
 					total,
 					showErrorMessage,
-					successUrl: successRedirectUrl,
-					cancelUrl: failureRedirectUrl,
 					beginCardTransaction,
 					setFormSubmitting,
 				} )
@@ -362,8 +358,6 @@ async function submitExistingCardPayment( {
 	items,
 	total,
 	showErrorMessage,
-	successUrl,
-	cancelUrl,
 	beginCardTransaction,
 	setFormSubmitting,
 	setFormReady,
@@ -374,8 +368,6 @@ async function submitExistingCardPayment( {
 		beginCardTransaction( {
 			items,
 			total,
-			successUrl,
-			cancelUrl,
 		} );
 	} catch ( error ) {
 		setFormReady();
