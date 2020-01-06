@@ -7,7 +7,7 @@ import {
 	Checkout,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
-	useActiveStep,
+	useIsStepComplete,
 	useSelect,
 	useLineItems,
 	useDispatch,
@@ -24,10 +24,8 @@ import WPContactForm from './wp-contact-form';
 const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
-	const activeStep = useActiveStep();
-	// TODO: check this step's isComplete, not the active step's isComplete
-	const isComplete = isActive === false && activeStep.isComplete;
-	return isComplete
+	const isComplete = useIsStepComplete();
+	return isActive && isComplete
 		? translate( 'Contact information' )
 		: translate( 'Enter your contact information' );
 };
