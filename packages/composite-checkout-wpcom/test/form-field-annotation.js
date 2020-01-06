@@ -2,17 +2,13 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
 import React from 'react';
-import {
-	render,
-	getAllByLabelText as getAllByLabelTextInNode,
-	getByText as getByTextInNode,
-	queryByText as queryByTextInNode,
-	fireEvent,
-} from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { matchers } from 'jest-emotion';
 import { ThemeProvider } from 'emotion-theming';
@@ -51,7 +47,7 @@ describe( 'FormFieldAnnotation', () => {
 						errorMessage={ 'An Error Message' }
 						isError={ false }
 						isDisabled={ false }
-						className={ 'annotation_class' }
+						className={ 'test__annotation_class' }
 					>
 						<span id={ 'fieldId' }>{ 'child contents' }</span>
 					</FormFieldAnnotation>
@@ -71,7 +67,7 @@ describe( 'FormFieldAnnotation', () => {
 
 		it( 'does not have a highlighted border', () => {
 			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
-			expect( getAllByTestId( 'annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
+			expect( getAllByTestId( 'test__annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
 				'border',
 				'1px solid black'
 			);
@@ -93,7 +89,7 @@ describe( 'FormFieldAnnotation', () => {
 						errorMessage={ 'An Error Message' }
 						isError={ true }
 						isDisabled={ false }
-						className={ 'annotation_class' }
+						className={ 'test__annotation_class' }
 					>
 						<span id={ 'fieldId' }>{ 'child contents' }</span>
 					</FormFieldAnnotation>
@@ -113,7 +109,7 @@ describe( 'FormFieldAnnotation', () => {
 
 		it( 'does not have a highlighted border', () => {
 			const { getAllByTestId } = render( <MyFormFieldAnnotation /> );
-			expect( getAllByTestId( 'annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
+			expect( getAllByTestId( 'test__annotation_class_wrapper' )[ 0 ] ).toHaveStyleRule(
 				'border',
 				'1px solid red'
 			);
