@@ -61,8 +61,6 @@ describe( 'CheckoutProvider', () => {
 				showErrorMessage={ noop }
 				showInfoMessage={ noop }
 				showSuccessMessage={ noop }
-				successRedirectUrl="#"
-				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
 			>
 				<CustomForm />
