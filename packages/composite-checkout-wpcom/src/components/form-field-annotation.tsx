@@ -20,10 +20,12 @@ type FormFieldAnnotationProps = {
 	className?: string;
 	labelId: string;
 	descriptionId: string;
+	formFieldId: string;
 };
 
 export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 	formField,
+	formFieldId,
 	labelText,
 	labelId,
 	descriptionText,
@@ -35,7 +37,7 @@ export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > 
 } ) => (
 	<div className={ className }>
 		{ labelText && (
-			<Label id={ labelId } isDisabled={ isDisabled }>
+			<Label htmlFor={ formFieldId } id={ labelId } isDisabled={ isDisabled }>
 				{ labelText }
 			</Label>
 		) }
