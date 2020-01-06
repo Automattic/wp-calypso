@@ -1,23 +1,32 @@
 /**
  * External dependencies
  */
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 
 const ActiveStepContext = createContext();
 
-export const ActiveStepProvider = ( { step, children } ) => {
+export const ActiveStepProvider = ( { step, steps, children } ) => {
 	if ( ! step ) {
 		throw new Error( 'ActiveStepProvider requires a step object' );
 	}
-	return <ActiveStepContext.Provider value={ step }>{ children }</ActiveStepContext.Provider>;
+	const value = useMemo( () => ( { step, steps } ), [ step, steps ] );
+	return <ActiveStepContext.Provider value={ value }>{ children }</ActiveStepContext.Provider>;
 };
 
 export const useActiveStep = () => {
-	const step = useContext( ActiveStepContext );
+	const { step } = useContext( ActiveStepContext );
 	if ( ! step ) {
 		throw new Error( 'useActiveStep can only be used inside an ActiveStepProvider' );
 	}
 	return step;
+};
+
+export const useSteps = () => {
+	const { steps } = useContext( ActiveStepContext );
+	if ( ! steps ) {
+		throw new Error( 'useSteps can only be used inside an ActiveStepProvider' );
+	}
+	return steps;
 };
 
 const RenderedStepContext = createContext();

@@ -136,7 +136,7 @@ export default function Checkout( { steps, className } ) {
 				className={ joinClasses( [ className, 'checkout__content' ] ) }
 				isCheckoutInProgress={ isCheckoutInProgress }
 			>
-				<ActiveStepProvider step={ activeStep }>
+				<ActiveStepProvider step={ activeStep } steps={ annotatedSteps }>
 					{ annotatedSteps.map( step => (
 						<CheckoutStepContainer
 							{ ...step }
