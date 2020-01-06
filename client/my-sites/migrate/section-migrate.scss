@@ -4,8 +4,13 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.migrate__source-site, .migrate__confirmation, .migrate__status, .migrate__explain {
+.migrate__source-site, .migrate__confirmation, .migrate__explain {
 	margin-bottom: 16px;
+}
+
+.migrate__status {
+	margin-bottom: 16px;
+	text-align: center;
 }
 
 .migrate__card {
