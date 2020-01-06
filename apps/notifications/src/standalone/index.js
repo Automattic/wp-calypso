@@ -1,12 +1,22 @@
-import '@babel/polyfill';
+/**
+ * External dependencies
+ */
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import AuthWrapper from './auth-wrapper';
 import { receiveMessage, sendMessage } from './messaging';
 
-require( '../panel/boot/stylesheets/style.scss' );
+/**
+ * Style dependencies
+ */
+import '../panel/boot/stylesheets/style.scss';
 
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
@@ -21,7 +31,7 @@ const customEnhancer = next => ( reducer, initialState ) =>
 const customMiddleware = {
 	APP_IS_READY: [ () => sendMessage( { action: 'iFrameReady' } ) ],
 	APP_RENDER_NOTES: [
-		( store, { latestType, newNoteCount } ) =>
+		( st, { latestType, newNoteCount } ) =>
 			newNoteCount > 0
 				? sendMessage( {
 						action: 'render',
@@ -31,27 +41,27 @@ const customMiddleware = {
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],
-	OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+	OPEN_LINK: [ ( st, { href } ) => window.open( href, '_blank' ) ],
 	OPEN_SITE: [
-		( store, { siteId, href } ) => {
+		( st, { siteId, href } ) => {
 			sendMessage( { action: 'openSite', siteId } );
 			window.open( href, '_blank' );
 		},
 	],
 	OPEN_POST: [
-		( store, { siteId, postId, href } ) => {
+		( st, { siteId, postId, href } ) => {
 			sendMessage( { action: 'openPost', siteId, postId } );
 			window.open( href, '_blank' );
 		},
 	],
 	OPEN_COMMENT: [
-		( store, { siteId, postId, commentId, href } ) => {
+		( st, { siteId, postId, commentId, href } ) => {
 			sendMessage( { action: 'openComment', siteId, postId, commentId } );
 			window.open( href, '_blank' );
 		},
 	],
 	SET_LAYOUT: [
-		( store, { layout } ) =>
+		( st, { layout } ) =>
 			sendMessage( {
 				action: 'widescreen',
 				widescreen: layout === 'widescreen',
@@ -59,7 +69,7 @@ const customMiddleware = {
 	],
 	VIEW_SETTINGS: [ () => window.open( 'https://wordpress.com/me/notifications' ) ],
 	EDIT_COMMENT: [
-		( store, { siteId, postId, commentId, href } ) => {
+		( st, { siteId, postId, commentId, href } ) => {
 			sendMessage( { action: 'editComment', siteId, postId, commentId } );
 			window.open( href, '_blank' );
 		},

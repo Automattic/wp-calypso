@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import '@babel/polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import svg4everybody from 'svg4everybody';
-import '@webcomponents/url';
-import URLSearchParamsPolyfill from '@ungap/url-search-params';
 import 'isomorphic-fetch';
-import 'globalthis/auto';
 
 /**
  * Internal dependencies
  */
 import localStoragePolyfill from 'lib/local-storage-polyfill';
 
-localStoragePolyfill();
-
 const isBrowser = typeof window !== 'undefined';
+
+// NOTE: This file includes polyfills for both client and server.
+// If a polyfill does not work correctly on the server, make sure you only run
+// it in the client, by adding its init to the if block below.
 if ( isBrowser ) {
 	// Polyfill SVG external content support. Noop in the evergreen build.
 	svg4everybody();
-	// Polyfill URLSearchParams.
-	window.URLSearchParams = window.URLSearchParams || URLSearchParamsPolyfill;
+	localStoragePolyfill();
 }

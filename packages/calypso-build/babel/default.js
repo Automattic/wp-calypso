@@ -16,7 +16,7 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
-				corejs: 2,
+				corejs: 3,
 				modules: modulesOption( opts ),
 				useBuiltIns: 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
