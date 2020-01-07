@@ -417,10 +417,16 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
+			isJetpack,
+			isSubscriptionsModuleActive,
 			isRequestingSettings,
 			isSavingSettings,
 			translate,
 		} = this.props;
+		// Subscriptions are only supported on jetpack sites with the Subscriptions module activated
+		if ( isJetpack && ! isSubscriptionsModuleActive ) {
+			return null;
+		}
 
 		return (
 			<CompactFormToggle
@@ -637,12 +643,14 @@ const connectComponent = connect( state => {
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+	const isSubscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
 
 	return {
 		siteId,
 		siteSlug,
 		isJetpack,
 		isLikesModuleActive,
+		isSubscriptionsModuleActive,
 	};
 } );
 
