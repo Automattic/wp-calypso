@@ -57,10 +57,6 @@ const SiteSettingsSecurity = ( {
 		);
 	}
 
-	if ( ! site.hasMinimumJetpackVersion ) {
-		return <JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.4" />;
-	}
-
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />

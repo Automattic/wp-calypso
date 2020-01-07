@@ -30,7 +30,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return false when passed an site object that has something value in the file_mod_option.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				options: {
 					unmapped_url: 'someurl',
 					main_network_site: 'someurl',
@@ -43,7 +42,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				is_multisite: true,
 				options: {
 					unmapped_url: 'someurl',
@@ -57,7 +55,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				is_multisite: false,
 				options: {
 					unmapped_url: 'someurl',
@@ -71,7 +68,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				is_multisite: true,
 				options: {
 					unmapped_url: 'http://someurl',
@@ -85,7 +81,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return false when passed a site  that has compares ftp to http protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				is_multisite: true,
 				options: {
 					unmapped_url: 'http://someurl',
@@ -99,7 +94,6 @@ describe( 'Site Utils', () => {
 
 		test( 'Should return true when passed a site that has all the right settings permissions to be able to update files.', () => {
 			const site = {
-				hasMinimumJetpackVersion: true,
 				is_multisite: true,
 				options: {
 					unmapped_url: 'someurl',
