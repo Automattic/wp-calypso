@@ -18,5 +18,5 @@ export default function canSiteViewAtomicHosting( state ) {
 		return false;
 	}
 
-	return canCurrentUser( state, siteId, 'manage_hosting' );
+	return canCurrentUser( state, siteId, 'view_hosting' );
 }
