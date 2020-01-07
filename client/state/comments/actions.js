@@ -71,7 +71,7 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
 	commentId,
 } );
 
-/***
+/**
  * Creates an action that requests comments for a given post
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -182,7 +182,7 @@ export const deleteComment = (
 	} );
 };
 
-/***
+/**
  * Creates a write comment action for a siteId and postId
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
@@ -196,7 +196,7 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
 	commentText,
 } );
 
-/***
+/**
  * Creates a reply to comment action for a siteId, postId and commentId
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
@@ -220,7 +220,7 @@ export const replyComment = (
 	refreshCommentListQuery,
 } );
 
-/***
+/**
  * Creates a thunk that likes a comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -234,7 +234,7 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-/***
+/**
  * Creates an action that unlikes a comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -334,7 +334,7 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
 	payload: { siteId, commentIds, postId, displayType },
 } );
 
-/***
+/**
  * Creates an action that sets the active reply for a given site ID and post ID
  * This is used on the front end to show a reply box under the specified comment.
  *

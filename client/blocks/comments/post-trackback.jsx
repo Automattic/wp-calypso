@@ -7,7 +7,7 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import TimeSince from 'components/time-since';

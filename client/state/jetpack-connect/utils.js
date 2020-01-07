@@ -4,7 +4,7 @@
 
 import { JETPACK_CONNECT_TTL } from './constants';
 
-/***
+/**
  * Whether a Jetpack Connect store timestamp is stale.
  * @param   {number} timestamp  Item to check.
  * @param   {number} expiration Expiration to compare with, in milliseconds. Default is JETPACK_CONNECT_TTL.

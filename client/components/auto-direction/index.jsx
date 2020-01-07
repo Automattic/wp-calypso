@@ -22,14 +22,14 @@ const SPACE_CHARACTERS = {
 	' ': true,
 };
 
-/***
+/**
  * Checks whether a character is a space character
  * @param {string} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
 
-/***
+/**
  * Get index of the first character that is not within a tag
  * @param {string} text text to examine
  * @returns {number} index not within a tag
@@ -55,7 +55,7 @@ const getTaglessIndex = text => {
 	return 0;
 };
 
-/***
+/**
  * Gets text content from react element in case that's a leaf element
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
@@ -101,7 +101,7 @@ const getContent = reactElement => {
 	return null;
 };
 
-/***
+/**
  * Gets the main directionality in a text
  * It returns what kind of characters we had the most, RTL or LTR according to some ratio
  *
@@ -153,7 +153,7 @@ const getChildDirection = ( child, isRtl ) => {
 };
 
 const inlineComponents = [ Emojify ];
-/***
+/**
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
  * It will set directionality only to the leaf components - because it does so according
@@ -202,7 +202,7 @@ const setChildDirection = ( child, isRtl ) => {
 	return child;
 };
 
-/***
+/**
  * Auto direction component that will set direction to child components according to their text content
  * @param {object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
