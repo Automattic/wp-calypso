@@ -104,7 +104,10 @@ const applePayMethod = isApplePayAvailable()
 	  } )
 	: null;
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+const paypalMethod = createPayPalMethod( {
+	registerStore,
+	submitTransaction: makePayPalExpressRequest,
+} );
 
 export function isApplePayAvailable() {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
