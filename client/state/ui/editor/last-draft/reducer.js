@@ -11,7 +11,7 @@ import { combineReducers } from 'state/utils';
  *
  * @param  {?number} state  Current state
  * @param  {object}  action Action payload
- * @return {?number}        Updated state
+ * @returns {?number}        Updated state
  */
 export function siteId( state = null, action ) {
 	switch ( action.type ) {
@@ -28,7 +28,7 @@ export function siteId( state = null, action ) {
  *
  * @param  {?number} state  Current state
  * @param  {object}  action Action payload
- * @return {?number}        Updated state
+ * @returns {?number}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {

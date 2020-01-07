@@ -16,7 +16,7 @@ import { withoutHttp } from 'lib/url';
  * @param  {object} 	state       		Global state tree
  * @param  {number}  	mainSiteId      	The ID of the main site
  * @param  {number}  	secondarySiteId		The ID of the main site
- * @return {?boolean}	            		Whether site with id equal to mainSiteId is main site of site with id equal to secondarySiteId
+ * @returns {?boolean}	            		Whether site with id equal to mainSiteId is main site of site with id equal to secondarySiteId
  */
 export default ( state, mainSiteId, secondarySiteId ) => {
 	return (

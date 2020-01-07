@@ -4,7 +4,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {boolean}        Whether a request is in progress
+ * @returns {boolean}        Whether a request is in progress
  */
 
 export function isRequestingPageTemplates( state, siteId ) {
@@ -17,7 +17,7 @@ export function isRequestingPageTemplates( state, siteId ) {
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {?Array}        Page template objects, if known
+ * @returns {?Array}        Page template objects, if known
  */
 export function getPageTemplates( state, siteId ) {
 	return state.pageTemplates.items[ siteId ] || null;

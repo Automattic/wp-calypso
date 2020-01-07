@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  *
  * @param {string} countryCode Country code to check.
- * @return {?Array}             States objects, if known.
+ * @returns {?Array}             States objects, if known.
  */
 
 export function getCountryStates( state, countryCode ) {
@@ -23,7 +23,7 @@ export function getCountryStates( state, countryCode ) {
  *
  * @param  {object}  state       Global state tree
  * @param  {string}  countryCode Country code to check.
- * @return {boolean}             Whether a request is in progress
+ * @returns {boolean}             Whether a request is in progress
  */
 export function isCountryStatesFetching( state, countryCode ) {
 	return get( state.countryStates, [ 'isFetching', countryCode.toLowerCase() ], false );

@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * False otherwise.
  *
  * @param  {object}   state  Global state tree
- * @return {boolean}         Whether the billing transactions are being requested
+ * @returns {boolean}         Whether the billing transactions are being requested
  */
 export default function isRequestingBillingTransactions( state ) {
 	return get( state, 'billingTransactions.requesting', false );

@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
- * @return {boolean}             Whether connection status is currently being requested for that site.
+ * @returns {boolean}             Whether connection status is currently being requested for that site.
  */
 export default function isRequestingSiteConnectionStatus( state, siteId ) {
 	return get( state.sites.connection.requesting, siteId, false );

@@ -16,7 +16,7 @@ import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
  * @param {number}  siteId        The ID of the site.
  * @param {(string|null)}  akismetKey    Akismet key.
  * @param {(string|null)}  vaultpressKey VaultPress key.
- * @return {object}               Action object.
+ * @returns {object}               Action object.
  */
 export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_REQUEST,
@@ -29,7 +29,7 @@ export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) 
  * Retrieve the current status of the Jetpack product install for that site.
  *
  * @param {number} siteId The ID of the site.
- * @return {object}       Action object.
+ * @returns {object}       Action object.
  */
 export const requestJetpackProductInstallStatus = siteId => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
@@ -41,7 +41,7 @@ export const requestJetpackProductInstallStatus = siteId => ( {
  *
  * @param {number} siteId The ID of the site.
  * @param {object} status Product installation status.
- * @return {object}       Action object.
+ * @returns {object}       Action object.
  */
 export const receiveJetpackProductInstallStatus = ( siteId, status ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE,

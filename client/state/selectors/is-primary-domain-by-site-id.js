@@ -12,7 +12,7 @@ import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site
  * @param {object} state - current state object
  * @param {object} siteId - site object
  * @param {string} domain - domian name
- * @return {object} primary domain
+ * @returns {object} primary domain
  */
 export default function isPrimaryDomainBySiteId( state, siteId, domain ) {
 	return domain === get( getPrimaryDomainBySiteId( state, siteId ), 'domain' );

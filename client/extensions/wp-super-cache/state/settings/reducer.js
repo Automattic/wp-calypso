@@ -23,7 +23,7 @@ import {
  *
  * @param  {object} state Current requesting state
  * @param  {object} action Action object
- * @return {object} Updated requesting state
+ * @returns {object} Updated requesting state
  */
 const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -62,7 +62,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current saving state
  * @param  {object} action Action object
- * @return {object} Updated saving state
+ * @returns {object} Updated saving state
  */
 const saveStatus = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -113,7 +113,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current restoring state
  * @param  {object} action Action object
- * @return {object} Updated restoring state
+ * @returns {object} Updated restoring state
  */
 export const restoring = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -151,7 +151,7 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current settings
  * @param  {object} action Action object
- * @return {object} Updated settings
+ * @returns {object} Updated settings
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

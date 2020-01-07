@@ -16,7 +16,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isSaving( state = null, action ) {
 	switch ( action.type ) {

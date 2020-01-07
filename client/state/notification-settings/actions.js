@@ -31,7 +31,7 @@ export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS
  * Returns an action object to signal the arrival of the requested notification settings.
  *
  * @param  {object} settings User Notification Settings
- * @return {object}          action object
+ * @returns {object}          action object
  */
 export const updateNotificationSettings = settings => ( {
 	type: NOTIFICATION_SETTINGS_UPDATE,

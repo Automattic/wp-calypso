@@ -17,7 +17,7 @@ import {
  * @param {number} productId The id of the product.
  * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function fetchProductVariations( siteId, productId, successAction, failureAction ) {
 	return {
@@ -38,7 +38,7 @@ export function fetchProductVariations( siteId, productId, successAction, failur
  * @param {object} variation The complete variation object to be created.
  * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function createProductVariation(
 	siteId,
@@ -65,7 +65,7 @@ export function createProductVariation(
  * @param {object} variation The variation data to be updated (must include id).
  * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function updateProductVariation(
 	siteId,
@@ -92,7 +92,7 @@ export function updateProductVariation(
  * @param {object} variationId The id of the variation to be deleted.
  * @param {object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function deleteProductVariation(
 	siteId,
@@ -120,7 +120,7 @@ export function deleteProductVariation(
  * @param {number} productId The id of the product to which this variation belongs.
  * @param {object} data The complete variation object with which to update the state.
  * @param {object} originatingAction The action which was the source of this update.
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function productVariationUpdated( siteId, productId, data, originatingAction ) {
 	return {

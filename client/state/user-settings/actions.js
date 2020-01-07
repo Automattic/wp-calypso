@@ -34,7 +34,7 @@ export const fetchUserSettings = () => ( {
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {object} settingsOverride - default settings object
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const saveUserSettings = settingsOverride => ( {
 	type: USER_SETTINGS_SAVE,
@@ -45,7 +45,7 @@ export const saveUserSettings = settingsOverride => ( {
  * Returns an action object signalling the settings have been received from server.
  *
  * @param  {object} settingValues Setting values (the subset of keys to be updated)
- * @return {object}               Action object
+ * @returns {object}               Action object
  */
 export const updateUserSettings = settingValues => ( {
 	type: USER_SETTINGS_UPDATE,
@@ -79,7 +79,7 @@ export const removeUnsavedUserSetting = settingName => ( {
  *
  * @param  {string} settingName - setting name
  * @param  {*} value - setting value
- * @return {Function} Action thunk that returns updating successful response
+ * @returns {Function} Action thunk that returns updating successful response
  */
 export function setUserSetting( settingName, value ) {
 	return ( dispatch, getState ) => {

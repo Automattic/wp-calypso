@@ -14,7 +14,7 @@ import { DEFAULT_TERMS_QUERY } from './constants';
  * default terms query.
  *
  * @param  {object} query Posts query
- * @return {object}       Normalized terms query
+ * @returns {object}       Normalized terms query
  */
 export function getNormalizedTermsQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_TERMS_QUERY[ key ] === value );
@@ -25,7 +25,7 @@ export function getNormalizedTermsQuery( query ) {
  * `state.terms.queries` state object.
  *
  * @param  {object} query    Terms query
- * @return {string}          Serialized terms query
+ * @returns {string}          Serialized terms query
  */
 export function getSerializedTermsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
@@ -37,7 +37,7 @@ export function getSerializedTermsQuery( query = {} ) {
  *
  * @param  {object} query  Terms query
  * @param  {number} siteId Optional site ID
- * @return {string}        Serialized terms query
+ * @returns {string}        Serialized terms query
  */
 export function getSerializedTermsQueryWithoutPage( query ) {
 	return getSerializedTermsQuery( omit( query, 'page' ) );

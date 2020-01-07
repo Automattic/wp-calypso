@@ -10,7 +10,7 @@ import getSite from './get-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?boolean}        Whether site is previewable
+ * @returns {?boolean}        Whether site is previewable
  */
 export default function canCurrentUserUseAds( state, siteId = null ) {
 	if ( ! siteId ) {

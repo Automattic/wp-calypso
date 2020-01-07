@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  blogId  The ID of the site we're querying
- * @return {Array} Blog stickers
+ * @returns {Array} Blog stickers
  */
 export default function getBlogStickers( state, blogId ) {
 	return get( state.sites.blogStickers.items, blogId, null );

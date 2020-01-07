@@ -40,7 +40,7 @@ export default withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {Array}  products A list of products
  * @param  {object} product  A single product to update or add to the products list
- * @return {Array}         Updated product list
+ * @returns {Array}         Updated product list
  */
 function updateCachedProduct( products, product ) {
 	let found = false;
@@ -66,7 +66,7 @@ function updateCachedProduct( products, product ) {
  * @param  {object}  state     The current state
  * @param  {object}  params    Params of the query to update
  * @param  {boolean} newStatus The new value to save
- * @return {object}            Updated isLoading state
+ * @returns {object}            Updated isLoading state
  */
 function setLoading( state, params, newStatus ) {
 	const queries = ( state.queries && { ...state.queries } ) || {};
@@ -80,7 +80,7 @@ function setLoading( state, params, newStatus ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function productUpdated( state, action ) {
 	const { data } = action;
@@ -96,7 +96,7 @@ export function productUpdated( state, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function productsRequestSuccess( state = {}, action ) {
 	let products = get( state, 'products', [] );
@@ -133,7 +133,7 @@ export function productsRequestSuccess( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function productsDeleteSuccess( state = {}, action ) {
 	const products = get( state, 'products', [] );
@@ -157,7 +157,7 @@ export function productsDeleteSuccess( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function productsRequest( state = {}, action ) {
 	const queries = setLoading( state, action.params, true );
@@ -169,7 +169,7 @@ export function productsRequest( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function productsRequestFailure( state = {}, action ) {
 	const queries = setLoading( state, action.params, false );

@@ -142,7 +142,7 @@ export function getStatsPathForTab(
 /**
  * Post status in our routes mapped to valid API values
  * @param status  Status param from route
- * @return        mapped status value
+ * @returns        mapped status value
  */
 export function mapPostStatus( status: string ): string {
 	switch ( status ) {

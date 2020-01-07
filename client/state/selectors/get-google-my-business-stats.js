@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param {string} statType - Type of metrics (e.g. 'queries')
  * @param {string} interval - Time period (e.g. 'month')
  * @param {string} aggregation - Type of aggregation (e.g. 'daily')
- * @return {number} the corresponding stats, or null if not found
+ * @returns {number} the corresponding stats, or null if not found
  */
 export default function getGoogleMyBusinessStats( state, siteId, statType, interval, aggregation ) {
 	return get(

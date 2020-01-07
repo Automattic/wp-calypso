@@ -36,7 +36,7 @@ import themeSetup from './theme-setup/reducers';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
@@ -87,7 +87,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * Tracks if the notifications panel is open
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const isNotificationsOpen = function( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {

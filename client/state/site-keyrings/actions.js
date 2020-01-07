@@ -23,7 +23,7 @@ import {
  * retrieve site keyrings
  *
  * @param  {number} siteId Site ID
- * @return {Function}      Action thunk
+ * @returns {Function}      Action thunk
  */
 export function requestSiteKeyrings( siteId ) {
 	return dispatch => {

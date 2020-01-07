@@ -37,7 +37,7 @@ import { whoisType } from '../../../lib/domains/whois/constants';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const isRequestingContactDetailsCache = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -74,7 +74,7 @@ export const isRequestingWhois = keyedReducer(
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const isSaving = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -132,7 +132,7 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -194,7 +194,7 @@ export default combineReducers( {
  *   // [1, 2, 3] (no foo for you!)
  *
  * @param  {object} data   Potential contact details
- * @return {object}        Sanitized contact details
+ * @returns {object}        Sanitized contact details
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';

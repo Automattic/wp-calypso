@@ -20,7 +20,7 @@ import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-d
  * @param  {object} state - Global state tree
  * @param  {number} siteId - The Id of the site
  * @param  {Array}  domains - list of domain objects
- * @return {boolean} true if the nudge should be visible
+ * @returns {boolean} true if the nudge should be visible
  */
 export default function isGSuiteStatsNudgeVisible( state, siteId, domains ) {
 	if ( isGSuiteStatsNudgeDismissed( state, siteId ) ) {

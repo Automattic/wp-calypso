@@ -25,7 +25,7 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  *
  * @param  {object} state  Global state tree
  * @param  {object} siteId The site ID
- * @return {object}        List of GMB connections for this site
+ * @returns {object}        List of GMB connections for this site
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
 	// Google My Business can only have one location connected at a time

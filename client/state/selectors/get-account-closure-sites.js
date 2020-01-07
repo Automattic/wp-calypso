@@ -10,7 +10,7 @@ import { userCan } from 'lib/site/utils';
  * Get all the sites which are deleted after account closure
  *
  * @param {Object} state  Global state tree
- * @return {Array}        Array of site objects
+ * @returns {Array}        Array of site objects
  */
 export default createSelector( state =>
 	getSites( state ).filter(

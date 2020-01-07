@@ -73,7 +73,7 @@ export function validateVertical( context, next ) {
  *
  * @param {object} context Routing context
  * @param {Array} terms Array of term strings
- * @return {Array} Sorted array
+ * @returns {Array} Sorted array
  */
 export function sortFilterTerms( context, terms ) {
 	return terms

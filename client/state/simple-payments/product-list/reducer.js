@@ -38,7 +38,7 @@ function addOrEditProduct( list = [], newProduct ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

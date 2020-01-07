@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Gets the last query parameters set by a ROUTE_SET action
  * @param {object} state - global redux state
- * @return {object} current state value
+ * @returns {object} current state value
  */
 export const getCurrentQueryArguments = state => get( state, 'ui.route.query.current', null );
 

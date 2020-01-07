@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param  {object} state    Global state tree
  * @param  {string} domainName domainName to request email forwards for
- * @return {object}          EmailForwards list
+ * @returns {object}          EmailForwards list
  */
 export function getEmailForwards( state, domainName ) {
 	return get( state.emailForwarding, [ domainName, 'forwards' ], null );
@@ -19,7 +19,7 @@ export function getEmailForwards( state, domainName ) {
  *
  * @param  {object} state   Global state tree
  * @param  {string} domains domains to filter
- * @return {Array}          list of domains with forwards
+ * @returns {Array}          list of domains with forwards
  */
 export function getDomainsWithForwards( state, domains ) {
 	if ( ! domains || ! domains.length ) {

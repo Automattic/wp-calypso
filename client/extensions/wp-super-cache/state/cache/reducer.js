@@ -21,7 +21,7 @@ import {
  *
  * @param  {object} state Current deleting state
  * @param  {object} action Action object
- * @return {object} Updated deleting state
+ * @returns {object} Updated deleting state
  */
 const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -68,7 +68,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
  * Preloading state tracks whether the preload for a site is currently in progress.
  * @param  {object} state Current preloading state
  * @param  {object} action Action object
- * @return {object} Updated preloading state
+ * @returns {object} Updated preloading state
  */
 const preloading = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -103,7 +103,7 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current cache testing state
  * @param  {object} action Action object
- * @return {object} Updated cache testing state
+ * @returns {object} Updated cache testing state
  */
 const testing = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -137,7 +137,7 @@ const testing = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current cache test results
  * @param  {object} action Action object
- * @return {object} Updated cache test results
+ * @returns {object} Updated cache test results
  */
 const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

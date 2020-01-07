@@ -15,7 +15,7 @@ import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {

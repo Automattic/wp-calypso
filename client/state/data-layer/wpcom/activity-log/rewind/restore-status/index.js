@@ -31,7 +31,7 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * when it arrives. For now, it's statefully ugly.
  *
  * @param  {object} action Redux action
- * @return {object}        Redux action
+ * @returns {object}        Redux action
  */
 const fetchProgress = action => {
 	const { restoreId, siteId } = action;

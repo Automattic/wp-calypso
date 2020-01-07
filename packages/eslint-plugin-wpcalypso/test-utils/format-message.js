@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utility for replacing placeholders in eslint rule messages
+ * @file Utility for replacing placeholders in eslint rule messages
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -13,7 +13,7 @@
  *
  * @param  {string} message Message template
  * @param  {object} terms   Terms
- * @return {string}         Formatted message
+ * @returns {string}         Formatted message
  */
 function formatMessage( message, terms ) {
 	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function( fullMatch, term ) {

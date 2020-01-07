@@ -28,7 +28,7 @@ export const extractStoredCardMetaValue = ( action, meta_key ) =>
  *
  * @param  {object} state - The current global state.
  * @param  {object} action - The action object containing the new country code.
- * @return {object} - The updated global state.
+ * @returns {object} - The updated global state.
  */
 export const countryCode = withSchemaValidation(
 	paymentCountryCodeSchema,
@@ -61,7 +61,7 @@ export const countryCode = withSchemaValidation(
  *
  * @param  {object} state - The current global state.
  * @param  {object} action - The action object containing the new postalCode.
- * @return {object} - The updated global state.
+ * @returns {object} - The updated global state.
  */
 export const postalCode = withSchemaValidation(
 	paymentPostalCodeSchema,

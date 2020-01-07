@@ -12,7 +12,7 @@ const DAY_IN_MS = 1000 * 60 * 60 * 24;
  * @param {Date} refDate Date for determination of elapsed days since registration
  * @param {number} from Lower bound on days
  * @param {number} to Upper bound on days
- * @return {?boolean} True if the number of days falls withing the specified range
+ * @returns {?boolean} True if the number of days falls withing the specified range
  */
 export default function isUserRegistrationDaysWithinRange( state, refDate, from, to ) {
 	const date = getCurrentUserDate( state );

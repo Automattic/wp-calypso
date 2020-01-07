@@ -13,7 +13,7 @@ import isVipSite from 'state/selectors/is-vip-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?boolean} True if the user can participate in the domain to paid plan upsell
+ * @returns {?boolean} True if the user can participate in the domain to paid plan upsell
  */
 const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );

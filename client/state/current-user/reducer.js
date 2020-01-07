@@ -30,7 +30,7 @@ import emailVerification from './email-verification/reducer';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -55,7 +55,7 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
@@ -85,7 +85,7 @@ export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = 
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

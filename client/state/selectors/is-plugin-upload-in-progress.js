@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {number} siteId the site ID
- * @return {boolean} true if plugin upload is in progress
+ * @returns {boolean} true if plugin upload is in progress
  */
 export default function isPluginUploadInProgress( state, siteId ) {
 	return !! get( state.plugins.upload.inProgress, siteId, false );

@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {object}        Sharing Buttons
+ * @returns {object}        Sharing Buttons
  */
 export default function getSharingButtons( state, siteId ) {
 	return get( state.sites.sharingButtons.items, [ siteId ], null );

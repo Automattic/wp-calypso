@@ -65,7 +65,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
  * site ID.
  *
  * @param  {number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function fetchConnections( siteId ) {
 	return dispatch => {
@@ -100,7 +100,7 @@ export function fetchConnections( siteId ) {
  *
  * @param  {number} siteId       Site ID
  * @param  {number} connectionId ID of the connection to be fetched.
- * @return {Function}            Action thunk
+ * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
 	return dispatch => {
@@ -144,7 +144,7 @@ export function fetchConnection( siteId, connectionId ) {
  * @param {number} siteId              Site ID
  * @param {number} keyringConnectionId Keyring connection ID
  * @param {number} externalUserId      An optional external user ID to create a connection to an external user account.
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
 	return dispatch =>
@@ -168,7 +168,7 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
  * @param  {number} connection.ID      ID of the connection to be updated.
  * @param  {string} connection.label   Name of the connected service.
  * @param  {object} attributes         The update request body.
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
 	return dispatch =>
@@ -196,7 +196,7 @@ export function updateSiteConnection( connection, attributes ) {
  * @param  {number} connection.site_ID Site ID for which the connection is deleted.
  * @param  {number} connection.ID      ID of the connection to be deleted.
  * @param  {string} connection.label   Name of the service that was connected.
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export function deleteSiteConnection( connection ) {
 	return dispatch =>
@@ -223,7 +223,7 @@ export function deleteSiteConnection( connection ) {
  * connection has failed.
  *
  * @param  {object} error Error object
- * @return {object}       Action object
+ * @returns {object}       Action object
  */
 export function failCreateConnection( error ) {
 	return {
@@ -237,7 +237,7 @@ export function failCreateConnection( error ) {
  * removing a Publicize connection has been received.
  *
  * @param  {object} connection Connection to be deleted.
- * @return {object}            Action object
+ * @returns {object}            Action object
  */
 export function deleteConnection( connection ) {
 	return {
@@ -252,7 +252,7 @@ export function deleteConnection( connection ) {
  *
  * @param  {number} siteId Site ID
  * @param  {object} data   API response
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function receiveConnections( siteId, data ) {
 	return {

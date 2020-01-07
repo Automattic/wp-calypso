@@ -13,7 +13,7 @@ import isSiteConflicting from './is-site-conflicting';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?string}        Site slug
+ * @returns {?string}        Site slug
  */
 export default createSelector(
 	( state, siteId ) => {

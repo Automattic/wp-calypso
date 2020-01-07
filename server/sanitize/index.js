@@ -2,7 +2,7 @@
  * Encode single characters with backslashes.
  *
  * @param {string} charStr single-character string.
- * @return {string} backslash escaped character.
+ * @returns {string} backslash escaped character.
  * @copyright (c) 2013, GoInstant Inc., a salesforce.com company.
  * @license See CREDITS.md.
  * @see https://github.com/goinstant/secure-filters/blob/master/lib/secure-filters.js
@@ -41,7 +41,7 @@ function jsSlashEncoder( charStr ) {
 /**
  * Create JSON serialized string suitable for inclusion in HTML
  * @param {mixed} value The variable to be serialized
- * @return {string} JSON serialized string
+ * @returns {string} JSON serialized string
  **/
 exports.jsonStringifyForHtml = function( value ) {
 	const jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;

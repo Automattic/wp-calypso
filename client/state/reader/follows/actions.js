@@ -58,7 +58,7 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
  * Follow a feed URL
  * @param  {string} feedUrl      The feed URL
  * @param {Follow} followInfo		A subscription, optional
- * @return {object}              The action
+ * @returns {object}              The action
  */
 export function follow( feedUrl, followInfo ) {
 	const action = {
@@ -84,7 +84,7 @@ export function unfollow( feedUrl ) {
  *
  * @param  {string} feedUrl Feed URL
  * @param  {object} error Error response (contains keys 'info' and 'subscribed')
- * @return {object} Action
+ * @returns {object} Action
  */
 export function recordFollowError( feedUrl, error ) {
 	const action = {
@@ -99,7 +99,7 @@ export function recordFollowError( feedUrl, error ) {
  * Returns an action object to signal that a URL has been followed.
  *
  * @param  {string} url Followed URL
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function recordFollow( url ) {
 	return dispatch => {
@@ -115,7 +115,7 @@ export function recordFollow( url ) {
  * Returns an action object to signal that a URL has been unfollowed.
  *
  * @param  {string} url Unfollowed URL
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function recordUnfollow( url ) {
 	return dispatch => {
@@ -131,7 +131,7 @@ export function recordUnfollow( url ) {
  * Returns an action object to signal that followed sites have been received.
  *
  * @param  {Array}  follows Follows received
- * @return {object} 		Action object
+ * @returns {object} 		Action object
  */
 export function receiveFollows( { follows, totalCount } ) {
 	return {
@@ -143,7 +143,7 @@ export function receiveFollows( { follows, totalCount } ) {
 /**
  * Returns an action object to signal that follows have been requested.
  *
- * @return {object} 		Action object
+ * @returns {object} 		Action object
  */
 export function requestFollows() {
 	return {
@@ -154,7 +154,7 @@ export function requestFollows() {
 /**
  * Represents a completed sync.
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
- * @return {object}              The action
+ * @returns {object}              The action
  */
 export function syncComplete( followedUrls ) {
 	return {

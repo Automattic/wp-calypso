@@ -28,7 +28,7 @@ export const registerHandlers = ( id, handlers ) => {
  * Returns list of handlers for given action type else undefined
  *
  * @param {string} actionType requested action type
- * @return {?Array<Function>} list of handlers for type
+ * @returns {?Array<Function>} list of handlers for type
  */
 export const getHandlers = actionType => registeredHandlers[ actionType ];
 

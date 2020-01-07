@@ -20,7 +20,7 @@ export function getAllProductEdits( state, siteId ) {
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The current accumulated edits
+ * @returns {object} The current accumulated edits
  */
 export function getProductEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductEdits( state, siteId );
@@ -36,7 +36,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
  * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The product data merged between the fetched data and edits
+ * @returns {object} The product data merged between the fetched data and edits
  */
 export function getProductWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const existing = ! isObject( productId );
@@ -52,7 +52,7 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number|object} Id of the currently editing product.
+ * @returns {number|object} Id of the currently editing product.
  */
 export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductEdits( state, siteId ) || {};
@@ -66,7 +66,7 @@ export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state 
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} Product object that is merged between fetched data and edits
+ * @returns {object} Product object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( state ) ) {
 	const currentlyEditingId = getCurrentlyEditingId( state, siteId );
@@ -79,7 +79,7 @@ export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( s
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number} Current product list page (defaul: 1)
+ * @returns {number} Current product list page (defaul: 1)
  */
 export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
@@ -94,7 +94,7 @@ export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string} Current product list search term (defaul: '')
+ * @returns {string} Current product list search term (defaul: '')
  */
 export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
@@ -109,7 +109,7 @@ export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( sta
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number|null} Requested product list page
+ * @returns {number|null} Requested product list page
  */
 export function getProductsRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
@@ -124,7 +124,7 @@ export function getProductsRequestedPage( state, siteId = getSelectedSiteId( sta
  *
  * @param {object} state Global state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string|null} Requested product list term
+ * @returns {string|null} Requested product list term
  */
 export function getProductsRequestedSearch( state, siteId = getSelectedSiteId( state ) ) {
 	return get(

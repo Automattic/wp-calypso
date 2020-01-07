@@ -57,7 +57,7 @@ export const lastActivityTimestamp = withSchemaValidation(
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
@@ -73,7 +73,7 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 const timelineEvent = ( state = {}, action ) => {
@@ -102,7 +102,7 @@ const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.time
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 export const timeline = withSchemaValidation( timelineSchema, ( state = [], action ) => {

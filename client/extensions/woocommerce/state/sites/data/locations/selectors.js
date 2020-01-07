@@ -14,7 +14,7 @@ import { LOADING, ERROR } from 'woocommerce/state/constants';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The locations tree, as retrieved from the server. It can also be the string "LOADING"
+ * @returns {Array} The locations tree, as retrieved from the server. It can also be the string "LOADING"
  * if the locations are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -24,7 +24,7 @@ const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the locations data tree has been successfully loaded from the server
+ * @returns {boolean} Whether the locations data tree has been successfully loaded from the server
  */
 export const areLocationsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isArray( getRawLocations( state, siteId ) );
@@ -33,7 +33,7 @@ export const areLocationsLoaded = ( state, siteId = getSelectedSiteId( state ) )
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the locations data tree is currently being retrieved from the server
+ * @returns {boolean} Whether the locations data tree is currently being retrieved from the server
  */
 export const areLocationsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawLocations( state, siteId );
@@ -42,7 +42,7 @@ export const areLocationsLoading = ( state, siteId = getSelectedSiteId( state ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the locations data fetch has resulted in an error
+ * @returns {boolean} Whether the locations data fetch has resulted in an error
  */
 export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return ERROR === getRawLocations( state, siteId );
@@ -51,7 +51,7 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
 /**
  * Common "getDependants" logic for all the selectors that operate on a site's locations data.
  * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
- * @return {Function} Function, as expected by the "createSelector" library
+ * @returns {Function} Function, as expected by the "createSelector" library
  */
 const _getSelectorDependants = numArgs => ( state, ...args ) => {
 	// First argument is always "state", last argument is always "siteId"
@@ -63,7 +63,7 @@ const _getSelectorDependants = numArgs => ( state, ...args ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of continents, represented by { code, name } pairs. Sorted alphabetically by name.
+ * @returns {Array} A list of continents, represented by { code, name } pairs. Sorted alphabetically by name.
  */
 export const getContinents = createSelector( ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areLocationsLoaded( state, siteId ) ) {
@@ -78,7 +78,7 @@ export const getContinents = createSelector( ( state, siteId = getSelectedSiteId
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} An array of all countries represented by { code, name, states } objects. Sorted alphabetically by name.
+ * @returns {Array} An array of all countries represented by { code, name, states } objects. Sorted alphabetically by name.
  */
 export const getAllCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areLocationsLoaded( state, siteId ) ) {
@@ -93,7 +93,7 @@ export const getAllCountries = ( state, siteId = getSelectedSiteId( state ) ) =>
  * @param {object} state Whole Redux state tree
  * @param {string} continentCode 2-letter continent code
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of countries in the given continent, represented by { code, name } pairs. Sorted alphabetically by name.
+ * @returns {Array} A list of countries in the given continent, represented by { code, name } pairs. Sorted alphabetically by name.
  */
 export const getCountriesByContinent = createSelector(
 	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
@@ -114,7 +114,7 @@ export const getCountriesByContinent = createSelector(
  * @param {object} state Whole Redux state tree
  * @param {string} countryCode 2-letter ISO country code
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string} The country name. If it can't be found, it will default to returning the country ISO code.
+ * @returns {string} The country name. If it can't be found, it will default to returning the country ISO code.
  */
 export const getCountryName = createSelector(
 	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
@@ -135,7 +135,7 @@ export const getCountryName = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of countries (codes) that have states
+ * @returns {Array} A list of countries (codes) that have states
  */
 export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areLocationsLoaded( state, siteId ) ) {
@@ -154,7 +154,7 @@ export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state
  * @param {object} state Whole Redux state tree
  * @param {string} countryCode 2-letter ISO country code
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of states in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
+ * @returns {Array} A list of states in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
  */
 export const getStates = createSelector(
 	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
@@ -177,7 +177,7 @@ export const getStates = createSelector(
  * @param {string} countryCode 2-letter ISO country code
  * @param {string} stateCode 2-letter code of the country's state
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string} The readable name of the given state. It falls back to returning the state code if its name wasn't found
+ * @returns {string} The readable name of the given state. It falls back to returning the state code if its name wasn't found
  */
 export const getStateName = createSelector(
 	( state, countryCode, stateCode, siteId = getSelectedSiteId( state ) ) => {
@@ -200,7 +200,7 @@ export const getStateName = createSelector(
  * @param {object} state Whole Redux state tree
  * @param {string} countryCode code 2-letter ISO country code
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the country has a list of states or not. Note that even if the result is "false", that only
+ * @returns {boolean} Whether the country has a list of states or not. Note that even if the result is "false", that only
  * means WooCommerce doesn't have a list of states for the country, but the country may still have states (or provinces,
  * or a similar term).
  */
@@ -211,7 +211,7 @@ export const hasStates = ( state, countryCode, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} Map with the pairs { countryCode: countryName } of all the countries in the world
+ * @returns {object} Map with the pairs { countryCode: countryName } of all the countries in the world
  */
 export const getAllCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {

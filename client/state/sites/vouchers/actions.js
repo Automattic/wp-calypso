@@ -41,7 +41,7 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  * Return SITE_VOUCHERS_REQUEST action object
  *
  * @param {number} siteId - side identifier
- * @return {object} siteId - action object
+ * @returns {object} siteId - action object
  */
 export const vouchersRequestAction = siteId => ( {
 	type: SITE_VOUCHERS_REQUEST,

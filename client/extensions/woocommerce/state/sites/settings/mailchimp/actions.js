@@ -184,7 +184,7 @@ const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
  * Triggers a network request to fetch current MailChimp plugin settings.
  *
  * @param  {number|string} siteId        Jetpack site ID
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const requestSettings = siteId => ( dispatch, getState ) => {
 	const state = getState();
@@ -209,7 +209,7 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
  *
  * @param  {number|string} siteId        Jetpack site ID
  * @param  {string}        apiKey        MailChimp api key
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
 	if ( null == siteId || null == apiKey ) {
@@ -233,7 +233,7 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
  *
  * @param  {number|string} siteId        Jetpack site ID
  * @param  {object}        storeInfo     MailChimp store info settings object
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
 	if ( null == siteId || null == storeInfo ) {
@@ -258,7 +258,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
  *
  * @param  {number|string} siteId           Jetpack site ID
  * @param  {object}        campaignDefaults MailChimp campaign defaults settings object
- * @return {Function}                       Action thunk
+ * @returns {Function}                       Action thunk
  */
 export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => dispatch => {
 	if ( null == siteId || null == campaignDefaults ) {
@@ -282,7 +282,7 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
  * associated with api key stored in plugin config..
  *
  * @param  {number|string} siteId        Jetpack site ID
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const requestLists = siteId => ( dispatch, getState ) => {
 	const state = getState();
@@ -306,7 +306,7 @@ export const requestLists = siteId => ( dispatch, getState ) => {
  * Triggers a network request to fetch current MailChimp plugin to MailChimp server sync status
  *
  * @param  {number|string} siteId        Jetpack site ID
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const requestSyncStatus = siteId => ( dispatch, getState ) => {
 	const state = getState();
@@ -329,7 +329,7 @@ export const requestSyncStatus = siteId => ( dispatch, getState ) => {
  * Triggers a network request that triggers store resync procedure in MailChimp plugin
  *
  * @param  {number|string} siteId        Jetpack site ID
- * @return {Function}                    Action thunk
+ * @returns {Function}                    Action thunk
  */
 export const requestResync = siteId => ( dispatch, getState ) => {
 	const state = getState();
@@ -354,7 +354,7 @@ export const requestResync = siteId => ( dispatch, getState ) => {
  *
  * @param  {number|string} siteId      Jetpack site ID
  * @param  {object}        newsLetter  MailChimp newsletter settings object
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispatch => {
 	if ( null == siteId || null == newsLetter ) {
@@ -379,7 +379,7 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
  * isSaveSettingsRequested
  *
  * @param  {number|string} siteId      Jetpack site ID
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {
 	if ( null == siteId ) {

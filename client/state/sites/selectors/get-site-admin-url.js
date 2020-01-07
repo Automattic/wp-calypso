@@ -12,7 +12,7 @@ import getSiteOption from './get-site-option';
  * @param  {object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @param  {?string} path   Admin screen path
- * @return {?string}        Admin URL
+ * @returns {?string}        Admin URL
  */
 export default function getSiteAdminUrl( state, siteId, path = '' ) {
 	const adminUrl = getSiteOption( state, siteId, 'admin_url' );

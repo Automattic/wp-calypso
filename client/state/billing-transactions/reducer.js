@@ -20,7 +20,7 @@ import individualTransactions from './individual-transactions/reducer';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( billingTransactionsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -39,7 +39,7 @@ export const items = withSchemaValidation( billingTransactionsSchema, ( state = 
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -60,7 +60,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow using the wildcard `*` in postMessage
+ * @file Disallow using the wildcard `*` in postMessage
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

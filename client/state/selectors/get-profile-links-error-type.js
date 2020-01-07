@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Can be one of 'duplicate', 'malformed', 'other' or `null`.
  *
  * @param {object} state Global state tree
- * @return {?string}     Error type.
+ * @returns {?string}     Error type.
  */
 export default function getProfileLinksErrorType( state ) {
 	if ( get( state, [ 'userProfileLinks', 'errors', 'duplicate' ], false ) ) {

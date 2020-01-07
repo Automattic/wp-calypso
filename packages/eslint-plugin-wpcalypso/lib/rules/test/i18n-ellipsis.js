@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow using three dots in translate strings
+ * @file Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

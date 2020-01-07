@@ -3,7 +3,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {boolean}        Whether specified site is blocked
+ * @returns {boolean}        Whether specified site is blocked
  */
 
 export default function isSiteBlocked( state, siteId ) {

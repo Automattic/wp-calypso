@@ -14,7 +14,7 @@ import { getSerializedOrdersQuery } from './utils';
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the orders list has been successfully loaded from the server
+ * @returns {boolean} Whether the orders list has been successfully loaded from the server
  */
 export const areOrdersLoaded = ( state, query, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedOrdersQuery( query );
@@ -35,7 +35,7 @@ export const areOrdersLoaded = ( state, query, siteId = getSelectedSiteId( state
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the orders list is currently being retrieved from the server
+ * @returns {boolean} Whether the orders list is currently being retrieved from the server
  */
 export const areOrdersLoading = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedOrdersQuery( query );
@@ -56,7 +56,7 @@ export const areOrdersLoading = ( state, query = {}, siteId = getSelectedSiteId(
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether this order has a pending invoice request sent to the remote site
+ * @returns {boolean} Whether this order has a pending invoice request sent to the remote site
  */
 export const isOrderInvoiceSending = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const isSending = get( state, [
@@ -77,7 +77,7 @@ export const isOrderInvoiceSending = ( state, orderId, siteId = getSelectedSiteI
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the orders list has been successfully loaded from the server
+ * @returns {boolean} Whether the orders list has been successfully loaded from the server
  */
 export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const isLoading = get( state, [
@@ -97,7 +97,7 @@ export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether this order is currently being retrieved from the server
+ * @returns {boolean} Whether this order is currently being retrieved from the server
  */
 export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const isLoading = get( state, [
@@ -117,7 +117,7 @@ export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( stat
  * @param {object} state Whole Redux state tree
  * @param {number} orderId Order ID to check
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether this order is currently being updated on the server
+ * @returns {boolean} Whether this order is currently being updated on the server
  */
 export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! isFinite( orderId ) ) {
@@ -139,7 +139,7 @@ export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( sta
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array|false} List of orders, or false if there was an error
+ * @returns {Array|false} List of orders, or false if there was an error
  */
 export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areOrdersLoaded( state, query, siteId ) ) {
@@ -166,7 +166,7 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
  * @param {object} state Whole Redux state tree
  * @param {number} orderId ID number of an order
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object|Null} The requested order object, or null if not available
+ * @returns {object|Null} The requested order object, or null if not available
  */
 export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -180,7 +180,7 @@ export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number} Total number of orders available on a site, or 0 if not loaded yet.
+ * @returns {number} Total number of orders available on a site, or 0 if not loaded yet.
  */
 export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedOrdersQuery( omit( query, 'page' ) );
@@ -194,7 +194,7 @@ export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( s
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} List of new orders.
+ * @returns {Array} List of new orders.
  */
 export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 	// TODO: fetchOrders right now loads max number of orders, as pagination won't be supported until post v1
@@ -217,7 +217,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} List of new orders without PayPal Pending Orders.
+ * @returns {Array} List of new orders without PayPal Pending Orders.
  */
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
@@ -231,7 +231,7 @@ export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSit
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number} Total from all new orders.
+ * @returns {number} Total from all new orders.
  */
 export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
@@ -241,7 +241,7 @@ export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number} Total from all new orders without PayPal Pending Orders.
+ * @returns {number} Total from all new orders without PayPal Pending Orders.
  */
 export const getNewOrdersWithoutPayPalPendingRevenue = (
 	state,

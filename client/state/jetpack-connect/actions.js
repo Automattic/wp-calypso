@@ -208,7 +208,7 @@ export function retryAuth( url, attemptNumber, fromParam ) {
  * @param  {string}  socialInfo.access_token An OAuth2 acccess token
  * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
  *
- * @return {Promise}                         Resolves to { username, bearerToken }
+ * @returns {Promise}                         Resolves to { username, bearerToken }
  */
 export function createSocialAccount( socialInfo ) {
 	return async dispatch => {
@@ -248,7 +248,7 @@ export function createSocialAccount( socialInfo ) {
  * @param  {string} userData.password Password
  * @param  {string} userData.email    Email
  *
- * @return {Promise}                  Resolves to { username, bearerToken }
+ * @returns {Promise}                  Resolves to { username, bearerToken }
  */
 export function createAccount( userData ) {
 	return async dispatch => {

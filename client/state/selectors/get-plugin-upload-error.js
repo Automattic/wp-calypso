@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {number} siteId the site ID
- * @return {?object} Error from upload, if any
+ * @returns {?object} Error from upload, if any
  */
 export default function getPluginUploadError( state, siteId ) {
 	return get( state.plugins.upload.uploadError, siteId, null );

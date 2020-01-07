@@ -142,7 +142,7 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
  * @param {object} state Whole Redux state tree
  * @param {number} [zoneId] Shipping Zone ID
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods included in the given shipping zone. On any failure, it will return
+ * @returns {Array} The list of shipping methods included in the given shipping zone. On any failure, it will return
  * an empty Array
  */
 export const getShippingZoneMethods = createSelector(
@@ -174,7 +174,7 @@ export const getShippingZoneMethods = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods included in the shipping zone currently being edited, including
+ * @returns {Array} The list of shipping methods included in the shipping zone currently being edited, including
  * shipping methods that haven't yet been "committed" to the main state tree. On any failure, it will return
  * an empty Array
  */
@@ -202,7 +202,7 @@ export const getCurrentlyEditingShippingZoneMethods = createSelector(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object|null} The currently open shipping method or null
+ * @returns {object|null} The currently open shipping method or null
  */
 export const getCurrentlyOpenShippingZoneMethod = (
 	state,
@@ -274,7 +274,7 @@ export const getCurrentlyOpenShippingZoneMethod = (
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the opened method is new or not
+ * @returns {boolean} Whether the opened method is new or not
  */
 export const isCurrentlyOpenShippingZoneMethodNew = (
 	state,
@@ -296,7 +296,7 @@ export const isCurrentlyOpenShippingZoneMethodNew = (
  * @param {object} state Whole Redux state tree
  * @param {number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of Shipping Method types that can be added to the given shipping Zone
+ * @returns {Array} The list of Shipping Method types that can be added to the given shipping Zone
  */
 export const getNewMethodTypeOptions = (
 	state,
@@ -346,7 +346,7 @@ export const getNewMethodTypeOptions = (
  * @param {number} currentMethodType Shipping method type currently being used
  * @param {number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of Shipping Method types that this shipping zone method can be changed too. It
+ * @returns {Array} The list of Shipping Method types that this shipping zone method can be changed too. It
  * includes the current method type.
  */
 export const getMethodTypeChangeOptions = (

@@ -26,7 +26,7 @@ async function writeABTests( driver, testList ) {
  * @param {Browser} driver Webdriver browser instance
  * @param {string} name A/B test name
  * @param {string} variation the variation you want to set
- * @return {Function} undo the changes.
+ * @returns {Function} undo the changes.
  */
 export async function setOverriddenABTests( driver, name, variation ) {
 	const abTestList = abTests.default;

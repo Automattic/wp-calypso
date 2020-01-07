@@ -22,7 +22,7 @@ export class TransformerError extends Error {
 /**
  * @typedef {Function} Parser
  * @param   {*}        data   Input data
- * @return {*}                Transformed data
+ * @returns {*}                Transformed data
  * @throws {SchemaError}      Error describing failed schema validation
  * @throws {TransformerError} Error ocurred during transformation
  */
@@ -34,7 +34,7 @@ export class TransformerError extends Error {
  * @param {Function} transformer=identity Transformer function
  * @param {object}   schemaOptions={}     Options to pass to schema validator
  *
- * @return {Parser}                       Function to validate and transform data
+ * @returns {Parser}                       Function to validate and transform data
  */
 export function makeJsonSchemaParser( schema, transformer = identity, schemaOptions = {} ) {
 	let transform;

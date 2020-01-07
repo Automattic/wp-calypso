@@ -15,7 +15,7 @@ import {
 /**
  * Triggers a network request for a user's connected services.
  *
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
 	return dispatch => {
@@ -48,7 +48,7 @@ export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
  * Triggers an action to delete a Keyring connection.
  *
  * @param  {object}   connection Keyring connection to be removed.
- * @return {Function}            Action thunk
+ * @returns {Function}            Action thunk
  */
 export function deleteKeyringConnection( connection ) {
 	return {
@@ -63,7 +63,7 @@ export function deleteKeyringConnection( connection ) {
  * @param  {object} connection         Connection to be deleted.
  * @param  {number} connection.ID      ID of the connection to be deleted.
  * @param  {string} connection.label   Name of the service that was connected.
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export function deleteStoredKeyringConnection( connection ) {
 	return dispatch =>

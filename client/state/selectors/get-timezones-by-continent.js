@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object} state - Global state tree
  * @param {string} continent - continent value
- * @return {Array} Continent timezones array
+ * @returns {Array} Continent timezones array
  */
 export default function getTimezonesByContinent( state, continent ) {
 	const byContinents = get( state, 'timezones.byContinents', {} );

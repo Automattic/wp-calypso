@@ -10,7 +10,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  *
  * @param {object} state Global state tree
  * @param {object} siteId Site ID
- * @return {boolean} True if site is private
+ * @returns {boolean} True if site is private
  */
 export default function isPrivateSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

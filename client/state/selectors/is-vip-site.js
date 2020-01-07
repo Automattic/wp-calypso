@@ -11,7 +11,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?boolean}        Whether site is VIP
+ * @returns {?boolean}        Whether site is VIP
  */
 export default function isVipSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

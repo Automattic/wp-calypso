@@ -10,7 +10,7 @@ import isPluginActive from 'state/selectors/is-plugin-active';
  * @param {object} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {Array} pluginSlugs - Array of plugin slugs for which to check
- * @return {boolean} - truthiness of a site having at least one of the given plugins active
+ * @returns {boolean} - truthiness of a site having at least one of the given plugins active
  */
 export default function isAnyPluginActive( state, siteId, pluginSlugs ) {
 	const activePlugins = pluginSlugs.filter( pluginSlug =>

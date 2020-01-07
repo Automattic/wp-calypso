@@ -20,7 +20,7 @@ import { USER_SETTING_KEY } from './constants';
  * received.
  *
  * @param  {object} values Preference values
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function receivePreferences( values ) {
 	return {

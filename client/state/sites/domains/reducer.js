@@ -56,7 +56,7 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
  *
  * @param {object} state - current state
  * @param {object} action - domains action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
@@ -135,7 +135,7 @@ export const updatingPrivacy = ( state = {}, action ) => {
  *
  * @param {object} state - current state
  * @param {object} action - domains action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -155,7 +155,7 @@ export const requesting = ( state = {}, action ) => {
  *
  * @param {object} state - current state
  * @param {object} action - domains action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {

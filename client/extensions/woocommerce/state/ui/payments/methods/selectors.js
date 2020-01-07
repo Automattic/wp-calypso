@@ -20,7 +20,7 @@ export const getPaymentMethodsEdits = ( state, siteId ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} All changes made to method
+ * @returns {Array} All changes made to method
  */
 export const getPaymentMethodEdits = ( state, siteId ) => {
 	return get( state, [
@@ -37,7 +37,7 @@ export const getPaymentMethodEdits = ( state, siteId ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of payment methods that the UI should show. That will be the list of methods returned by
+ * @returns {Array} The list of payment methods that the UI should show. That will be the list of methods returned by
  * the wc-api with the edits "overlayed" on top of them.
  */
 export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -94,7 +94,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
  *
  * @param {object} state Global state tree
  * @param {number} siteId wpcom site id
- * @return {boolean} Bool indicating if payments are setup
+ * @returns {boolean} Bool indicating if payments are setup
  */
 export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function( method ) {
@@ -108,7 +108,7 @@ export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) =
  * @param {object} state Global state tree
  * @param {string} type type of payment method
  * @param {number} siteId wpcom site id
- * @return {Array} Array of Payment Methods of requested type
+ * @returns {Array} Array of Payment Methods of requested type
  */
 export const getPaymentMethodsGroup = ( state, type, siteId = getSelectedSiteId( state ) ) => {
 	return filter( getPaymentMethodsWithEdits( state, siteId ), { methodType: type } );
@@ -117,7 +117,7 @@ export const getPaymentMethodsGroup = ( state, type, siteId = getSelectedSiteId(
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object|null} The payment methods that's currently being edited, with all the edits
+ * @returns {object|null} The payment methods that's currently being edited, with all the edits
  * (including the non-committed changes). If no method is being edited, this will return null.
  */
 export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -150,7 +150,7 @@ export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSit
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the user is currently editing a payment method.
+ * @returns {boolean} Whether the user is currently editing a payment method.
  */
 export const isCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingPaymentMethod( state, siteId ) );

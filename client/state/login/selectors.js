@@ -8,7 +8,7 @@ import { get, isEmpty } from 'lodash';
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
  * @param  {object}   state  Global state tree
- * @return {?number}         The user ID.
+ * @returns {?number}         The user ID.
  */
 export const getTwoFactorUserId = state => {
 	return get( state, 'login.twoFactorAuth.user_id', null );
@@ -20,7 +20,7 @@ export const getTwoFactorUserId = state => {
  *
  * @param	{object}	state  Global state tree
  * @param	{string}	nonceType nonce's type
- * @return {?string}         The nonce.
+ * @returns {?string}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state, nonceType ) => {
 	return get( state, `login.twoFactorAuth.two_step_nonce_${ nonceType }`, null );
@@ -31,7 +31,7 @@ export const getTwoFactorAuthNonce = ( state, nonceType ) => {
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
  * @param  {object}   state  Global state tree
- * @return {?string}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
+ * @returns {?string}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
  */
 export const getTwoFactorNotificationSent = state => {
 	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
@@ -68,7 +68,7 @@ export const getTwoFactorPushPollSuccess = state =>
  * Determines whether two factor authentication is enabled for the logging in user.
  *
  * @param  {object}   state  Global state tree
- * @return {boolean}        Whether 2FA is enabled
+ * @returns {boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = state => {
 	const twoFactorAuth = get( state, 'login.twoFactorAuth' );
@@ -80,7 +80,7 @@ export const isTwoFactorEnabled = state => {
  * Determines whether a request to authenticate 2FA is being made.
  *
  * @param  {object}   state  Global state tree
- * @return {boolean}         Whether a request to authenticate 2FA is being made.
+ * @returns {boolean}         Whether a request to authenticate 2FA is being made.
  */
 export const isRequestingTwoFactorAuth = state => {
 	return get( state, 'login.isRequestingTwoFactorAuth', false );
@@ -90,7 +90,7 @@ export const isRequestingTwoFactorAuth = state => {
  * Returns the error for a request to authenticate 2FA.
  *
  * @param  {object}   state  Global state tree
- * @return {?string}         Error for the request.
+ * @returns {?string}         Error for the request.
  */
 export const getTwoFactorAuthRequestError = state => {
 	return get( state, 'login.twoFactorAuthRequestError', null );
@@ -101,7 +101,7 @@ export const getTwoFactorAuthRequestError = state => {
  * Returns null if there is no such information yet.
  *
  * @param  {object}   state  Global state tree
- * @return {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
+ * @returns {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
  */
 export const getTwoFactorSupportedAuthTypes = state => {
 	return get( state, 'login.twoFactorAuth.two_step_supported_auth_types', null );
@@ -113,7 +113,7 @@ export const getTwoFactorSupportedAuthTypes = state => {
  *
  * @param  {object}   state  Global state tree
  * @param  {string}   type   A 2FA auth type (of `authenticator`, `sms`, `push` ).
- * @return {?boolean}        Whether the auth type `type` is supported
+ * @returns {?boolean}        Whether the auth type `type` is supported
  */
 export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 	const supportedAuthTypes = getTwoFactorSupportedAuthTypes( state );
@@ -124,7 +124,7 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
  * Determines whether a login request is in-progress.
  *
  * @param  {object}   state  Global state tree
- * @return {boolean}         Whether a login request is in-progress.
+ * @returns {boolean}         Whether a login request is in-progress.
  */
 export const isRequesting = state => {
 	return get( state, 'login.isRequesting', false );
@@ -134,7 +134,7 @@ export const isRequesting = state => {
  * Returns the error for a login request.
  *
  * @param  {object}   state  Global state tree
- * @return {?object}         Error for the request.
+ * @returns {?object}         Error for the request.
  */
 export const getRequestError = state => {
 	return get( state, 'login.requestError', null );
@@ -144,7 +144,7 @@ export const getRequestError = state => {
  * Returns the notice for a login request.
  *
  * @param  {object}   state  Global state tree
- * @return {?object}         Notice for the request.
+ * @returns {?object}         Notice for the request.
  */
 export const getRequestNotice = state => {
 	return get( state, 'login.requestNotice', null );

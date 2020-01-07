@@ -33,7 +33,7 @@ function getIncludedDomain( purchase ) {
  *
  * @param {Array} purchases An array of purchase objects.
  * @param {Array} sites An array of site objects
- * @return {Array} An array of sites with purchases attached.
+ * @returns {Array} An array of sites with purchases attached.
  */
 function getPurchasesBySite( purchases, sites ) {
 	return purchases
@@ -122,7 +122,7 @@ function hasIncludedDomain( purchase ) {
  * Purchases included with a plan can't be cancelled.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} whether the purchase is cancelable
+ * @returns {boolean} whether the purchase is cancelable
  */
 function isCancelable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
@@ -182,7 +182,7 @@ function isPendingTransfer( purchase ) {
  * is not currently true for other providers such as EBANX.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} if the purchase card can be updated
+ * @returns {boolean} if the purchase card can be updated
  */
 function cardProcessorSupportsUpdates( purchase ) {
 	return (
@@ -236,7 +236,7 @@ function maybeWithinRefundPeriod( purchase ) {
  * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} if the purchase can be recharged by us through the bound payment method.
+ * @returns {boolean} if the purchase can be recharged by us through the bound payment method.
  */
 function isRechargeable( purchase ) {
 	return purchase.isRechargeable;
@@ -253,7 +253,7 @@ function isRechargeable( purchase ) {
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} if the purchase is refundable
+ * @returns {boolean} if the purchase is refundable
  */
 function isRefundable( purchase ) {
 	return purchase.isRefundable;
@@ -263,7 +263,7 @@ function isRefundable( purchase ) {
  * Checks whether the specified purchase can be removed from a user account.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase can be removed, false otherwise
+ * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
 	if ( isRefundable( purchase ) ) {
@@ -298,7 +298,7 @@ function isPartnerPurchase( purchase ) {
  * manually checks all kinds of stuff
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase has cancelable flag, false otherwise
+ * @returns {boolean} true if the purchase has cancelable flag, false otherwise
  */
 function isPurchaseCancelable( purchase ) {
 	return purchase.isCancelable;
@@ -310,7 +310,7 @@ function isPurchaseCancelable( purchase ) {
  * "is this part of a bundle?", etc.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase is renewable per business logic, false otherwise
+ * @returns {boolean} true if the purchase is renewable per business logic, false otherwise
  */
 function isRenewable( purchase ) {
 	return purchase.isRenewable;
@@ -352,7 +352,7 @@ function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
  * are only renewable via auto-renew.
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {boolean} true if the purchase is capable of explicit renew
+ * @returns {boolean} true if the purchase is capable of explicit renew
  */
 function canExplicitRenew( purchase ) {
 	return purchase.canExplicitRenew;
@@ -382,7 +382,7 @@ function subscribedWithinPastWeek( purchase ) {
  * Returns the payment logo to display based on the payment method
  *
  * @param {object} purchase - the purchase with which we are concerned
- * @return {string|null} the payment logo type, or null if no payment type is set.
+ * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
 function paymentLogoType( purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {

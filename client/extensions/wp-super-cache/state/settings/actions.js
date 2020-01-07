@@ -30,7 +30,7 @@ import { getSiteTitle } from 'state/sites/selectors';
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings Settings object
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const receiveSettings = ( siteId, settings ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_SETTINGS,

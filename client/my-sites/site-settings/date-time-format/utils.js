@@ -16,7 +16,7 @@ import { has, startsWith } from 'lodash';
  * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
  *
  * @param {string} timezoneString A timezone string.
- * @return {object} The timezone-adjusted Moment.js object of the current date and time.
+ * @returns {object} The timezone-adjusted Moment.js object of the current date and time.
  */
 export function getLocalizedDate( timezoneString ) {
 	return startsWith( timezoneString, 'UTC' )
@@ -90,7 +90,7 @@ const phpToMomentMapping = {
  *
  * @param {object} momentDate A Moment.js object of the current date and time.
  * @param {string} formatString A PHP datetime format string
- * @return {string} A Moment.js datetime format string
+ * @returns {string} A Moment.js datetime format string
  */
 export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 	const mappedFormat = formatString

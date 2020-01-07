@@ -12,7 +12,7 @@ import { isEmpty, isUndefined } from 'lodash';
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateCouponCode( fieldName, promotion, currency, showEmpty ) {
 	const couponCode = promotion.couponCode || '';
@@ -27,7 +27,7 @@ export function validateCouponCode( fieldName, promotion, currency, showEmpty ) 
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
 	const discount = promotion[ fieldName ];
@@ -45,7 +45,7 @@ export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
 	if ( showEmpty && isEmpty( promotion.salePrice ) ) {
@@ -61,7 +61,7 @@ export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
  *
  * @param { string } startDateString String form of end date, or null/undefined.
  * @param { string } endDateString String form of end date, or null/undefined.
- * @return { boolean } True if the end date is before the start date, false if not.
+ * @returns { boolean } True if the end date is before the start date, false if not.
  */
 export function isEndDateBeforeStartDate( startDateString, endDateString ) {
 	const startDate = startDateString ? new Date( startDateString ) : new Date();
@@ -84,7 +84,7 @@ export function isEndDateBeforeStartDate( startDateString, endDateString ) {
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateStartEndDate( fieldName, promotion ) {
 	if ( isEndDateBeforeStartDate( promotion.startDate, promotion.endDate ) ) {
@@ -107,7 +107,7 @@ export function validateStartEndDate( fieldName, promotion ) {
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateEndDate( fieldName, promotion ) {
 	if ( isUndefined( promotion.endDate ) ) {
@@ -125,7 +125,7 @@ export function validateEndDate( fieldName, promotion ) {
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateMinimumAmount( fieldName, promotion, currency, showEmpty ) {
 	const { minimumAmount, maximumAmount } = promotion;
@@ -154,7 +154,7 @@ export function validateMinimumAmount( fieldName, promotion, currency, showEmpty
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateMaximumAmount( fieldName, promotion, currency, showEmpty ) {
 	const { minimumAmount, maximumAmount } = promotion;
@@ -183,7 +183,7 @@ export function validateMaximumAmount( fieldName, promotion, currency, showEmpty
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) {
 	const { usageLimit, usageLimitPerUser } = promotion;
@@ -212,7 +212,7 @@ export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) 
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateUsageLimitPerUser( fieldName, promotion, currency, showEmpty ) {
 	const { usageLimit, usageLimitPerUser } = promotion;
@@ -241,7 +241,7 @@ export function validateUsageLimitPerUser( fieldName, promotion, currency, showE
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateCouponAppliesTo( fieldName, promotion, currency, showEmpty ) {
 	const { appliesTo } = promotion;
@@ -263,7 +263,7 @@ export function validateCouponAppliesTo( fieldName, promotion, currency, showEmp
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
+ * @returns { string } Returns a validation error, or undefined if none.
  */
 export function validateAppliesToSingleProduct( fieldName, promotion, currency, showEmpty ) {
 	const { appliesTo } = promotion;

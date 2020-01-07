@@ -10,7 +10,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?boolean} true if the site has Jetpack themes management
+ * @returns {?boolean} true if the site has Jetpack themes management
  */
 export default function hasJetpackSiteJetpackThemes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

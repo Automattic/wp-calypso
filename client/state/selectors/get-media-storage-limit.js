@@ -17,7 +17,7 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?number}        Storage limit in bytes
+ * @returns {?number}        Storage limit in bytes
  */
 export default function getMediaStorageLimit( state, siteId ) {
 	return get( getMediaStorage( state, siteId ), 'max_storage_bytes', null );

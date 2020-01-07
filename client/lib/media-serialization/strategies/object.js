@@ -3,7 +3,7 @@
  *
  *
  * @param {object} node Deserialized media object
- * @return {object}      Deserialized media object
+ * @returns {object}      Deserialized media object
  */
 
 export function deserialize( node ) {

@@ -16,7 +16,7 @@ let getSiteCache = new WeakMap();
  *
  * @param  {object}  state  Global state tree
  * @param  {number|string}  siteIdOrSlug Site ID or site slug
- * @return {?object}        Site object
+ * @returns {?object}        Site object
  */
 export default function getSite( state, siteIdOrSlug ) {
 	const rawSite = getRawSite( state, siteIdOrSlug ) || getSiteBySlug( state, siteIdOrSlug );

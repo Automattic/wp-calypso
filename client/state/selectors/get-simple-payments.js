@@ -16,7 +16,7 @@ import createSelector from 'lib/create-selector';
  * @param {object} state           Global state tree
  * @param {int}    siteId          Site which the Simple Payment belongs to.
  * @param {int}    simplePaymentId The ID of the Simple Payment to get. Optional.
- * @return {Array|object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
+ * @returns {Array|object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
  */
 export default createSelector(
 	( state, siteId, simplePaymentId = null ) => {

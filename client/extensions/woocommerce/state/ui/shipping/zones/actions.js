@@ -18,7 +18,7 @@ import {
  * Creates a new (empty) Shipping Zone. This will open the newly created zone for editing, but the zone itself
  * won't be saved into "permanent" state until `closeEditingShippingZone` is called.
  * @param {number} siteId Site ID.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const addNewShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_ADD, siteId };
@@ -28,7 +28,7 @@ export const addNewShippingZone = siteId => {
  * Opens the given Shipping Zone for editing it.
  * @param {number} siteId Site ID.
  * @param {number} id Shipping Zone ID to open.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const openShippingZoneForEdit = ( siteId, id ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_OPEN, siteId, id };
@@ -37,7 +37,7 @@ export const openShippingZoneForEdit = ( siteId, id ) => {
 /**
  * Saves the changes made to the Shipping Zone currently being edited, and stops editing it.
  * @param {number} siteId Site ID.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const closeEditingShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CLOSE, siteId };
@@ -47,7 +47,7 @@ export const closeEditingShippingZone = siteId => {
  * Stops editing the Shipping Zone currently being edited, discarding all the changes made to it since the modal
  * was opened.
  * @param {number} siteId Site ID.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const cancelEditingShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CANCEL, siteId };
@@ -57,7 +57,7 @@ export const cancelEditingShippingZone = siteId => {
  * Changes the name of the Shipping Zone currently being edited.
  * @param {number} siteId Site ID.
  * @param {string} name New name for the Shipping Zone.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const changeShippingZoneName = ( siteId, name ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME, siteId, name };
@@ -68,7 +68,7 @@ export const changeShippingZoneName = ( siteId, name ) => {
  * to the server.
  * @param {number} siteId Site ID.
  * @param {number} id Shipping Zone ID to delete.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const deleteShippingZone = ( siteId, id ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_REMOVE, siteId, id };
@@ -82,7 +82,7 @@ export const deleteShippingZone = ( siteId, id ) => {
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
  * @param {Function} [locationsFailAction] Action to be dispatched upon failure of execution.
  * @param {Function} [methodsFailAction] Action to be dispatched upon failure of execution.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export function createShippingZoneSaveActionList(
 	successAction,
@@ -105,7 +105,7 @@ export function createShippingZoneSaveActionList(
  * Deletes the shipping zone, its shipping methods and its locations.
  * @param {Function} [successAction] Action to be dispatched upon successful completion.
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export function createShippingZoneDeleteActionList( successAction, failureAction ) {
 	return {
@@ -118,7 +118,7 @@ export function createShippingZoneDeleteActionList( successAction, failureAction
 /**
  * Creates an action list to create the default Shipping Zones settings for a new store.
  *
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export function createAddDefultShippingZoneActionList() {
 	return {

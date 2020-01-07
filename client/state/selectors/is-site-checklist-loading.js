@@ -9,7 +9,7 @@ import { requestSiteChecklist } from 'state/checklist/actions';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {Bool}    Whether the checklist is loading
+ * @returns {Bool}    Whether the checklist is loading
  */
 export default function isSiteChecklistLoading( state, siteId ) {
 	return getRequest( state, requestSiteChecklist( siteId ) ).isLoading;

@@ -24,7 +24,7 @@ import {
  * Triggers a network request to fetch invites for the specified site.
  *
  * @param  {?number}  siteId Site ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSiteInvites( siteId ) {
 	return dispatch => {

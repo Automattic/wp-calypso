@@ -9,7 +9,7 @@ import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filte
  *
  * @param {object} state Global state tree
  * @param {string} filter taxonomy:term string
- * @return {string} The term part, or full string if term is ambiguous
+ * @returns {string} The term part, or full string if term is ambiguous
  */
 export default function getThemeFilterTermFromString( state, filter ) {
 	const term = filter.split( ':' )[ 1 ];

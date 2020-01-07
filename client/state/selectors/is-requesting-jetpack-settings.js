@@ -15,7 +15,7 @@ import { requestJetpackSettings } from 'state/jetpack/settings/actions';
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @param  {object}  query       An optional query to be passed to the JP settings endpoint
- * @return {boolean}             Whether Jetpack settings are currently being requested
+ * @returns {boolean}             Whether Jetpack settings are currently being requested
  */
 export default function isRequestingJetpackSettings( state, siteId, query ) {
 	return get( getRequest( state, requestJetpackSettings( siteId, query ) ), 'isLoading', false );

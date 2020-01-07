@@ -34,7 +34,7 @@ import refunds from './refunds/reducer';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isDeleting( state = {}, action ) {
 	switch ( action.type ) {
@@ -56,7 +56,7 @@ export function isDeleting( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -78,7 +78,7 @@ export function isLoading( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -99,7 +99,7 @@ export function isQueryLoading( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isUpdating( state = {}, action ) {
 	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
@@ -120,7 +120,7 @@ export function isUpdating( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	let orders;
@@ -143,7 +143,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
@@ -161,7 +161,7 @@ export function queries( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function total( state = 1, action ) {
 	switch ( action.type ) {

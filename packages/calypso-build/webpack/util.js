@@ -7,7 +7,7 @@ const webpack = require( 'webpack' );
  * Transform webpack output.filename and output.chunkFilename to CSS variants
  *
  * @param {(string|undefined)} name filename, chunkFilename or undefined
- * @return {(string|undefined)}     Transformed name or undefined
+ * @returns {(string|undefined)}     Transformed name or undefined
  */
 function cssNameFromFilename( name ) {
 	if ( name ) {

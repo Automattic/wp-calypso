@@ -5,7 +5,7 @@
  * See http://woocommerce.github.io/woocommerce-rest-api-docs/#order-billing-properties
  *
  * @param {object} address The address as returned from the remote site API
- * @return {object} An object with keys matching the expected AddressView props
+ * @returns {object} An object with keys matching the expected AddressView props
  */
 const getAddressViewFormat = address => {
 	return {

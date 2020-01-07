@@ -24,7 +24,7 @@ import {
  *
  * @param  {object} state Current generating state
  * @param  {object} action Action object
- * @return {object} Updated generating state
+ * @returns {object} Updated generating state
  */
 export const generating = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -59,7 +59,7 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current deleting state
  * @param  {object} action Action object
- * @return {object} Updated deleting state
+ * @returns {object} Updated deleting state
  */
 const deleting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -93,7 +93,7 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current stats
  * @param  {object} action Action object
- * @return {object} Updated stats
+ * @returns {object} Updated stats
  */
 const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

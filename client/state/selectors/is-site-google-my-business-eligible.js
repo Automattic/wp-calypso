@@ -15,7 +15,7 @@ import { FEATURE_GOOGLE_MY_BUSINESS, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/pl
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
- * @return {boolean} True if site has business plan
+ * @returns {boolean} True if site has business plan
  */
 export const siteHasEligibleWpcomPlan = createSelector(
 	( state, siteId ) => {
@@ -31,7 +31,7 @@ export const siteHasEligibleWpcomPlan = createSelector(
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
- * @return {boolean} True if site has business plan
+ * @returns {boolean} True if site has business plan
  */
 export const siteHasEligibleJetpackPlan = createSelector(
 	( state, siteId ) => {
@@ -49,7 +49,7 @@ export const siteHasEligibleJetpackPlan = createSelector(
  * - site has a business plan on wpcom or Jetpack premium/business
  * @param  {object}  state  Global state tree
  * @param  {string}  siteId The Site ID
- * @return {boolean} True if we should show the nudge
+ * @returns {boolean} True if we should show the nudge
  */
 export default function isSiteGoogleMyBusinessEligible( state, siteId ) {
 	return siteHasEligibleWpcomPlan( state, siteId ) || siteHasEligibleJetpackPlan( state, siteId );

@@ -18,7 +18,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  *
  * @param  {object}    state   Global state tree
  * @param  {number}    siteId  The ID of the site we're querying
- * @return {?string}           The default post format of that site
+ * @returns {?string}           The default post format of that site
  */
 export default function getSiteDefaultPostFormat( state, siteId ) {
 	const siteSettings = getSiteSettings( state, siteId );

@@ -31,7 +31,7 @@ import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } fr
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -63,7 +63,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const subscribedLists = withSchemaValidation(
 	subscriptionsSchema,
@@ -92,7 +92,7 @@ export const subscribedLists = withSchemaValidation(
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -116,7 +116,7 @@ export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = 
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
@@ -134,7 +134,7 @@ export function isRequestingList( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
@@ -152,7 +152,7 @@ export function isRequestingLists( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -174,7 +174,7 @@ export const errors = withSchemaValidation( errorsSchema, ( state = {}, action )
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function missingLists( state = [], action ) {
 	switch ( action.type ) {

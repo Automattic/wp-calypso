@@ -22,7 +22,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const requests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -70,7 +70,7 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -13,7 +13,7 @@ import debug from './debug';
  * Decodes a url-safe base64 encoded string.
  *
  * @param {string} str The url-safe base64 encoded string
- * @return {string} The decoded string
+ * @returns {string} The decoded string
  */
 function urlSafeBase64DecodeString( str ) {
 	const decodeMap = {
@@ -30,7 +30,7 @@ function urlSafeBase64DecodeString( str ) {
  * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
  *
  * @param {string} value Value to be decoded
- * @return {null|object} null or and object containing key/value pairs
+ * @returns {null|object} null or and object containing key/value pairs
  */
 function parseAmpEncodedParams( value ) {
 	value = value
@@ -55,7 +55,7 @@ function parseAmpEncodedParams( value ) {
  * This function is used to support AMP-compatible tracking.
  *
  * @param {string} url URL to be parsed like `document.location.href`.
- * @return {object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
+ * @returns {object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
  */
 export default function urlParseAmpCompatible( url ) {
 	const parsedUrl = parseUrl( url, true );

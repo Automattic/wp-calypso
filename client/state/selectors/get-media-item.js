@@ -3,7 +3,7 @@
  *
  *
  * @param {number}  mediaId Media ID
- * @return {?object}         Media object, if known
+ * @returns {?object}         Media object, if known
  */
 
 export default function getMediaItem( state, siteId, mediaId ) {

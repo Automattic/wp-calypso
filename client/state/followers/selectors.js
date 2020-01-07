@@ -8,7 +8,7 @@ import { getSerializedQuery } from 'state/followers/utils';
  *
  * @param  {object} state Global state tree
  * @param  {object} query Query paramaters by which the followers were fetched
- * @return {object}       List of followers keyed by follower id
+ * @returns {object}       List of followers keyed by follower id
  */
 export function getFollowersForQuery( state, query ) {
 	const serializedQuery = getSerializedQuery( query );

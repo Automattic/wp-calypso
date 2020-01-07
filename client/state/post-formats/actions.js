@@ -15,7 +15,7 @@ import {
  * retrieve post formats for a site.
  *
  * @param  {number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestPostFormats( siteId ) {
 	return dispatch => {

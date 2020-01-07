@@ -15,7 +15,7 @@ import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-s
  *
  * @param  {object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
- * @return {?boolean}          Whether the site is in development mode.
+ * @returns {?boolean}          Whether the site is in development mode.
  */
 export default function isJetpackSiteInDevelopmentMode( state, siteId ) {
 	const isDevMode = get(

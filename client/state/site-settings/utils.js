@@ -7,7 +7,7 @@ import { isPlainObject, values } from 'lodash';
  * Normalize API Settings
  *
  * @param {object} settings Raw API settings
- * @return {object}          Normalized settings
+ * @returns {object}          Normalized settings
  */
 
 export function normalizeSettings( settings ) {

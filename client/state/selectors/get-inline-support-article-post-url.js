@@ -5,6 +5,6 @@ import { get } from 'lodash';
 
 /**
  * @param {object} state Global app state
- * @return {object} ...
+ * @returns {object} ...
  */
 export default state => get( state, 'inlineSupportArticle.postUrl' );

@@ -20,7 +20,7 @@ import { itemsSchema } from './schema';
  *
  * @param {object} state - current state
  * @param {object} action - vouchers action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId, type, voucher, vouchers, serviceType } = action;
@@ -50,7 +50,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  *
  * @param {object} state - current state
  * @param {object} action - vouchers action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const requesting = ( state = {}, { type, siteId } ) => {
 	switch ( type ) {
@@ -76,7 +76,7 @@ export const requesting = ( state = {}, { type, siteId } ) => {
  *
  * @param {object} state - current state
  * @param {object} action - vouchers action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const errors = ( state = {}, { type, siteId, error } ) => {
 	switch ( type ) {

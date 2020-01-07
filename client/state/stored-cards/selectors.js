@@ -3,7 +3,7 @@
  *
  *
  * @param {object} state - current state object
- * @return {Array} Stored Cards
+ * @returns {Array} Stored Cards
  */
 
 export const getStoredCards = state => state.storedCards.items;
@@ -12,7 +12,7 @@ export const getStoredCards = state => state.storedCards.items;
  * Returns a Stored Card
  * @param  {object} state      global state
  * @param  {number} cardId  the card id
- * @return {object} the matching card if there is one
+ * @returns {object} the matching card if there is one
  */
 export const getStoredCardById = ( state, cardId ) =>
 	getStoredCards( state )

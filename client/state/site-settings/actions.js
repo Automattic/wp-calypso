@@ -22,7 +22,7 @@ import 'state/data-layer/wpcom/sites/homepage';
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings The site settings object
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function receiveSiteSettings( siteId, settings ) {
 	return {
@@ -37,7 +37,7 @@ export function receiveSiteSettings( siteId, settings ) {
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings The updated site settings
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function updateSiteSettings( siteId, settings ) {
 	return {
@@ -52,7 +52,7 @@ export function updateSiteSettings( siteId, settings ) {
  * retrieve site settings
  *
  * @param  {number} siteId Site ID
- * @return {Function}      Action thunk
+ * @returns {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
 	return dispatch => {

@@ -78,7 +78,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  *
  * @param  {object}  post       Post received
  * @param  {?string} saveMarker Save marker in the edits log
- * @return {object}             Action object
+ * @returns {object}             Action object
  */
 export function receivePost( post, saveMarker ) {
 	return receivePosts( [ post ], saveMarker );
@@ -90,7 +90,7 @@ export function receivePost( post, saveMarker ) {
  *
  * @param  {Array}   posts      Posts received
  * @param  {?string} saveMarker Save marker in the edits log
- * @return {object}             Action object
+ * @returns {object}             Action object
  */
 export function receivePosts( posts, saveMarker ) {
 	const action = { type: POSTS_RECEIVE, posts };
@@ -105,7 +105,7 @@ export function receivePosts( posts, saveMarker ) {
  *
  * @param  {number}   siteId Site ID
  * @param  {string}   query  Post query
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
 	if ( ! siteId ) {
@@ -120,7 +120,7 @@ export function requestSitePosts( siteId, query = {} ) {
  * posts across all of the current user's sites for the specified query.
  *
  * @param  {string}   query Post query
- * @return {Function}       Action thunk
+ * @returns {Function}       Action thunk
  */
 export function requestAllSitesPosts( query = {} ) {
 	return requestPosts( null, query );
@@ -131,7 +131,7 @@ export function requestAllSitesPosts( query = {} ) {
  *
  * @param  {?number}  siteId Site ID
  * @param  {string}   query  Post query
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 function requestPosts( siteId, query = {} ) {
 	return dispatch => {
@@ -171,7 +171,7 @@ function requestPosts( siteId, query = {} ) {
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSitePost( siteId, postId ) {
 	return dispatch => {
@@ -211,7 +211,7 @@ export function requestSitePost( siteId, postId ) {
  * @param  {number} siteId Site ID
  * @param  {number} postId Post ID
  * @param  {object} post   Post attribute updates
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function editPost( siteId, postId = null, post ) {
 	return {
@@ -263,7 +263,7 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
  * @param  {number}   postId     Post ID
  * @param  {object}   savedPost  Updated post
  * @param  {object}   post       Post attributes
- * @return {object}              Action thunk
+ * @returns {object}              Action thunk
  */
 export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 	return {
@@ -282,7 +282,7 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @param  {object}   post   Post attributes
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
 	return dispatch => {
@@ -323,7 +323,7 @@ export function savePost( siteId, postId = null, post ) {
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function trashPost( siteId, postId ) {
 	return dispatch => {
@@ -376,7 +376,7 @@ export function trashPost( siteId, postId ) {
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function deletePost( siteId, postId ) {
 	return dispatch => {
@@ -419,7 +419,7 @@ export function deletePost( siteId, postId ) {
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function restorePost( siteId, postId ) {
 	return dispatch => {
@@ -464,7 +464,7 @@ export function restorePost( siteId, postId ) {
  * @param  {string}   taxonomy Taxonomy Slug
  * @param  {object}   term     Object of new term attributes
  * @param  {number}   postId   ID of post to which term is associated
- * @return {Function}          Action thunk
+ * @returns {Function}          Action thunk
  */
 export function addTermForPost( siteId, taxonomy, term, postId ) {
 	return ( dispatch, getState ) => {
@@ -526,7 +526,7 @@ function normalizePost( post ) {
 /**
  * Normalizes attributes to API expectations
  * @param  {object} attributes - changed attributes
- * @return {object} - normalized attributes
+ * @returns {object} - normalized attributes
  */
 function normalizeApiAttributes( attributes ) {
 	attributes = clone( attributes );
@@ -544,7 +544,7 @@ function normalizeApiAttributes( attributes ) {
  *
  * @param {object} siteId Site ID
  * @param {number} postId Post ID to load
- * @return {Promise<?Object>} The edited post object
+ * @returns {Promise<?Object>} The edited post object
  */
 export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {
 	const currentSiteId = getSelectedSiteId( getState() );

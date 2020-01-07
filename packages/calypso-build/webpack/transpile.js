@@ -9,7 +9,7 @@
  * @param {RegExp|Function} _.exclude Directories to exclude when looking for files to transpile
  * @param {RegExp|Function} _.include Directories to inclued when looking for files to transpile
  *
- * @return {object} Webpack loader object
+ * @returns {object} Webpack loader object
  */
 module.exports.loader = ( {
 	workerCount,

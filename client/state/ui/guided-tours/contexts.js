@@ -26,7 +26,7 @@ export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
  * Returns a selector that tests if the current user is in a given section
  *
  * @param {string} sectionName Name of section
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const inSection = sectionName => state => getSectionName( state ) === sectionName;
 
@@ -34,7 +34,7 @@ export const inSection = sectionName => state => getSectionName( state ) === sec
  * Returns a selector that tests if a feature is enabled in config
  *
  * @param {string} feature Name of feature
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const isEnabled = feature => () => config.isEnabled( feature );
 
@@ -42,7 +42,7 @@ export const isEnabled = feature => () => config.isEnabled( feature );
  * Returns milliseconds since registration date of the current user
  *
  * @param {object} state Global state tree
- * @return {number|boolean} Milliseconds since registration, false if cannot be determined
+ * @returns {number|boolean} Milliseconds since registration, false if cannot be determined
  */
 const timeSinceUserRegistration = state => {
 	const user = getCurrentUser( state );
@@ -54,7 +54,7 @@ const timeSinceUserRegistration = state => {
  * Returns a selector that tests if the user is newer than a given time
  *
  * @param {number} age Number of milliseconds
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const isUserNewerThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
@@ -65,7 +65,7 @@ export const isUserNewerThan = age => state => {
  * Returns true if the user is considered "new" (less than a week since registration)
  *
  * @param {object} state Global state tree
- * @return {boolean} True if user is new, false otherwise
+ * @returns {boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
 	return isUserNewerThan( WEEK_IN_MILLISECONDS )( state );
@@ -75,7 +75,7 @@ export const isNewUser = state => {
  * Returns true if the user is NOT considered "new" (less than a week since registration)
  *
  * @param {object} state Global state tree
- * @return {boolean} True if user is NOT new, false otherwise
+ * @returns {boolean} True if user is NOT new, false otherwise
  */
 export const isNotNewUser = state => {
 	return ! isNewUser( state );
@@ -85,7 +85,7 @@ export const isNotNewUser = state => {
  * Returns a selector that tests if the user is older than a given time
  *
  * @param {number} age Number of milliseconds
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const isUserOlderThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
@@ -96,7 +96,7 @@ export const isUserOlderThan = age => state => {
  * Returns a selector that tests if the user has registered before given date
  *
  * @param {Date} date Date of registration
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const hasUserRegisteredBefore = date => state => {
 	const compareDate = date && Date.parse( date );
@@ -117,7 +117,7 @@ export const hasUserInteractedWithComponent = () => () => false;
  * @see client/state/analytics
  *
  * @param {string} eventName Name of analytics event
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const hasAnalyticsEventFired = eventName => state => {
 	const last = getLastAction( state );
@@ -131,7 +131,7 @@ export const hasAnalyticsEventFired = eventName => state => {
  * Returns true if the selected site can be previewed
  *
  * @param {object} state Global state tree
- * @return {boolean} True if selected site can be previewed, false otherwise.
+ * @returns {boolean} True if selected site can be previewed, false otherwise.
  */
 export const isSelectedSitePreviewable = state =>
 	get( getSelectedSite( state ), 'is_previewable', false );
@@ -140,7 +140,7 @@ export const isSelectedSitePreviewable = state =>
  * Returns true if the current user can run customizer for the selected site
  *
  * @param {object} state Global state tree
- * @return {boolean} True if user can run customizer, false otherwise.
+ * @returns {boolean} True if user can run customizer, false otherwise.
  */
 export const isSelectedSiteCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
@@ -149,7 +149,7 @@ export const isSelectedSiteCustomizable = state =>
  * Returns true if the selected site has any media files.
  *
  * @param {object} state Global state tree
- * @return {boolean} True if site has any media files, false otherwise.
+ * @returns {boolean} True if site has any media files, false otherwise.
  */
 export const doesSelectedSiteHaveMediaFiles = state => {
 	const siteId = getSelectedSiteId( state );
@@ -167,7 +167,7 @@ export const doesSelectedSiteHaveMediaFiles = state => {
  *
  * @param {string} testName Name of A/B test
  * @param {string} variant Variant identifier
- * @return {Function} Selector function
+ * @returns {Function} Selector function
  */
 export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName ) === variant;
 
@@ -175,7 +175,7 @@ export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName
  * Returns true if the selected site has an unchanged site title
  *
  * @param {object} state Global state tree
- * @return {boolean} True if site title is default, false otherwise.
+ * @returns {boolean} True if site title is default, false otherwise.
  */
 export const hasSelectedSiteDefaultSiteTitle = state => {
 	const siteId = getSelectedSiteId( state );
@@ -186,7 +186,7 @@ export const hasSelectedSiteDefaultSiteTitle = state => {
  * Returns true if the selected site has a paid plan
  *
  * @param {object} state Global state tree
- * @return {boolean} True if selected site is on a paid plan, false otherwise.
+ * @returns {boolean} True if selected site is on a paid plan, false otherwise.
  */
 export const isSelectedSitePlanPaid = state => {
 	const siteId = getSelectedSiteId( state );
@@ -197,7 +197,7 @@ export const isSelectedSitePlanPaid = state => {
  * Returns true if the selected site has a free plan.
  *
  * @param {object} state Global state tree
- * @return {boolean} True if selected site is on a free plan, false otherwise.
+ * @returns {boolean} True if selected site is on a free plan, false otherwise.
  */
 export const isSelectedSitePlanFree = state => {
 	const siteId = getSelectedSiteId( state );
@@ -208,7 +208,7 @@ export const isSelectedSitePlanFree = state => {
  * Returns true if user has just pasted something from Google Docs.
  *
  * @param {object} state Global state tree
- * @return {boolean} True if user has just pasted something from Google Docs, false otherwise.
+ * @returns {boolean} True if user has just pasted something from Google Docs, false otherwise.
  */
 export const hasUserPastedFromGoogleDocs = state => {
 	const action = getLastAction( state ) || false;
@@ -220,7 +220,7 @@ export const hasUserPastedFromGoogleDocs = state => {
  * Used in the siteTitle tour.
  *
  * @param {object} state Global state tree
- * @return {boolean} True if user can edit settings, false otherwise.
+ * @returns {boolean} True if user can edit settings, false otherwise.
  */
 export const canUserEditSettingsOfSelectedSite = state => {
 	const siteId = getSelectedSiteId( state );
@@ -232,7 +232,7 @@ export const canUserEditSettingsOfSelectedSite = state => {
  * Used in activity log tours.
  *
  * @param {object} state Global state tree
- * @return {boolean} True if site is Jetpack, false otherwise.
+ * @returns {boolean} True if site is Jetpack, false otherwise.
  */
 export const isSelectedSiteJetpack = state => {
 	const siteId = getSelectedSiteId( state );
@@ -244,7 +244,7 @@ export const isSelectedSiteJetpack = state => {
  * Used in activity log tours.
  *
  * @param {object} state Global state tree
- * @return {boolean} True is not Jetpack, false otherwise.
+ * @returns {boolean} True is not Jetpack, false otherwise.
  */
 export const isSelectedSiteNotJetpack = state => {
 	const siteId = getSelectedSiteId( state );

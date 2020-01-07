@@ -27,7 +27,7 @@ import { UNITS } from './constants';
  * @param {object|undefined} previousItem - the previous data point, if it exists
  * @param {string} attr - the property name to compare
  * @param {string} unit - day, week, month, or year
- * @return {Delta} - An object used to render the UI element
+ * @returns {Delta} - An object used to render the UI element
  */
 export function calculateDelta( item, previousItem, attr, unit ) {
 	const negativeIsBeneficialAttributes = [ 'total_refund' ];
@@ -68,7 +68,7 @@ export function calculateDelta( item, previousItem, attr, unit ) {
  *
  * @param {string} date - Date to calculate from
  * @param {string} unit - Unit to use in calculation
- * @return {string} - YYYY-MM-DD format of the date to be queried
+ * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getStartDate( date, unit ) {
 	const unitConfig = UNITS[ unit ];
@@ -85,7 +85,7 @@ export function getStartDate( date, unit ) {
  * Given a startDate query parameter, determine which date to send the backend on a request for data.
  *
  * @param {object} context - Object supplied by page function
- * @return {string} - YYYY-MM-DD format of the date to be queried
+ * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getQueryDate( context ) {
 	const { unit } = context.params;
@@ -98,7 +98,7 @@ export function getQueryDate( context ) {
  *
  * @param {string} date - string date in YYYY-MM-DD format
  * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
- * @return {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
+ * @returns {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
  */
 export function getUnitPeriod( date, unit ) {
 	return moment( date ).format( UNITS[ unit ].format );
@@ -110,7 +110,7 @@ export function getUnitPeriod( date, unit ) {
  *
  * @param {string} date - string date in YYYY-MM-DD format
  * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
- * @return {string} - YYYY-MM-DD format of the date to be queried
+ * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getEndPeriod( date, unit ) {
 	return unit === 'week'
@@ -128,7 +128,7 @@ export function getEndPeriod( date, unit ) {
  *
  * @param {string} date - string date in YYYY-MM-DD format
  * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
- * @return {string} - YYYY-MM-DD format of the date to be queried
+ * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getStartPeriod( date, unit ) {
 	return unit === 'week'
@@ -147,7 +147,7 @@ export function getStartPeriod( date, unit ) {
  * @param {string} format - string of 'text', 'number' or 'currency'
  * @param {string} [code] - optional currency code
  * @param {number} [decimals] - optional number of decimal places
- * @return {string|number} - formatted number or string value
+ * @returns {string|number} - formatted number or string value
  */
 export function formatValue( value, format, code, decimals ) {
 	switch ( format ) {
@@ -169,7 +169,7 @@ export function formatValue( value, format, code, decimals ) {
  * @param {Array} deltas - an array of delta objects
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
- * @return {Array} - array of delta objects matching selectedDate
+ * @returns {Array} - array of delta objects matching selectedDate
  */
 export function getDelta( deltas, selectedDate, stat ) {
 	const selectedDeltas = find( deltas, item => item.period === selectedDate );
@@ -183,7 +183,7 @@ export function getDelta( deltas, selectedDate, stat ) {
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
  * @param {string} unit - unit/period format for the data provided
- * @return {object} - Object containing data from calculateDelta
+ * @returns {object} - Object containing data from calculateDelta
  */
 export function getDeltaFromData( data, selectedDate, stat, unit ) {
 	if ( ! data || ! Array.isArray( data ) || data.length < 3 ) {
@@ -212,7 +212,7 @@ export function getDeltaFromData( data, selectedDate, stat, unit ) {
  * @param {Array} visitorData - an array of API data from the 'visits' stat endpoint
  * @param {Array} orderData -  an array of API data from the orders endpoint
  * @param {string} unit - unit/period format for the data provided
- * @return {object} - Object containing data from calculateDelta
+ * @returns {object} - Object containing data from calculateDelta
  */
 export function getConversionRateData( visitorData, orderData, unit ) {
 	return visitorData.map( visitorRow => {
@@ -239,7 +239,7 @@ export function getConversionRateData( visitorData, orderData, unit ) {
  * @param {string} unit - unit/period format for the data provided
  * @param {string} baseDate - string of date in 'YYYY-MM-DD'
  * @param {object} overrides - Object of query overrides. Example: { referrerQuery: { quantity: 1 }
- * @return {object} - Object containing data from calculateDelta
+ * @returns {object} - Object containing data from calculateDelta
  */
 export function getQueries( unit, baseDate, overrides = {} ) {
 	const baseQuery = { unit };
@@ -292,7 +292,7 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  * @param {string} unit - day, week, month, or year
  * @param {string} slug - site slug
  * @param {object} urlQuery - url query params represented as an object
- * @return {string} - widget path url portion
+ * @returns {string} - widget path url portion
  */
 export function getWidgetPath( unit, slug, urlQuery ) {
 	const query = qs.stringify( urlQuery, { addQueryPrefix: true } );

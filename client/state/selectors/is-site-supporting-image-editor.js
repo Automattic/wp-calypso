@@ -11,7 +11,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether site supports editing images
+ * @returns {boolean}        Whether site supports editing images
  */
 export default function isSiteSupportingImageEditor( state, siteId ) {
 	return (

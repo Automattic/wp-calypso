@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean} Whether status are being requested
+ * @returns {boolean} Whether status are being requested
  */
 export function isRequestingStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'status', 'requesting', siteId ], false );
@@ -20,7 +20,7 @@ export function isRequestingStatus( state, siteId ) {
  *
  * @param  {object} state Global state tree
  * @param  {number} siteId Site ID
- * @return {object} Status
+ * @returns {object} Status
  */
 export function getStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'status', 'items', siteId ], {} );

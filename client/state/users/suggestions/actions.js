@@ -16,7 +16,7 @@ import {
  *
  * @param  {number} siteId  	Site ID
  * @param  {object} suggestions User suggestions
- * @return {object}         	Action object
+ * @returns {object}         	Action object
  */
 export function receiveUserSuggestions( siteId, suggestions ) {
 	return {
@@ -31,7 +31,7 @@ export function receiveUserSuggestions( siteId, suggestions ) {
  * retrieve user suggestions for a site.
  *
  * @param  {number}   siteId  Site ID
- * @return {Function}         Action thunk
+ * @returns {Function}         Action thunk
  */
 export function requestUserSuggestions( siteId ) {
 	return dispatch => {

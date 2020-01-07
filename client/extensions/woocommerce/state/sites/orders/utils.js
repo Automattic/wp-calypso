@@ -21,7 +21,7 @@ export const DEFAULT_QUERY = {
  * default order query.
  *
  * @param  {object} query Orders query
- * @return {object}       Normalized orders query
+ * @returns {object}       Normalized orders query
  */
 export function getNormalizedOrdersQuery( query ) {
 	if ( query.status ) {
@@ -34,7 +34,7 @@ export function getNormalizedOrdersQuery( query ) {
  * Returns a serialized orders query
  *
  * @param  {object} query  Orders query
- * @return {string}        Serialized orders query
+ * @returns {string}        Serialized orders query
  */
 export function getSerializedOrdersQuery( query = {} ) {
 	const normalizedQuery = getNormalizedOrdersQuery( query );
@@ -49,7 +49,7 @@ export function getSerializedOrdersQuery( query = {} ) {
  * to correctly save them as new line items/fee items.
  *
  * @param  {object} order  Order object
- * @return {object}        Order object, with no temporary IDs
+ * @returns {object}        Order object, with no temporary IDs
  */
 export function removeTemporaryIds( order ) {
 	const newOrder = { ...order };
@@ -71,7 +71,7 @@ export function removeTemporaryIds( order ) {
  * Convert all order values to the type expected by the API
  *
  * @param  {object} order  Order object
- * @return {object}        Order object, with no temporary IDs
+ * @returns {object}        Order object, with no temporary IDs
  */
 export function transformOrderForApi( order ) {
 	const totalsAndTaxes = [

@@ -15,7 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number|object} The ID of the current order (or object placeholder, if a new order)
+ * @returns {number|object} The ID of the current order (or object placeholder, if a new order)
  */
 export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -28,7 +28,7 @@ export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( s
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number} The current page being shown to the user. Defaults to 1.
+ * @returns {number} The current page being shown to the user. Defaults to 1.
  */
 export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -41,7 +41,7 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string} The current search term being shown to the user. Defaults to "".
+ * @returns {string} The current search term being shown to the user. Defaults to "".
  */
 export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -53,7 +53,7 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
 
 /**
  * Get a default order "frame", so we have values for components.
- * @return {object} The local edits made to the current order
+ * @returns {object} The local edits made to the current order
  */
 export const getDefaultEmptyOrder = () => {
 	const currency = 'USD';
@@ -86,7 +86,7 @@ export const getDefaultEmptyOrder = () => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The local edits made to the current order
+ * @returns {object} The local edits made to the current order
  */
 export const getOrderEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -99,7 +99,7 @@ export const getOrderEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The order merged with changes, or just the changes if a newly created order
+ * @returns {object} The order merged with changes, or just the changes if a newly created order
  */
 export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orderId = getCurrentlyEditingOrderId( state, siteId );
@@ -123,7 +123,7 @@ export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} True if there is an order ID tracked as "editing"
+ * @returns {boolean} True if there is an order ID tracked as "editing"
  */
 export const isCurrentlyEditingOrder = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return !! getCurrentlyEditingOrderId( state, siteId );

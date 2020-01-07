@@ -9,7 +9,7 @@ import getTimezonesLabels from 'state/selectors/get-timezones-labels';
  *
  * @param {object}  state - Global state tree
  * @param {string} key - timezone value
- * @return {string} the timezone label
+ * @returns {string} the timezone label
  */
 export default function getTimezonesLabel( state, key ) {
 	const labels = getTimezonesLabels( state );

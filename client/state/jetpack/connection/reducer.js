@@ -28,7 +28,7 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  *
  * @param  {Array}  state  Current state
  * @param  {object} action action
- * @return {Array}         Updated state
+ * @returns {Array}         Updated state
  */
 export const items = keyedReducer(
 	'siteId',
@@ -50,7 +50,7 @@ export const items = keyedReducer(
  *
  * @param {object} state - current state
  * @param {object} action - action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const requests = keyedReducer(
 	'siteId',
@@ -74,7 +74,7 @@ export const requests = keyedReducer(
  *
  * @param  {Array}  state  Current state
  * @param  {object} action action
- * @return {Array}         Updated state
+ * @returns {Array}         Updated state
  */
 export const dataItems = keyedReducer(
 	'siteId',
@@ -96,7 +96,7 @@ export const dataItems = keyedReducer(
  *
  * @param {object} state - current state
  * @param {object} action - action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const dataRequests = keyedReducer(
 	'siteId',

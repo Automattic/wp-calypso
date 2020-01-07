@@ -39,7 +39,7 @@ export const UPWORK_LOCALES = [
 
 /**
  * @param state Global state tree
- * @return Whether or not this customer should receive Upwork support
+ * @returns Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ): boolean {
 	if ( ! includes( UPWORK_LOCALES, getCurrentUserLocale( state ) ) ) {

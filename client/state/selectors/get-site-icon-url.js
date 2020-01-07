@@ -17,7 +17,7 @@ import getSiteIconId from 'state/selectors/get-site-icon-id';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?string}        URL of site icon, if known and exists
+ * @returns {?string}        URL of site icon, if known and exists
  */
 export default function getSiteIconUrl( state, siteId ) {
 	const iconId = getSiteIconId( state, siteId );

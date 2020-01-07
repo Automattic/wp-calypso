@@ -19,7 +19,7 @@ import {
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings The sharing buttons object
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function receiveSharingButtons( siteId, settings ) {
 	return {
@@ -34,7 +34,7 @@ export function receiveSharingButtons( siteId, settings ) {
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings The updated sharing buttons
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function updateSharingButtons( siteId, settings ) {
 	return {
@@ -49,7 +49,7 @@ export function updateSharingButtons( siteId, settings ) {
  * retrieve sharing buttons
  *
  * @param  {number} siteId Site ID
- * @return {Function}      Action thunk
+ * @returns {Function}      Action thunk
  */
 export function requestSharingButtons( siteId ) {
 	return dispatch => {
@@ -84,7 +84,7 @@ export function requestSharingButtons( siteId ) {
  *
  * @param  {number} siteId Site ID
  * @param  {object} settings The sharing buttons to save
- * @return {Function}      Action thunk
+ * @returns {Function}      Action thunk
  */
 export function saveSharingButtons( siteId, settings ) {
 	return dispatch => {

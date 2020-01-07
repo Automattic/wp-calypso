@@ -11,7 +11,7 @@ import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( domainTransferSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

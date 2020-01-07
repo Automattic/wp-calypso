@@ -119,7 +119,7 @@ export function handleProductActionListCreate( store, action ) {
  * @param {object} [variationEdits=all edits] The variation edits to be included in the Action List
  * @param {object} [onSuccess] Action to be dispatched upon successful action list completion.
  * @param {object} [onFailure] Action to be dispatched upon failure of action list execution.
- * @return {object} An Action List object.
+ * @returns {object} An Action List object.
  */
 export function makeProductActionList(
 	rootState,

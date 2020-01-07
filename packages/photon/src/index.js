@@ -28,7 +28,7 @@ const mappings = {
  *
  * @param {string} imageUrl - the URL of the image to run through Photon
  * @param {object} [opts] - optional options object with Photon options
- * @return {string} The generated Photon URL string
+ * @returns {string} The generated Photon URL string
  * @api public
  */
 export default function photon( imageUrl, opts ) {
@@ -99,7 +99,7 @@ function isAlreadyPhotoned( host ) {
  *
  * Statically hash the subdomain based on the URL, to optimize browser caches.
  * @param  {string} pathname The pathname to use
- * @return {string}          The hostname for the pathname
+ * @returns {string}          The hostname for the pathname
  */
 function serverFromPathname( pathname ) {
 	const hash = crc32( pathname );

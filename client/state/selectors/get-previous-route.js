@@ -11,7 +11,7 @@ import getPreviousQuery from 'state/selectors/get-previous-query';
 /**
  * Gets the previous route set by a ROUTE_SET action
  * @param {object} state - global redux state
- * @return {string} previous route value
+ * @returns {string} previous route value
  */
 
 export const getPreviousRoute = state => {

@@ -13,7 +13,7 @@ import getSiteCollisions from './get-site-collisions';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether collision exists
+ * @returns {boolean}        Whether collision exists
  */
 export default function isSiteConflicting( state, siteId ) {
 	return includes( getSiteCollisions( state ), siteId );

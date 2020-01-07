@@ -14,7 +14,7 @@ import { combineReducers } from 'state/utils';
  *
  * @param  {string} state Current poster URL
  * @param  {object} action Action object
- * @return {string} Updated poster URL
+ * @returns {string} Updated poster URL
  */
 export const url = ( state = null, { type, posterUrl } ) =>
 	VIDEO_EDITOR_SET_POSTER_URL === type ? posterUrl : state;
@@ -24,7 +24,7 @@ export const url = ( state = null, { type, posterUrl } ) =>
  *
  * @param  {number} state Current upload progress of the poster
  * @param  {object} action Action object
- * @return {number} Updated upload progress of the poster
+ * @returns {number} Updated upload progress of the poster
  */
 export const uploadProgress = ( state = null, { type, percentage } ) => {
 	if ( VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS === type ) {
@@ -43,7 +43,7 @@ export const uploadProgress = ( state = null, { type, percentage } ) => {
  *
  * @param  {boolean} state Whether or not an error was to be shown
  * @param  {object} action Action object
- * @return {boolean} Whether or not an error should now be shown
+ * @returns {boolean} Whether or not an error should now be shown
  */
 export const showError = ( state, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 

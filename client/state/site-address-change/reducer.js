@@ -24,7 +24,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated rename request state
+ * @returns {object}        Updated rename request state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -59,7 +59,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state 	Current rename requesting state
  * @param  {object} action 	Action object
- * @return {object} 		Updated rename request state
+ * @returns {object} 		Updated rename request state
  */
 export const status = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

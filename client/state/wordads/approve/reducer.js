@@ -16,7 +16,7 @@ import { combineReducers } from 'state/utils';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -34,7 +34,7 @@ export function requesting( state = {}, action ) {
  * Keeps track of all WordAds errors, indexed by siteId
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requestErrors( state = {}, action ) {
 	switch ( action.type ) {
@@ -56,7 +56,7 @@ export function requestErrors( state = {}, action ) {
  * Keeps track of all WordAds request successes, indexed by siteId
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requestSuccess( state = {}, action ) {
 	switch ( action.type ) {

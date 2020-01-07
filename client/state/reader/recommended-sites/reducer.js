@@ -15,7 +15,7 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  *
  * @param  {Array} state  Current state
  * @param  {object} action Action payload
- * @return {Array}        Updated state
+ * @returns {Array}        Updated state
  */
 export const items = keyedReducer(
 	'seed',
@@ -35,7 +35,7 @@ export const items = keyedReducer(
  *
  * @param  {Array} state Current state
  * @param  {object} action Action payload
- * @return {Array}        Updated state
+ * @returns {Array}        Updated state
  */
 export const pagingOffset = keyedReducer(
 	'seed',

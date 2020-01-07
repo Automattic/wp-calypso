@@ -3,7 +3,7 @@
  * __(), _n(), _nx(), _x()
  *
  * @param {object} properties - properties describing translation request
- * @return {string}            returns the function name
+ * @returns {string}            returns the function name
  */
 function getGlotPressFunction( properties ) {
 	let wpFunc = [ '_' ];
@@ -29,7 +29,7 @@ function getGlotPressFunction( properties ) {
  * request found in the client code
  * @param  {object} properties - properties describing translation request
  * @param  {string} textdomain - optional string to be added as a textdomain value
- * @return {string}            the equivalent php code for each translation request
+ * @returns {string}            the equivalent php code for each translation request
  */
 function buildPHPString( properties, textdomain ) {
 	const wpFunc = getGlotPressFunction( properties );
@@ -72,7 +72,7 @@ function buildPHPString( properties, textdomain ) {
  * @param  {string} options.phpArrayName Name of the array in the php resulting php file
  * @param  {string} options.projectName  Project name
  * @param  {string} options.textDomain   Text domain
- * @return {string}                      string representation of the final php file
+ * @returns {string}                      string representation of the final php file
  */
 module.exports = function formatInPHP( matches, options ) {
 	const arrayName = options.phpArrayName || options.projectName + '_i18n_strings';

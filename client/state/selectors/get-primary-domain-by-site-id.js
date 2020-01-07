@@ -10,7 +10,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
  *
  * @param {object} state - current state object
  * @param {object} siteId - site object
- * @return {object} primary domain
+ * @returns {object} primary domain
  */
 export default function getPrimaryDomainBySiteId( state, siteId ) {
 	const domains = getDomainsBySiteId( state, siteId );

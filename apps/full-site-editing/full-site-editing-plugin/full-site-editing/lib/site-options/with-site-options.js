@@ -32,7 +32,7 @@ import { useSiteOptions } from './use-site-options';
  *                         WordPress option to fetch, and `defaultValue`, the
  *                         value to use while the option is fetching.
  *
- * @return {Component} The higher order component.
+ * @returns {Component} The higher order component.
  *
  * In the following example, withSiteOptions is called with an object mapping a
  * name for the option to some information about it. In particular, optionName

@@ -18,7 +18,7 @@ import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './u
  * @param  {number}  siteId Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query  Taxonomy query object
- * @return {boolean}        Whether terms are being requested
+ * @returns {boolean}        Whether terms are being requested
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query );
@@ -33,7 +33,7 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {boolean}           Terms for the query
+ * @returns {boolean}           Terms for the query
  */
 export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
 	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );
@@ -55,7 +55,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?Array}           Terms for the query
+ * @returns {?Array}           Terms for the query
  */
 export const getTermsForQuery = createSelector(
 	( state, siteId, taxonomy, query ) => {
@@ -81,7 +81,7 @@ export const getTermsForQuery = createSelector(
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?Array}           Terms for the query
+ * @returns {?Array}           Terms for the query
  */
 export const getTermsForQueryIgnoringPage = createSelector(
 	( state, siteId, taxonomy, query ) => {
@@ -107,7 +107,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?number}          Last terms page
+ * @returns {?number}          Last terms page
  */
 export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
@@ -129,7 +129,7 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy slug
- * @return {?Array}          Terms
+ * @returns {?Array}          Terms
  */
 export function getTerms( state, siteId, taxonomy ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
@@ -147,7 +147,7 @@ export function getTerms( state, siteId, taxonomy ) {
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {number}  termId   Term ID
- * @return {?object}         Term
+ * @returns {?object}         Term
  */
 export function getTerm( state, siteId, taxonomy, termId ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
@@ -171,7 +171,7 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {object}  query    Terms query object
- * @return {?number}          Count terms
+ * @returns {?number}          Count terms
  */
 export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );

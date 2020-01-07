@@ -17,7 +17,7 @@ import {
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
  * @param  {object} counts   Mapping of post status to count
- * @return {object}          Action object
+ * @returns {object}          Action object
  */
 export function receivePostCounts( siteId, postType, counts ) {
 	return {
@@ -34,7 +34,7 @@ export function receivePostCounts( siteId, postType, counts ) {
  *
  * @param  {number}   siteId   Site ID
  * @param  {string}   postType Post type
- * @return {Function}          Action thunk
+ * @returns {Function}          Action thunk
  */
 export function requestPostCounts( siteId, postType ) {
 	return dispatch => {

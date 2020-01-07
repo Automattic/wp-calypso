@@ -14,7 +14,7 @@ import { isPlan } from 'lib/products-values';
  * Whether the user currently has any paid plans
  *
  * @param {object} state  Global state tree
- * @return {object}       Site object
+ * @returns {object}       Site object
  */
 export default createSelector(
 	state => some( getSitesItems( state ), site => isPlan( site.plan ) ),

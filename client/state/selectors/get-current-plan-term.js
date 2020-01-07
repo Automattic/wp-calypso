@@ -10,7 +10,7 @@ import { getSitePlan } from 'state/sites/selectors';
  *
  * @param {object} state Current state
  * @param {number} siteId Site ID
- * @return {string} Human-readable interval type
+ * @returns {string} Human-readable interval type
  */
 export default function getTermFromCurrentPlan( state, siteId ) {
 	const currentPlanProduct = getSitePlan( state, siteId );

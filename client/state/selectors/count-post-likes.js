@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post ID
- * @return {Array}          Post Likes
+ * @returns {Array}          Post Likes
  */
 export default function countPostLikes( state, siteId, postId ) {
 	return get( state.posts.likes.items, [ siteId, postId, 'found' ], null );

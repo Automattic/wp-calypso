@@ -37,7 +37,7 @@ const createRequestingReducer = requesting => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -88,7 +88,7 @@ function mediaItemsReducer( state, { siteId, data } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( shortcodesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

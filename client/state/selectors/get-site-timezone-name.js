@@ -12,7 +12,7 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
  *
  * @param  {object}  state - Global state tree
  * @param  {number}  siteId - Site ID
- * @return {?string} site setting timezone
+ * @returns {?string} site setting timezone
  */
 export default function getSiteTimezoneName( state, siteId ) {
 	const timezone_string = getSiteTimezoneValue( state, siteId );

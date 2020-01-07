@@ -14,7 +14,7 @@ import { getPreference } from 'state/preferences/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {boolean} True if the nudge has been dismissed
+ * @returns {boolean} True if the nudge has been dismissed
  */
 export default function isECommerceManageNudgeDismissed( state, siteId ) {
 	const preference = getPreference( state, 'ecommerce-manage-dismissible-nudge' ) || {};

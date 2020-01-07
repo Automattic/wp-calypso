@@ -28,7 +28,7 @@ class Item extends PureComponent {
 	 * Highlights the part of the text that matches the query.
 	 * @param  {string} text  Text.
 	 * @param  {string} query The text to be matched.
-	 * @return {element}      A React element including the highlighted text.
+	 * @returns {element}      A React element including the highlighted text.
 	 */
 	createTextWithHighlight( text, query ) {
 		const re = new RegExp( '(' + query + ')', 'gi' );

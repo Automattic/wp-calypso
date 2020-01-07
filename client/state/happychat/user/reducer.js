@@ -18,7 +18,7 @@ import {
  *
  *
  * @param {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = null, action ) => {
 	switch ( action.type ) {

@@ -8,7 +8,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?object}        Site object
+ * @returns {?object}        Site object
  */
 export default ( state, siteId ) => {
 	return getSitesItems( state )[ siteId ] || null;

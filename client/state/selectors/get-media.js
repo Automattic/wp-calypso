@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  query  Query object
- * @return {?Array}         Media
+ * @returns {?Array}         Media
  */
 
 export default function getMedia( state, siteId, query ) {

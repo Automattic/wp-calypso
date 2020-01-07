@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}    state   Global state tree
  * @param  {number}    siteId  The ID of the site we're querying
- * @return {?boolean}          Whether site is connected to WordPress.com.
+ * @returns {?boolean}          Whether site is connected to WordPress.com.
  */
 export default function getSiteConnectionStatus( state, siteId ) {
 	return get( state.sites.connection.items, siteId, null );

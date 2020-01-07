@@ -25,7 +25,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {object} query Query object (unused).
 	 * @param  {object} itemA First item
 	 * @param  {object} itemB Second item
-	 * @return {number}       0 if equal, less than 0 if itemA is first,
+	 * @returns {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
 	static compare( query, a, b ) {
@@ -43,7 +43,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {boolean}       Whether item matches query
+	 * @returns {boolean}       Whether item matches query
 	 */
 	static matches = overEvery( [
 		ActivityQueryManager.matchDateStart,
@@ -55,7 +55,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {boolean}       Whether item matches query.dateStart
+	 * @returns {boolean}       Whether item matches query.dateStart
 	 */
 	static matchDateStart( query, { activityTs } ) {
 		return get( query, 'dateStart', -Infinity ) <= activityTs;
@@ -66,7 +66,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {boolean}       Whether item matches query.dateEnd
+	 * @returns {boolean}       Whether item matches query.dateEnd
 	 */
 	static matchDateEnd( query, { activityTs } ) {
 		return activityTs <= get( query, 'dateEnd', Infinity );

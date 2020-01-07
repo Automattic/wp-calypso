@@ -27,7 +27,7 @@ import { countsSchema } from './schema';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -51,7 +51,7 @@ export function requesting( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const counts = ( () => {
 	let currentUserId;
@@ -62,7 +62,7 @@ export const counts = ( () => {
 	 *
 	 * @param  {number} siteId Site ID
 	 * @param  {number} postId Post ID
-	 * @return {string}        Serialized key
+	 * @returns {string}        Serialized key
 	 */
 	function getPostStatusKey( siteId, postId ) {
 		return [ siteId, postId ].join();
@@ -76,7 +76,7 @@ export const counts = ( () => {
 	 * @param  {number} siteId Site ID
 	 * @param  {number} postId Post ID
 	 * @param  {string} status Post status
-	 * @return {object}        Updated state
+	 * @returns {object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
 		const postStatusKey = getPostStatusKey( siteId, postId );

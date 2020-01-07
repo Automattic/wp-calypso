@@ -12,7 +12,7 @@ import createSelector from 'lib/create-selector';
  * Gets timeline chat events from the happychat state
  *
  * @param {object} state - Global redux state
- * @return [{object}] events - an array of timeline chat events
+ * @returns [{object}] events - an array of timeline chat events
  */
 export default createSelector(
 	state => state.happychat.chat.timeline,

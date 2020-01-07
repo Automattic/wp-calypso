@@ -37,7 +37,7 @@ const initialState = {
  *
  * @param {Array} existingPurchases - an array of purchases in the store
  * @param {Array} newPurchases - an array of purchases fetched from the API
- * @return {Array} An array of purchases
+ * @returns {Array} An array of purchases
  */
 function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
@@ -57,7 +57,7 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  * @param {Array} existingPurchases - an array of purchases in the store
  * @param {Array} newPurchases - an array of purchases fetched from the API
  * @param {object} predicate - the predicate to check before removing the item from the array.
- * @return {Array} An array of purchases
+ * @returns {Array} An array of purchases
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
 	return existingPurchases.filter(

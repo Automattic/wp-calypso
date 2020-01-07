@@ -30,7 +30,7 @@ export function fetchProductCategories( siteId, query = {} ) {
  * @param {object} category The product category object (may include a placeholder id).
  * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {object|Function} [failureAction] action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function createProductCategory( siteId, category, successAction, failureAction ) {
 	// TODO: Error action if not valid?
@@ -53,7 +53,7 @@ export function createProductCategory( siteId, category, successAction, failureA
  * @param {object} category The product category object.
  * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {object|Function} [failureAction] action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function updateProductCategory( siteId, category, successAction, failureAction ) {
 	const action = {
@@ -74,7 +74,7 @@ export function updateProductCategory( siteId, category, successAction, failureA
  * @param {object} category The product category object.
  * @param {object|Function} [successAction] action with extra props { sentData, receivedData }
  * @param {object|Function} [failureAction] action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function deleteProductCategory( siteId, category, successAction, failureAction ) {
 	return {
@@ -92,7 +92,7 @@ export function deleteProductCategory( siteId, category, successAction, failureA
  * @param {number} siteId The id of the site to which the category belongs.
  * @param {object} data The complete product category object with which to update the state.
  * @param {object} originatingAction The action that precipitated this update.
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function productCategoryUpdated( siteId, data, originatingAction ) {
 	return {

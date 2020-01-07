@@ -16,7 +16,7 @@ import {
  *
  * @param  {object} mediaStorage received
  * @param  {number} siteId       Site ID
- * @return {object}              Action object
+ * @returns {object}              Action object
  */
 export function receiveMediaStorage( mediaStorage, siteId ) {
 	return {

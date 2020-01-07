@@ -129,6 +129,7 @@ export function isMainNetworkSite( site ) {
 
 /**
  * Checks whether a site has a custom mapped URL.
+ *
  * @param   {object}   site Site object
  * @returns {?boolean}      Whether site has custom domain
  */

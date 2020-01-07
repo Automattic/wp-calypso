@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {object}  mediaId Media ID
- * @return {bool}            True if the media is being requested
+ * @returns {bool}            True if the media is being requested
  */
 export default function isRequestingMediaItem( state, siteId, mediaId ) {
 	return get( state.media.mediaItemRequests, [ siteId, mediaId ], false );

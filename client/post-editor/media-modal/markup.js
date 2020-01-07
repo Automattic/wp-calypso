@@ -24,7 +24,7 @@ const Markup = {
 	 * @param  {object} site    A site object
 	 * @param  {object} media   A media object
 	 * @param  {object} options Appearance options
-	 * @return {string}         A markup string
+	 * @returns {string}         A markup string
 	 */
 	get: function( site, media, options ) {
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
@@ -47,7 +47,7 @@ const Markup = {
 	 * object.
 	 *
 	 * @param  {object} media A media object
-	 * @return {string}       A link markup string
+	 * @returns {string}       A link markup string
 	 */
 	link: function( media ) {
 		const element = React.createElement(
@@ -73,7 +73,7 @@ const Markup = {
 	 *
 	 * @param  {object} site           A site object
 	 * @param  {(object|string)} media A media object or markup string
-	 * @return {string}                A caption React element, or null if not
+	 * @returns {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {
@@ -124,7 +124,7 @@ const Markup = {
 		 * @param  {object} site    A site object
 		 * @param  {object} media   An image media object
 		 * @param  {object} options Appearance options
-		 * @return {string}         An image markup string
+		 * @returns {string}         An image markup string
 		 */
 		image: function( site, media, options ) {
 			options = assign(
@@ -194,7 +194,7 @@ const Markup = {
 		 *
 		 * @param  {object} site  A site object
 		 * @param  {object} media An audio media object
-		 * @return {string}       An audio markup string
+		 * @returns {string}       An audio markup string
 		 */
 		audio: function( site, media ) {
 			return stringify( {
@@ -211,7 +211,7 @@ const Markup = {
 		 *
 		 * @param  {object} site  A site object
 		 * @param  {string} media A video media object
-		 * @return {string}       A video markup string
+		 * @returns {string}       A video markup string
 		 */
 		video: function( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {

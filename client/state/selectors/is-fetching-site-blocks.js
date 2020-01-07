@@ -5,7 +5,7 @@ import { get, filter } from 'lodash';
 
 /**
  * @param {object} state Global state tree
- * @return {boolean} true if we are fetching site blocks
+ * @returns {boolean} true if we are fetching site blocks
  */
 export default function isFetchingSiteBlocks( state ) {
 	const inflightPages = get( state, [ 'reader', 'siteBlocks', 'inflightPages' ] );

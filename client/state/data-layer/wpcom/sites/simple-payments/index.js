@@ -85,7 +85,7 @@ export function customPostToProduct( customPost ) {
  * Extract custom posts array from `responseData`, filter out invalid items and convert the
  * valid custom posts to products.
  * @param {object} responseData JSON data with shape `{ posts }`
- * @return {Array} validated and converted product list
+ * @returns {Array} validated and converted product list
  */
 export function customPostsToProducts( responseData ) {
 	const posts = get( responseData, 'posts', [] );

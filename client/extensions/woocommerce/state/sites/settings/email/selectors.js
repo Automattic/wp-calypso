@@ -14,7 +14,7 @@ import { LOADING } from 'woocommerce/state/constants';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} Email settings.
+ * @returns {Array} Email settings.
  */
 export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email' ], null );
@@ -23,7 +23,7 @@ export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) =
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the email settings have been successfully loaded from the server
+ * @returns {boolean} Whether the email settings have been successfully loaded from the server
  */
 export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isObject( getEmailSettings( state, siteId ) );
@@ -32,7 +32,7 @@ export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the email settings are currently being retrieved from the server
+ * @returns {boolean} Whether the email settings are currently being retrieved from the server
  */
 export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getEmailSettings( state, siteId );
@@ -53,7 +53,7 @@ const getField = field => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether user requested save action.
+ * @returns {boolean}        Whether user requested save action.
  */
 export const emailSettingsSaveRequest = getField( 'save' );
 
@@ -62,7 +62,7 @@ export const emailSettingsSaveRequest = getField( 'save' );
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether user requested save action.
+ * @returns {boolean}        Whether user requested save action.
  */
 export const isSavingEmailSettings = getField( 'isSaving' );
 
@@ -71,6 +71,6 @@ export const isSavingEmailSettings = getField( 'isSaving' );
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether user requested save action.
+ * @returns {boolean}        Whether user requested save action.
  */
 export const emailSettingsSubmitSettingsError = getField( 'error' );

@@ -14,7 +14,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * Get the newest site of the current user
  *
  * @param {object} state  Global state tree
- * @return {object}       Site object
+ * @returns {object}       Site object
  */
 export default createSelector(
 	state => {

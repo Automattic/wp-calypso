@@ -518,7 +518,7 @@ const makeUpdatableList = ( itemList, siteId, state = null ) =>
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
 const updateTheme = ( siteId, themeId ) =>
 	requestHttpData(
@@ -539,7 +539,7 @@ const updateTheme = ( siteId, themeId ) =>
  *
  * @param {number} siteId  Site Id.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
 const updateCore = siteId =>
 	requestHttpData(

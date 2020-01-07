@@ -13,7 +13,7 @@ import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
  * the current instance of Calypso.
  *
  * @param  {object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
+ * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was made
  */
 export const wasImmediateLoginAttempted = state => {
@@ -31,7 +31,7 @@ export const wasImmediateLoginAttempted = state => {
  * use it to make user interface improvements for the immediate login scenario.
  *
  * @param {object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
+ * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was successful
  */
 export const wasImmediateLoginSuccessfulAccordingToClient = state => {
@@ -43,7 +43,7 @@ export const wasImmediateLoginSuccessfulAccordingToClient = state => {
  * immediate login request.
  *
  * @param  {object} state - Global state tree
- * @return {?string} - Reason for immediate login, or null
+ * @returns {?string} - Reason for immediate login, or null
  */
 export const getImmediateLoginReason = state => {
 	return get( state, 'immediateLogin.reason', null );
@@ -54,7 +54,7 @@ export const getImmediateLoginReason = state => {
  * to query parameters provided in the client request.
  *
  * @param  {object} state - Global state tree
- * @return {?string} - Email address used for the immediate login attempt, or
+ * @returns {?string} - Email address used for the immediate login attempt, or
  *                     null
  */
 export const getImmediateLoginEmail = state => {
@@ -66,7 +66,7 @@ export const getImmediateLoginEmail = state => {
  * to query parameters provided in the client request.
  *
  * @param  {object} state - Global state tree
- * @return {?string} - Two-letter code for the preferred language of the user
+ * @returns {?string} - Two-letter code for the preferred language of the user
  *                     attempting to log in, or null
  */
 export const getImmediateLoginLocale = state => {
@@ -80,7 +80,7 @@ export const getImmediateLoginLocale = state => {
  * current instance of Calypso.
  *
  * @param {object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
+ * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was made from a manual renewal email
  */
 export const wasManualRenewalImmediateLoginAttempted = state => {

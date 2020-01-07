@@ -15,7 +15,7 @@ import createSelector from 'lib/create-selector';
  *
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
- * @return {?Array}              Slugs of modules that require connection to work.
+ * @returns {?Array}              Slugs of modules that require connection to work.
  */
 const getJetpackModulesRequiringConnection = createSelector(
 	( state, siteId ) => {

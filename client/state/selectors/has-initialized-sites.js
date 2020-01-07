@@ -2,7 +2,7 @@
  * Returns true if site selection has occured, else false
  *
  * @param {object}  state Global state tree
- * @return {boolean}       Has site selection occurred
+ * @returns {boolean}       Has site selection occurred
  */
 
 export default function hasInitializedSites( state ) {

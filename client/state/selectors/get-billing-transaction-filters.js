@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state           Global state tree
  * @param  {string}  transactionType Transaction type
- * @return {object}                 Billing transaction filters
+ * @returns {object}                 Billing transaction filters
  */
 export default ( state, transactionType ) => {
 	const filters = get( state, [ 'ui', 'billingTransactions', transactionType ], {} );

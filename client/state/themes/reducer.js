@@ -53,7 +53,7 @@ import { decodeEntities } from 'lib/formatting';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -85,7 +85,7 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function activationRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -108,7 +108,7 @@ export function activationRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const completedActivationRequests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -140,7 +140,7 @@ export const completedActivationRequests = withoutPersistence( ( state = {}, act
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function activeThemeRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -163,7 +163,7 @@ export function activeThemeRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function themeRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -187,7 +187,7 @@ export function themeRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function themeInstalls( state = {}, action ) {
 	switch ( action.type ) {
@@ -211,7 +211,7 @@ export function themeInstalls( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const themeRequestErrors = withSchemaValidation(
 	themeRequestErrorsSchema,
@@ -249,7 +249,7 @@ export const themeRequestErrors = withSchemaValidation(
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	let serializedQuery;
@@ -274,7 +274,7 @@ export function queryRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -309,7 +309,7 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
@@ -392,7 +392,7 @@ export const queries = ( () => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const lastQuery = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -415,7 +415,7 @@ export const lastQuery = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const themePreviewOptions = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -438,7 +438,7 @@ export const themePreviewOptions = withoutPersistence( ( state = {}, action ) =>
  *
  * @param  {Bool}   state  Current state
  * @param  {object} action Action payload
- * @return {Bool}          Updated state
+ * @returns {Bool}          Updated state
  */
 export const themePreviewVisibility = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

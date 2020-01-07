@@ -22,7 +22,7 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  term  Item to consider
-	 * @return {boolean}       Whether term matches query
+	 * @returns {boolean}       Whether term matches query
 	 */
 	static matches( query, term ) {
 		if ( ! query.search ) {
@@ -43,7 +43,7 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * @param  {object} query Query object
 	 * @param  {object} termA First term
 	 * @param  {object} termB Second term
-	 * @return {number}       0 if equal, less than 0 if termA is first,
+	 * @returns {number}       0 if equal, less than 0 if termA is first,
 	 *                        greater than 0 if termB is first.
 	 */
 	static compare( query, termA, termB ) {

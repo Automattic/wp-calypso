@@ -9,7 +9,7 @@ import { map } from 'lodash';
  *
  * @param {object} variant the product variant option which includes the attributes key.
  * @param {string} fallbackName Fallback name to use if no attributes are passed.
- * @return {string} Formatted variation name.
+ * @returns {string} Formatted variation name.
  */
 
 export default function formattedVariationName( { attributes }, fallbackName = '' ) {

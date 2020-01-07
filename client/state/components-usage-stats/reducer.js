@@ -8,7 +8,7 @@ import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '
  * Tracks usage stats fetching state
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export default function componentsUsageStats(
 	state = {

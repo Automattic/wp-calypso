@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  id      ID of the transaction
- * @return {boolean}         True if transaction failed to fetch, false otherwise
+ * @returns {boolean}         True if transaction failed to fetch, false otherwise
  */
 export default ( state, id ) =>
 	get( state, [ 'billingTransactions', 'individualTransactions', id, 'error' ], false );

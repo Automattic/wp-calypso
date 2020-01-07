@@ -7,7 +7,7 @@ import getHappychatConnectionStatus from 'state/happychat/selectors/get-happycha
 /**
  * Returns true if connection status is connected
  * @param {object} state - global redux state
- * @return {boolean} Whether Happychat connection status is connected
+ * @returns {boolean} Whether Happychat connection status is connected
  */
 export default function( state ) {
 	return getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED;

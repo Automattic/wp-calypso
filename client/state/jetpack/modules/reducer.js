@@ -92,7 +92,7 @@ const createSettingsItemsReducer = () => {
  *
  * @param  {Array}  state  Current state
  * @param  {object} action action
- * @return {Array}         Updated state
+ * @returns {Array}         Updated state
  */
 export const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -117,7 +117,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
  *
  * @param {object} state - current state
  * @param {object} action - action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const requests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

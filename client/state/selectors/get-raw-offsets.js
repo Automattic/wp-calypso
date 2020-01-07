@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * gotten from state.timezones subtree.
  *
  * @param  {object} state - Global state tree
- * @return {?Array} An array of manual offset timezones
+ * @returns {?Array} An array of manual offset timezones
  */
 export default function getRawOffsets( state ) {
 	return get( state, 'timezones.rawOffsets', null );

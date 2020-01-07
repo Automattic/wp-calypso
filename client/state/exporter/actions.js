@@ -27,7 +27,7 @@ import 'state/data-layer/wpcom/sites/exports/media';
  * Sets the post type to export.
  *
  * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
- * @return {object}            Action object
+ * @returns {object}            Action object
  */
 export function setPostType( postType ) {
 	return {
@@ -49,7 +49,7 @@ export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
 /**
  * Fetches the available advanced settings for customizing export content
  * @param {number} siteId The ID of the site to fetch
- * @return {thunk}        An action thunk for fetching the advanced settings
+ * @returns {thunk}        An action thunk for fetching the advanced settings
  */
 export function advancedSettingsFetch( siteId ) {
 	return ( dispatch, getState ) => {
@@ -98,7 +98,7 @@ export function advancedSettingsFail( siteId, error ) {
 /**
  * Sends a request to the server to start an export.
  * @param  {number}   siteId  The ID of the site to export
- * @return {Function}         Action thunk
+ * @returns {Function}         Action thunk
  */
 export function startExport( siteId, { exportAll = true } = {} ) {
 	return ( dispatch, getState ) => {

@@ -22,7 +22,7 @@ import config from 'config';
  * Create an UndocumentedMe instance
  *
  * @param {WPCOM} wpcom - WPCOMUndocumented instance
- * @return {NUll} null
+ * @returns {NUll} null
  */
 function UndocumentedMe( wpcom ) {
 	debug( 'UndocumentedMe' );
@@ -135,7 +135,7 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
  * @param {object} [cardToken] Payment key
  * @param {object} [additionalData] Any additional data to send in the request
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  * @api public
  */
 UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {} ) {
@@ -303,7 +303,7 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  *  {string} redirect_to - The URL to redirect to after connecting.
  * @param {Function} fn - The callback for the request.
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialConnect = function(
 	{ service, access_token, id_token, user_name, user_email, redirect_to },
@@ -346,7 +346,7 @@ UndocumentedMe.prototype.socialConnect = function(
  * @param {string} service - Social service associated with token, e.g. google.
  * @param {Function} fn - callback
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
 	const body = {

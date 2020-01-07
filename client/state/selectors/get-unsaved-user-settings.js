@@ -3,7 +3,7 @@
  *
  *
  * @param {object} state Global state tree
- * @return {?object} dictionary with the setting names and values
+ * @returns {?object} dictionary with the setting names and values
  */
 
 export default function getUnsavedUserSettings( state ) {

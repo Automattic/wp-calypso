@@ -56,7 +56,7 @@ const queryManagerSchema = deepFreeze( {
  * Get a queryManagerSchema with a customized items schema
  *
  * @param  {object} itemsSchema Schema that will be used for the items
- * @return {object}            Customized schema
+ * @returns {object}            Customized schema
  */
 export function withItemsSchema( itemsSchema ) {
 	return cloneDeepWith( queryManagerSchema, value => {

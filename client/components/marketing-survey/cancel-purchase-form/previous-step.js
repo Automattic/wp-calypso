@@ -3,7 +3,7 @@
  *
  * @param {string} currentStep The name of the current step
  * @param {Array}  steps The array of step names for the current survey
- * @return {string} The name of the previous (or first) step
+ * @returns {string} The name of the previous (or first) step
  */
 export default function previousStep( currentStep, steps ) {
 	const index = steps.indexOf( currentStep );

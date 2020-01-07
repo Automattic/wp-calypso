@@ -3,7 +3,7 @@
  *
  *
  * @param {object} state  Global state tree
- * @return {Array}         Course objects
+ * @returns {Array}         Course objects
  */
 
 export function getHelpCourses( state ) {

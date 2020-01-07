@@ -66,6 +66,6 @@ export const convertToCamelCase = obj => convertKeysBy( obj, camelCase );
  * Deeply convert keys of an object to snake_case.
  *
  * @param {object} obj Object to convert
- * @return {object} a new object with snake_cased keys
+ * @returns {object} a new object with snake_cased keys
  */
 export const convertToSnakeCase = obj => convertKeysBy( obj, snakeCase );

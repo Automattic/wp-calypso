@@ -190,7 +190,7 @@ export const findEligibleTour = createSelector(
  * active.
  *
  * @param  {object}  state Global state tree
- * @return {object}        Current Guided Tours state
+ * @returns {object}        Current Guided Tours state
  */
 const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 

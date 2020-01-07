@@ -9,7 +9,7 @@ const DISCOVER_BLOG_ID = 53424024;
 /**
  * Add discover properties to a post
  * @param  {object} post - the post to extend
- * @return {object}      - the post with discover properties
+ * @returns {object}      - the post with discover properties
  */
 export default function( post ) {
 	const isDiscover = !! (

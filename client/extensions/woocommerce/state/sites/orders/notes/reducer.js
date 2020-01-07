@@ -24,7 +24,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -46,7 +46,7 @@ export function isLoading( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isSaving( state = {}, action ) {
 	switch ( action.type ) {
@@ -66,7 +66,7 @@ export function isSaving( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -87,7 +87,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function orders( state = {}, action ) {
 	switch ( action.type ) {

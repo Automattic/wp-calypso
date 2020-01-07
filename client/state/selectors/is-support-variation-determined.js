@@ -15,7 +15,7 @@ import getHappychatConnectionStatus from 'state/happychat/selectors/get-happycha
 
 /**
  * @param {object} state Global state tree
- * @return {boolean} Have each of the required async checks been made?
+ * @returns {boolean} Have each of the required async checks been made?
  */
 export default function isSupportVariationDetermined( state ) {
 	const ticketReadyOrError =

@@ -15,7 +15,7 @@ import { isValidCapability } from 'state/current-user/selectors';
  * @param  {object}   state      Global state tree
  * @param  {number}   siteId     Site ID
  * @param  {string}   capability Capability label
- * @return {?boolean}            Whether current user has capability
+ * @returns {?boolean}            Whether current user has capability
  */
 export const canCurrentUser = ( state, siteId, capability ) => {
 	if ( ! isValidCapability( state, siteId, capability ) ) {

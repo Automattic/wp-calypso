@@ -15,7 +15,7 @@ import isRequestingBillingTransactions from 'state/selectors/is-requesting-billi
  *
  * @param  {object}   state         Global state tree
  * @param  {number}   transactionId ID of the requested transaction
- * @return {boolean}                Whether a billing transaction is being requested
+ * @returns {boolean}                Whether a billing transaction is being requested
  */
 export default ( state, transactionId ) =>
 	isRequestingBillingTransactions( state ) ||

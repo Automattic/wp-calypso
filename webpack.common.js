@@ -6,7 +6,7 @@ const { clamp } = require( 'lodash' );
  *
  * @param {string} envVarName   Environment variable name
  * @param {number} defaultValue Fallback in case env variable isn't present or invalid
- * @return {number} Value
+ * @returns {number} Value
  */
 function getEnvVarAsNaturalNumber( envVarName, defaultValue ) {
 	if ( typeof envVarName !== 'string' ) {

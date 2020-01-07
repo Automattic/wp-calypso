@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {Array}         Site connections
+ * @returns {Array}         Site connections
  */
 export function getConnectionsBySiteId( state, siteId ) {
 	return filter( state.sharing.publicize.connections, { site_ID: siteId } );
@@ -30,7 +30,7 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
  * @param  {number} userId User ID to filter
- * @return {Array}         User connections
+ * @returns {Array}         User connections
  */
 export const getSiteUserConnections = createSelector(
 	( state, siteId, userId ) =>
@@ -51,7 +51,7 @@ export const getSiteUserConnections = createSelector(
  * @param  {number} siteId  Site ID
  * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
- * @return {Array}          User connections
+ * @returns {Array}          User connections
  */
 export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
 	return filter( getSiteUserConnections( state, siteId, userId ), { service } );
@@ -64,7 +64,7 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @param  {number} siteId  Site ID
  * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
- * @return {Array}          Broken user connections.
+ * @returns {Array}          Broken user connections.
  */
 export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {
 	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), {
@@ -82,7 +82,7 @@ export function getBrokenSiteUserConnectionsForService( state, siteId, userId, s
  *
  * @param  {object} state   Global state tree
  * @param  {string} service The name of the service
- * @return {Array}          Connections for which the current user is
+ * @returns {Array}          Connections for which the current user is
  *                          permitted to remove.
  */
 export function getRemovableConnections( state, service ) {
@@ -107,7 +107,7 @@ export function getRemovableConnections( state, service ) {
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {Array}         Site connections
+ * @returns {Array}         Site connections
  */
 export function hasFetchedConnections( state, siteId ) {
 	return get( state.sharing.publicize.fetchedConnections, [ siteId ], false );
@@ -118,7 +118,7 @@ export function hasFetchedConnections( state, siteId ) {
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {Array}         Site connections
+ * @returns {Array}         Site connections
  */
 export function isFetchingConnections( state, siteId ) {
 	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
@@ -129,7 +129,7 @@ export function isFetchingConnections( state, siteId ) {
  *
  * @param  {object}  state        Global state tree
  * @param  {number}  connectionId Connection ID
- * @return {boolean}              Whether the connection is being fetched.
+ * @returns {boolean}              Whether the connection is being fetched.
  */
 export function isFetchingConnection( state, connectionId ) {
 	return state.sharing.publicize.fetchingConnection[ connectionId ] || false;

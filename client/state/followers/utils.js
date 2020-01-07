@@ -9,7 +9,7 @@ import { omit } from 'lodash';
  * that is used as a unique identifier for the query.
  *
  * @param  {object} query A list of query parameters
- * @return {string}       Alphabetically ordered string of query parameters and values
+ * @returns {string}       Alphabetically ordered string of query parameters and values
  */
 export function getSerializedQuery( query ) {
 	return deterministicStringify( omit( query, [ 'page', 'max' ] ) );
@@ -20,7 +20,7 @@ export function getSerializedQuery( query ) {
  * object to be used with the Gravatar component.
  *
  * @param  {object} follower A follower ojbect
- * @return {object}          A normalized follower object
+ * @returns {object}          A normalized follower object
  */
 export function normalizeFollower( follower ) {
 	follower.avatar_URL = follower.avatar;

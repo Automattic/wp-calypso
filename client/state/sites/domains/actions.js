@@ -58,7 +58,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * Return SITE_DOMAINS_REQUEST action object
  *
  * @param {number} siteId - side identifier
- * @return {object} siteId - action object
+ * @returns {object} siteId - action object
  */
 export const domainsRequestAction = siteId => {
 	const action = {
@@ -76,7 +76,7 @@ export const domainsRequestAction = siteId => {
  * Return SITE_DOMAINS_REQUEST_SUCCESS action object
  *
  * @param {number} siteId - side identifier
- * @return {object} siteId - action object
+ * @returns {object} siteId - action object
  */
 export const domainsRequestSuccessAction = siteId => {
 	const action = {
@@ -95,7 +95,7 @@ export const domainsRequestSuccessAction = siteId => {
  *
  * @param {number} siteId - site identifier
  * @param {object} error - error message according to REST-API error response
- * @return {object} action object
+ * @returns {object} action object
  */
 export const domainsRequestFailureAction = ( siteId, error ) => {
 	const action = {

@@ -115,7 +115,7 @@ class PostScheduleClock extends Component {
 	 * Converts a 12-hour time to a 24-hour time, depending on time format.
 	 *
 	 * @param {number}  hour The hour to convert.
-	 * @return {number}      The converted hour.
+	 * @returns {number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
 		if ( 'PM' === this.amPmRef.current.value && hour < 12 ) {

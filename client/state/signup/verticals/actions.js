@@ -12,7 +12,7 @@ import 'state/data-layer/wpcom/signup/verticals';
  * @param {string} siteType Site type relevant for given search term
  * @param {number} limit The maximum number of vertical items.
  *
- * @return {object} The action object.
+ * @returns {object} The action object.
  */
 export const requestVerticals = ( search, siteType, limit ) => ( {
 	type: SIGNUP_VERTICALS_REQUEST,
@@ -28,7 +28,7 @@ export const requestVerticals = ( search, siteType, limit ) => ( {
  * @param {string} siteType Site type relevant for given search term
  * @param {Array} verticals The verticals data matches with the given search term.
  *
- * @return {object} The action object.
+ * @returns {object} The action object.
  */
 export const setVerticals = ( search, siteType, verticals ) => ( {
 	type: SIGNUP_VERTICALS_SET,

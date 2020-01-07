@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
  * false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @return {boolean}        Whether lists are being requested
+ * @returns {boolean}        Whether lists are being requested
  */
 export function isRequestingList( state ) {
 	return !! state.reader.lists.isRequestingList;
@@ -24,7 +24,7 @@ export function isRequestingList( state ) {
  * false otherwise.
  *
  * @param  {object}  state  Global state tree
- * @return {boolean}        Whether lists are being requested
+ * @returns {boolean}        Whether lists are being requested
  */
 export function isRequestingSubscribedLists( state ) {
 	return !! state.reader.lists.isRequestingLists;
@@ -34,7 +34,7 @@ export function isRequestingSubscribedLists( state ) {
  * Returns the user's subscribed Reader lists.
  *
  * @param  {object}  state  Global state tree
- * @return {?object}        Reader lists
+ * @returns {?object}        Reader lists
  */
 export const getSubscribedLists = createSelector(
 	state =>
@@ -53,7 +53,7 @@ export const getSubscribedLists = createSelector(
  *
  * @param  {object}  state  Global state tree
  * @param  {Integer}  listId  List ID
- * @return {boolean}        Whether lists are being requested
+ * @returns {boolean}        Whether lists are being requested
  */
 export function isUpdatedList( state, listId ) {
 	if ( ! has( state, 'reader.lists.updatedLists' ) ) {
@@ -67,7 +67,7 @@ export function isUpdatedList( state, listId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {Integer}  listId  List ID
- * @return {boolean}        Whether list has an error
+ * @returns {boolean}        Whether list has an error
  */
 export function hasError( state, listId ) {
 	if ( ! has( state, 'reader.lists.errors' ) ) {
@@ -83,7 +83,7 @@ export function hasError( state, listId ) {
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @return {?object}        Reader list
+ * @returns {?object}        Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
 	if ( ! has( state, 'reader.lists.items' ) || ! owner || ! slug ) {
@@ -104,7 +104,7 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @return {boolean} Is the user subscribed?
+ * @returns {boolean} Is the user subscribed?
  */
 export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 	const list = getListByOwnerAndSlug( state, owner, slug );
@@ -120,7 +120,7 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @return {boolean} Is the list missing?
+ * @returns {boolean} Is the list missing?
  */
 export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();

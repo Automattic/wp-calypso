@@ -33,7 +33,7 @@ export const fetchStats = action => {
  *
  * @param {object} action Redux action
  * @param {Array} data raw data from stats API
- * @return {object} action Redux action
+ * @returns {object} action Redux action
  */
 export const receiveStats = ( action, data ) => {
 	const { siteId, statType, interval, aggregation } = action;
@@ -46,7 +46,7 @@ export const receiveStats = ( action, data ) => {
  *
  * @param {object} action Redux action
  * @param {object} error raw error from stats API
- * @return {object} action Redux action
+ * @returns {object} action Redux action
  */
 export const receiveStatsError = ( action, error ) => {
 	const { siteId, statType, interval, aggregation } = action;

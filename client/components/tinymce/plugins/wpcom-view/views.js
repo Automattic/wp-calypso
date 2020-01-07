@@ -43,7 +43,7 @@ export default {
 	 *
 	 * @param {string} content The string to scan.
 	 *
-	 * @return {string} The string with markers.
+	 * @returns {string} The string with markers.
 	 */
 	setMarkers( content ) {
 		let pieces = [ { content: content } ],

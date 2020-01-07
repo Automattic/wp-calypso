@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether site's sharing buttons are being requested
+ * @returns {boolean}        Whether site's sharing buttons are being requested
  */
 export default function isRequestingSharingButtons( state, siteId ) {
 	return get( state.sites.sharingButtons.requesting, [ siteId ], false );

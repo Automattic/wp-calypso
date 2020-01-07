@@ -57,7 +57,7 @@ export const getCurrentPlan = ( state, siteId ) => {
  * @param  {object} state        global state
  * @param  {number} siteId       the site id
  * @param  {string} productSlug  the plan product slug
- * @return {object} the matching plan
+ * @returns {object} the matching plan
  */
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {
@@ -76,7 +76,7 @@ export const getSitePlan = createSelector(
  * @param  {object}   state         global state
  * @param  {number}   siteId        the site id
  * @param  {string}   productSlug   the plan product slug
- * @return {?boolean}              true if a plan has a discount
+ * @returns {?boolean}              true if a plan has a discount
  */
 export function isSitePlanDiscounted( state, siteId, productSlug ) {
 	const plan = getSitePlan( state, siteId, productSlug );
@@ -95,7 +95,7 @@ export function isSitePlanDiscounted( state, siteId, productSlug ) {
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
  * @param  {boolean} isMonthly     if true, returns monthly price
- * @return {number}                plan discounted raw price
+ * @returns {number}                plan discounted raw price
  */
 export function getPlanDiscountedRawPrice(
 	state,
@@ -119,7 +119,7 @@ export function getPlanDiscountedRawPrice(
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
  * @param  {boolean} isMonthly     if true, returns monthly price
- * @return {number}                plan raw price
+ * @returns {number}                plan raw price
  */
 export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = false } = {} ) {
 	const plan = getSitePlan( state, siteId, productSlug );
@@ -141,7 +141,7 @@ export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = f
  * @param  {number}  siteId       the site id
  * @param  {string}  productSlug  the plan product slug
  * @param  {boolean} isMonthly    if true, returns monthly price
- * @return {number}               plan raw discount
+ * @returns {number}               plan raw discount
  */
 export function getPlanRawDiscount( state, siteId, productSlug, { isMonthly = false } = {} ) {
 	const plan = getSitePlan( state, siteId, productSlug );
@@ -179,7 +179,7 @@ export function isCurrentPlanExpiring( state, siteId ) {
  *
  * @param  {object}  state        global state
  * @param  {number}  siteId       the site id
- * @return {boolean}			  True when user is a plan owner
+ * @returns {boolean}			  True when user is a plan owner
  */
 export function isCurrentUserCurrentPlanOwner( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
@@ -192,7 +192,7 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
  *
  * @param  {object}  state   Global State tree
  * @param  {number}  siteId  Site ID
- * @return {?string}          The site's current plan's product slug
+ * @returns {?string}          The site's current plan's product slug
  */
 export function getSitePlanSlug( state, siteId ) {
 	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
@@ -207,7 +207,7 @@ export function getSitePlanSlug( state, siteId ) {
  * @param  {object}  state   Global State tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  feature The feature we're looking for
- * @return {boolean}         True if the site's current plan includes the feature
+ * @returns {boolean}         True if the site's current plan includes the feature
  */
 export function hasFeature( state, siteId, feature ) {
 	return planHasFeature( getSitePlanSlug( state, siteId ), feature );

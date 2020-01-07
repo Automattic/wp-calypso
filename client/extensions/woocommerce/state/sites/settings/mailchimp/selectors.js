@@ -23,7 +23,7 @@ const basePath = siteId => [
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether settings are being requested
+ * @returns {boolean}        Whether settings are being requested
  */
 export const isRequestingSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settingsRequest' ];
@@ -36,7 +36,7 @@ export const isRequestingSettings = ( state, siteId ) => {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {object}          error object if present or null otherwise
+ * @returns {object}          error object if present or null otherwise
  */
 export const requestingSettingsError = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settingsRequestError' ];
@@ -49,7 +49,7 @@ export const requestingSettingsError = ( state, siteId ) => {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {object}          MailChimp settings
+ * @returns {object}          MailChimp settings
  */
 export const mailChimpSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settings' ];
@@ -62,7 +62,7 @@ export const mailChimpSettings = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether api key is being submitted
+ * @returns {boolean}        Whether api key is being submitted
  */
 export const isSubmittingApiKey = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'apiKeySubmit' ];
@@ -75,7 +75,7 @@ export const isSubmittingApiKey = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether newsletter settings are being submitted
+ * @returns {boolean}        Whether newsletter settings are being submitted
  */
 export const isSubmittingNewsletterSetting = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmit' ];
@@ -88,7 +88,7 @@ export const isSubmittingNewsletterSetting = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether store informations are being submitted
+ * @returns {boolean}        Whether store informations are being submitted
  */
 export const isSubmittingStoreInfo = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'storeInfoSubmit' ];
@@ -101,7 +101,7 @@ export const isSubmittingStoreInfo = ( state, siteId ) => {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {object}          error object if present or null otherwise
+ * @returns {object}          error object if present or null otherwise
  */
 export const newsletterSettingsSubmitError = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmitError' ];
@@ -116,7 +116,7 @@ export const newsletterSettingsSubmitError = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether api key is correct
+ * @returns {boolean}        Whether api key is correct
  */
 export const isApiKeyCorrect = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settings', 'mailchimp_account_info_id' ];
@@ -129,7 +129,7 @@ export const isApiKeyCorrect = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether lists are being requested
+ * @returns {boolean}        Whether lists are being requested
  */
 export const isRequestingLists = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'listsRequest' ];
@@ -142,7 +142,7 @@ export const isRequestingLists = ( state, siteId ) => {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @return {object}          Sync status
+ * @returns {object}          Sync status
  */
 export const syncStatus = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'syncStatus' ];
@@ -155,7 +155,7 @@ export const syncStatus = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether sync status is being requested
+ * @returns {boolean}        Whether sync status is being requested
  */
 export const isRequestingSyncStatus = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'syncStatusRequest' ];
@@ -168,7 +168,7 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Wheter setup is compleate
+ * @returns {boolean}        Wheter setup is compleate
  */
 export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const path = [ ...basePath( siteId ), 'syncStatus', 'mailchimp_list_name' ];
@@ -189,7 +189,7 @@ export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether resync procedure is being requested
+ * @returns {boolean}        Whether resync procedure is being requested
  */
 export const isRequestingResync = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'resyncRequest' ];
@@ -202,7 +202,7 @@ export const isRequestingResync = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether user requested save action.
+ * @returns {boolean}        Whether user requested save action.
  */
 export const isSavingMailChimpSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'saveSettings' ];

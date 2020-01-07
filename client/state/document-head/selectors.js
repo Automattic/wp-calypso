@@ -18,7 +18,7 @@ const UNREAD_COUNT_CAP = 40;
  * action.
  *
  * @param  {object}  state  Global state tree
- * @return {?string}        Document title
+ * @returns {?string}        Document title
  */
 export function getDocumentHeadTitle( state ) {
 	return state.documentHead.title;
@@ -28,7 +28,7 @@ export function getDocumentHeadTitle( state ) {
  * Returns a count reflecting unread items.
  *
  * @param  {object}  state  Global state tree
- * @return {?string}        Unread count (string because it can be e.g. '40+')
+ * @returns {?string}        Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadUnreadCount( state ) {
 	return state.documentHead.unreadCount;
@@ -40,7 +40,7 @@ export function getDocumentHeadUnreadCount( state ) {
  * '1', '20', '39', '40+'
  *
  * @param  {object}  state  Global state tree
- * @return {string}         Unread count (string because it can be e.g. '40+')
+ * @returns {string}         Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadCappedUnreadCount( state ) {
 	const unreadCount = getDocumentHeadUnreadCount( state );
@@ -56,7 +56,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * capped unreadCount, and selected site.
  *
  * @param  {object}  state  Global state tree
- * @return {string}         Formatted title
+ * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	state => {
@@ -86,7 +86,7 @@ export const getDocumentHeadFormattedTitle = createSelector(
  * component or setDocumentHeadMeta action.
  *
  * @param  {object}  state  Global state tree
- * @return {object[]}       Array of meta objects
+ * @returns {object[]}       Array of meta objects
  */
 export function getDocumentHeadMeta( state ) {
 	return state.documentHead.meta;
@@ -97,7 +97,7 @@ export function getDocumentHeadMeta( state ) {
  * component or setDocumentHeadLink action.
  *
  * @param  {object}  state  Global state tree
- * @return {object[]}       Array of link objects
+ * @returns {object[]}       Array of link objects
  */
 export function getDocumentHeadLink( state ) {
 	return state.documentHead.link;

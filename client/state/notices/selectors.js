@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
  * Returns array value of notice item state
  *
  * @param  {object} state Global state tree
- * @return {Array}        Notice objects as array
+ * @returns {Array}        Notice objects as array
  */
 export const getNotices = createSelector(
 	state => values( state.notices.items ),

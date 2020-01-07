@@ -28,7 +28,7 @@ import {
  * @param {object} product The complete product object (may include a placeholder id)
  * @param {object|Function} [successAction] Action with extra props { sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function createProduct( siteId, product, successAction, failureAction ) {
 	const action = {
@@ -49,7 +49,7 @@ export function createProduct( siteId, product, successAction, failureAction ) {
  * @param {object} product The complete product object (must have real id)
  * @param {object|Function} [successAction] Action with extra props { sentData, receivedData }
  * @param {object|Function} [failureAction] Action with extra props { error }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function updateProduct( siteId, product, successAction, failureAction ) {
 	const action = {
@@ -71,7 +71,7 @@ export function updateProduct( siteId, product, successAction, failureAction ) {
  * @param {number} siteId The id of the site to which the product belongs.
  * @param {object} data The complete product object with which to update the state.
  * @param {object} originatingAction The action which precipitated this update.
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function productUpdated( siteId, data, originatingAction ) {
 	return {
@@ -91,7 +91,7 @@ export function productUpdated( siteId, data, originatingAction ) {
  * @param {number} productId The ID of the product to remove.
  * @param {string} [successAction=undefined] Optional action object to be dispatched upon success.
  * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const deleteProduct = ( siteId, productId, successAction = null, failureAction = null ) => (
 	dispatch,

@@ -18,7 +18,7 @@ import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
  *
  * @param  {object}  state       Global state tree
  * @param  {number}  mainSiteId  The ID of the main site for which we're retrieving the network sites
- * @return {?Array}              Array of network sites (the main one and the secondary ones)
+ * @returns {?Array}              Array of network sites (the main one and the secondary ones)
  */
 export default createSelector(
 	( state, mainSiteId ) => {

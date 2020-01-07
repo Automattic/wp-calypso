@@ -15,7 +15,7 @@ import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
  * @param  {object}  state  Global state tree
  * @param  {string}  filter The filter slug
  * @param  {string}  term   The term slug
- * @return {object}         A filter term object
+ * @returns {object}         A filter term object
  */
 export default function getThemeFilterTerm( state, filter, term ) {
 	return get( getThemeFilterTerms( state, filter ), term );
