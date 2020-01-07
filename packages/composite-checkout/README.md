@@ -31,7 +31,7 @@ Any component which is a child of `CheckoutProvider` gets access to the custom h
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
-Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive).
+Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
 ## Submitting the form
 
@@ -282,6 +282,12 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 A React Hook that will return the currently active [Step object](#steps). Only works within a step.
 
+The step object that is returned will include some additional properties:
+
+- `isComplete: boolean`. True if the `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
+- `stepNumber: number | null`. The step's visible number. If the step has no number (because `hasStepNumber` is false), this will be `null`.
+- `stepIndex: number`. The index of the step in the array of steps.
+
 ### useAllPaymentMethods
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -313,6 +319,10 @@ Only works within [CheckoutProvider](#CheckoutProvider).
 ### useIsStepActive
 
 A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
+
+### useIsStepComplete
+
+A React Hook that will return true if the current [Step](#steps) is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
 
 ### useLineItems
 

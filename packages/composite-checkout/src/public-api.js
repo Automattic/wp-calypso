@@ -32,7 +32,7 @@ import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import { useActiveStep, useIsStepActive } from './lib/active-step';
+import { useActiveStep, useIsStepActive, useIsStepComplete } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
@@ -72,6 +72,7 @@ export {
 	useEvents,
 	useFormStatus,
 	useIsStepActive,
+	useIsStepComplete,
 	useLineItems,
 	useMessages,
 	usePaymentData,

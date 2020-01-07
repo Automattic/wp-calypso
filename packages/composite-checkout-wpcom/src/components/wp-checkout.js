@@ -7,6 +7,7 @@ import {
 	Checkout,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
+	useIsStepComplete,
 	useSelect,
 	useLineItems,
 	useDispatch,
@@ -23,7 +24,17 @@ import WPContactForm from './wp-contact-form';
 const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
-	return isActive ? translate( 'Billing details' ) : translate( 'Enter your billing details' );
+	const isComplete = useIsStepComplete();
+	const [ items ] = useLineItems();
+
+	if ( areDomainsInLineItems( items ) ) {
+		return ! isActive && isComplete
+			? translate( 'Contact information' )
+			: translate( 'Enter your contact information' );
+	}
+	return ! isActive && isComplete
+		? translate( 'Billing information' )
+		: translate( 'Enter your billing information' );
 };
 
 const OrderReviewTitle = () => {

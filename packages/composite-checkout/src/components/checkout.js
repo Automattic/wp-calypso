@@ -96,33 +96,15 @@ export default function Checkout( { steps, className } ) {
 	validateSteps( steps );
 
 	// Assign step numbers to all steps with numbers
-	let numberedStepNumber = 0;
-	let annotatedSteps = steps.map( ( step, index ) => {
-		numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
-		return {
-			...step,
-			stepNumber: step.hasStepNumber ? numberedStepNumber : null,
-			stepIndex: index,
-		};
+	const annotatedSteps = getAnnotatedSteps( steps, stepNumber, {
+		paymentData,
+		activePaymentMethod,
 	} );
-	if ( annotatedSteps.length < 1 ) {
-		throw new Error( 'No steps found' );
-	}
 
 	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
 	if ( ! activeStep ) {
-		throw new Error( 'There is no active step' );
+		throw new Error( 'The active step was lost' );
 	}
-
-	// Assign isComplete separately so we can provide the activeStep
-	annotatedSteps = annotatedSteps.map( step => {
-		return {
-			...step,
-			isComplete:
-				!! step.isCompleteCallback &&
-				step.isCompleteCallback( { paymentData, activeStep, activePaymentMethod } ),
-		};
-	} );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( annotatedSteps );
@@ -154,7 +136,7 @@ export default function Checkout( { steps, className } ) {
 				className={ joinClasses( [ className, 'checkout__content' ] ) }
 				isCheckoutInProgress={ isCheckoutInProgress }
 			>
-				<ActiveStepProvider step={ activeStep }>
+				<ActiveStepProvider step={ activeStep } steps={ annotatedSteps }>
 					{ annotatedSteps.map( step => (
 						<CheckoutStepContainer
 							{ ...step }
@@ -365,4 +347,35 @@ function useChangeStepNumberForUrl( steps ) {
 		} );
 		return () => ( isSubscribed = false );
 	}, [ changeStep ] );
+}
+
+function getAnnotatedSteps( steps, stepNumber, dataForCompleteCallback ) {
+	// Assign step numbers to all steps with numbers
+	let numberedStepNumber = 0;
+	const annotatedSteps = steps.map( ( step, index ) => {
+		numberedStepNumber = step.hasStepNumber ? numberedStepNumber + 1 : numberedStepNumber;
+		return {
+			...step,
+			stepNumber: step.hasStepNumber ? numberedStepNumber : null,
+			stepIndex: index,
+		};
+	} );
+	if ( annotatedSteps.length < 1 ) {
+		throw new Error( 'No steps found' );
+	}
+
+	const activeStep = annotatedSteps.find( step => step.stepNumber === stepNumber );
+	if ( ! activeStep ) {
+		throw new Error( 'There is no active step' );
+	}
+
+	// Assign isComplete separately so we can provide the activeStep
+	return annotatedSteps.map( step => {
+		return {
+			...step,
+			isComplete:
+				!! step.isCompleteCallback &&
+				step.isCompleteCallback( { ...dataForCompleteCallback, activeStep } ),
+		};
+	} );
 }
