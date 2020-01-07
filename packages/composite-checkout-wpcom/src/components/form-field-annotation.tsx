@@ -4,15 +4,23 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 
+/**
+ * Annotate a form field element with a label, description, and an optional
+ * colored error border with error text.
+ *
+ * If you pass a labelText, you should also pass labelId and formFieldId
+ * for accessibility purposes. formFieldId must be the id attribute of the
+ * child component, of which there should be exactly one.
+ */
 type FormFieldAnnotationProps = {
 	// Semantic props
 	labelText: string;
-	descriptionText?: string;
-	errorMessage: string;
+	normalDescription?: string;
+	errorDescription: string;
 
 	// Functional props
-	isError: boolean;
-	isDisabled: boolean;
+	isError?: boolean; // default false
+	isDisabled?: boolean; // default false
 
 	// Technical props
 	className?: string;
@@ -21,35 +29,38 @@ type FormFieldAnnotationProps = {
 	formFieldId: string;
 };
 
-export const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
+const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 	formFieldId,
 	labelText,
 	labelId,
-	descriptionText,
+	normalDescription,
 	descriptionId,
-	errorMessage,
+	errorDescription,
 	isError,
 	isDisabled,
 	className,
 	children,
-} ) => (
-	<div className={ className }>
-		{ labelText && (
-			<Label htmlFor={ formFieldId } id={ labelId } isDisabled={ isDisabled }>
+} ) => {
+	const isErrorWithDefault: boolean = isError === undefined ? false : isError;
+	const isDisabledWithDefault: boolean = isDisabled === undefined ? false : isDisabled;
+
+	return (
+		<div className={ className }>
+			<Label htmlFor={ formFieldId } id={ labelId } isDisabled={ isDisabledWithDefault }>
 				{ labelText }
 			</Label>
-		) }
-		<FormFieldWrapper data-testid={ `${ className }_wrapper` } isError={ isError }>
-			{ children }
-		</FormFieldWrapper>
-		<RenderedDescription
-			descriptionText={ descriptionText }
-			descriptionId={ descriptionId }
-			isError={ isError }
-			errorMessage={ errorMessage }
-		/>
-	</div>
-);
+			<FormFieldWrapper data-testid={ `${ className }_wrapper` } isError={ isErrorWithDefault }>
+				{ children }
+			</FormFieldWrapper>
+			<RenderedDescription
+				descriptionText={ normalDescription }
+				descriptionId={ descriptionId }
+				isError={ isError }
+				errorMessage={ errorDescription }
+			/>
+		</div>
+	);
+};
 
 type LabelProps = {
 	isDisabled: boolean;
@@ -115,3 +126,5 @@ const Description = styled.p< DescriptionProps >`
 	font-style: italic;
 	font-size: 14px;
 `;
+
+export default FormFieldAnnotation;

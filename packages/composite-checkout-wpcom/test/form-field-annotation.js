@@ -16,7 +16,7 @@ import { ThemeProvider } from 'emotion-theming';
 /**
  * Internal dependencies
  */
-import { FormFieldAnnotation } from '../src/components/form-field-annotation';
+import FormFieldAnnotation from '../src/components/form-field-annotation';
 
 // Add the custom matchers provided by 'jest-emotion'
 expect.extend( matchers );
@@ -42,9 +42,9 @@ describe( 'FormFieldAnnotation', () => {
 						formFieldId={ 'fieldId' }
 						labelText={ 'A Label' }
 						labelId={ 'labelId' }
-						descriptionText={ 'A description' }
+						normalDescription={ 'A description' }
 						descriptionId={ 'descriptionId' }
-						errorMessage={ 'An Error Message' }
+						errorDescription={ 'An Error Message' }
 						isError={ false }
 						isDisabled={ false }
 						className={ 'test__annotation_class' }
@@ -84,9 +84,9 @@ describe( 'FormFieldAnnotation', () => {
 						formFieldId={ 'fieldId' }
 						labelText={ 'A Label' }
 						labelId={ 'labelId' }
-						descriptionText={ 'A description' }
+						normalDescription={ 'A description' }
 						descriptionId={ 'descriptionId' }
-						errorMessage={ 'An Error Message' }
+						errorDescription={ 'An Error Message' }
 						isError={ true }
 						isDisabled={ false }
 						className={ 'test__annotation_class' }
