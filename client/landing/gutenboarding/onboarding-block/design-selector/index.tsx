@@ -14,7 +14,6 @@ import { Dialog, DialogBackdrop } from 'reakit/Dialog';
 /**
  * Internal dependencies
  */
-import { SiteVertical } from '../../stores/onboard/types';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -26,12 +25,20 @@ const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
 	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
+		select => select( 'automattic/onboard' ).getState().siteVertical
 	);
 
+	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
+	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
+	// vertical that the endpoint would fall back to anyway if an unknown ID is passed.
+	// This seems okay since the list of templates currently appears to be the same for all verticals
+	// anyway.
+	// We should modify the endpoint (or rather, add a `verticals/templates` route that doesn't require
+	// a vertical ID) for this case.
 	const templates =
-		useSelect( select => select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical.id ) ) ??
-		[];
+		useSelect( select =>
+			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
+		) ?? [];
 
 	const [ designs, otherTemplates ] = partition(
 		templates,

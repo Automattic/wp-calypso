@@ -28,12 +28,19 @@ const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onL
 	useEffect( () => void ( new window.Image().src = defaultImageUrl ), [] );
 
 	useEffect( () => {
+		// Has the user selected a vertical yet?
 		if ( siteVertical ) {
 			const preloadImage = new window.Image();
 			const failureHandler = () => {
 				setImageUrl( defaultImageUrl );
 				onLoad();
 			};
+
+			// If this is a user-supplied vertical, use the default background.
+			if ( ! siteVertical.id ) {
+				return failureHandler;
+			}
+
 			// We get an esmodule wrapping the url here
 			const successHandler = ( { default: url }: { default: string } ) => {
 				preloadImage.onload = () => {
