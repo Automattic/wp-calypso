@@ -71,6 +71,8 @@ export class LanguagePickerModal extends PureComponent {
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
 		};
+
+		this.languagesList = React.createRef();
 	}
 
 	componentDidMount() {
@@ -197,6 +199,19 @@ export class LanguagePickerModal extends PureComponent {
 		return suggestedLanguages;
 	}
 
+	getLanguagesListColumnsCount() {
+		const wrapper = this.languagesList.current;
+		const wrapperWidth = wrapper.getBoundingClientRect().width;
+		const wrapperChildWidth =
+			wrapper.children.length > 0 ? wrapper.children[ 0 ].getBoundingClientRect().width : 0;
+
+		if ( wrapperWidth === 0 ) {
+			return 0;
+		}
+
+		return Math.floor( wrapperWidth / wrapperChildWidth );
+	}
+
 	selectLanguageFromSearch( search ) {
 		const filteredLanguages = this.getFilteredLanguages();
 		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
@@ -224,6 +239,34 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	}
 
+	navigateByArrows( arrowKey ) {
+		let navigateStep = 0;
+
+		if ( arrowKey === 'ArrowUp' ) {
+			navigateStep = -this.getLanguagesListColumnsCount();
+		} else if ( arrowKey === 'ArrowDown' ) {
+			navigateStep = this.getLanguagesListColumnsCount();
+		} else if ( arrowKey === 'ArrowLeft' ) {
+			navigateStep = -1;
+		} else if ( arrowKey === 'ArrowRight' ) {
+			navigateStep = 1;
+		}
+
+		if ( navigateStep !== 0 ) {
+			const { selectedLanguageSlug } = this.state;
+			const filteredLanguages = this.getFilteredLanguages();
+			const selectedIndex = filteredLanguages.findIndex(
+				( { langSlug } ) => langSlug === selectedLanguageSlug
+			);
+			const nextIndex =
+				selectedIndex >= 0
+					? Math.max( Math.min( selectedIndex + navigateStep, filteredLanguages.length - 1 ), 0 )
+					: 0;
+
+			this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug } );
+		}
+	}
+
 	handleKeyPress = event => {
 		const { isSearchOpen } = this.state;
 
@@ -246,6 +289,12 @@ export class LanguagePickerModal extends PureComponent {
 		if ( isPrintableCharacter && ! isSearchOpen ) {
 			this.handleSearchOpen();
 			return;
+		}
+
+		// Handle arrow keys navigation
+		const arrowKeys = [ 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight' ];
+		if ( arrowKeys.includes( event.key ) ) {
+			this.navigateByArrows( event.key );
 		}
 	};
 
@@ -311,7 +360,7 @@ export class LanguagePickerModal extends PureComponent {
 		const languages = this.getFilteredLanguages();
 
 		return (
-			<div className="language-picker__modal-list">
+			<div className="language-picker__modal-list" ref={ this.languagesList }>
 				{ map( languages, this.renderLanguageItem ) }
 			</div>
 		);
