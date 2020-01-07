@@ -177,7 +177,7 @@
 	figure figcaption,
 	figure .caption,
 	.wp-caption .wp-media-credit {
-		padding: 12px 12px 12px 0;
+		padding: 12px;
 		margin: 0;
 		font-size: 13px;
 		text-align: center;
@@ -235,6 +235,10 @@
 	.wp-block-gallery {
 		margin-left: 0;
 		margin-bottom: 1em;
+	}
+
+	.blocks-gallery-caption {
+		margin: auto;
 	}
 
 	// Import Gutenberg gallery styles
