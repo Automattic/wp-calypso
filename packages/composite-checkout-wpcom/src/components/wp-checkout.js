@@ -25,9 +25,16 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
+	const [ items ] = useLineItems();
+
+	if ( areDomainsInLineItems( items ) ) {
+		return ! isActive && isComplete
+			? translate( 'Contact information' )
+			: translate( 'Enter your contact information' );
+	}
 	return ! isActive && isComplete
-		? translate( 'Contact information' )
-		: translate( 'Enter your contact information' );
+		? translate( 'Billing information' )
+		: translate( 'Enter your billing information' );
 };
 
 const OrderReviewTitle = () => {
