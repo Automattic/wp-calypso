@@ -14,7 +14,7 @@ import formattedVariationName from '../formatted-variation-name';
  *
  * @param {object} product Product object.
  * @param {Array} existingVariations Existing variations for this product.
- * @return {Array} Array of variation objects.
+ * @returns {Array} Array of variation objects.
  */
 export default function generateVariations(
 	{ name, attributes: productAttributes },

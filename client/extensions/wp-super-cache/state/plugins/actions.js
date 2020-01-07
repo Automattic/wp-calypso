@@ -24,7 +24,7 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
  *
  * @param  {number} siteId Site ID
  * @param  {object} plugins Plugins object
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const receivePlugins = ( siteId, plugins ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_PLUGINS,

@@ -48,7 +48,7 @@ const SERVICE_HOSTNAME_PATTERNS = {
  * Given a numberic value, returns the value multiplied by image scale factor
  *
  * @param  {number} value Original value
- * @return {number}       Updated value
+ * @returns {number}       Updated value
  */
 const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 

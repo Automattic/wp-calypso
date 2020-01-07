@@ -22,7 +22,7 @@ export function editProduct( siteId, product, data ) {
  * Action Creator: Clear All Product Edits
  *
  * @param {number} siteId The site for which to clear all product edits.
- * @return {object} action
+ * @returns {object} action
  */
 export function clearProductEdits( siteId ) {
 	return {
@@ -59,7 +59,7 @@ export function editProductRemoveCategory( siteId, product, categoryId ) {
  * Saves products, variations, and product categories.
  * @param {object} [successAction] Action to be dispatched upon successful completion.
  * @param {object} [failureAction] Action to be dispatched upon failure of execution.
- * @return {Function} action
+ * @returns {Function} action
  */
 export function createProductActionList( successAction, failureAction ) {
 	return {

@@ -9,7 +9,7 @@ import { merge } from 'lodash';
  *
  * @param  {(Function|object)} action Action object or thunk
  * @param  {object}            data   Additional data to include in action
- * @return {(Function|object)}        Augmented action object or thunk
+ * @returns {(Function|object)}        Augmented action object or thunk
  * @see client/state/utils/withEnhancers for a more advanced alternative
  */
 export function extendAction( action, data ) {

@@ -38,7 +38,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function settings( state = {}, action ) {
 	switch ( action.type ) {
@@ -69,7 +69,7 @@ function settings( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function settingsRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -88,7 +88,7 @@ function settingsRequest( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function settingsRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -108,7 +108,7 @@ function settingsRequestError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
@@ -125,7 +125,7 @@ function syncStatus( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function syncStatusRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -144,7 +144,7 @@ function syncStatusRequest( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function syncStatusRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -163,7 +163,7 @@ function syncStatusRequestError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function resyncRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -182,7 +182,7 @@ function resyncRequest( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function resyncRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -201,7 +201,7 @@ function resyncRequestError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function apiKeySubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -220,7 +220,7 @@ function apiKeySubmit( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function apiKeySubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -239,7 +239,7 @@ function apiKeySubmitError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function storeInfoSubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -258,7 +258,7 @@ function storeInfoSubmit( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function storeInfoSubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -277,7 +277,7 @@ function storeInfoSubmitError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function listsRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -296,7 +296,7 @@ function listsRequest( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function listsRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -315,7 +315,7 @@ function listsRequestError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function newsletterSettingsSubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -334,7 +334,7 @@ function newsletterSettingsSubmit( state = false, { type } ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function newsletterSettingsSubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -357,7 +357,7 @@ function newsletterSettingsSubmitError( state = false, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 function saveSettings( state = false, { type } ) {
 	switch ( type ) {

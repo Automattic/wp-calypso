@@ -16,7 +16,7 @@ import isJetpackSite from './is-jetpack-site';
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @param {Array} moduleIds A list of active module ids to verify
- * @return {?boolean} true if the all the given modules are active for this site
+ * @returns {?boolean} true if the all the given modules are active for this site
  */
 export default function verifyJetpackModulesActive( state, siteId, moduleIds ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

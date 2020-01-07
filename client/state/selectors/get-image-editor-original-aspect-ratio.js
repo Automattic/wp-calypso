@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * This is based on the original image's width/height when it was loaded.
  *
  * @param  {object}  state   Global state tree
- * @return {?object}         Original image dimensions, if known
+ * @returns {?object}         Original image dimensions, if known
  */
 export default function getImageEditorOriginalAspectRatio( state ) {
 	return get( state, 'ui.editor.imageEditor.originalAspectRatio', null );

@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state       Global state tree
  * @param  {string}  domain      Domain
- * @return {object}              Registrar object/record
+ * @returns {object}              Registrar object/record
  */
 export default function getGainingRegistrar( state, domain ) {
 	return get( state.domains.transfer, [ 'items', domain, 'selectedRegistrar' ], {} );

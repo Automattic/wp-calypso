@@ -21,7 +21,7 @@ import {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The list of shipping zones, as retrieved from the server. It can also be the string "LOADING"
+ * @returns {object} The list of shipping zones, as retrieved from the server. It can also be the string "LOADING"
  * if the zones are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -31,7 +31,7 @@ export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) 
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping zones list has been successfully loaded from the server
+ * @returns {boolean} Whether the shipping zones list has been successfully loaded from the server
  */
 export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const zones = getAPIShippingZones( state, siteId );
@@ -45,7 +45,7 @@ export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping zones list is currently being retrieved from the server
+ * @returns {boolean} Whether the shipping zones list is currently being retrieved from the server
  */
 export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const zones = getAPIShippingZones( state, siteId );

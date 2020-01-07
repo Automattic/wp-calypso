@@ -9,7 +9,7 @@ import { find } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number} blogId  The blogId to find
- * @return {object} The subscription
+ * @returns {object} The subscription
  */
 export default ( state, blogId ) =>
 	find( state.reader.follows.items, item => item.blog_ID == blogId ); // eslint-disable-line eqeqeq

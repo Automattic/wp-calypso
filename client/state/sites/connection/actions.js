@@ -14,7 +14,7 @@ import wp from 'lib/wp';
  * Request the Jetpack connection status for a certain site.
  *
  * @param  {Int}       siteId  ID of the site.
- * @return {Function}          Action thunk to request the Jetpack connection status when called.
+ * @returns {Function}          Action thunk to request the Jetpack connection status when called.
  */
 export const requestConnectionStatus = siteId => {
 	return dispatch => {

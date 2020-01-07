@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Gets the previous path set by a ROUTE_SET action
  * @param {object} state - global redux state
- * @return {string} previous path value
+ * @returns {string} previous path value
  */
 export const getPreviousPath = state => get( state, 'ui.route.path.previous', '' );
 

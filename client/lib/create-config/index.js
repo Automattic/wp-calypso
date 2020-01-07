@@ -60,7 +60,7 @@ const config = data => key => {
  *
  * @param {string} feature Feature name
  * @param {object} data the json environment configuration to use for getting config values
- * @return {boolean} True when feature is enabled.
+ * @returns {boolean} True when feature is enabled.
  * @api public
  */
 const isEnabled = data => feature => ( data.features && !! data.features[ feature ] ) || false;

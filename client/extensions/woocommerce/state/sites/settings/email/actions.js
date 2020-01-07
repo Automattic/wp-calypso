@@ -65,7 +65,7 @@ export const emailSettingChange = ( siteId, setting ) => dispatch => {
  * isSaveSettingsRequested
  *
  * @param  {number|string} siteId      Jetpack site ID
- * @return {Function}                  Action thunk
+ * @returns {Function}                  Action thunk
  */
 export const emailSettingsSaveSettings = siteId => dispatch => {
 	if ( null == siteId ) {

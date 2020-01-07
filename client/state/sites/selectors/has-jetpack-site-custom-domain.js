@@ -13,7 +13,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?boolean} Whether site has custom domain
+ * @returns {?boolean} Whether site has custom domain
  */
 export default function hasJetpackSiteCustomDomain( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

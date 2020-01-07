@@ -11,7 +11,7 @@ import { getSiteFrontPage } from 'state/sites/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
+ * @returns {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
  */
 export default function isSiteChecklistComplete( state, siteId ) {
 	const siteChecklist = getSiteChecklist( state, siteId );

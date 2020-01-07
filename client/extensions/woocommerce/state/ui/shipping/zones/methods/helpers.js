@@ -14,7 +14,7 @@ import { getBucket } from 'woocommerce/state/ui/helpers';
  * It's in the format { creates: [], updates: [], deletes: [] }
  * @param {object} [currentMethodEdits] Edits made to the zone's methods, but not committed yet
  * (i.e. the "Edit Zone" modal is still open). Same format as zoneMethodEdits
- * @return {object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
+ * @returns {object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
  */
 export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 	if ( ! currentMethodEdits ) {

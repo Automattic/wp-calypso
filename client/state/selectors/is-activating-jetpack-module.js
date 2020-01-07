@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @param  {string}  moduleSlug  Slug of the module
- * @return {?boolean}            Whether module is currently being activated
+ * @returns {?boolean}            Whether module is currently being activated
  */
 export default function isActivatingJetpackModule( state, siteId, moduleSlug ) {
 	return get( state.jetpack.modules.requests, [ siteId, moduleSlug, 'activating' ], null );

@@ -96,7 +96,7 @@ export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
  * Fetch all remote login urls
  *
  * @param  {Array}   loginLinks     Array of urls
- * @return {Promise}                A promise that always resolve
+ * @returns {Promise}                A promise that always resolve
  */
 export const remoteLoginUser = loginLinks => {
 	return Promise.all(
@@ -114,7 +114,7 @@ export const remoteLoginUser = loginLinks => {
  * @param  {string}   password        Password of the user
  * @param  {string}   redirectTo      Url to redirect the user to upon successful login
  * @param  {string}   domain          A domain to reverse login to
- * @return {Function}                 A thunk that can be dispatched
+ * @returns {Function}                 A thunk that can be dispatched
  */
 export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
 	dispatch( {
@@ -237,7 +237,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
  *
  * @param  {string}   twoStepCode       Verification code received by the user
  * @param  {string}   twoFactorAuthType Two factor authentication method (sms, push ...)
- * @return {Function}                   A thunk that can be dispatched
+ * @returns {Function}                   A thunk that can be dispatched
  */
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => (
 	dispatch,
@@ -285,7 +285,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
  *           {string}   access_token OAuth2 access token provided by the social service
  *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect.
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
- * @return {Function}                A thunk that can be dispatched
+ * @returns {Function}                A thunk that can be dispatched
  */
 export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
@@ -338,7 +338,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  *           {string}   access_token OAuth2 access token provided by the social service
  *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
  * @param  {string}   flowName       The name of the current signup flow
- * @return {Function}                A thunk that can be dispatched
+ * @returns {Function}                A thunk that can be dispatched
  */
 export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 	dispatch( {
@@ -381,7 +381,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
  *           {string}   access_token OAuth2 access token provided by the social service
  *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
- * @return {Function}                A thunk that can be dispatched
+ * @returns {Function}                A thunk that can be dispatched
  */
 export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( {
@@ -419,7 +419,7 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * Disconnects the current WordPress.com account from a third-party social account (Google ...).
  *
  * @param  {string}   socialService The social service name
- * @return {Function}               A thunk that can be dispatched
+ * @returns {Function}               A thunk that can be dispatched
  */
 export const disconnectSocialUser = socialService => dispatch => {
 	dispatch( {
@@ -461,7 +461,7 @@ export const createSocialUserFailed = ( socialInfo, error ) => ( {
 /**
  * Sends a two factor authentication recovery code to a user.
  *
- * @return {Function} A thunk that can be dispatched
+ * @returns {Function} A thunk that can be dispatched
  */
 export const sendSmsCode = () => ( dispatch, getState ) => {
 	dispatch( {
@@ -508,7 +508,7 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.
  *
  * @param  {string}   usernameOrEmail Identifier of the user
- * @return {Function}                 A thunk that can be dispatched
+ * @returns {Function}                 A thunk that can be dispatched
  */
 export const getAuthAccountType = usernameOrEmail => dispatch => {
 	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
@@ -551,7 +551,7 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 /**
  * Resets the type of authentication of the account of the current user.
  *
- * @return {object} An action that can be dispatched
+ * @returns {object} An action that can be dispatched
  */
 export const resetAuthAccountType = () => ( {
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,

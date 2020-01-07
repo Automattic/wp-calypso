@@ -73,7 +73,7 @@ const getRejectedPromise = errorToPass => {
  *
  * @param {object} site - site object
  * @param {object} plugin - plugin object
- * @return {string} plugin if
+ * @returns {string} plugin if
  */
 const getPluginId = ( site, plugin ) => {
 	return site.jetpack ? plugin.id : plugin.slug;
@@ -84,7 +84,7 @@ const getPluginId = ( site, plugin ) => {
  *
  * @param {object} site - site object
  * @param {string} pluginId - plugin identifier
- * @return {SitePlugin} SitePlugin instance
+ * @returns {SitePlugin} SitePlugin instance
  */
 const getPluginHandler = ( site, pluginId ) => {
 	const siteHandler = wpcom.site( site.ID );
@@ -101,7 +101,7 @@ const getPluginHandler = ( site, pluginId ) => {
  * @param {object} site - site object
  * @param {string} pluginId - plugin identifier
  * @param {string} method - plugin method to bind
- * @return {Function} bound function
+ * @returns {Function} bound function
  */
 const getPluginBoundMethod = ( site, pluginId, method ) => {
 	const handler = getPluginHandler( site, pluginId );

@@ -14,7 +14,7 @@ import getBillingTransactions from 'state/selectors/get-billing-transactions';
  * Returns null if the billing transactions have not been fetched yet.
  *
  * @param  {object}  state   Global state tree
- * @return {?Array}          An array of past transactions
+ * @returns {?Array}          An array of past transactions
  */
 export default function getPastBillingTransactions( state ) {
 	return get( getBillingTransactions( state ), 'past', null );

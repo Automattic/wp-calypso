@@ -18,7 +18,7 @@ const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
  * Get all sites
  *
  * @param {object} state  Global state tree
- * @return {Array}        Sites objects
+ * @returns {Array}        Sites objects
  */
 export default createSelector(
 	state => {

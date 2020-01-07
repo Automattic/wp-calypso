@@ -20,7 +20,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -38,7 +38,7 @@ export function isQueryLoading( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	if ( action.error ) {
@@ -69,7 +69,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isQueryError( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.error ) {
@@ -86,7 +86,7 @@ export function isQueryError( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
@@ -102,7 +102,7 @@ export function queries( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function total( state = 0, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {

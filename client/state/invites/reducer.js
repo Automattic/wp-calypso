@@ -28,7 +28,7 @@ import { inviteItemsSchema } from './schema';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -49,7 +49,7 @@ export function requesting( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -103,7 +103,7 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
  *
  * @param  {Array} siteInvites      Array of invite objects.
  * @param  {Array} invitesToDelete  Array of invite keys to remove.
- * @return {Array}                  Updated array of invite objects.
+ * @returns {Array}                  Updated array of invite objects.
  */
 function deleteInvites( siteInvites, invitesToDelete ) {
 	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
@@ -115,7 +115,7 @@ function deleteInvites( siteInvites, invitesToDelete ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const counts = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -143,7 +143,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requestingResend( state = {}, action ) {
 	switch ( action.type ) {
@@ -175,7 +175,7 @@ export function requestingResend( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function deleting( state = {}, action ) {
 	switch ( action.type ) {

@@ -17,7 +17,7 @@ import {
  * @param  {number} siteId     Site ID
  * @param  {string} postType   Post type
  * @param  {Array}  taxonomies Taxonomies received
- * @return {object}            Action object
+ * @returns {object}            Action object
  */
 export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
 	return {
@@ -34,7 +34,7 @@ export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
  *
  * @param  {number}   siteId   Site ID
  * @param  {string}   postType Post type
- * @return {Function}          Action thunk
+ * @returns {Function}          Action thunk
  */
 export function requestPostTypeTaxonomies( siteId, postType ) {
 	return dispatch => {

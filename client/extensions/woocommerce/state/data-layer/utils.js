@@ -10,7 +10,7 @@ import { unescape } from 'lodash';
  * the site. Otherwise it has an error message from the remote site.
  *
  * @param  {object} response Response from an API call
- * @return {object}          Verified response
+ * @returns {object}          Verified response
  */
 export function verifyResponseHasData( response ) {
 	if ( ! response.data ) {
@@ -23,7 +23,7 @@ export function verifyResponseHasData( response ) {
  * Check that all categories in a given list are valid category objects.
  *
  * @param  {Array} categories List of categories from the remote site API
- * @return {boolean}          True if the categories are valid.
+ * @returns {boolean}          True if the categories are valid.
  */
 function isValidCategoriesArray( categories ) {
 	for ( let i = 0; i < categories.length; i++ ) {
@@ -39,7 +39,7 @@ function isValidCategoriesArray( categories ) {
  * Check if the given category has the expected properties
  *
  * @param  {object} category A single category from the remote site API
- * @return {boolean}         True if the category is valid.
+ * @returns {boolean}         True if the category is valid.
  */
 function isValidProductCategory( category ) {
 	return (
@@ -60,7 +60,7 @@ function isValidProductCategory( category ) {
  * the site. Otherwise it has an error message from the remote site.
  *
  * @param  {object} response Response from an API call
- * @return {object}          Verified response
+ * @returns {object}          Verified response
  */
 export function verifyResponseHasValidCategories( response ) {
 	if ( ! response.data ) {

@@ -5,7 +5,7 @@
  *  - does it have at least two parts separated by a dot?
  *
  * @param  query The string to check
- * @return       Does it appear to be a URL?
+ * @returns       Does it appear to be a URL?
  */
 export default function resemblesUrl( query: string ): boolean {
 	if ( ! query ) {

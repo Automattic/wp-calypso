@@ -16,7 +16,7 @@ import { isDomainRegistration } from 'lib/products-values';
  * @param {?object} receipt - The receipt for the transaction
  * @param {?object} cart - The cart for the transaction
  *
- * @return {?string} the name of the first domain for the transaction.
+ * @returns {?string} the name of the first domain for the transaction.
  */
 export function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	let domainRegistration;

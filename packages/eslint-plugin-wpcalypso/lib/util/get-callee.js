@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utility for retrieving callee identifier node from a CallExpression
+ * @file Utility for retrieving callee identifier node from a CallExpression
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,7 +9,7 @@
  * Returns the callee identifier node from a CallExpression.
  *
  * @param  {object} node CallExpression node
- * @return {object}      First non-sequence callee
+ * @returns {object}      First non-sequence callee
  */
 const getCallee = ( module.exports = function( node ) {
 	const callee = node.callee;

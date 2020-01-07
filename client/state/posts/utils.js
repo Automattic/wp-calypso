@@ -66,7 +66,7 @@ const normalizeDisplayFlow = flow( [
  * default post query.
  *
  * @param  {object} query Posts query
- * @return {object}       Normalized posts query
+ * @returns {object}       Normalized posts query
  */
 export function getNormalizedPostsQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
@@ -77,7 +77,7 @@ export function getNormalizedPostsQuery( query ) {
  *
  * @param  {object} query  Posts query
  * @param  {number} siteId Optional site ID
- * @return {string}        Serialized posts query
+ * @returns {string}        Serialized posts query
  */
 export function getSerializedPostsQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedPostsQuery( query );
@@ -95,7 +95,7 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
  * The object will include siteId and/or query object, if can be parsed.
  *
  * @param  {string} serializedQuery Serialized posts query
- * @return {object}                 Deserialized posts query details
+ * @returns {object}                 Deserialized posts query details
  */
 export function getDeserializedPostsQueryDetails( serializedQuery ) {
 	let siteId, query;
@@ -116,7 +116,7 @@ export function getDeserializedPostsQueryDetails( serializedQuery ) {
  *
  * @param  {object} query  Posts query
  * @param  {number} siteId Optional site ID
- * @return {string}        Serialized posts query
+ * @returns {string}        Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
@@ -161,7 +161,7 @@ function applyMetadataEdits( metadata, edits ) {
  *
  * @param  {object} post  Destination post for merge
  * @param  {object} edits Objects with edits
- * @return {object}       Merged post with applied edits
+ * @returns {object}       Merged post with applied edits
  */
 export function applyPostEdits( post, edits ) {
 	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {
@@ -192,7 +192,7 @@ function mergeMetadataEdits( edits, nextEdits ) {
  * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
  * @param  {Array<Object>} postEditsLog Edits objects to be merged
- * @return {object?}                    Merged edits object with changes from all sources
+ * @returns {object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
 	reduce(
@@ -235,7 +235,7 @@ export const mergePostEdits = ( ...postEditsLog ) =>
  *
  * @param {Array<Object>?} postEditsLog Existing edits log to be appended to
  * @param {object} newPostEdits New edits to be appended to the log
- * @return {Array<Object>} Merged edits log
+ * @returns {Array<Object>} Merged edits log
  */
 export const appendToPostEditsLog = ( postEditsLog, newPostEdits ) => {
 	if ( isEmpty( postEditsLog ) ) {
@@ -264,7 +264,7 @@ const normalizePostCache = new WeakMap();
  * includes common transformations to prepare the post for display.
  *
  * @param  {object} post Raw post object
- * @return {object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForDisplay( post ) {
 	if ( ! post ) {
@@ -284,7 +284,7 @@ export function normalizePostForDisplay( post ) {
  * Given a post object, returns a normalized post object
  *
  * @param  {Ojbect} post Raw edited post object
- * @return {object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForEditing( post ) {
 	if ( ! post ) {
@@ -299,7 +299,7 @@ export function normalizePostForEditing( post ) {
  * in the global state object.
  *
  * @param  {object} post Raw post object
- * @return {object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForState( post ) {
 	const normalizedPost = cloneDeep( post );
@@ -328,7 +328,7 @@ export function normalizePostForState( post ) {
  * Takes existing term post edits and updates the `terms_by_id` attribute
  *
  * @param  {object}    post  object of post edits
- * @return {object}          normalized post edits
+ * @returns {object}          normalized post edits
  */
 export function getTermIdsFromEdits( post ) {
 	if ( ! post || ! post.terms ) {
@@ -372,7 +372,7 @@ export function getTermIdsFromEdits( post ) {
  * Returns a normalized post terms object for sending to the API
  *
  * @param  {object} post Raw post object
- * @return {object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizeTermsForApi( post ) {
 	if ( ! post || ! post.terms ) {
@@ -392,7 +392,7 @@ export function normalizeTermsForApi( post ) {
  *
  * @param  {object}  localTermEdits local state of term edits
  * @param  {object}  savedTerms     term object returned from API POST
- * @return {boolean}                are there differences in local edits vs saved terms
+ * @returns {boolean}                are there differences in local edits vs saved terms
  */
 export function isTermsEqual( localTermEdits, savedTerms ) {
 	return every( localTermEdits, ( terms, taxonomy ) => {
@@ -411,7 +411,7 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
  *
  * @param  {object}  localDiscussionEdits local state of discussion edits
  * @param  {object}  savedDiscussion      discussion property returned from API POST
- * @return {boolean}                      are there differences in local edits vs saved values?
+ * @returns {boolean}                      are there differences in local edits vs saved values?
  */
 export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
 	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
@@ -423,7 +423,7 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
  *
  * @param  {object}  localAuthorEdit locally edited author object
  * @param  {object}  savedAuthor     author property returned from API POST
- * @return {boolean}                 are the locally edited and saved values equal?
+ * @returns {boolean}                 are the locally edited and saved values equal?
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
@@ -491,7 +491,7 @@ export function areAllMetadataEditsApplied( edits, savedMetadata ) {
  * Returns a normalized post object for sending to the API
  *
  * @param  {object} post Raw post object
- * @return {object}      Normalized post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForApi( post ) {
 	if ( ! post ) {

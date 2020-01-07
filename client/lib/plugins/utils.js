@@ -13,7 +13,7 @@ import { sanitizeSectionContent } from './sanitize-section-content';
 /**
  * @param  {object} site       Site Object
  * @param  {object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @returns {Bool} True if notice matches criteria
  */
 function isSameSiteNotice( site, log ) {
 	return site && log.site && log.site.ID === site.ID;
@@ -22,7 +22,7 @@ function isSameSiteNotice( site, log ) {
 /**
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @returns {Bool} True if notice matches criteria
  */
 function isSamePluginNotice( pluginSlug, log ) {
 	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
@@ -34,7 +34,7 @@ function isSamePluginNotice( pluginSlug, log ) {
  * @param  {object} site       Site Object
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @returns {Bool} True if notice matches criteria
  */
 function filterNoticesBy( site, pluginSlug, log ) {
 	if ( ! site && ! pluginSlug ) {
@@ -215,7 +215,7 @@ export function normalizePluginsList( pluginsList ) {
  * @param  {object} site       Site Object
  * @param  {string} pluginSlug Plugin Slug
  *
- * @return {Array} Array of filtered logs that match the criteria
+ * @returns {Array} Array of filtered logs that match the criteria
  */
 export function filterNotices( logs, site, pluginSlug ) {
 	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );

@@ -17,7 +17,7 @@ import {
  * @param  {number} siteId Site ID
  * @param  {number} postId Post Id
  * @param  {Array}  stats  The received stats
- * @return {object}        Action object
+ * @returns {object}        Action object
  */
 export function receivePostStats( siteId, postId, stats ) {
 	return {
@@ -35,7 +35,7 @@ export function receivePostStats( siteId, postId, stats ) {
  * @param  {number} siteId Site ID
  * @param  {number} postId Post Id
  * @param  {string} fields Stat Fields to fetch
- * @return {Function}      Action thunk
+ * @returns {Function}      Action thunk
  */
 export function requestPostStats( siteId, postId, fields = [] ) {
 	return dispatch => {

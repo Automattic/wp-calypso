@@ -62,7 +62,7 @@ const DEFAULT_DIR = 'build/';
  *
  * @param {object} node AST node.
  *
- * @return {string} String value.
+ * @returns {string} String value.
  */
 function getNodeAsString( node ) {
 	if ( undefined === node ) {

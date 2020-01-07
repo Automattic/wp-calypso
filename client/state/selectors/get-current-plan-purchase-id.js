@@ -18,7 +18,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?number}        Purchase ID if known
+ * @returns {?number}        Purchase ID if known
  */
 export default function getCurrentPlanPurchaseId( state, siteId ) {
 	const result = get( getCurrentPlan( state, siteId ), 'id', null );

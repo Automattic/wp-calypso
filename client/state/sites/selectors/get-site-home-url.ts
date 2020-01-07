@@ -10,7 +10,7 @@ import { getStatsDefaultSitePage } from 'lib/route/path';
  *
  * @param  {object}  state  Global state tree.
  * @param  {?number} siteId Site ID.
- * @return {string}         Url of the site home.
+ * @returns {string}         Url of the site home.
  */
 export default function getSiteHomeUrl( state: object, siteId?: number ): string {
 	const selectedSiteId = siteId || getSelectedSiteId( state );

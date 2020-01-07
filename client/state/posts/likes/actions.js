@@ -18,7 +18,7 @@ import 'state/data-layer/wpcom/sites/posts/likes';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @return {object}        Action
+ * @returns {object}        Action
  */
 export function requestPostLikes( siteId, postId ) {
 	return {

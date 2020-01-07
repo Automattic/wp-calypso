@@ -17,7 +17,7 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -38,7 +38,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -61,7 +61,7 @@ export function requesting( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function errors( state = {}, action ) {
 	const serializedQuery =

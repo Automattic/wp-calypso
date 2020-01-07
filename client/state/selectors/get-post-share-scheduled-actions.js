@@ -23,7 +23,7 @@ const getScheduledActions = ( state, siteId, postId ) =>
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
- * @return {Array} share publihed actions array
+ * @returns {Array} share publihed actions array
  */
 const getPostShareScheduledActions = createSelector(
 	( state, siteId, postId ) => {

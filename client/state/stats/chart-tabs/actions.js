@@ -13,7 +13,7 @@ import 'state/data-layer/wpcom/sites/stats/visits';
  * @param  {number}  quantity      Number of periods to include in the query
  * @param  {number}  siteId        Site ID
  * @param  {Array}   statFields    Comma separated list of stat fields
- * @return {object}  Action object
+ * @returns {object}  Action object
  */
 export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
 	return {
@@ -34,7 +34,7 @@ export function requestChartCounts( { chartTab, date, period, quantity, siteId, 
  * @param  {number}  siteId   		 Site ID
  * @param  {string}  period   		 Type of duration to include in the query (such as daily)
  * @param  {object}  data   			 Visitor counts API response
- * @return {object}  Action object
+ * @returns {object}  Action object
  */
 export function receiveChartCounts( siteId, period, data ) {
 	return {

@@ -3,7 +3,7 @@
  *
  *
  * @param {number} userId User ID
- * @return {object}        User object
+ * @returns {object}        User object
  */
 
 export function getPostRevisionAuthor( state, userId ) {

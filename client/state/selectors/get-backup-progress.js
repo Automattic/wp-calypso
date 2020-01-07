@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {number|string} siteId the site ID
- * @return {?object} Progress object, null if no data
+ * @returns {?object} Progress object, null if no data
  */
 export default function getBackupProgress( state, siteId ) {
 	return get( state, [ 'activityLog', 'backupProgress', siteId ], null );

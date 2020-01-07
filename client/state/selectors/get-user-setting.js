@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object} state Global state tree
  * @param  {string} settingName - setting name
- * @return {*} setting name value
+ * @returns {*} setting name value
  */
 export default function getUserSetting( state, settingName ) {
 	const { settings, unsavedSettings } = state.userSettings;

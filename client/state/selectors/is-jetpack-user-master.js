@@ -15,7 +15,7 @@ import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connectio
  *
  * @param  {object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
- * @return {?boolean}          Whether the current site user is the master user.
+ * @returns {?boolean}          Whether the current site user is the master user.
  */
 export default function isJetpackUserMaster( state, siteId ) {
 	return get( getJetpackUserConnection( state, siteId ), [ 'isMaster' ], null );

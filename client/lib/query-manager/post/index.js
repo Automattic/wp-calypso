@@ -23,7 +23,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  post  Item to consider
-	 * @return {boolean}       Whether post matches query
+	 * @returns {boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
 		const queryWithDefaults = Object.assign( {}, this.DefaultQuery, query );
@@ -119,7 +119,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @param  {object} query Query object
 	 * @param  {object} postA First post
 	 * @param  {object} postB Second post
-	 * @return {number}       0 if equal, less than 0 if postA is first,
+	 * @returns {number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */
 	static compare( query, postA, postB ) {

@@ -21,7 +21,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} response from the server
  * @param {object} response.diffs raw data containing a set of diffs for the site & post
  *
- * @return {Array} An array of Redux actions
+ * @returns {Array} An array of Redux actions
  */
 export const receiveSuccess = ( { siteId, postId }, response ) =>
 	receivePostRevisions( { siteId, postId, ...response } );
@@ -30,7 +30,7 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
  * Dispatches a request to fetch post revisions
  *
  * @param {object} action Redux action
- * @return {object} Redux action
+ * @returns {object} Redux action
  */
 export const fetchPostRevisionsDiffs = action => {
 	const { siteId, postId, postType, comparisons } = action;

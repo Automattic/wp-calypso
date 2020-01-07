@@ -14,7 +14,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  * Whether the user currently has any Atomic sites
  *
  * @param {object} state  Global state tree
- * @return {boolean}
+ * @returns {boolean}
  */
 export default createSelector(
 	state => some( getSitesItems( state ), site => isAtomicSite( state, site.ID ) ),

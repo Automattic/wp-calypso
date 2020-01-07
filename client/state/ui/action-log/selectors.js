@@ -19,7 +19,7 @@ import { ROUTE_SET } from 'state/action-types';
  * actions are welcome to use and/or extend it.
  *
  * @param  {object}   state      Global state tree
- * @return {Array}               Array of Redux actions, each with timestamp
+ * @returns {Array}               Array of Redux actions, each with timestamp
  */
 export function getActionLog( state ) {
 	return state.ui.actionLog;
@@ -30,7 +30,7 @@ export function getActionLog( state ) {
  * dispatched for the current user.
  *
  * @param  {object}   state      Global state tree
- * @return {Array}               Array of Redux actions of with a type of
+ * @returns {Array}               Array of Redux actions of with a type of
  *                               ROUTE_SET, each with timestamp
  */
 export const getRouteHistory = createSelector(
@@ -42,7 +42,7 @@ export const getRouteHistory = createSelector(
  * Returns the last ROUTE_SET action that had been dispatched for the current user.
  *
  * @param  {object}   state      Global state tree
- * @return {object}              The last Redux action of type ROUTE_SET, with timestamp
+ * @returns {object}              The last Redux action of type ROUTE_SET, with timestamp
  */
 export const getLastRouteAction = createSelector(
 	state => findLast( getActionLog( state ), action => action.type === ROUTE_SET ),
@@ -53,7 +53,7 @@ export const getLastRouteAction = createSelector(
  * Returns the last item from the action log.
  *
  * @param  {object}   state      Global state tree
- * @return {object}              The matching dispatched action
+ * @returns {object}              The matching dispatched action
  */
 export const getLastAction = createSelector(
 	state => last( state.ui.actionLog ) || false,

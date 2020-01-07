@@ -10,7 +10,7 @@ import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function currentPage( state = 1, action ) {
 	const { type, query } = action;
@@ -25,7 +25,7 @@ export function currentPage( state = 1, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function currentProduct( state = null, action ) {
 	const { type, query } = action;
@@ -40,7 +40,7 @@ export function currentProduct( state = null, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function currentSearch( state = '', action ) {
 	const { type, query } = action;

@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state       Global state tree
  * @param  {string}  domain      Domain to query details
- * @return {object}              Contact details
+ * @returns {object}              Contact details
  */
 export default function getWhois( state, domain ) {
 	return get( state, [ 'domains', 'management', 'items', domain ], false );

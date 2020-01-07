@@ -28,7 +28,7 @@ import { combineReducers } from 'state/utils';
  *
  * @param  {Array} state  Current state
  * @param  {object} action Action payload
- * @return {Array}        Updated state
+ * @returns {Array}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -48,7 +48,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action object
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {

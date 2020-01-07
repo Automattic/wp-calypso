@@ -4,7 +4,7 @@
  *
  *
  * @param {number}  siteId Site ID
- * @return {boolean}        Whether post formats are being requested
+ * @returns {boolean}        Whether post formats are being requested
  */
 
 export function isRequestingPostFormats( state, siteId ) {
@@ -16,7 +16,7 @@ export function isRequestingPostFormats( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?object}        Site post formats
+ * @returns {?object}        Site post formats
  */
 export function getPostFormats( state, siteId ) {
 	return state.postFormats.items[ siteId ] || null;

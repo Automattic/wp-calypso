@@ -126,7 +126,7 @@ export function bypassPersistentStorage( shouldBypassPersistentStorage: boolean 
  * Get a stored item.
  *
  * @param key The stored item key.
- * @return A promise with the stored value. `undefined` if missing.
+ * @returns A promise with the stored value. `undefined` if missing.
  */
 export async function getStoredItem< T >( key: string ): Promise< T | undefined > {
 	if ( shouldBypass ) {
@@ -151,7 +151,7 @@ export async function getStoredItem< T >( key: string ): Promise< T | undefined 
  *
  * @param key The key to store the item under.
  * @param value The value of the item to be stored.
- * @return A promise that gets resolved when the item is successfully stored.
+ * @returns A promise that gets resolved when the item is successfully stored.
  */
 export async function setStoredItem< T >( key: string, value: T ): Promise< void > {
 	if ( shouldBypass ) {
@@ -170,7 +170,7 @@ export async function setStoredItem< T >( key: string, value: T ): Promise< void
 /**
  * Clear all stored items.
  *
- * @return A promise that gets resolved when all items are successfully cleared.
+ * @returns A promise that gets resolved when all items are successfully cleared.
  */
 export async function clearStorage(): Promise< void > {
 	if ( shouldBypass ) {

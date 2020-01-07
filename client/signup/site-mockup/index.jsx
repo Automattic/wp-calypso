@@ -109,7 +109,7 @@ class SiteMockups extends Component {
 	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
-	 * @return {string} Formatted content
+	 * @returns {string} Formatted content
 	 */
 	getContent( content = '' ) {
 		if ( 'string' !== typeof content ) {

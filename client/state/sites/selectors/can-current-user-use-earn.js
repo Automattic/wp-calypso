@@ -10,7 +10,7 @@ import getSite from './get-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?boolean}        Whether user can access the Earn section.
+ * @returns {?boolean}        Whether user can access the Earn section.
  */
 export default function canCurrentUserUseEarn( state, siteId = null ) {
 	if ( ! siteId ) {

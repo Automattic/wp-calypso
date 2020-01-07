@@ -10,7 +10,7 @@ import MediaQueryManager from 'lib/query-manager/media';
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {object}  query  Query object
- * @return {bool}           True if media is being requested
+ * @returns {bool}           True if media is being requested
  */
 export default function isRequestingMedia( state, siteId, query ) {
 	const queryRequests = state.media.queryRequests[ siteId ];

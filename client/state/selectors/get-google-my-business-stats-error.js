@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param {string} statType - Type of metrics (e.g. 'queries')
  * @param {string} interval - Time period (e.g. 'month')
  * @param {string} aggregation - Type of aggregation (e.g. 'daily')
- * @return {object} the corresponding stats error, or null if there is no error
+ * @returns {object} the corresponding stats error, or null if there is no error
  */
 export default function getGoogleMyBusinessStatsError(
 	state,

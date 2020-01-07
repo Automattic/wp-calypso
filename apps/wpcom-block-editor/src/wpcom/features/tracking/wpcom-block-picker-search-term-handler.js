@@ -32,7 +32,7 @@ const trackSearchTerm = ( event, target ) => {
  * Return the event definition object to track `wpcom_block_picker_no_results`.
  * Also, it tracks `wpcom_block_picker_no_results` is the searcher doesn't return any result.
  *
- * @return {{handler: function, selector: string, type: string}} event object definition.
+ * @returns {{handler: function, selector: string, type: string}} event object definition.
  */
 export default () => ( {
 	selector: '.block-editor-inserter__search',

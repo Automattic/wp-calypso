@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state  Global state tree
- * @return {Array}          Reader Teams
+ * @returns {Array}          Reader Teams
  */
 
 export default function getReaderTeams( state ) {

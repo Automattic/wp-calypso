@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state  Global state tree
- * @return {Array}          Reader Tags
+ * @returns {Array}          Reader Tags
  */
 
 export default function getReaderTags( state ) {

@@ -61,7 +61,7 @@ export default class QueryManager {
 	 * @param  {?object} item        Existing item, if exists
 	 * @param  {object}  revisedItem Incoming revision of item
 	 * @param  {boolean} patch       Use patching application
-	 * @return {?object}             Item to track, or undefined to omit
+	 * @returns {?object}             Item to track, or undefined to omit
 	 */
 	static mergeItem( item, revisedItem, patch = false ) {
 		if ( patch ) {
@@ -80,7 +80,7 @@ export default class QueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  item  Item to consider
-	 * @return {boolean}       Whether item matches query
+	 * @returns {boolean}       Whether item matches query
 	 */
 	static matches( query, item ) {
 		return !! item;
@@ -93,7 +93,7 @@ export default class QueryManager {
 	 * @param  {object} query Query object
 	 * @param  {object} itemA First item
 	 * @param  {object} itemB Second item
-	 * @return {number}       0 if equal, less than 0 if itemA is first,
+	 * @returns {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
 	static compare( query, itemA, itemB ) {
@@ -132,7 +132,7 @@ export default class QueryManager {
 	 * Returns a single item by key.
 	 *
 	 * @param  {string} itemKey Item key
-	 * @return {object}         Item
+	 * @returns {object}         Item
 	 */
 	getItem( itemKey ) {
 		return this.data.items[ itemKey ];
@@ -144,7 +144,7 @@ export default class QueryManager {
 	 * the query.
 	 *
 	 * @param  {?object}       query Optional query object
-	 * @return {object[]|null}       Items tracked, if known
+	 * @returns {object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {
 		if ( ! query ) {
@@ -166,7 +166,7 @@ export default class QueryManager {
 	 * not known.
 	 *
 	 * @param  {object}  query Query object
-	 * @return {?number}       Found items for query
+	 * @returns {?number}       Found items for query
 	 */
 	getFound( query ) {
 		const queryKey = this.constructor.QueryKey.stringify( query );
@@ -179,7 +179,7 @@ export default class QueryManager {
 	 * otherwise.
 	 *
 	 * @param  {string}       itemKey Key of item to remove
-	 * @return {QueryManager}         New instance if changed, or same instance
+	 * @returns {QueryManager}         New instance if changed, or same instance
 	 *                                otherwise
 	 */
 	removeItem( itemKey ) {
@@ -192,7 +192,7 @@ export default class QueryManager {
 	 * current instance otherwise.
 	 *
 	 * @param  {string[]}     itemKeys Keys of items to remove
-	 * @return {QueryManager}          New instance if changed, or same
+	 * @returns {QueryManager}          New instance if changed, or same
 	 *                                 instance otherwise
 	 */
 	removeItems( itemKeys = [] ) {
@@ -220,7 +220,7 @@ export default class QueryManager {
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {boolean}        options.mergeQuery Add to existing query set
 	 * @param  {number}         options.found      Total found items for query
-	 * @return {QueryManager}                      New instance if changed, or
+	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */
 	receive( items = [], options = {} ) {

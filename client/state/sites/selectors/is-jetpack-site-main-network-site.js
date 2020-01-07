@@ -14,7 +14,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?boolean} true if the site is the main site
+ * @returns {?boolean} true if the site is the main site
  */
 export default function isJetpackSiteMainNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

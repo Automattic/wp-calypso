@@ -12,7 +12,7 @@ export function isIE() {
  * Returns CSS link HTML
  *
  * @param  {string} url 	The css file path
- * @return {string}         The HTML source or an empty string if `url` is absent.
+ * @returns {string}         The HTML source or an empty string if `url` is absent.
  */
 export function getCSSLinkHtml( url ) {
 	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${ url }" />` : '';
@@ -23,7 +23,7 @@ export function getCSSLinkHtml( url ) {
  *
  * @param  {string}  url	The css file path of Gutenberg's style.css
  * @param  {boolean} isRtl	If the current locale is a right-to-left language
- * @return {string}			The Gutenberg theme.css URL
+ * @returns {string}			The Gutenberg theme.css URL
  */
 export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
 	const themeCss = 'theme' + ( isRtl ? '-rtl.css' : '.css' );
@@ -50,7 +50,7 @@ export function revokeObjectURL( objectUrl ) {
  * @param  {boolean} isRtl              If the current locale is a right-to-left language
  * @param  {string}  langSlug           The slug of the current locale
  * @param  {boolean} scrolling          Whether to allow scrolling on the body
- * @return {string}                     The HTML source.
+ * @returns {string}                     The HTML source.
  */
 export function getIframeSource(
 	content,

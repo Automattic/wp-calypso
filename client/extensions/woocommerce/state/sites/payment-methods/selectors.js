@@ -14,7 +14,7 @@ import { LOADING } from 'woocommerce/state/constants';
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} Object containing payment methods
+ * @returns {object} Object containing payment methods
  */
 export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'paymentMethods' ] );
@@ -24,7 +24,7 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
  * @param {object} state Whole Redux state tree
  * @param {string} methodId Method to fetch (if exists)
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} Object with payment method data, false if no method found
+ * @returns {object} Object with payment method data, false if no method found
  */
 export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
 	if ( methodId === 'calypso_manual' ) {
@@ -46,7 +46,7 @@ export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( s
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the payment methods list has been successfully loaded from the server
+ * @returns {boolean} Whether the payment methods list has been successfully loaded from the server
  */
 export const arePaymentMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isArray( getPaymentMethods( state, siteId ) );
@@ -55,7 +55,7 @@ export const arePaymentMethodsLoaded = ( state, siteId = getSelectedSiteId( stat
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the payment methods list is currently being retrieved from the server
+ * @returns {boolean} Whether the payment methods list is currently being retrieved from the server
  */
 export const arePaymentMethodsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getPaymentMethods( state, siteId );

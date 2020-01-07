@@ -16,7 +16,7 @@ export const DEFAULT_QUERY = {
  * default reviews query.
  *
  * @param  {object} query Reviews query
- * @return {object}       Normalized reviews query
+ * @returns {object}       Normalized reviews query
  */
 export function getNormalizedReviewsQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_QUERY[ key ] === value );
@@ -26,7 +26,7 @@ export function getNormalizedReviewsQuery( query ) {
  * Returns a serialized reviews query
  *
  * @param  {object} query  Reviews query
- * @return {string}        Serialized reviews query
+ * @returns {string}        Serialized reviews query
  */
 export function getSerializedReviewsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedReviewsQuery( query );

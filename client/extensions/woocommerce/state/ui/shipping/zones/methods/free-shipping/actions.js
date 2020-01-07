@@ -12,7 +12,7 @@ import {
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {string} condition Condition that must be met to qualify for free shipping. See README.md for more details.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const setFreeShippingCondition = ( siteId, methodId, condition ) => {
 	return {
@@ -29,7 +29,7 @@ export const setFreeShippingCondition = ( siteId, methodId, condition ) => {
  * @param {number} siteId Site ID.
  * @param {string} methodId ID of the shipping method to edit.
  * @param {number} cost Minimum monetary amount for an order to qualify for free shipping.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const setFreeShippingMinCost = ( siteId, methodId, cost ) => {
 	return {

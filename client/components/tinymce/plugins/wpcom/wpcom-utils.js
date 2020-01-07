@@ -6,7 +6,7 @@
  *
  * @see https:
  * @param {string}   content TinyMCE Editor content
- * @return {string}           Content with strings removed from empty paragraphs
+ * @returns {string}           Content with strings removed from empty paragraphs
  */
 
 export function removeEmptySpacesInParagraphs( content ) {

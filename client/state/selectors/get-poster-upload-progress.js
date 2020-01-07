@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state  Global state tree
- * @return {number}  Poster upload progress percentage.
+ * @returns {number}  Poster upload progress percentage.
  */
 
 export default function getPosterUploadProgress( state ) {

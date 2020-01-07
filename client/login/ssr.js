@@ -31,7 +31,7 @@ export function setShouldServerSideRenderLogin( context, next ) {
  * Verifies if the given redirect_to value enables SSR or not.
  *
  * @param {string}   redirectToQueryValue The URI-encoded value of the analyzed redirect_to
- * @return {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
+ * @returns {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
  */
 function isRedirectToValidForSsr( redirectToQueryValue ) {
 	if ( 'undefined' === typeof redirectToQueryValue ) {

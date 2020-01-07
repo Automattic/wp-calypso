@@ -44,7 +44,7 @@ const normalizePluginInstructions = data => {
  *
  * @param {object} site - site object
  * @param {string} plugin - plugin identifier
- * @return {SitePlugin} SitePlugin instance
+ * @returns {SitePlugin} SitePlugin instance
  */
 const getPluginHandler = ( site, plugin ) => {
 	const siteHandler = wpcom.site( site.ID );

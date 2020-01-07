@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {object}        Site settings
+ * @returns {object}        Site settings
  */
 export default function getSiteChecklist( state, siteId ) {
 	return get( state.checklist, [ siteId, 'items' ], null );

@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/domains/validation-schemas/index.js';
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD
  *
  * @param  {object} schemas object of { tld: schemaObject } pairs
- * @return {object} action
+ * @returns {object} action
  */
 export const addValidationSchemas = schemas => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
@@ -28,7 +28,7 @@ export const addValidationSchemas = schemas => ( {
  * Action creator to request tld validation schemas: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST
  *
  * @param  {string|Array<String>} tlds List of tlds that we're requesting schemas for
- * @return {object} action
+ * @returns {object} action
  */
 export const requestValidationSchemas = tlds => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,

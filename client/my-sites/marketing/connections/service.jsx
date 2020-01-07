@@ -252,7 +252,7 @@ export class SharingService extends Component {
 	 *
 	 * @param  {object}   connection Connection to update.
 	 * @param  {boolean}  shared     Whether the connection can be used by other users.
-	 * @return {Function}            Action thunk
+	 * @returns {Function}            Action thunk
 	 */
 	toggleSitewideConnection = ( connection, shared ) =>
 		this.props.updateSiteConnection( connection, { shared } );
@@ -304,14 +304,14 @@ export class SharingService extends Component {
 	 * Fetch connections
 	 *
 	 * @param {object} connection Connection to update.
-	 * @return {Function} Action thunk
+	 * @returns {Function} Action thunk
 	 */
 	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
 
 	/**
 	 * Checks whether any connection can be removed.
 	 *
-	 * @return {boolean} true if there's any removable; otherwise, false.
+	 * @returns {boolean} true if there's any removable; otherwise, false.
 	 */
 	canRemoveConnection = () => {
 		return this.props.removableConnections.length > 0;
@@ -378,7 +378,7 @@ export class SharingService extends Component {
 	 *
 	 * @param  {Array} overrides Optional. If it is passed, just return the argument
 	 *                           instead of the default connections.
-	 * @return {Array} connections
+	 * @returns {Array} connections
 	 */
 	getConnections( overrides ) {
 		return overrides || this.props.siteUserConnections;
@@ -389,7 +389,7 @@ export class SharingService extends Component {
 	 * service's connection.
 	 *
 	 * @param {string} service The name of the service to check
-	 * @return {string} Connection status.
+	 * @returns {string} Connection status.
 	 */
 	getConnectionStatus( service ) {
 		let status;
@@ -419,7 +419,7 @@ export class SharingService extends Component {
 	 * authorization attempt succeeded in creating new Keyring account options.
 	 *
 	 * @param {Array} externalAccounts Props to check on if a keyring connection succeeded.
-	 * @return {boolean} Whether the Keyring authorization attempt succeeded
+	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( externalAccounts ) {
 		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
@@ -606,7 +606,7 @@ export class SharingService extends Component {
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
  * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
- * @return {component} A highter-order service component
+ * @returns {component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {
 	return connect(

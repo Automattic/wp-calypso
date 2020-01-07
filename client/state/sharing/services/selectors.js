@@ -16,7 +16,7 @@ import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-bu
  * Returns an object of service objects.
  *
  * @param  {object} state Global state tree
- * @return {object}       Keyring services, if known.
+ * @returns {object}       Keyring services, if known.
  */
 export function getKeyringServices( state ) {
 	return state.sharing.services.items;
@@ -27,7 +27,7 @@ export function getKeyringServices( state ) {
  *
  * @param  {object} state Global state tree
  * @param  {string} type  Type of service. 'publicize' or 'other'.
- * @return {Array}        Keyring services, if known.
+ * @returns {Array}        Keyring services, if known.
  */
 export function getKeyringServicesByType( state, type ) {
 	return filter( getKeyringServices( state ), { type } );
@@ -38,7 +38,7 @@ export function getKeyringServicesByType( state, type ) {
  *
  * @param  {object} state Global state tree
  * @param  {string} name  Service name
- * @return {object}        Keyring service, if known, or false.
+ * @returns {object}        Keyring service, if known, or false.
  */
 export function getKeyringServiceByName( state, name ) {
 	const services = getKeyringServices( state );
@@ -58,7 +58,7 @@ export function getKeyringServiceByName( state, name ) {
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID.
  * @param  {string} type   Type of service. 'publicize' or 'other'.
- * @return {Array}         Keyring services, if known.
+ * @returns {Array}         Keyring services, if known.
  */
 export function getEligibleKeyringServices( state, siteId, type ) {
 	const services = getKeyringServicesByType( state, type );
@@ -134,7 +134,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
  * or false otherwise.
  *
  * @param  {object}  state Global state tree
- * @return {boolean}       Whether a request is in progress
+ * @returns {boolean}       Whether a request is in progress
  */
 export function isKeyringServicesFetching( state ) {
 	return state.sharing.services.isFetching;

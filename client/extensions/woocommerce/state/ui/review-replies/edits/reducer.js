@@ -20,7 +20,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function currentlyEditingId( state = null, action ) {
 	switch ( action.type ) {
@@ -42,7 +42,7 @@ export function currentlyEditingId( state = null, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function reviewId( state = null, action ) {
 	switch ( action.type ) {
@@ -62,7 +62,7 @@ export function reviewId( state = null, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function changes( state = {}, action ) {
 	switch ( action.type ) {

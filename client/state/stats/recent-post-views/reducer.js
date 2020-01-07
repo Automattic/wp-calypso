@@ -16,7 +16,7 @@ import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'state/action-types';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utility for extracting strings from node
+ * @file Utility for extracting strings from node
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

@@ -53,7 +53,7 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
  *
  * @param {number} siteId wpcom site id.
  * @param {Mixed}  setting, single setting object { id: '', value: '' }
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => {
 	dispatch( {
@@ -72,7 +72,7 @@ export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => 
  * @param {Mixed}  settingsData, either single object { id: '', value: '' }, or array of settings objects
  * @param {Mixed}  successAction, either action object or empty (null)
  * @param {Mixed}  failureAction, either action object or empty (null)
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const updateSettingsProducts = (
 	siteId,
@@ -120,7 +120,7 @@ export const updateSettingsProducts = (
  * @param {number} siteId wpcom site id.
  * @param {object}  successAction, success action object
  * @param {object}  failureAction, failure action object
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureAction ) => (
 	dispatch,

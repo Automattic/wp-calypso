@@ -20,7 +20,7 @@ import { storedCardsSchema } from './schema';
  *
  * @param  {Array}  state  Current state
  * @param  {object} action storeCard action
- * @return {Array}         Updated state
+ * @returns {Array}         Updated state
  */
 export const items = withSchemaValidation( storedCardsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -46,7 +46,7 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
  *
  * @param {Array} state - current state
  * @param {object} action - action payload
- * @return {boolean} - updated state
+ * @returns {boolean} - updated state
  */
 export const hasLoadedFromServer = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -63,7 +63,7 @@ export const hasLoadedFromServer = ( state = false, action ) => {
  *
  * @param {object} state - current state
  * @param {object} action - storedCard action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const isFetching = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -84,7 +84,7 @@ export const isFetching = ( state = false, action ) => {
  *
  * @param {object} state - current state
  * @param {object} action - storedCard action
- * @return {object} updated state
+ * @returns {object} updated state
  */
 export const isDeleting = ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -8,7 +8,7 @@ import { getPreference } from 'state/preferences/selectors';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {number}  Count  the number of times the nudge has been dismissed
+ * @returns {number}  Count  the number of times the nudge has been dismissed
  */
 export default function getGoogleMyBusinessStatsNudgeDismissCount( state, siteId ) {
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};

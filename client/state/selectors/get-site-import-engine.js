@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?string}       The import engine used for importing the site
+ * @returns {?string}       The import engine used for importing the site
  */
 export default function getSiteImportEngine( state, siteId ) {
 	return get( state, [ 'sites', 'items', siteId, 'options', 'import_engine' ], null );

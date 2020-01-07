@@ -14,7 +14,7 @@ import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business
  *
  * @param  {object} state  Global state tree
  * @param  {object} siteId The site ID
- * @return {object}        A connected GMB location
+ * @returns {object}        A connected GMB location
  */
 export default function getGoogleMyBusinessConnectedLocation( state, siteId ) {
 	return last(

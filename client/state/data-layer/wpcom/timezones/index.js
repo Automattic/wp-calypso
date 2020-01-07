@@ -31,7 +31,7 @@ const timezonePairsToMap = pairs =>
  * Normalize data gotten from the REST API making them more Calypso friendly.
  *
  * @param {object} data - REST-API response
- * @return {object} normalized timezones data.
+ * @returns {object} normalized timezones data.
  */
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {
 	rawOffsets: timezonePairsToMap( manual_utc_offsets ),

@@ -20,7 +20,7 @@ import {
  *
  * @param  {object} state Current requesting state
  * @param  {object} action Action object
- * @return {object} Updated requesting state
+ * @returns {object} Updated requesting state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -55,7 +55,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current toggling state
  * @param  {object} action Action object
- * @return {object} Updated saving state
+ * @returns {object} Updated saving state
  */
 export const toggling = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -99,7 +99,7 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current plugins
  * @param  {object} action Action object
- * @return {object} Updated plugins
+ * @returns {object} Updated plugins
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

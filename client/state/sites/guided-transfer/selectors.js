@@ -23,7 +23,7 @@ export function isGuidedTransferInProgress( state, siteId ) {
  *
  * @param {object} state The Redux state object
  * @param {number} siteId The siteId to check
- * @return {bool} true if guided transfer is awaiting purchase
+ * @returns {bool} true if guided transfer is awaiting purchase
  */
 export function isGuidedTransferAwaitingPurchase( state, siteId ) {
 	const status = state.sites.guidedTransfer.status[ siteId ];

@@ -16,7 +16,7 @@ import { withoutPersistence } from './without-persistence';
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
  * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @return {Function} The function to be attached as `addReducer` method to the
+ * @returns {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
 export function addReducer( origReducer, reducers ) {

@@ -13,7 +13,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?string}        WordPress version of selected site
+ * @returns {?string}        WordPress version of selected site
  */
 export default function getWordPressVersion( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );

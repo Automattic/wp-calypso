@@ -8,7 +8,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:mailing-list' );
 /**
  * `MailingList` constructor.
  *
- * @constructor
+ * @class
  * @param {WPCOM} wpcom
  * @public
  */

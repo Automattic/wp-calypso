@@ -14,7 +14,7 @@ import {
  *
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @return {Action}        Action object
+ * @returns {Action}        Action object
  */
 export const requestFeed = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED,
@@ -27,7 +27,7 @@ export const requestFeed = ( siteId, zoneId ) => ( {
  *
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @return {Action}        Action object
+ * @returns {Action}        Action object
  */
 export const requestFeedError = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED_ERROR,
@@ -42,7 +42,7 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
  * @param  {number} zoneId  Zone ID
  * @param  {string} form    Form name
  * @param  {Array}  posts   Feed posts
- * @return {object}         Action object
+ * @returns {object}         Action object
  */
 export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 	type: ZONINATOR_SAVE_FEED,
@@ -58,7 +58,7 @@ export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
  * @param  {number} siteId  Site ID
  * @param  {number} zoneId  Zone ID
  * @param  {Array}  posts   Feed posts
- * @return {object}         Action object
+ * @returns {object}         Action object
  */
 export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_UPDATE_FEED,

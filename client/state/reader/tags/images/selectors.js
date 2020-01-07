@@ -8,7 +8,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  tag 	Tag
- * @return {object} Image
+ * @returns {object} Image
  */
 export function getTagImages( state, tag ) {
 	const items = get( state, 'reader.tags.images.items' );
@@ -25,7 +25,7 @@ export function getTagImages( state, tag ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  tag 	Tag
- * @return {boolean} Whether a request is in progress or we already have tags
+ * @returns {boolean} Whether a request is in progress or we already have tags
  */
 export function shouldRequestTagImages( state, tag ) {
 	return ! ( getTagImages( state, tag ) || state.reader.tags.images.requesting[ tag ] );

@@ -16,7 +16,7 @@ export const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 /**
  * @param {object} state Global state tree
- * @return {string} One of the exported support variation constants listed above
+ * @returns {string} One of the exported support variation constants listed above
  */
 export default function getSupportVariation( state ) {
 	if (

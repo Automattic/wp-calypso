@@ -47,7 +47,7 @@ export const initialState = {
 /**
  * Gets the temporal ID object that the next created method should have.
  * @param {object} state Current edit state
- * @return {object} Object with an "index" property, guaranteed to be unique
+ * @returns {object} Object with an "index" property, guaranteed to be unique
  */
 const nextCreateId = state => {
 	return {

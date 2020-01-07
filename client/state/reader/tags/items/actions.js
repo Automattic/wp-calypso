@@ -22,7 +22,7 @@ import 'state/data-layer/wpcom/read/tags/mine/new';
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
  *
  * @param  {string} tag  Tag name to parse into a slug
- * @return {string}      Tag slug
+ * @returns {string}      Tag slug
  */
 export const slugify = tag =>
 	encodeURIComponent(

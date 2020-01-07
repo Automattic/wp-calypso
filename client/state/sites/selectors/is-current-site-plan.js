@@ -9,7 +9,7 @@ import getSitePlan from './get-site-plan';
  * @param  {object}   state         Global state tree
  * @param  {number}   siteId        Site ID
  * @param  {number}   planProductId Plan product_id
- * @return {?boolean}               Whether site's plan matches supplied plan
+ * @returns {?boolean}               Whether site's plan matches supplied plan
  */
 export default function isCurrentSitePlan( state, siteId, planProductId ) {
 	if ( planProductId === undefined ) {

@@ -16,7 +16,7 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * Sites that are not loaded yet are intentionally skipped.
  *
  * @param  {object}   state   Global state tree
- * @return {object}           Site slugs, indexed by site ID
+ * @returns {object}           Site slugs, indexed by site ID
  */
 const getSiteSlugsForUpcomingTransactions = createSelector(
 	state => {

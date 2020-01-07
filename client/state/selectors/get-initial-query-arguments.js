@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Gets the initial query parameters set by a ROUTE_SET action
  * @param {object} state - global redux state
- * @return {object} initial query arguments
+ * @returns {object} initial query arguments
  */
 export const getInitialQueryArguments = state => get( state, 'ui.route.query.initial', null );
 

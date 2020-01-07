@@ -29,7 +29,7 @@ const METHOD_NAMES = {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods, as retrieved from the server. It can also be the string "LOADING"
+ * @returns {Array} The list of shipping methods, as retrieved from the server. It can also be the string "LOADING"
  * if the methods are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -55,7 +55,7 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping methods list has been successfully loaded from the server
+ * @returns {boolean} Whether the shipping methods list has been successfully loaded from the server
  */
 export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! isArray( getShippingMethods( state, siteId ) ) ) {
@@ -70,7 +70,7 @@ export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping methods list is currently being retrieved from the server
+ * @returns {boolean} Whether the shipping methods list is currently being retrieved from the server
  */
 export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( LOADING === getShippingMethods( state, siteId ) ) {
@@ -86,7 +86,7 @@ export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( st
  * @param {object} state Whole Redux state tree
  * @param {number|object} id Shipping method ID
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {object} The shipping method definition, or an object with dummy (but valid) values if it wasn't found
+ * @returns {object} The shipping method definition, or an object with dummy (but valid) values if it wasn't found
  */
 export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state ) ) => {
 	if ( areShippingMethodsLoaded( state, siteId ) ) {

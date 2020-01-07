@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?boolean}        Whether site is previewable
+ * @returns {?boolean}        Whether site is previewable
  */
 export default function canCurrentUserUseStore( state, siteId = null ) {
 	if ( ! siteId ) {

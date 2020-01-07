@@ -15,7 +15,7 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @param  {object}  settings    The settings we're updating
- * @return {boolean}             Whether Jetpack settings are currently being updated
+ * @returns {boolean}             Whether Jetpack settings are currently being updated
  */
 export default function isUpdatingJetpackSettings( state, siteId, settings ) {
 	return get( getRequest( state, saveJetpackSettings( siteId, settings ) ), 'isLoading', false );

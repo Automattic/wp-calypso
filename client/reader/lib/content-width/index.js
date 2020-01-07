@@ -13,7 +13,7 @@ const MAX_CONTENT_WIDTH = 720;
 
 /**
  * Returns the available content width in full post for the reader at the current viewport width
- * @return {[type]} [description]
+ * @returns {[type]} [description]
  */
 export default function contentWidth() {
 	if ( typeof document === 'undefined' ) {

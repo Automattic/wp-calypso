@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/sites/plugins/new';
  *
  * @param {number} siteId site ID
  * @param {File} file the plugin zip to upload
- * @return {object} action object
+ * @returns {object} action object
  */
 export function uploadPlugin( siteId, file ) {
 	return {
@@ -32,7 +32,7 @@ export function uploadPlugin( siteId, file ) {
  *
  * @param {number} siteId site ID
  * @param {number} progress percentage of file uploaded
- * @return {object} action object
+ * @returns {object} action object
  */
 export function updatePluginUploadProgress( siteId, progress ) {
 	return {
@@ -47,7 +47,7 @@ export function updatePluginUploadProgress( siteId, progress ) {
  *
  * @param {number} siteId site ID
  * @param {string} pluginId plugin id
- * @return {object} action object
+ * @returns {object} action object
  */
 export function completePluginUpload( siteId, pluginId ) {
 	return {
@@ -62,7 +62,7 @@ export function completePluginUpload( siteId, pluginId ) {
  *
  * @param {number} siteId site ID
  * @param {object} error the error
- * @return {object} action object
+ * @returns {object} action object
  */
 export function pluginUploadError( siteId, error ) {
 	return {
@@ -76,7 +76,7 @@ export function pluginUploadError( siteId, error ) {
  * Clear any plugin upload data for a site.
  *
  * @param {number} siteId site ID
- * @return {object} action object
+ * @returns {object} action object
  */
 export function clearPluginUpload( siteId ) {
 	return {

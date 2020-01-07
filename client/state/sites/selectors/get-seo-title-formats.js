@@ -17,6 +17,6 @@ import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
  *
  * @param  {object} state  Global app state
  * @param  {number} siteId Selected site
- * @return {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
+ * @returns {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
 export default compose( getSeoTitleFormatsForSite, getRawSite );

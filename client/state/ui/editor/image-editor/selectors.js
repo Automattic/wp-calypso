@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state Global state tree
- * @return {object}  image editor transform { degrees, scaleX, scaleY }
+ * @returns {object}  image editor transform { degrees, scaleX, scaleY }
  */
 
 export function getImageEditorTransform( state ) {
@@ -14,7 +14,7 @@ export function getImageEditorTransform( state ) {
  * Returns an object containing the image data loaded in the editor
  *
  * @param  {object}  state Global state tree
- * @return {object}  image data { src, fileName }
+ * @returns {object}  image data { src, fileName }
  *
  */
 export function getImageEditorFileInfo( state ) {
@@ -25,7 +25,7 @@ export function getImageEditorFileInfo( state ) {
  * Returns true if there were any changes made to the editor
  *
  * @param  {object}  state Global state tree
- * @return {boolean} true if editor has changes
+ * @returns {boolean} true if editor has changes
  *
  */
 export function imageEditorHasChanges( state ) {
@@ -36,7 +36,7 @@ export function imageEditorHasChanges( state ) {
  * Returns true if image has been loaded.
  *
  * @param  {object}  state Global state tree
- * @return {boolean} true if image has been loaded
+ * @returns {boolean} true if image has been loaded
  *
  */
 export function isImageEditorImageLoaded( state ) {
@@ -47,7 +47,7 @@ export function isImageEditorImageLoaded( state ) {
  * Returns the bounds of the canvas crop tool
  *
  * @param  {object} state Global state tree
- * @return {object} topBound, leftBound, bottomBound and rightBound of the canvas
+ * @returns {object} topBound, leftBound, bottomBound and rightBound of the canvas
  *
  */
 export function getImageEditorCropBounds( state ) {
@@ -58,7 +58,7 @@ export function getImageEditorCropBounds( state ) {
  * Returns the crop data for the image editor
  *
  * @param  {object} state Global state tree
- * @return {object} topRatio, leftRatio, widthRatio and heightRatio of the crop
+ * @returns {object} topRatio, leftRatio, widthRatio and heightRatio of the crop
  *
  */
 export function getImageEditorCrop( state ) {
@@ -69,7 +69,7 @@ export function getImageEditorCrop( state ) {
  * Returns the crop data for the image editor
  *
  * @param  {object} state Global state tree
- * @return {object} one of the AspectRatios as defined in state/ui/editor/image-editor/constants
+ * @returns {object} one of the AspectRatios as defined in state/ui/editor/image-editor/constants
  *
  */
 export function getImageEditorAspectRatio( state ) {

@@ -56,7 +56,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 * This function returns true if the video editor can be enabled/shown.
 	 *
 	 * @param  {object}  item Media item
-	 * @return {boolean} Whether the video editor can be enabled
+	 * @returns {boolean} Whether the video editor can be enabled
 	 */
 	shouldShowVideoEditingButtons( item ) {
 		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
@@ -85,7 +85,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 *
 	 * @param  {object} item - media item
 	 * @param  {object} site - current site
-	 * @return {boolean} `true` if the image-editor can be enabled.
+	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
 	shouldShowImageEditingButtons( item, site ) {
 		const { isSitePrivate } = this.props;

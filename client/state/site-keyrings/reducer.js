@@ -20,7 +20,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -47,7 +47,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -86,7 +86,7 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -28,7 +28,7 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
  * Whether a given theme object is premium.
  *
  * @param  {object} theme Theme object
- * @return {boolean}      True if the theme is premium
+ * @returns {boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
 	const themeStylesheet = get( theme, 'stylesheet', false );
@@ -39,7 +39,7 @@ export function isPremium( theme ) {
  * Normalizes a theme obtained via the WordPress.com REST API from a Jetpack site
  *
  * @param  {object} theme  Theme object
- * @return {object}        Normalized theme object
+ * @returns {object}        Normalized theme object
  */
 export function normalizeJetpackTheme( theme = {} ) {
 	if ( ! theme.tags ) {
@@ -59,7 +59,7 @@ export function normalizeJetpackTheme( theme = {} ) {
  * Normalizes a theme obtained from the WordPress.com REST API
  *
  * @param  {object} theme  Theme object
- * @return {object}        Normalized theme object
+ * @returns {object}        Normalized theme object
  */
 export function normalizeWpcomTheme( theme ) {
 	const attributesMap = {
@@ -75,7 +75,7 @@ export function normalizeWpcomTheme( theme ) {
  * Normalizes a theme obtained from the WordPress.org REST API
  *
  * @param  {object} theme  Theme object
- * @return {object}        Normalized theme object
+ * @returns {object}        Normalized theme object
  */
 export function normalizeWporgTheme( theme ) {
 	const attributesMap = {
@@ -115,7 +115,7 @@ export function normalizeWporgTheme( theme ) {
  * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
  *
  * @param  {string}  stylesheet Theme stylesheet
- * @return {?string}            Theme ID
+ * @returns {?string}            Theme ID
  */
 export function getThemeIdFromStylesheet( stylesheet ) {
 	const [ , slug ] = split( stylesheet, '/', 2 );
@@ -130,7 +130,7 @@ export function getThemeIdFromStylesheet( stylesheet ) {
  * default theme query.
  *
  * @param  {object} query Themes query
- * @return {object}       Normalized themes query
+ * @returns {object}       Normalized themes query
  */
 export function getNormalizedThemesQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_THEME_QUERY[ key ] === value );
@@ -141,7 +141,7 @@ export function getNormalizedThemesQuery( query ) {
  *
  * @param  {object} query  Themes query
  * @param  {number} siteId Optional site ID
- * @return {string}        Serialized themes query
+ * @returns {string}        Serialized themes query
  */
 export function getSerializedThemesQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedThemesQuery( query );
@@ -159,7 +159,7 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * The object will include siteId and/or query object, if can be parsed.
  *
  * @param  {string} serializedQuery Serialized themes query
- * @return {object}                 Deserialized themes query details
+ * @returns {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
 	let siteId, query;
@@ -180,7 +180,7 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
  *
  * @param  {object} query  Themes query
  * @param  {number} siteId Optional site ID
- * @return {string}        Serialized themes query
+ * @returns {string}        Serialized themes query
  */
 export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 	return getSerializedThemesQuery( omit( query, 'page' ), siteId );
@@ -197,7 +197,7 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * requests.
  *
  * @param  {object} theme Theme object
- * @return {boolean}      Whether theme is a wpcom theme
+ * @returns {boolean}      Whether theme is a wpcom theme
  */
 export function isThemeFromWpcom( theme ) {
 	return includes( theme.theme_uri, 'wordpress.com' );
@@ -208,7 +208,7 @@ export function isThemeFromWpcom( theme ) {
  *
  * @param  {object}  query Query object
  * @param  {object}  theme Item to consider
- * @return {boolean}       Whether theme matches query
+ * @returns {boolean}       Whether theme matches query
  */
 export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
@@ -260,7 +260,7 @@ export function isThemeMatchingQuery( query, theme ) {
  *
  * @param  {object} theme    The theme object.
  * @param  {string} taxonomy The taxonomy items to get.
- * @return {Array}           An array of theme taxonomy slugs.
+ * @returns {Array}           An array of theme taxonomy slugs.
  */
 export function getThemeTaxonomySlugs( theme, taxonomy ) {
 	const items = get( theme, [ 'taxonomies', taxonomy ], [] );

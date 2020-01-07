@@ -28,7 +28,7 @@ import { queriesSchema } from './schema';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {

@@ -201,7 +201,7 @@ function getCurrentCommitShortChecksum() {
  * or merge similar language codes.
  *
  * @param  {string} header - The content of the AcceptedLanguages header.
- * @return {Array} An array of language codes in the header, all in lowercase.
+ * @returns {Array} An array of language codes in the header, all in lowercase.
  */
 function getAcceptedLanguagesFromHeader( header ) {
 	if ( ! header ) {

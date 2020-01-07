@@ -66,7 +66,7 @@ import { getFeaturedImageId } from 'state/posts/utils';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -114,7 +114,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function siteRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -138,7 +138,7 @@ export function siteRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -161,7 +161,7 @@ export function queryRequests( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
@@ -319,7 +319,7 @@ export const queries = ( () => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const allSitesQueries = ( () => {
 	function findItemKey( state, siteId, postId ) {
@@ -427,7 +427,7 @@ export const allSitesQueries = ( () => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function edits( state = {}, action ) {
 	switch ( action.type ) {

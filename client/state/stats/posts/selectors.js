@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
  * @param  {object}  fields Stat fields
- * @return {boolean}        Whether post stat is being requested
+ * @returns {boolean}        Whether post stat is being requested
  */
 export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
 	return get( state.stats.posts.requesting, [ siteId, postId, fields.join() ], false );
@@ -26,7 +26,7 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
  * @param  {string}  stat   Stat Key
- * @return {*}              Stat value
+ * @returns {*}              Stat value
  */
 export function getPostStat( state, siteId, postId, stat ) {
 	return get( state.stats.posts.items, [ siteId, postId, stat ], null );
@@ -38,7 +38,7 @@ export function getPostStat( state, siteId, postId, stat ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
- * @return {object}         Stats
+ * @returns {object}         Stats
  */
 export function getPostStats( state, siteId, postId ) {
 	return get( state.stats.posts.items, [ siteId, postId ], null );

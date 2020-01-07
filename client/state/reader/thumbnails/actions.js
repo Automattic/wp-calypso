@@ -27,7 +27,7 @@ export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
  *
  * @param {string} embedUrl the url of the embed for which the thumbnail was grabbed
  * @param {string} thumbnailUrl the url at which to find the thumbnail for the embed
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 	return {
@@ -57,7 +57,7 @@ function requestFailure( embedUrl, error ) {
  * triggers a network request to fetch a thumbnailUrl if necessary
  *
  * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
- * @return {Function|object} Action thunk | Action object
+ * @returns {Function|object} Action thunk | Action object
  */
 export const requestThumbnail = embedUrl => dispatch => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};

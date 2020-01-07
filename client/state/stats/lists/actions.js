@@ -23,7 +23,7 @@ import { includes } from 'lodash';
  * @param  {object} query    Stats query
  * @param  {Array}  data     Stat Data
  * @param  {object} date	 Date
- * @return {object}          Action object
+ * @returns {object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
@@ -43,7 +43,7 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * @param  {number} siteId   Site ID
  * @param  {string} statType Type of stats
  * @param  {object} query    Stats Query
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
 	return dispatch => {

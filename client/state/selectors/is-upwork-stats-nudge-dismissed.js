@@ -15,7 +15,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {number}  Timestamp marking the last time the nudge was dismissed
+ * @returns {number}  Timestamp marking the last time the nudge was dismissed
  */
 const getLastDismissTime = ( state, siteId ) => {
 	const preference = getPreference( state, 'upwork-dismissible-nudge' ) || {};
@@ -34,7 +34,7 @@ const getLastDismissTime = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {boolean} True if the nudge has been dismissed
+ * @returns {boolean} True if the nudge has been dismissed
  */
 export default function isUpworkStatsNudgeDismissed( state, siteId ) {
 	const lastDismissTime = getLastDismissTime( state, siteId );

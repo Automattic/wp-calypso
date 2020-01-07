@@ -13,7 +13,7 @@ import { getOAuth2Client } from 'state/oauth2-clients/selectors';
  * Returns the ID of the current OAuth2 client.
  *
  * @param  {object}  state  Global state tree
- * @return {?number}        Current OAuth2 client ID
+ * @returns {?number}        Current OAuth2 client ID
  */
 export function getCurrentOAuth2ClientId( state ) {
 	return get( state, 'ui.oauth2Clients.currentClientId' );
@@ -23,7 +23,7 @@ export function getCurrentOAuth2ClientId( state ) {
  * Gets the OAuth2 client data.
  *
  * @param  {object}   state  Global state tree
- * @return {object}          OAuth2 client data
+ * @returns {object}          OAuth2 client data
  */
 export const getCurrentOAuth2Client = state => {
 	const currentClientId = getCurrentOAuth2ClientId( state );
@@ -39,6 +39,6 @@ export const getCurrentOAuth2Client = state => {
  * Determines if the OAuth2 layout should be used.
  *
  * @param  {object}   state  Global state tree
- * @return {boolean}         Whether the OAuth2 layout should be used.
+ * @returns {boolean}         Whether the OAuth2 layout should be used.
  */
 export const showOAuth2Layout = state => !! getCurrentOAuth2ClientId( state );

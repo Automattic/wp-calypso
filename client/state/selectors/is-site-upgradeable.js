@@ -13,7 +13,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @return {?boolean}        Whether site is upgradeable
+ * @returns {?boolean}        Whether site is upgradeable
  */
 export default function( state, siteId ) {
 	// Cannot determine site upgradeability if there is no current user

@@ -9,7 +9,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  *
  * @param {number|string} number A floating point number (or integer), or string that converts to a number
  * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
- * @return {number} The original number rounded to a decimal point
+ * @returns {number} The original number rounded to a decimal point
  */
 export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
 	const { precision } = getCurrencyDefaults( currency );
@@ -28,7 +28,7 @@ export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
  *
  * @param {number|string} number A floating point number (or integer), or string that converts to a number
  * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
- * @return {string} The original number rounded to a decimal point
+ * @returns {string} The original number rounded to a decimal point
  */
 export function getCurrencyFormatString( number, currency = 'USD' ) {
 	const { precision } = getCurrencyDefaults( currency );

@@ -9,7 +9,7 @@ import { has } from 'lodash';
  *
  * @param  {object} state Global state tree
  * @param  {string} settingName setting name
- * @return {boolean} is there unsaved value for the setting?
+ * @returns {boolean} is there unsaved value for the setting?
  */
 export default function isUserSettingUnsaved( state, settingName ) {
 	return has( state, [ 'userSettings', 'unsavedSettings', settingName ] );

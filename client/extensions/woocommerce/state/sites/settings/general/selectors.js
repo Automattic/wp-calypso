@@ -17,7 +17,7 @@ const getRawGeneralSettings = ( state, siteId ) => {
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the general settings list has been successfully loaded from the server
+ * @returns {boolean} Whether the general settings list has been successfully loaded from the server
  */
 export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return isArray( getRawGeneralSettings( state, siteId ) );
@@ -26,7 +26,7 @@ export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( sta
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the general settings list is currently being retrieved from the server
+ * @returns {boolean} Whether the general settings list is currently being retrieved from the server
  */
 export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawGeneralSettings( state, siteId );
@@ -35,7 +35,7 @@ export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( st
 /**
  * @param {object} state Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether there has been an error fetching the general settings list from the server
+ * @returns {boolean} Whether there has been an error fetching the general settings list from the server
  */
 export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return ERROR === getRawGeneralSettings( state, siteId );
@@ -46,7 +46,7 @@ export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( 
  *
  * @param {object} state Global state tree
  * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {object} Payment Currency Settings
+ * @returns {object} Payment Currency Settings
  */
 export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );
@@ -59,7 +59,7 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
  *
  * @param {object} state Global state tree
  * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
- * @return {object} Value of the "Shipping location(s)" Setting
+ * @returns {object} Value of the "Shipping location(s)" Setting
  */
 export function getShipToCountrySetting( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );

@@ -10,7 +10,7 @@ import createSelector from 'lib/create-selector';
  * Get all visible sites
  *
  * @param {object} state  Global state tree
- * @return {Array}        Sites objects
+ * @returns {Array}        Sites objects
  */
 export default createSelector(
 	state =>

@@ -10,7 +10,7 @@ import Strategies from './strategies';
  *
  * @param  {*}      node    Media object to parse
  * @param  {object} _parsed In recursion, the known values
- * @return {object}         Object of all detected values
+ * @returns {object}         Object of all detected values
  */
 export function deserialize( node, _parsed ) {
 	const format = detectFormat( node );

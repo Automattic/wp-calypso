@@ -21,7 +21,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isSearching( state = {}, action ) {
 	switch ( action.type ) {
@@ -41,7 +41,7 @@ export function isSearching( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -59,7 +59,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {

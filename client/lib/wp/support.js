@@ -11,7 +11,7 @@ export default function wpcomSupport( wpcom ) {
 	/**
 	 * Add the supportUser and supportToken to the query.
 	 * @param {object}  params The original request params object
-	 * @return {object}        The new query object with support data injected
+	 * @returns {object}        The new query object with support data injected
 	 */
 	const addSupportData = function( params ) {
 		// Unwind the query string
@@ -29,7 +29,7 @@ export default function wpcomSupport( wpcom ) {
 	/**
 	 * Add the supportUser and supportToken to the query.
 	 * @param {object}  params The original request params object
-	 * @return {object}        The new query object with support data injected
+	 * @returns {object}        The new query object with support data injected
 	 */
 	const addSupportParams = function( params ) {
 		return {

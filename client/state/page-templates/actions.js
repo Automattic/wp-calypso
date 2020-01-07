@@ -16,7 +16,7 @@ import {
  *
  * @param  {number}   siteId    Site ID
  * @param  {object[]} templates Array of template objects
- * @return {object}             Action object
+ * @returns {object}             Action object
  */
 export function receivePageTemplates( siteId, templates ) {
 	return {
@@ -31,7 +31,7 @@ export function receivePageTemplates( siteId, templates ) {
  * page templates for a site.
  *
  * @param  {number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestPageTemplates( siteId ) {
 	return dispatch => {

@@ -9,7 +9,7 @@ import { get, filter, find } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether site keyrings is being requested
+ * @returns {boolean}        Whether site keyrings is being requested
  */
 export function isRequestingSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.requesting, [ siteId ], false );
@@ -20,7 +20,7 @@ export function isRequestingSiteKeyrings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether site keyrings is being requested
+ * @returns {boolean}        Whether site keyrings is being requested
  */
 export function isSavingSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.saveRequests, [ siteId, 'saving' ], false );
@@ -31,7 +31,7 @@ export function isSavingSiteKeyrings( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {string|undefined} The request status (pending, success or error) it will return undefined if no requests were issued yet.
+ * @returns {string|undefined} The request status (pending, success or error) it will return undefined if no requests were issued yet.
  */
 export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
 	return get( state.siteKeyrings.saveRequests, [ siteId, 'status' ] );
@@ -42,7 +42,7 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {object}  Site keyrings indexed by keyring ids
+ * @returns {object}  Site keyrings indexed by keyring ids
  */
 export function getSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.items, [ siteId ], [] );
@@ -54,7 +54,7 @@ export function getSiteKeyrings( state, siteId ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  service The service name to filter with
- * @return {Array}   Site keyrings list
+ * @returns {Array}   Site keyrings list
  */
 export function getSiteKeyringsForService( state, siteId, service ) {
 	return filter( getSiteKeyrings( state, siteId ), { service } );
@@ -68,7 +68,7 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @param  {number}  keyringId      Keyring Id
  * @param  {string}  externalUserId External User Id on the keyring
  *
- * @return {?object}                Site Keyring connection
+ * @returns {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
 	return find( getSiteKeyrings( state, siteId ), siteKeyring => {

@@ -17,7 +17,7 @@ import { combineReducers, withSchemaValidation } from 'state/utils';
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 export const currentMessage = ( state = '', action ) => {
@@ -37,7 +37,7 @@ const lostFocusAtSchema = { type: 'number' };
  * was lost, and `null` means HC currently has focus.
  * @param {object} state Current state
  * @param {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -69,7 +69,7 @@ const isOpen = ( state = false, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 const isMinimizing = ( state = false, action ) => {

@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
- * @return {boolean} true if publicize scheduling share action for a post has failed
+ * @returns {boolean} true if publicize scheduling share action for a post has failed
  */
 export default function isSchedulingPublicizeShareActionError( state, siteId, postId ) {
 	return (

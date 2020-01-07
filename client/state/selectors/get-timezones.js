@@ -22,7 +22,7 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  * This structure facilitates the creation of a select element.
  *
  * @param  {object} state - Global state tree
- * @return {Array} Timezones arrays
+ * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {
 	const continents = toPairs( get( state, 'timezones.byContinents', null ) );

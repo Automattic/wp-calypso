@@ -11,7 +11,7 @@ const getZonesState = state => state.extensions.zoninator.zones;
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {boolean}       Whether zones are being requested
+ * @returns {boolean}       Whether zones are being requested
  */
 export const isRequestingZones = ( state, siteId ) =>
 	get( getZonesState( state ), [ 'requesting', siteId ], false );
@@ -21,7 +21,7 @@ export const isRequestingZones = ( state, siteId ) =>
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {Array}         Zones
+ * @returns {Array}         Zones
  */
 export const getZones = ( state, siteId ) =>
 	values( get( getZonesState( state ), [ 'items', siteId ], {} ) );
@@ -32,7 +32,7 @@ export const getZones = ( state, siteId ) =>
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @return {object}        Zone
+ * @returns {object}        Zone
  */
 export const getZone = ( state, siteId, zoneId ) =>
 	get( getZonesState( state ), [ 'items', siteId, zoneId ], null );

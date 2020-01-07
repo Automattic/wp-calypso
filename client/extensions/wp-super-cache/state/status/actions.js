@@ -14,7 +14,7 @@ import {
  *
  * @param  {number} siteId Site ID
  * @param  {object} status Status object
- * @return {object} Action object
+ * @returns {object} Action object
  */
 export const receiveStatus = ( siteId, status ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_STATUS,

@@ -17,7 +17,7 @@ const MAX_DISMISS = 2;
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {number}  Timestamp marking the last time the nudge was dismissed
+ * @returns {number}  Timestamp marking the last time the nudge was dismissed
  */
 const getLastDismissTime = ( state, siteId ) => {
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
@@ -38,7 +38,7 @@ const getLastDismissTime = ( state, siteId ) => {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The Id of the site
- * @return {boolean} True if the nudge has been dismissed
+ * @returns {boolean} True if the nudge has been dismissed
  */
 export default function isGoogleMyBusinessStatsNudgeDismissed( state, siteId ) {
 	const lastDismissTime = getLastDismissTime( state, siteId );

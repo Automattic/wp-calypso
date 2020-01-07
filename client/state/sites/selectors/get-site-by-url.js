@@ -9,7 +9,7 @@ import getSiteBySlug from './get-site-by-slug';
  *
  * @param  {object}  state Global state tree
  * @param  {string}  url   Site URL
- * @return {?object}       Site object
+ * @returns {?object}       Site object
  */
 export default function getSiteByUrl( state, url ) {
 	const slug = urlToSlug( url );

@@ -36,7 +36,7 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * because Photon itself does not support this!
  *
  * @param  {string} url The URL to secure
- * @return {?string}    The secured URL, or `null` if we couldn't make it safe
+ * @returns {?string}    The secured URL, or `null` if we couldn't make it safe
  */
 export default function safeImageUrl( url ) {
 	if ( typeof url !== 'string' ) {

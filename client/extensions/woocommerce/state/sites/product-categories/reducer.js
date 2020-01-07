@@ -22,7 +22,7 @@ import {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -43,7 +43,7 @@ export function isQueryLoading( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function isQueryError( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE === action.type && action.error ) {
@@ -59,7 +59,7 @@ export function isQueryError( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -87,7 +87,7 @@ export function items( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -104,7 +104,7 @@ export function queries( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function total( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -120,7 +120,7 @@ export function total( state = {}, action ) {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export function totalPages( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {

@@ -3,7 +3,7 @@
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?object}        Site post types
+ * @returns {?object}        Site post types
  */
 export function getPostTypes( state, siteId ) {
 	return state.postTypes.items[ siteId ] || null;
@@ -15,7 +15,7 @@ export function getPostTypes( state, siteId ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  slug   Post type slug
- * @return {?object}        Post type
+ * @returns {?object}        Post type
  */
 export function getPostType( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );
@@ -35,7 +35,7 @@ export function getPostType( state, siteId, slug ) {
  * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
  * @param  {string}   feature Feature slug
- * @return {?boolean}         Whether post type supports feature
+ * @returns {?boolean}         Whether post type supports feature
  */
 export function postTypeSupports( state, siteId, slug, feature ) {
 	// Hard-coded overrides; even if we know the post type object, continue to
@@ -75,7 +75,7 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {string}   slug   Post type slug
- * @return {?boolean}        Whether site supports post type
+ * @returns {?boolean}        Whether site supports post type
  */
 export function isPostTypeSupported( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );

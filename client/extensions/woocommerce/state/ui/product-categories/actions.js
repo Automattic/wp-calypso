@@ -15,7 +15,7 @@ import {
 /**
  * Generates a new product category placeholder ID
  * This is used for new creates.
- * @return {object} A new unique placeholder ID.
+ * @returns {object} A new unique placeholder ID.
  */
 export function generateProductCategoryId() {
 	return { placeholder: uniqueId( 'productCategory_' ) };
@@ -27,7 +27,7 @@ export function generateProductCategoryId() {
  * @param {number} siteId The id of the site to which the category belongs.
  * @param {object} [category] The most recent version of the category object, or null if new.
  * @param {object} data An object containing the properties to be edited for the object, if null, the category will be removed.
- * @return {object} The action object.
+ * @returns {object} The action object.
  */
 export function editProductCategory( siteId, category, data ) {
 	return {
@@ -42,7 +42,7 @@ export function editProductCategory( siteId, category, data ) {
  * Action Creator: Clear All Product Category Edits
  *
  * @param {number} siteId The site for which to clear all product category edits.
- * @return {object} action
+ * @returns {object} action
  */
 export function clearProductCategoryEdits( siteId ) {
 	return {

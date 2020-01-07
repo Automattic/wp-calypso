@@ -14,7 +14,7 @@ import treeSelect from '@automattic/tree-select';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {boolean}        Whether invites are being requested
+ * @returns {boolean}        Whether invites are being requested
  */
 export function isRequestingInvitesForSite( state, siteId ) {
 	return !! state.invites.requesting[ siteId ];
@@ -26,7 +26,7 @@ export function isRequestingInvitesForSite( state, siteId ) {
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {?Array}        The list of pending invites for the given site
+ * @returns {?Array}        The list of pending invites for the given site
  */
 export function getPendingInvitesForSite( state, siteId ) {
 	const invites = state.invites.items[ siteId ];
@@ -42,7 +42,7 @@ export function getPendingInvitesForSite( state, siteId ) {
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
- * @return {?Array}        The list of accepted invites for the given site
+ * @returns {?Array}        The list of accepted invites for the given site
  */
 export function getAcceptedInvitesForSite( state, siteId ) {
 	const invites = state.invites.items[ siteId ];
@@ -57,7 +57,7 @@ export function getAcceptedInvitesForSite( state, siteId ) {
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @return {?number}        The number of invites found for the given site
+ * @returns {?number}        The number of invites found for the given site
  */
 export function getNumberOfInvitesFoundForSite( state, siteId ) {
 	return state.invites.counts[ siteId ] || null;
@@ -70,7 +70,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
- * @return {?object}          Invite object (if found)
+ * @returns {?object}          Invite object (if found)
  */
 export const getInviteForSite = treeSelect(
 	( state, siteId ) => [ state.invites.items[ siteId ] ],
@@ -93,7 +93,7 @@ export const getInviteForSite = treeSelect(
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
- * @return {boolean}          Whether invites resend is being requested
+ * @returns {boolean}          Whether invites resend is being requested
  */
 export function isRequestingInviteResend( state, siteId, inviteId ) {
 	return 'requesting' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
@@ -106,7 +106,7 @@ export function isRequestingInviteResend( state, siteId, inviteId ) {
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
- * @return {boolean}          Whether invite resend was a success
+ * @returns {boolean}          Whether invite resend was a success
  */
 export function didInviteResendSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
@@ -119,7 +119,7 @@ export function didInviteResendSucceed( state, siteId, inviteId ) {
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
- * @return {boolean}          Whether invites resend is being requested
+ * @returns {boolean}          Whether invites resend is being requested
  */
 export function isDeletingInvite( state, siteId, inviteId ) {
 	return 'requesting' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
@@ -132,7 +132,7 @@ export function isDeletingInvite( state, siteId, inviteId ) {
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
- * @return {boolean}          Whether invites resend is being requested
+ * @returns {boolean}          Whether invites resend is being requested
  */
 export function didInviteDeletionSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
@@ -145,7 +145,7 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
 
- * @return {boolean}          Whether an invite is being deleted
+ * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {
 	return (

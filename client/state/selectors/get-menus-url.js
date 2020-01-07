@@ -11,7 +11,7 @@ import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selecto
  *
  * @param {object}  state   Global state tree
  * @param {number}  siteId  A site ID
- * @return {?string}        Menus admin URL
+ * @returns {?string}        Menus admin URL
  */
 export default function getMenusUrl( state, siteId ) {
 	if ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ) {

@@ -18,7 +18,7 @@ import isMainSiteOf from 'state/selectors/is-main-site-of';
  *
  * @param  {object}    state     Global state tree
  * @param  {number}    siteId    The ID of the site we're querying
- * @return {boolean}             Whether site with id equal to siteId is a connected secondary network site
+ * @returns {boolean}             Whether site with id equal to siteId is a connected secondary network site
  */
 export default createSelector( ( state, siteId ) => {
 	const siteIds = Object.keys( getSitesItems( state ) );

@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param {object} state Global state tree
  * @param {string} url .org site URL
- * @return {bool} True if installation and activation was successful
+ * @returns {bool} True if installation and activation was successful
  */
 export default function isJetpackRemoteInstallComplete( state, url ) {
 	return !! get( state.jetpackRemoteInstall.isComplete, url, false );

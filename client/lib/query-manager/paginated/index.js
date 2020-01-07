@@ -23,7 +23,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * query pagination keys.
 	 *
 	 * @param  {object}  query Query object to check
-	 * @return {boolean}       Whether query contains pagination key
+	 * @returns {boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
 		if ( ! query ) {
@@ -40,7 +40,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * items specific to that query.
 	 *
 	 * @param  {?object}  query Optional query object
-	 * @return {object[]}       Items tracked
+	 * @returns {object[]}       Items tracked
 	 */
 	getItems( query ) {
 		if ( ! query ) {
@@ -70,7 +70,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
 	 *                                  items yet to be received as `undefined`
-	 * @return {object[]}               Items tracked, ignoring page
+	 * @returns {object[]}               Items tracked, ignoring page
 	 */
 	getItemsIgnoringPage( query, includeFiller = false ) {
 		if ( ! query ) {
@@ -90,7 +90,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * query is not known.
 	 *
 	 * @param  {object}  query Query object
-	 * @return {?number}       Pages for query
+	 * @returns {?number}       Pages for query
 	 */
 	getNumberOfPages( query ) {
 		const found = this.getFound( query );
@@ -115,7 +115,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {boolean}        options.mergeQuery Add to existing query set
 	 * @param  {number}         options.found      Total found items for query
-	 * @return {QueryManager}                      New instance if changed, or
+	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */
 	receive( items, options = {} ) {

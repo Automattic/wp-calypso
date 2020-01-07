@@ -15,7 +15,7 @@ export const isRequestingFeed = ( state, siteId, zoneId ) =>
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @return {Array}         Feed
+ * @returns {Array}         Feed
  */
 export const getFeed = ( state, siteId, zoneId ) =>
 	get( getFeedsState( state ), [ 'items', siteId, zoneId ], [] );

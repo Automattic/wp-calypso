@@ -9,7 +9,7 @@ import queryKey from 'state/reader/feed-searches/query-key';
  *
  * @param  {object}  state  Global state tree
  * @param  {string}  query query
- * @return {Array} list of feeds that are the result of that query
+ * @returns {Array} list of feeds that are the result of that query
  */
 export default function getReaderFeedsCountForQuery( state, query ) {
 	const key = queryKey( query );

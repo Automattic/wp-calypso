@@ -9,7 +9,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  *
  * @param {object} state Global state tree
  * @param {object} siteId Site ID
- * @return {boolean} True if site is hidden
+ * @returns {boolean} True if site is hidden
  */
 export default function isHiddenSite( state, siteId ) {
 	const settings = getSiteSettings( state, siteId );

@@ -14,7 +14,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * @param  {object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @param  {string}  optionName The option key
- * @return {*}  The value of that option or null
+ * @returns {*}  The value of that option or null
  */
 export default function getSiteOption( state, siteId, optionName ) {
 	return get( getSiteOptions( state, siteId ), optionName, null );

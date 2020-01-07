@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
- * @return {boolean}             Whether monitor settings is currently being requested for that site.
+ * @returns {boolean}             Whether monitor settings is currently being requested for that site.
  */
 export default function isRequestingSiteMonitorSettings( state, siteId ) {
 	return get( state, [ 'sites', 'monitor', 'requesting', siteId ], false );

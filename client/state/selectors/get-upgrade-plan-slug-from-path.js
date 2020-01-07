@@ -16,7 +16,7 @@ import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
  * @param  {object}   state      Global state tree
  * @param  {number}   siteId     The site we're interested in upgrading
  * @param  {string}   path       The path fragment indicating the plan we want to upgrade to
- * @return {string}              The plan slug that corresponds to the given path, or null if the site cannot be upgraded
+ * @returns {string}              The plan slug that corresponds to the given path, or null if the site cannot be upgraded
  */
 export default function( state, siteId, path ) {
 	return find(

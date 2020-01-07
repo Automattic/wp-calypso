@@ -13,7 +13,7 @@ import { combineReducers, keyedReducer } from 'state/utils';
  * Returns the updated app filter state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {string}        Updated state
+ * @returns {string}        Updated state
  */
 export const app = ( state = null, action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
@@ -26,7 +26,7 @@ export const app = ( state = null, action ) => {
  * Returns the updated date filter state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  */
 export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
 	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
@@ -42,7 +42,7 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
  * Returns the updated page state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {number}        Updated state
+ * @returns {number}        Updated state
  */
 export const page = ( state = 1, action ) => {
 	switch ( action.type ) {
@@ -61,7 +61,7 @@ export const page = ( state = 1, action ) => {
  * Returns the updated string search filter state after an action has been dispatched
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {string}        Updated state
+ * @returns {string}        Updated state
  */
 export const query = ( state = '', action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {

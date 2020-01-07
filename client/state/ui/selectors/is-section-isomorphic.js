@@ -12,7 +12,7 @@ import getSection from './get-section';
  * Returns true if the current section is isomorphic.
  *
  * @param  {object}  state Global state tree
- * @return {bool}    True if current section is isomorphic
+ * @returns {bool}    True if current section is isomorphic
  *
  * @see client/sections
  */

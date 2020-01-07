@@ -15,7 +15,7 @@ import {
  *
  * @param  {object} state Current requesting state
  * @param  {object} action Action object
- * @return {object} Updated requesting state
+ * @returns {object} Updated requesting state
  */
 const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -45,7 +45,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  *
  * @param  {object} state Current status
  * @param  {object} action Action object
- * @return {object} Updated status
+ * @returns {object} Updated status
  */
 const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

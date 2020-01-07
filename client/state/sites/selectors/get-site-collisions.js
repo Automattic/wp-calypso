@@ -12,7 +12,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * exists in the set of sites with the same URL.
  *
  * @param  {object}   state Global state tree
- * @return {number[]}       WordPress.com site IDs with collisions
+ * @returns {number[]}       WordPress.com site IDs with collisions
  */
 export default createSelector(
 	state =>

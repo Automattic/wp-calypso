@@ -128,7 +128,7 @@ export function isUrlLikelyAnImage( uri ) {
 /**
  * Determine if a post thumbnail is likely an image
  * @param  {object} thumb the thumbnail object from a post
- * @return {boolean}       whether or not we think this is an image
+ * @returns {boolean}       whether or not we think this is an image
  */
 export function thumbIsLikelyImage( thumb ) {
 	if ( ! thumb || ! thumb.URL ) {
@@ -146,7 +146,7 @@ export function thumbIsLikelyImage( thumb ) {
  * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
  * them a free-er sandbox
  * @param  {object} iframe the iframe to check
- * @return {bool} true if whitelisted
+ * @returns {bool} true if whitelisted
  */
 export function iframeIsWhitelisted( iframe ) {
 	const iframeWhitelist = [

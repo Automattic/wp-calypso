@@ -11,7 +11,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId The ID of the site we're querying
- * @return {?boolean}         Whether the list is being requested
+ * @returns {?boolean}         Whether the list is being requested
  */
 export default function isFetchingJetpackModules( state, siteId ) {
 	return get( state.jetpack.modules.requests, [ siteId, 'fetchingModules' ], null );

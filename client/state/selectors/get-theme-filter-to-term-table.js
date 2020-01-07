@@ -16,7 +16,7 @@ import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-
  * full 'taxonomy:term' strings.
  *
  * @param {object} state Global state tree
- * @return {object} table of 'taxonomy:term' to 'term'
+ * @returns {object} table of 'taxonomy:term' to 'term'
  */
 export default createSelector(
 	state => {

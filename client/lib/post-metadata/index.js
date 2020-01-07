@@ -39,7 +39,7 @@ const PostMetadata = {
 	 * that post, or `undefined` if the value cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {string}      Publicize custom message
+	 * @returns {string}      Publicize custom message
 	 */
 	publicizeMessage: function( post ) {
 		if ( ! post ) {
@@ -55,7 +55,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {Array}       Array of Publicize service IDs
+	 * @returns {Array}       Array of Publicize service IDs
 	 */
 	publicizeDone: function( post ) {
 		if ( ! post ) {
@@ -71,7 +71,7 @@ const PostMetadata = {
 	 * the value cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {Array}       Array of Publicize service IDs
+	 * @returns {Array}       Array of Publicize service IDs
 	 */
 	publicizeSkipped: function( post ) {
 		if ( ! post ) {
@@ -86,7 +86,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {string|undefined} ThemeId on success.
+	 * @returns {string|undefined} ThemeId on success.
 	 */
 	homepageTemplate: function( post ) {
 		if ( ! post ) {
@@ -102,7 +102,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {string}      Human-readable geographic address label
+	 * @returns {string}      Human-readable geographic address label
 	 */
 	geoLabel: function( post ) {
 		if ( ! post ) {
@@ -117,7 +117,7 @@ const PostMetadata = {
 	 * the post, or undefined if it is has not been set.
 	 *
 	 * @param  {object} post Post object
-	 * @return {string}      Custom post meta description
+	 * @returns {string}      Custom post meta description
 	 */
 	metaDescription: function( post ) {
 		if ( ! post ) {
@@ -133,7 +133,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {object} post Post object
-	 * @return {string}      Array of geographic float coordinates
+	 * @returns {string}      Array of geographic float coordinates
 	 */
 	geoCoordinates: function( post ) {
 		if ( ! post ) {

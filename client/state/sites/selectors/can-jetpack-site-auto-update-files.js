@@ -17,7 +17,7 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
- * @return {?boolean} true if the site can auto update
+ * @returns {?boolean} true if the site can auto update
  */
 export default function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

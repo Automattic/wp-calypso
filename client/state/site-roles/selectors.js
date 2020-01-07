@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param  {object}  state     Global state tree
  * @param  {number}  siteId    Site ID
- * @return {boolean}           Whether that shortcode is being requested
+ * @returns {boolean}           Whether that shortcode is being requested
  */
 export const isRequestingSiteRoles = ( state, siteId ) => {
 	return get( state.siteRoles.requesting, [ siteId ], false );
@@ -20,7 +20,7 @@ export const isRequestingSiteRoles = ( state, siteId ) => {
  * Retrieve the site roles, supported in a particular site
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {Array}           Site roles
+ * @returns {Array}           Site roles
  */
 export const getSiteRoles = ( state, siteId ) => {
 	return get( state.siteRoles.items, [ siteId ] );

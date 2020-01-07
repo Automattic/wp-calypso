@@ -8,7 +8,7 @@ import { ROUTE_SET } from 'state/action-types';
  *
  * @param  {string} path    Route path
  * @param  {object} [query] Query arguments
- * @return {object}         Action object
+ * @returns {object}         Action object
  */
 export default function setRoute( path, query = {} ) {
 	return {

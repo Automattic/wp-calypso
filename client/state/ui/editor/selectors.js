@@ -20,7 +20,7 @@ import { addQueryArgs } from 'lib/route';
  * Returns the current editor post ID, or `null` if a new post.
  *
  * @param  {object} state Global state tree
- * @return {?number}      Current editor post ID
+ * @returns {?number}      Current editor post ID
  */
 export function getEditorPostId( state ) {
 	return state.ui.editor.postId;
@@ -30,7 +30,7 @@ export function getEditorPostId( state ) {
  * Returns whether editing a new post in the post editor.
  *
  * @param  {object}  state Global state tree
- * @return {boolean}       Whether editing new post in editor
+ * @returns {boolean}       Whether editing new post in editor
  */
 export function isEditorNewPost( state ) {
 	return ! getEditorPostId( state );
@@ -43,7 +43,7 @@ export function isEditorNewPost( state ) {
  * @param  {number} siteId      Site ID
  * @param  {number} postId      Post ID
  * @param  {string} type        Post type
- * @return {string}             Editor URL path
+ * @returns {string}             Editor URL path
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
 	return addQueryArgs(
@@ -60,7 +60,7 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
  * @param  {object} state       Global state tree
  * @param  {number} siteId      Site ID
  * @param  {number} type        Post type
- * @return {string}             Editor URL path
+ * @returns {string}             Editor URL path
  */
 export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 	let path;
@@ -93,7 +93,7 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * @param  {number} siteId      Site ID
  * @param  {number} postId      Post ID
  * @param  {string} defaultType Fallback post type if post not found
- * @return {string}             Editor URL path
+ * @returns {string}             Editor URL path
  */
 export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	if ( ! siteId ) {
@@ -115,7 +115,7 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  *
  * @param  {object}  state     Global state tree
  * @param  {number}  siteId    Site ID
- * @return {boolean}           Whether or not the sidebar is enabled
+ * @returns {boolean}           Whether or not the sidebar is enabled
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;

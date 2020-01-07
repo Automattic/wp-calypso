@@ -10,7 +10,7 @@ import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action
  * Saves the payment settings (currency and methods).
  * @param {object} [successAction] Action to be dispatched upon successful completion.
  * @param {object} [failureAction] Action to be dispatched upon failure of execution.
- * @return {object} Action object.
+ * @returns {object} Action object.
  */
 export const createPaymentSettingsActionList = ( successAction, failureAction ) => {
 	return {

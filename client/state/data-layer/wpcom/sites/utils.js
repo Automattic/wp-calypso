@@ -47,7 +47,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  *
  * @param {object}   action   redux action
  * @param {string}   path     comments resource path
- * @return {Array}	actions
+ * @returns {Array}	actions
  */
 export const dispatchNewCommentRequest = ( action, path ) => {
 	const { siteId, postId, parentCommentId, commentText } = action;
@@ -84,7 +84,7 @@ export const dispatchNewCommentRequest = ( action, path ) => {
  *
  * @param {Function} dispatch redux dispatcher
  * @param {object}   comment  updated comment from the request response
- * @return {Function} thunk
+ * @returns {Function} thunk
  */
 export const updatePlaceholderComment = (
 	{ siteId, postId, parentCommentId, placeholderId, refreshCommentListQuery },
@@ -122,7 +122,7 @@ export const updatePlaceholderComment = (
  *
  * @param {object}   action   redux action
  * @param {object} rawError plain error object
- * @return {Function} thunk
+ * @returns {Function} thunk
  */
 export const handleWriteCommentFailure = (
 	{ siteId, postId, parentCommentId, placeholderId },

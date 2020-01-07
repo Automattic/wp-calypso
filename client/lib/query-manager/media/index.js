@@ -24,7 +24,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 *
 	 * @param  {object}  query Query object
 	 * @param  {object}  media Item to consider
-	 * @return {boolean}       Whether media item matches query
+	 * @returns {boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
 		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {
@@ -84,7 +84,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @param  {object} query  Query object
 	 * @param  {object} mediaA First media item
 	 * @param  {object} mediaB Second media item
-	 * @return {number}        0 if equal, less than 0 if mediaA is first,
+	 * @returns {number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */
 	static compare( query, mediaA, mediaB ) {

@@ -8,7 +8,7 @@ const path = require( 'path' );
  * Given a module name, returns the package version
  *
  * @param  {string} id Module name
- * @return {string}    Module version
+ * @returns {string}    Module version
  */
 function getModuleVersion( id ) {
 	return require( id + '/package.json' ).version;

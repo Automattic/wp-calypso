@@ -9,7 +9,7 @@ import { HELP_COURSES_RECEIVE } from 'state/action-types';
  * receivede.
  *
  * @param  {object[]} courses Array of course objects
- * @return {object}           Action object
+ * @returns {object}           Action object
  */
 export function receiveHelpCourses( courses ) {
 	return {

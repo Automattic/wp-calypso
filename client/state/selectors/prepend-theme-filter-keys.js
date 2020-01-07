@@ -11,7 +11,7 @@ import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-strin
  *
  * @param {object} state Global state tree
  * @param {string} terms Space or + separated list of filter terms
- * @return {string} Complete taxonomy:term filter string, or empty string if term is not valid
+ * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */
 export default function prependThemeFilterKeys( state, terms = '' ) {
 	const result = terms

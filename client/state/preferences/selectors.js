@@ -18,7 +18,7 @@ export const isFetchingPreferences = state => !! state.preferences.fetching;
  *
  * @param  {object} state Global state tree
  * @param  {string} key   Preference key
- * @return {*}            Preference value
+ * @returns {*}            Preference value
  */
 export function getPreference( state, key ) {
 	return get(
@@ -37,7 +37,7 @@ export function getPreference( state, key ) {
  * values.
  *
  * @param  {object} state Global state tree
- * @return {object}       Preference value
+ * @returns {object}       Preference value
  */
 export function getAllRemotePreferences( state ) {
 	return state.preferences.remoteValues;
@@ -50,7 +50,7 @@ export const preferencesLastFetchedTimestamp = state => state.preferences.lastFe
  * false otherwise.
  *
  * @param  {object}  state Global state tree
- * @return {boolean}       Whether preferences have been received
+ * @returns {boolean}       Whether preferences have been received
  */
 export function hasReceivedRemotePreferences( state ) {
 	return !! state.preferences.remoteValues;

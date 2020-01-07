@@ -8,7 +8,7 @@ import { get, reduce } from 'lodash';
  * Returns a sync status object by site ID.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {object}          Sync status object
+ * @returns {object}          Sync status object
  */
 function getSyncStatus( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'syncStatus', siteId ] );
@@ -18,7 +18,7 @@ function getSyncStatus( state, siteId ) {
  * Returns a full sync request object by site ID.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {object}          Full sync request object
+ * @returns {object}          Full sync request object
  */
 function getFullSyncRequest( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'fullSyncRequest', siteId ] );
@@ -28,7 +28,7 @@ function getFullSyncRequest( state, siteId ) {
  * Returns a boolean for whether a full sync is pending start.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {boolean}         Whether a sync is pending start for site
+ * @returns {boolean}         Whether a sync is pending start for site
  */
 function isPendingSyncStart( state, siteId ) {
 	const syncStatus = getSyncStatus( state, siteId );
@@ -62,7 +62,7 @@ function isPendingSyncStart( state, siteId ) {
  * Returns a boolean for whether a site is in the process of a full sync.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {boolean}         Whether a sync is in the process of syncing
+ * @returns {boolean}         Whether a sync is in the process of syncing
  */
 function isFullSyncing( state, siteId ) {
 	const syncStatus = getSyncStatus( state, siteId );
@@ -80,7 +80,7 @@ function isFullSyncing( state, siteId ) {
  * Returns a rounded up percentage the amount of sync completed.
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @return {number}          The percentage of sync completed, expressed as an integer
+ * @returns {number}          The percentage of sync completed, expressed as an integer
  */
 function getSyncProgressPercentage( state, siteId ) {
 	const syncStatus = getSyncStatus( state, siteId ),

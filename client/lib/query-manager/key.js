@@ -31,7 +31,7 @@ export default class QueryKey {
 	 * matching those in a default query.
 	 *
 	 * @param  {object} query Query object
-	 * @return {object}       Pruned query object
+	 * @returns {object}       Pruned query object
 	 */
 	static omit( query ) {
 		const { OMIT_NULL_VALUES, DEFAULT_QUERY } = this;
@@ -56,7 +56,7 @@ export default class QueryKey {
 	 * Returns a serialized query, given a query object
 	 *
 	 * @param  {object} query Query object
-	 * @return {string}       Serialized query
+	 * @returns {string}       Serialized query
 	 */
 	static stringify( query ) {
 		const prunedQuery = this.omit( query );
@@ -74,7 +74,7 @@ export default class QueryKey {
 	 * Returns a query object, given a serialized query
 	 *
 	 * @param  {string} key Serialized query
-	 * @return {object}     Query object
+	 * @returns {object}     Query object
 	 */
 	static parse( key ) {
 		return this.omit( fromPairs( JSON.parse( key ) ) );

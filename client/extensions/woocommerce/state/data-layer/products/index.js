@@ -54,7 +54,7 @@ export function apiError( { dispatch }, action, error ) {
  * @param {object} originatingAction The action which precipitated this request.
  * @param {object} successAction Will be dispatched with extra props: { sentData, receivedData }
  * @param {object} [sentData] The sentData to be embedded in the successAction along with receivedData.
- * @return {Function} Curried function to be dispatched.
+ * @returns {Function} Curried function to be dispatched.
  */
 function updatedAction( siteId, originatingAction, successAction, sentData ) {
 	return ( dispatch, getState, { data: receivedData } ) => {

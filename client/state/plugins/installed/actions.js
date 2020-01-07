@@ -49,7 +49,7 @@ import {
  *
  * @param {object} siteId - site ID
  * @param {string} pluginId - plugin identifier
- * @return {SitePlugin} SitePlugin instance
+ * @returns {SitePlugin} SitePlugin instance
  */
 const getPluginHandler = ( siteId, pluginId ) => {
 	const siteHandler = wpcom.site( siteId );

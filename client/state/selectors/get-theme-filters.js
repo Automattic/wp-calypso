@@ -3,7 +3,7 @@
  *
  *
  * @param {object}  state Global state tree
- * @return {object}        A nested list of theme filters, keyed by filter slug
+ * @returns {object}        A nested list of theme filters, keyed by filter slug
  */
 
 export default function getThemeFilters( state ) {

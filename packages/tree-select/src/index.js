@@ -17,7 +17,7 @@ const isObject = o => {
  * @param  {object}   options       Options bag with additional arguments
  * @param  {Function} options.getCacheKey
  *                                  Custom way to compute the cache key from the `args` list
- * @return {Function}               Cached selector
+ * @returns {Function}               Cached selector
  */
 export default function treeSelect( getDependents, selector, options = {} ) {
 	if ( process.env.NODE_ENV !== 'production' ) {

@@ -33,7 +33,7 @@ const error = ( state = null, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
- * @return {object}        Updated state
+ * @returns {object}        Updated state
  *
  */
 const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
@@ -55,7 +55,7 @@ const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => 
  *
  * @param  {boolean} state  Current happychat status
  * @param  {object}  action Action playload
- * @return {boolean}        Updated happychat status
+ * @returns {boolean}        Updated happychat status
  */
 const isAvailable = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -71,7 +71,7 @@ const isAvailable = ( state = false, action ) => {
  *
  * @param  {boolean} state  Current happychat status
  * @param  {object}  action Action playload
- * @return {boolean}        Updated happychat status
+ * @returns {boolean}        Updated happychat status
  */
 export const localizedSupport = ( state = false, action ) => {
 	switch ( action.type ) {
