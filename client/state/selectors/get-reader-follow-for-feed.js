@@ -9,6 +9,6 @@ import { find } from 'lodash';
  *
  * @param  {object}  state  Global state tree
  * @param  {number} feedId  The feedId to find
- * @return {object} the subscription
+ * @returns {object} the subscription
  */
 export default ( state, feedId ) => find( state.reader.follows.items, { feed_ID: feedId } );

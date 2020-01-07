@@ -17,7 +17,7 @@ import getCurrentStream from 'state/selectors/get-reader-current-stream';
  * @param  {object} Redux state
  * @param  {object} Current stream item
  * @param  {integer} Offset from current stream item (e.g. -1 for previous item)
- * @return {object|null} The stream item, or null if the offset would be out of bounds
+ * @returns {object|null} The stream item, or null if the offset would be out of bounds
  */
 function getOffsetItem( state, currentItem, offset ) {
 	const streamKey = getCurrentStream( state );

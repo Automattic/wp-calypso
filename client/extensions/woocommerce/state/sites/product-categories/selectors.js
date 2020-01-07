@@ -157,7 +157,7 @@ export function getAllProductCategoriesBySearch(
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch product categories. If not provided, API defaults are used.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {number|Null} Total number of pages available for a query, or null if not loaded yet.
+ * @returns {number|null} Total number of pages available for a query, or null if not loaded yet.
  */
 export function getProductCategoriesLastPage(
 	state,
@@ -195,7 +195,7 @@ export function getTotalProductCategories(
  * @param {object} state Global state tree
  * @param {number} categoryId ID of the starting category.
  * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
- * @return {string} Label of given category, with all parents included
+ * @returns {string} Label of given category, with all parents included
  */
 function getProductCategoryLabel( state, categoryId, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );

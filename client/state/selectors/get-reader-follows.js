@@ -15,7 +15,7 @@ import { getFeed } from 'state/reader/feeds/selectors';
  * Get all sites/feeds the user follows.
  *
  * @param  {object}  state  Global state tree
- * @return {Array} Followed sites/feeds
+ * @returns {Array} Followed sites/feeds
  */
 const getReaderFollows = createSelector(
 	state => {

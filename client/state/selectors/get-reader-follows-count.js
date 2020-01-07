@@ -8,7 +8,7 @@ import { size, filter } from 'lodash';
  * Get the count of follows a user has
  *
  * @param  {object}  state  Global state tree
- * @return {Integer} Follow count
+ * @returns {Integer} Follow count
  */
 const getReaderFollowsCount = state =>
 	Math.max(
