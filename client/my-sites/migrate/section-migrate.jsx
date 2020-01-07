@@ -98,6 +98,8 @@ class SectionMigrate extends Component {
 			return;
 		}
 
+		this.setMigrationState( { migrationStatus: 'backing-up' } );
+
 		wpcom
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
