@@ -96,6 +96,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		suggestions = verticals
 			.filter( vertical => popular.includes( vertical.label ) )
 			.map( vertical => ( { ...vertical, category: NO__( 'Popular' ) } ) );
+		resetSiteVertical();
 	} else {
 		suggestions = verticals.filter( vertical =>
 			vertical.label.toLowerCase().includes( normalizedInputValue )
@@ -118,15 +119,11 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	};
 
 	const handleBlur = () => {
-		if ( ! normalizedInputValue ) {
-			resetSiteVertical();
-		} else {
-			const vertical = suggestions.find( ( { label } ) =>
-				label.toLowerCase().includes( normalizedInputValue )
-			) ?? { label: inputValue.trim() };
+		const vertical = suggestions.find( ( { label } ) =>
+			label.toLowerCase().includes( normalizedInputValue )
+		) ?? { label: inputValue.trim() };
 
-			setSiteVertical( vertical );
-		}
+		setSiteVertical( vertical );
 		onSelect();
 	};
 
