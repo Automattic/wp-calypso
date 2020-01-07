@@ -157,7 +157,7 @@ export function createExistingCardMethod( {
 
 function formatDate( cardExpiry ) {
 	const expiryDate = new Date( cardExpiry );
-	const formattedDate = `${ expiryDate.getMonth() + 1 }/${ expiryDate
+	const formattedDate = expiryDate.toLocaleDateString( 'en-US', { month: '2-digit', year: '2-digit' } );
 		.getFullYear()
 		.toString()
 		.substring( 2 ) }`;
