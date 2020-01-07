@@ -16,30 +16,30 @@ export interface SiteVertical {
 }
 
 export interface NewUserPostData {
-    readonly email: string;
-    readonly is_passwordless: boolean;
-    readonly validate: false;
-    readonly send_verification_email: false;
+	readonly email: string;
+	readonly is_passwordless: boolean;
+	readonly validate: false;
+	readonly send_verification_email: false;
+	readonly send_welcome_email: false;
 }
 
 export interface NewSitePostData {
-    blog_name: string,
-    blog_title?: string,
-    public: -1,
-    options?: object,
-    validate: false,
-    find_available_url: true,
+	blog_name: string;
+	blog_title?: string;
+	public: -1;
+	options?: object;
+	validate: false;
+	find_available_url: true;
 }
 
 export interface TemporaryBlog {
-    title: string;
-    url: string;
-    id: number;
+	title: string;
+	url: string;
+	id: number;
 }
 
 export interface TemporaryAccount {
-    username: string;
-    userId: number;
-    bearerToken: string;
+	username: string;
+	userId: number;
+	bearerToken: string;
 }
-
