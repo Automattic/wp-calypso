@@ -131,11 +131,11 @@ function getDomainDetails() {
 		firstName,
 		lastName,
 		email,
-		phoneNumber,
-		address,
+		phone: phoneNumber,
+		address_1: address,
 		city,
 		state,
-		country,
+		countryCode: country,
 		postalCode,
 	};
 }
