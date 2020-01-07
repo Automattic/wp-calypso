@@ -197,6 +197,33 @@ export class LanguagePickerModal extends PureComponent {
 		return suggestedLanguages;
 	}
 
+	selectLanguageFromSearch( search ) {
+		const filteredLanguages = this.getFilteredLanguages();
+		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
+
+		if ( exactMatch ) {
+			this.setState( { selectedLanguageSlug: exactMatch.langSlug } );
+			return;
+		}
+
+		const closeMatch = filteredLanguages.reduce( ( currentCloseMatch, language ) => {
+			const matchIndex = language.langSlug.indexOf( search );
+
+			if ( matchIndex === -1 ) {
+				return currentCloseMatch;
+			}
+
+			if ( ! currentCloseMatch || currentCloseMatch.langSlug.indexOf( search ) > matchIndex ) {
+				return language;
+			}
+		}, null );
+
+		if ( closeMatch ) {
+			this.setState( { selectedLanguageSlug: closeMatch.langSlug } );
+			return;
+		}
+	}
+
 	handleKeyPress = event => {
 		const { isSearchOpen } = this.state;
 
@@ -224,6 +251,10 @@ export class LanguagePickerModal extends PureComponent {
 
 	handleSearch = search => {
 		this.setState( { search } );
+
+		if ( search ) {
+			this.selectLanguageFromSearch( search );
+		}
 	};
 
 	handleSearchOpen = () => {
