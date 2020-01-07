@@ -14,8 +14,8 @@ import {
  * Returns an action object used in signalling that a list of HEs
  * has been received.
  *
- * @param  {Object[]} happinessEngineers Array of template objects
- * @return {Object}                      Action object
+ * @param  {object[]} happinessEngineers Array of template objects
+ * @return {object}                      Action object
  */
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {

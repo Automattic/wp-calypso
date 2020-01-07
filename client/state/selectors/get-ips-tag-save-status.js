@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Return a string indicating whether the status of a .uk transfer
  * IPS tag save.
  *
- * @param  {Object} state   Global state tree
+ * @param  {object} state   Global state tree
  * @param  {string} domain  Domain
  * @return {string}         Transfer status
  */

@@ -10,7 +10,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 /**
  * Return an array with the selected site or all sites Jetpack can manage
  *
- * @param {Object} state  Global state tree
+ * @param {object} state  Global state tree
  * @return {Array}        Array of Sites objects with the result
  */
 export default createSelector(

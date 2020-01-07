@@ -67,8 +67,8 @@ function buildPHPString( properties, textdomain ) {
  * equivalent WordPress-style translate functions. Also prepends with some
  * necessary time and number translations.
  *
- * @param  {array}  matches              Matches
- * @param  {Object} options              Options
+ * @param  {Array}  matches              Matches
+ * @param  {object} options              Options
  * @param  {string} options.phpArrayName Name of the array in the php resulting php file
  * @param  {string} options.projectName  Project name
  * @param  {string} options.textDomain   Text domain

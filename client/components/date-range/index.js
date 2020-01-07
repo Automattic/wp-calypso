@@ -181,7 +181,7 @@ export class DateRange extends Component {
 	 * and special configuration component config props
 	 *
 	 * @param  {moment}  date MomentJS date object
-	 * @return {Boolean}      whether date is considered valid or not
+	 * @return {boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
@@ -277,7 +277,7 @@ export class DateRange extends Component {
 	 * as required by Day Picker DateUtils
 	 * @param  {MomentJSDate} startDate the start date for the range
 	 * @param  {MomentJSDate} endDate   the end date for the range
-	 * @return {Object}           the date range object
+	 * @return {object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
 		return {
@@ -460,7 +460,7 @@ export class DateRange extends Component {
 	 * Formats a given date to the appropriate format for the
 	 * current locale
 	 * @param  {Date|MomentJSDate} date the date to be converted
-	 * @return {String}      the date as a formatted locale string
+	 * @return {string}      the date as a formatted locale string
 	 */
 	formatDateToLocale( date ) {
 		return this.props.moment( date ).format( 'L' );
@@ -468,7 +468,7 @@ export class DateRange extends Component {
 
 	/**
 	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
-	 * @return {String} date format as a string
+	 * @return {string} date format as a string
 	 */
 	getLocaleDateFormat() {
 		return this.props.moment.localeData().longDateFormat( 'L' );
@@ -520,7 +520,7 @@ export class DateRange extends Component {
 	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
 	 * http://react-day-picker.js.org/docs/matching-days
 	 *
-	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
+	 * @return {Array} configuration to be passed to DatePicker as disabledDays prop
 	 */
 	getDisabledDaysConfig() {
 		const { firstSelectableDate, lastSelectableDate } = this.props;

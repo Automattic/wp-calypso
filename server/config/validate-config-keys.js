@@ -6,14 +6,14 @@ const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 
-/** @type {String} path to configuration file directory */
+/** @type {string} path to configuration file directory */
 const configRoot = path.resolve( __dirname, '../../', 'config' );
 
 /**
  * Reads a config file given its basename
  *
- * @param {String} filename basename of config file to read, e.g. 'development.json'
- * @returns {String} contents of file
+ * @param {string} filename basename of config file to read, e.g. 'development.json'
+ * @returns {string} contents of file
  */
 const readConfigFile = filename =>
 	fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
@@ -23,7 +23,7 @@ const readConfigFile = filename =>
  * config file given its basename
  *
  * @throws SyntaxError if contents of config file not valid JSON
- * @param {String} filename basename of config file to read, e.g. 'development.json'
+ * @param {string} filename basename of config file to read, e.g. 'development.json'
  * @returns {*} parsed data from config file contents
  */
 const parseConfig = filename => JSON.parse( readConfigFile( filename ) );
@@ -37,7 +37,7 @@ const environmentKeys = fs
 	.filter( filename => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( filename => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
-/** @type {Object} config data in the shared config file (defaults) */
+/** @type {object} config data in the shared config file (defaults) */
 const sharedConfig = parseConfig( '_shared.json' );
 
 /**

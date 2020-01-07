@@ -18,7 +18,7 @@ export const getHelpSiteId = state => state.help.selectedSiteId;
  *  - The primary site (which may not be available).
  *  - If any of the above is requested, but the full site object is not available, return the site with the lowest siteId.
  * @param state - global state
- * @returns {?Object} the help site or null
+ * @returns {?object} the help site or null
  */
 export const getHelpSelectedSite = state => {
 	const siteId = getHelpSiteId( state ) || getSelectedOrPrimarySiteId( state );
@@ -38,7 +38,7 @@ export const getHelpSelectedSite = state => {
  *  - The Primary Site (which may not be available).
  *  - If any of the above is requested, but the full site object is not available, return the site with the lowest siteId.
  * @param state - global state
- * @returns {?Object} the help site or null
+ * @returns {?object} the help site or null
  */
 export const getHelpSelectedSiteId = state => {
 	const site = getHelpSelectedSite( state );

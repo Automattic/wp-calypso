@@ -97,7 +97,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Setup our initial state
-	 * @return {Object} An object representing our initial state
+	 * @return {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		howCanWeHelp: 'gettingStarted',

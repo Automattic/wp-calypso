@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Returns the post likes for a given site ID, post ID.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post ID
  * @return {Array}          Post Likes
  */
 export default function getPostLikes( state, siteId, postId ) {

@@ -19,9 +19,9 @@ import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/c
  *
  * We return AspectRatios.FREE if no specified aspect ratio is valid.
  *
- * @param   {String} aspectRatio  an aspect ratio which should be validated and used as default one for image editor
+ * @param   {string} aspectRatio  an aspect ratio which should be validated and used as default one for image editor
  * @param   {Array}  aspectRatios list of aspect ratios to be validated and used in image editor
- * @returns {String}              the default valid aspect ratio image editor should use
+ * @returns {string}              the default valid aspect ratio image editor should use
  */
 export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = AspectRatiosValues ) {
 	if ( ! includes( aspectRatios, aspectRatio ) ) {

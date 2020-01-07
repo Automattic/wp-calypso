@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Returns true if WebPreview is currently showing.
  *
- * @param  {Object}  state Global state tree
+ * @param  {object}  state Global state tree
  * @return {bool}    True if currently showing WebPreview
  *
  * @see client/components/web-preview

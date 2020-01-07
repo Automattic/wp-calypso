@@ -11,9 +11,9 @@ import isJetpackSite from './is-jetpack-site';
  * the minimum Jetpack version as set by the 'jetpack_min_version' config value.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param  {Object} state - whole state tree
- * @param  {Number} siteId - site id
- * @return {?Boolean} true if the site has minimum jetpack version
+ * @param  {object} state - whole state tree
+ * @param  {number} siteId - site id
+ * @return {?boolean} true if the site has minimum jetpack version
  */
 export default function siteHasMinimumJetpackVersion( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

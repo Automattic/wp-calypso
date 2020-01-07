@@ -141,16 +141,16 @@ export class SharingService extends Component {
 	/**
 	 * Handle external access provided by the user.
 	 *
-	 * @param {Number} keyringConnectionId Keyring connection ID.
+	 * @param {number} keyringConnectionId Keyring connection ID.
 	 */
 	externalAccessProvided = keyringConnectionId => {}; // eslint-disable-line no-unused-vars
 
 	/**
 	 * Establishes a new connection.
 	 *
-	 * @param {Object} service             Service to connect to.
-	 * @param {Number} keyringConnectionId Keyring conneciton ID.
-	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
+	 * @param {object} service             Service to connect to.
+	 * @param {number} keyringConnectionId Keyring conneciton ID.
+	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	addConnection = ( service, keyringConnectionId, externalUserId = 0 ) => {
 		this.setState( { isConnecting: true } );
@@ -214,8 +214,8 @@ export class SharingService extends Component {
 	/**
 	 * Create or update the connection
 	 *
-	 * @param {Number} keyringConnectionId Keyring conneciton ID.
-	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
+	 * @param {number} keyringConnectionId Keyring conneciton ID.
+	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
 		const existingConnection = find( this.props.siteUserConnections, {
@@ -250,8 +250,8 @@ export class SharingService extends Component {
 	/**
 	 * Sets a connection to be site-wide or not.
 	 *
-	 * @param  {Object}   connection Connection to update.
-	 * @param  {Boolean}  shared     Whether the connection can be used by other users.
+	 * @param  {object}   connection Connection to update.
+	 * @param  {boolean}  shared     Whether the connection can be used by other users.
 	 * @return {Function}            Action thunk
 	 */
 	toggleSitewideConnection = ( connection, shared ) =>
@@ -303,7 +303,7 @@ export class SharingService extends Component {
 	/**
 	 * Fetch connections
 	 *
-	 * @param {Object} connection Connection to update.
+	 * @param {object} connection Connection to update.
 	 * @return {Function} Action thunk
 	 */
 	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
@@ -376,9 +376,9 @@ export class SharingService extends Component {
 	/**
 	 * Get current connections
 	 *
-	 * @param  {array} overrides Optional. If it is passed, just return the argument
+	 * @param  {Array} overrides Optional. If it is passed, just return the argument
 	 *                           instead of the default connections.
-	 * @return {array} connections
+	 * @return {Array} connections
 	 */
 	getConnections( overrides ) {
 		return overrides || this.props.siteUserConnections;
@@ -419,7 +419,7 @@ export class SharingService extends Component {
 	 * authorization attempt succeeded in creating new Keyring account options.
 	 *
 	 * @param {Array} externalAccounts Props to check on if a keyring connection succeeded.
-	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 * @return {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( externalAccounts ) {
 		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
@@ -603,7 +603,7 @@ export class SharingService extends Component {
  * Connect a SharingService component to a Redux store.
  *
  * @param  {component} sharingService     A SharingService component
- * @param  {function}  mapStateToProps    Optional. A function to pick props from the state.
+ * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
  * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @return {component} A highter-order service component

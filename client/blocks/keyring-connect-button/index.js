@@ -149,7 +149,7 @@ class KeyringConnectButton extends Component {
 	 * in creating new Keyring account options.
 	 *
 	 * @param {Array} keyringConnections props to check on if a keyring connection succeeded.
-	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 * @return {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
 		const hasAnyConnectionOptions = some(

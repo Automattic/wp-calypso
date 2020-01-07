@@ -12,14 +12,14 @@ import { getFiltersKey } from 'state/ui/comments/utils';
 /**
  * Returns a list of comment IDs for the requested page and filters.
  *
- * @param {Object} state Redux state.
- * @param {Number} siteId Site identifier.
- * @param {Object} query Filter parameters.
- * @param {String} [query.order] Query order ('ASC' or 'DESC').
- * @param {Number} [query.page] Requested page.
- * @param {Number} [query.postId] Post identifier.
- * @param {String} [query.search] Search query.
- * @param {String} [query.status] Comments status.
+ * @param {object} state Redux state.
+ * @param {number} siteId Site identifier.
+ * @param {object} query Filter parameters.
+ * @param {string} [query.order] Query order ('ASC' or 'DESC').
+ * @param {number} [query.page] Requested page.
+ * @param {number} [query.postId] Post identifier.
+ * @param {string} [query.search] Search query.
+ * @param {string} [query.status] Comments status.
  * @returns {Array} List of comment IDs for the requested page and filters.
  */
 export const getCommentsPage = ( state, siteId, query ) => {

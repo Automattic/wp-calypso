@@ -21,9 +21,9 @@ import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib
  * 3. Other Cart Items
  * 4. Credits Cart Item
  *
- * @param {Object[]} products
+ * @param {object[]} products
  *
- * @returns {Object[]} the sorted list of items in the shopping cart
+ * @returns {object[]} the sorted list of items in the shopping cart
  */
 
 function sortProducts( products ) {

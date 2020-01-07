@@ -11,9 +11,9 @@ import { THOUSANDS } from './thousands';
 
 /**
  * Formats a number to a short format given a language code
- * @param   {Number}     number              number to format
- * @param   {String}     code                language code e.g. 'es'
- * @returns {?String}                        A formatted string.
+ * @param   {number}     number              number to format
+ * @param   {string}     code                language code e.g. 'es'
+ * @returns {?string}                        A formatted string.
  */
 export default function formatNumberCompact( number, code = i18n.getLocaleSlug() ) {
 	//use numberFormat directly from i18n in this case!

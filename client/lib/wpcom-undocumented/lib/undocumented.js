@@ -1170,7 +1170,7 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
  * The data format is: {
  *		country: {string} The billing country,
  *		postal_code: {string} The billing postal code,
- *		cart: {array} An JSON serialization of the cart,
+ *		cart: {Array} An JSON serialization of the cart,
  * }
  */
 Undocumented.prototype.paypalExpressUrl = function( data, fn ) {

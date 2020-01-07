@@ -55,9 +55,9 @@ const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default
  * Notifies user about the fact that they were automatically logged in
  * via an immediate link.
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
 	if ( ! action.query.immediate_login_attempt ) {
@@ -101,7 +101,7 @@ let selectedSiteChangeListeners = [];
 /**
  * Calls the listeners to selected site.
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {number} siteId     - the selected site id
  */
 const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
@@ -111,7 +111,7 @@ const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
 /**
  * Registers a listener function to be fired once selected site changes.
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
  */
 const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
@@ -122,7 +122,7 @@ const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
 /**
  * Removes a selectedSite listener.
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
  */
 const removeSelectedSitesChangeListener = ( dispatch, action ) => {
@@ -135,9 +135,9 @@ const removeSelectedSitesChangeListener = ( dispatch, action ) => {
 /**
  * Sets the selectedSite for lib/keyboard-shortcuts/global
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) => {
 	const state = getState();
@@ -148,9 +148,9 @@ const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) =
 /**
  * Sets isNotificationOpen for lib/keyboard-shortcuts
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
 	// flip the state here, since the reducer hasn't had a chance to update yet
@@ -161,9 +161,9 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 /**
  * Sets the selected site for lib/desktop
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
 	const state = getState();

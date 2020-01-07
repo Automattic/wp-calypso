@@ -215,8 +215,8 @@ function getPathname( uri ) {
 
 /** returns whether or not a posts featuredImages is contained within the contents
  *
- * @param {Object} post - the post to check
- * @returns {Boolean|Number} false if featuredImage is not within content content_images.
+ * @param {object} post - the post to check
+ * @returns {boolean|number} false if featuredImage is not within content content_images.
  *   otherwise returns the index of the dupe in post.images.
  */
 export function isFeaturedImageInContent( post ) {
@@ -265,8 +265,8 @@ export const safeLinkRe = /^https?:\/\//;
 /**
  * Only accept links that start with http or https. Reject others.
  *
- * @param {String} link the link to check
- * @returns {String|undefined} the safe link or undefined
+ * @param {string} link the link to check
+ * @returns {string|undefined} the safe link or undefined
  */
 export function safeLink( link ) {
 	if ( safeLinkRe.test( link ) ) {

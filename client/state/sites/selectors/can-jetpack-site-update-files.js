@@ -15,9 +15,9 @@ import siteHasMinimumJetpackVersion from './site-has-minimum-jetpack-version';
  * Determines if a Jetpack site can update its files.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site can update its file
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @return {?boolean} true if the site can update its file
  */
 export default function canJetpackSiteUpdateFiles( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

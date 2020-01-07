@@ -23,10 +23,10 @@ import { errorNotice } from 'state/notices/actions';
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param   {String}           commentText     text of the comment
- * @param   {Number}           postId          post identifier
- * @param   {Number|undefined} parentCommentId parent comment identifier
- * @returns {Object}                           comment placeholder
+ * @param   {string}           commentText     text of the comment
+ * @param   {number}           postId          post identifier
+ * @param   {number|undefined} parentCommentId parent comment identifier
+ * @returns {object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
 	ID: 'placeholder-' + new Date().getTime(),
@@ -45,8 +45,8 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param {Object}   action   redux action
- * @param {String}   path     comments resource path
+ * @param {object}   action   redux action
+ * @param {string}   path     comments resource path
  * @return {Array}	actions
  */
 export const dispatchNewCommentRequest = ( action, path ) => {
@@ -83,7 +83,7 @@ export const dispatchNewCommentRequest = ( action, path ) => {
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {Object}   comment  updated comment from the request response
+ * @param {object}   comment  updated comment from the request response
  * @return {Function} thunk
  */
 export const updatePlaceholderComment = (
@@ -120,8 +120,8 @@ export const updatePlaceholderComment = (
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {Object}   action   redux action
- * @param {Object} rawError plain error object
+ * @param {object}   action   redux action
+ * @param {object} rawError plain error object
  * @return {Function} thunk
  */
 export const handleWriteCommentFailure = (

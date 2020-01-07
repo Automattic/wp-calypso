@@ -38,7 +38,7 @@ export const dismissRestore = action =>
  *
  * @param {object}   action   Changeset to update state.
  * @param {object}     data     Description of request result.
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const restoreSilentlyDismissed = ( action, data ) =>
 	! data.dismissed
@@ -48,7 +48,7 @@ export const restoreSilentlyDismissed = ( action, data ) =>
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const restoreDismissFailed = () => null;
 

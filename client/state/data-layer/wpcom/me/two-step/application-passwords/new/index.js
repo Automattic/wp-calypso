@@ -24,8 +24,8 @@ export const apiTransformer = data => data.application_password;
 /**
  * Dispatches a request to add an application password for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
 export const addApplicationPassword = action =>
 	http(
@@ -45,7 +45,7 @@ export const addApplicationPassword = action =>
  * - a create application password success action
  * - a user application passwords receive action
  *
- * @param   {Object} action      Redux action
+ * @param   {object} action      Redux action
  * @param   {Array}  appPassword Response from the endpoint
  * @returns {Array}              Dispatched actions
  */
@@ -57,7 +57,7 @@ export const handleAddSuccess = ( action, appPassword ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @returns {Object} Dispatched error notice action
+ * @returns {object} Dispatched error notice action
  */
 export const handleAddError = () =>
 	errorNotice(

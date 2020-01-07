@@ -33,7 +33,7 @@ const getTypeForBlockId = blockId => {
  * and calls your tracking for each of the blocks involved in the action.
  *
  * @param {string} eventName event name
- * @return {function} track handler
+ * @return {Function} track handler
  */
 const getBlocksTracker = eventName => blockIds => {
 	// track separately for each block
@@ -45,7 +45,7 @@ const getBlocksTracker = eventName => blockIds => {
 /**
  * Track block insertion.
  *
- * @param {object|array} blocks block instance object or an array of such objects
+ * @param {object|Array} blocks block instance object or an array of such objects
  * @return {void}
  */
 const trackBlockInsertion = blocks => {
@@ -60,8 +60,8 @@ const trackBlockInsertion = blocks => {
 /**
  * Track block replacement.
  *
- * @param {array} originalBlockIds ids or blocks that are being replaced
- * @param {object|array} blocks block instance object or an array of such objects
+ * @param {Array} originalBlockIds ids or blocks that are being replaced
+ * @param {object|Array} blocks block instance object or an array of such objects
  * @return {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {
@@ -77,7 +77,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * Track update and publish action for Global Styles plugin.
  *
  * @param {string} eventName Name of the track event.
- * @return {function}
+ * @return {Function}
  */
 const trackGlobalStyles = eventName => options => {
 	tracksRecordEvent( eventName, {

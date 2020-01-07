@@ -21,7 +21,7 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  *
  * This structure facilitates the creation of a select element.
  *
- * @param  {Object} state - Global state tree
+ * @param  {object} state - Global state tree
  * @return {Array} Timezones arrays
  */
 export default function getTimezones( state ) {

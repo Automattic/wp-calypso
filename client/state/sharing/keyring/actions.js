@@ -47,7 +47,7 @@ export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
 /**
  * Triggers an action to delete a Keyring connection.
  *
- * @param  {Object}   connection Keyring connection to be removed.
+ * @param  {object}   connection Keyring connection to be removed.
  * @return {Function}            Action thunk
  */
 export function deleteKeyringConnection( connection ) {
@@ -60,9 +60,9 @@ export function deleteKeyringConnection( connection ) {
 /**
  * Triggers a network request to delete a Keyring connection from the server-side.
  *
- * @param  {Object} connection         Connection to be deleted.
- * @param  {Number} connection.ID      ID of the connection to be deleted.
- * @param  {String} connection.label   Name of the service that was connected.
+ * @param  {object} connection         Connection to be deleted.
+ * @param  {number} connection.ID      ID of the connection to be deleted.
+ * @param  {string} connection.label   Name of the service that was connected.
  * @return {Function}                  Action thunk
  */
 export function deleteStoredKeyringConnection( connection ) {

@@ -76,9 +76,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns an action object to be used in signalling that a post object has
  * been received.
  *
- * @param  {Object}  post       Post received
- * @param  {?String} saveMarker Save marker in the edits log
- * @return {Object}             Action object
+ * @param  {object}  post       Post received
+ * @param  {?string} saveMarker Save marker in the edits log
+ * @return {object}             Action object
  */
 export function receivePost( post, saveMarker ) {
 	return receivePosts( [ post ], saveMarker );
@@ -89,8 +89,8 @@ export function receivePost( post, saveMarker ) {
  * been received.
  *
  * @param  {Array}   posts      Posts received
- * @param  {?String} saveMarker Save marker in the edits log
- * @return {Object}             Action object
+ * @param  {?string} saveMarker Save marker in the edits log
+ * @return {object}             Action object
  */
 export function receivePosts( posts, saveMarker ) {
 	const action = { type: POSTS_RECEIVE, posts };
@@ -103,8 +103,8 @@ export function receivePosts( posts, saveMarker ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {Number}   siteId Site ID
- * @param  {String}   query  Post query
+ * @param  {number}   siteId Site ID
+ * @param  {string}   query  Post query
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
@@ -119,7 +119,7 @@ export function requestSitePosts( siteId, query = {} ) {
  * Returns a function which, when invoked, triggers a network request to fetch
  * posts across all of the current user's sites for the specified query.
  *
- * @param  {String}   query Post query
+ * @param  {string}   query Post query
  * @return {Function}       Action thunk
  */
 export function requestAllSitesPosts( query = {} ) {
@@ -129,8 +129,8 @@ export function requestAllSitesPosts( query = {} ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {?Number}  siteId Site ID
- * @param  {String}   query  Post query
+ * @param  {?number}  siteId Site ID
+ * @param  {string}   query  Post query
  * @return {Function}        Action thunk
  */
 function requestPosts( siteId, query = {} ) {
@@ -169,8 +169,8 @@ function requestPosts( siteId, query = {} ) {
 /**
  * Triggers a network request to fetch a specific post from a site.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
  * @return {Function}        Action thunk
  */
 export function requestSitePost( siteId, postId ) {
@@ -208,10 +208,10 @@ export function requestSitePost( siteId, postId ) {
  * Returns an action object to be used in signalling that the specified
  * post updates should be applied to the set of edits.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @param  {Object} post   Post attribute updates
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {number} postId Post ID
+ * @param  {object} post   Post attribute updates
+ * @return {object}        Action object
  */
 export function editPost( siteId, postId = null, post ) {
 	return {
@@ -259,11 +259,11 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
 /**
  * Returns an action object to be used in signalling that a post has been saved
  *
- * @param  {Number}   siteId     Site ID
- * @param  {Number}   postId     Post ID
- * @param  {Object}   savedPost  Updated post
- * @param  {Object}   post       Post attributes
- * @return {Object}              Action thunk
+ * @param  {number}   siteId     Site ID
+ * @param  {number}   postId     Post ID
+ * @param  {object}   savedPost  Updated post
+ * @param  {object}   post       Post attributes
+ * @return {object}              Action thunk
  */
 export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 	return {
@@ -279,9 +279,9 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
  * Returns an action thunk which, when dispatched, triggers a network request
  * to save the specified post object.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
- * @param  {Object}   post   Post attributes
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
+ * @param  {object}   post   Post attributes
  * @return {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
@@ -321,8 +321,8 @@ export function savePost( siteId, postId = null, post ) {
  * Returns an action thunk which, when dispatched, triggers a network request
  * to trash the specified post.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
  * @return {Function}        Action thunk
  */
 export function trashPost( siteId, postId ) {
@@ -374,8 +374,8 @@ export function trashPost( siteId, postId ) {
  * to delete the specified post. The post should already have a status of trash
  * when dispatching this action, else you should use `trashPost`.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
  * @return {Function}        Action thunk
  */
 export function deletePost( siteId, postId ) {
@@ -417,8 +417,8 @@ export function deletePost( siteId, postId ) {
  * Returns an action thunk which, when dispatched, triggers a network request
  * to restore the specified post.
  *
- * @param  {Number}   siteId Site ID
- * @param  {Number}   postId Post ID
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
  * @return {Function}        Action thunk
  */
 export function restorePost( siteId, postId ) {
@@ -460,10 +460,10 @@ export function restorePost( siteId, postId ) {
 /**
  * Returns an action thunk which, when dispatched, adds a term to the current edited post
  *
- * @param  {Number}   siteId   Site ID
- * @param  {String}   taxonomy Taxonomy Slug
- * @param  {Object}   term     Object of new term attributes
- * @param  {Number}   postId   ID of post to which term is associated
+ * @param  {number}   siteId   Site ID
+ * @param  {string}   taxonomy Taxonomy Slug
+ * @param  {object}   term     Object of new term attributes
+ * @param  {number}   postId   ID of post to which term is associated
  * @return {Function}          Action thunk
  */
 export function addTermForPost( siteId, taxonomy, term, postId ) {
@@ -542,8 +542,8 @@ function normalizeApiAttributes( attributes ) {
 /**
  * Load an existing post and keep track of edits to it
  *
- * @param {Object} siteId Site ID
- * @param {Number} postId Post ID to load
+ * @param {object} siteId Site ID
+ * @param {number} postId Post ID to load
  * @return {Promise<?Object>} The edited post object
  */
 export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {

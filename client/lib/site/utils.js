@@ -12,8 +12,8 @@ export function userCan( capability, site ) {
 /**
  * site's timezone getter
  *
- * @param {Object} site - site object
- * @return {String} timezone
+ * @param {object} site - site object
+ * @return {string} timezone
  */
 export function timezone( site ) {
 	return site && site.options ? site.options.timezone : null;
@@ -22,8 +22,8 @@ export function timezone( site ) {
 /**
  * site's gmt_offset getter
  *
- * @param {Object} site - site object
- * @return {String} gmt_offset
+ * @param {object} site - site object
+ * @return {string} gmt_offset
  */
 export function gmtOffset( site ) {
 	return site && site.options ? site.options.gmt_offset : null;
@@ -132,8 +132,8 @@ export function isMainNetworkSite( site ) {
 
 /**
  * Checks whether a site has a custom mapped URL.
- * @param  {Object}   site Site object
- * @return {?Boolean}      Whether site has custom domain
+ * @param  {object}   site Site object
+ * @return {?boolean}      Whether site has custom domain
  */
 export function hasCustomDomain( site ) {
 	if ( ! site || ! site.domain || ! site.wpcom_url ) {

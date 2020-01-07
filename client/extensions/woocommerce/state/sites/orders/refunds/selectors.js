@@ -9,9 +9,9 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} List of refund objects
  */
 export const getOrderRefunds = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -23,9 +23,9 @@ export const getOrderRefunds = ( state, orderId, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} orderId Order ID to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} orderId Order ID to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether an order refund has been requested (or completed)
  */
 export const isOrderRefunding = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

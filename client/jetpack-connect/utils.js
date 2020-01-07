@@ -107,8 +107,8 @@ export function getRoleFromScope( scope ) {
  * Parse an authorization query
  *
  * @property {Function} parser Lazy-instatiated parser
- * @param  {Object}     query  Authorization query
- * @return {?Object}           Query after transformation. Null if invalid or errored during transform.
+ * @param  {object}     query  Authorization query
+ * @return {?object}           Query after transformation. Null if invalid or errored during transform.
  */
 export function parseAuthorizationQuery( query ) {
 	if ( ! parseAuthorizationQuery.parser ) {

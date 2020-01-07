@@ -217,7 +217,7 @@ export function serverRender( req, res ) {
  * applied before truly SSRing (@see isServerSideRenderCompatible)
  *
  * @param {object}   context  The entire request context
- * @param {function} next     As all middlewares, will call next in the sequence
+ * @param {Function} next     As all middlewares, will call next in the sequence
  */
 export function setShouldServerSideRender( context, next ) {
 	context.serverSideRender = Object.keys( context.query ).length === 0; // no SSR when we have query args

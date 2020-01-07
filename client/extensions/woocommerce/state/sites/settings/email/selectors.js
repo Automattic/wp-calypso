@@ -12,8 +12,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} Email settings.
  */
 export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -21,8 +21,8 @@ export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) =
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the email settings have been successfully loaded from the server
  */
 export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -30,8 +30,8 @@ export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the email settings are currently being retrieved from the server
  */
 export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -51,26 +51,26 @@ const getField = field => {
 /**
  * Returns true if user requested save action in Email Settings.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @return {boolean}        Whether user requested save action.
  */
 export const emailSettingsSaveRequest = getField( 'save' );
 
 /**
  * Returns true if email settings are being saved.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @return {boolean}        Whether user requested save action.
  */
 export const isSavingEmailSettings = getField( 'isSaving' );
 
 /**
  * Returns true if email settings are being saved.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether user requested save action.
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @return {boolean}        Whether user requested save action.
  */
 export const emailSettingsSubmitSettingsError = getField( 'error' );

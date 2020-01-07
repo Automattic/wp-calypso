@@ -9,7 +9,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 /**
  * Get all Jetpack sites
  *
- * @param {Object} state  Global state tree
+ * @param {object} state  Global state tree
  * @return {Array}        Array of Jetpack Sites objects
  */
 export default createSelector(

@@ -21,9 +21,9 @@ const Markup = {
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
 	 *
-	 * @param  {Object} site    A site object
-	 * @param  {Object} media   A media object
-	 * @param  {Object} options Appearance options
+	 * @param  {object} site    A site object
+	 * @param  {object} media   A media object
+	 * @param  {object} options Appearance options
 	 * @return {string}         A markup string
 	 */
 	get: function( site, media, options ) {
@@ -46,7 +46,7 @@ const Markup = {
 	 * Given a media object, returns a link markup string representing that
 	 * object.
 	 *
-	 * @param  {Object} media A media object
+	 * @param  {object} media A media object
 	 * @return {string}       A link markup string
 	 */
 	link: function( media ) {
@@ -71,9 +71,9 @@ const Markup = {
 	 * @license See CREDITS.md.
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
 	 *
-	 * @param  {Object} site           A site object
-	 * @param  {(Object|String)} media A media object or markup string
-	 * @return {String}                A caption React element, or null if not
+	 * @param  {object} site           A site object
+	 * @param  {(object|string)} media A media object or markup string
+	 * @return {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {
@@ -121,9 +121,9 @@ const Markup = {
 		 * Given an image media object and a site, returns a markup string representing that
 		 * image object as HTML.
 		 *
-		 * @param  {Object} site    A site object
-		 * @param  {Object} media   An image media object
-		 * @param  {Object} options Appearance options
+		 * @param  {object} site    A site object
+		 * @param  {object} media   An image media object
+		 * @param  {object} options Appearance options
 		 * @return {string}         An image markup string
 		 */
 		image: function( site, media, options ) {
@@ -192,8 +192,8 @@ const Markup = {
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
 		 *
-		 * @param  {Object} site  A site object
-		 * @param  {Object} media An audio media object
+		 * @param  {object} site  A site object
+		 * @param  {object} media An audio media object
 		 * @return {string}       An audio markup string
 		 */
 		audio: function( site, media ) {
@@ -209,7 +209,7 @@ const Markup = {
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
 		 *
-		 * @param  {Object} site  A site object
+		 * @param  {object} site  A site object
 		 * @param  {string} media A video media object
 		 * @return {string}       A video markup string
 		 */

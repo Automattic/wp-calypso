@@ -11,7 +11,7 @@ import { intersection } from 'lodash';
  * present, then it also needs to start with a certain prefix).
  *
  * @param {object}   context  The entire request context
- * @param {function} next     Next middleware in the running sequence
+ * @param {Function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {
 	const whitelistedQueryKeys = [ 'client_id', 'signup_flow', 'redirect_to' ];

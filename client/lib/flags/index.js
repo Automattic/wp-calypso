@@ -1,8 +1,8 @@
 /**
  * Given a country code, return a flag SVG file path
  *
- * @param   {String} countryCode  A two-letter ISO_3166-1_country code
- * @returns {String}              Flag SVG file path
+ * @param   {string} countryCode  A two-letter ISO_3166-1_country code
+ * @returns {string}              Flag SVG file path
  */
 export function flagUrl( countryCode ) {
 	try {

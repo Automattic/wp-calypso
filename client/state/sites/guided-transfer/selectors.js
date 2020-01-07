@@ -21,7 +21,7 @@ export function isGuidedTransferInProgress( state, siteId ) {
  * Returns true if the user has initiated a guided transfer, but
  * we're still waiting for them to purchase the GT
  *
- * @param {Object} state The Redux state object
+ * @param {object} state The Redux state object
  * @param {number} siteId The siteId to check
  * @return {bool} true if guided transfer is awaiting purchase
  */

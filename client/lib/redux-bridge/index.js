@@ -26,7 +26,7 @@ export function getReduxStore() {
 
 /**
  * Get the state of the current redux store
- * @returns {Object} Redux state
+ * @returns {object} Redux state
  */
 export function reduxGetState() {
 	if ( ! reduxStore ) {

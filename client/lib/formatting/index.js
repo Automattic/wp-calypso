@@ -310,7 +310,7 @@ export function capitalPDangit( input ) {
 /**
  * Parses HTML by using the browser's built in string to DOM converter.
  *
- * @param  {String} html HTML String to be converted into DOM fragment
+ * @param  {string} html HTML String to be converted into DOM fragment
  * @return {Dom} DOM fragment that can be queried using built in browser functions.
  */
 export function parseHtml( html ) {
@@ -352,8 +352,8 @@ const nbsp = String.fromCharCode( 160 );
  * using '&nbsp;' for this because again, React will escape whatever we pass
  * in).
  *
- * @param	{String} str String to unescape in preparation for React rendering
- * @return	{String} Transformed string
+ * @param	{string} str String to unescape in preparation for React rendering
+ * @return	{string} Transformed string
  */
 export function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );

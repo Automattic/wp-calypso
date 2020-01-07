@@ -776,8 +776,8 @@ export const normalizers = {
 	/*
 	 * Returns a normalized statsClicks array, ready for use in stats-module
 	 *
-	 * @param  {Object} data   Stats data
-	 * @param  {Object} query  Stats query
+	 * @param  {object} data   Stats data
+	 * @param  {object} query  Stats query
 	 * @return {Array}        Parsed data array
 	 */
 	statsClicks( data, query ) {
@@ -819,8 +819,8 @@ export const normalizers = {
 	/*
 	 * Returns a normalized statsReferrers array, ready for use in stats-module
 	 *
-	 * @param  {Object} data   Stats data
-	 * @param  {Object} query  Stats query
+	 * @param  {object} data   Stats data
+	 * @param  {object} query  Stats query
 	 * @param  {Int}    siteId Site ID
 	 * @return {Array}         Parsed data array
 	 */
@@ -933,8 +933,8 @@ export const normalizers = {
 	/*
 	 * Returns a normalized statsSearchTerms array, ready for use in stats-module
 	 *
-	 * @param  {Object} data   Stats data
-	 * @param  {Object} query  Stats query
+	 * @param  {object} data   Stats data
+	 * @param  {object} query  Stats query
 	 * @return {Array}         Parsed data array
 	 */
 	statsSearchTerms( data, query ) {
@@ -974,8 +974,8 @@ export const normalizers = {
 	/*
 	 * Returns a normalized statsFileDownloads array, ready for use in stats-module
 	 *
-	 * @param  {Object} data   Stats data
-	 * @param  {Object} query  Stats query
+	 * @param  {object} data   Stats data
+	 * @param  {object} query  Stats query
 	 * @return {Array}         Parsed data array
 	 */
 	statsFileDownloads( data, query ) {

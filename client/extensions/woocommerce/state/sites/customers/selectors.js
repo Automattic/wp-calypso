@@ -10,9 +10,9 @@ import { filter, get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {string} searchTerm Search term to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term have been successfully loaded from the server.
  */
 export const isCustomerSearchLoaded = (
@@ -29,9 +29,9 @@ export const isCustomerSearchLoaded = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {string} searchTerm Search term to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the search results for a given term are currently being retrieved from the server.
  */
 export const isCustomerSearchLoading = (
@@ -48,10 +48,10 @@ export const isCustomerSearchLoading = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {String} searchTerm Search term to check
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of customer results matching term
+ * @param {object} state Whole Redux state tree
+ * @param {string} searchTerm Search term to check
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} List of customer results matching term
  */
 export const getCustomerSearchResults = (
 	state,
@@ -72,10 +72,10 @@ export const getCustomerSearchResults = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} customerId Customer ID to get
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|False} a customer object as stored in the API, false if not found
+ * @param {object} state Whole Redux state tree
+ * @param {number} customerId Customer ID to get
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {object|False} a customer object as stored in the API, false if not found
  */
 export const getCustomer = ( state, customerId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

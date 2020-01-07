@@ -10,8 +10,8 @@ export default {
 	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE ]: [
 		/**
 		 * Issues a PUT request to payment_gateways/${ method.id }
-		 * @param {Object} store - Redux store
-		 * @param {Object} action - and action with the following fields: siteId, method, successAction, failureAction
+		 * @param {object} store - Redux store
+		 * @param {object} action - and action with the following fields: siteId, method, successAction, failureAction
 		 */
 		( store, action ) => {
 			const { siteId, method, successAction, failureAction } = action;
@@ -43,7 +43,7 @@ export default {
 			 * A callback issued after a successful request
 			 * @param {Function} dispatch - dispatch function
 			 * @param {Function} getState - getState function
-			 * @param {Object} data - data returned by the server
+			 * @param {object} data - data returned by the server
 			 */
 			const updatedAction = ( dispatch, getState, { data } ) => {
 				dispatch( savePaymentMethodSuccess( siteId, data, action ) );

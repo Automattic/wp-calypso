@@ -146,8 +146,8 @@ const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type
 /**
  * Creates a new entity reference for a blockMap
  *
- * @param {Number} offset start of entity inside of block text
- * @param {String} type token name for entity reference
+ * @param {number} offset start of entity inside of block text
+ * @param {string} type token name for entity reference
  * @param {object} tokens mapping between token names and translated titles
  * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} entityRange for use in blockMap in ContentState

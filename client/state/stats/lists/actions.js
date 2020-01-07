@@ -18,12 +18,12 @@ import { includes } from 'lodash';
  * Returns an action object to be used in signalling that stats for a given type of stats and query
  * have been received.
  *
- * @param  {Number} siteId   Site ID
- * @param  {String} statType Stat Key
- * @param  {Object} query    Stats query
+ * @param  {number} siteId   Site ID
+ * @param  {string} statType Stat Key
+ * @param  {object} query    Stats query
  * @param  {Array}  data     Stat Data
- * @param  {Object} date	 Date
- * @return {Object}          Action object
+ * @param  {object} date	 Date
+ * @return {object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
@@ -40,9 +40,9 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site stats.
  *
- * @param  {Number} siteId   Site ID
- * @param  {String} statType Type of stats
- * @param  {Object} query    Stats Query
+ * @param  {number} siteId   Site ID
+ * @param  {string} statType Type of stats
+ * @param  {object} query    Stats Query
  * @return {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {

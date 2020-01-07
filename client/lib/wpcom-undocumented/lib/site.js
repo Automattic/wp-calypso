@@ -222,7 +222,7 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
  * unlimited storage or is a jetpack site, values returned will be -1.
  *
  * @param {Function} callback - called on completion of the GET request
- * @return {Object} promise - resolves on completion of the GET request
+ * @return {object} promise - resolves on completion of the GET request
  */
 UndocumentedSite.prototype.mediaStorage = function( callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/media-storage', callback );
@@ -243,7 +243,7 @@ UndocumentedSite.prototype.getGuidedTransferStatus = function() {
 /**
  * Saves guided transfer host details
  *
- * @param {Object} hostDetails  Host details
+ * @param {object} hostDetails  Host details
  * @returns {Promise} Resolves to the response containing the transfer status
  */
 UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails ) {
@@ -258,7 +258,7 @@ UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails
 /**
  * Returns a single site connection.
  *
- * @param  {Number}  connectionId The connection ID to get.
+ * @param  {number}  connectionId The connection ID to get.
  * @return {Promise}              A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.getConnection = function( connectionId ) {
@@ -273,9 +273,9 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
  * Upload an external media item to the WordPress media library
  *
  * @param {string} service - external media service name (i.e 'google_photos')
- * @param {array} files - array of external media file IDs
+ * @param {Array} files - array of external media file IDs
  *
- * @return {Object} promise - resolves on completion of the GET request
+ * @return {object} promise - resolves on completion of the GET request
  */
 UndocumentedSite.prototype.uploadExternalMedia = function( service, files ) {
 	debug( '/sites/:site_id:/external-media-upload query' );
@@ -402,7 +402,7 @@ UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 /**
  * Delete site invites
  *
- * @param {array}     inviteIds  An array of inviteIds for deletion.
+ * @param {Array}     inviteIds  An array of inviteIds for deletion.
  * @return {Promise}             A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.deleteInvites = function( inviteIds ) {

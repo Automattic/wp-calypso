@@ -6,7 +6,7 @@ import { find, get, reduce } from 'lodash';
 /**
  * Get the total tax for the discount value
  *
- * @param {Object} order An order as returned from API
+ * @param {object} order An order as returned from API
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderDiscountTax( order ) {
@@ -18,8 +18,8 @@ export function getOrderDiscountTax( order ) {
 /**
  * Get the total tax for a given line item's value
  *
- * @param {Object} order An order as returned from API
- * @param {Number} id The ID of the line_item
+ * @param {object} order An order as returned from API
+ * @param {number} id The ID of the line_item
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderLineItemTax( order, id ) {
@@ -31,8 +31,8 @@ export function getOrderLineItemTax( order, id ) {
 /**
  * Get the total tax for a given fee
  *
- * @param {Object} order An order as returned from API
- * @param {Number} id The ID of a fee line in this order
+ * @param {object} order An order as returned from API
+ * @param {number} id The ID of a fee line in this order
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderFeeTax( order, id ) {
@@ -44,7 +44,7 @@ export function getOrderFeeTax( order, id ) {
 /**
  * Get the total tax for all fees in an order (total of all fee lines)
  *
- * @param {Object} order An order as returned from API
+ * @param {object} order An order as returned from API
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderFeeTotalTax( order ) {
@@ -55,8 +55,8 @@ export function getOrderFeeTotalTax( order ) {
 /**
  * Get the method title for the shipping value
  *
- * @param {Object} order An order as returned from API
- * @return {String} Shipping method title
+ * @param {object} order An order as returned from API
+ * @return {string} Shipping method title
  */
 export function getOrderShippingMethod( order ) {
 	return get( order, 'shipping_lines[0].method_title', false );
@@ -65,7 +65,7 @@ export function getOrderShippingMethod( order ) {
 /**
  * Get the total tax for the shipping value
  *
- * @param {Object} order An order as returned from API
+ * @param {object} order An order as returned from API
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderShippingTax( order ) {
@@ -76,7 +76,7 @@ export function getOrderShippingTax( order ) {
 /**
  * Get the total tax for the subtotal value (total of all line items)
  *
- * @param {Object} order An order as returned from API
+ * @param {object} order An order as returned from API
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderSubtotalTax( order ) {
@@ -87,7 +87,7 @@ export function getOrderSubtotalTax( order ) {
 /**
  * Get the total tax for the total value
  *
- * @param {Object} order An order as returned from API
+ * @param {object} order An order as returned from API
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderTotalTax( order ) {

@@ -2,7 +2,7 @@
  * Returns an array of course objects.
  *
  *
- * @param {Object} state  Global state tree
+ * @param {object} state  Global state tree
  * @return {Array}         Course objects
  */
 

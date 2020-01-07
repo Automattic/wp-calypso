@@ -14,8 +14,8 @@ import moment from 'moment-timezone';
  *
  * @see https://wikipedia.org/wiki/12-hour_clock
  *
- * @param  {String}  timeFormat Time format.
- * @return {Boolean}            Whether it's a 12-hour time format.
+ * @param  {string}  timeFormat Time format.
+ * @return {boolean}            Whether it's a 12-hour time format.
  */
 export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
@@ -24,7 +24,7 @@ export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat 
  * Basically it should be a number.
  *
  * @param  {*}  gmtOffset - gmt offset
- * @return {Boolean} is it a valid gtm offset?
+ * @return {boolean} is it a valid gtm offset?
  */
 export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
 
@@ -33,8 +33,8 @@ export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
  * parameters.
  *
  * @param {Moment} date - date instance
- * @param {String} tz - timezone
- * @param {Number} gmt - gmt offset in minutes
+ * @param {string} tz - timezone
+ * @param {number} gmt - gmt offset in minutes
  * @return {Moment} localized date
  */
 export const getLocalizedDate = ( date, tz, gmt ) => {
@@ -81,8 +81,8 @@ export const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * adding a `+` when the number is greater than zero,
  * not adding `:00` case (zero minutes).
  *
- * @param  {Number} minutes - a number of minutes
- * @return {String} `hh:mm` format
+ * @param  {number} minutes - a number of minutes
+ * @return {string} `hh:mm` format
  */
 export const convertMinutesToHHMM = minutes => {
 	const hours = Math.trunc( minutes / 60 );
@@ -105,8 +105,8 @@ export const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
  * This function has been thought to get the data entered
  * by the used through of an input element.
  *
- * @param {String} value - time value to check
- * @return {Number|Boolean} valid number or `false`
+ * @param {string} value - time value to check
+ * @return {number|boolean} valid number or `false`
  */
 export const parseAndValidateNumber = value => {
 	value = String( value );
