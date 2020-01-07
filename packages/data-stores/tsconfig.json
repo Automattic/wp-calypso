@@ -26,6 +26,7 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
 
 		"noEmitHelpers": true,
 		"importHelpers": true
