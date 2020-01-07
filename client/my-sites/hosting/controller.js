@@ -46,7 +46,7 @@ export async function handleHostingPanelRedirect( context, next ) {
 		return;
 	}
 
-	page.redirect( `/stats/day/${ context.params.siteId || '' }` );
+	page.redirect( '/hosting-config' );
 }
 
 export function layout( context, next ) {
