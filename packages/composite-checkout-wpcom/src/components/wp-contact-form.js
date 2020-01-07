@@ -278,7 +278,7 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 	return (
 		<FormField
 			id={ id }
-			type="Number"
+			type="text"
 			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
 			value={ phoneNumber.value }
 			onChange={ value =>
