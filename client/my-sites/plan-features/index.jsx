@@ -79,6 +79,7 @@ import { Dialog } from '@automattic/components';
 
 const defaultState = {
 	checkoutUrl: '/checkout',
+	settingPublic: false,
 	showingSiteLaunchDialog: false,
 	choosingPlanSlug: '',
 };
@@ -99,21 +100,24 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
+		this.setState( { settingPublic: true } );
+
 		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
 			current_plan: currentSitePlanSlug,
 			upgrading_to: choosingPlanSlug,
 		} );
 
-		const setPublicResult = await this.props.saveSiteSettings( siteId, {
-			blog_public: 1,
-		} );
-
-		if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
-			this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: choosingPlanSlug,
+		try {
+			const setPublicResult = await this.props.saveSiteSettings( siteId, {
+				blog_public: 1,
 			} );
-		}
+			if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
+				this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
+					current_plan: currentSitePlanSlug,
+					upgrading_to: choosingPlanSlug,
+				} );
+			}
+		} catch ( e ) {}
 
 		page( checkoutUrl );
 	};
@@ -221,7 +225,7 @@ export class PlanFeatures extends Component {
 
 	renderSiteLaunchDialog() {
 		const { currentSitePlanSlug, translate } = this.props;
-		const { choosingPlanSlug, showingSiteLaunchDialog } = this.state;
+		const { choosingPlanSlug, settingPublic, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
@@ -237,9 +241,10 @@ export class PlanFeatures extends Component {
 				additionalClassNames="plan-features__upgrade-launch-dialog"
 				isVisible
 				buttons={ [
-					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{ action: 'cancel', disabled: settingPublic, label: translate( 'Cancel' ) },
 					{
 						action: 'continue',
+						disabled: settingPublic,
 						label: translate( "Let's do it!" ),
 						isPrimary: true,
 					},
