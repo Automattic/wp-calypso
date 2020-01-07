@@ -11,17 +11,17 @@ import debugFactory from 'debug';
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useDispatch, useSelect } from '../../lib/registry';
-import { useMessages, useCheckoutRedirects, useLineItems } from '../../public-api';
+import { useMessages, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod( { registerStore, submitTransaction } ) {
+export function createPayPalMethod( { registerStore, submitTransaction, successUrl, cancelUrl } ) {
 	registerStore( 'paypal', {
 		controls: {
 			PAYPAL_TRANSACTION_SUBMIT( action ) {
-				const { items, successUrl, cancelUrl } = action.payload;
+				const { items } = action.payload;
 				return submitTransaction( {
 					successUrl,
 					cancelUrl,
@@ -91,15 +91,12 @@ export function PaypalSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	const [ items ] = useLineItems();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
 
 	const onClick = () =>
 		submitPaypalPayment( {
 			items,
-			successUrl: successRedirectUrl,
-			cancelUrl: failureRedirectUrl,
 		} );
 	return (
 		<Button

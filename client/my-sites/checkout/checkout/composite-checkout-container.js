@@ -293,6 +293,8 @@ function useCreatePaymentMethods() {
 	const paypalMethod = useMemo(
 		() =>
 			createPayPalMethod( {
+				successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
+				cancelUrl: window.location.href,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
 					makePayPalExpressRequest( {
