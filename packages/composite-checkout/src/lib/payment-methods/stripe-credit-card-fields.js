@@ -515,7 +515,7 @@ const LockIconGraphic = styled( LockIcon )`
 	height: 20px;
 `;
 
-function CardFieldIcon( { brand, isSummary } ) {
+export function CardFieldIcon( { brand, isSummary } ) {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
