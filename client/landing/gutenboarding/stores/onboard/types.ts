@@ -19,6 +19,7 @@ export interface NewUserPostData {
     readonly email: string;
     readonly is_passwordless: boolean;
     readonly validate: false;
+    readonly send_verification_email: false;
 }
 
 export interface NewSitePostData {

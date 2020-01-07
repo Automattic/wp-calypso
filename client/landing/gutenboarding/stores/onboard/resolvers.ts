@@ -42,6 +42,7 @@ export function* getTemporaryAccount() {
         email: `{yourgmailaddresshere}+${ Math.round( Math.random() * 1000000 ) }@gmail.com`,
         is_passwordless: true,
         validate: false,
+        send_verification_email: false,
     };
 
     const userData  = yield wpcom.undocumented().usersNew( userPostData, null );
