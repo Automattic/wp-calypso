@@ -157,10 +157,10 @@ export function createExistingCardMethod( {
 
 function formatDate( cardExpiry ) {
 	const expiryDate = new Date( cardExpiry );
-	const formattedDate = expiryDate.toLocaleDateString( 'en-US', { month: '2-digit', year: '2-digit' } );
-		.getFullYear()
-		.toString()
-		.substring( 2 ) }`;
+	const formattedDate = expiryDate.toLocaleDateString( 'en-US', {
+		month: '2-digit',
+		year: '2-digit',
+	} );
 
 	return formattedDate;
 }
@@ -173,7 +173,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
 				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Exp:' ) }  ${ formatDate( cardExpiry ) }` }
+				{ `${ localize( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
 			</div>
 			<div>
 				<CardFieldIcon brand={ brand } isSummary={ true } />
@@ -263,7 +263,7 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 			<SummaryLine>
 				<CardFieldIcon brand={ brand } isSummary={ true } />
 				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Exp:' ) } ${ formatDate( cardExpiry ) }` }
+				{ `${ localize( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
 			</SummaryLine>
 		</SummaryDetails>
 	);
