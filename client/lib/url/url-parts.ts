@@ -123,23 +123,41 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
  * @returns the generated URL object.
  */
 export function getUrlFromParts( parts: OptionalUrlParts ): URL {
-	if ( ! parts?.protocol ) {
+	if ( ! parts?.protocol && ! parts?.origin ) {
 		throw new Error( 'getUrlFromParts: protocol missing.' );
 	}
 
-	if ( ! parts.host && ! parts.hostname ) {
+	if ( ! parts.host && ! parts.hostname && ! parts.origin ) {
 		throw new Error( 'getUrlFromParts: host missing.' );
 	}
 
 	const result = new URL( BASE_URL );
 
-	// Apply 'host' first, since it includes both hostname and port.
-	result.host = parts.host ?? result.host;
+	// Apply 'origin' first, since it includes protocol, hostname, and port.
+	if ( parts.origin ) {
+		try {
+			const origin = new URL( parts.origin );
+			result.host = origin.host;
+			result.protocol = origin.protocol;
+		} catch {
+			throw new Error( 'getUrlFromParts: invalid origin.' );
+		}
+	}
+
+	// Apply 'host' next, since it includes both hostname and port.
+	result.host = parts.host || result.host;
+
+	// Apply 'searchParams' object if it's specified.
+	if ( parts.searchParams?.toString ) {
+		result.search = parts.searchParams.toString();
+	}
 
 	for ( const part of URL_PART_KEYS ) {
 		if ( part !== 'host' && part !== 'origin' && part !== 'searchParams' ) {
-			if ( parts[ part ] && parts[ part ] !== result[ part ] ) {
-				result[ part ] = parts[ part ];
+			const value = parts[ part ];
+			// Avoid some implementation bugs, e.g. https://bugs.webkit.org/show_bug.cgi?id=127958.
+			if ( value && value !== result[ part ] ) {
+				result[ part ] = value;
 			}
 		}
 	}
