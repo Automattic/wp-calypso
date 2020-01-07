@@ -138,7 +138,9 @@ export function getUrlFromParts( parts: OptionalUrlParts ): URL {
 
 	for ( const part of URL_PART_KEYS ) {
 		if ( part !== 'host' && part !== 'origin' && part !== 'searchParams' ) {
-			result[ part ] = parts[ part ] ?? result[ part ];
+			if ( parts[ part ] && parts[ part ] !== result[ part ] ) {
+				result[ part ] = parts[ part ];
+			}
 		}
 	}
 	return result;
