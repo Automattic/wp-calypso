@@ -128,15 +128,15 @@ function getDomainDetails() {
 	const { firstName, lastName, email, phoneNumber, address, city, state, country, postalCode } =
 		select( 'wpcom' )?.getContactInfo?.() ?? {};
 	return {
-		firstName,
-		lastName,
-		email,
-		phone: phoneNumber,
-		address_1: address,
-		city,
-		state,
-		countryCode: country,
-		postalCode,
+		firstName: firstName?.value,
+		lastName: lastName?.value,
+		email: email?.value,
+		phone: phoneNumber?.value,
+		address_1: address?.value,
+		city: city?.value,
+		state: state?.value,
+		countryCode: country?.value,
+		postalCode: postalCode?.value,
 	};
 }
 
