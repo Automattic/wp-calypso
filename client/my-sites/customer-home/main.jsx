@@ -41,6 +41,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
+import { localizeUrl } from 'lib/i18n-utils';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
@@ -542,7 +543,7 @@ class Home extends Component {
 							<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
-									path="https://support.wordpress.com/"
+									path={ localizeUrl( 'https://en.support.wordpress.com' ) }
 									external
 									onClick={ () => trackAction( 'support', 'docs' ) }
 								>
