@@ -41,6 +41,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 								{ ! siteVertical &&
 									! siteTitle &&
 									NO__( "Let's set up your website – it takes only a moment." ) }
+								{ /* This empty 'non breaking space' is here so that the content below doesn't jump around once the 'siteTitle' is added */ }
+								&nbsp;
 							</h2>
 							<StepperWizard
 								stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }

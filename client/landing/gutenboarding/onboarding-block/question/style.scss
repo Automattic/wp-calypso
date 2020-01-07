@@ -2,26 +2,12 @@
 
 .onboarding-block__question {
 	display: flex;
-	font-size: 28px;
+	font-size: 40px;
 	margin-bottom: 10px;
 	transition-property: 'font-size';
 	transition-duration: 0.25s;
 	transition-timing-function: 'linear';
 	transition-delay: 0;
-
-	&.selected {
-		font-size: 40px;
-		margin-top: 18px;
-		margin-bottom: 28px;
-
-		&:first-of-type {
-			margin-top: 0;
-		}
-
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-	}
 
 	.onboarding-block__question-input {
 		border: 0;
