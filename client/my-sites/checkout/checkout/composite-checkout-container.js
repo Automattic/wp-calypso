@@ -110,7 +110,7 @@ export function createCartFromLineItems( {
 		extra: [],
 		products: items.map( item => ( {
 			product_id: item.wpcom_meta?.product_id,
-			meta: '', // TODO: get this for domains, etc
+			meta: item.sublabel,
 			currency: item.amount.currency,
 			volume: 1, // TODO: get this from the item
 		} ) ),
