@@ -20,7 +20,7 @@ import {
 import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
-import { CardFieldIcon } from './stripe-credit-card-fields.js';
+import PaymentLogo from './payment-logo.js';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -176,7 +176,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 				{ `${ localize( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
 			</div>
 			<div>
-				<CardFieldIcon brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
 		</React.Fragment>
 	);
@@ -261,7 +261,7 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				<CardFieldIcon brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary={ true } />
 				<CardDetails>**** { last4 }</CardDetails>
 				{ `${ localize( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
 			</SummaryLine>
