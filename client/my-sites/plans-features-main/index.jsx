@@ -164,7 +164,6 @@ export class PlansFeaturesMain extends Component {
 						isSecondary
 					/>
 				) }
-
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -446,18 +445,18 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__group is-narrow">
 				<PlansFeaturesMainProductsHeader />
+				<AsyncLoad
+					require="blocks/product-plan-overlap-notices"
+					placeholder={ null }
+					plans={ JETPACK_PLANS }
+					products={ JETPACK_BACKUP_PRODUCTS }
+				/>
 				<ProductSelector
 					products={ JETPACK_PRODUCTS }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 					redirectTo={ redirectTo }
-				/>
-				<AsyncLoad
-					require="blocks/product-plan-overlap-notices"
-					placeholder={ null }
-					plans={ JETPACK_PLANS }
-					products={ JETPACK_BACKUP_PRODUCTS }
 				/>
 			</div>
 		);
@@ -482,7 +481,6 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
-
 				<CartData>
 					<PaymentMethods />
 				</CartData>
