@@ -2,7 +2,7 @@
 // (currently only used for the bar chart module at the top)
 
 ul.module-tabs {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
 	background: var( --color-surface );
@@ -48,7 +48,7 @@ ul.module-tabs {
 		a,
 		.no-link {
 			@extend %mobile-link-element;
-			@include a8c-clearFix;
+			@include a8c-clear-fix;
 			padding: 5px 0 10px;
 			display: block;
 			background: var( --color-surface );

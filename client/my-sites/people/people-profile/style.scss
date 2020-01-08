@@ -1,6 +1,6 @@
 .people-profile {
 	position: relative;
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 
 	&.is-placeholder {
 		.people-profile__username,
@@ -72,7 +72,7 @@
 }
 
 .people-profile__badges {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	margin-top: 8px;
 }
 

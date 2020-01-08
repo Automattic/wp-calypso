@@ -10,7 +10,7 @@
 	background: var( --color-surface );
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 
 	@include a8c-breakpoint( '>480px' ) {
 		margin-bottom: 16px;

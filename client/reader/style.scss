@@ -147,7 +147,7 @@
 		position: relative;
 		margin: 0 -32px;
 		padding: 16px 32px 8px;
-		font-family: $a8c-fontFamily-sans;
+		font-family: $a8c-font-family-sans;
 		font-size: 15px;
 		font-weight: bold;
 		line-height: 1.6;
@@ -164,7 +164,7 @@
 	p.reblog-source {
 		position: relative;
 			top: 16px;
-		font-family: $a8c-fontFamily-sans;
+		font-family: $a8c-font-family-sans;
 		font-size: 15px;
 		padding-top: 5px;
 		border-top: 1px solid var( --color-neutral-10 );
@@ -282,7 +282,7 @@
 	background: rgba( 0, 0, 0, 0.3 );
 	background: linear-gradient( to bottom, transparent, rgba( 0, 0, 0, 0.2 ) 73%, rgba( 0, 0, 0, 0.5 ) 100% );
 	color: var( --color-text-inverted );
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	font-size: 14px;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 	font-weight: 400;

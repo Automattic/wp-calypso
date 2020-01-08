@@ -21,7 +21,7 @@
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	position: relative;
 	margin: 0;
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );

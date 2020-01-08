@@ -493,7 +493,7 @@
 }
 
 .sharing-buttons-tray__buttons {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	@include a8c-breakpoint( '<480px' ) {
 		margin-right: -16px;
 	}
@@ -546,7 +546,7 @@
 }
 
 .sharing-buttons__panel {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
@@ -555,7 +555,7 @@
 }
 
 .sharing-buttons__fieldset-group {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	margin: 0 -3%;
 
 	@include a8c-breakpoint( '<660px' ) {

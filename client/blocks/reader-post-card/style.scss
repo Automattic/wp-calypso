@@ -67,7 +67,7 @@
 
 			.reader-post-card__title {
 				color: var( --color-text-inverted );
-				font-family: $a8c-fontFamily-sans;
+				font-family: $a8c-font-family-sans;
 				position: relative;
 				bottom: 30px;
 				left: 20px;
@@ -280,7 +280,7 @@
 }
 
 .reader-post-card__byline-author-site {
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	font-weight: 500;
 	overflow: hidden;
 	position: relative;
@@ -300,7 +300,7 @@
 	align-items: flex-start;
 	display: flex;
 	flex-direction: row;
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	margin-top: -2px;
 }
 

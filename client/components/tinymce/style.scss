@@ -215,7 +215,7 @@
 	box-shadow: none !important;
 	background: var( --color-neutral-70 ) !important;
 	color: var( --color-text-inverted ) !important;
-	font-family: $a8c-fontFamily-sans !important;
+	font-family: $a8c-font-family-sans !important;
 	padding: 4px 8px 5px !important;
 }
 
@@ -577,7 +577,7 @@ div.mce-path {
 
 .post-editor .mce-path-item {
 	color: var( --color-neutral-50 );
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 }
 
 .mce-path .mce-divider {
@@ -736,7 +736,7 @@ div.mce-path {
 	width: auto;
 	padding: 0;
 	color: var( --color-neutral-50 );
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	font-size: 13px;
 	text-overflow: initial;
 

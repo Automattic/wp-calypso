@@ -2,7 +2,7 @@
 // (currently only used for the bar chart module at the top)
 
 .stats-tabs {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 	background: var( --color-surface );
 	border-top: 1px solid var( --color-border-subtle );
 	list-style: none;
@@ -96,7 +96,7 @@
 			@include a8c-breakpoint( '>480px' ) {
 				@include mobile-link-element;
 				padding: 5px 0 10px;
-				@include a8c-clearFix;
+				@include a8c-clear-fix;
 				-webkit-touch-callout: none;
 			}
 		}
