@@ -304,7 +304,7 @@ function saveStepNumberToUrl( stepNumber ) {
 	if ( ! window.history?.pushState ) {
 		return;
 	}
-	const newHash = `#step${ stepNumber }`;
+	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
 	if ( window.location.hash === newHash ) {
 		return;
 	}
