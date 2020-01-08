@@ -5,11 +5,12 @@
  * External dependencies
  */
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { createStore } from 'redux';
 import { Provider as ReduxProvider } from 'react-redux';
-import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { mockSetCartEndpoint, mockGetCartEndpointWith } from '@automattic/composite-checkout-wpcom';
+import { render } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -17,9 +18,13 @@ import { mockSetCartEndpoint, mockGetCartEndpointWith } from '@automattic/compos
 import { CompositeCheckout } from '../composite-checkout';
 
 describe( 'CompositeCheckout', () => {
+	let container;
 	let MyCheckout;
 
 	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+
 		const initialCart = {
 			coupon: '',
 			currency: 'BRL',
@@ -89,20 +94,37 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
-	it( 'renders the line items with prices', () => {
-		const { getAllByLabelText } = render( <MyCheckout /> );
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+	afterEach( () => {
+		document.body.removeChild( container );
+		container = null;
+	} );
+
+	it( 'renders the line items with prices', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( container, 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
 
-	it( 'renders the tax amount', () => {
-		const { getAllByLabelText } = render( <MyCheckout /> );
+	it( 'renders the tax amount', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'Tax' ).map( element => expect( element ).toHaveTextContent( 'R$7' ) );
 	} );
 
-	it( 'renders the total amount', () => {
-		const { getAllByLabelText } = render( <MyCheckout /> );
+	it( 'renders the total amount', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'Total' ).map( element => expect( element ).toHaveTextContent( 'R$156' ) );
 	} );
 } );
