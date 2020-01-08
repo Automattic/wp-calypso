@@ -19,4 +19,8 @@ function deprecateCoBlocksButtonsSettings( settings, name ) {
 	};
 }
 
-addFilter( 'blocks.registerBlockType', deprecateCoBlocksButtonsSettings );
+addFilter(
+	'blocks.registerBlockType',
+	'wpcom-block-editor/coblocks-buttons',
+	deprecateCoBlocksButtonsSettings
+);
