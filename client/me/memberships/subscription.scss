@@ -67,7 +67,7 @@
 	@include a8c-breakpoint( '>660px' ) {
 		color: var( --color-text-subtle );
 		display: block;
-		font-family: $a8c-fontFamily-sans;
+		font-family: $a8c-font-family-sans;
 		font-size: 12px;
 		font-weight: 400;
 		margin: 0 0 12px;

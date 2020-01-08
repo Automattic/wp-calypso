@@ -370,7 +370,7 @@
 .reader__x-post,
 .reader__x-post-to {
 	font-size: 13px;
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	color: var( --color-text-subtle );
 	position: relative;
 }
@@ -398,7 +398,7 @@
 	padding: 0;
 	position: relative;
 	line-height: 16px;
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 }
 
 .reader__post-byline {

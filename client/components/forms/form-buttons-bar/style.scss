@@ -1,5 +1,5 @@
 .form-buttons-bar {
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 
 	@include a8c-breakpoint( '<480px' ) {
 		align-items: flex-end;

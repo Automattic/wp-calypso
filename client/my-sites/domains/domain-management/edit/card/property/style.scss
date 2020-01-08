@@ -1,7 +1,7 @@
 .domain-details-card__property {
 	font-size: 13px;
 	margin-bottom: 10px;
-	@include a8c-clearFix;
+	@include a8c-clear-fix;
 
 	&:last-of-type {
 		margin-bottom: 0;

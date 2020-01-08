@@ -79,7 +79,7 @@ textarea,
 .button,
 #footer,
 #footer a.readmore {
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 }
 
 /*!rtl:ignore*/
@@ -91,7 +91,7 @@ body.rtl,
 .rtl .button,
 .rtl #footer,
 .rtl #footer a.readmore {
-	font-family: $a8c-fontFamily-sans-rtl;
+	font-family: $a8c-font-family-sans-rtl;
 }
 
 /*!rtl:ignore*/
@@ -103,7 +103,7 @@ body.rtl,
 :lang( he ) .rtl .button,
 :lang( he ) .rtl #footer,
 :lang( he ) .rtl #footer a.readmore {
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 }
 
 /*!rtl:ignore*/

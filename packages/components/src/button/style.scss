@@ -4,7 +4,7 @@
 @import '../styles/typography.scss';
 
 .button {
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	background: transparent;
 	border-style: solid;
 	border-width: 1px 1px 2px;
@@ -25,7 +25,7 @@
 	appearance: none;
 
 	.rtl & {
-		font-family: $a8c-fontFamily-sans-rtl;
+		font-family: $a8c-font-family-sans-rtl;
 	}
 
 	&.hidden {

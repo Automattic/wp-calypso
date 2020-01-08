@@ -7,7 +7,7 @@
 	overflow: hidden;
 	margin: 12px auto 24px;
 	color: var( --color-text-inverted );
-	font-family: $a8c-fontFamily-sans;
+	font-family: $a8c-font-family-sans;
 	text-align: center;
 
 	@include a8c-breakpoint( '>480px' ) {

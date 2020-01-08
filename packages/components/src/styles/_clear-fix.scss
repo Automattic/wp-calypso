@@ -3,7 +3,7 @@
 // Clear fix mixin (clearfix)
 // ==========================================================================
 
-@mixin a8c-clearFix {
+@mixin a8c-clear-fix {
 	&::after {
 		content: '.';
 		display: block;

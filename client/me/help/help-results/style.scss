@@ -14,7 +14,7 @@
 }
 
 .help-results__footer {
-	font: 14px/24px $a8c-fontFamily-sans;
+	font: 14px/24px $a8c-font-family-sans;
 }
 
 .help-result {
@@ -42,11 +42,11 @@
 .help-result__title {
 	margin: -2px 0 0 32px;
 	color: var( --color-primary );
-	font: 16px/20px $a8c-fontFamily-sans;
+	font: 16px/20px $a8c-font-family-sans;
 }
 
 .help-result__description {
 	color: var( --color-neutral-50 );
-	font: 14px/20px $a8c-fontFamily-sans;
+	font: 14px/20px $a8c-font-family-sans;
 	margin: 2px 0 0 32px;
 }
