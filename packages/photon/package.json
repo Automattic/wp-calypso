@@ -1,6 +1,6 @@
 {
 	"name": "photon",
-	"version": "2.1.0",
+	"version": "3.0.0",
 	"description": "JavaScript library for the WordPress.com Photon image manipulation service",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -33,8 +33,7 @@
 	"dependencies": {
 		"crc32": "0.2.2",
 		"debug": "^4.0.0",
-		"seed-random": "2.2.0",
-		"url": "^0.11.0"
+		"seed-random": "2.2.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
