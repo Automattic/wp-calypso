@@ -1,4 +1,4 @@
-require( '@babel/polyfill' );
+import '@babel/polyfill';
 
 /**
  * Internal dependencies
