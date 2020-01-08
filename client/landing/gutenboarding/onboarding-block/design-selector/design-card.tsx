@@ -9,7 +9,10 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Card, CardMedia } from '@wordpress/components';
+import { Card as CardComponent, CardMedia as CardMediaComponent } from '@wordpress/components';
+
+const Card = CardComponent.withComponent( 'button' );
+const CardMedia = CardMediaComponent.withComponent( 'span' );
 
 const gridWidth = 960;
 const srcSet = ( src: string, widths: number[] ) =>
@@ -18,7 +21,7 @@ const srcSet = ( src: string, widths: number[] ) =>
 interface Props {
 	isSelected?: boolean;
 	design: import('@automattic/data-stores').VerticalsTemplates.Template;
-	onClick: MouseEventHandler< HTMLDivElement >;
+	onClick: MouseEventHandler< HTMLButtonElement >;
 	style?: CSSProperties;
 	dialogId: string;
 }
@@ -30,7 +33,6 @@ const DesignCard: FunctionComponent< Props > = ( {
 	style,
 } ) => (
 	<Card
-		as="button"
 		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
 		isElevated
 		onClick={ onClick }
@@ -38,7 +40,7 @@ const DesignCard: FunctionComponent< Props > = ( {
 		aria-haspopup="dialog"
 		aria-controls={ dialogId }
 	>
-		<CardMedia as="span">
+		<CardMedia>
 			<img
 				width={ 480 }
 				height={ 360 }
