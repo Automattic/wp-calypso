@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { find, groupBy, isEqual, partition, property } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ class Suggestions extends Component {
 		).isRequired,
 		suggest: PropTypes.func.isRequired,
 		railcar: PropTypes.object,
+		className: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -159,11 +161,14 @@ class Suggestions extends Component {
 	}
 
 	render() {
-		const { query } = this.props;
+		const { query, className } = this.props;
 		const showSuggestions = this.getSuggestionsCount() > 0;
+		const containerClass = classnames( {
+			[className]: className,
+		} );
 
 		return (
-			<div>
+			<div className={ containerClass } >
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
 						{ this.getCategories().map(
