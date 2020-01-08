@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import urlLib from 'url';
 import path from 'path';
 import photon from 'photon';
 import { includes, omitBy, startsWith, get } from 'lodash';
@@ -22,6 +21,7 @@ import {
 import { stringify } from 'lib/shortcode';
 import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
+import { getUrlParts } from 'lib/url';
 
 const { uniqueId } = impureLodash;
 
@@ -95,7 +95,7 @@ export function url( media, options ) {
  * getFileExtension( new window.File( [''], 'example.gif' ) );
  * // All examples return 'gif'
  *
- * @param  {(string|File|object)} media Media object or string
+ * @param  {(string|window.File|object)} media Media object or string
  * @returns {string}                     File extension
  */
 export function getFileExtension( media ) {
@@ -111,7 +111,7 @@ export function getFileExtension( media ) {
 	if ( isString ) {
 		let filePath;
 		if ( isUri( media ) ) {
-			filePath = urlLib.parse( media ).pathname;
+			filePath = getUrlParts( media ).pathname;
 		} else {
 			filePath = media;
 		}
@@ -122,7 +122,7 @@ export function getFileExtension( media ) {
 	} else if ( media.extension ) {
 		extension = media.extension;
 	} else {
-		const pathname = urlLib.parse( media.URL || media.file || media.guid || '' ).pathname || '';
+		const pathname = getUrlParts( media.URL || media.file || media.guid || '' ).pathname || '';
 		extension = path.extname( pathname ).slice( 1 );
 	}
 
@@ -138,7 +138,7 @@ export function getFileExtension( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image'
  *
- * @param  {(string|File|object)} media Media object or mime type string
+ * @param  {(string|window.File|object)} media Media object or mime type string
  * @returns {string}       The MIME type prefix
  */
 export function getMimePrefix( media ) {
@@ -165,7 +165,7 @@ export function getMimePrefix( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image/gif'
  *
- * @param  {(string|File|object)} media Media object or string
+ * @param  {(string|window.File|object)} media Media object or string
  * @returns {string}                     Mime type of the media, if known
  */
 export function getMimeType( media ) {
@@ -186,7 +186,7 @@ export function getMimeType( media ) {
 	}
 
 	extension = extension.toLowerCase();
-	if ( MimeTypes.hasOwnProperty( extension ) ) {
+	if ( Object.keys( MimeTypes ).includes( extension ) ) {
 		return MimeTypes[ extension ];
 	}
 }
@@ -488,6 +488,8 @@ export function canUserDeleteItem( item, user, site ) {
  * @param {number} quality extracted image quality
  */
 export function canvasToBlob( canvas, callback, type, quality ) {
+	const { HTMLCanvasElement, Blob, atob } = window;
+
 	if ( ! HTMLCanvasElement.prototype.toBlob ) {
 		Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
 			value: function( polyfillCallback, polyfillType, polyfillQuality ) {
@@ -533,7 +535,7 @@ export function isTransientPreviewable( item ) {
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
  *
- * @param  {(string|object|Blob|File)} file URL or File object
+ * @param  {(string|object|window.Blob|window.File)} file URL or File object
  * @returns {object}                         Transient media object
  */
 export function createTransientMedia( file ) {

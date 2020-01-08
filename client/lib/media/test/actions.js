@@ -52,7 +52,7 @@ jest.mock( 'lib/redux-bridge', () => ( {
 } ) );
 
 describe( 'MediaActions', () => {
-	let MediaActions, sandbox, Dispatcher, MediaListStore;
+	let MediaActions, sandbox, Dispatcher, MediaListStore, savedCreateObjectURL;
 
 	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
@@ -75,14 +75,15 @@ describe( 'MediaActions', () => {
 		MediaActions._fetching = {};
 		window.FileList = function() {};
 		window.FileList.prototype[ Symbol.iterator ] = Array.prototype[ Symbol.iterator ];
-		window.URL = { createObjectURL: sandbox.stub() };
+		savedCreateObjectURL = window.URL.createObjectURL;
+		window.URL.createObjectURL = sandbox.stub();
 		mockReduxPostId = null;
 	} );
 
 	afterEach( () => {
 		sandbox.restore();
 		delete window.FileList;
-		delete window.URL;
+		window.URL.createObjectURL = savedCreateObjectURL;
 	} );
 
 	describe( '#setQuery()', () => {
@@ -98,27 +99,29 @@ describe( 'MediaActions', () => {
 	} );
 
 	describe( '#fetch()', () => {
-		test( 'should call to the WordPress.com REST API', done => {
-			Dispatcher.handleViewAction.restore();
-			sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function() {
-				expect( MediaActions._fetching ).to.have.all.keys( [
-					[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
-				] );
-			} );
-
-			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-			expect( stubs.mediaGet ).to.have.been.calledOn( [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() );
-			process.nextTick( function() {
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					error: null,
-					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE,
+		test( 'should call to the WordPress.com REST API', () => {
+			return new Promise( done => {
+				Dispatcher.handleViewAction.restore();
+				sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function() {
+					expect( MediaActions._fetching ).to.have.all.keys( [
+						[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
+					] );
 				} );
 
-				done();
+				MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
+
+				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
+				expect( stubs.mediaGet ).to.have.been.calledOn( [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() );
+				process.nextTick( function() {
+					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+						type: 'RECEIVE_MEDIA_ITEM',
+						error: null,
+						siteId: DUMMY_SITE_ID,
+						data: DUMMY_API_RESPONSE,
+					} );
+
+					done();
+				} );
 			} );
 		} );
 
@@ -138,44 +141,48 @@ describe( 'MediaActions', () => {
 	} );
 
 	describe( '#fetchNextPage()', () => {
-		test( 'should call to the internal WordPress.com REST API', done => {
-			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
+		test( 'should call to the internal WordPress.com REST API', () => {
+			return new Promise( done => {
+				const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
 
-			MediaActions.fetchNextPage( DUMMY_SITE_ID );
+				MediaActions.fetchNextPage( DUMMY_SITE_ID );
 
-			expect( stubs.mediaList ).to.have.been.calledOn( DUMMY_SITE_ID );
-			process.nextTick( function() {
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEMS',
-					error: null,
-					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE,
-					query: query,
+				expect( stubs.mediaList ).to.have.been.calledOn( DUMMY_SITE_ID );
+				process.nextTick( function() {
+					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+						type: 'RECEIVE_MEDIA_ITEMS',
+						error: null,
+						siteId: DUMMY_SITE_ID,
+						data: DUMMY_API_RESPONSE,
+						query: query,
+					} );
+
+					done();
 				} );
-
-				done();
 			} );
 		} );
 
-		test( 'should call to the external WordPress.com REST API', done => {
-			MediaListStore._activeQueries[ DUMMY_SITE_ID ] = { query: { source: 'external' } };
+		test( 'should call to the external WordPress.com REST API', () => {
+			return new Promise( done => {
+				MediaListStore._activeQueries[ DUMMY_SITE_ID ] = { query: { source: 'external' } };
 
-			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
+				const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
 
-			MediaActions.fetchNextPage( DUMMY_SITE_ID );
+				MediaActions.fetchNextPage( DUMMY_SITE_ID );
 
-			expect( stubs.mediaListExternal ).to.have.been.calledWithMatch( { source: 'external' } );
+				expect( stubs.mediaListExternal ).to.have.been.calledWithMatch( { source: 'external' } );
 
-			process.nextTick( function() {
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEMS',
-					error: null,
-					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE,
-					query: query,
+				process.nextTick( function() {
+					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+						type: 'RECEIVE_MEDIA_ITEMS',
+						error: null,
+						siteId: DUMMY_SITE_ID,
+						data: DUMMY_API_RESPONSE,
+						query: query,
+					} );
+
+					done();
 				} );
-
-				done();
 			} );
 		} );
 	} );
@@ -352,20 +359,22 @@ describe( 'MediaActions', () => {
 			} );
 		} );
 
-		test( 'should call to the WordPress.com REST API', done => {
-			MediaActions.update( DUMMY_SITE_ID, item );
+		test( 'should call to the WordPress.com REST API', () => {
+			return new Promise( done => {
+				MediaActions.update( DUMMY_SITE_ID, item );
 
-			expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
+				expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
 
-			process.nextTick( function() {
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_MEDIA_ITEM',
-					error: null,
-					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE,
+				process.nextTick( function() {
+					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+						type: 'RECEIVE_MEDIA_ITEM',
+						error: null,
+						siteId: DUMMY_SITE_ID,
+						data: DUMMY_API_RESPONSE,
+					} );
+
+					done();
 				} );
-
-				done();
 			} );
 		} );
 	} );
@@ -383,19 +392,21 @@ describe( 'MediaActions', () => {
 			expect( stubs.mediaDelete ).to.have.been.calledTwice;
 		} );
 
-		test( 'should call to the WordPress.com REST API', done => {
-			MediaActions.delete( DUMMY_SITE_ID, item );
+		test( 'should call to the WordPress.com REST API', () => {
+			return new Promise( done => {
+				MediaActions.delete( DUMMY_SITE_ID, item );
 
-			expect( stubs.mediaDelete ).to.have.been.calledOn( [ DUMMY_SITE_ID, item.ID ].join() );
-			process.nextTick( function() {
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'REMOVE_MEDIA_ITEM',
-					error: null,
-					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE,
+				expect( stubs.mediaDelete ).to.have.been.calledOn( [ DUMMY_SITE_ID, item.ID ].join() );
+				process.nextTick( function() {
+					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+						type: 'REMOVE_MEDIA_ITEM',
+						error: null,
+						siteId: DUMMY_SITE_ID,
+						data: DUMMY_API_RESPONSE,
+					} );
+
+					done();
 				} );
-
-				done();
 			} );
 		} );
 

@@ -4,8 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import url from 'url';
-import { parse, stringify } from 'qs';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import classnames from 'classnames';
@@ -14,6 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
+import { getUrlParts, getUrlFromParts } from 'lib/url';
 import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
 
 /**
@@ -22,13 +21,6 @@ import { getUserTempGravatar } from 'state/current-user/gravatar-status/selector
 import './style.scss';
 
 export class Gravatar extends Component {
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			failedToLoad: false,
-		};
-	}
-
 	static propTypes = {
 		user: PropTypes.object,
 		size: PropTypes.number,
@@ -46,22 +38,23 @@ export class Gravatar extends Component {
 		size: 32,
 	};
 
+	state = { failedToLoad: false };
+
 	getResizedImageURL( imageURL ) {
 		const { imgSize } = this.props;
 		imageURL = imageURL || 'https://www.gravatar.com/avatar/0';
-		const parsedURL = url.parse( imageURL );
-		const query = parse( parsedURL.query );
+		const parsedURL = getUrlParts( imageURL );
+		delete parsedURL.search;
 
 		if ( /^([-a-zA-Z0-9_]+\.)*(gravatar.com)$/.test( parsedURL.hostname ) ) {
-			query.s = imgSize;
-			query.d = 'mm';
+			parsedURL.searchParams.set( 's', imgSize );
+			parsedURL.searchParams.set( 'd', 'mm' );
 		} else {
 			// assume photon
-			query.resize = imgSize + ',' + imgSize;
+			parsedURL.searchParams.set( 'resize', `${ imgSize },${ imgSize }` );
 		}
 
-		parsedURL.search = stringify( query );
-		return url.format( parsedURL );
+		return getUrlFromParts( parsedURL ).href;
 	}
 
 	onError = () => this.setState( { failedToLoad: true } );

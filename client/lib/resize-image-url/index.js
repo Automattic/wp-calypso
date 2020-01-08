@@ -2,13 +2,13 @@
  * External dependencies
  */
 
-import { get, assign, omit, includes, mapValues, findKey } from 'lodash';
-import { parse, format } from 'url';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import safeImageUrl from 'lib/safe-image-url';
+import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
 
 /**
  * Pattern matching valid http(s) URLs
@@ -25,7 +25,7 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  * @type {number}
  */
 const IMAGE_SCALE_FACTOR =
-	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+	( typeof window !== 'undefined' && window?.devicePixelRatio ) > 1 ? 2 : 1;
 
 /**
  * Query parameters to be treated as image dimensions
@@ -73,7 +73,9 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 		return imageUrl;
 	}
 
-	const parsedUrl = parse( imageUrl, true, true );
+	const parsedUrl = getUrlParts( imageUrl );
+	delete parsedUrl.search;
+
 	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
 		return imageUrl;
 	}
@@ -82,11 +84,10 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 		return imageUrl;
 	}
 
-	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
+	SIZE_PARAMS.forEach( param => parsedUrl.searchParams.delete( param ) );
 
-	const service = findKey(
-		SERVICE_HOSTNAME_PATTERNS,
-		String.prototype.match.bind( parsedUrl.hostname )
+	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( key =>
+		parsedUrl.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
 	);
 
 	if ( 'number' === typeof resize ) {
@@ -104,23 +105,22 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
-	assign(
-		parsedUrl.query,
-		mapValues( resize, ( value, key ) => {
-			if ( 'resize' === key || 'fit' === key ) {
-				return value
-					.split( ',' )
-					.map( scaleByFactor )
-					.join( ',' );
-			} else if ( includes( SIZE_PARAMS, key ) ) {
-				return scaleByFactor( value );
-			}
+	const mapped = mapValues( resize, ( value, key ) => {
+		if ( 'resize' === key || 'fit' === key ) {
+			return value
+				.split( ',' )
+				.map( scaleByFactor )
+				.join( ',' );
+		} else if ( SIZE_PARAMS.includes( key ) ) {
+			return scaleByFactor( value );
+		}
 
-			return value;
-		} )
-	);
+		return value;
+	} );
 
-	delete parsedUrl.search;
+	for ( const key of Object.keys( mapped ) ) {
+		parsedUrl.searchParams.set( key, mapped[ key ] );
+	}
 
-	return format( parsedUrl );
+	return getUrlFromParts( parsedUrl ).href;
 }

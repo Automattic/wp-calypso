@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-
 import photon from 'photon';
-import { parse as parseUrl } from 'url';
-import { endsWith } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { getUrlParts } from 'lib/url/url-parts';
 
 /**
  * Pattern matching URLs to be left unmodified.
@@ -12,8 +14,10 @@ import { endsWith } from 'lodash';
  * @type {RegExp}
  */
 let REGEX_EXEMPT_URL;
-if ( 'object' === typeof location ) {
-	REGEX_EXEMPT_URL = new RegExp( `^(/(?!/)|data:image/[^;]+;|blob:${ location.origin }/)` );
+if ( typeof globalThis.location === 'object' ) {
+	REGEX_EXEMPT_URL = new RegExp(
+		`^(/(?!/)|data:image/[^;]+;|blob:${ globalThis.location.origin }/)`
+	);
 } else {
 	REGEX_EXEMPT_URL = /^(\/(?!\/)|data:image\/[^;]+;)/;
 }
@@ -47,11 +51,7 @@ export default function safeImageUrl( url ) {
 		return url;
 	}
 
-	const { hostname, path, query } = parseUrl(
-		url,
-		/* parseQueryString */ false,
-		/* slashesDenoteHost */ true
-	);
+	const { hostname, pathname, search } = getUrlParts( url );
 
 	if ( REGEXP_A8C_HOST.test( hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
@@ -59,12 +59,12 @@ export default function safeImageUrl( url ) {
 	}
 
 	// If there's a query string, bail out because Photon doesn't support them on external URLs
-	if ( query && query.length > 0 ) {
+	if ( search ) {
 		return null;
 	}
 
 	// Photon doesn't support SVGs
-	if ( endsWith( path, '.svg' ) ) {
+	if ( pathname.endsWith( '.svg' ) ) {
 		return null;
 	}
 
