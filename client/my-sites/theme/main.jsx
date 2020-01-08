@@ -55,12 +55,12 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
+import { UPGRADE_INTENT_INSTALL_THEME } from 'lib/checkout/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { INSTALL_THEME } from 'state/plugins/installed/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
@@ -662,7 +662,7 @@ class ThemeSheet extends React.Component {
 						'redirect_to',
 						`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 							encodeQueryParameters( [
-								[ 'intent', INSTALL_THEME ],
+								[ 'intent', UPGRADE_INTENT_INSTALL_THEME ],
 								[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 								[ 'redirect_to', document.location.pathname ],
 							] ),

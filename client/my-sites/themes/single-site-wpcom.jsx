@@ -21,7 +21,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { INSTALL_PLUGIN } from 'state/plugins/installed/constants';
+import { UPGRADE_INTENT_INSTALL_THEME } from 'lib/checkout/constants';
 import isVipSite from 'state/selectors/is-vip-site';
 import { encodeQueryParameters } from 'state/http';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -51,7 +51,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 					'redirect_to',
 					`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 						encodeQueryParameters( [
-							[ 'intent', INSTALL_PLUGIN ],
+							[ 'intent', UPGRADE_INTENT_INSTALL_THEME ],
 							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 							[ 'plan', PLAN_PREMIUM ],

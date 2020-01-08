@@ -22,6 +22,7 @@ import NavItem from 'components/section-nav/item';
 import InfiniteScroll from 'components/infinite-scroll';
 import NoResults from 'my-sites/no-results';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { UPGRADE_INTENT_INSTALL_PLUGIN } from 'lib/checkout/constants';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
@@ -46,7 +47,6 @@ import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
 import { TYPE_BUSINESS } from 'lib/plans/constants';
-import { INSTALL_PLUGIN } from 'state/plugins/installed/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
@@ -566,7 +566,7 @@ export class PluginsBrowser extends Component {
 					'redirect_to',
 					`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 						encodeQueryParameters( [
-							[ 'intent', INSTALL_PLUGIN ],
+							[ 'intent', UPGRADE_INTENT_INSTALL_PLUGIN ],
 							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 						] ),

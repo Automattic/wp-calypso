@@ -20,6 +20,7 @@ import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import { UPGRADE_INTENT_INSTALL_PLUGIN } from 'lib/checkout/constants';
 import PluginsActions from 'lib/plugins/actions';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
@@ -44,7 +45,6 @@ import { encodeQueryParameters } from 'state/http';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { INSTALL_PLUGIN } from 'state/plugins/installed/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -614,7 +614,7 @@ export class PluginMeta extends Component {
 					'redirect_to',
 					`/checkout/thank-you/${ slug }/:receiptId?` +
 						encodeQueryParameters( [
-							[ 'intent', INSTALL_PLUGIN ],
+							[ 'intent', UPGRADE_INTENT_INSTALL_PLUGIN ],
 							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 						] ),
