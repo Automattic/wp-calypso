@@ -7,25 +7,14 @@ import { RequestCart, ResponseCart } from '../types';
 
 /**
  * A fake WPCOM shopping cart endpoint.
- *
- * This is awful.
- *
- * @param siteSlug Cart key for the 'backend'
- * @param Cart object
- * @returns Promise
  */
-export async function mockSetCartEndpoint(
-	siteSlug: string,
-	{
-		products: requestProducts,
-		currency: requestCurrency,
-		coupon: requestCoupon,
-		locale: requestLocale,
-	}: RequestCart
-): Promise< ResponseCart > {
+export async function mockSetCartEndpoint( {
+	products: requestProducts,
+	currency: requestCurrency,
+	coupon: requestCoupon,
+	locale: requestLocale,
+}: RequestCart ): Promise< ResponseCart > {
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
-
-	console.log( siteSlug ); // eslint-disable-line no-console
 
 	const taxInteger = products.reduce( ( accum, current ) => {
 		return accum + current.item_tax;
@@ -39,6 +28,7 @@ export async function mockSetCartEndpoint(
 		products: products,
 		locale: requestLocale,
 		currency: requestCurrency,
+		credits: 0,
 		allowed_payment_methods: [
 			'WPCOM_Billing_Stripe_Payment_Method',
 			'WPCOM_Billing_Ebanx',
@@ -88,8 +78,7 @@ function convertRequestProductToResponseProduct( currency ) {
 export function mockGetCartEndpointWith(
 	initialCart: ResponseCart
 ): ( string ) => Promise< ResponseCart > {
-	return async ( siteSlug: string ) => {
-		console.log( siteSlug ); // eslint-disable-line no-console
+	return async () => {
 		return initialCart;
 	};
 }
