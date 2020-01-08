@@ -38,13 +38,15 @@ const wpcom = wp.undocumented();
 
 // Aliasing getCart and setCart explicitly bound to wpcom is
 // required here; otherwise we get `this is not defined` errors.
-const getCart = ( ...args ) => wpcom.getCart( ...args );
-const setCart = ( ...args ) => wpcom.setCart( ...args );
+const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
+const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 
 export function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	product,
+	getCart,
+	setCart,
 	// TODO: handle these also
 	// purchaseId,
 	// couponCode,
@@ -90,7 +92,7 @@ export function CompositeCheckout( {
 		changePlanLength,
 		errors,
 		isLoading,
-	} = useShoppingCart( siteSlug, setCart, getCart );
+	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
 	const { registerStore } = registry;
 	useWpcomStore( registerStore, handleCheckoutEvent );
 
@@ -139,6 +141,8 @@ CompositeCheckout.propTypes = {
 	siteSlug: PropTypes.string,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 	product: PropTypes.string,
+	getCart: PropTypes.func,
+	setCart: PropTypes.func,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
