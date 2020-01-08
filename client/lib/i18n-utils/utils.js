@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
-import { getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, hasTranslation } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -72,6 +72,20 @@ export function isLocaleRtl( locale ) {
  */
 export function canBeTranslated( locale ) {
 	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+}
+
+/**
+ * To be used with the same parameters as i18n-calpyso's translate():
+ * Check whether the user would be exposed to text not in their language.
+ *
+ * Since the text is in English, this is always true in that case. Otherwise
+ * We check whether a translation was provided for this text.
+ *
+ * @returns {boolean} true when a user would see text they can read.
+ */
+export function translationExists() {
+	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
+	return isDefaultLocale( localeSlug ) || hasTranslation.apply( null, arguments );
 }
 
 /**
