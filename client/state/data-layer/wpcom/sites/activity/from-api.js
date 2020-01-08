@@ -68,6 +68,7 @@ export function processItem( item ) {
 			activityMedia: get( item, 'image' ),
 			activityMeta,
 		},
+		item.object && item.object.backup_period && { backupPeriod: item.object.backup_period },
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },
 		object && object.target_ts && { activityTargetTs: object.target_ts },

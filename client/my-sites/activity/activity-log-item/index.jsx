@@ -159,28 +159,29 @@ class ActivityLogItem extends Component {
 				activityMedia,
 				isBreakpointActive: isDesktop,
 				activityName,
-				rewindId,
+				backupPeriod,
 			},
 			siteId,
 		} = this.props;
 
-		wpcom.req
-			.get( {
-				path: `/sites/${ siteId }/rewind/screenshots?period=${ rewindId }`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( resp => {
-				if ( null === resp.encodedData ) {
-					return;
-				}
-
-				// inject the received response into the img
-				const URL = 'data:' + resp.contentType + ';base64,' + resp.encodedData;
-				document.getElementById( `img_${ rewindId }` ).src = URL;
-			} )
-			.catch( err => {
-				return err;
-			} );
+		if ( backupPeriod ) {
+			wpcom.req
+				.get( {
+					path: `/sites/${ siteId }/rewind/screenshots?period=${ backupPeriod }`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.then( resp => {
+					if ( null === resp.data ) {
+						return;
+					}
+					// inject the received response into the img
+					const URL = 'data:' + resp.contentType + ';base64,' + resp.data;
+					document.getElementById( `img_${ backupPeriod }` ).src = URL;
+				} )
+				.catch( err => {
+					return err;
+				} );
+		}
 
 		return (
 			<div className="activity-log-item__card-header">
@@ -204,12 +205,12 @@ class ActivityLogItem extends Component {
 							activity={ this.props.activity }
 							rewindIsActive={ this.props.rewindIsActive }
 						/>
-						{ 'rewind__backup_complete_full' === activityName && (
+						{ backupPeriod && 'rewind__backup_complete_full' === activityName && (
 							<Image
 								src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
 								alt="Backup screenshot"
 								className="activity-log-item__screenshot-picture"
-								id={ `img_${ rewindId }` }
+								id={ `img_${ backupPeriod }` }
 							/>
 						) }
 					</div>
