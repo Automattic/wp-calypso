@@ -55,7 +55,7 @@ export default function photon( imageUrl, opts ) {
 		if ( parsedUrl.search ) {
 			return null;
 		}
-		let formattedUrl = parsedUrl.href.replace( `${ parsedUrl.protocol }//`, '' );
+		let formattedUrl = parsedUrl.href.replace( `${ parsedUrl.protocol }/`, '' );
 		// Handle blob: protocol URLs.
 		if ( parsedUrl.protocol === 'blob:' ) {
 			formattedUrl = parsedUrl.pathname.replace( '://', '//' );
