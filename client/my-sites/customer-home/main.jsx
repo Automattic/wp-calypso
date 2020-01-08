@@ -41,6 +41,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
+import { localizeUrl } from 'lib/i18n-utils';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
@@ -58,6 +59,23 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
+import commentIcon from 'assets/images/customer-home/comment.svg';
+import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
+import customizeIcon from 'assets/images/customer-home/customize.svg';
+import googlePlayLogo from 'assets/images/customer-home/google-play.png';
+import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
+import happinessIllustration from 'assets/images/customer-home/happiness.png';
+import imagesIcon from 'assets/images/customer-home/images.svg';
+import logoIcon from 'assets/images/customer-home/logo.svg';
+import menuIcon from 'assets/images/customer-home/menus.svg';
+import pageIcon from 'assets/images/customer-home/page.svg';
+import postIcon from 'assets/images/customer-home/post.svg';
+import themeIcon from 'assets/images/customer-home/theme.svg';
 
 const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
@@ -356,7 +374,7 @@ class Home extends Component {
 										page( `/page/${ siteSlug }` );
 									} }
 									label={ translate( 'Add a page' ) }
-									iconSrc="/calypso/images/customer-home/page.svg"
+									iconSrc={ pageIcon }
 								/>
 								{ isStaticHomePage ? (
 									<ActionBox
@@ -365,7 +383,7 @@ class Home extends Component {
 											page( `/post/${ siteSlug }` );
 										} }
 										label={ translate( 'Write blog post' ) }
-										iconSrc="/calypso/images/customer-home/post.svg"
+										iconSrc={ postIcon }
 									/>
 								) : (
 									<ActionBox
@@ -374,7 +392,7 @@ class Home extends Component {
 											page( `/comments/${ siteSlug }` );
 										} }
 										label={ translate( 'Manage comments' ) }
-										iconSrc="/calypso/images/customer-home/comment.svg"
+										iconSrc={ commentIcon }
 									/>
 								) }
 								{ showCustomizer && (
@@ -382,7 +400,7 @@ class Home extends Component {
 										href={ customizeUrl }
 										onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
 										label={ translate( 'Customize theme' ) }
-										iconSrc="/calypso/images/customer-home/customize.svg"
+										iconSrc={ customizeIcon }
 									/>
 								) }
 								<ActionBox
@@ -391,28 +409,28 @@ class Home extends Component {
 										page( `/themes/${ siteSlug }` );
 									} }
 									label={ translate( 'Change theme' ) }
-									iconSrc="/calypso/images/customer-home/theme.svg"
+									iconSrc={ themeIcon }
 								/>
 								{ showCustomizer && (
 									<ActionBox
 										href={ menusUrl }
 										onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
 										label={ translate( 'Edit menus' ) }
-										iconSrc="/calypso/images/customer-home/menus.svg"
+										iconSrc={ menuIcon }
 									/>
 								) }
 								<ActionBox
 									href={ `/media/${ siteSlug }` }
 									onClick={ () => trackAction( 'my_site', 'change_images' ) }
 									label={ translate( 'Change images' ) }
-									iconSrc="/calypso/images/customer-home/images.svg"
+									iconSrc={ imagesIcon }
 								/>
 								<ActionBox
 									href="https://wp.me/logo-maker"
 									onClick={ () => trackAction( 'my_site', 'design_logo' ) }
 									target="_blank"
 									label={ translate( 'Design a logo' ) }
-									iconSrc="/calypso/images/customer-home/logo.svg"
+									iconSrc={ logoIcon }
 								/>
 								{ hasCustomDomain ? (
 									<ActionBox
@@ -421,7 +439,7 @@ class Home extends Component {
 											page( `/email/${ siteSlug }` );
 										} }
 										label={ translate( 'Add email' ) }
-										iconSrc="/calypso/images/customer-home/gsuite.svg"
+										iconSrc={ gSuiteIcon }
 									/>
 								) : (
 									<ActionBox
@@ -430,7 +448,7 @@ class Home extends Component {
 											page( `/domains/add/${ siteSlug }` );
 										} }
 										label={ translate( 'Add a domain' ) }
-										iconSrc="/calypso/images/customer-home/custom-domain.svg"
+										iconSrc={ customDomainIcon }
 									/>
 								) }
 							</div>
@@ -524,13 +542,10 @@ class Home extends Component {
 							{ translate( 'Get all the help you need' ) }
 						</h6>
 						<div className="customer-home__card-support">
-							<img
-								src="/calypso/images/customer-home/happiness.png"
-								alt={ translate( 'Support' ) }
-							/>
+							<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
-									path="https://en.support.wordpress.com/"
+									path={ localizeUrl( 'https://en.support.wordpress.com' ) }
 									external
 									onClick={ () => trackAction( 'support', 'docs' ) }
 								>
@@ -558,7 +573,7 @@ class Home extends Component {
 								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
 								altText={ translate( 'Apple App Store download badge' ) }
 							>
-								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
+								<img src={ appleStoreLogo } alt="" />
 							</AppsBadge>
 							<AppsBadge
 								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
@@ -566,7 +581,7 @@ class Home extends Component {
 								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
 								altText={ translate( 'Google Play Store download badge' ) }
 							>
-								<img src="/calypso/images/customer-home/google-play.png" alt="" />
+								<img src={ googlePlayLogo } alt="" />
 							</AppsBadge>
 						</div>
 					</Card>
