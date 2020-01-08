@@ -26,6 +26,7 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { STORE_KEY } from './stores/onboard';
 import { routes, Step } from './steps';
+import { HIDE_BUTTON } from './constants';
 import './style.scss';
 
 registerBlockType( name, settings );
@@ -41,9 +42,7 @@ export function Gutenboard() {
 	let prev: undefined | string;
 	switch ( r?.url ) {
 		case Step.IntentGathering:
-			if ( siteVertical ) {
-				next = Step.DesignSelection;
-			}
+			next = HIDE_BUTTON;
 			break;
 
 		case Step.DesignSelection:
