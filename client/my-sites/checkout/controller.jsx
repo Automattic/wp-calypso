@@ -126,7 +126,6 @@ export function checkoutThankYou( context, next ) {
 			selectedFeature={ context.params.feature }
 			redirectTo={ context.query.redirect_to }
 			upgradeIntent={ context.query.intent }
-			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>

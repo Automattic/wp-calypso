@@ -36,7 +36,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
 		isSimplified: PropTypes.bool,
-		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
 	};
 
@@ -435,13 +434,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 				}
 			),
 		];
-		if ( this.props.siteUnlaunchedBeforeUpgrade ) {
-			messages.push(
-				translate(
-					"Your site has been launched. You can share it with the world whenever you're ready."
-				)
-			);
-		}
 
 		if ( messages.length === 1 ) {
 			return <h2 className="checkout-thank-you__header-text">{ messages[ 0 ] }</h2>;

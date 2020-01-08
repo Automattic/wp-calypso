@@ -75,25 +75,5 @@ describe( 'CheckoutThankYouHeader', () => {
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
 			);
 		} );
-		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
-			const comp = shallow(
-				<CheckoutThankYouHeader
-					isDataLoaded={ true }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
-					{ ...defaultProps }
-				/>
-			);
-			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
-				'Congratulations on your purchase!'
-			);
-			expect( comp.find( '.checkout-thank-you__header-text' ).length ).toBe( 0 );
-			expect( comp.find( '.checkout-thank-you__success-message-item' ).length ).toEqual( 2 );
-			expect(
-				comp.find( '.checkout-thank-you__success-message-item:last-child div' ).text()
-			).toEqual(
-				"Your site has been launched. You can share it with the world whenever you're ready."
-			);
-		} );
 	} );
 } );

@@ -44,7 +44,6 @@ import isVipSite from 'state/selectors/is-vip-site';
 import { encodeQueryParameters } from 'state/http';
 import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -602,7 +601,7 @@ export class PluginMeta extends Component {
 	};
 
 	renderUpsell() {
-		const { translate, slug, isSiteUnlaunched } = this.props;
+		const { translate, slug } = this.props;
 
 		if ( this.props.isVipSite ) {
 			return null;
@@ -615,7 +614,6 @@ export class PluginMeta extends Component {
 					`/checkout/thank-you/${ slug }/:receiptId?` +
 						encodeQueryParameters( [
 							[ 'intent', UPGRADE_INTENT_INSTALL_PLUGIN ],
-							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 						] ),
 				],
@@ -730,7 +728,6 @@ const mapStateToProps = state => {
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
-		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 	};

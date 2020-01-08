@@ -24,13 +24,11 @@ import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { UPGRADE_INTENT_INSTALL_THEME } from 'lib/checkout/constants';
 import isVipSite from 'state/selectors/is-vip-site';
 import { encodeQueryParameters } from 'state/http';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
-		isSiteUnlaunched,
 		siteId,
 		isVip,
 		siteSlug,
@@ -52,7 +50,6 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 					`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 						encodeQueryParameters( [
 							[ 'intent', UPGRADE_INTENT_INSTALL_THEME ],
-							[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 							[ 'redirect_to', document.location.pathname ],
 							[ 'plan', PLAN_PREMIUM ],
 						] ),
@@ -116,7 +113,6 @@ export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
 	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
-	isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
 } ) )( ConnectedSingleSiteWpcom );

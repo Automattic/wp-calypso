@@ -129,15 +129,7 @@ describe( 'CheckoutThankYou', () => {
 		} );
 		test( 'Should pass props down to CheckoutThankYou', () => {
 			const comp = shallow(
-				<CheckoutThankYou
-					{ ...props }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
-					upgradeIntent={ 'plugins' }
-				/>
-			);
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteUnlaunchedBeforeUpgrade ).toBe(
-				true
+				<CheckoutThankYou { ...props } isSimplified={ true } upgradeIntent={ 'plugins' } />
 			);
 			expect( comp.find( 'CheckoutThankYouHeader' ).props().upgradeIntent ).toBe( 'plugins' );
 		} );

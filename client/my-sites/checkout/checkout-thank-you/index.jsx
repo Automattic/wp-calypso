@@ -120,7 +120,6 @@ export class CheckoutThankYou extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
-		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -542,7 +541,6 @@ export class CheckoutThankYou extends React.Component {
 	productRelatedMessages = () => {
 		const {
 			selectedSite,
-			siteUnlaunchedBeforeUpgrade,
 			upgradeIntent,
 			isSimplified,
 			sitePlans,
@@ -571,7 +569,6 @@ export class CheckoutThankYou extends React.Component {
 						isSimplified={ isSimplified }
 						selectedSite={ selectedSite }
 						upgradeIntent={ upgradeIntent }
-						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
 						displayMode={ displayMode }
 					/>
 
@@ -598,7 +595,6 @@ export class CheckoutThankYou extends React.Component {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
 					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }

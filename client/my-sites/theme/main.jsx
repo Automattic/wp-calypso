@@ -50,7 +50,6 @@ import {
 	getThemeForumUrl,
 } from 'state/themes/selectors';
 import { encodeQueryParameters } from 'state/http';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -94,7 +93,6 @@ class ThemeSheet extends React.Component {
 		isActive: PropTypes.bool,
 		isPurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isSiteUnlaunched: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -607,7 +605,6 @@ class ThemeSheet extends React.Component {
 			isJetpack,
 			isVip,
 			translate,
-			isSiteUnlaunched,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
 		} = this.props;
@@ -663,7 +660,6 @@ class ThemeSheet extends React.Component {
 						`/checkout/thank-you/${ siteSlug }/:receiptId?` +
 							encodeQueryParameters( [
 								[ 'intent', UPGRADE_INTENT_INSTALL_THEME ],
-								[ 'site_unlaunched_before_upgrade', isSiteUnlaunched ? 'true' : 'false' ],
 								[ 'redirect_to', document.location.pathname ],
 							] ),
 					],
@@ -808,7 +804,6 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
