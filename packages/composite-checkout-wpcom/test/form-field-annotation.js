@@ -39,17 +39,17 @@ describe( 'FormFieldAnnotation', () => {
 			MyFormFieldAnnotation = () => (
 				<ThemeProvider theme={ theme }>
 					<FormFieldAnnotation
-						formFieldId={ 'fieldId' }
-						labelText={ 'A Label' }
-						labelId={ 'labelId' }
-						normalDescription={ 'A description' }
-						descriptionId={ 'descriptionId' }
-						errorDescription={ 'An Error Message' }
+						formFieldId="fieldId"
+						labelText="A Label"
+						labelId="labelId"
+						normalDescription="A description"
+						descriptionId="descriptionId"
+						errorDescription="An Error Message"
 						isError={ false }
 						isDisabled={ false }
-						className={ 'test__annotation_class' }
+						className="test__annotation_class"
 					>
-						<span id={ 'fieldId' }>{ 'child contents' }</span>
+						<span id="fieldId">{ 'child contents' }</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);
@@ -81,17 +81,17 @@ describe( 'FormFieldAnnotation', () => {
 			MyFormFieldAnnotation = () => (
 				<ThemeProvider theme={ theme }>
 					<FormFieldAnnotation
-						formFieldId={ 'fieldId' }
-						labelText={ 'A Label' }
-						labelId={ 'labelId' }
-						normalDescription={ 'A description' }
-						descriptionId={ 'descriptionId' }
-						errorDescription={ 'An Error Message' }
-						isError={ true }
-						isDisabled={ false }
-						className={ 'test__annotation_class' }
+						formFieldId="fieldId"
+						labelText="A Label"
+						labelId="labelId"
+						normalDescription="A description"
+						descriptionId="descriptionId"
+						errorDescription="An Error Message"
+						isError="true"
+						isDisabled="false"
+						className="test__annotation_class"
 					>
-						<span id={ 'fieldId' }>{ 'child contents' }</span>
+						<span id="fieldId">{ 'child contents' }</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);
