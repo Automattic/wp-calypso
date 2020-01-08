@@ -34,6 +34,51 @@ class RemoveDomainDialog extends Component {
 		showErrors: false,
 	};
 
+	renderDomainDeletionWarning( productName ) {
+		const { translate } = this.props;
+
+		return (
+			<p>
+				{ translate(
+					'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
+						'You will no longer own it, and it could be registered ' +
+						'by someone else.',
+					{
+						args: { domain: productName },
+						components: { strong: <strong /> },
+					}
+				) }
+				<br />
+				{ translate(
+					'If you want to use your domain with another provider or service, you can ' +
+						'{{a}}map it instead{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://en.support.wordpress.com/move-domain/change-name-servers/"
+								/>
+							),
+						},
+					}
+				) }{ ' ' }
+				{ translate( 'You may also be able to {{a}}transfer it{{/a}}.', {
+					components: {
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://en.support.wordpress.com/move-domain/transfer-domain-registration/"
+							/>
+						),
+					},
+				} ) }
+			</p>
+		);
+	}
+
 	renderFirstStep( productName ) {
 		const { translate, purchase } = this.props;
 
@@ -45,17 +90,9 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					} ) }
 				</FormSectionHeading>
-				<p>
-					{ translate(
-						'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
-							'You will no longer own it, and it could be registered ' +
-							'by someone else.',
-						{
-							args: { domain: productName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
+
+				{ this.renderDomainDeletionWarning( productName ) }
+
 				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
 					<p>
 						<strong>
@@ -140,17 +177,7 @@ class RemoveDomainDialog extends Component {
 					) }
 				</FormFieldset>
 
-				<p>
-					{ translate(
-						'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
-							'You will no longer own it, and it could be registered ' +
-							'by someone else.',
-						{
-							args: { domain: productName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
+				{ this.renderDomainDeletionWarning( productName ) }
 			</Fragment>
 		);
 	}
