@@ -26,7 +26,6 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { STORE_KEY } from './stores/onboard';
 import { routes, Step } from './steps';
-import { HIDE_BUTTON } from './constants';
 import './style.scss';
 
 registerBlockType( name, settings );
@@ -40,9 +39,10 @@ export function Gutenboard() {
 	const r = useRouteMatch( routes );
 	let next: undefined | string;
 	let prev: undefined | string;
+	let isNextHidden = false;
 	switch ( r?.url ) {
 		case Step.IntentGathering:
-			next = HIDE_BUTTON;
+			isNextHidden = true;
 			break;
 
 		case Step.DesignSelection:
@@ -60,7 +60,7 @@ export function Gutenboard() {
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="edit-post-layout">
-					<Header prev={ prev } next={ next } />
+					<Header prev={ prev } next={ next } isNextHidden={ isNextHidden } />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

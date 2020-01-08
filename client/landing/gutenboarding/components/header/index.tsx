@@ -15,7 +15,7 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { HIDE_BUTTON, selectorDebounce } from '../../constants';
+import { selectorDebounce } from '../../constants';
 import Link from '../link';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
@@ -23,9 +23,14 @@ const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 interface Props {
 	next?: string;
 	prev?: string;
+	isNextHidden?: boolean;
 }
 
-const Header: FunctionComponent< Props > = ( { next, prev } ) => {
+const Header: FunctionComponent< Props > = ( {
+	next,
+	prev,
+	isNextHidden,
+} ) => {
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -103,7 +108,7 @@ const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ next !== HIDE_BUTTON && (
+					{ ! isNextHidden && (
 						<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
 							{ NO__( 'Next' ) }
 						</Link>

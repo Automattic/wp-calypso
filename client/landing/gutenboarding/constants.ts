@@ -7,5 +7,3 @@
  * @see https://stackoverflow.com/a/44755058/1432801
  */
 export const selectorDebounce = 300;
-
-export const HIDE_BUTTON = 'HIDE_BUTTON';
