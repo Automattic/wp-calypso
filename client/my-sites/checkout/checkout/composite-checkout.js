@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import wp from 'lib/wp';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useCallback } from 'react';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
@@ -22,6 +24,10 @@ import {
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { useCreatePaymentMethods } from './composite-checkout-payment-methods';
+import notices from 'notices';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -37,14 +43,43 @@ const setCart = ( ...args ) => wpcom.setCart( ...args );
 
 export function CompositeCheckout( {
 	siteSlug,
-	planSlug,
-	isJetpackNotAtomic,
 	siteId,
-	onPaymentComplete,
-	showErrorMessage,
-	showInfoMessage,
-	showSuccessMessage,
+	product,
+	// TODO: handle these also
+	// purchaseId,
+	// couponCode,
 } ) {
+	const translate = useTranslate();
+	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
+	const isJetpackNotAtomic = useSelector(
+		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
+	const onPaymentComplete = useCallback( () => {
+		debug( 'payment completed successfully' );
+		// TODO: determine which thank-you page to visit
+		page.redirect( `/checkout/thank-you/${ siteId }/` );
+	}, [ siteId ] );
+
+	const showErrorMessage = useCallback(
+		error => {
+			debug( 'error', error );
+			const message = error && error.toString ? error.toString() : error;
+			notices.error( message || translate( 'An error occurred during your purchase.' ) );
+		},
+		[ translate ]
+	);
+
+	const showInfoMessage = useCallback( message => {
+		debug( 'info', message );
+		notices.info( message );
+	}, [] );
+
+	const showSuccessMessage = useCallback( message => {
+		debug( 'success', message );
+		notices.success( message );
+	}, [] );
+
 	const {
 		items,
 		tax,
@@ -101,17 +136,9 @@ export function CompositeCheckout( {
 }
 
 CompositeCheckout.propTypes = {
-	registry: PropTypes.object.isRequired,
 	siteSlug: PropTypes.string,
-	setCart: PropTypes.func.isRequired,
-	getCart: PropTypes.func.isRequired,
-	onPaymentComplete: PropTypes.func.isRequired,
-	showErrorMessage: PropTypes.func.isRequired,
-	showInfoMessage: PropTypes.func.isRequired,
-	showSuccessMessage: PropTypes.func.isRequired,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-	planSlug: PropTypes.string,
-	isJetpackNotAtomic: PropTypes.bool,
+	product: PropTypes.string,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {
