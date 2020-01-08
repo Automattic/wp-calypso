@@ -42,7 +42,7 @@ export const CheckoutProvider = props => {
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		paymentMethods ? paymentMethods[ 0 ].id : null
+		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
