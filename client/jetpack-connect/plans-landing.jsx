@@ -18,7 +18,6 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
@@ -108,7 +107,6 @@ class PlansLanding extends Component {
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
 							<HelpButton />

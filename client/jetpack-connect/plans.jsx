@@ -17,7 +17,6 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/cart/actions';
@@ -217,7 +216,6 @@ class Plans extends Component {
 					interval={ interval }
 					selectedSite={ selectedSite }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
