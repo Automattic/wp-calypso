@@ -372,6 +372,7 @@
 		"interpolate-components": "1.1.1",
 		"jest": "24.9.0",
 		"jest-docblock": "24.9.0",
+		"jest-emotion": "10.0.27",
 		"jest-fetch-mock": "2.1.2",
 		"jest-junit": "9.0.0",
 		"md5-file": "4.0.0",
