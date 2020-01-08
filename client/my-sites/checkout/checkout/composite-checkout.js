@@ -41,7 +41,7 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 
-export function CompositeCheckout( {
+export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	product,

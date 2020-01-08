@@ -15,7 +15,7 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import { CompositeCheckout } from '../composite-checkout';
+import CompositeCheckout from '../composite-checkout';
 
 describe( 'CompositeCheckout', () => {
 	let container;
