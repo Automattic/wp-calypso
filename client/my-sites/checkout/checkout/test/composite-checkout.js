@@ -89,6 +89,7 @@ describe( 'CompositeCheckout', () => {
 					siteSlug={ 'foo.com' }
 					setCart={ mockSetCartEndpoint }
 					getCart={ mockGetCartEndpointWith( initialCart ) }
+					allowedPaymentMethods={ [ 'paypal' ] }
 				/>
 			</ReduxProvider>
 		);
@@ -105,7 +106,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( container, 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );

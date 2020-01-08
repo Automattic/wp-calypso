@@ -47,6 +47,7 @@ export function CompositeCheckout( {
 	product,
 	getCart,
 	setCart,
+	allowedPaymentMethods,
 	// TODO: handle these also
 	// purchaseId,
 	// couponCode,
@@ -107,6 +108,7 @@ export function CompositeCheckout( {
 	// Payment methods must be created inside the component so their stores are
 	// re-created when the checkout unmounts and remounts.
 	const paymentMethods = useCreatePaymentMethods( {
+		allowedPaymentMethods,
 		select,
 		registerStore,
 		wpcom,
@@ -143,6 +145,7 @@ CompositeCheckout.propTypes = {
 	product: PropTypes.string,
 	getCart: PropTypes.func,
 	setCart: PropTypes.func,
+	allowedPaymentMethods: PropTypes.array,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {

@@ -13,73 +13,91 @@ import {
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
 
-export function useCreatePaymentMethods( { select, registerStore, wpcom, credits, total } ) {
+const mockwpcom = {
+	getStoredCards: () => [],
+};
+
+export function useCreatePaymentMethods( {
+	allowedPaymentMethods,
+	select,
+	registerStore,
+	wpcom,
+	credits,
+	total,
+} ) {
 	const fullCreditsPaymentMethod = useMemo(
 		() =>
-			credits >= total.amount
+			isMethodEnabled( 'full-credits', allowedPaymentMethods ) && credits >= total.amount
 				? createFullCreditsMethod( { registerStore, submitTransaction: submitCreditsTransaction } )
 				: null,
-		[ credits, total.amount, registerStore ]
+		[ credits, total.amount, registerStore, allowedPaymentMethods ]
 	);
 
 	const stripeMethod = useMemo(
 		() =>
-			createStripeMethod( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				registerStore,
-				fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
-				submitTransaction: submitData =>
-					sendStripeTransaction(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcom
-					),
-			} ),
-		[ registerStore, select, wpcom ]
+			isMethodEnabled( 'stripe', allowedPaymentMethods )
+				? createStripeMethod( {
+						getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+						getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+						getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+						getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+						registerStore,
+						fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
+						submitTransaction: submitData =>
+							sendStripeTransaction(
+								{
+									...submitData,
+									siteId: select( 'wpcom' )?.getSiteId?.(),
+									domainDetails: getDomainDetails( select ),
+								},
+								wpcom
+							),
+				  } )
+				: null,
+		[ registerStore, select, wpcom, allowedPaymentMethods ]
 	);
 
 	const paypalMethod = useMemo(
 		() =>
-			createPayPalMethod( {
-				successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
-				cancelUrl: window.location.href,
-				registerStore: registerStore,
-				submitTransaction: submitData =>
-					makePayPalExpressRequest(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							domainDetails: getDomainDetails( select ),
-							couponId: null, // TODO: get couponId
-							country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
-							postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-							subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-							phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
-						},
-						wpcom
-					),
-			} ),
-		[ registerStore, select, wpcom ]
+			isMethodEnabled( 'paypal', allowedPaymentMethods )
+				? createPayPalMethod( {
+						successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
+						cancelUrl: window.location.href,
+						registerStore: registerStore,
+						submitTransaction: submitData =>
+							makePayPalExpressRequest(
+								{
+									...submitData,
+									siteId: select( 'wpcom' )?.getSiteId?.(),
+									domainDetails: getDomainDetails( select ),
+									couponId: null, // TODO: get couponId
+									country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+									postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+									subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+									phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+								},
+								wpcom
+							),
+				  } )
+				: null,
+		[ registerStore, select, wpcom, allowedPaymentMethods ]
 	);
 
 	const applePayMethod = useMemo(
 		() =>
-			isApplePayAvailable()
+			isMethodEnabled( 'apple-pay', allowedPaymentMethods ) && isApplePayAvailable()
 				? createApplePayMethod( {
 						registerStore,
 						fetchStripeConfiguration: args => fetchStripeConfiguration( args, wpcom ),
 				  } )
 				: null,
-		[ registerStore, wpcom ]
+		[ registerStore, wpcom, allowedPaymentMethods ]
 	);
 
-	const storedCards = useStoredCards( wpcom );
+	// We have to use a mocked wpcom here since we can't not call the hook
+	const storedCards = useStoredCards(
+		isMethodEnabled( 'existing-cards', allowedPaymentMethods ) ? wpcom : mockwpcom
+	);
 	const existingCardMethods = useMemo(
 		() =>
 			storedCards.map( storedDetails =>
@@ -319,4 +337,12 @@ function createCartFromLineItems( {
 
 function submitCreditsTransaction() {
 	// TODO: where does this go?
+}
+
+function isMethodEnabled( method, allowedPaymentMethods ) {
+	// By default, allow all payment methods
+	if ( ! allowedPaymentMethods?.length ) {
+		return true;
+	}
+	return allowedPaymentMethods.includes( method );
 }
