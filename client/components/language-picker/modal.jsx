@@ -239,32 +239,38 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	}
 
-	navigateByArrows( arrowKey ) {
+	navigateByArrowKey( arrowKey ) {
+		const { selectedLanguageSlug } = this.state;
+		const filteredLanguages = this.getFilteredLanguages();
+		const selectedIndex = filteredLanguages.findIndex(
+			( { langSlug } ) => langSlug === selectedLanguageSlug
+		);
+
 		let navigateStep = 0;
 
 		if ( arrowKey === 'ArrowUp' ) {
 			navigateStep = -this.getLanguagesListColumnsCount();
 		} else if ( arrowKey === 'ArrowDown' ) {
-			navigateStep = this.getLanguagesListColumnsCount();
+			// If selected language is not included in the filtered languages list
+			// arrow down key should select first item in the first column
+			navigateStep = selectedIndex === -1 ? 1 : this.getLanguagesListColumnsCount();
 		} else if ( arrowKey === 'ArrowLeft' ) {
 			navigateStep = -1;
 		} else if ( arrowKey === 'ArrowRight' ) {
 			navigateStep = 1;
 		}
 
-		if ( navigateStep !== 0 ) {
-			const { selectedLanguageSlug } = this.state;
-			const filteredLanguages = this.getFilteredLanguages();
-			const selectedIndex = filteredLanguages.findIndex(
-				( { langSlug } ) => langSlug === selectedLanguageSlug
-			);
-			const nextIndex =
-				selectedIndex >= 0
-					? Math.max( Math.min( selectedIndex + navigateStep, filteredLanguages.length - 1 ), 0 )
-					: 0;
-
-			this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug } );
+		if ( navigateStep === 0 ) {
+			return;
 		}
+
+		const nextIndex = selectedIndex + navigateStep;
+
+		if ( nextIndex < 0 || nextIndex >= filteredLanguages.length ) {
+			return;
+		}
+
+		this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug } );
 	}
 
 	handleKeyPress = event => {
@@ -293,8 +299,10 @@ export class LanguagePickerModal extends PureComponent {
 
 		// Handle arrow keys navigation
 		const arrowKeys = [ 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight' ];
+
 		if ( arrowKeys.includes( event.key ) ) {
-			this.navigateByArrows( event.key );
+			event.preventDefault();
+			this.navigateByArrowKey( event.key );
 		}
 	};
 
