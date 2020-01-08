@@ -13,6 +13,7 @@ export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
 export const CATEGORIES_VS_TAGS = `${ root }/posts/categories-vs-tags`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-servers-to-point-to-wordpress-com`;
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#finding-out-your-new-name-server`;
+export const CHANGE_NAME_SERVERS_POINT_AWAY = `${ root }/move-domain/change-name-servers/#changing-name-servers-to-point-away-from-wordpress-com`;
 export const COMMENTS = `${ root }/category/comments`;
 export const COMMUNITY_TRANSLATOR = `${ root }/community-translator`;
 export const COMPLETING_GOOGLE_APPS_SIGNUP = `${ root }/adding-g-suite-to-your-site/#completing-sign-up`;
