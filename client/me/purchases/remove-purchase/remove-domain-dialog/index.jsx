@@ -15,7 +15,11 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	CHANGE_NAME_SERVERS_POINT_AWAY,
+	TRANSFER_DOMAIN_REGISTRATION,
+} from 'lib/url/support';
 import { getName, isRefundable, maybeWithinRefundPeriod } from 'lib/purchases';
 
 class RemoveDomainDialog extends Component {
@@ -58,7 +62,7 @@ class RemoveDomainDialog extends Component {
 								<a
 									target="_blank"
 									rel="noopener noreferrer"
-									href="https://en.support.wordpress.com/move-domain/change-name-servers/"
+									href={ CHANGE_NAME_SERVERS_POINT_AWAY }
 								/>
 							),
 						},
@@ -67,11 +71,7 @@ class RemoveDomainDialog extends Component {
 				{ translate( 'You may also be able to {{a}}transfer it{{/a}}.', {
 					components: {
 						a: (
-							<a
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://en.support.wordpress.com/move-domain/transfer-domain-registration/"
-							/>
+							<a target="_blank" rel="noopener noreferrer" href={ TRANSFER_DOMAIN_REGISTRATION } />
 						),
 					},
 				} ) }
