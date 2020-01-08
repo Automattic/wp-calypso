@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { useSpring, animated } from 'react-spring';
 import classNames from 'classnames';
 
 /**
@@ -26,22 +27,32 @@ const Question: FunctionComponent< Props > = ( {
 	isActive,
 	label,
 	onExpand,
-} ) => (
-	<div className={ classNames( 'onboarding-block__question', className, { selected: isActive } ) }>
-		<span>{ label }</span>
-		<div>
-			{ isActive ? (
-				children
-			) : (
-				<>
-					<button className="onboarding-block__question-answered" onClick={ onExpand }>
-						{ displayValue }
-					</button>
-					<span>.</span>
-				</>
-			) }
-		</div>
-	</div>
-);
+} ) => {
+	const springProps = useSpring( {
+		opacity: 1,
+		fontSize: isActive ? 40 : 28, // transition to a bigger font when the question is active
+		from: { opacity: 0 }, // fade in when mounting
+	} );
 
+	return (
+		<animated.div
+			style={ springProps }
+			className={ classNames( 'onboarding-block__question', className ) }
+		>
+			<span>{ label }</span>
+			<div>
+				{ isActive ? (
+					children
+				) : (
+					<>
+						<button className="onboarding-block__question-answered" onClick={ onExpand }>
+							{ displayValue }
+						</button>
+						<span>.</span>
+					</>
+				) }
+			</div>
+		</animated.div>
+	);
+};
 export default Question;
