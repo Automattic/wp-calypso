@@ -2,7 +2,8 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"jsx": "react",
-		"target": "es5",
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015", "ScriptHost" ],
 		"module": "esnext",
 		"declaration": true,
 		"declarationDir": "types",
@@ -18,7 +19,10 @@
 		"strictNullChecks": true,
 
 		"moduleResolution": "node",
-		"esModuleInterop": true
+		"esModuleInterop": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": []
 	},
 	"include": [ "src/**/*" ],
 	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
