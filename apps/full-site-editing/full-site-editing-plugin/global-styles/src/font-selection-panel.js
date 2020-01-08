@@ -23,7 +23,9 @@ export default ( {
 	updateBaseFont,
 	updateHeadingsFont,
 	lineHeightBase,
+	lineHeightBaseDefault,
 	lineHeightHeadings,
+	lineHeightHeadingsDefault,
 	updateBaseLineHeight,
 	updateHeadingsLineHeight,
 } ) => {
@@ -43,10 +45,16 @@ export default ( {
 			<RangeControl
 				label={ __( 'Headings line height' ) }
 				value={ lineHeightHeadings }
-				onChange={ newValue => updateHeadingsLineHeight( newValue ) }
+				onChange={ newValue =>
+					newValue
+						? updateHeadingsLineHeight( newValue )
+						: updateHeadingsLineHeight( lineHeightHeadingsDefault )
+				}
 				min={ 0 }
 				max={ 3 }
-				step={ 0.1 }
+				step={ 0.01 }
+				initialPosition={ lineHeightHeadingsDefault }
+				allowReset
 			/>
 			<SelectControl
 				label={ __( 'Base Font' ) }
@@ -58,10 +66,16 @@ export default ( {
 			<RangeControl
 				label={ __( 'Base line height' ) }
 				value={ lineHeightBase }
-				onChange={ newValue => updateBaseLineHeight( newValue ) }
+				onChange={ newValue =>
+					newValue
+						? updateBaseLineHeight( newValue )
+						: updateBaseLineHeight( lineHeightBaseDefault )
+				}
 				min={ 0 }
 				max={ 3 }
-				step={ 0.1 }
+				step={ 0.01 }
+				initialPosition={ lineHeightBaseDefault }
+				allowReset
 			/>
 			<hr />
 		</>

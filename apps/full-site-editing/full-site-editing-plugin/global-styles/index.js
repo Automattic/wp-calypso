@@ -20,7 +20,9 @@ import {
 	FONT_OPTIONS,
 	SITE_NAME,
 	LINE_HEIGHT_BODY,
+	LINE_HEIGHT_BODY_DEFAULT,
 	LINE_HEIGHT_HEADING,
+	LINE_HEIGHT_HEADING_DEFAULT,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -47,7 +49,11 @@ registerPlugin( PLUGIN_NAME, {
 			fontOptions: getSelectors( STORE_NAME ).getOption( FONT_OPTIONS ),
 			hasLocalChanges: getSelectors( STORE_NAME ).hasLocalChanges(),
 			lineHeightBase: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_BODY ),
+			lineHeightBaseDefault: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_BODY_DEFAULT ),
 			lineHeightHeadings: getSelectors( STORE_NAME ).getOption( LINE_HEIGHT_HEADING ),
+			lineHeightHeadingsDefault: getSelectors( STORE_NAME ).getOption(
+				LINE_HEIGHT_HEADING_DEFAULT
+			),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,

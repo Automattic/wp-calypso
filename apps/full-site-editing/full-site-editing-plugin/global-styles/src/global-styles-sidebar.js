@@ -65,7 +65,9 @@ export default ( {
 	fontPairings,
 	fontOptions,
 	lineHeightBase,
+	lineHeightBaseDefault,
 	lineHeightHeadings,
+	lineHeightHeadingsDefault,
 	siteName,
 	publishOptions,
 	updateOptions,
@@ -120,7 +122,9 @@ export default ( {
 						updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value } ) }
 						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
 						lineHeightBase={ lineHeightBase }
+						lineHeightBaseDefault={ lineHeightBaseDefault }
 						lineHeightHeadings={ lineHeightHeadings }
+						lineHeightHeadingsDefault={ lineHeightHeadingsDefault }
 						updateBaseLineHeight={ value => updateOptions( { [ LINE_HEIGHT_BODY ]: value } ) }
 						updateHeadingsLineHeight={ value =>
 							updateOptions( { [ LINE_HEIGHT_HEADING ]: value } )

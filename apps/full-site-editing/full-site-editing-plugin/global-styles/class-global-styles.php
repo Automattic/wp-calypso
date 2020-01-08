@@ -206,7 +206,17 @@ class Global_Styles {
 					'name'      => ['jetpack_global_styles', 'line_height_heading'],
 					'default'   => 1.125,
 					'updatable' => true,
-				]
+				],
+				'line_height_body_default'     => [
+					'type'    => 'theme',
+					'name'    => ['jetpack-global-styles', 'line_height_body'],
+					'default' => 1.78,
+				],
+				'line_height_heading_default' => [
+					'type'    => 'theme',
+					'name'    => ['jetpack-global-styles', 'line_height_heading'],
+					'default' => 1.125,
+				],
 			]
 		);
 
