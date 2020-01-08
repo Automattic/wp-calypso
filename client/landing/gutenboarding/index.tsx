@@ -7,16 +7,18 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import config from '../../config';
-import { Provider } from 'react-redux';
+import { registerGenericStore } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import { getCurrentUserId } from '../../state/current-user/selectors';
 import createStore from './store';
 import { setupMiddlewares, configureReduxStore } from './common';
 import userFactory from '../../lib/user';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import { setupLocale } from '../../boot/locale';
+import { USER_STORE_KEY } from './constants';
 
 /**
  * Style dependencies
@@ -27,22 +29,36 @@ import 'components/environment-badge/style.scss';
 const debug = debugFactory( 'calypso' );
 
 // Create Redux store
-const store = createStore();
+const userStore = createStore();
+
+const genericUserStore = {
+	getSelectors() {
+		return {
+			getCurrentUserId: () => getCurrentUserId( userStore.getState() ),
+		};
+	},
+	getActions() {
+		return {};
+	},
+	subscribe: userStore.subscribe,
+};
+
+registerGenericStore( USER_STORE_KEY, genericUserStore );
 
 function boot( currentUser ) {
 	debug( "Starting Calypso. Let's do this." );
 
-	configureReduxStore( currentUser, store );
-	setupMiddlewares( currentUser, store );
-	setupLocale( currentUser.get(), store );
+	configureReduxStore( currentUser, userStore );
+	setupMiddlewares( currentUser, userStore );
+	setupLocale( currentUser.get(), userStore );
 
 	page( '*', ( context, next ) => {
-		context.store = store;
+		context.store = userStore;
 		next();
 	} );
 
 	page.exit( '*', ( context, next ) => {
-		context.store = store;
+		context.store = userStore;
 		next();
 	} );
 
@@ -59,11 +75,9 @@ window.AppBoot = () => {
 		setupWpDataDebug();
 
 		ReactDom.render(
-			<Provider store={ store }>
-				<BrowserRouter basename="gutenboarding">
-					<Gutenboard />
-				</BrowserRouter>
-			</Provider>,
+			<BrowserRouter basename="gutenboarding">
+				<Gutenboard />
+			</BrowserRouter>,
 			document.getElementById( 'wpcom' )
 		);
 	}

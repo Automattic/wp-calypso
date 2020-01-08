@@ -7,3 +7,5 @@
  * @see https://stackoverflow.com/a/44755058/1432801
  */
 export const selectorDebounce = 300;
+
+export const USER_STORE_KEY = 'automattic/user';

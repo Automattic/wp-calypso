@@ -18,7 +18,6 @@ import {
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { rawShortcut, displayShortcut, shortcutAriaLabel } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
-import { useSelector } from 'react-redux';
 import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useRef, useState } from 'react';
@@ -28,12 +27,12 @@ import { useRouteMatch } from 'react-router-dom';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from '../../state/current-user/selectors';
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
+import { USER_STORE_KEY } from './constants';
 import { routes, Step } from './steps';
 import './style.scss';
 
@@ -52,7 +51,7 @@ export function Gutenboard() {
 	const toggleGeneralSidebar = () => updateIsEditorSidebarOpened( isOpen => ! isOpen );
 
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-	const isLoggedIn = useSelector( state => getCurrentUserId( state ) );
+	const isLoggedIn = useSelect( select => select( USER_STORE_KEY ).getCurrentUserId() );
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
