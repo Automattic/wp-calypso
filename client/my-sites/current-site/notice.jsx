@@ -25,9 +25,7 @@ import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
-import CartData from 'components/data/cart';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PendingPaymentNotice from './pending-payment-notice';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import QueryProductsList from 'components/data/query-products-list';
@@ -230,18 +228,6 @@ export class SiteNotice extends React.Component {
 		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
 
-	pendingPaymentNotice() {
-		if ( ! config.isEnabled( 'async-payments' ) ) {
-			return null;
-		}
-
-		return (
-			<CartData>
-				<PendingPaymentNotice />
-			</CartData>
-		);
-	}
-
 	render() {
 		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
@@ -266,7 +252,6 @@ export class SiteNotice extends React.Component {
 					) ) }
 				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
-				{ this.pendingPaymentNotice() }
 				{ ! hasJITM && domainCreditNotice }
 				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
 			</div>
