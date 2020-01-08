@@ -73,7 +73,7 @@ export class UpsellNudge extends Component {
 			showDismiss,
 			translate,
 		} = this.props;
-		const classes = classnames( 'upsell-nudge', className, isCompact ? 'compact' : '' );
+		const classes = classnames( 'upsell-nudge', className, { 'is-compact': isCompact } );
 
 		return (
 			<div className={ classes }>
