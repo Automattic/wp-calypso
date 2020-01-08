@@ -186,7 +186,7 @@ export function getMimeType( media ) {
 	}
 
 	extension = extension.toLowerCase();
-	if ( Object.keys( MimeTypes ).includes( extension ) ) {
+	if ( MimeTypes.hasOwnProperty( extension ) ) {
 		return MimeTypes[ extension ];
 	}
 }
