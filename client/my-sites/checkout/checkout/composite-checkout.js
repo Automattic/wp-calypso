@@ -82,7 +82,7 @@ function CountrySelectMenu( {
 			formFieldId={ countrySelectorId }
 			labelId={ countrySelectorLabelId }
 			descriptionId={ countrySelectorDescriptionId }
-			errorMessage={ errorMessage }
+			errorDescription={ errorMessage }
 		>
 			<FormCountrySelect
 				id={ countrySelectorId }
