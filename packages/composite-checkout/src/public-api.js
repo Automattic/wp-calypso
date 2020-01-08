@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	CheckoutProvider,
-	useEvents,
-	useMessages,
-	useCheckoutRedirects,
-} from './components/checkout-provider';
+import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import CheckoutStep from './components/checkout-step';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -67,7 +62,6 @@ export {
 	renderDisplayValueMarkdown,
 	useActiveStep,
 	useAllPaymentMethods,
-	useCheckoutRedirects,
 	useDispatch,
 	useEvents,
 	useFormStatus,

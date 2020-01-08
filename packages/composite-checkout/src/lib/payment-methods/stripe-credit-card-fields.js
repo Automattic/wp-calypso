@@ -26,7 +26,6 @@ import {
 	useDispatch,
 	useMessages,
 	useLineItems,
-	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
 	useEvents,
 } from '../../public-api';
@@ -511,7 +510,6 @@ function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage } = useMessages();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
@@ -570,8 +568,6 @@ function StripePayButton( { disabled } ) {
 					stripe,
 					stripeConfiguration,
 					showErrorMessage,
-					successUrl: successRedirectUrl,
-					cancelUrl: failureRedirectUrl,
 					beginStripeTransaction,
 					setFormSubmitting,
 				} )
@@ -605,8 +601,6 @@ async function submitStripePayment( {
 	stripe,
 	stripeConfiguration,
 	showErrorMessage,
-	successUrl,
-	cancelUrl,
 	beginStripeTransaction,
 	setFormSubmitting,
 	setFormReady,
@@ -620,8 +614,6 @@ async function submitStripePayment( {
 			items,
 			total,
 			stripeConfiguration,
-			successUrl,
-			cancelUrl,
 		} );
 	} catch ( error ) {
 		setFormReady();

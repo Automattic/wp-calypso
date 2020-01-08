@@ -57,8 +57,6 @@ function formatDataForTransactionsEndpoint( {
 	name,
 	items,
 	total,
-	successUrl,
-	cancelUrl,
 	paymentMethodType,
 	paymentPartnerProcessorId,
 	storedDetailsId,
@@ -72,8 +70,6 @@ function formatDataForTransactionsEndpoint( {
 		zip: postalCode, // TODO: do we need this in addition to postalCode?
 		postalCode,
 		country,
-		successUrl,
-		cancelUrl,
 	};
 	return {
 		cart: createCartFromLineItems( {
@@ -288,6 +284,8 @@ function useCreatePaymentMethods() {
 	const paypalMethod = useMemo(
 		() =>
 			createPayPalMethod( {
+				successUrl: `/checkout/thank-you/${ select( 'wpcom' )?.getSiteId?.() }/`, // TODO: get the correct redirect URL
+				cancelUrl: window.location.href,
 				registerStore: registerStore,
 				submitTransaction: submitData =>
 					makePayPalExpressRequest( {

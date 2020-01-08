@@ -23,11 +23,6 @@ import { getPlanBySlug } from 'state/plans/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-// These are used only for redirect payment methods
-// TODO: determine what these should be
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
 export function CompositeCheckout( {
 	siteSlug,
 	planSlug,
@@ -73,8 +68,6 @@ export function CompositeCheckout( {
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
 			onEvent={ handleCheckoutEvent }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ availablePaymentMethods }
 			registry={ registry }
 			isLoading={ isLoading }

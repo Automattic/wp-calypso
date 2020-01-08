@@ -39,10 +39,8 @@ const initialItems = [
 	},
 ];
 
-const successRedirectUrl = '/complete.html';
-const failureRedirectUrl = window.location.href;
-
 const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
 	window.location.href = successRedirectUrl;
 };
 const onEvent = event => window.console.log( 'Event', event );
@@ -107,6 +105,8 @@ const applePayMethod = isApplePayAvailable()
 const paypalMethod = createPayPalMethod( {
 	registerStore,
 	submitTransaction: makePayPalExpressRequest,
+	successUrl: '#',
+	cancelUrl: '#',
 } );
 
 export function isApplePayAvailable() {
@@ -315,8 +315,6 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
