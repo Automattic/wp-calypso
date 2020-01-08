@@ -68,7 +68,8 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		if ( ! this.props.recommendedThemes ) {
+		const { query, recommendedThemes } = this.props;
+		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}

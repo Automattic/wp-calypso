@@ -152,14 +152,14 @@ export class EditorDiscussion extends React.Component {
 											<ExternalLink
 												href="https://support.wordpress.com/comments/pingbacks/"
 												target="_blank"
-												icon="true"
+												icon
 											/>
 										),
 										trackbacksLink: (
 											<ExternalLink
 												href="https://support.wordpress.com/comments/trackbacks/"
 												target="_blank"
-												icon="true"
+												icon
 											/>
 										),
 									},

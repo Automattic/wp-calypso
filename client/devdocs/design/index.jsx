@@ -90,6 +90,7 @@ import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProductCard from 'components/product-card/docs/example';
+import ProductExpiration from 'components/product-expiration/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import PromoSection from 'components/promo-section/docs/example';
@@ -257,6 +258,7 @@ class DesignAssets extends React.Component {
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
+					<ProductExpiration readmeFilePath="product-expiration" />
 					<ProgressBar readmeFilePath="/packages/components/src/progress-bar" />
 					<PromoSection readmeFilePath="promo-section" />
 					<PromoCard readmeFilePath="promo-section/promo-card" />

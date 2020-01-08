@@ -1,4 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -30,6 +32,7 @@
 }
 
 .gutenboarding__header-back-button {
+	color: inherit;
 	.dashicons-arrow-left-alt {
 		margin-right: 5px;
 	}
@@ -54,6 +57,13 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 		outline: 0;
 	}
 
+	&:disabled {
+		opacity: 1;
+		.gutenboarding__site-title {
+			color: black;
+		}
+	}
+
 	.gutenboarding__site-title {
 		padding: 0;
 	}
@@ -65,6 +75,12 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 	}
 	> .dashicon {
 		align-self: flex-end;
+	}
+}
+
+.gutenboarding__header-domain-picker-button-domain {
+	&.placeholder {
+		@include placeholder();
 	}
 }
 

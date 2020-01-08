@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Localize a React component
  * @param {I18N} i18n I18N instance to use for localization
- * @returns {function} Component localization function
+ * @returns {Function} Component localization function
  */
 export default function( i18n ) {
 	const i18nProps = {
@@ -18,7 +18,7 @@ export default function( i18n ) {
 	/**
 	 * Localize a React component
 	 * @param  {React.Component} ComposedComponent React component to localize
-	 * @return {React.Component}                   The localized component
+	 * @returns {React.Component}                   The localized component
 	 */
 	return function( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';

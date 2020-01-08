@@ -175,7 +175,9 @@ class Home extends Component {
 				return translate( 'Make sure you share it with everyone and show it off.' );
 
 			default:
-				return translate( 'Next, use this quick list of setup tasks to get it ready to share.' );
+				return translate(
+					'Next, use this quick list of setup tasks to get your site ready to share.'
+				);
 		}
 	};
 
@@ -592,7 +594,7 @@ const connectHome = connect(
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
 		return {
-			displayChecklist: !! ( hasChecklistData && ! isChecklistComplete ),
+			displayChecklist: !! ( ! isAtomic && hasChecklistData && ! isChecklistComplete ),
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),

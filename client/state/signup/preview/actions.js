@@ -6,7 +6,7 @@ import { SIGNUP_SITE_PREVIEW_SHOW, SIGNUP_SITE_PREVIEW_HIDE } from 'state/action
 /**
  * Action creator: Hide signup site preview
  *
- * @return {Object} The action object.
+ * @returns {object} The action object.
  */
 export const hideSitePreview = () => ( {
 	type: SIGNUP_SITE_PREVIEW_HIDE,
@@ -15,7 +15,7 @@ export const hideSitePreview = () => ( {
 /**
  * Action creator: Show signup site preview
  *
- * @return {Object} The action object.
+ * @returns {object} The action object.
  */
 export const showSitePreview = () => ( {
 	type: SIGNUP_SITE_PREVIEW_SHOW,

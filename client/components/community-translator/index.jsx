@@ -90,7 +90,7 @@ class CommunityTranslator extends Component {
 	 * @param { String } originalFromPage - original string
 	 * @param { String } displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
-	 * @returns {Object} DOM object
+	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {

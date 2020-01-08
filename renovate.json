@@ -43,6 +43,10 @@
 		{
 			"packageName": "tinymce",
 			"allowedVersions": "^4"
+		},
+		{
+			"extends": "monorepo:storybook",
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,

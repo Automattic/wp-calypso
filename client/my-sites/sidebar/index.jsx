@@ -36,6 +36,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -63,7 +64,6 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import Badge from 'components/badge';
 /**
  * Style dependencies
  */
@@ -229,9 +229,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackEarnClick }
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
-			>
-				<Badge type="info">{ translate( 'New' ) }</Badge>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -335,13 +333,14 @@ export class MySitesSidebar extends Component {
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
-		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 
-		if ( ! this.props.siteId ) {
-			return null;
+		let domainsLink = '/domains/manage';
+
+		if ( this.props.siteSuffix ) {
+			domainsLink += this.props.siteSuffix;
 		}
 
-		if ( ! canUserManageOptions ) {
+		if ( this.props.siteId && ! canUserManageOptions ) {
 			return null;
 		}
 
@@ -703,8 +702,11 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
+		if ( this.props.isMigrationInProgress ) {
+			return <SidebarMenu />;
+		}
+
 		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
-		const manage = !! this.upgrades() || !! this.users() || !! this.siteSettings();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -752,7 +754,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{ manage && (
+				{
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
 						expanded={ this.props.isManageSectionOpen }
@@ -766,7 +768,7 @@ export class MySitesSidebar extends Component {
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
-				) }
+				}
 
 				{ this.wpAdmin() }
 			</div>
@@ -823,6 +825,7 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,

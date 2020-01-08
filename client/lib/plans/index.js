@@ -439,18 +439,14 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanType = siteType => {
-	switch ( siteType ) {
-		case 'blog':
-			return TYPE_PERSONAL;
-		case 'professional':
-			return TYPE_PREMIUM;
-		default:
-			return TYPE_BUSINESS;
-	}
-};
-
-export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+export const getPopularPlanSpec = ( {
+	customerType,
+	isJetpack,
+	abtest,
+	isInSignup,
+	isLaunchPage,
+	countryCode,
+} ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
@@ -461,40 +457,28 @@ export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest 
 		group: GROUP_WPCOM,
 	};
 
-	// Not sure why, but things break if the abtest lib is imported in this file
-	if ( ! siteType || abtest( 'popularPlanBy' ) === 'customerType' ) {
-		if ( customerType === 'personal' ) {
-			spec.type = TYPE_PREMIUM;
-		}
-		return spec;
-	}
+	if ( customerType === 'personal' ) {
+		const isUserOutsideUS = countryCode && 'US' !== countryCode;
 
-	spec.type = getPopularPlanType( siteType );
+		if (
+			isInSignup &&
+			! isLaunchPage &&
+			isUserOutsideUS &&
+			'control' === abtest( 'nonEnglishDomainStepCopyUpdates' ) &&
+			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
+		) {
+			return spec;
+		}
+
+		spec.type = TYPE_PREMIUM;
+	}
 
 	return spec;
 };
 
-export const chooseDefaultCustomerType = ( {
-	currentCustomerType,
-	selectedPlan,
-	currentPlan,
-	siteType,
-	abtest,
-} ) => {
+export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
-	}
-
-	if ( abtest( 'popularPlanBy' ) === 'siteType' ) {
-		// Choose the tab that will make the "POPULAR" label visible when the
-		// page is first loaded.
-		switch ( siteType ) {
-			case 'blog':
-			case 'professional':
-				return 'personal';
-			default:
-				return 'business';
-		}
 	}
 
 	const group = GROUP_WPCOM;

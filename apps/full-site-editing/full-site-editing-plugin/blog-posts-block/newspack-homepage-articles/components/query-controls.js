@@ -3,7 +3,12 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { QueryControls as BaseControl, SelectControl, ToggleControl } from '@wordpress/components';
+import {
+	Button,
+	QueryControls as BaseControl,
+	SelectControl,
+	ToggleControl,
+} from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -14,6 +19,9 @@ import { decodeEntities } from '@wordpress/html-entities';
 import AutocompleteTokenField from './autocomplete-tokenfield';
 
 class QueryControls extends Component {
+	state = {
+		showAdvancedFilters: false,
+	};
 
 	fetchPostSuggestions = search => {
 		return apiFetch( {
@@ -151,12 +159,16 @@ class QueryControls extends Component {
 			onCategoriesChange,
 			tags,
 			onTagsChange,
+			tagExclusions,
+			onTagExclusionsChange,
 			enableSpecific,
 		} = this.props;
+		const { showAdvancedFilters } = this.state;
 
 		return [
 			enableSpecific && (
 				<ToggleControl
+					key="specificMode"
 					checked={ specificMode }
 					onChange={ onSpecificModeChange }
 					label={ __( 'Choose specific stories', 'newspack-blocks' ) }
@@ -164,6 +176,7 @@ class QueryControls extends Component {
 			),
 			specificMode && (
 				<AutocompleteTokenField
+					key="posts"
 					tokens={ specificPosts || [] }
 					onChange={ onSpecificPostsChange }
 					fetchSuggestions={ this.fetchPostSuggestions }
@@ -171,9 +184,10 @@ class QueryControls extends Component {
 					label={ __( 'Posts', 'newspack-blocks' ) }
 				/>
 			),
-			! specificMode && <BaseControl { ...this.props } />,
+			! specificMode && <BaseControl key="queryControls" { ...this.props } />,
 			! specificMode && onAuthorsChange && (
 				<AutocompleteTokenField
+					key="authors"
 					tokens={ authors || [] }
 					onChange={ onAuthorsChange }
 					fetchSuggestions={ this.fetchAuthorSuggestions }
@@ -183,20 +197,45 @@ class QueryControls extends Component {
 			),
 			! specificMode && onCategoriesChange && (
 				<AutocompleteTokenField
+					key="categories"
 					tokens={ categories || [] }
 					onChange={ onCategoriesChange }
 					fetchSuggestions={ this.fetchCategorySuggestions }
 					fetchSavedInfo={ this.fetchSavedCategories }
 					label={ __( 'Categories', 'newspack-blocks' ) }
-					/>
+				/>
 			),
 			! specificMode && onTagsChange && (
 				<AutocompleteTokenField
+					key="tags"
 					tokens={ tags || [] }
 					onChange={ onTagsChange }
 					fetchSuggestions={ this.fetchTagSuggestions }
 					fetchSavedInfo={ this.fetchSavedTags }
 					label={ __( 'Tags', 'newspack-blocks' ) }
+				/>
+			),
+			! specificMode && onTagExclusionsChange && (
+				<p>
+					<Button
+						key="toggle-advanced-filters"
+						isLink
+						onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
+					>
+						{ showAdvancedFilters
+							? __( 'Hide Advanced Filters', 'newspack-blocks' )
+							: __( 'Show Advanced Filters', 'newspack-blocks' ) }
+					</Button>
+				</p>
+			),
+			! specificMode && onTagExclusionsChange && showAdvancedFilters && (
+				<AutocompleteTokenField
+					key="tag-exclusion"
+					tokens={ tagExclusions || [] }
+					onChange={ onTagExclusionsChange }
+					fetchSuggestions={ this.fetchTagSuggestions }
+					fetchSavedInfo={ this.fetchSavedTags }
+					label={ __( 'Excluded Tags', 'newspack-blocks' ) }
 				/>
 			),
 		];
@@ -209,6 +248,7 @@ QueryControls.defaultProps = {
 	authors: [],
 	categories: [],
 	tags: [],
+	tagExclusions: [],
 };
 
 export default QueryControls;

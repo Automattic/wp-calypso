@@ -19,8 +19,8 @@ import { USER_SETTING_KEY } from './constants';
  * Returns an action object signalling the remote preferences have been
  * received.
  *
- * @param  {Object} values Preference values
- * @return {Object}        Action object
+ * @param  {object} values Preference values
+ * @returns {object}        Action object
  */
 export function receivePreferences( values ) {
 	return {

@@ -51,11 +51,6 @@
 		color: var( --color-text-inverted );
 	}
 
-	.is-warning & {
-		background: var( --color-warning );
-		color: var( --color-text-inverted );
-	}
-
 	.is-error & {
 		background: var( --color-error );
 		color: var( --color-text-inverted );
@@ -96,7 +91,6 @@
 	display: flex;
 	justify-content: space-between;
 
-	.is-warning &,
 	.is-update & {
 		background: var( --color-warning );
 	}

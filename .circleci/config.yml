@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.16.3-browsers
+    - image: circleci/node:12.14.0-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -215,6 +215,14 @@ jobs:
           # Report but don't fail the build (`|| exit 0`)
           command: npm run typecheck || exit 0
 
+  typecheck-strict:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: TypeScript strict typecheck of individual subprojects
+          command: npm run typecheck -- --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
@@ -679,6 +687,9 @@ workflows:
       - typecheck:
           requires:
             - setup
+      - typecheck-strict:
+          requires:
+            - setup
       - wait-calypso-live:
           requires:
             - test-client
@@ -781,7 +792,7 @@ workflows:
           name: test-e2e-jetpack
           requires:
             - setup
-          test-flags: '-j'
+          test-flags: '-j -s desktop'
           jetpack-host: 'PRESSABLEBLEEDINGEDGE'
           test-target: 'JETPACK'
           slack-webhook: '$SLACK_JP'

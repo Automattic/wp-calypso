@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Returns true if a comment tree has been initialized.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   The ID of the site we're querying
- * @param  {String}  status   unapproved|approved|all|spam|trash
- * @return {Boolean} True if the comment tree has been initialized
+ * @param  {object}  state    Global state tree
+ * @param  {number}  siteId   The ID of the site we're querying
+ * @param  {string}  status   unapproved|approved|all|spam|trash
+ * @returns {boolean} True if the comment tree has been initialized
  */
 export default function isCommentsTreeInitialized( state, siteId, status ) {
 	if ( 'all' === status ) {

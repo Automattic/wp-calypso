@@ -8,8 +8,8 @@ import createSelector from 'lib/create-selector';
 /**
  * Get all public sites
  *
- * @param {Object} state  Global state tree
- * @return {Array}        Site objects
+ * @param {object} state  Global state tree
+ * @returns {Array}        Site objects
  */
 export default createSelector(
 	state =>

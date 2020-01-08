@@ -15,9 +15,9 @@ import { combineReducers, withSchemaValidation } from 'state/utils';
 /**
  * Tracks the current message the user has typed into the happychat client
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const currentMessage = ( state = '', action ) => {
@@ -35,9 +35,9 @@ const lostFocusAtSchema = { type: 'number' };
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
- * @param {Object} state Current state
- * @param {Object} action Action payload
- * @return {Object}        Updated state
+ * @param {object} state Current state
+ * @param {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -67,9 +67,9 @@ const isOpen = ( state = false, action ) => {
 /**
  * Tracks the state of the happychat minimizing process
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 const isMinimizing = ( state = false, action ) => {

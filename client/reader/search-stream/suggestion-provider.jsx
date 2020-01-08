@@ -15,9 +15,9 @@ import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags
- * @param  {Number} count The number of suggestions required
+ * @param  {number} count The number of suggestions required
  * @param  {Array} tags  An array of subscribed tags
- * @return {Array}       An array of suggestions, or null if no tags where provided
+ * @returns {Array}       An array of suggestions, or null if no tags where provided
  */
 function suggestionsFromTags( count, tags ) {
 	if ( tags ) {

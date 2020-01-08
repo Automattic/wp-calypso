@@ -524,3 +524,16 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	opacity: 0.33;
 	pointer-events: none;
 }
+
+.site-settings__writing-settings {
+	.theme-enhancements__card {
+		.form-fieldset.minileven {
+			&.inactive {
+				p, .form-toggle__label, .support-info {
+					opacity: 0.3;
+					transition: all 0.75s;
+				}
+			}
+		}
+	}
+}

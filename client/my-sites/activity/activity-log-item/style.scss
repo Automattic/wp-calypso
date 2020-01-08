@@ -186,13 +186,11 @@
 
 .activity-log-item__actor {
 	display: flex;
-	flex-shrink: 0;
-	min-width: 180px;
-	max-width: 100%;
 	margin-right: 32px;
 	align-items: center;
 
 	@include breakpoint( '>960px' ) {
+		flex: 0 0 180px;
 		margin-left: -56px;
 	}
 

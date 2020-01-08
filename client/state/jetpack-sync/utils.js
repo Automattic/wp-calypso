@@ -3,7 +3,7 @@
  * from the API when checking sync status for a site.
  *
  *
- * @return {Array} Array of strings that are expected keys in API response.
+ * @returns {Array} Array of strings that are expected keys in API response.
  */
 
 export function getExpectedResponseKeys() {

@@ -6,11 +6,7 @@ jest.mock( 'store', () => ( {
 	get: () => {},
 	User: () => {},
 } ) );
-jest.mock( 'components/language-picker', () => 'LanguagePicker' );
-jest.mock( 'components/popover', () => 'Popover' );
-jest.mock( 'components/info-popover', () => 'InfoPopover' );
 jest.mock( 'components/banner', () => 'Banner' );
-jest.mock( 'components/data/query-site-settings', () => 'QuerySiteSettings' );
 
 /**
  * External dependencies

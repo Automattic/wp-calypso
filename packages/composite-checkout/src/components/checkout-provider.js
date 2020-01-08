@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -14,6 +14,7 @@ import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, createRegistry } from '../lib/registry';
+import { useFormStatusManager } from '../lib/form-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -29,19 +30,28 @@ export const CheckoutProvider = props => {
 		locale,
 		total,
 		items,
-		onSuccess,
-		onFailure,
-		successRedirectUrl,
-		failureRedirectUrl,
+		onPaymentComplete,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
 		theme,
 		paymentMethods,
 		registry,
 		onEvent,
+		isLoading,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods ? paymentMethods[ 0 ].id : null
 	);
+
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	useEffect( () => {
+		if ( formStatus === 'complete' ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			onPaymentComplete();
+		}
+	}, [ formStatus, onPaymentComplete ] );
 
 	// Remove undefined and duplicate CheckoutWrapper properties
 	const wrappers = [
@@ -53,16 +63,29 @@ export const CheckoutProvider = props => {
 	const registryRef = useRef( registry );
 	registryRef.current = registryRef.current || createRegistry();
 
-	const value = {
-		allPaymentMethods: paymentMethods,
-		paymentMethodId,
-		setPaymentMethodId,
-		onSuccess,
-		onFailure,
-		successRedirectUrl,
-		failureRedirectUrl,
-		onEvent,
-	};
+	const value = useMemo(
+		() => ( {
+			allPaymentMethods: paymentMethods,
+			paymentMethodId,
+			setPaymentMethodId,
+			showErrorMessage,
+			showInfoMessage,
+			showSuccessMessage,
+			onEvent: onEvent || ( () => {} ),
+			formStatus,
+			setFormStatus,
+		} ),
+		[
+			formStatus,
+			onEvent,
+			paymentMethodId,
+			paymentMethods,
+			setFormStatus,
+			showErrorMessage,
+			showInfoMessage,
+			showSuccessMessage,
+		]
+	);
 
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
@@ -94,11 +117,12 @@ CheckoutProvider.propTypes = {
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethodId: PropTypes.string,
-	onSuccess: PropTypes.func.isRequired,
-	onFailure: PropTypes.func.isRequired,
-	successRedirectUrl: PropTypes.string.isRequired,
-	failureRedirectUrl: PropTypes.string.isRequired,
+	onPaymentComplete: PropTypes.func.isRequired,
+	showErrorMessage: PropTypes.func.isRequired,
+	showInfoMessage: PropTypes.func.isRequired,
+	showSuccessMessage: PropTypes.func.isRequired,
 	onEvent: PropTypes.func,
+	isLoading: PropTypes.bool,
 };
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
@@ -106,25 +130,37 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		total,
 		items,
-		onSuccess,
-		onFailure,
-		successRedirectUrl,
-		failureRedirectUrl,
+		onPaymentComplete,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
 		paymentMethods,
 	} = propsToValidate;
-	debug( 'propsToValidate', propsToValidate );
+	useEffect( () => {
+		debug( 'propsToValidate', propsToValidate );
 
-	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
-	validateArg( total, 'CheckoutProvider missing required prop: total' );
-	validateTotal( total );
-	validateArg( items, 'CheckoutProvider missing required prop: items' );
-	validateLineItems( items );
-	validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
-	validatePaymentMethods( paymentMethods );
-	validateArg( onSuccess, 'CheckoutProvider missing required prop: onSuccess' );
-	validateArg( onFailure, 'CheckoutProvider missing required prop: onFailure' );
-	validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
-	validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
+		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
+		validateArg( total, 'CheckoutProvider missing required prop: total' );
+		validateTotal( total );
+		validateArg( items, 'CheckoutProvider missing required prop: items' );
+		validateLineItems( items );
+		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
+		validatePaymentMethods( paymentMethods );
+		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
+		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
+		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
+		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
+	}, [
+		items,
+		locale,
+		onPaymentComplete,
+		paymentMethods,
+		propsToValidate,
+		showErrorMessage,
+		showInfoMessage,
+		showSuccessMessage,
+		total,
+	] );
 	return null;
 }
 
@@ -134,18 +170,18 @@ function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	}, children );
 }
 
-export const useCheckoutHandlers = () => {
-	const { onSuccess, onFailure, onEvent } = useContext( CheckoutContext );
-	if ( ! onSuccess || ! onFailure ) {
-		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
+export function useEvents() {
+	const { onEvent } = useContext( CheckoutContext );
+	if ( ! onEvent ) {
+		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
 	}
-	return { onSuccess, onFailure, onEvent };
-};
+	return onEvent;
+}
 
-export const useCheckoutRedirects = () => {
-	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
-	if ( ! successRedirectUrl || ! failureRedirectUrl ) {
-		throw new Error( 'useCheckoutRedirects can only be used inside a CheckoutProvider' );
+export function useMessages() {
+	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
+	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
+		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
 	}
-	return { successRedirectUrl, failureRedirectUrl };
-};
+	return { showErrorMessage, showInfoMessage, showSuccessMessage };
+}

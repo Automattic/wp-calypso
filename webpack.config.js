@@ -66,6 +66,7 @@ const nodeModulesToTranspile = [
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
 	'@github/webauthn-json/',
 	'acorn-jsx/',
+	'chalk/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
@@ -75,7 +76,7 @@ const nodeModulesToTranspile = [
 	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',
-	'striptags',
+	'striptags/',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
 ];

@@ -14,8 +14,8 @@ import {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post formats for a site.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function requestPostFormats( siteId ) {
 	return dispatch => {

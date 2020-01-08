@@ -51,7 +51,6 @@ exports[`Plans should render plans 1`] = `
         },
         "domain": "an.example.site",
         "hasConflict": false,
-        "hasMinimumJetpackVersion": true,
         "isMainNetworkSite": true,
         "isSecondaryNetworkSite": false,
         "isSiteUpgradeable": true,

@@ -18,9 +18,9 @@ import {
 /**
  * Returns if a reviews request for a specific query is in progress or not.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -36,9 +36,9 @@ export function isQueryLoading( state = {}, action ) {
 /**
  * Tracks all known reviews objects, indexed by ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	if ( action.error ) {
@@ -67,9 +67,9 @@ export function items( state = {}, action ) {
 /**
  * Returns if a reviews request for a specific query has returned an error.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryError( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.error ) {
@@ -84,9 +84,9 @@ export function isQueryError( state = {}, action ) {
  * Tracks the reviews which belong to a query, as a list of IDs
  * referencing items in `reviews.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
@@ -100,9 +100,9 @@ export function queries( state = {}, action ) {
 /**
  * Tracks the total number of reviews for the current query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function total( state = 0, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {

@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
+import { useEvents } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import Button from './button';
 
 export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
 	const translate = useTranslate();
+	const onEvent = useEvents();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 	const [ hasCouponError, setHasCouponError ] = useState( false );
@@ -34,7 +36,8 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 					couponFieldValue,
 					setHasCouponError,
 					couponAdded,
-					setIsCouponApplied
+					setIsCouponApplied,
+					onEvent
 				);
 			} }
 		>
@@ -108,13 +111,18 @@ function handleFormSubmit(
 	couponFieldValue,
 	setHasCouponError,
 	couponAdded,
-	setIsCouponApplied
+	setIsCouponApplied,
+	onEvent
 ) {
 	event.preventDefault();
 
 	//TODO: Validate coupon field and replace condition in the following if statement
 	if ( couponFieldValue === 'Add' ) {
 		setIsCouponApplied( true );
+		onEvent( {
+			type: 'a8c_checkout_add_coupon',
+			payload: { coupon: couponFieldValue },
+		} );
 
 		if ( couponAdded ) {
 			couponAdded();
@@ -123,5 +131,9 @@ function handleFormSubmit(
 		return;
 	}
 
+	onEvent( {
+		type: 'a8c_checkout_add_coupon_error',
+		payload: { type: 'Invalid code' },
+	} );
 	setHasCouponError( true );
 }

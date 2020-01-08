@@ -135,18 +135,15 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 .template-selector-control__options {
 	display: grid;
-	// stylelint-disable-next-line unit-whitelist
 	grid-template-columns: 1fr;
 	grid-gap: 1.75em;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		margin-top: 0;
-		// stylelint-disable unit-whitelist
 		grid-template-columns: repeat(
 			auto-fit,
 			minmax( 110px, 1fr )
 		); // allow grid to take over number of cols on large screens
-		// stylelint-enable unit-whitelist
 	}
 }
 

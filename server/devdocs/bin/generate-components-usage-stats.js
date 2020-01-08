@@ -78,7 +78,7 @@ function getModulesWithDependencies( root, fileList ) {
  * Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-haste
  *
  * @param {string} code The source code string to parse
- * @returns {array} An array of required modules, if any
+ * @returns {Array} An array of required modules, if any
  */
 function getDependencies( code ) {
 	var cache = Object.create( null );

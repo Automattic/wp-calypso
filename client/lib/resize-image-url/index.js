@@ -22,7 +22,7 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  * high pixel-density displays (e.g. retina). This multiplier currently maxes
  * at 2x image size, though could foreseeably be the exact display ratio.
  *
- * @type {Number}
+ * @type {number}
  */
 const IMAGE_SCALE_FACTOR =
 	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
@@ -30,14 +30,14 @@ const IMAGE_SCALE_FACTOR =
 /**
  * Query parameters to be treated as image dimensions
  *
- * @type {String[]}
+ * @type {string[]}
  */
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 
 /**
  * Mappings of supported safe services to patterns by which they can be matched
  *
- * @type {Object}
+ * @type {object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
 	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,
@@ -47,8 +47,8 @@ const SERVICE_HOSTNAME_PATTERNS = {
 /**
  * Given a numberic value, returns the value multiplied by image scale factor
  *
- * @param  {Number} value Original value
- * @return {Number}       Updated value
+ * @param  {number} value Original value
+ * @returns {number}       Updated value
  */
 const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 
@@ -61,12 +61,12 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  * URL containing query string arguments is passed to this function, it will
  * return `null`.
  *
- * @param   {String}          imageUrl Original image url
- * @param   {(Number|Object)} resize   Resize pixel width, or object of query
+ * @param   {string}          imageUrl Original image url
+ * @param   {(number|object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
- * @param   {?Number}         height   Pixel height if specifying resize width
- * @param   {?Boolean}        makeSafe Should we make sure this is on a safe host?
- * @returns {?String}                  Resized image URL, or `null` if unable to resize
+ * @param   {?number}         height   Pixel height if specifying resize width
+ * @param   {?boolean}        makeSafe Should we make sure this is on a safe host?
+ * @returns {?string}                  Resized image URL, or `null` if unable to resize
  */
 export default function resizeImageUrl( imageUrl, resize, height, makeSafe = true ) {
 	if ( 'string' !== typeof imageUrl ) {

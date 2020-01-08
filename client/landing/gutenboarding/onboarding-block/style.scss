@@ -1,5 +1,8 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 
+// This should match the timeout used in the component.
+$onboarding-block-css-transition-duration: 750ms;
+
 .onboarding-block__acquire-intent {
 	display: flex;
 	justify-content: center;
@@ -10,6 +13,17 @@
 	top: 20%;
 	left: 0%;
 	width: 100%;
+
+	.onboarding-block__question-answered,
+	.onboarding-block__question-input,
+	.onboarding-block__question-input::placeholder,
+	.onboarding-block__question,
+	.onboarding-block__questions-heading,
+	.onboarding-block__question-skip {
+		// @TODO: replace with opacity transition as described in https://github.com/Automattic/wp-calypso/pull/38412/files#r358123862
+		transition: $onboarding-block-css-transition-duration color linear
+			$onboarding-block-css-transition-duration;
+	}
 }
 
 .onboarding-block__questions {
@@ -44,13 +58,14 @@
 	position: fixed;
 	top: 0;
 	bottom: 0;
-	width: 100%;
+	left: 0;
+	right: 0;
 	background-size: cover;
 	z-index: -1;
 }
 
-.onboarding-block__background::before {
-	background: $white;
+.onboarding-block__background.has-background::before {
+	background-color: $white;
 	content: '';
 	position: absolute;
 	top: 0;
@@ -58,8 +73,15 @@
 	bottom: 0;
 	left: 0;
 	opacity: 0.7;
-	transition: opacity 1s linear;
+	transition: opacity $onboarding-block-css-transition-duration linear,
+		// @TODO: replace with opacity transition
+			background-color $onboarding-block-css-transition-duration linear
+			$onboarding-block-css-transition-duration;
+	@media ( prefers-color-scheme: dark ) {
+		background-color: $dark-gray-900;
+	}
 }
+
 .onboarding-block__background-fade-enter {
 	&.onboarding-block__background::before {
 		opacity: 0.8;
@@ -74,7 +96,7 @@
 .onboarding-block__background-fade-enter,
 .onboarding-block__background-fade-exit,
 .onboarding-block__background-fade-enter-done {
-	transition: opacity 1s linear;
+	transition: opacity $onboarding-block-css-transition-duration linear;
 }
 
 @media ( prefers-color-scheme: dark ) {
@@ -97,9 +119,6 @@
 			.onboarding-block__question-answered {
 				color: $blue-medium-highlight;
 			}
-		}
-		.onboarding-block__background::before {
-			background: $dark-gray-900;
 		}
 		.components-button.is-link.onboarding-block__question-skip {
 			color: $light-gray-500;

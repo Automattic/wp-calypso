@@ -42,7 +42,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * Handles input focus events with fixed arguments
 	 * for consistency via partial application
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputFocus = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
@@ -56,7 +56,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * Handles input blur events with fixed arguments
 	 * for consistency via partial application
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputBlur = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
@@ -70,7 +70,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	 * Handles input change events with fixed arguments
 	 * for consistency via partial application
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputChange = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {

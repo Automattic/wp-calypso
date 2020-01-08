@@ -1,0 +1,218 @@
+@import '~@wordpress/base-styles/colors';
+
+$design-selector-transition-timing: 250ms;
+
+$design-selector-max-width: 1100px;
+$design-selector-header-height: 60px;
+// We'll use this height to move the heading up out of the viewport.
+// Gutenberg editor adds 50px
+$design-selector-header-vertical-shift: $design-selector-header-height + 50px;
+$deisgn-selector-selection-space: 175px;
+
+@mixin design-selector-show {
+	transform: translate3d( 0, 0, 0 );
+}
+@mixin design-selector-hide {
+	transform: translate3d( 0, 100vh, 0 );
+}
+
+@mixin design-selector-transition {
+	transition: $design-selector-transition-timing transform ease-out;
+}
+
+.design-selector {
+	@include design-selector-transition();
+	transform: translate3d( 0, 0, 0 );
+	&.has-selected-design {
+		transform: translate3d( 0, -( $design-selector-header-vertical-shift ), 0 );
+	}
+}
+
+.design-selector__title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.25em;
+	text-align: center;
+}
+
+.design-selector__subtitle {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	margin-bottom: 3em;
+	text-align: center;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	.design-selector__subtitle,
+	.design-selector__title {
+		color: $white;
+	}
+}
+
+.design-selector__grid-container {
+	position: absolute;
+	margin-top: 1em;
+
+	&.exit,
+	&.exit-done {
+		overflow-y: hidden;
+		height: 100vh;
+
+		.design-selector__grid {
+			@include design-selector-hide();
+		}
+	}
+}
+.design-selector__grid {
+	@include design-selector-transition();
+	display: grid;
+	grid-gap: 4.5em;
+
+	@include breakpoint( '>660px' ) {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@include design-selector-show();
+}
+
+.design-selector__page-layout-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.design-selector__page-layout-container {
+	position: absolute;
+	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
+	width: 100%;
+	background: $white;
+	box-shadow: $dark-gray-300 0 0 12px;
+	padding: 2em 4em;
+
+	@include design-selector-transition();
+	transition-timing-function: ease-out;
+
+	&,
+	&.enter,
+	&.exit-active.exit-active , // duplicate selector to override `.exit` below
+	&.exit-done {
+		@include design-selector-hide();
+	}
+
+	&.exit,
+	&.enter-active,
+	&.enter-done {
+		@include design-selector-show();
+	}
+}
+
+.page-layout-selector {
+	max-width: $design-selector-max-width;
+	margin: 0 auto;
+}
+
+.design-selector__header-container {
+	height: $design-selector-header-height;
+}
+
+.page-layout-selector__title {
+	font-weight: bold;
+	margin-bottom: 1em;
+	font-size: 1.3em;
+}
+
+.page-layout-selector__grid {
+	display: grid;
+	grid-gap: 1.25em;
+	@include breakpoint( '>660px' ) {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}
+
+.page-layout-selector__item {
+	position: relative;
+	overflow: hidden;
+	padding: 2px;
+
+	&.is-selected {
+		border: 3px solid $blue-medium-focus;
+		padding: 0;
+		.page-layout-selector__selected-indicator {
+			top: -2px;
+			right: -2px;
+			transform: translate3d( 0, 0, 0 );
+		}
+	}
+
+	&:hover,
+	&:focus {
+		border: 3px solid var( --color-neutral-dark );
+		padding: 0;
+		.page-layout-selector__selected-indicator {
+			background: linear-gradient(
+				to bottom left,
+				var( --color-neutral-dark ),
+				var( --color-neutral-dark ) 50%,
+				transparent 51% /* 1% difference helps prevent a rough edge */
+			);
+		}
+	}
+}
+
+.page-layout-selector__selected-indicator {
+	$size: 24px; // should match icon size
+	$full-size: floor( $size * 1.66 );
+
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: $full-size;
+	height: $full-size;
+
+	text-align: right;
+	color: $white;
+	background: linear-gradient(
+		to bottom left,
+		$blue-medium-focus,
+		$blue-medium-focus 50%,
+		transparent 51% /* 1% difference helps prevent a rough edge */
+	);
+
+	transition: 80ms transform linear;
+	transform: translate3d( $size, -$size, 0 );
+}
+
+.design-selector__design-option {
+	transform: translate3d( 0, 0, 0 );
+	@include design-selector-transition();
+
+	.design-selector__option-overlay {
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: 400ms;
+
+		.design-selector__option-overlay-text {
+			font-size: 24px;
+			color: $white;
+			border-bottom: 2px solid $white;
+		}
+	}
+
+	&:hover,
+	&:focus {
+		.design-selector__option-overlay {
+			opacity: 1;
+		}
+	}
+}

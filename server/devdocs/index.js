@@ -47,7 +47,7 @@ marked.setOptions( {
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
  * @param {object} query The search query for lunr
- * @returns {array} The results from the query
+ * @returns {Array} The results from the query
  */
 function queryDocs( query ) {
 	return docsIndex.search( query ).map( result => {
@@ -64,8 +64,8 @@ function queryDocs( query ) {
 
 /**
  * Return an array of results based on the provided filenames
- * @param {array} filePaths An array of file paths
- * @returns {array} The results from the docs
+ * @param {Array} filePaths An array of file paths
+ * @returns {Array} The results from the docs
  */
 function listDocs( filePaths ) {
 	return filePaths.map( path => {

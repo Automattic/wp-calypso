@@ -7,8 +7,8 @@ const path = require( 'path' );
 /**
  * Given a module name, returns the package version
  *
- * @param  {String} id Module name
- * @return {String}    Module version
+ * @param  {string} id Module name
+ * @returns {string}    Module version
  */
 function getModuleVersion( id ) {
 	return require( id + '/package.json' ).version;
@@ -20,7 +20,7 @@ function getModuleVersion( id ) {
  * transform plugin to ensure proper cachebusting.
  *
  * @see https://github.com/babel/babel-loader/blob/501d60d/src/index.js#L85-L92
- * @type {String}
+ * @type {string}
  */
 module.exports = JSON.stringify( {
 	'babel-loader': getModuleVersion( 'babel-loader' ),

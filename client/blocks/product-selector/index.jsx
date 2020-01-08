@@ -19,6 +19,7 @@ import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -155,7 +156,7 @@ export class ProductSelector extends Component {
 	}
 
 	getSubtitleByProduct( product ) {
-		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
+		const { currentPlanSlug, selectedSiteSlug, translate } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
@@ -172,15 +173,17 @@ export class ProductSelector extends Component {
 
 		const purchase = product ? this.getPurchaseByProduct( product ) : null;
 
-		if ( purchase ) {
-			return translate( 'Purchased on %(purchaseDate)s', {
-				args: {
-					purchaseDate: moment( purchase.subscribedDate ).format( 'LL' ),
-				},
-			} );
+		if ( ! purchase ) {
+			return null;
 		}
 
-		return null;
+		return (
+			<ProductExpiration
+				expiryDateMoment={ purchase.expiryMoment }
+				purchaseDateMoment={ purchase.subscribedMoment }
+				isRefundable={ purchase.isRefundable }
+			/>
+		);
 	}
 
 	getDescriptionByProduct( product ) {

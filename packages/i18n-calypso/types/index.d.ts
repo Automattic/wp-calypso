@@ -74,8 +74,8 @@ declare namespace i18nCalypso {
 		thousandsSep?: string;
 	}
 
-	export function numberFormat( number: number, numberOfDecimalPlaces: number );
-	export function numberFormat( number: number, options: NumberFormatOptions );
+	export function numberFormat( number: number, numberOfDecimalPlaces: number ): string;
+	export function numberFormat( number: number, options: NumberFormatOptions ): string;
 
 	export interface LocalizeProps {
 		locale: string;

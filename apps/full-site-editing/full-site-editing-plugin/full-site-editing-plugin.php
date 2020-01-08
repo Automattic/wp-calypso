@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.17
+ * Version: 0.18.2
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.17' );
+define( 'PLUGIN_VERSION', '0.18.2' );
 
 // Always include these helper files for FSE.
 require_once __DIR__ . '/full-site-editing/helpers.php';
@@ -119,18 +119,24 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 /**
  * Load Event Countdown Block
  */
-add_action( 'plugins_loaded', function() {
-	require_once __DIR__ . '/event-countdown-block/index.php';
-} );
+add_action(
+	'plugins_loaded',
+	function() {
+		require_once __DIR__ . '/event-countdown-block/index.php';
+	}
+);
 
 /**
  * Load Timeline Block
  */
-add_action( 'plugins_loaded', function() {
-	require_once __DIR__ . '/jetpack-timeline/index.php';
-} );
+add_action(
+	'plugins_loaded',
+	function() {
+		require_once __DIR__ . '/jetpack-timeline/index.php';
+	}
+);
 
-/** 
+/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,

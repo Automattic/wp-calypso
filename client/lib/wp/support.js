@@ -10,8 +10,8 @@ export default function wpcomSupport( wpcom ) {
 
 	/**
 	 * Add the supportUser and supportToken to the query.
-	 * @param {Object}  params The original request params object
-	 * @return {Object}        The new query object with support data injected
+	 * @param {object}  params The original request params object
+	 * @returns {object}        The new query object with support data injected
 	 */
 	const addSupportData = function( params ) {
 		// Unwind the query string
@@ -28,8 +28,8 @@ export default function wpcomSupport( wpcom ) {
 
 	/**
 	 * Add the supportUser and supportToken to the query.
-	 * @param {Object}  params The original request params object
-	 * @return {Object}        The new query object with support data injected
+	 * @param {object}  params The original request params object
+	 * @returns {object}        The new query object with support data injected
 	 */
 	const addSupportParams = function( params ) {
 		return {
@@ -44,8 +44,8 @@ export default function wpcomSupport( wpcom ) {
 	return Object.assign( wpcom, {
 		addSupportParams,
 		/**
-		 * @param {String} supportUser  Support username
-		 * @param {String} supportToken Support token
+		 * @param {string} supportUser  Support username
+		 * @param {string} supportToken Support token
 		 * @returns {bool}  true if the user and token were changed, false otherwise
 		 */
 		setSupportUserToken: function( newUser = '', newToken = '', newTokenErrorCallback ) {

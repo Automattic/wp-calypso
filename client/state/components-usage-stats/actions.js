@@ -5,7 +5,7 @@ import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '
 
 /**
  * Return an action object to signaling that the "usage stats" have been requested
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export function requestComponentsUsageStats() {
 	return {
@@ -15,8 +15,8 @@ export function requestComponentsUsageStats() {
 
 /**
  * Return an action object to signaling that the "usage stats" have been requested
- * @param {Object} componentsUsageStats Parsed JSON for the usage stats
- * @return {Object} 					Action object
+ * @param {object} componentsUsageStats Parsed JSON for the usage stats
+ * @returns {object} 					Action object
  */
 export function receiveComponentsUsageStats( componentsUsageStats ) {
 	return {

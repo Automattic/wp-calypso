@@ -35,7 +35,6 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'state/selectors/has-navigated';
@@ -384,7 +383,6 @@ const SinglePlugin = createReactClass( {
 
 		return (
 			<MainComponent>
-				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				{ this.renderPageViewTracker() }
 				<SidebarNavigation />

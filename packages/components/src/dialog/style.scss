@@ -1,4 +1,5 @@
-.dialog__backdrop {
+.dialog__backdrop,
+.dialog__backdrop.card {
 	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
 	align-items: center;
 	bottom: 0;

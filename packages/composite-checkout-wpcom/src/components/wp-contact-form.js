@@ -18,7 +18,6 @@ import { LeftColumn, RightColumn } from './ie-fallback';
 export default function WPContactForm( { summary, isComplete, isActive } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
-	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
 	const setters = useDispatch( 'wpcom' );
 
 	if ( summary && isComplete ) {
@@ -28,14 +27,9 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 		return null;
 	}
 
-	const toggleDomainFieldsVisibility = () =>
-		setters.setIsDomainContactSame( ! isDomainContactSame );
-
 	return (
 		<BillingFormFields>
-			{ isDomainFieldsVisible && (
-				<AddressFields section="contact" contactInfo={ contactInfo } setters={ setters } />
-			) }
+			{ isDomainFieldsVisible && <DomainFields /> }
 
 			<TaxFields section="contact" taxInfo={ contactInfo } setters={ setters } />
 
@@ -46,15 +40,6 @@ export default function WPContactForm( { summary, isComplete, isActive } ) {
 			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
-
-			{ isDomainFieldsVisible && (
-				<DomainFieldsCheckbox
-					toggleVisibility={ toggleDomainFieldsVisibility }
-					isDomainContactVisible={ ! isDomainContactSame }
-				/>
-			) }
-
-			{ ! isDomainContactSame && isDomainFieldsVisible && <DomainFields /> }
 		</BillingFormFields>
 	);
 }
@@ -293,7 +278,7 @@ function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
 	return (
 		<FormField
 			id={ id }
-			type="Number"
+			type="text"
 			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
 			value={ phoneNumber.value }
 			onChange={ value =>
@@ -385,46 +370,24 @@ function isZipOrPostal() {
 
 function DomainFields() {
 	const translate = useTranslate();
-	const contactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
-	const { setDomainContactField } = useDispatch( 'wpcom' );
-	const setters = {
-		setContactField: setDomainContactField,
-	};
+	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const setters = useDispatch( 'wpcom' );
 
 	return (
 		<DomainContactFields>
-			<DomainContactFieldsTitle>
-				{ translate( 'Enter your domain registration contact information' ) }
-			</DomainContactFieldsTitle>
 			<DomainContactFieldsDescription>
 				{ translate(
 					'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 				) }
 			</DomainContactFieldsDescription>
 
-			<AddressFields section="domains" contactInfo={ contactInfo } setters={ setters } />
-			<TaxFields section="domains" taxInfo={ contactInfo } setters={ setters } />
-			<PhoneNumberField
-				id="domains-phone-number"
-				isRequired
-				phoneNumber={ contactInfo.phoneNumber }
-				onChange={ setDomainContactField }
-			/>
+			<AddressFields section="contact" contactInfo={ contactInfo } setters={ setters } />
 		</DomainContactFields>
 	);
 }
 
 const DomainContactFields = styled.div`
 	margin: 16px 0 24px;
-`;
-
-const DomainContactFieldsTitle = styled.h2`
-	font-size: 16px;
-	margin: 0 0 4px;
-	font-weight: 600;
-	color: ${props => props.theme.colors.borderColorDark};
-	padding-top: 24px;
-	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
 `;
 
 const DomainContactFieldsDescription = styled.p`
@@ -436,14 +399,9 @@ const DomainContactFieldsDescription = styled.p`
 function ContactFormSummary() {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
-	const domainContactInfo = useSelect( select => select( 'wpcom' ).getDomainContactInfo() );
-	const isDomainContactSame = useSelect( select => select( 'wpcom' ).isDomainContactSame() );
 
 	//Check if paymentData is empty
-	if (
-		Object.entries( contactInfo ).length === 0 &&
-		Object.entries( domainContactInfo ).length === 0
-	) {
+	if ( Object.entries( contactInfo ).length === 0 ) {
 		return null;
 	}
 
@@ -457,22 +415,6 @@ function ContactFormSummary() {
 		', ',
 		contactInfo.postalCode.value,
 		contactInfo.country.value
-	);
-
-	const domainFullName = joinNonEmptyValues(
-		' ',
-		domainContactInfo.firstName.value,
-		domainContactInfo.lastName.value
-	);
-	const domainCityAndState = joinNonEmptyValues(
-		', ',
-		domainContactInfo.city.value,
-		domainContactInfo.state.value
-	);
-	const domainPostalAndCountry = joinNonEmptyValues(
-		', ',
-		domainContactInfo.postalCode.value,
-		domainContactInfo.country.value
 	);
 
 	return (
@@ -506,32 +448,6 @@ function ContactFormSummary() {
 					</SummaryDetails>
 				) }
 			</div>
-
-			{ ! isDomainContactSame && (
-				<div>
-					<SummaryDetails>
-						{ domainFullName && <SummaryLine>{ domainFullName }</SummaryLine> }
-
-						{ domainContactInfo.email.value.length > 0 && (
-							<SummarySpacerLine>{ domainContactInfo.email.value }</SummarySpacerLine>
-						) }
-
-						{ domainContactInfo.address.value.length > 0 && (
-							<SummaryLine>{ domainContactInfo.address.value }</SummaryLine>
-						) }
-
-						{ domainCityAndState && <SummaryLine>{ domainCityAndState }</SummaryLine> }
-
-						{ domainPostalAndCountry && <SummaryLine>{ domainPostalAndCountry }</SummaryLine> }
-					</SummaryDetails>
-
-					{ domainContactInfo.phoneNumber.value.length > 0 && (
-						<SummaryDetails>
-							<SummaryLine>{ domainContactInfo.phoneNumber.value }</SummaryLine>
-						</SummaryDetails>
-					) }
-				</div>
-			) }
 		</GridRow>
 	);
 }

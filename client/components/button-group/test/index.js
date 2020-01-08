@@ -1,35 +1,19 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-
 import { Button } from '@automattic/components';
+import ButtonGroup from '..';
 
 describe( 'ButtonGroup', () => {
-	let sandbox, ButtonGroup;
-
-	beforeEach( () => {
-		sandbox = sinon.createSandbox();
-		sandbox.stub( console, 'error' );
-		sandbox.stub( console, 'log' );
-
-		ButtonGroup = require( '../index' );
-	} );
-
-	afterEach( () => {
-		sandbox.restore();
-	} );
-
 	test( 'should have ButtonGroup class', () => {
 		const buttonGroup = shallow( <ButtonGroup /> );
-		assert.equal( 1, buttonGroup.find( '.button-group' ).length );
+		expect( buttonGroup.find( '.button-group' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should contains the same number of .button nodes than <Button>s it receives', () => {
@@ -39,23 +23,26 @@ describe( 'ButtonGroup', () => {
 				<Button>test2</Button>
 			</ButtonGroup>
 		);
-		assert.equal( 2, buttonGroup.find( Button ).length );
+		expect( buttonGroup.find( Button ) ).toHaveLength( 2 );
 	} );
 
 	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
 		const buttonGroup = shallow( <ButtonGroup busy /> );
-		assert.equal( 1, buttonGroup.find( '.is-busy' ).length );
+		expect( buttonGroup.find( '.is-busy' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should throw an error if any of the children is not a <Button>', () => {
+		const consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
+
 		shallow(
 			<ButtonGroup>
 				<div id="test">test</div>
 			</ButtonGroup>
 		);
 
-		/* eslint-disable no-console */
-		sinon.assert.calledWithMatch( console.error, 'All children elements should be a Button.' );
-		/* eslint-enable no-console */
+		expect( consoleErrorSpy ).toHaveBeenCalledWith(
+			expect.stringContaining( 'All children elements should be a Button.' )
+		);
+		consoleErrorSpy.mockRestore();
 	} );
 } );

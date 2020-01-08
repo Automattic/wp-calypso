@@ -48,7 +48,7 @@ export class NavigationLink extends Component {
 	 * Returns the previous step , skipping over steps with the
 	 * `wasSkipped` property.
 	 *
-	 * @return {Object} The previous step object
+	 * @returns {object} The previous step object
 	 */
 	getPreviousStep() {
 		const { flowName, signupProgress, stepName } = this.props;

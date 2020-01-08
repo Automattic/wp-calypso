@@ -71,9 +71,9 @@ export function validateVertical( context, next ) {
  * prefixed taxonomy:term. Returned terms will
  * keep this prefix.
  *
- * @param {Object} context Routing context
- * @param {array} terms Array of term strings
- * @return {array} Sorted array
+ * @param {object} context Routing context
+ * @param {Array} terms Array of term strings
+ * @returns {Array} Sorted array
  */
 export function sortFilterTerms( context, terms ) {
 	return terms

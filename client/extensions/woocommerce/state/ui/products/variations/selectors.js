@@ -27,11 +27,11 @@ export function getVariationEditsStateForProduct(
 /**
  * Gets the accumulated edits for a variation, if any.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {any} variationId The id of the variation (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} The current accumulated edits
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} The current accumulated edits
  */
 export function getVariationEdits(
 	state,
@@ -48,11 +48,11 @@ export function getVariationEdits(
 /**
  * Gets a variation with local edits overlayed on top of fetched data.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {any} variationId The id of the variation (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} The product data merged between the fetched data and edits
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} The product data merged between the fetched data and edits
  */
 export function getVariationWithLocalEdits(
 	state,
@@ -71,10 +71,10 @@ export function getVariationWithLocalEdits(
 /**
  * Gets the variation being currently edited in the UI.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Variation object that is merged between fetched data and edits
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Variation object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingVariation(
 	state,
@@ -90,10 +90,10 @@ export function getCurrentlyEditingVariation(
 /**
  * Gets an array of variation objects for a product, including new ones being edited in the UI.
  *
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} Array of variation objects.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} Array of variation objects.
  */
 export function getProductVariationsWithLocalEdits(
 	state,

@@ -10,7 +10,7 @@ import { URL as URLString } from 'types';
  * relative URLs, or pure query strings, or hashbangs.
  *
  * @param  url URL to check
- * @return     true if the given URL is located outside of Calypso
+ * @returns     true if the given URL is located outside of Calypso
  */
 export default function isOutsideCalypso( url: URLString ): boolean {
 	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );

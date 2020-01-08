@@ -161,7 +161,17 @@ export default function() {
 		clientRender
 	);
 
-	page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	if ( config.isEnabled( 'manage/all-domains' ) ) {
+		page(
+			paths.domainManagementRoot(),
+			...getCommonHandlers( { noSitePath: false } ),
+			domainManagementController.domainManagementListAllSites,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	}
 
 	page(
 		paths.domainManagementList( ':site' ),

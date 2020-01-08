@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
+ * @file Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

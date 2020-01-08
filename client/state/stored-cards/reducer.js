@@ -19,8 +19,8 @@ import { storedCardsSchema } from './schema';
  * concerning stored cards data updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action storeCard action
- * @return {Array}         Updated state
+ * @param  {object} action storeCard action
+ * @returns {Array}         Updated state
  */
 export const items = withSchemaValidation( storedCardsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -45,8 +45,8 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
  *
  * @param {Array} state - current state
- * @param {Object} action - action payload
- * @return {Boolean} - updated state
+ * @param {object} action - action payload
+ * @returns {boolean} - updated state
  */
 export const hasLoadedFromServer = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -61,9 +61,9 @@ export const hasLoadedFromServer = ( state = false, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning stored cards fetching
  *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - storedCard action
+ * @returns {object} updated state
  */
 export const isFetching = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -82,9 +82,9 @@ export const isFetching = ( state = false, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning stored card deletion
  *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - storedCard action
+ * @returns {object} updated state
  */
 export const isDeleting = ( state = {}, action ) => {
 	switch ( action.type ) {

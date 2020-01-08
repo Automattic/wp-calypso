@@ -241,7 +241,9 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.showTestCopy ? 'Our Recommendation' : translate( 'Best Match' );
+			title = this.props.showTestCopy
+				? translate( 'Our Recommendation' )
+				: translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,

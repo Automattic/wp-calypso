@@ -8,7 +8,6 @@
 	"hostname": "wpcalypso.wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
-	"jetpack_min_version": "3.3-dev",
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
@@ -68,6 +67,7 @@
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"mailchimp": true,
+		"manage/all-domains": true,
 		"manage/comments": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
@@ -176,6 +176,5 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "wpcalypso",
 	"google_analytics_key": "UA-10673494-15",
-	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true
 }

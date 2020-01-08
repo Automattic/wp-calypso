@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 /**
  * Internal dependencies
@@ -9,7 +9,7 @@ import React, { useContext } from 'react';
 import LineItemsContext from './line-items-context';
 
 export function LineItemsProvider( { items, total, children } ) {
-	const value = { items, total };
+	const value = useMemo( () => ( { items, total } ), [ items, total ] );
 	return <LineItemsContext.Provider value={ value }>{ children }</LineItemsContext.Provider>;
 }
 

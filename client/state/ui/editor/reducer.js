@@ -28,9 +28,9 @@ import rawContent from './raw-content/reducer';
  * Returns the updated editor post ID state after an action has been
  * dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {

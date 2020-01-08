@@ -62,51 +62,69 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		const onSuccess = data => {
+		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+
+		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
+		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
+
+		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
+
+		function onSuccess( data ) {
 			// Validate received data.
-			if ( isPostsDataValid( data ) ) {
+			if ( ! isPostsDataValid( data ) ) {
+				return onError();
+			}
+
+			if ( data.items.length ) {
 				// Render posts' HTML from string.
 				const postsHTML = data.items.map( item => item.html ).join( '' );
 				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
-
-				if ( data.next ) {
-					// Save next URL as button's attribute.
-					btnEl.setAttribute( btnURLAttr, data.next );
-
-					// Unhide button since there are more posts available.
-					showEl( btnEl );
-				} else {
-					isEndOfData = true;
-				}
-
-				isFetching = false;
-
-				hideEl( loadingEl );
 			}
-		};
 
-		const onError = () => {
+			if ( data.next ) {
+				// Save next URL as button's attribute.
+				btnEl.setAttribute( btnURLAttr, data.next );
+
+				// Unhide button since there are more posts available.
+				showEl( btnEl );
+			}
+
+			if ( ! data.items.length || ! data.next ) {
+				isEndOfData = true;
+			}
+
+			isFetching = false;
+
+			hideEl( loadingEl );
+		}
+
+		function onError() {
 			isFetching = false;
 
 			// Display error message and keep the button visible to enable retrying.
 			hideEl( loadingEl );
 			showEl( errorEl );
 			showEl( btnEl );
-		};
-
-		fetchWithRetry(
-			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
-			fetchRetryCount
-		);
+		}
 	};
+}
+
+/**
+ * Returns unique IDs for posts that are currently in the DOM.
+ */
+function getRenderedPostsIds() {
+	const postEls = document.querySelectorAll( 'article[data-post-id]' );
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
+
+	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
 
 /**
  * Wrapper for XMLHttpRequest that performs given number of retries when error
  * occurs.
  *
- * @param {Object} options XMLHttpRequest options
- * @param {Number} n retry count before throwing
+ * @param {object} options XMLHttpRequest options
+ * @param {number} n retry count before throwing
  */
 function fetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();
@@ -162,22 +180,29 @@ function fetchWithRetry( options, n ) {
  * 	"required": ["items", "next"]
  * }
  *
- * @param {Object} data posts endpoint payload
+ * @param {object} data posts endpoint payload
  */
 function isPostsDataValid( data ) {
+	let isValid = false;
+
 	if (
 		data &&
 		hasOwnProp( data, 'items' ) &&
-		hasOwnProp( data, 'next' ) &&
 		Array.isArray( data.items ) &&
-		data.items.length &&
-		hasOwnProp( data.items[ 0 ], 'html' ) &&
-		typeof data.items[ 0 ].html === 'string'
+		hasOwnProp( data, 'next' ) &&
+		typeof data.next === 'string'
 	) {
-		return true;
+		isValid = true;
+
+		if (
+			data.items.length &&
+			! ( hasOwnProp( data.items[ 0 ], 'html' ) && typeof data.items[ 0 ].html === 'string' )
+		) {
+			isValid = false;
+		}
 	}
 
-	return false;
+	return isValid;
 }
 
 /**
@@ -203,8 +228,8 @@ function showEl( el ) {
 /**
  * Checks if object has own property.
  *
- * @param {Object} obj
- * @param {String} prop
+ * @param {object} obj
+ * @param {string} prop
  */
 function hasOwnProp( obj, prop ) {
 	return Object.prototype.hasOwnProperty.call( obj, prop );

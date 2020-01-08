@@ -172,7 +172,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Used to determine if at least one plugin is in at least one of the provided plugin states.
 	 *
 	 * @param  pluginStates States to check against.
-	 * @return              True if at least one plugin is in at least one of the given states, false otherwise.
+	 * @returns              True if at least one plugin is in at least one of the given states, false otherwise.
 	 */
 	arePluginsInState( pluginStates: PluginStateDescriptor[] ): boolean {
 		const { status } = this.props;
@@ -189,7 +189,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Potential errors we consider here could be recoverable or not.
 	 * What we don't consider errors are the `NON_ERROR_STATES` above.
 	 *
-	 * @return Whether there are currently any installation errors.
+	 * @returns Whether there are currently any installation errors.
 	 */
 	installationHasErrors(): boolean {
 		if ( this.installationHasRecoverableErrors() ) {
@@ -203,7 +203,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Used to determine if at least one plugin is in an error state
 	 * that we could potentially recover from by just waiting.
 	 *
-	 * @return Whether there are currently any recoverable errors.
+	 * @returns Whether there are currently any recoverable errors.
 	 */
 	installationHasRecoverableErrors(): boolean {
 		return this.arePluginsInState( RECOVERABLE_ERROR_STATES );
@@ -216,7 +216,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - We haven't retried too many times (limit is `MAX_RETRIES`).
 	 * - We currently have recoverable errors.
 	 *
-	 * @return Whether to trigger a request to refetch installation status.
+	 * @returns Whether to trigger a request to refetch installation status.
 	 */
 	shouldRefetchInstallationStatus(): boolean {
 		return this.retries < MAX_RETRIES && this.installationHasRecoverableErrors();
@@ -225,7 +225,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	/**
 	 * A helper to refresh the page, which essentially will restart the installation process.
 	 *
-	 * @return {undefined} Eslint requires this silly return tag. @TODO get rid of this.
+	 * @returns {undefined} Eslint requires this silly return tag. @TODO get rid of this.
 	 */
 	refreshPage = (): void => void window.location.reload();
 

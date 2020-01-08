@@ -90,13 +90,6 @@ const getTracksDataForAutoconfigHalt = selectedSite => {
 		};
 	}
 
-	if ( ! selectedSite.hasMinimumJetpackVersion ) {
-		return {
-			name: 'calypso_plans_autoconfig_halt_jpversion',
-			properties: { jetpack_version: selectedSite.options.jetpack_version },
-		};
-	}
-
 	if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite ) {
 		return { name: 'calypso_plans_autoconfig_halt_multisite' };
 	}

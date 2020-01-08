@@ -24,8 +24,8 @@ import {
 /**
  * Updates state to clear any error from a previous action
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountClearError( state = {} ) {
 	return Object.assign( {}, state, {
@@ -36,8 +36,8 @@ function connectAccountClearError( state = {} ) {
 /**
  * Updates state to clear the completed state from a previous connect or create action
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountClearCompletedNotification( state = {} ) {
 	return Object.assign( {}, state, {
@@ -48,8 +48,8 @@ function connectAccountClearCompletedNotification( state = {} ) {
 /**
  * Updates state to indicate account creation is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountCreate( state = {} ) {
 	return Object.assign( {}, state, {
@@ -62,9 +62,9 @@ function connectAccountCreate( state = {} ) {
 /**
  * Updates state to reflect account creation completed (or failed with an error)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountCreateComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -85,8 +85,8 @@ function connectAccountCreateComplete( state = {}, action ) {
 /**
  * Updates state to indicate account (details) fetch request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountFetch( state = {} ) {
 	return Object.assign( {}, state, {
@@ -106,9 +106,9 @@ function connectAccountFetch( state = {} ) {
 /**
  * Updates state with fetched account details
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountFetchComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -128,8 +128,8 @@ function connectAccountFetchComplete( state = {}, action ) {
 /**
  * Updates state to indicate account deauthorization request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountDeauthorize( state = {} ) {
 	return Object.assign( {}, state, {
@@ -140,9 +140,9 @@ function connectAccountDeauthorize( state = {} ) {
 /**
  * Updates state after deauthorization completes
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountDeauthorizeComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -162,8 +162,8 @@ function connectAccountDeauthorizeComplete( state = {}, action ) {
 /**
  * Updates state to indicate oauth initialization request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthInit( state = {} ) {
 	return Object.assign( {}, state, {
@@ -175,9 +175,9 @@ function connectAccountOAuthInit( state = {} ) {
 /**
  * Updates state after oauth initialization completes
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthInitComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -190,8 +190,8 @@ function connectAccountOAuthInitComplete( state = {}, action ) {
 /**
  * Updates state to indicate account creation is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthConnect( state = {} ) {
 	return Object.assign( {}, state, {
@@ -204,9 +204,9 @@ function connectAccountOAuthConnect( state = {} ) {
 /**
  * Updates state to reflect account creation completed (or failed with an error)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthConnectComplete( state = {}, action ) {
 	return Object.assign( {}, state, {

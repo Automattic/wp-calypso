@@ -333,7 +333,7 @@ function getDomainTypeText( domain = {} ) {
  *
  * @param {string} search Original search string
  * @param {integer} minLength Minimum search string length
- * @return {string} Cleaned search string
+ * @returns {string} Cleaned search string
  */
 function getDomainSuggestionSearch( search, minLength = 2 ) {
 	const cleanedSearch = getFixedDomainSearch( search );

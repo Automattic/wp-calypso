@@ -80,6 +80,7 @@ export function checkout( context, next ) {
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
 			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
 			clearTransaction={ false }
 		/>
 	);

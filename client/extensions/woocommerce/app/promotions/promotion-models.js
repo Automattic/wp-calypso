@@ -126,7 +126,7 @@ const appliesToProductSale = {
  * @param { Object } props Component properties
  * @param { Object } props.promotion Promotion API object
  * @param { string } props.value Current value for end date.
- * @return { Object } React component instance.
+ * @returns { Object } React component instance.
  */
 const StartDateField = props => {
 	return (
@@ -145,7 +145,7 @@ const StartDateField = props => {
  * @param { Object } props Component properties
  * @param { Object } props.promotion Promotion API object
  * @param { string } props.value Current value for end date.
- * @return { Object } React component instance.
+ * @returns { Object } React component instance.
  */
 const EndDateField = props => {
 	const { promotion } = props;
@@ -380,7 +380,7 @@ export default allModels;
  * @param { Object } promotion The promotion to validate.
  * @param { String } currency The currency to use for validations.
  * @param { bool } showEmptyValidationErrors True if empty required fields should be errors.
- * @return { Object } Validation error strings keyed by their field names.
+ * @returns { Object } Validation error strings keyed by their field names.
  */
 export function validateAll( promotion, currency, showEmptyValidationErrors ) {
 	const promotionModel = allModels[ promotion.type ];

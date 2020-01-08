@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,25 +21,28 @@ class FreeDomainExplainer extends React.Component {
 		this.props.onSkip( undefined, hideFreePlan );
 	};
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="free-domain-explainer card is-compact">
 				<header>
 					<h1 className="free-domain-explainer__title">
-						Get a free one-year domain registration with any paid plan.
+						{ translate( 'Get a free one-year domain registration with any paid plan.' ) }
 					</h1>
 					<p className="free-domain-explainer__subtitle">
-						We'll pay the registration fees for your new domain when you choose a paid plan during
-						the next step.
+						{ translate(
+							"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
+						) }
 					</p>
 					<p className="free-domain-explainer__subtitle">
-						You can claim your free custom domain later if you aren't ready yet.
+						{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
 						<Button
 							borderless
 							className="free-domain-explainer__subtitle-link"
 							onClick={ this.handleClick }
 							href
 						>
-							Review our plans to get started &raquo;
+							{ translate( 'Review our plans to get started' ) } &raquo;
 						</Button>
 					</p>
 				</header>
@@ -47,4 +51,4 @@ class FreeDomainExplainer extends React.Component {
 	}
 }
 
-export default FreeDomainExplainer;
+export default localize( FreeDomainExplainer );

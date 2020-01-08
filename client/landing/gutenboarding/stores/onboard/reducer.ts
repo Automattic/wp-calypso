@@ -7,12 +7,11 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, Vertical, SiteVertical } from './types';
-import { DomainSuggestion } from '../domain-suggestions/types';
+import { ActionType, SiteVertical } from './types';
 import * as Actions from './actions';
 
 const domain: Reducer<
-	DomainSuggestion | undefined,
+	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
 	ReturnType< typeof Actions[ 'setDomain' ] >
 > = ( state = undefined, action ) => {
 	if ( action.type === ActionType.SET_DOMAIN ) {
@@ -31,16 +30,6 @@ const siteTitle: Reducer< string, ReturnType< typeof Actions[ 'setSiteTitle' ] >
 	return state;
 };
 
-const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVerticals' ] > > = (
-	state = [],
-	action
-) => {
-	if ( action.type === ActionType.RECEIVE_VERTICALS ) {
-		return action.verticals;
-	}
-	return state;
-};
-
 const siteVertical: Reducer<
 	SiteVertical | undefined,
 	ReturnType< typeof Actions[ 'setSiteVertical' ] >
@@ -54,7 +43,7 @@ const siteVertical: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { domain, siteTitle, verticals, siteVertical } );
+const reducer = combineReducers( { domain, siteTitle, siteVertical } );
 
 export type State = ReturnType< typeof reducer >;
 

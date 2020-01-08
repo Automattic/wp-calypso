@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
-import { moment } from 'i18n-calypso';
 import { round } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -13,9 +12,9 @@ import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 /**
  * Returns the date of the last site stats query
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @return {Object}           Stats View Summary
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @returns {object}           Stats View Summary
  */
 export default function getSiteStatsViewSummary( state, siteId ) {
 	const query = {

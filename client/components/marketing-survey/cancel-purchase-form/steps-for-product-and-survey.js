@@ -29,7 +29,8 @@ export default function stepsForProductAndSurvey(
 	survey,
 	product,
 	canChat,
-	precancellationChatAvailable
+	precancellationChatAvailable,
+	downgradePossible
 ) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) && abtest( 'ATPromptOnCancel' ) === 'show' ) {
@@ -42,7 +43,7 @@ export default function stepsForProductAndSurvey(
 	}
 
 	if ( survey && survey.questionOneRadio === 'onlyNeedFree' ) {
-		if ( includesProduct( PREMIUM_PLANS, product ) ) {
+		if ( includesProduct( PREMIUM_PLANS, product ) && downgradePossible ) {
 			return [ steps.INITIAL_STEP, steps.DOWNGRADE_STEP, steps.FINAL_STEP ];
 		}
 	}

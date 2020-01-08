@@ -29,7 +29,7 @@ export class CommentHeader extends PureComponent {
 			<div className="comment__header">
 				{ isBulkMode && (
 					<span className="comment__bulk-select">
-						<FormCheckbox checked={ isSelected } tabIndex="0" disabled={ isDisabled } />
+						<FormCheckbox checked={ isSelected } disabled={ isDisabled } readOnly tabIndex="0" />
 					</span>
 				) }
 

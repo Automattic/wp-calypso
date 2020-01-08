@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
+import PaymentLogo from './payment-logo';
 import {
 	useStripe,
 	createStripePaymentMethod,
@@ -22,38 +24,31 @@ import {
 import {
 	useSelect,
 	useDispatch,
-	useCheckoutHandlers,
+	useMessages,
 	useLineItems,
-	useCheckoutRedirects,
 	renderDisplayValueMarkdown,
+	useEvents,
 } from '../../public-api';
-import useLocalize, { sprintf } from '../localize';
-import {
-	VisaLogo,
-	AmexLogo,
-	MastercardLogo,
-	JcbLogo,
-	DinersLogo,
-	UnionpayLogo,
-	DiscoverLogo,
-} from '../../components/payment-logos';
+import { sprintf, useLocalize } from '../localize';
 import { CreditCardLabel } from './credit-card';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import CreditCardFields, { CVVImage } from './credit-card-fields';
 import Spinner from '../../components/spinner';
 import ErrorMessage from '../../components/error-message';
+import { useFormStatus } from '../form-status';
+
+const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
 export function createStripeMethod( {
-	getSiteId,
 	getCountry,
 	getPostalCode,
 	getPhoneNumber,
 	getSubdivisionCode,
-	getDomainDetails,
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction,
 } ) {
+	debug( 'creating a new stripe payment method' );
 	const actions = {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
@@ -91,31 +86,31 @@ export function createStripeMethod( {
 						phoneNumber: getPhoneNumber(),
 					},
 				};
+				debug( 'stripe payment token created' );
 				stripeResponse = yield {
 					type: 'STRIPE_TRANSACTION_BEGIN',
 					payload: {
 						...payload,
-						siteId: getSiteId(),
 						country: getCountry(),
 						postalCode: getPostalCode(),
 						subdivisionCode: getSubdivisionCode(),
-						domainDetails: getDomainDetails(),
 						paymentMethodToken,
 					},
 				};
+				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
+				debug( 'stripe transaction had an error', error );
 				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
 			}
-			if (
-				stripeResponse &&
-				stripeResponse.message &&
-				stripeResponse.message.payment_intent_client_secret
-			) {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'stripe transaction requires auth' );
 				return { type: 'STRIPE_TRANSACTION_AUTH', payload: stripeResponse };
 			}
-			if ( stripeResponse && stripeResponse.redirect_url ) {
+			if ( stripeResponse?.redirect_url ) {
+				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
+			debug( 'stripe transaction requires is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
@@ -232,7 +227,7 @@ export function createStripeMethod( {
 				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return sendStripeTransaction( action.payload );
+				return submitTransaction( action.payload );
 			},
 		},
 	} );
@@ -261,7 +256,8 @@ export function createStripeMethod( {
 function StripeCreditCardFields() {
 	const localize = useLocalize();
 	const theme = useTheme();
-	const { onFailure } = useCheckoutHandlers();
+	const { showErrorMessage } = useMessages();
+	const onEvent = useEvents();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
@@ -277,9 +273,9 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			onFailure( stripeLoadingError );
+			showErrorMessage( stripeLoadingError );
 		}
-	}, [ onFailure, stripeLoadingError ] );
+	}, [ showErrorMessage, stripeLoadingError ] );
 
 	const handleStripeFieldChange = input => {
 		setCardDataComplete( input.elementType, input.complete );
@@ -288,6 +284,14 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
+			onEvent( {
+				type: 'a8c_checkout_error',
+				payload: {
+					type: 'Stripe field error',
+					field: input.elementType,
+					message: input.error.message,
+				},
+			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -310,6 +314,8 @@ function StripeCreditCardFields() {
 	};
 
 	if ( stripeLoadingError ) {
+		onEvent( { type: 'a8c_checkout_error', payload: { type: 'Stripe loading error' } } );
+
 		return (
 			<CreditCardFieldsWrapper isLoaded={ true }>
 				<ErrorMessage>
@@ -346,7 +352,7 @@ function StripeCreditCardFields() {
 								handleStripeFieldChange( input );
 							} }
 						/>
-						<CardFieldIcon brand={ brand } />
+						<PaymentLogo brand={ brand } />
 
 						{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 					</StripeFieldWrapper>
@@ -491,87 +497,6 @@ const StripeErrorMessage = styled.span`
 	font-weight: ${props => props.theme.weights.normal};
 `;
 
-const LockIconGraphic = styled( LockIcon )`
-	display: block;
-	position: absolute;
-	right: 10px;
-	top: 14px;
-	width: 20px;
-	height: 20px;
-`;
-
-function CardFieldIcon( { brand, isSummary } ) {
-	let cardFieldIcon = null;
-
-	switch ( brand ) {
-		case 'visa':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<VisaLogo />
-				</BrandLogo>
-			);
-			break;
-		case 'mastercard':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<MastercardLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'amex':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<AmexLogo />
-				</BrandLogo>
-			);
-			break;
-		case 'jcb':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<JcbLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'diners':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<DinersLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'unionpay':
-			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
-					<UnionpayLogo />
-				</SmallBrandLogo>
-			);
-			break;
-		case 'discover':
-			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
-					<DiscoverLogo />
-				</BrandLogo>
-			);
-			break;
-		default:
-			cardFieldIcon = brand === 'unknown' && isSummary ? null : <LockIconGraphic />;
-	}
-
-	return cardFieldIcon;
-}
-
-const BrandLogo = styled.span`
-	display: ${props => ( props.isSummary ? 'inline-block' : 'block' )};
-	position: ${props => ( props.isSummary ? 'relative' : 'absolute' )};
-	top: ${props => ( props.isSummary ? '0' : '15px' )};
-	right: ${props => ( props.isSummary ? '0' : '10px' )};
-	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
-`;
-
-const SmallBrandLogo = styled( BrandLogo )`
-	transform: translate( ${props => ( props.isSummary ? '-10px, 4px' : '10px, 0' )} );
-`;
-
 function LoadingFields() {
 	return (
 		<React.Fragment>
@@ -581,48 +506,29 @@ function LoadingFields() {
 	);
 }
 
-function LockIcon( { className } ) {
-	return (
-		<svg
-			className={ className }
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			aria-hidden="true"
-			focusable="false"
-		>
-			<g fill="none">
-				<path d="M0 0h24v24H0V0z" />
-				<path opacity=".87" d="M0 0h24v24H0V0z" />
-			</g>
-			<path
-				fill="#8E9196"
-				d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"
-			/>
-		</svg>
-	);
-}
-
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
+	const { showErrorMessage } = useMessages();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
 			// TODO: clear this after showing it
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
+			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+			debug( 'stripe transaction is complete' );
+			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
 			// TODO: notify user that we are going to redirect
@@ -632,12 +538,14 @@ function StripePayButton( { disabled } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} ).catch( error => {
-				onFailure( error.stripeError || error.message );
+				setFormReady();
+				showErrorMessage( error.stripeError || error.message );
 			} );
 		}
 	}, [
-		onSuccess,
-		onFailure,
+		setFormReady,
+		setFormComplete,
+		showErrorMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
@@ -645,10 +553,10 @@ function StripePayButton( { disabled } ) {
 		localize,
 	] );
 
-	const buttonString = sprintf(
-		localize( 'Pay %s' ),
-		renderDisplayValueMarkdown( total.amount.displayValue )
-	);
+	const buttonString =
+		formStatus === 'submitting'
+			? localize( 'Processing...' )
+			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
@@ -659,10 +567,9 @@ function StripePayButton( { disabled } ) {
 					total,
 					stripe,
 					stripeConfiguration,
-					onFailure,
-					successUrl: successRedirectUrl,
-					cancelUrl: failureRedirectUrl,
+					showErrorMessage,
 					beginStripeTransaction,
+					setFormSubmitting,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -681,7 +588,7 @@ function StripeSummary() {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <CardFieldIcon brand={ brand } isSummary={ true } />
+				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
 			</SummaryLine>
 		</SummaryDetails>
 	);
@@ -693,23 +600,24 @@ async function submitStripePayment( {
 	total,
 	stripe,
 	stripeConfiguration,
-	onFailure,
-	successUrl,
-	cancelUrl,
+	showErrorMessage,
 	beginStripeTransaction,
+	setFormSubmitting,
+	setFormReady,
 } ) {
+	debug( 'submitting stripe payment' );
 	try {
+		setFormSubmitting();
 		beginStripeTransaction( {
 			stripe,
 			name,
 			items,
 			total,
 			stripeConfiguration,
-			successUrl,
-			cancelUrl,
 		} );
 	} catch ( error ) {
-		onFailure( error );
+		setFormReady();
+		showErrorMessage( error );
 		return;
 	}
 }

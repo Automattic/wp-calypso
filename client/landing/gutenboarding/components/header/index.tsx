@@ -2,24 +2,28 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button, Icon, IconButton } from '@wordpress/components';
+import { Icon, IconButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as DOMAIN_STORE } from '../../stores/domain-suggestions';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
-import { DomainPickerButton } from '../domain-picker';
+import DomainPickerButton from '../domain-picker-button';
 import { selectorDebounce } from '../../constants';
+import Link from '../link';
+
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
 	isEditorSidebarOpened: boolean;
-	next?: () => void;
-	prev?: () => void;
+	next?: string;
+	prev?: string;
 	toggleGeneralSidebar: () => void;
 	toggleSidebarShortcut: KeyboardShortcut;
 }
@@ -52,7 +56,7 @@ const Header: FunctionComponent< Props > = ( {
 			if ( ! domainSearch ) {
 				return;
 			}
-			return select( DOMAIN_STORE ).getDomainSuggestions( domainSearch, {
+			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				quantity: 1,
@@ -71,6 +75,16 @@ const Header: FunctionComponent< Props > = ( {
 		</span>
 	);
 
+	const domainElement = (
+		<span
+			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
+				placeholder: ! currentDomain,
+			} ) }
+		>
+			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
+		</span>
+	);
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -80,25 +94,22 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Button
-						className="gutenboarding__header-back-button"
-						disabled={ ! prev }
-						onClick={ prev }
-					>
+					<Link className="gutenboarding__header-back-button" to={ prev }>
 						<Icon icon="arrow-left-alt" />
 						{ NO__( 'Back' ) }
-					</Button>
+					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
-					{ currentDomain ? (
+					{ siteTitle ? (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
+							disabled={ ! currentDomain }
 							onDomainSelect={ setDomain }
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ siteTitleElement }
-							<span>{ currentDomain.domain_name }</span>
+							{ domainElement }
 						</DomainPickerButton>
 					) : (
 						siteTitleElement
@@ -106,11 +117,9 @@ const Header: FunctionComponent< Props > = ( {
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					<Button isPrimary isLarge disabled={ ! next } onClick={ next }>
-						{ NO__( 'Next' ) }
-					</Button>
-				</div>
+				<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+					{ NO__( 'Next' ) }
+				</Link>
 				<div className="gutenboarding__header-group">
 					<IconButton
 						aria-expanded={ isEditorSidebarOpened }

@@ -89,9 +89,9 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
  * Returns an action object used in signalling that the available modules
  * in a Jetpack site were received.
  *
- * @param  {Number}   siteId    Site ID
- * @param  {Object[]} modules Object of modules indexed by slug
- * @return {Object}             Action object
+ * @param  {number}   siteId    Site ID
+ * @param  {object[]} modules Object of modules indexed by slug
+ * @returns {object}             Action object
  */
 export function receiveJetpackModules( siteId, modules ) {
 	return {

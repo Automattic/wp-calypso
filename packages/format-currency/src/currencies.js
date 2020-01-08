@@ -969,8 +969,8 @@ export const CURRENCIES = {
 
 /**
  * Returns currency defaults.
- * @param   {String} code      currency code
- * @returns {?Object}          currency defaults
+ * @param   {string} code      currency code
+ * @returns {?object}          currency defaults
  */
 export function getCurrencyDefaults( code ) {
 	const defaultCurrency = {

@@ -20,9 +20,9 @@ import {
 /**
  * Returns if a product categories request for a specific query is in progress or not.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -41,9 +41,9 @@ export function isQueryLoading( state = {}, action ) {
 /**
  * Returns if a product categories request for a specific query has returned an error.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryError( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE === action.type && action.error ) {
@@ -57,9 +57,9 @@ export function isQueryError( state = {}, action ) {
 /**
  * Tracks all known categories objects, indexed by ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -85,9 +85,9 @@ export function items( state = {}, action ) {
  * Tracks the categories which belong to a query, as a list of IDs
  * referencing items in `productCategories.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -102,9 +102,9 @@ export function queries( state = {}, action ) {
 /**
  * Tracks the total number of product categories for the current query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function total( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
@@ -118,9 +118,9 @@ export function total( state = {}, action ) {
 /**
  * Tracks the total number of pages for the current query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function totalPages( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {

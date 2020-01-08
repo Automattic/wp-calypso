@@ -4,25 +4,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { filter, get, includes, noop } from 'lodash';
+import { includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import hasLocalizedText from './has-localized-text';
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Banner from 'components/banner';
-import { Button, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import HoldList from './hold-list';
+import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
 
 /**
@@ -38,66 +36,38 @@ interface ExternalProps {
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
-	backUrl,
+	ctaName,
 	context,
+	feature,
 	eligibilityData,
-	hasBusinessPlan,
 	isEligible,
-	isJetpack,
-	isVip,
 	isPlaceholder,
 	onProceed,
-	onCancel,
+	recordUpgradeClick,
 	siteId,
-	sitePlan,
 	siteSlug,
 	translate,
 }: Props ) => {
-	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
+	const warnings = eligibilityData.eligibilityWarnings || [];
+	const listHolds = eligibilityData.eligibilityHolds || [];
 
-	const listHolds = filter(
-		get( eligibilityData, 'eligibilityHolds', [] ),
-		hold => ! includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold )
-	);
-
+	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames( 'eligibility-warnings', {
 		'eligibility-warnings__placeholder': isPlaceholder,
+		'eligibility-warnings--with-indent': showWarnings,
 	} );
 
-	let businessUpsellBanner = null;
-	if ( ! hasBusinessPlan && ! isJetpack && ! isVip ) {
-		const description = translate(
-			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
-		);
-		const title = translate( 'Business plan required' ) as string;
-		const plan =
-			sitePlan &&
-			findFirstSimilarPlanKey( sitePlan.product_slug, {
-				type: TYPE_BUSINESS,
-			} );
-		let feature = null;
-		let event = null;
-
-		if ( 'plugins' === context ) {
-			feature = FEATURE_UPLOAD_PLUGINS;
-			event = 'calypso-plugin-eligibility-upgrade-nudge';
-		} else {
-			feature = FEATURE_UPLOAD_THEMES;
-			event = 'calypso-theme-eligibility-upgrade-nudge';
+	const logEventAndProceed = () => {
+		if ( siteRequiresUpgrade( listHolds ) ) {
+			recordUpgradeClick( ctaName, feature );
+			page.redirect( `/checkout/${ siteSlug }/business` );
+			return;
 		}
+		onProceed();
+	};
 
-		const bannerURL = `/checkout/${ siteSlug }/business`;
-		businessUpsellBanner = (
-			<Banner
-				description={ description }
-				feature={ feature }
-				event={ event }
-				plan={ plan }
-				title={ title }
-				href={ bannerURL }
-			/>
-		);
-	}
+	const showThisSiteIsEligibleMessage =
+		isEligible && 0 === listHolds.length && 0 === warnings.length;
 
 	return (
 		<div className={ classes }>
@@ -106,61 +76,85 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ businessUpsellBanner }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
-				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } />
-			) }
-			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
-
-			{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
-				<Card className="eligibility-warnings__no-conflicts">
-					<Gridicon icon="thumbs-up" size={ 24 } />
-					<span>
-						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-					</span>
-				</Card>
+				<CompactCard>
+					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+				</CompactCard>
 			) }
 
-			<Card className="eligibility-warnings__confirm-box">
-				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && (
-						<>
-							{ translate( 'Please clear all issues above to proceed.' ) }
-							&nbsp;
-						</>
-					) }
-					{ isEligible && warnings.length > 0 && (
-						<>
-							{ translate( 'If you proceed you will no longer be able to use these features. ' ) }
-							&nbsp;
-						</>
-					) }
-					{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/help/contact"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					} ) }
-				</div>
+			{ showThisSiteIsEligibleMessage && (
+				<CompactCard>
+					<div className="eligibility-warnings__no-conflicts">
+						<Gridicon icon="thumbs-up" size={ 24 } />
+						<span>{ getSiteIsEligibleMessage( context, translate ) }</span>
+					</div>
+				</CompactCard>
+			) }
+
+			{ showWarnings && (
+				<CompactCard className="eligibility-warnings__warnings-card">
+					<WarningList context={ context } warnings={ warnings } />
+				</CompactCard>
+			) }
+			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<Button href={ backUrl } onClick={ onCancel }>
-						{ translate( 'Cancel' ) }
-					</Button>
-
-					<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
-						{ translate( 'Proceed' ) }
+					<Button
+						primary={ true }
+						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
+						onClick={ logEventAndProceed }
+					>
+						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
 				</div>
-			</Card>
+			</CompactCard>
 		</div>
 	);
 };
+
+function getSiteIsEligibleMessage(
+	context: string | null,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	const defaultCopy = translate( 'This site is eligible to install plugins and upload themes.' );
+	switch ( context ) {
+		case 'plugins':
+		case 'themes':
+			return hasLocalizedText( 'This site is eligible to install plugins and upload themes.' )
+				? translate( 'This site is eligible to install plugins and upload themes.' )
+				: defaultCopy;
+		case 'hosting':
+			return hasLocalizedText( 'This site is eligible to activate hosting access.' )
+				? translate( 'This site is eligible to activate hosting access.' )
+				: defaultCopy;
+		default:
+			return hasLocalizedText( 'This site is eligible to continue.' )
+				? translate( 'This site is eligible to continue.' )
+				: defaultCopy;
+	}
+}
+
+function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
+	const defaultCopy = translate( 'Proceed' );
+	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
+		return hasLocalizedText( 'Upgrade and continue' )
+			? translate( 'Upgrade and continue' )
+			: defaultCopy;
+	}
+
+	return hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
+}
+
+function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
+	const canHandleHoldsAutomatically =
+		holds.length <= 2 && holds.every( hold => [ 'NO_BUSINESS_PLAN' ].includes( hold ) );
+
+	return ! canHandleHoldsAutomatically && ! isEligible;
+}
+
+function siteRequiresUpgrade( holds: string[] ) {
+	return holds.includes( 'NO_BUSINESS_PLAN' );
+}
 
 EligibilityWarnings.defaultProps = {
 	onProceed: noop,
@@ -171,31 +165,26 @@ const mapStateToProps = ( state: object ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
-	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isVip = siteId !== null && isVipSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
-	const sitePlan = siteId !== null ? getSitePlan( state, siteId ) : null;
 
 	return {
 		eligibilityData,
-		hasBusinessPlan,
 		isEligible,
-		isJetpack,
-		isVip,
 		isPlaceholder: ! dataLoaded,
 		siteId,
 		siteSlug,
-		sitePlan,
 	};
 };
 
 const mapDispatchToProps = {
-	trackCancel: ( eventProperties = {} ) =>
-		recordTracksEvent( 'calypso_automated_transfer_eligibility_click_cancel', eventProperties ),
 	trackProceed: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
+	recordUpgradeClick: ( ctaName: string, feature: string ) =>
+		recordTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: ctaName,
+			cta_feature: feature,
+			cta_size: 'regular',
+		} ),
 };
 
 function mergeProps(
@@ -204,15 +193,22 @@ function mergeProps(
 	ownProps: ExternalProps
 ) {
 	let context: string | null = null;
+	let feature = '';
+	let ctaName = '';
 	if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
+		feature = FEATURE_UPLOAD_PLUGINS;
+		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
 		context = 'themes';
+		feature = FEATURE_UPLOAD_THEMES;
+		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
 		context = 'hosting';
+		feature = FEATURE_SFTP;
+		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
 	}
 
-	const onCancel = () => dispatchProps.trackCancel( { context } );
 	const onProceed = () => {
 		ownProps.onProceed();
 		dispatchProps.trackProceed( { context } );
@@ -222,9 +218,10 @@ function mergeProps(
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
-		onCancel,
 		onProceed,
 		context,
+		feature,
+		ctaName,
 	};
 }
 

@@ -17,9 +17,9 @@ import { getBucket } from '../helpers';
 /**
  * Gets all edits for product categories.
  *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
- * @return {Object} All product category edits in the form of { creates: [], updates: [] }
+ * @param {object} state Global state tree
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @returns {object} All product category edits in the form of { creates: [], updates: [] }
  */
 export function getAllProductCategoryEdits( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
@@ -32,10 +32,10 @@ export function getAllProductCategoryEdits( state, siteId = getSelectedSiteId( s
 /**
  * Gets the accumulated edits for a category, if any.
  *
- * @param {Object} state Global state tree
- * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
- * @return {Object} The current accumulated edits
+ * @param {object} state Global state tree
+ * @param {number|object} categoryId The id of the product category (or { index: # } if pending create)
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @returns {object} The current accumulated edits
  */
 export function getProductCategoryEdits( state, categoryId, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductCategoryEdits( state, siteId );
@@ -48,10 +48,10 @@ export function getProductCategoryEdits( state, categoryId, siteId = getSelected
 /**
  * Gets a category with local edits overlayed on top of fetched data.
  *
- * @param {Object} state Global state tree
- * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
- * @return {Object} The category data merged between the fetched data and edits
+ * @param {object} state Global state tree
+ * @param {number|object} categoryId The id of the product category (or { index: # } if pending create)
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @returns {object} The category data merged between the fetched data and edits
  */
 export function getProductCategoryWithLocalEdits(
 	state,
@@ -72,9 +72,9 @@ export function getProductCategoryWithLocalEdits(
  * This returns a list of all fetched categories overlaid with updates (if any) and
  * all categories in the creates list as well.
  *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
- * @return {Object} The category list merged between the fetched data, edits, and creates
+ * @param {object} state Global state tree
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @returns {object} The category list merged between the fetched data, edits, and creates
  */
 export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryCreates = getAllProductCategoryEdits( state, siteId ).creates || [];
@@ -89,9 +89,9 @@ export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedS
 /**
  * Gets the product category last edited in the UI.
  *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
- * @return {Object} The category data merged between the fetched data and edits
+ * @param {object} state Global state tree
+ * @param {number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @returns {object} The category data merged between the fetched data and edits
  */
 export function getCurrentlyEditingProductCategory( state, siteId = getSelectedSiteId( state ) ) {
 	const { currentlyEditingId } = getAllProductCategoryEdits( state, siteId );
@@ -102,9 +102,9 @@ export function getCurrentlyEditingProductCategory( state, siteId = getSelectedS
 /**
  * Gets the id of the currently editing product category.
  *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|Object} Id of the currently editing product category.
+ * @param {object} state Global state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {number|object} Id of the currently editing product category.
  */
 export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductCategoryEdits( state, siteId ) || {};

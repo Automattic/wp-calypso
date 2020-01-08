@@ -10,7 +10,7 @@ namespace A8C\FSE;
 /**
  * The strategy to use for loading the default template part content.
  *
- * @typedef {String="use-api","use-local"} LoadingStrategy
+ * @typedef {string="use-api","use-local"} LoadingStrategy
  */
 
 /**

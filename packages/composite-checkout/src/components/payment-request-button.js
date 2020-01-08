@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 
 /**
@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
  */
 import { useLocalize } from '../lib/localize';
 import Button from './button';
+import { useFormStatus } from '../lib/form-status';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -21,19 +22,19 @@ export default function PaymentRequestButton( {
 	disabledReason,
 } ) {
 	const localize = useLocalize();
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
-		setIsSubmitting( true );
-		paymentRequest.on( 'cancel', () => setIsSubmitting( false ) );
+		setFormSubmitting();
+		paymentRequest.on( 'cancel', setFormReady );
 		paymentRequest.show();
 	};
 	if ( ! paymentRequest ) {
 		disabled = true;
 	}
 
-	if ( isSubmitting ) {
+	if ( formStatus === 'submitting' ) {
 		return (
 			<Button disabled fullWidth>
 				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }

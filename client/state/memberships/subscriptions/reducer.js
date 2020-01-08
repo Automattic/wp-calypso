@@ -14,9 +14,9 @@ import { combineReducers, withoutPersistence } from 'state/utils';
  * Returns the updated items state after an action has been dispatched.
  * The state contains all past and upcoming billing transactions.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withoutPersistence( ( state = [], action ) => {
 	switch ( action.type ) {

@@ -18,9 +18,9 @@ const debug = debugFactory( 'calypso:wpcom-undocumented' );
  * Class inherited from `WPCOMUnpublished` class and adds
  * specific methods useful for wp-calypso.
  *
- * @param {String} [token] - oauth token
+ * @param {string} [token] - oauth token
  * @param {Function} [reqHandler] - request handler
- * @return {NUll} null
+ * @returns {NUll} null
  */
 function WPCOMUndocumented( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOMUndocumented ) ) {
@@ -52,7 +52,7 @@ inherits( WPCOMUndocumented, wpcomFactory );
 /**
  * Get `Undocumented` object instance
  *
- * @return {Undocumented} Undocumented instance
+ * @returns {Undocumented} Undocumented instance
  */
 WPCOMUndocumented.prototype.undocumented = function() {
 	return new Undocumented( this );
@@ -62,7 +62,7 @@ WPCOMUndocumented.prototype.undocumented = function() {
  * Add a token to this instance of WPCOM.
  * When loaded, the token is applied to the param object of each subsequent request.
  *
- * @param {String} [token] - oauth token
+ * @param {string} [token] - oauth token
  */
 wpcomFactory.prototype.loadToken = function( token ) {
 	this._token = token;
@@ -71,7 +71,7 @@ wpcomFactory.prototype.loadToken = function( token ) {
 /**
  * Returns a boolean representing whether or not the token has been loaded.
  *
- * @return {String} oauth token
+ * @returns {string} oauth token
  */
 WPCOMUndocumented.prototype.isTokenLoaded = function() {
 	return this._token !== undefined;

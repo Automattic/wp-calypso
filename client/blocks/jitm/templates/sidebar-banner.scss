@@ -1,0 +1,28 @@
+.sidebar-banner {
+	font-size: 12px;
+
+	.sidebar-banner__link {
+		background-color: var( --color-success );
+		color: var( --color-text-inverted );
+		display: flex;
+
+		@include breakpoint( '<660px' ) {
+			padding: 0 19px;
+		}
+
+		.sidebar-banner__icon-wrapper {
+			flex: 0 0 auto;
+			padding: 5px 5px 2px;
+		}
+
+		.sidebar-banner__content {
+			width: 100%;
+			padding: 6px 5px 5px;
+		}
+
+		.sidebar-banner__cta {
+			padding: 6px 8px 2px 5px;
+			text-transform: uppercase;
+		}
+	}
+}

@@ -1,44 +1,52 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { identity, map } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import hasLocalizedText from './has-localized-text';
+import { Button } from '@automattic/components';
+import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-// TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
+function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	return {
-		BLOCKED_ATOMIC_TRANSFER: {
-			title: translate( 'Blocked' ),
-			description: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-			),
-			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
-		},
-		TRANSFER_ALREADY_EXISTS: {
-			title: translate( 'Installation in progress' ),
-			description: translate(
-				'Just a minute! Please wait until the installation is finished, then try again.'
-			),
-			supportUrl: null,
-		},
-		NO_JETPACK_SITES: {
-			title: translate( 'Not available for Jetpack sites' ),
-			description: translate( 'Try using a different site.' ),
-			supportUrl: null,
-		},
-		NO_VIP_SITES: {
-			title: translate( 'Not available for VIP sites' ),
-			description: translate( 'Try using a different site.' ),
+		NO_BUSINESS_PLAN: {
+			title: hasLocalizedText( 'Upgrade to a Business plan' )
+				? translate( 'Upgrade to a Business plan' )
+				: translate( 'Upgrade to Business' ),
+			description: ( function() {
+				if ( context === 'themes' ) {
+					return hasLocalizedText(
+						"You'll also get to install custom plugins, have more storage, and access live support."
+					)
+						? translate(
+								"You'll also get to install custom plugins, have more storage, and access live support."
+						  )
+						: translate(
+								'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+						  );
+				}
+
+				return hasLocalizedText(
+					"You'll also get to install custom themes, have more storage, and access live support."
+				)
+					? translate(
+							"You'll also get to install custom themes, have more storage, and access live support."
+					  )
+					: translate(
+							'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+					  );
+			} )(),
 			supportUrl: null,
 		},
 		SITE_PRIVATE: {
@@ -47,13 +55,6 @@ function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
 				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
-		},
-		SITE_GRAYLISTED: {
-			title: translate( 'Ongoing site dispute' ),
-			description: translate(
-				"Contact us to review your site's standing and resolve the dispute."
-			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
@@ -68,13 +69,6 @@ function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
 			supportUrl: localizeUrl(
 				'https://en.support.wordpress.com/move-domain/setting-custom-a-records/'
 			),
-		},
-		NO_SSL_CERTIFICATE: {
-			title: translate( 'Certificate installation in progress' ),
-			description: translate(
-				'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.'
-			),
-			supportUrl: null,
 		},
 		EMAIL_UNVERIFIED: {
 			title: translate( 'Confirm your email address' ),
@@ -93,24 +87,115 @@ function getHoldMessages( translate: LocalizeProps[ 'translate' ] ) {
 	};
 }
 
+/**
+ * This function defines how we should communicate each type of blocking hold the public-api returns.
+ * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
+ * should short-circuit any eligibility checks and just communicate the problem.
+ *
+ * @param {Function} translate Translate fn
+ * @returns {object} Dictionary of blocking holds and their corresponding messages
+ */
+function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
+	return {
+		BLOCKED_ATOMIC_TRANSFER: {
+			message: hasLocalizedText(
+				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+			)
+				? translate(
+						'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+				  )
+				: translate(
+						'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
+				  ),
+			status: 'is-error',
+			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
+		},
+		TRANSFER_ALREADY_EXISTS: {
+			message: translate(
+				'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+			),
+			status: null,
+			contactUrl: null,
+		},
+		NO_JETPACK_SITES: {
+			message: translate( 'Try using a different site.' ),
+			status: 'is-error',
+			contactUrl: null,
+		},
+		NO_VIP_SITES: {
+			message: translate( 'Try using a different site.' ),
+			status: 'is-error',
+			contactUrl: null,
+		},
+		SITE_GRAYLISTED: {
+			message: hasLocalizedText(
+				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+			)
+				? translate(
+						"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+				  )
+				: translate( "Contact us to review your site's standing and resolve the dispute." ),
+			status: 'is-error',
+			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
+		},
+		NO_SSL_CERTIFICATE: {
+			message: hasLocalizedText(
+				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+			)
+				? translate(
+						'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+				  )
+				: translate(
+						'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.\''
+				  ),
+			status: null,
+			contactUrl: null,
+		},
+	};
+}
+
 interface ExternalProps {
+	context: string | null;
 	holds: string[];
 	isPlaceholder: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const HoldList = ( { holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( translate );
+export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
+	const holdMessages = getHoldMessages( context, translate );
+	const blockingMessages = getBlockingMessages( translate );
+
+	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
 
 	return (
-		<div>
-			<SectionHeader
-				label={ translate( 'Please resolve this issue:', 'Please resolve these issues:', {
-					count: holds.length,
+		<>
+			{ ! isPlaceholder &&
+				blockingHold &&
+				isHardBlockingHoldType( blockingHold, blockingMessages ) && (
+					<Notice
+						status={ blockingMessages[ blockingHold ].status }
+						text={ blockingMessages[ blockingHold ].message }
+						showDismiss={ false }
+					>
+						{ blockingMessages[ blockingHold ].contactUrl && (
+							<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+								{ translate( 'Contact us' ) }
+							</NoticeAction>
+						) }
+					</Notice>
+				) }
+			<div
+				className={ classNames( {
+					'eligibility-warnings__hold-list-dim': blockingHold,
 				} ) }
-			/>
-			<Card className="eligibility-warnings__hold-list">
+				data-testid="HoldList-Card"
+			>
+				<CardHeading>
+					<span className="eligibility-warnings__hold-heading">
+						{ getCardHeading( context, translate ) }
+					</span>
+				</CardHeading>
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
@@ -127,20 +212,19 @@ export const HoldList = ( { holds, isPlaceholder, translate }: Props ) => {
 					map( holds, hold =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
-								<Gridicon icon="notice-outline" size={ 24 } />
 								<div className="eligibility-warnings__message">
-									<span className="eligibility-warnings__message-title">
+									<div className="eligibility-warnings__message-title">
 										{ holdMessages[ hold ].title }
-									</span>
-									:&nbsp;
-									<span className="eligibility-warnings__message-description">
+									</div>
+									<div className="eligibility-warnings__message-description">
 										{ holdMessages[ hold ].description }
-									</span>
+									</div>
 								</div>
 								{ holdMessages[ hold ].supportUrl && (
-									<div className="eligibility-warnings__action">
+									<div className="eligibility-warnings__hold-action">
 										<Button
 											compact
+											disabled={ !! blockingHold }
 											href={ holdMessages[ hold ].supportUrl }
 											rel="noopener noreferrer"
 										>
@@ -151,10 +235,32 @@ export const HoldList = ( { holds, isPlaceholder, translate }: Props ) => {
 							</div>
 						)
 					) }
-			</Card>
-		</div>
+			</div>
+		</>
 	);
 };
+
+function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+	const defaultCopy = translate( "To continue you'll need to:" );
+	switch ( context ) {
+		case 'plugins':
+			return hasLocalizedText( "To install plugins you'll need to:" )
+				? translate( "To install plugins you'll need to:" )
+				: defaultCopy;
+		case 'themes':
+			return hasLocalizedText( "To install themes you'll need to:" )
+				? translate( "To install themes you'll need to:" )
+				: defaultCopy;
+		case 'hosting':
+			return hasLocalizedText( "To activate hosting access you'll need to:" )
+				? translate( "To activate hosting access you'll need to:" )
+				: defaultCopy;
+		default:
+			return hasLocalizedText( "To continue you'll need to:" )
+				? translate( "To continue you'll need to:" )
+				: defaultCopy;
+	}
+}
 
 function isKnownHoldType(
 	hold: string,
@@ -162,5 +268,24 @@ function isKnownHoldType(
 ): hold is keyof ReturnType< typeof getHoldMessages > {
 	return holdMessages.hasOwnProperty( hold );
 }
+
+/**
+ * This checks if hold coming from API is blocking (@see getBlockingMessages);
+ * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
+ * to our support.
+ *
+ * @param {string} hold Specific hold we want to check
+ * @param {object} blockingMessages List of all holds we consider blocking
+ * @returns {boolean} Is {hold} blocking or not
+ */
+function isHardBlockingHoldType(
+	hold: string,
+	blockingMessages: ReturnType< typeof getBlockingMessages >
+): hold is keyof ReturnType< typeof getBlockingMessages > {
+	return blockingMessages.hasOwnProperty( hold );
+}
+
+export const hasBlockingHold = ( holds: string[] ) =>
+	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
 export default localize( HoldList );

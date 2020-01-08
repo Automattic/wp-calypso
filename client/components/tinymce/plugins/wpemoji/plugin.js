@@ -9,7 +9,7 @@ import config from 'config';
 /**
  * TinyMCE plugin tweaking Markdown behaviour.
  *
- * @param {Object} editor TinyMCE editor instance
+ * @param {object} editor TinyMCE editor instance
  */
 function wpemoji( editor ) {
 	let typing = false;

@@ -23,13 +23,19 @@
 	&__main {
 		@include breakpoint( '>1040px' ) {
 			@include display-grid;
-			// stylelint-disable-next-line unit-whitelist
 			@include grid-template-columns( 12, 24px, 1fr );
 		}
 	}
 
 	&__upsells {
 		@include grid-column( 1, 12 );
+	}
+
+	&__main .banner.card {
+		@include grid-column( 1, 12 );
+		@include grid-row( 2, 1 );
+		margin-left: 0;
+		margin-right: 0;
 	}
 
 	&__page-heading {
@@ -199,11 +205,10 @@
 		padding-bottom: 12px;
 	}
 	&__layout {
-		@include grid-row( 2, 1 );
+		@include grid-row( 3, 1 );
 		@include breakpoint( '>1040px' ) {
 			@include grid-column( 1, 12 );
 			@include display-grid;
-			// stylelint-disable-next-line unit-whitelist
 			@include grid-template-columns( 12, 24px, 1fr );
 			grid-gap: 24px;
 		}

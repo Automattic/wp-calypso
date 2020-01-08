@@ -47,12 +47,13 @@ class DomainProductPrice extends React.Component {
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
 				if ( this.props.showTestCopy ) {
-					message = (
-						<>
-							Registration fee: <del>{ this.props.price }</del>{' '}
-							<span className="domain-product-price__free-price">Free</span>
-						</>
-					);
+					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
+						args: { cost: this.props.price },
+						components: {
+							del: <del />,
+							span: <span className="domain-product-price__free-price" />,
+						},
+					} );
 				} else {
 					message = translate( 'First year included in paid plans' );
 				}
@@ -75,7 +76,9 @@ class DomainProductPrice extends React.Component {
 		}
 
 		const priceText = this.props.showTestCopy
-			? `Renews at ${ this.props.price }/year`
+			? this.props.translate( 'Renews at %(cost)s / year', {
+					args: { cost: this.props.price },
+			  } )
 			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
 					args: { cost: this.props.price },
 					components: { small: <small /> },

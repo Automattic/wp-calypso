@@ -28,7 +28,7 @@ import {
  * Returns an action object to signal that list objects have been received.
  *
  * @param  {Array}  lists Lists received
- * @return {Object}       Action object
+ * @returns {object}       Action object
  */
 export function receiveLists( lists ) {
 	return {
@@ -40,7 +40,7 @@ export function receiveLists( lists ) {
 /**
  * Triggers a network request to fetch the current user's lists.
  *
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSubscribedLists() {
 	return dispatch => {
@@ -72,9 +72,9 @@ export function requestSubscribedLists() {
 /**
  * Triggers a network request to fetch a single Reader list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function}        Action thunk
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function}        Action thunk
  */
 export function requestList( owner, slug ) {
 	return dispatch => {
@@ -118,9 +118,9 @@ export function requestList( owner, slug ) {
 /**
  * Triggers a network request to follow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function} Action promise
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function} Action promise
  */
 export function followList( owner, slug ) {
 	return dispatch => {
@@ -155,9 +155,9 @@ export function followList( owner, slug ) {
 /**
  * Triggers a network request to unfollow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function} Action promise
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function} Action promise
  */
 export function unfollowList( owner, slug ) {
 	return dispatch => {
@@ -192,8 +192,8 @@ export function unfollowList( owner, slug ) {
 /**
  * Triggers a network request to update a list's details.
  *
- * @param  {Object}  list List details to save
- * @return {Function} Action promise
+ * @param  {object}  list List details to save
+ * @returns {Function} Action promise
  */
 export function updateListDetails( list ) {
 	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
@@ -236,7 +236,7 @@ export function updateListDetails( list ) {
  * Trigger an action to dismiss a list update notice.
  *
  * @param  {Integer}  listId List ID
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function dismissListNotice( listId ) {
 	return dispatch => {
@@ -251,8 +251,8 @@ export function dismissListNotice( listId ) {
  * Trigger an action to update a list title.
  *
  * @param  {Integer}  listId List ID
- * @param  {String}  newTitle List title
- * @return {Function} Action thunk
+ * @param  {string}  newTitle List title
+ * @returns {Function} Action thunk
  */
 export function updateTitle( listId, newTitle ) {
 	return dispatch => {
@@ -268,8 +268,8 @@ export function updateTitle( listId, newTitle ) {
  * Trigger an action to update a list description.
  *
  * @param  {Integer}  listId List ID
- * @param  {String}  newDescription List description
- * @return {Function} Action thunk
+ * @param  {string}  newDescription List description
+ * @returns {Function} Action thunk
  */
 export function updateDescription( listId, newDescription ) {
 	return dispatch => {

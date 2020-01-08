@@ -189,8 +189,8 @@ export const findEligibleTour = createSelector(
  * configuration (`stepConfig`) for the currently active tour step, if one is
  * active.
  *
- * @param  {Object}  state Global state tree
- * @return {Object}        Current Guided Tours state
+ * @param  {object}  state Global state tree
+ * @returns {object}        Current Guided Tours state
  */
 const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 

@@ -29,9 +29,9 @@ import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-
 /**
  * Computes a map of the continents that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
- * @param {Object} state Whole Redux state tree
- * @param {Number} siteId Site ID
- * @return {Object} A map with the form { continentCode => zoneId }. If a continent doesn't appear in the map, it means that
+ * @param {object} state Whole Redux state tree
+ * @param {number} siteId Site ID
+ * @returns {object} A map with the form { continentCode => zoneId }. If a continent doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
 const getContinentsOwnedByOtherZone = createSelector(
@@ -59,9 +59,9 @@ const getContinentsOwnedByOtherZone = createSelector(
 /**
  * Computes a map of the countries that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
- * @param {Object} state Whole Redux state tree
- * @param {Number} siteId Site ID
- * @return {Object} A map with the form { countryCode => zoneId }. If a country doesn't appear in the map, it means that
+ * @param {object} state Whole Redux state tree
+ * @param {number} siteId Site ID
+ * @returns {object} A map with the form { countryCode => zoneId }. If a country doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
 const getCountriesOwnedByOtherZone = createSelector(
@@ -90,10 +90,10 @@ const getCountriesOwnedByOtherZone = createSelector(
 /**
  * Computes a map of the states that belong to a zone different than the one that's currently being edited.
  * That information will be used to mark them as "disabled" in the UI.
- * @param {Object} state Whole Redux state tree
- * @param {Number} siteId Site ID
- * @param {String} countryCode 2-letter ISO country code
- * @return {Object} A map with the form { stateCode: zoneId }. If a state doesn't appear in the map, it means that
+ * @param {object} state Whole Redux state tree
+ * @param {number} siteId Site ID
+ * @param {string} countryCode 2-letter ISO country code
+ * @returns {object} A map with the form { stateCode: zoneId }. If a state doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
 const getStatesOwnedByOtherZone = createSelector(
@@ -125,10 +125,10 @@ const getStatesOwnedByOtherZone = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} zoneId ID of the shipping zone
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} The list of locations for the shipping zone, in the form
+ * @param {object} state Whole Redux state tree
+ * @param {number} zoneId ID of the shipping zone
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} The list of locations for the shipping zone, in the form
  * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
  * This won't include any local edits made to the zone locations.
  */
@@ -171,11 +171,11 @@ export const getShippingZoneLocations = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @param {Boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
  * or just use the committed edits.
- * @return {Object} The list of locations for the shipping zone, including any edits made, in the form
+ * @returns {object} The list of locations for the shipping zone, including any edits made, in the form
  * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
  */
 export const getShippingZoneLocationsWithEdits = createSelector(
@@ -316,9 +316,9 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Edit Locations" modal is opened or not.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the "Edit Locations" modal is opened or not.
  */
 export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if (
@@ -333,9 +333,9 @@ export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
  * is only one country selected (and no continents).
  */
 export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -347,9 +347,9 @@ export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|undefined} The Zone ID that is the "owner" of the currently selected country, or "false-y" if the
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {number|undefined} The Zone ID that is the "owner" of the currently selected country, or "false-y" if the
  * currently selected country isn't owned by any other zone. If this returns a Zone ID, then the user shouldn't be able
  * to filter by "whole country", only by states / postcode.
  */
@@ -365,9 +365,9 @@ export const getCurrentSelectedCountryZoneOwner = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
  * is only one country selected and it has a list of available states.
  */
 export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -380,9 +380,9 @@ export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Filter by postcode range" option is selected.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the "Filter by postcode range" option is selected.
  */
 export const areLocationsFilteredByPostcode = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -422,9 +422,9 @@ export const areLocationsFilteredByPostcode = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Filter by state" option is selected.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the "Filter by state" option is selected.
  */
 export const areLocationsFilteredByState = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -468,9 +468,9 @@ export const areLocationsFilteredByState = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the "Ship to the whole country" option is selected.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the "Ship to the whole country" option is selected.
  */
 export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return (
@@ -482,12 +482,12 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} locations Set of locations (it has the properties "continent", "country", "state" and "postcode", all arrays)
- * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * @param {object} state Whole Redux state tree
+ * @param {object} locations Set of locations (it has the properties "continent", "country", "state" and "postcode", all arrays)
+ * @param {number} maxCountries Maximum number of countries per continent to list individually before
  * they are grouped into a continent
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of locations, based on the "locations" object provided.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of locations, based on the "locations" object provided.
  * Each element of the list will have these properties:
  * - type: 'continent|country|state'
  * - code: Continent code, country code or state code, depending on the type
@@ -579,12 +579,12 @@ const getShippingZoneLocationsListFromLocations = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} zoneId ID of the shipping zone.
- * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * @param {object} state Whole Redux state tree
+ * @param {number} zoneId ID of the shipping zone.
+ * @param {number} maxCountries Maximum number of countries per continent to list individually before
  * they are grouped into a continent
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of locations configured for the zone. This doesn't include any local edits.
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of locations configured for the zone. This doesn't include any local edits.
  */
 export const getShippingZoneLocationsList = createSelector(
 	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
@@ -601,11 +601,11 @@ export const getShippingZoneLocationsList = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * @param {object} state Whole Redux state tree
+ * @param {number} maxCountries Maximum number of countries per continent to list individually before
  * they are grouped into a continent
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of locations currently configured for the zone. This includes committed edits,
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of locations currently configured for the zone. This includes committed edits,
  * but not temporary edits, since it's made to be used for the UI outside of the locations modal.
  */
 export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
@@ -622,9 +622,9 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of continents and countries for this zone, ready to be rendered in the UI. This includes
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of continents and countries for this zone, ready to be rendered in the UI. This includes
  * temporary edits, as it's made to be used inside the modal UI. Each element will have these properties:
  * - type: 'continent|country'
  * - code: Continent code or country code
@@ -689,9 +689,9 @@ export const getCurrentlyEditingShippingZoneCountries = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of states for this zone, ready to be rendered in the UI. This includes
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of states for this zone, ready to be rendered in the UI. This includes
  * temporary edits, as it's made to be used inside the modal UI. Each element will have these properties:
  * - code: State code
  * - name: State name
@@ -730,9 +730,9 @@ export const getCurrentlyEditingShippingZoneStates = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
  * temporary edits, as it's designed to be used for enabling / disabling the "Save Changes" button.
  */
 export const areCurrentlyEditingShippingZoneLocationsValid = (
@@ -756,9 +756,9 @@ export const areCurrentlyEditingShippingZoneLocationsValid = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} A map of the new "order" property that the zones will need to have to preserve a correct ordering.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} A map of the new "order" property that the zones will need to have to preserve a correct ordering.
  * The keys will be the zone IDs, and the values will be the required order property for those zones
  */
 export const getOrderOperationsToSaveCurrentZone = (

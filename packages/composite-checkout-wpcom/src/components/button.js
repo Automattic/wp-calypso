@@ -83,13 +83,13 @@ const CallToAction = styled.button`
 `;
 
 function getImageFilter( { buttonType, buttonState } ) {
-	return `grayscale( ${ buttonState && buttonState.includes( 'primary' ) ? 0 : 100 } ) invert( ${
+	return `grayscale( ${ buttonState === 'disabled' ? 100 : 0 } ) invert( ${
 		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : 0
 	} );`;
 }
 
 function getImageOpacity( { buttonState } ) {
-	return buttonState && buttonState.includes( 'primary' ) ? 1 : '0.5';
+	return buttonState === 'disabled' ? 0.5 : '1';
 }
 
 function getBorderWeight( { buttonState } ) {

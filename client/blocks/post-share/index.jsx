@@ -20,6 +20,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
 import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
 import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
@@ -403,7 +404,7 @@ class PostShare extends Component {
 	}
 
 	renderRequestSharingNotice() {
-		const { failure, requesting, success, translate } = this.props;
+		const { failure, requesting, success, translate, moment } = this.props;
 
 		if ( this.props.scheduling ) {
 			return (
@@ -416,7 +417,7 @@ class PostShare extends Component {
 			return (
 				<Notice status="is-success" onDismissClick={ this.dismiss }>
 					{ translate( "We'll share your post on %s.", {
-						args: this.props.scheduledAt.format( 'LLLL' ),
+						args: moment.unix( this.props.scheduledAt ).format( 'LLLL' ),
 					} ) }
 				</Notice>
 			);
@@ -631,4 +632,4 @@ export default connect(
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation, schedulePostShareAction }
-)( localize( PostShare ) );
+)( localize( withLocalizedMoment( PostShare ) ) );
