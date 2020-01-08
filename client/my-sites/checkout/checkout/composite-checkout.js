@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useMemo } from 'react';
+import wp from 'lib/wp';
+import React, { useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CheckoutProvider, createFullCreditsMethod } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
+import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -20,17 +21,24 @@ import {
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
+import { useCreatePaymentMethods } from './composite-checkout-payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
+
+const registry = createRegistry();
+const { select } = registry;
+
+const wpcom = wp.undocumented();
+
+// Aliasing getCart and setCart explicitly bound to wpcom is
+// required here; otherwise we get `this is not defined` errors.
+const getCart = ( ...args ) => wpcom.getCart( ...args );
+const setCart = ( ...args ) => wpcom.setCart( ...args );
 
 export function CompositeCheckout( {
 	siteSlug,
 	planSlug,
 	isJetpackNotAtomic,
-	setCart,
-	getCart,
-	availablePaymentMethods,
-	registry,
 	siteId,
 	onPaymentComplete,
 	showErrorMessage,
@@ -59,15 +67,15 @@ export function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
-	const fullCreditsPaymentMethod = useMemo(
-		() => ( credits >= total.amount ? createFullCreditsMethod() : null ),
-		[ credits, total.amount ]
-	);
-
-	const paymentMethods = useMemo(
-		() => [ ...availablePaymentMethods, fullCreditsPaymentMethod ].filter( Boolean ),
-		[ availablePaymentMethods, fullCreditsPaymentMethod ]
-	);
+	// Payment methods must be created inside the component so their stores are
+	// re-created when the checkout unmounts and remounts.
+	const paymentMethods = useCreatePaymentMethods( {
+		select,
+		registerStore,
+		wpcom,
+		credits,
+		total,
+	} );
 
 	return (
 		<CheckoutProvider
@@ -93,7 +101,6 @@ export function CompositeCheckout( {
 }
 
 CompositeCheckout.propTypes = {
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	registry: PropTypes.object.isRequired,
 	siteSlug: PropTypes.string,
 	setCart: PropTypes.func.isRequired,
