@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { CheckoutProvider } from '@automattic/composite-checkout';
+import { CheckoutProvider, createFullCreditsMethod } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
@@ -41,6 +41,7 @@ export function CompositeCheckout( {
 		items,
 		tax,
 		total,
+		credits,
 		removeItem,
 		addItem,
 		changePlanLength,
@@ -58,6 +59,16 @@ export function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
+	const fullCreditsPaymentMethod = useMemo(
+		() => ( credits >= total.amount ? createFullCreditsMethod() : null ),
+		[ credits, total.amount ]
+	);
+
+	const paymentMethods = useMemo(
+		() => [ ...availablePaymentMethods, fullCreditsPaymentMethod ].filter( Boolean ),
+		[ availablePaymentMethods, fullCreditsPaymentMethod ]
+	);
+
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
@@ -68,7 +79,7 @@ export function CompositeCheckout( {
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
 			onEvent={ handleCheckoutEvent }
-			paymentMethods={ availablePaymentMethods }
+			paymentMethods={ paymentMethods }
 			registry={ registry }
 			isLoading={ isLoading }
 		>
