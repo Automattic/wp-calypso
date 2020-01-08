@@ -15,7 +15,7 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
+import { selectorDebounce, enableSidebarDisplay } from '../../constants';
 import Link from '../link';
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
@@ -121,16 +121,18 @@ const Header: FunctionComponent< Props > = ( {
 					{ NO__( 'Next' ) }
 				</Link>
 				<div className="gutenboarding__header-group">
-					<IconButton
-						aria-expanded={ isEditorSidebarOpened }
-						aria-haspopup="menu"
-						aria-pressed={ isEditorSidebarOpened }
-						icon="admin-generic"
-						isToggled={ isEditorSidebarOpened }
-						label={ NO__( 'Site block settings' ) }
-						onClick={ toggleGeneralSidebar }
-						shortcut={ toggleSidebarShortcut }
-					/>
+					{ enableSidebarDisplay && (
+						<IconButton
+							aria-expanded={ isEditorSidebarOpened }
+							aria-haspopup="menu"
+							aria-pressed={ isEditorSidebarOpened }
+							icon="admin-generic"
+							isToggled={ isEditorSidebarOpened }
+							label={ NO__( 'Site block settings' ) }
+							onClick={ toggleGeneralSidebar }
+							shortcut={ toggleSidebarShortcut }
+						/>
+					) }
 				</div>
 			</div>
 		</div>

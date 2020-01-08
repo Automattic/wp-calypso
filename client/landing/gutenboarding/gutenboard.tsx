@@ -33,6 +33,7 @@ import { Slot as SidebarSlot } from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import { STORE_KEY } from './stores/onboard';
 import { routes, Step } from './steps';
+import { enableSidebarDisplay } from './constants';
 import './style.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/c7d00c64a4c74236a4aab528b3987811ab928deb/packages/edit-post/src/keyboard-shortcuts.js#L11-L15
@@ -116,10 +117,12 @@ export function Gutenboard() {
 									</WritingFlow>
 								</div>
 							</div>
-							<div>
-								<SettingsSidebar isActive={ isEditorSidebarOpened } />
-								<SidebarSlot />
-							</div>
+							{ enableSidebarDisplay && (
+								<div>
+									<SettingsSidebar isActive={ isEditorSidebarOpened } />
+									<SidebarSlot />
+								</div>
+							) }
 						</BlockEditorProvider>
 					</div>
 				</DropZoneProvider>
