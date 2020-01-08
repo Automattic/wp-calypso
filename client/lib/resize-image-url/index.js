@@ -73,21 +73,21 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 		return imageUrl;
 	}
 
-	const parsedUrl = getUrlParts( imageUrl );
-	delete parsedUrl.search;
+	const resultUrl = getUrlParts( imageUrl );
+	delete resultUrl.search;
 
-	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
+	if ( ! REGEXP_VALID_PROTOCOL.test( resultUrl.protocol ) ) {
 		return imageUrl;
 	}
-	if ( ! parsedUrl.hostname ) {
+	if ( ! resultUrl.hostname ) {
 		// no hostname? must be a bad url.
 		return imageUrl;
 	}
 
-	SIZE_PARAMS.forEach( param => parsedUrl.searchParams.delete( param ) );
+	SIZE_PARAMS.forEach( param => resultUrl.searchParams.delete( param ) );
 
 	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( key =>
-		parsedUrl.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
+		resultUrl.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
 	);
 
 	if ( 'number' === typeof resize ) {
@@ -119,8 +119,8 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	} );
 
 	for ( const key of Object.keys( mapped ) ) {
-		parsedUrl.searchParams.set( key, mapped[ key ] );
+		resultUrl.searchParams.set( key, mapped[ key ] );
 	}
 
-	return getUrlFromParts( parsedUrl ).href;
+	return getUrlFromParts( resultUrl ).href;
 }
