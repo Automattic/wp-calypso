@@ -348,7 +348,8 @@ export class SiteSettingsFormGeneral extends Component {
 
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
-		const guessedTimezone = moment.tz.guess();
+		const guessedTimezone = 'Asia/Calcutta';
+		moment.tz.guess();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
