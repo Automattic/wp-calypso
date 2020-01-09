@@ -93,13 +93,13 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, onClick } = this.props;
+		const { event, feature, isCompact, onClick } = this.props;
 
 		if ( event ) {
 			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 				cta_name: event,
 				cta_feature: feature,
-				cta_size: 'regular',
+				cta_size: isCompact ? 'compact' : 'regular',
 			} );
 		}
 
@@ -153,6 +153,7 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
+			isCompact,
 			list,
 			price,
 			title,
@@ -169,7 +170,7 @@ export class Banner extends Component {
 						eventProperties={ {
 							cta_name: event,
 							cta_feature: feature,
-							cta_size: 'regular',
+							cta_size: isCompact ? 'compact' : 'regular',
 						} }
 					/>
 				) }
