@@ -4,6 +4,13 @@
 import React, { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
+import { AppState } from 'types';
+
+/**
+ * Internal Dependencies
+ */
+import { getVariationForUser, isLoading } from 'state/experiments/selectors';
+import { assignCurrentUserToVariations } from 'state/experiments/actions';
 
 /**
  * The expected props for the top-level experiment component
@@ -50,12 +57,12 @@ export class Variation extends Component< VariationProps, State > {
 	acceptedVariation: ( string | null | undefined )[] = [ this.props.name ];
 
 	render() {
-		const { variation, isLoading, children } = this.props;
+		const { variation, isLoading: loading, children } = this.props;
 
 		// if it's loading and there's a variation to display, maybe display the variation.
 		// if it's loading and there's not a variation, don't show the variation
 		// if there's a variation, maybe show the variation
-		if ( ( isLoading && variation ) || variation || ( ! isLoading && variation == null ) ) {
+		if ( ( loading && variation ) || variation || ( ! loading && variation == null ) ) {
 			if ( includes( this.acceptedVariation, variation ) ) {
 				return <>{ children }</>;
 			}
@@ -76,8 +83,8 @@ export class DefaultVariation extends Variation {
  */
 export class LoadingVariations extends Component< LoadingProps, State > {
 	render() {
-		const { variation, isLoading, children } = this.props;
-		if ( variation == null && isLoading ) return <>{ children }</>;
+		const { variation, isLoading: loading, children } = this.props;
+		if ( variation == null && loading ) return <>{ children }</>;
 		return null;
 	}
 }
@@ -87,15 +94,39 @@ export class LoadingVariations extends Component< LoadingProps, State > {
  */
 export class RawExperiment extends Component< ExperimentProps, State > {
 	render() {
-		const { isLoading, variation, children } = this.props;
+		const { isLoading: loading, variation, children } = this.props;
 		return (
 			<>
 				{ React.Children.map( React.Children.toArray( children ), elem =>
-					React.cloneElement( elem, { variation, isLoading } )
+					React.cloneElement( elem, { variation, loading } )
 				) }
 			</>
 		);
 	}
 }
 
-export default connect( () => {}, {} )( RawExperiment );
+function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): ExperimentProps {
+	// todo: throw error in dev mode if name is not defined
+	if ( ownProps == null || ownProps.name == null )
+		return {
+			name: 'unknown_experiment',
+			children: null,
+			isLoading: false,
+		};
+	const { name: experimentName } = ownProps;
+	return {
+		isLoading: isLoading( state, experimentName ),
+		variation: getVariationForUser( state, experimentName ),
+		userId: '3',
+		anonId: '2',
+		...ownProps,
+	};
+}
+
+function mapDispatchToProps( dispatch, ownProps?: ExperimentProps ): ExperimentProps | undefined {
+	dispatch( assignCurrentUserToVariations() );
+
+	return ownProps;
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( RawExperiment );
