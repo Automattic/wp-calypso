@@ -26,6 +26,7 @@ interface Props {
 	prev?: string;
 	toggleGeneralSidebar: () => void;
 	toggleSidebarShortcut: KeyboardShortcut;
+	isLoggedIn?: boolean;
 }
 
 interface KeyboardShortcut {
@@ -40,6 +41,7 @@ const Header: FunctionComponent< Props > = ( {
 	prev,
 	toggleGeneralSidebar,
 	toggleSidebarShortcut,
+	isLoggedIn,
 } ) => {
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
@@ -94,10 +96,17 @@ const Header: FunctionComponent< Props > = ( {
 		>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					<Link className="gutenboarding__header-back-button" to={ prev }>
-						<Icon icon="arrow-left-alt" />
-						{ NO__( 'Back' ) }
-					</Link>
+					{ ! isLoggedIn ? (
+						<Link className="gutenboarding__header-back-button" to={ prev }>
+							<Icon icon="arrow-left-alt" />
+							{ NO__( 'Back' ) }
+						</Link>
+					) : (
+						<a className="gutenboarding__header-back-button" href="/sites">
+							<Icon icon="arrow-left-alt" />
+							{ NO__( 'Back to My Sites' ) }
+						</a>
+					) }
 				</div>
 				<div className="gutenboarding__header-group">
 					{ siteTitle ? (
