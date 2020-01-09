@@ -8,11 +8,11 @@ import superagent from 'superagent';
 /**
  * Internal dependencies
  */
-import { statsdTimingUrl, statsdCountingUrl } from '../../../../client/lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import analytics from '../index';
 import config from 'config';
 jest.mock( 'config', () => require( 'sinon' ).stub() );
-jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
+jest.mock( 'lib/analytics/statsd', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
 	statsdCountingUrl: require( 'sinon' ).stub(),
 } ) );
