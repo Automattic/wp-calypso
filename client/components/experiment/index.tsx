@@ -3,7 +3,7 @@
  */
 import React, { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
-import { map, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * The expected props for the top-level experiment component
@@ -57,7 +57,7 @@ export class Variation extends Component< VariationProps, State > {
 		// if there's a variation, maybe show the variation
 		if ( ( isLoading && variation ) || variation || ( ! isLoading && variation == null ) ) {
 			if ( includes( this.acceptedVariation, variation ) ) {
-				return children;
+				return <>{ children }</>;
 			}
 		}
 		return null;
@@ -77,7 +77,7 @@ export class DefaultVariation extends Variation {
 export class LoadingVariations extends Component< LoadingProps, State > {
 	render() {
 		const { variation, isLoading, children } = this.props;
-		if ( variation == null && isLoading ) return children;
+		if ( variation == null && isLoading ) return <>{ children }</>;
 		return null;
 	}
 }
@@ -87,9 +87,13 @@ export class LoadingVariations extends Component< LoadingProps, State > {
  */
 export class RawExperiment extends Component< ExperimentProps, State > {
 	render() {
-		const { isLoading, variation } = this.props;
-		return map( React.Children.toArray( this.props.children ), elem =>
-			React.cloneElement( elem, { variation, isLoading } )
+		const { isLoading, variation, children } = this.props;
+		return (
+			<>
+				{ React.Children.map( React.Children.toArray( children ), elem =>
+					React.cloneElement( elem, { variation, isLoading } )
+				) }
+			</>
 		);
 	}
 }
