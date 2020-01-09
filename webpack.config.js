@@ -35,7 +35,7 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './config/webpack/extensions' );
+const getAliasesForExtensions = require( './client/webpack/extensions' );
 
 /**
  * Internal variables
