@@ -108,32 +108,34 @@ export function createPaymentMethods( {
 			  } )
 			: null;
 
-	const existingCardMethods = storedCards.map( storedDetails =>
-		createExistingCardMethod( {
-			id: `existingCard-${ storedDetails.stored_details_id }`,
-			cardholderName: storedDetails.name,
-			cardExpiry: storedDetails.expiry,
-			brand: storedDetails.card_type,
-			last4: storedDetails.card,
-			submitTransaction: submitData =>
-				submitExistingCardPayment(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						storedDetailsId: storedDetails.stored_details_id,
-						paymentMethodToken: storedDetails.mp_ref,
-						paymentPartnerProcessorId: storedDetails.payment_partner,
-						domainDetails: getDomainDetails( select ),
-					},
-					wpcom
-				),
-			registerStore,
-			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
-			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
-			getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-		} )
-	);
+	const existingCardMethods = isMethodEnabled( 'existing-cards', allowedPaymentMethods )
+		? storedCards.map( storedDetails =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					submitTransaction: submitData =>
+						submitExistingCardPayment(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								storedDetailsId: storedDetails.stored_details_id,
+								paymentMethodToken: storedDetails.mp_ref,
+								paymentPartnerProcessorId: storedDetails.payment_partner,
+								domainDetails: getDomainDetails( select ),
+							},
+							wpcom
+						),
+					registerStore,
+					getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+					getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+					getPhoneNumber: () => select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+					getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				} )
+		  )
+		: [];
 
 	return [
 		fullCreditsPaymentMethod,
