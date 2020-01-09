@@ -128,7 +128,7 @@ export default {
 		defaultVariation: 'variation2_front',
 	},
 	showBusinessPlanPopular: {
-		datestamp: '20191220',
+		datestamp: '20200109',
 		variations: {
 			variantShowBizPopular: 50,
 			control: 50,
