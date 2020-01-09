@@ -339,10 +339,6 @@ jobs:
     steps:
       - prepare
       - run:
-          name: Install Full Site Editing specific test deps
-          command: |
-            npm ci
-      - run:
           name: Run Full Site Editing client tests
           command: |
             npm run test:unit
