@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { map, includes } from 'lodash';
 
@@ -10,7 +10,7 @@ import { map, includes } from 'lodash';
  */
 interface ExperimentProps {
 	name: string;
-	children: Variation & DefaultVariation & LoadingVariations;
+	children: ReactNode;
 	variation?: string;
 	isLoading?: boolean;
 }
@@ -20,7 +20,7 @@ interface ExperimentProps {
  */
 interface VariationProps {
 	name: string;
-	children?: any;
+	children?: ReactNode;
 	variation?: string;
 	isLoading?: boolean;
 }
@@ -29,7 +29,7 @@ interface VariationProps {
  * The expected props for the loading component
  */
 interface LoadingProps {
-	children?: any;
+	children?: ReactNode;
 	variation?: string;
 	isLoading?: boolean;
 }
@@ -94,4 +94,4 @@ export class RawExperiment extends Component< ExperimentProps, State > {
 	}
 }
 
-export default connect( x => x, {} )( RawExperiment );
+export default connect( () => {}, {} )( RawExperiment );

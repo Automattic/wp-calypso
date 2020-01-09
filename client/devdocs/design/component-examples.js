@@ -28,6 +28,7 @@ export { default as EllipsisMenu } from 'components/ellipsis-menu/docs/example';
 export { default as EmbedDialog } from 'components/tinymce/plugins/embed/docs/example';
 export { default as EmojifyExample } from 'components/emojify/docs/example';
 export { default as EmptyContent } from 'components/empty-content/docs/example';
+import { default as Experiment } from 'components/experiment/docs/example';
 export { default as ExternalLink } from 'components/external-link/docs/example';
 export { default as FAQ } from 'components/faq/docs/example';
 export { default as FeatureGate } from 'components/feature-example/docs/example';

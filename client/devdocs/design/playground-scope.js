@@ -37,6 +37,12 @@ export { default as DropZones } from 'components/drop-zone';
 export { default as EllipsisMenu } from 'components/ellipsis-menu';
 export { default as Emojify } from 'components/emojify';
 export { default as EmptyContent } from 'components/empty-content';
+export {
+	default as Experiment,
+	LoadingVariations,
+	DefaultVariation,
+	Variation,
+} from 'components/experiment';
 export { default as ExternalLink } from 'components/external-link';
 export { default as FAQ } from 'components/faq';
 export { default as FeatureGate } from 'components/feature-example';
