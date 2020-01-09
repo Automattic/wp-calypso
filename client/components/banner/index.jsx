@@ -49,6 +49,7 @@ export class Banner extends Component {
 		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		isCompact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
@@ -64,6 +65,7 @@ export class Banner extends Component {
 		forceHref: false,
 		disableHref: false,
 		dismissTemporary: false,
+		isCompact: false,
 		onClick: noop,
 		onDismiss: noop,
 	};
@@ -126,6 +128,10 @@ export class Banner extends Component {
 					<PlanIcon plan={ plan } />
 				</div>
 			);
+		}
+
+		if ( ! icon ) {
+			return;
 		}
 
 		return (
@@ -221,6 +227,7 @@ export class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
+			isCompact,
 		} = this.props;
 
 		const classes = classNames(
@@ -234,6 +241,7 @@ export class Banner extends Component {
 			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
+			{ 'is-compact': isCompact },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
