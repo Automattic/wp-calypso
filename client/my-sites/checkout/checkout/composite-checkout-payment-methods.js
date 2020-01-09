@@ -25,9 +25,17 @@ export function useCreatePaymentMethods( {
 	credits,
 	total,
 } ) {
+	debug(
+		'creating payment methods; allowedPaymentMethods is',
+		allowedPaymentMethods,
+		'credits is',
+		credits,
+		'and total is',
+		total.amount.value
+	);
 	const fullCreditsPaymentMethod = useMemo(
 		() =>
-			isMethodEnabled( 'full-credits', allowedPaymentMethods ) && credits >= total.amount
+			isMethodEnabled( 'full-credits', allowedPaymentMethods ) && credits >= total.amount.value
 				? createFullCreditsMethod( { registerStore, submitTransaction: submitCreditsTransaction } )
 				: null,
 		[ credits, total.amount, registerStore, allowedPaymentMethods ]
