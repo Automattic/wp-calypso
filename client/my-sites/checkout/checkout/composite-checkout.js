@@ -23,7 +23,7 @@ import {
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { useCreatePaymentMethods } from './composite-checkout-payment-methods';
+import { createPaymentMethods, useStoredCards } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -36,10 +36,11 @@ const { select } = registry;
 
 const wpcom = wp.undocumented();
 
-// Aliasing getCart and setCart explicitly bound to wpcom is
-// required here; otherwise we get `this is not defined` errors.
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
+const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -47,6 +48,7 @@ export default function CompositeCheckout( {
 	product,
 	getCart,
 	setCart,
+	getStoredCards,
 	allowedPaymentMethods,
 	// TODO: handle these also
 	// purchaseId,
@@ -94,6 +96,7 @@ export default function CompositeCheckout( {
 		errors,
 		isLoading,
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
+
 	const { registerStore } = registry;
 	useWpcomStore( registerStore, handleCheckoutEvent );
 
@@ -105,16 +108,32 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
-	// Payment methods must be created inside the component so their stores are
-	// re-created when the checkout unmounts and remounts.
-	const paymentMethods = useCreatePaymentMethods( {
-		allowedPaymentMethods,
-		select,
-		registerStore,
-		wpcom,
-		credits,
-		total,
-	} );
+	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+		getStoredCards || wpcomGetStoredCards
+	);
+
+	const paymentMethods = useMemo(
+		() =>
+			createPaymentMethods( {
+				isLoading: isLoading || isLoadingStoredCards,
+				storedCards,
+				allowedPaymentMethods,
+				select,
+				registerStore,
+				wpcom,
+				credits,
+				total,
+			} ),
+		[
+			allowedPaymentMethods,
+			isLoading,
+			isLoadingStoredCards,
+			storedCards,
+			credits,
+			registerStore,
+			total,
+		]
+	);
 
 	return (
 		<CheckoutProvider
@@ -145,6 +164,7 @@ CompositeCheckout.propTypes = {
 	product: PropTypes.string,
 	getCart: PropTypes.func,
 	setCart: PropTypes.func,
+	getStoredCards: PropTypes.func,
 	allowedPaymentMethods: PropTypes.array,
 };
 
