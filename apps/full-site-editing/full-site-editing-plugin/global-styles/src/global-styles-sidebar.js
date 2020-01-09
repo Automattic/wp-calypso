@@ -78,6 +78,7 @@ export default ( {
 	lineHeightHeadingsDefault,
 	siteName,
 	typeScaleRoot,
+	typeScaleRootDefault,
 	publishOptions,
 	updateOptions,
 	hasLocalChanges,
@@ -143,9 +144,10 @@ export default ( {
 				<PanelBody title={ __( 'Font Spacing' ) }>
 					<FontSizePicker
 						value={ typeScaleRoot }
-						onChange={ value => value === undefined ?
-							updateOptions( { [ TYPESCALE_ROOT ]: 18 } ) :
-							updateOptions( { [ TYPESCALE_ROOT ]: value } )
+						onChange={ value =>
+							value === undefined
+								? updateOptions( { [ TYPESCALE_ROOT ]: typeScaleRootDefault } )
+								: updateOptions( { [ TYPESCALE_ROOT ]: value } )
 						}
 					/>
 					<LineHeightPanel

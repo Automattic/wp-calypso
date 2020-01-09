@@ -217,9 +217,14 @@ class Global_Styles {
 					'name'    => ['jetpack-global-styles', 'line_height_heading'],
 					'default' => 1.125,
 				],
-				'typescale_root' => [ // This is in pixels.
-					'type'    => 'literal',
-					'default' => 18,
+				'typescale_root' => [
+					'type'      => 'literal',
+					'default'   => 18, // Pixels.
+				],
+				'typescale_root_default' => [
+					'type'    => 'theme',
+					'name'    => ['jetpack-global-styles', 'typescale_root'],
+					'default' => 18, // Pixels.
 				],
 			]
 		);
