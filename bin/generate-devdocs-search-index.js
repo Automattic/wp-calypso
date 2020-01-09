@@ -22,7 +22,6 @@ function main() {
 		'config',
 		'docs',
 		'packages',
-		'server',
 		'test',
 		'.github',
 	].map( dir => dir + '/**/*.md' );
@@ -34,7 +33,7 @@ function main() {
 		.map( documentFromFile )
 		.filter( doc => doc.title && doc.body /* skip empty/invalid files */ );
 
-	writeSearchIndex( documents, 'server/devdocs/search-index.js' );
+	writeSearchIndex( documents, 'client/server/devdocs/search-index.js' );
 }
 
 function writeSearchIndex( documents, searchIndexPath ) {

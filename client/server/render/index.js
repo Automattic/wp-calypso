@@ -24,9 +24,9 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import initialReducer from 'state/reducer';
 import { SERIALIZE } from 'state/action-types';
-import stateCache from 'state-cache';
-import { getNormalizedPath } from 'isomorphic-routing';
 import { logToLogstash } from 'state/logstash/actions';
+import stateCache from 'server/state-cache';
+import { getNormalizedPath } from 'server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;

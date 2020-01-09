@@ -1,5 +1,5 @@
 const { merge } = require( 'lodash' );
-const reactVersion = require( './package.json' ).dependencies.react;
+const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
 	root: true,

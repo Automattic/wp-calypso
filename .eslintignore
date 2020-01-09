@@ -6,6 +6,7 @@
 node_modules/
 !.eslintrc.js
 /server/devdocs/search-index.js
+/client/server/devdocs/search-index.js
 /packages/calypso-codemods/tests
 
 # Built packages
@@ -19,4 +20,8 @@ node_modules/
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
 /server/bundler/assets.json
+/client/stats.json
+/client/server/devdocs/components-usage-stats.json
+/client/server/devdocs/proptypes-index.json
+/client/server/bundler/assets.json
 /cached-requests.json

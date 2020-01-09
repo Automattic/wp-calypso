@@ -7,7 +7,7 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { serverRender, setShouldServerSideRender } from 'render';
+import { serverRender, setShouldServerSideRender } from 'server/render';
 import { setSection as setSectionMiddlewareFactory } from 'controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 

@@ -15,7 +15,7 @@ const webpack = require( 'webpack' );
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const config = require( 'config' );
+const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -68,12 +68,14 @@ function getExternals() {
 	];
 }
 
+const buildDir = path.resolve( 'build' );
+
 const webpackConfig = {
 	devtool: 'source-map',
-	entry: './index.js',
+	entry: path.join( __dirname, 'server' ),
 	target: 'node',
 	output: {
-		path: path.join( __dirname, 'build' ),
+		path: buildDir,
 		filename: 'bundle.js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
@@ -81,7 +83,7 @@ const webpackConfig = {
 	module: {
 		rules: [
 			{
-				include: path.join( __dirname, 'client/sections.js' ),
+				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 					options: { forceRequire: true, onlyIsomorphic: true },
@@ -89,8 +91,8 @@ const webpackConfig = {
 			},
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.join( __dirname, 'babel.config.js' ),
-				cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+				configFile: path.resolve( 'babel.config.js' ),
+				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
 				cacheIdentifier,
 				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
@@ -102,14 +104,11 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		modules: [
-			__dirname,
-			path.join( __dirname, 'server' ),
-			path.join( __dirname, 'client' ),
-			path.join( __dirname, 'client', 'extensions' ),
-			'node_modules',
-		],
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		alias: {
+			config: 'server/config',
+		},
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,

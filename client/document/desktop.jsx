@@ -13,7 +13,7 @@ import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/en
 import Head from 'components/head';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Desktop extends React.Component {
 	render() {

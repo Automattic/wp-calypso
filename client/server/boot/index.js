@@ -2,22 +2,21 @@
  * Module dependencies
  */
 
-const path = require( 'path' ),
-	config = require( 'config' ),
-	chalk = require( 'chalk' ),
-	express = require( 'express' ),
-	cookieParser = require( 'cookie-parser' ),
-	userAgent = require( 'express-useragent' ),
-	morgan = require( 'morgan' ),
-	pages = require( 'pages' ),
-	pwa = require( 'pwa' ).default;
-
-const analytics = require( '../lib/analytics' ).default;
+const path = require( 'path' );
+const chalk = require( 'chalk' );
+const express = require( 'express' );
+const cookieParser = require( 'cookie-parser' );
+const userAgent = require( 'express-useragent' );
+const morgan = require( 'morgan' );
+const config = require( 'server/config' );
+const pages = require( 'server/pages' );
+const pwa = require( 'server/pwa' ).default;
+const analytics = require( 'server/lib/analytics' ).default;
 
 /**
  * Returns the server HTTP request handler "app".
+ *
  * @returns {object} The express app
- * @api public
  */
 function setup() {
 	const app = express();
@@ -29,7 +28,7 @@ function setup() {
 	app.use( userAgent.express() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'bundler' )( app );
+		require( 'server/bundler' )( app );
 
 		// setup logger
 		app.use( morgan( 'dev' ) );
@@ -76,7 +75,7 @@ function setup() {
 	app.use( pwa() );
 
 	// attach the static file server to serve the `public` dir
-	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
@@ -91,24 +90,15 @@ function setup() {
 		response.end( "console.log('Stats are disabled');" );
 	} );
 
-	// serve files when not in production so that the source maps work correctly
-	if ( 'development' === process.env.NODE_ENV ) {
-		app.use( '/assets', express.static( path.resolve( __dirname, '..', '..', 'assets' ) ) );
-		app.use( '/client', express.static( path.resolve( __dirname, '..', '..', 'client' ) ) );
-	}
-
 	if ( config.isEnabled( 'devdocs' ) ) {
-		app.use( require( 'devdocs' )() );
+		app.use( require( 'server/devdocs' )() );
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use(
-			'/desktop',
-			express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) )
-		);
+		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) ) );
 	}
 
-	app.use( require( 'api' )() );
+	app.use( require( 'server/api' )() );
 
 	// attach the pages module
 	app.use( pages() );

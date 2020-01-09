@@ -29,21 +29,27 @@ import { matchesUA } from 'browserslist-useragent';
  * Internal dependencies
  */
 import config from 'config';
-import sanitize from 'sanitize';
-import utils from 'bundler/utils';
+import sanitize from 'server/sanitize';
+import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
-import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
-import stateCache from 'state-cache';
+import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
+import {
+	serverRender,
+	renderJsx,
+	attachBuildTimestamp,
+	attachHead,
+	attachI18n,
+} from 'server/render';
+import stateCache from 'server/state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
 import { logSectionResponse } from './analytics';
-import analytics from '../lib/analytics';
+import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
@@ -393,7 +399,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			return;
 		}
 
-		const user = require( 'user-bootstrap' );
+		const user = require( 'server/user-bootstrap' );
 
 		start = new Date().getTime();
 
@@ -864,7 +870,7 @@ module.exports = function() {
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
-		const user = require( 'user-bootstrap' );
+		const user = require( 'server/user-bootstrap' );
 
 		debug( 'Issuing API call to fetch user object' );
 
