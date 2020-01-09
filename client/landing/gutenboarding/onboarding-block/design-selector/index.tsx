@@ -47,19 +47,6 @@ const DesignSelector: FunctionComponent = () => {
 
 	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
 
-	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
-
-	const toggleLayout = ( layout: Template ) =>
-		setSelectedLayouts( layouts => {
-			const nextLayouts = new Set( layouts );
-			if ( nextLayouts.has( layout.slug ) ) {
-				nextLayouts.delete( layout.slug );
-			} else {
-				nextLayouts.add( layout.slug );
-			}
-			return nextLayouts;
-		} );
-
 	const resetState = () => {
 		setSelectedDesign( undefined );
 	};
@@ -136,11 +123,7 @@ const DesignSelector: FunctionComponent = () => {
 					timeout={ transitionTiming }
 				>
 					<div className="design-selector__page-layout-container">
-						<PageLayoutSelector
-							selectedLayouts={ selectedLayouts }
-							selectLayout={ toggleLayout }
-							templates={ otherTemplates }
-						/>
+						<PageLayoutSelector templates={ otherTemplates } />
 					</div>
 				</CSSTransition>
 			</Dialog>
