@@ -88,7 +88,7 @@ exports[`LanguagePickerModal should render 1`] = `
       fitsContainer={true}
       hideClose={false}
       hideOpenIcon={false}
-      isOpen={true}
+      isOpen={false}
       onClick={[Function]}
       onKeyDown={[Function]}
       onSearch={[Function]}
@@ -98,6 +98,7 @@ exports[`LanguagePickerModal should render 1`] = `
       pinned={true}
       placeholder="Search languages…"
       searching={false}
+      value=""
     />
   </SectionNav>
   <div
