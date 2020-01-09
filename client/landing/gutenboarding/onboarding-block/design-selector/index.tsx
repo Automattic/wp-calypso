@@ -75,7 +75,6 @@ const DesignSelector: FunctionComponent = () => {
 		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
 			<div
 				className="design-selector__header-container"
-				onClick={ () => resetState() }
 				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
 			>
 				<h1 className="design-selector__title">
