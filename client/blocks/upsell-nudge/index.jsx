@@ -26,7 +26,7 @@ export const UpsellNudge = ( {
 	/* eventProperties, @TODO: We may want to add support for this to Banner */
 	href,
 	icon,
-	isCompact,
+	compact,
 	navigateAndTrack,
 	text,
 } ) => {
@@ -40,7 +40,7 @@ export const UpsellNudge = ( {
 			event={ eventName }
 			href={ href }
 			icon={ icon }
-			isCompact={ isCompact }
+			compact={ compact }
 			onClick={ navigateAndTrack }
 			title={ text }
 		/>
