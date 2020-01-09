@@ -5,13 +5,13 @@
  * data on each field: specifically whether it has been edited by the user
  * or passed validation. We wrap this extra data into an object type.
  */
-interface ManagedValue< T > {
+export interface ManagedValue< T > {
 	value: T;
 	isTouched: boolean; // Has value been edited by the user?
 	isValid: boolean; // Has value passed validation?
 }
 
-function initialManagedValue< T >( x: T ): ManagedValue< T > {
+export function initialManagedValue< T >( x: T ): ManagedValue< T > {
 	return {
 		value: value,
 		isTouched: false,
@@ -19,7 +19,10 @@ function initialManagedValue< T >( x: T ): ManagedValue< T > {
 	};
 }
 
-function touchIfDifferent< T >( newValue: T, oldData: ManagedValue< T > ): ManagedValue< T > {
+export function touchIfDifferent< T >(
+	newValue: T,
+	oldData: ManagedValue< T >
+): ManagedValue< T > {
 	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
 }
 

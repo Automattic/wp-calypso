@@ -24,6 +24,9 @@ import {
 	CheckoutCartTotal,
 } from './types/checkout-cart';
 import {
+	ManagedValue,
+	initialManagedValue,
+	touchIfDifferent,
 	WpcomStoreState,
 	initialWpcomStoreState,
 	ManagedContactDetails,
@@ -50,6 +53,9 @@ export {
 	CheckoutCartItem,
 	CheckoutCartItemAmount,
 	CheckoutCartTotal,
+	ManagedValue,
+	initialManagedValue,
+	touchIfDifferent,
 	WpcomStoreState,
 	initialWpcomStoreState,
 	ManagedContactDetails,
