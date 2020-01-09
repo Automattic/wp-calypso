@@ -48,7 +48,7 @@ export interface ResponseCart {
 	total_cost_integer: number;
 	total_cost_display: string;
 	currency: string;
-	credits: number;
+	credits_integer: number;
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
@@ -68,7 +68,7 @@ export const emptyResponseCart = {
 	total_cost_integer: 0,
 	total_cost_display: '0',
 	currency: 'USD',
-	credits: 0,
+	credits_integer: 0,
 	allowed_payment_methods: [],
 	coupon: '',
 	is_coupon_applied: false,
