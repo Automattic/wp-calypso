@@ -6,6 +6,9 @@ Usage:
 
 ```jsx harmony
 function SomeExperiment(props) {
+    import React from 'react';
+    import Experiment, {DefaultVariation, Variation, LoadingVariations} from "client/components/experiment";
+
     return (<Experiment name={'experiment_name'}>
     <DefaultVariation name=A>
         Show this variation, even if the user isn't assigned to this test.
