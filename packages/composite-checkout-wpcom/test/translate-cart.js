@@ -48,7 +48,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			total_cost_display: 'R$149',
 			total_cost_integer: 14900,
 			currency: 'BRL',
+			credits: 100,
 			credits_integer: 10000,
+			credits_display: 'R$100',
 			allowed_payment_methods: [
 				'WPCOM_Billing_Stripe_Payment_Method',
 				'WPCOM_Billing_Ebanx',
@@ -80,7 +82,9 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
 		it( 'has the expected credits', function() {
-			expect( clientCart.credits ).toBe( 10000 );
+			expect( clientCart.credits.amount.value ).toBe( 10000 );
+			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
+			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
 		} );
 
 		describe( 'first cart item (plan)', function() {

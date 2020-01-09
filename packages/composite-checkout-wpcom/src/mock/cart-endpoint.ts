@@ -29,6 +29,7 @@ export async function mockSetCartEndpoint( {
 		locale: requestLocale,
 		currency: requestCurrency,
 		credits_integer: 0,
+		credits_display: '0',
 		allowed_payment_methods: [
 			'WPCOM_Billing_Stripe_Payment_Method',
 			'WPCOM_Billing_Ebanx',

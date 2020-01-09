@@ -29,14 +29,19 @@ export function useCreatePaymentMethods( {
 		'creating payment methods; allowedPaymentMethods is',
 		allowedPaymentMethods,
 		'credits is',
-		credits,
+		credits.amount.value,
 		'and total is',
 		total.amount.value
 	);
 	const fullCreditsPaymentMethod = useMemo(
 		() =>
-			isMethodEnabled( 'full-credits', allowedPaymentMethods ) && credits >= total.amount.value
-				? createFullCreditsMethod( { registerStore, submitTransaction: submitCreditsTransaction } )
+			isMethodEnabled( 'full-credits', allowedPaymentMethods ) &&
+			credits.amount.value >= total.amount.value
+				? createFullCreditsMethod( {
+						registerStore,
+						submitTransaction: submitCreditsTransaction,
+						creditsDisplayValue: credits.amount.displayValue,
+				  } )
 				: null,
 		[ credits, total.amount, registerStore, allowedPaymentMethods ]
 	);
