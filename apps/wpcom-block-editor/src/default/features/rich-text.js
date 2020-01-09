@@ -9,7 +9,6 @@ import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
 import { RichTextToolbarButton } from '@wordpress/editor';
 import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
-import domReady from '@wordpress/dom-ready';
 
 const unsubscribe = subscribe( () => {
 	const underlineFormat = select( 'core/rich-text' ).getFormatType( 'core/underline' );
@@ -76,11 +75,9 @@ const ConnectedRichTextJustifyButton = compose(
 	ifCondition( props => 'core/paragraph' === props.blockName )
 )( RichTextJustifyButton );
 
-domReady( function() {
-	registerFormatType( 'wpcom/justify', {
-		title: wpcomGutenberg.richTextToolbar.justify,
-		tagName: 'p',
-		className: null,
-		edit: ConnectedRichTextJustifyButton,
-	} );
+registerFormatType( 'wpcom/justify', {
+	title: wpcomGutenberg.richTextToolbar.justify,
+	tagName: 'p',
+	className: null,
+	edit: ConnectedRichTextJustifyButton,
 } );

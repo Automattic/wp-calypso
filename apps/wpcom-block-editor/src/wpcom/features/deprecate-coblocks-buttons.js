@@ -3,31 +3,26 @@
 /**
  * External dependencies
  */
-import { addFilter } from '@wordpress/hooks';
+import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
+import domReady from '@wordpress/dom-ready';
 
 /**
  * Prevents the CoBlocks Buttons block from being insertable.
- *
- * @param settings {object} Block settings.
- * @param name {string} Block name.
- * @returns {object} Updated block settings.
  */
-function deprecateCoBlocksButtonsSettings( settings, name ) {
-	if ( name !== 'coblocks/buttons' ) {
-		return settings;
+function deprecateCoBlocksButtonsSettings() {
+	const coBlocksButtons = getBlockType( 'coblocks/buttons' );
+	if ( ! coBlocksButtons ) {
+		return;
 	}
 
-	return {
-		...settings,
+	unregisterBlockType( 'coblocks/buttons' );
+	registerBlockType( 'coblocks/buttons', {
+		...coBlocksButtons,
 		supports: {
-			...settings.supports,
+			...coBlocksButtons.supports,
 			inserter: false,
 		},
-	};
+	} );
 }
 
-addFilter(
-	'blocks.registerBlockType',
-	'wpcom-block-editor/coblocks-buttons',
-	deprecateCoBlocksButtonsSettings
-);
+domReady( deprecateCoBlocksButtonsSettings );
