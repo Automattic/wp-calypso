@@ -7,7 +7,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 
 /** @type {string} path to configuration file directory */
-const configRoot = path.resolve( __dirname, '../../', 'config' );
+const configRoot = path.resolve( __dirname, '../config' );
 
 /**
  * Reads a config file given its basename
