@@ -2,13 +2,17 @@
 
 A library of React components designed for use in Automattic products.
 
-# Using [Storybook](https://storybook.js.org/)
+## Development Workflow
 
-```bash
-# devDependencies are shared across the monorepo so ensure it is setup first
-$ npm install
+This package is developed as part of the Calypso monorepo. Run `npm install`
+in the root of the repository to get the required `devDependencies`.
 
-# Run `start-storybook` from this directory
-$ cd packages/components
-$ ../../.bin/start-storybook
-```
+### Tests
+
+```npm run test-packages```
+
+```npm run test-packages:watch```
+
+### Using [Storybook](https://storybook.js.org/)
+
+```npm run components:storybook:start```
