@@ -7,10 +7,11 @@ import React from 'react';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import { connect } from 'react-redux';
-
+import page from 'page';
 /**
  * Internal dependencies
  */
+import { isConfigEnabled } from 'config';
 import { appStates } from 'state/imports/constants';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
@@ -19,7 +20,6 @@ import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 import { startImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 /**
  * Style dependencies
  */
@@ -69,8 +69,18 @@ class FileImporter extends React.PureComponent {
 	handleClick = () => {
 		const {
 			importerStatus: { type },
-			site: { ID: siteId },
+			site: { ID: siteId, slug: siteSlug },
+			importerData: { overrideDestination },
 		} = this.props;
+
+		/**
+		 * Override where the clicks sends a user.
+		 *
+		 * This is used for the new Migration logic for the moment.
+		 */
+		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+			return page.redirect( overrideDestination.replace( '%SITE_SLUG%', siteSlug ) );
+		}
 
 		startImport( siteId, type );
 
