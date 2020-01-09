@@ -19,6 +19,12 @@ interface VariationProps {
 	isLoading?: boolean;
 }
 
+interface LoadingProps {
+	children?: any;
+	variation?: string;
+	isLoading?: boolean;
+}
+
 type State = {};
 
 export class Variation extends Component< VariationProps, State > {
@@ -39,7 +45,7 @@ export class DefaultVariation extends Variation {
 	acceptedVariation = [ null, undefined, this.props.name ];
 }
 
-export class LoadingVariations extends Component< VariationProps, State > {
+export class LoadingVariations extends Component< LoadingProps, State > {
 	render() {
 		const { variation, isLoading, children } = this.props;
 		if ( variation == null && isLoading ) return children;
