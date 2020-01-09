@@ -90,6 +90,7 @@ export default ( {
 			[ FONT_HEADINGS ]: fontHeadings,
 			[ LINE_HEIGHT_BODY ]: lineHeightBase,
 			[ LINE_HEIGHT_HEADING ]: lineHeightHeadings,
+			[ TYPESCALE_ROOT ]: typeScaleRoot,
 		} );
 	return (
 		<>

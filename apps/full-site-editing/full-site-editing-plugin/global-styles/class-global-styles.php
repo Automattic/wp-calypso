@@ -218,8 +218,10 @@ class Global_Styles {
 					'default' => 1.125,
 				],
 				'typescale_root' => [
-					'type'      => 'literal',
+					'type'      => 'option',
+					'name'      => ['jetpack_global_styles', 'typescale_root'],
 					'default'   => 18, // Pixels.
+					'updatable' => true,
 				],
 				'typescale_root_default' => [
 					'type'    => 'theme',
@@ -546,7 +548,7 @@ class Global_Styles {
 			}
 		}
 
-		foreach( [ 'line_height_body', 'line_height_heading'] as $key ) {
+		foreach( [ 'line_height_body', 'line_height_heading', 'typescale_root' ] as $key ) {
 			if( is_numeric( $incoming_data[ $key ] ) ) {
 				$result[ $key ] = $incoming_data[ $key ];
 			}
