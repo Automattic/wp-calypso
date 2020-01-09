@@ -8,7 +8,7 @@ import { last, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
+import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
 export class Eventbrite extends SharingService {
@@ -18,28 +18,25 @@ export class Eventbrite extends SharingService {
 		...SharingService.propTypes,
 		saveRequests: PropTypes.object,
 		saveSiteSettings: PropTypes.func,
-		deleteKeyringConnection: PropTypes.func,
+		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
 	static defaultProps = {
 		...SharingService.defaultProps,
 		saveRequests: {},
 		saveSiteSettings: () => {},
-		deleteKeyringConnection: () => {},
+		deleteStoredKeyringConnection: () => {},
 	};
 
 	createOrUpdateConnection = () => {};
 
 	/**
-	 * Deletes the passed connections.
-	 *
-	 * @param {Array} connections Optional. Connections to be deleted.
-	 *                            Default: All connections for this service.
+	 * Deletes the Keyring connection from our database and removes any stored token in site options.
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
 		this.props.saveSiteSettings( this.props.siteId, { eventbrite_api_token: null } );
-		this.props.deleteKeyringConnection( last( this.props.keyringConnections ) );
+		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
@@ -97,6 +94,6 @@ export default connectFor(
 	},
 	{
 		saveSiteSettings,
-		deleteKeyringConnection,
+		deleteStoredKeyringConnection,
 	}
 );
