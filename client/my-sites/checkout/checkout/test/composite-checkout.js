@@ -89,6 +89,7 @@ describe( 'CompositeCheckout', () => {
 					siteSlug={ 'foo.com' }
 					setCart={ mockSetCartEndpoint }
 					getCart={ mockGetCartEndpointWith( initialCart ) }
+					getStoredCards={ async () => [] }
 					allowedPaymentMethods={ [ 'paypal' ] }
 				/>
 			</ReduxProvider>
