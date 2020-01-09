@@ -43,8 +43,7 @@ class Sites extends Component {
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {
-			// Hosting routes are not applicable to any VIP or WP.org Jetpack sites.
-			if ( site.is_vip || ( site.jetpack && ! site.options.is_automated_transfer ) ) {
+			if ( ! site.capabilities.view_hosting ) {
 				return false;
 			}
 

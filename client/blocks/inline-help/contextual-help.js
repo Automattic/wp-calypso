@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
  */
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isEnabled } from 'config';
 
 /**
  * Module variables
@@ -907,7 +906,7 @@ const contextLinksForSection = {
 		},
 	],
 	hosting: [
-		isEnabled( 'hosting/sftp-phpmyadmin' ) && {
+		{
 			link: localizeUrl( 'https://en.support.wordpress.com/sftp/' ),
 			post_id: 159771,
 			title: translate( 'SFTP on WordPress.com' ),
@@ -915,7 +914,7 @@ const contextLinksForSection = {
 				"Access and edit your website's files directly by using an SFTP client."
 			),
 		},
-		isEnabled( 'hosting/sftp-phpmyadmin' ) && {
+		{
 			link: localizeUrl( 'https://en.support.wordpress.com/phpmyadmin-and-mysql/' ),
 			post_id: 159822,
 			title: translate( 'phpMyAdmin and MySQL' ),
