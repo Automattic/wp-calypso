@@ -91,20 +91,23 @@ export function updateQueryParamsTracking() {
 		return;
 	}
 
-	const query = urlParseAmpCompatible( document.location.href ).query;
+	const searchParams = urlParseAmpCompatible( document.location.href )?.searchParams;
 
 	// Sanitize query params
 	const sanitized_query = {};
-	Object.keys( query ).forEach( key => {
-		const value = query[ key ];
-		if ( isValidWhitelistedUrlParamValue( key, value ) ) {
-			sanitized_query[ key ] = value;
-		}
-	} );
 
-	// Cross domain tracking for AMP.
-	if ( query.amp_client_id ) {
-		window._tkq.push( [ 'identifyAnonUser', query.amp_client_id ] );
+	if ( searchParams ) {
+		for ( const key of searchParams.keys() ) {
+			const value = searchParams.get( key );
+			if ( isValidWhitelistedUrlParamValue( key, value ) ) {
+				sanitized_query[ key ] = value;
+			}
+		}
+
+		// Cross domain tracking for AMP.
+		if ( searchParams.get( 'amp_client_id' ) ) {
+			window._tkq.push( [ 'identifyAnonUser', searchParams.get( 'amp_client_id' ) ] );
+		}
 	}
 
 	// Drop SEM cookie update if either of these is missing
