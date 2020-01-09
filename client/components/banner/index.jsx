@@ -48,7 +48,7 @@ export class Banner extends Component {
 		event: PropTypes.string,
 		feature: PropTypes.string,
 		href: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		isCompact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
