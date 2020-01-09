@@ -217,6 +217,10 @@ class Global_Styles {
 					'name'    => ['jetpack-global-styles', 'line_height_heading'],
 					'default' => 1.125,
 				],
+				'typescale_root' => [ // This is in pixels.
+					'type'    => 'literal',
+					'default' => 18,
+				],
 			]
 		);
 
