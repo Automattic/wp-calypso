@@ -75,11 +75,11 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	componentDidMount() {
-		window.addEventListener( 'keydown', this.handleKeyPress );
+		window.addEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'keydown', this.handleKeyPress );
+		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -272,7 +272,7 @@ export class LanguagePickerModal extends PureComponent {
 		this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug } );
 	}
 
-	handleKeyPress = event => {
+	handleKeyDown = event => {
 		const { isSearchOpen } = this.state;
 
 		// A key press of a printable character should only have a single character
