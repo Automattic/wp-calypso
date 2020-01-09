@@ -85,21 +85,8 @@ type FormFieldWrapperProps = {
 };
 
 const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	font-size: 16px;
-	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-
-	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
-			solid 2px !important;
-	}
-
-	::-webkit-inner-spin-button,
-	::-webkit-outer-spin-button {
-		-webkit-appearance: none;
+	select {
+		width: 100%;
 	}
 `;
 
