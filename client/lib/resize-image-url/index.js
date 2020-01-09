@@ -24,8 +24,7 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  *
  * @type {number}
  */
-const IMAGE_SCALE_FACTOR =
-	( typeof window !== 'undefined' && window?.devicePixelRatio ) > 1 ? 2 : 1;
+const IMAGE_SCALE_FACTOR = typeof window !== 'undefined' && window?.devicePixelRatio > 1 ? 2 : 1;
 
 /**
  * Query parameters to be treated as image dimensions
@@ -73,8 +72,7 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 		return imageUrl;
 	}
 
-	const resultUrl = getUrlParts( imageUrl );
-	delete resultUrl.search;
+	const { search, ...resultUrl } = getUrlParts( imageUrl );
 
 	if ( ! REGEXP_VALID_PROTOCOL.test( resultUrl.protocol ) ) {
 		return imageUrl;
