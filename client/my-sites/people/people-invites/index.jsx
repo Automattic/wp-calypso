@@ -163,7 +163,9 @@ class PeopleInvites extends React.PureComponent {
 						</Card>
 					</div>
 				) : (
-					<div className="people-invites__pending">{ this.renderInviteUsersAction( false ) }</div>
+					<div className="people-invites__pending has-invite-button">
+						{ this.renderInviteUsersAction( false ) }
+					</div>
 				) }
 
 				{ hasAcceptedInvites && (
