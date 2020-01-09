@@ -1,4 +1,4 @@
-# @automattic/components
+# Components
 
 A library of React components designed for use in Automattic products.
 
