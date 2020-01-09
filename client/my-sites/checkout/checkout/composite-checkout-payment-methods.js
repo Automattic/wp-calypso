@@ -45,6 +45,10 @@ export function useCreatePaymentMethods( {
 									...submitData,
 									siteId: select( 'wpcom' )?.getSiteId?.(),
 									domainDetails: getDomainDetails( select ),
+									country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+									postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+									phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+									subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 								},
 								wpcom
 							),
