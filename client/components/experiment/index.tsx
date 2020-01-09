@@ -117,8 +117,6 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 	return {
 		isLoading: isLoading( state, experimentName ),
 		variation: getVariationForUser( state, experimentName ),
-		userId: '3',
-		anonId: '2',
 		...ownProps,
 	};
 }
