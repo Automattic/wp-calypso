@@ -348,8 +348,14 @@ function createCartFromLineItems( {
 	};
 }
 
-function submitCreditsTransaction() {
-	// TODO: where does this go?
+function submitCreditsTransaction( transactionData, wpcom ) {
+	debug( 'formatting full credits transaction', transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_WPCOM',
+	} );
+	debug( 'submitting full credits transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
 }
 
 function isMethodEnabled( method, allowedPaymentMethods ) {
