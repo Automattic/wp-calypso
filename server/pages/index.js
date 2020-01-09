@@ -31,9 +31,9 @@ import { matchesUA } from 'browserslist-useragent';
 import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
-import { pathToRegExp } from '../../client/utils';
-import sections from '../../client/sections';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
+import { pathToRegExp } from 'utils';
+import sections from 'sections';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
@@ -46,7 +46,7 @@ import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
