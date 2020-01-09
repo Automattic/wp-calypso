@@ -10,7 +10,6 @@
 const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
-const _ = require( 'lodash' );
 
 /**
  * Internal dependencies
@@ -118,7 +117,7 @@ const webpackConfig = {
 		__filename: true,
 		__dirname: true,
 	},
-	plugins: _.compact( [
+	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( {
 			banner: 'require( "source-map-support" ).install();',
@@ -138,7 +137,7 @@ const webpackConfig = {
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
-	] ),
+	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {

@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-const _ = require( 'lodash' );
 const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
@@ -195,7 +194,7 @@ const webpackConfig = {
 		),
 	},
 	node: false,
-	plugins: _.compact( [
+	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
@@ -256,7 +255,7 @@ const webpackConfig = {
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-	] ),
+	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
 
