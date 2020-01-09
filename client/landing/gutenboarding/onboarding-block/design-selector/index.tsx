@@ -140,7 +140,6 @@ const DesignSelector: FunctionComponent = () => {
 				>
 					<div className="design-selector__page-layout-container">
 						<PageLayoutSelector
-							selectedDesign={ selectedDesign }
 							selectedLayouts={ selectedLayouts }
 							selectLayout={ toggleLayout }
 							templates={ otherTemplates }

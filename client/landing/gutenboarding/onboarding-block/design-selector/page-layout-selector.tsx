@@ -17,7 +17,6 @@ import { Icon } from '@wordpress/components';
 type Template = import('@automattic/data-stores').VerticalsTemplates.Template;
 
 interface Props {
-	selectedDesign: Template | undefined;
 	selectedLayouts: Set< Template[ 'slug' ] >;
 	selectLayout: ( t: Template ) => void;
 	templates: Template[];
