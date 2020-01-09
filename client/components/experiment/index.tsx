@@ -98,7 +98,7 @@ export class RawExperiment extends Component< ExperimentProps, State > {
 		return (
 			<>
 				{ React.Children.map( React.Children.toArray( children ), elem =>
-					React.cloneElement( elem, { variation, loading } )
+					React.cloneElement( elem, { variation, isLoading: loading } )
 				) }
 			</>
 		);
