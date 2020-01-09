@@ -23,7 +23,6 @@ export const UpsellNudge = ( {
 	className,
 	dismissPreferenceName,
 	eventName,
-	/* eventProperties, @TODO: We may want to add support for this to Banner */
 	href,
 	icon,
 	compact,
@@ -48,13 +47,16 @@ export const UpsellNudge = ( {
 };
 
 const mapStateToProps = null;
-const mapDispatchToProps = ( dispatch, { href, eventName, eventProperties } ) => {
+const mapDispatchToProps = (
+	dispatch,
+	{ tracksEvent = 'calypso_upsell_nudge_click', href, eventName, eventProperties }
+) => {
 	return {
 		navigateAndTrack: () =>
 			dispatch(
 				withAnalytics(
-					recordTracksEvent( 'calypso_upsell_nudge_click', {
-						event_name: eventName,
+					recordTracksEvent( tracksEvent, {
+						cta_name: eventName,
 						...eventProperties,
 					} ),
 					navigate( href )
