@@ -39,11 +39,19 @@ export function useCreatePaymentMethods( {
 			credits.amount.value >= total.amount.value
 				? createFullCreditsMethod( {
 						registerStore,
-						submitTransaction: submitCreditsTransaction,
+						submitTransaction: submitData =>
+							submitCreditsTransaction(
+								{
+									...submitData,
+									siteId: select( 'wpcom' )?.getSiteId?.(),
+									domainDetails: getDomainDetails( select ),
+								},
+								wpcom
+							),
 						creditsDisplayValue: credits.amount.displayValue,
 				  } )
 				: null,
-		[ credits, total.amount, registerStore, allowedPaymentMethods ]
+		[ credits, total.amount, registerStore, allowedPaymentMethods, select, wpcom ]
 	);
 
 	const stripeMethod = useMemo(
