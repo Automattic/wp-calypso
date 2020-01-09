@@ -11,7 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { navigate } from 'state/ui/actions';
 
 /**
  * Style dependencies
@@ -34,15 +35,6 @@ export class UpsellNudge extends Component {
 		text: PropTypes.string,
 		onClick: PropTypes.func,
 		isCompact: PropTypes.bool,
-		track: PropTypes.func.isRequired,
-	};
-
-	onClick = e => {
-		const { eventName, eventProperties, track, onClick } = this.props;
-		track( 'calypso_upsell_nudge_button_click', { event_name: eventName, ...eventProperties } );
-		if ( onClick ) {
-			onClick( e );
-		}
 	};
 
 	render() {
@@ -53,6 +45,7 @@ export class UpsellNudge extends Component {
 			buttonText,
 			href,
 			icon,
+			navigateAndTrack,
 			text,
 			isCompact,
 		} = this.props;
@@ -67,7 +60,7 @@ export class UpsellNudge extends Component {
 				href={ href }
 				icon={ icon }
 				isCompact={ isCompact }
-				onClick={ this.onClick }
+				onClick={ navigateAndTrack }
 				title={ text }
 			/>
 		);
@@ -75,6 +68,19 @@ export class UpsellNudge extends Component {
 }
 
 const mapStateToProps = null;
-const mapDispatchToProps = { track: recordTracksEvent };
+const mapDispatchToProps = ( dispatch, { href, eventName, eventProperties } ) => {
+	return {
+		navigateAndTrack: () =>
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_upsell_nudge_click', {
+						event_name: eventName,
+						...eventProperties,
+					} ),
+					navigate( href )
+				)
+			),
+	};
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( UpsellNudge ) );

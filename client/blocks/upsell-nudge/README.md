@@ -1,7 +1,7 @@
 UpsellNudge (JSX)
 ===
 
-`UpsellNudge` is used to display upsell nudges for plans, domains, services, and product features.
+`UpsellNudge` is a wrapper for the `Banner` component, used to display upsell nudges for plans, domains, services, and product features.
 
 ## Usage
 
@@ -16,7 +16,6 @@ function myUpsell() {
 			text={ translate( 'Free domain with a plan!' ) }
 			href={ '/plans' }
 			isCompact
-			showDismiss
 		/>
 	)
 }
@@ -27,12 +26,11 @@ function myUpsell() {
 
 Name | Type | Default | Description
 ---- | ---- | ---- | ----
+`buttonText` | `string` | 'Upgrade' | Message to show on the upsell call to action.
+`dismissPreferenceName` | `string` | empty | Enables a dismiss icon with this value as the event name
+`eventName` | `string` | null | Unique event name for tracking the nudge, passed as a Tracks event property
+`eventProperties` | `object` | null | Additional event properties to track
 `href` | `string` | null | The URL/path that the user is taken to when clicked.
-`onClick` | `func` | | Optional function to call when the action is clicked.
 `icon` | `string` | null | Optional reference to a Gridicon.
 `isCompact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
-`buttonText` | `string` | 'Upgrade' | Message to show on the upsell call to action.
 `text` | `string` | 'Free domain with a plan!' | Message to show on the upsell.
-`eventName` | `string` | null | Unique event name for tracking the nudge, passed as a Tracks event property
-`dismissPreferenceName` | `string` | empty | Enables a dismiss icon with this value as the event name
-`eventProperties` | `object` | null | Additional event properties to track
