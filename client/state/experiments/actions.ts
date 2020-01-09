@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function assignVariationForUser( experiment: string ) {
+export function assignVariationForUser() {
 	//todo
 }
 

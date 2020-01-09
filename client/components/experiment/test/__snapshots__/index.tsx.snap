@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Experiment Component assumes variation will not change if already set 1`] = `
+<div>
+  Variation B
+</div>
+`;
+
 exports[`Experiment Component renders a default variation 1`] = `
 <div>
   Default
@@ -15,5 +21,11 @@ exports[`Experiment Component renders a default variation by name 1`] = `
 exports[`Experiment Component renders a variation by name 1`] = `
 <div>
   Variation B
+</div>
+`;
+
+exports[`Experiment Component renders something while loading 1`] = `
+<div>
+  Is Loading
 </div>
 `;
