@@ -48,7 +48,7 @@ const DesignSelector: FunctionComponent = () => {
 	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
 
 	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
-	const resetLayouts = () => setSelectedLayouts( new Set() );
+
 	const toggleLayout = ( layout: Template ) =>
 		setSelectedLayouts( layouts => {
 			const nextLayouts = new Set( layouts );
@@ -62,7 +62,6 @@ const DesignSelector: FunctionComponent = () => {
 
 	const resetState = () => {
 		setSelectedDesign( undefined );
-		resetLayouts();
 	};
 
 	const transitionTiming = 250;
@@ -109,7 +108,6 @@ const DesignSelector: FunctionComponent = () => {
 									setSelectedDesign( currentTemplate =>
 										currentTemplate?.slug === design?.slug ? undefined : design
 									);
-									resetLayouts();
 								} }
 							/>
 						) ) }
