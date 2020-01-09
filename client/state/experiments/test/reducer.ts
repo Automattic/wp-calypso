@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External Dependencies
  */
 import { expect } from 'chai';

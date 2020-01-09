@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Experiment Component renders a default variation 1`] = `
+<div>
+  Default
+</div>
+`;
+
+exports[`Experiment Component renders a default variation by name 1`] = `
+<div>
+  Default
+</div>
+`;
+
+exports[`Experiment Component renders a variation by name 1`] = `
+<div>
+  Variation B
+</div>
+`;

@@ -22,6 +22,5 @@ module.exports = {
 	verbose: false,
 	globals: {
 		google: {},
-		document: {},
 	},
 };
