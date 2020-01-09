@@ -11,6 +11,7 @@ import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
  */
 import FontPairingsPanel from './font-pairings-panel';
 import FontSelectionPanel from './font-selection-panel';
+import LineHeightPanel from './line-height-panel';
 import { GlobalStylesIcon } from './icon';
 import { FONT_BASE, FONT_HEADINGS, LINE_HEIGHT_BODY, LINE_HEIGHT_HEADING } from './constants';
 
@@ -121,14 +122,6 @@ export default ( {
 						fontHeadingsOptions={ toOptions( fontOptions, FONT_HEADINGS ) }
 						updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value } ) }
 						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
-						lineHeightBase={ lineHeightBase }
-						lineHeightBaseDefault={ lineHeightBaseDefault }
-						lineHeightHeadings={ lineHeightHeadings }
-						lineHeightHeadingsDefault={ lineHeightHeadingsDefault }
-						updateBaseLineHeight={ value => updateOptions( { [ LINE_HEIGHT_BODY ]: value } ) }
-						updateHeadingsLineHeight={ value =>
-							updateOptions( { [ LINE_HEIGHT_HEADING ]: value } )
-						}
 					/>
 					<FontPairingsPanel
 						fontHeadings={ fontHeadings }
@@ -136,6 +129,18 @@ export default ( {
 						fontPairings={ fontPairings }
 						update={ ( { headings, base } ) =>
 							updateOptions( { [ FONT_HEADINGS ]: headings, [ FONT_BASE ]: base } )
+						}
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Font Spacing' ) }>
+					<LineHeightPanel
+						lineHeightBase={ lineHeightBase }
+						lineHeightBaseDefault={ lineHeightBaseDefault }
+						lineHeightHeadings={ lineHeightHeadings }
+						lineHeightHeadingsDefault={ lineHeightHeadingsDefault }
+						updateBaseLineHeight={ value => updateOptions( { [ LINE_HEIGHT_BODY ]: value } ) }
+						updateHeadingsLineHeight={ value =>
+							updateOptions( { [ LINE_HEIGHT_HEADING ]: value } )
 						}
 					/>
 				</PanelBody>

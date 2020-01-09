@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * WordPress dependencies.
  */
-import { RangeControl, SelectControl } from '@wordpress/components';
+import { SelectControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -22,12 +22,6 @@ export default ( {
 	fontHeadingsOptions,
 	updateBaseFont,
 	updateHeadingsFont,
-	lineHeightBase,
-	lineHeightBaseDefault,
-	lineHeightHeadings,
-	lineHeightHeadingsDefault,
-	updateBaseLineHeight,
-	updateHeadingsLineHeight,
 } ) => {
 	if ( ! fontBaseOptions || ! fontHeadingsOptions ) {
 		return <NoSupport unsupportedFeature={ __( 'custom font selection' ) } />;
@@ -42,20 +36,6 @@ export default ( {
 				onChange={ newValue => updateHeadingsFont( newValue ) }
 				style={ { fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault } }
 			/>
-			<RangeControl
-				label={ __( 'Headings line height' ) }
-				value={ lineHeightHeadings }
-				onChange={ newValue =>
-					newValue
-						? updateHeadingsLineHeight( newValue )
-						: updateHeadingsLineHeight( lineHeightHeadingsDefault )
-				}
-				min={ 0 }
-				max={ 3 }
-				step={ 0.01 }
-				initialPosition={ lineHeightHeadingsDefault }
-				allowReset
-			/>
 			<SelectControl
 				label={ __( 'Base Font' ) }
 				value={ fontBase }
@@ -63,21 +43,6 @@ export default ( {
 				onChange={ newValue => updateBaseFont( newValue ) }
 				style={ { fontFamily: fontBase !== 'unset' ? fontBase : fontBaseDefault } }
 			/>
-			<RangeControl
-				label={ __( 'Base line height' ) }
-				value={ lineHeightBase }
-				onChange={ newValue =>
-					newValue
-						? updateBaseLineHeight( newValue )
-						: updateBaseLineHeight( lineHeightBaseDefault )
-				}
-				min={ 0 }
-				max={ 3 }
-				step={ 0.01 }
-				initialPosition={ lineHeightBaseDefault }
-				allowReset
-			/>
-			<hr />
 		</>
 	);
 };
