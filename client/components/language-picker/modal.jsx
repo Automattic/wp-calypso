@@ -33,7 +33,6 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isMobile } from 'lib/viewport';
 
 /**
  * Style dependencies
@@ -293,7 +292,11 @@ export class LanguagePickerModal extends PureComponent {
 
 		// Handle character input
 		if ( isPrintableCharacter && ! isSearchOpen ) {
+			event.preventDefault();
+
+			this.handleSearch( event.key );
 			this.handleSearchOpen();
+
 			return;
 		}
 
@@ -422,7 +425,7 @@ export class LanguagePickerModal extends PureComponent {
 
 	render() {
 		const { isVisible, translate } = this.props;
-		const { filter, isSearchOpen } = this.state;
+		const { filter, search, isSearchOpen } = this.state;
 
 		if ( ! isVisible ) {
 			return null;
@@ -453,8 +456,8 @@ export class LanguagePickerModal extends PureComponent {
 					<Search
 						pinned
 						fitsContainer
+						value={ search || '' }
 						isOpen={ isSearchOpen }
-						autoFocus={ ! isMobile() } // eslint-disable-line jsx-a11y/no-autofocus
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
