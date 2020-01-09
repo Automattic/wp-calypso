@@ -17,6 +17,7 @@ import {
 	canBeTranslated,
 	getPathParts,
 	filterLanguageRevisions,
+	translationExists,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -78,6 +79,7 @@ jest.mock( 'config', () => key => {
 
 jest.mock( 'i18n-calypso', () => ( {
 	getLocaleSlug: jest.fn( () => 'en' ),
+	hasTranslation: jest.fn( () => false ),
 } ) );
 
 describe( 'utils', () => {
@@ -509,6 +511,33 @@ describe( 'utils', () => {
 			};
 
 			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
+		} );
+	} );
+
+	describe( 'translationExists()', function() {
+		it( 'should return true for a simple translation', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return false for a string without translation', function() {
+			getLocaleSlug.mockImplementationOnce( () => 'fr' );
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( false );
+		} );
+
+		it( 'should return true for a simple translation when using default locale', function() {
+			expect( translationExists( 'test1' ) ).toBe( true );
+		} );
+
+		it( 'should return true for a string without translation when using default locale', function() {
+			expect(
+				translationExists(
+					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
+				)
+			).toBe( true );
 		} );
 	} );
 } );
