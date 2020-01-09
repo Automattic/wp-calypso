@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
-import { getLocaleSlug, hasTranslation } from 'i18n-calypso';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -85,7 +85,7 @@ export function canBeTranslated( locale ) {
  */
 export function translationExists() {
 	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || hasTranslation.apply( null, arguments );
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation.apply( null, arguments );
 }
 
 /**
