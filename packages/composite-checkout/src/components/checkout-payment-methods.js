@@ -54,6 +54,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	if ( summary ) {
 		return null;
 	}
+	debug( 'rendering paymentMethods', paymentMethods );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
@@ -67,7 +68,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 					>
 						<PaymentMethod
 							{ ...method }
-							checked={ paymentMethod.id === method.id }
+							checked={ paymentMethod?.id === method.id }
 							onClick={ onClickPaymentMethod }
 							ariaLabel={ method.getAriaLabel( localize ) }
 						/>
