@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -19,53 +18,34 @@ import { navigate } from 'state/ui/actions';
  */
 import './style.scss';
 
-export class UpsellNudge extends Component {
-	static defaultProps = {
-		className: '',
-	};
+export const UpsellNudge = ( {
+	buttonText,
+	className,
+	dismissPreferenceName,
+	eventName,
+	/* eventProperties, @TODO: We may want to add support for this to Banner */
+	href,
+	icon,
+	isCompact,
+	navigateAndTrack,
+	text,
+} ) => {
+	const classes = classnames( 'upsell-nudge', className );
 
-	static propTypes = {
-		className: PropTypes.string,
-		eventName: PropTypes.string,
-		/*eventProperties: PropTypes.object, @TODO: We may want to be able to assign eventProperties to Tracks events */
-		dismissPreferenceName: PropTypes.string,
-		buttonText: PropTypes.string,
-		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		href: PropTypes.string,
-		text: PropTypes.string,
-		onClick: PropTypes.func,
-		isCompact: PropTypes.bool,
-	};
-
-	render() {
-		const {
-			className,
-			dismissPreferenceName,
-			eventName,
-			buttonText,
-			href,
-			icon,
-			navigateAndTrack,
-			text,
-			isCompact,
-		} = this.props;
-		const classes = classnames( 'upsell-nudge', className );
-
-		return (
-			<Banner
-				className={ classes }
-				callToAction={ buttonText }
-				dismissPreferenceName={ dismissPreferenceName }
-				event={ eventName }
-				href={ href }
-				icon={ icon }
-				isCompact={ isCompact }
-				onClick={ navigateAndTrack }
-				title={ text }
-			/>
-		);
-	}
-}
+	return (
+		<Banner
+			className={ classes }
+			callToAction={ buttonText }
+			dismissPreferenceName={ dismissPreferenceName }
+			event={ eventName }
+			href={ href }
+			icon={ icon }
+			isCompact={ isCompact }
+			onClick={ navigateAndTrack }
+			title={ text }
+		/>
+	);
+};
 
 const mapStateToProps = null;
 const mapDispatchToProps = ( dispatch, { href, eventName, eventProperties } ) => {
