@@ -49,7 +49,7 @@ export class Banner extends Component {
 		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		isCompact: PropTypes.bool,
+		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
@@ -65,7 +65,7 @@ export class Banner extends Component {
 		forceHref: false,
 		disableHref: false,
 		dismissTemporary: false,
-		isCompact: false,
+		compact: false,
 		onClick: noop,
 		onDismiss: noop,
 	};
@@ -93,13 +93,13 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, isCompact, onClick } = this.props;
+		const { event, feature, compact, onClick } = this.props;
 
 		if ( event ) {
 			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 				cta_name: event,
 				cta_feature: feature,
-				cta_size: isCompact ? 'compact' : 'regular',
+				cta_size: compact ? 'compact' : 'regular',
 			} );
 		}
 
@@ -153,7 +153,7 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
-			isCompact,
+			compact,
 			list,
 			price,
 			title,
@@ -170,7 +170,7 @@ export class Banner extends Component {
 						eventProperties={ {
 							cta_name: event,
 							cta_feature: feature,
-							cta_size: isCompact ? 'compact' : 'regular',
+							cta_size: compact ? 'compact' : 'regular',
 						} }
 					/>
 				) }
@@ -228,7 +228,7 @@ export class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
-			isCompact,
+			compact,
 		} = this.props;
 
 		const classes = classNames(
@@ -242,7 +242,7 @@ export class Banner extends Component {
 			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
-			{ 'is-compact': isCompact },
+			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
