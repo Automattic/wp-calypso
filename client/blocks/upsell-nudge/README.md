@@ -34,6 +34,5 @@ Name | Type | Default | Description
 `buttonText` | `string` | 'Upgrade' | Message to show on the upsell call to action.
 `text` | `string` | 'Free domain with a plan!' | Message to show on the upsell.
 `eventName` | `string` | null | Unique event name for tracking the nudge, passed as a Tracks event property
-`onDismissClick` | `func` |  | Optional function to run when showDismiss is true and the upsell is dismissed
-`showDismiss` | `bool` | false | Allow the upsell to be dismissed
+`dismissPreferenceName` | `string` | empty | Enables a dismiss icon with this value as the event name
 `eventProperties` | `object` | null | Additional event properties to track

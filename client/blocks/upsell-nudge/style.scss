@@ -1,47 +1,75 @@
 .upsell-nudge {
-	border-left: 8px solid var( --color-accent );
-	background-color: var( --color-neutral-80 );
-	color: var( --color-text-inverted );
-	display: flex;
-	align-items: center;
-	margin-bottom: 1.5em;
-	padding: 0.5em 1.5em;
+	&.banner.card {
+		border-left: 8px solid var( --color-accent );
+		background-color: var( --color-neutral-80 );
+		color: var( --color-text-inverted );
+		display: flex;
+		align-items: center;
+		margin-bottom: 1.5em;
+		padding: 0.5em 1.5em;
 
-	a {
+		a {
+			color: var( --color-text-inverted );
+		}
+
+		&.is-compact {
+			border-left-width: 4px;
+			font-size: 12px;
+			margin-bottom: 0;
+			padding: 8px;
+
+			.banner__content {
+				padding: 5px;
+			}
+			.banner__title {
+				font-size: 12px;
+			}
+			.banner__icon-circle {
+				margin-right: 0.25em;
+			}
+			.dismissible-card__close-icon {
+				margin-left: 0.55em;
+				width: 16px;
+				height: 16px;
+			}
+		}
+	}
+
+	&.banner.card .banner__icon-circle {
+		width: auto;
+		height: auto;
+		color: var( --color-text-inverted );
+		border-radius: 0;
+		background: none;
+		padding: 0;
+	}
+
+	.banner__content {
+		padding: 1em 1em 1em 0;
+		margin-right: auto;
 		color: var( --color-text-inverted );
 	}
 
-}
-.upsell-nudge__content {
-	padding: 1em 1em 1em 0;
-	margin-right: auto;
-}
-.upsell-nudge__dismiss {
-	margin-left: 1em;
-}
-.upsell-nudge__dismiss-icon {
-	fill: var( --color-text-inverted );
-}
-.upsell-nudge__button {
-	margin-left: auto;
-	overflow: visible;
-	white-space: nowrap;
-}
-
-.upsell-nudge.is-compact {
-	border-left-width: 4px;
-	font-size: 12px;
-	margin-bottom: 0;
-	padding: 8px;
-
-	.upsell-nudge__content {
-		padding: 5px;
+	.banner__title {
+		color: var( --color-text-inverted );
+		font-weight: normal;
 	}
-	.upsell-nudge__icon {
-		margin-top: -2px;
-		margin-right: 0.25em;
+
+	.banner__action {
+		margin-left: auto;
+		margin-right: 0;
 	}
-	.upsell-nudge__dismiss {
-		margin-left: 0.5em;
+
+	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
+		margin-left: 1em;
+		position: relative;
+		top: auto;
+		right: auto;
+		order: 2;
+	}
+
+	&.is-dismissible .banner__action {
+		margin-top: 0;
 	}
 }

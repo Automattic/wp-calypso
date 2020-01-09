@@ -6,13 +6,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import Banner from 'components/banner';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -28,17 +26,15 @@ export class UpsellNudge extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		eventName: PropTypes.string,
-		eventProperties: PropTypes.object,
+		/*eventProperties: PropTypes.object, @TODO: We may want to be able to assign eventProperties to Tracks events */
+		dismissPreferenceName: PropTypes.string,
 		buttonText: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		href: PropTypes.string,
 		text: PropTypes.string,
 		onClick: PropTypes.func,
-		onDismissClick: PropTypes.func,
-		showDismiss: PropTypes.bool,
 		isCompact: PropTypes.bool,
 		track: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
 	};
 
 	onClick = e => {
@@ -49,77 +45,31 @@ export class UpsellNudge extends Component {
 		}
 	};
 
-	onDismissClick = e => {
-		const { eventName, eventProperties, track, onDismissClick } = this.props;
-		track( 'calypso_upsell_nudge_button_dismiss_click', {
-			event_name: eventName,
-			...eventProperties,
-		} );
-		if ( onDismissClick ) {
-			onDismissClick( e );
-		}
-	};
-
 	render() {
 		const {
 			className,
+			dismissPreferenceName,
 			eventName,
-			eventProperties,
 			buttonText,
 			href,
 			icon,
 			text,
 			isCompact,
-			showDismiss,
-			translate,
 		} = this.props;
-		const classes = classnames( 'upsell-nudge', className, { 'is-compact': isCompact } );
+		const classes = classnames( 'upsell-nudge', className );
 
 		return (
-			<div className={ classes }>
-				<TrackComponentView
-					eventName="calypso_upsell_nudge_impression"
-					eventProperties={ { event_name: eventName, ...eventProperties } }
-				/>
-				{ icon && (
-					<Gridicon className="upsell-nudge__icon" icon={ icon } size={ isCompact ? 18 : 24 } />
-				) }
-				<span className="upsell-nudge__content">
-					<span className="upsell-nudge__text">
-						<a href={ href } onClick={ this.onClick }>
-							{ text }
-						</a>
-					</span>
-				</span>
-				{ buttonText && (
-					<Button
-						className="upsell-nudge__button"
-						compact={ isCompact }
-						primary
-						onClick={ this.onClick }
-						href={ href }
-					>
-						{ buttonText }
-					</Button>
-				) }
-				{ showDismiss && (
-					<span className="upsell-nudge__dismiss">
-						<Button
-							className="upsell-nudge__dismiss-button"
-							onClick={ this.onDismissClick }
-							aria-label={ translate( 'Dismiss' ) }
-							compact
-							borderless
-						>
-							<Gridicon
-								className="upsell-nudge__dismiss-icon"
-								icon={ isCompact ? 'cross-small' : 'cross' }
-								size={ 18 }
-							/>
-						</Button>
-					</span>
-				) }
-			</div>
+			<Banner
+				className={ classes }
+				callToAction={ buttonText }
+				dismissPreferenceName={ dismissPreferenceName }
+				event={ eventName }
+				href={ href }
+				icon={ icon }
+				isCompact={ isCompact }
+				onClick={ this.onClick }
+				title={ text }
+			/>
 		);
 	}
 }
