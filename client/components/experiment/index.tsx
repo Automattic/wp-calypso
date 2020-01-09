@@ -9,14 +9,14 @@ interface ExperimentProps {
 	name: string;
 	children: Variation & DefaultVariation & LoadingVariations;
 	variation?: string;
-	isLoading: boolean;
+	isLoading?: boolean;
 }
 
 interface VariationProps {
 	name: string;
 	children?: any;
 	variation?: string;
-	isLoading: boolean;
+	isLoading?: boolean;
 }
 
 type State = {};
