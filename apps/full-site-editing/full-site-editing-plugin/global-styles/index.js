@@ -23,6 +23,7 @@ import {
 	LINE_HEIGHT_BODY_DEFAULT,
 	LINE_HEIGHT_HEADING,
 	LINE_HEIGHT_HEADING_DEFAULT,
+	TYPESCALE_ROOT,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -54,6 +55,7 @@ registerPlugin( PLUGIN_NAME, {
 			lineHeightHeadingsDefault: getSelectors( STORE_NAME ).getOption(
 				LINE_HEIGHT_HEADING_DEFAULT
 			),
+			typeScaleRoot: getSelectors( STORE_NAME ).getOption( TYPESCALE_ROOT ),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,
