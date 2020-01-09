@@ -30,6 +30,7 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  *     * items: the array of items currently in the cart
  *     * tax: the tax line item
  *     * total: the total price line item
+ *     * credits: the credits available as a line item
  *     * addItem: callback for adding an item to the cart
  *     * removeItem: callback for removing an item from the cart
  */
@@ -38,7 +39,7 @@ export interface ShoppingCartManager {
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
 	total: CheckoutCartTotal;
-	credits: number;
+	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
 	removeItem: ( WPCOMCartItem ) => void;
 }
