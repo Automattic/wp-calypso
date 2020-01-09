@@ -15,7 +15,7 @@ function myUpsell() {
 			buttonText={ translate( 'Upgrade' ) }
 			text={ translate( 'Free domain with a plan!' ) }
 			href={ '/plans' }
-			isCompact
+			compact
 		/>
 	)
 }
@@ -33,5 +33,5 @@ Name | Type | Default | Description
 `eventProperties` | `object` | null | Additional event properties to track on click
 `href` | `string` | null | The URL/path that the user is taken to when clicked.
 `icon` | `string` | null | Optional reference to a Gridicon.
-`isCompact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
+`compact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
 `text` | `string` | 'Free domain with a plan!' | Message to show on the upsell.
