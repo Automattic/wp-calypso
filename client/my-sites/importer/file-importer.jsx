@@ -7,11 +7,11 @@ import React from 'react';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import { connect } from 'react-redux';
-import page from 'page';
+
 /**
  * Internal dependencies
  */
-import { isConfigEnabled } from 'config';
+import { isEnabled as isConfigEnabled } from 'config';
 import { appStates } from 'state/imports/constants';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
@@ -69,7 +69,7 @@ class FileImporter extends React.PureComponent {
 	handleClick = () => {
 		const {
 			importerStatus: { type },
-			site: { ID: siteId, slug: siteSlug },
+			site: { ID: siteId },
 			importerData: { overrideDestination },
 		} = this.props;
 
@@ -79,7 +79,7 @@ class FileImporter extends React.PureComponent {
 		 * This is used for the new Migration logic for the moment.
 		 */
 		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
-			return page.redirect( overrideDestination.replace( '%SITE_SLUG%', siteSlug ) );
+			return false;
 		}
 
 		startImport( siteId, type );
@@ -91,7 +91,13 @@ class FileImporter extends React.PureComponent {
 	};
 
 	render() {
-		const { title, icon, description, uploadDescription } = this.props.importerData;
+		const {
+			title,
+			icon,
+			description,
+			overrideDestination,
+			uploadDescription,
+		} = this.props.importerData;
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
@@ -105,6 +111,10 @@ class FileImporter extends React.PureComponent {
 			onClick: this.handleClick,
 			tagName: 'button',
 		};
+
+		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
+		}
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
