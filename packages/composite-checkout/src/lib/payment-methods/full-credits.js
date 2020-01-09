@@ -20,7 +20,11 @@ import { useFormStatus } from '../form-status';
 
 const debug = debugFactory( 'composite-checkout:full-credits-payment-method' );
 
-export function createFullCreditsMethod( { registerStore, submitTransaction } ) {
+export function createFullCreditsMethod( {
+	registerStore,
+	submitTransaction,
+	creditsDisplayValue,
+} ) {
 	const actions = {
 		*beginCreditsTransaction( payload ) {
 			let response;
@@ -82,17 +86,22 @@ export function createFullCreditsMethod( { registerStore, submitTransaction } ) 
 
 	return {
 		id: 'full-credits',
-		label: <FullCreditsLabel />,
+		label: <FullCreditsLabel creditsDisplayValue={ creditsDisplayValue } />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <FullCreditsSummary />,
 		getAriaLabel: localize => localize( 'Credits' ),
 	};
 }
 
-export function FullCreditsLabel() {
+export function FullCreditsLabel( { creditsDisplayValue } ) {
 	const localize = useLocalize();
 
-	return <span>{ localize( 'Credits' ) }</span>;
+	return (
+		<React.Fragment>
+			<div>{ localize( 'Credits' ) }</div>
+			<div>{ sprintf( localize( 'You have %s in credits available.' ), creditsDisplayValue ) }</div>
+		</React.Fragment>
+	);
 }
 
 function FullCreditsSubmitButton( { disabled } ) {
@@ -133,7 +142,10 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const buttonString =
 		formStatus === 'submitting'
 			? localize( 'Processing...' )
-			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+			: sprintf(
+					localize( 'Pay %s with Credits' ),
+					renderDisplayValueMarkdown( total.amount.displayValue )
+			  );
 	return (
 		<Button
 			disabled={ disabled }
@@ -148,5 +160,5 @@ function FullCreditsSubmitButton( { disabled } ) {
 
 function FullCreditsSummary() {
 	const localize = useLocalize();
-	return localize( 'Credits' );
+	return localize( 'Pay using Credits' );
 }
