@@ -106,15 +106,16 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	domainSuggestionsWithHints: {
-		datestamp: '20191220',
+	nonEnglishDomainStepCopyUpdates: {
+		datestamp: '20191219',
 		variations: {
-			variation2_front: 0,
-			variation3_front: 50,
-			variation4_front: 25,
-			variation5_front: 25,
+			variantShowUpdates: 50,
+			control: 50,
 		},
-		defaultVariation: 'variation2_front',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
 	},
 	showBusinessPlanPopular: {
 		datestamp: '20200109',
