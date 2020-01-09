@@ -23,7 +23,10 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
 import SiteSelector from 'components/site-selector';
 import Spinner from 'components/spinner';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { updateSiteMigrationStatus } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -38,6 +41,8 @@ import './section-migrate.scss';
 const wpcom = wpLib.undocumented();
 
 class SectionMigrate extends Component {
+	_startedMigrationFromCart = false;
+
 	state = {
 		migrationStatus: 'unknown',
 		percent: 0,
@@ -46,6 +51,12 @@ class SectionMigrate extends Component {
 	};
 
 	componentDidMount() {
+		if ( true === this.props.startMigration ) {
+			this._startedMigrationFromCart = true;
+			this.setMigrationState( { migrationStatus: 'backing-up' } );
+			this.startMigration();
+		}
+
 		this.updateFromAPI();
 	}
 
@@ -76,11 +87,20 @@ class SectionMigrate extends Component {
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
 			 * Call to updateFromAPI will update both local and non-local state.
 			 */
-			this.setState( { migrationStatus: 'inactive', errorMessage: '' }, this.updateFromAPI );
+			this.setState(
+				{
+					migrationStatus: 'inactive',
+					errorMessage: '',
+				},
+				this.updateFromAPI
+			);
 		} );
 	};
 
 	setMigrationState = state => {
+		if ( 'error' === this.state.migrationStatus ) {
+			return;
+		}
 		if ( state.migrationStatus ) {
 			this.props.updateSiteMigrationStatus( this.props.targetSiteId, state.migrationStatus );
 		}
@@ -92,9 +112,19 @@ class SectionMigrate extends Component {
 	};
 
 	startMigration = () => {
-		const { sourceSiteId, targetSiteId } = this.props;
+		const { sourceSiteId, targetSiteId, targetSite } = this.props;
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
+			return;
+		}
+
+		const planSlug = get( targetSite, 'plan.product_slug' );
+		if (
+			planSlug &&
+			! this._startedMigrationFromCart &&
+			! planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS )
+		) {
+			this.goToCart();
 			return;
 		}
 
@@ -104,9 +134,27 @@ class SectionMigrate extends Component {
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
 			.catch( error => {
-				const { message = '' } = error;
-				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+				const { code = '', message = '' } = error;
+
+				if ( 'no_supported_plan' === code ) {
+					this.goToCart();
+					return;
+				}
+
+				this.setMigrationState( {
+					migrationStatus: 'error',
+					errorMessage: message,
+				} );
 			} );
+	};
+
+	goToCart = () => {
+		const { sourceSite, targetSiteSlug } = this.props;
+		const sourceSiteSlug = get( sourceSite, 'slug' );
+
+		page(
+			`/checkout/${ targetSiteSlug }/business?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
+		);
 	};
 
 	updateFromAPI = () => {
@@ -158,7 +206,10 @@ class SectionMigrate extends Component {
 			} )
 			.catch( error => {
 				const { message = '' } = error;
-				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+				this.setMigrationState( {
+					migrationStatus: 'error',
+					errorMessage: message,
+				} );
 			} );
 	};
 
@@ -497,6 +548,7 @@ export default connect(
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
+			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
 			targetSite: getSelectedSite( state ),
 			targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
