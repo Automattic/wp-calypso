@@ -136,13 +136,6 @@ function getWebpackConfig(
 					) }';`,
 					postCssConfig: { path: __dirname },
 				} ),
-				{
-					include: path.join( __dirname, 'client/sections.js' ),
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: {
-						include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
-					},
-				},
 			],
 		},
 		externals: [ 'electron' ],
