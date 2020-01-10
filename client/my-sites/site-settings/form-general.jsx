@@ -33,6 +33,7 @@ import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { maybeRewriteTimezone } from 'lib/i18n-utils/utils';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
@@ -350,7 +351,10 @@ export class SiteSettingsFormGeneral extends Component {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = 'Asia/Calcutta';
 		moment.tz.guess();
-		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
+		const setGuessedTimezone = this.onTimezoneSelect.bind(
+			this,
+			maybeRewriteTimezone( guessedTimezone )
+		);
 
 		return (
 			<FormFieldset>

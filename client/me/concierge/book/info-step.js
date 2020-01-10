@@ -29,7 +29,7 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage, maybeRewriteTimezone } from 'lib/i18n-utils/utils';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -48,7 +48,10 @@ class InfoStep extends Component {
 	};
 
 	setTimezone = timezone => {
-		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
+		this.props.updateConciergeSignupForm( {
+			...this.props.signupForm,
+			timezone: maybeRewriteTimezone( timezone ),
+		} );
 	};
 
 	updateSignupForm( name, value ) {
@@ -168,7 +171,7 @@ class InfoStep extends Component {
 							includeManualOffsets={ false }
 							name="timezone"
 							onSelect={ this.setTimezone }
-							selectedZone={ timezone }
+							selectedZone={ maybeRewriteTimezone( timezone ) }
 						/>
 						<FormSettingExplanation>
 							{ translate( 'Choose a city in your timezone.' ) }
