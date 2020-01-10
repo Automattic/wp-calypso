@@ -94,7 +94,7 @@ export default {
 			variantShowUpdates: 90,
 			control: 10,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
 	domainStepMoveParagraph: {
@@ -105,17 +105,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	nonEnglishDomainStepCopyUpdates: {
-		datestamp: '20191219',
-		variations: {
-			variantShowUpdates: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
 	},
 	domainSuggestionsWithHints: {
 		datestamp: '20191220',

@@ -123,13 +123,12 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if ( false !== this.props.shouldShowDomainTestCopy && ! props.isPlanStepFulfilled ) {
-			if (
-				'variantShowUpdates' === abtest( 'domainStepCopyUpdates' ) ||
-				'variantShowUpdates' === abtest( 'nonEnglishDomainStepCopyUpdates' )
-			) {
-				this.showTestCopy = true;
-			}
+		if (
+			false !== this.props.shouldShowDomainTestCopy &&
+			! props.isPlanStepFulfilled &&
+			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
+		) {
+			this.showTestCopy = true;
 		}
 
 		this.showTestParagraph = false;
