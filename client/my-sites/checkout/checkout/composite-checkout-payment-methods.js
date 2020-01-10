@@ -8,6 +8,7 @@ import {
 	createStripeMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
+	createFullCreditsMethod,
 } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout-payment-methods' );
@@ -19,10 +20,43 @@ export function createPaymentMethods( {
 	select,
 	registerStore,
 	wpcom,
+	credits,
+	total,
 } ) {
 	if ( isLoading ) {
 		return [];
 	}
+
+	debug(
+		'creating payment methods; allowedPaymentMethods is',
+		allowedPaymentMethods,
+		'credits is',
+		credits.amount.value,
+		'and total is',
+		total.amount.value
+	);
+
+	const fullCreditsPaymentMethod =
+		isMethodEnabled( 'full-credits', allowedPaymentMethods ) &&
+		credits.amount.value >= total.amount.value
+			? createFullCreditsMethod( {
+					registerStore,
+					submitTransaction: submitData =>
+						submitCreditsTransaction(
+							{
+								...submitData,
+								siteId: select( 'wpcom' )?.getSiteId?.(),
+								domainDetails: getDomainDetails( select ),
+								country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
+								postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+								phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
+								subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+							},
+							wpcom
+						),
+					creditsDisplayValue: credits.amount.displayValue,
+			  } )
+			: null;
 
 	const stripeMethod = isMethodEnabled( 'stripe', allowedPaymentMethods )
 		? createStripeMethod( {
@@ -103,7 +137,13 @@ export function createPaymentMethods( {
 		  )
 		: [];
 
-	return [ ...existingCardMethods, stripeMethod, paypalMethod, applePayMethod ].filter( Boolean );
+	return [
+		fullCreditsPaymentMethod,
+		...existingCardMethods,
+		stripeMethod,
+		paypalMethod,
+		applePayMethod,
+	].filter( Boolean );
 }
 
 export function useStoredCards( getStoredCards ) {
@@ -299,6 +339,16 @@ function createCartFromLineItems( {
 			},
 		},
 	};
+}
+
+function submitCreditsTransaction( transactionData, wpcom ) {
+	debug( 'formatting full credits transaction', transactionData );
+	const formattedTransactionData = formatDataForTransactionsEndpoint( {
+		...transactionData,
+		paymentMethodType: 'WPCOM_Billing_WPCOM',
+	} );
+	debug( 'submitting full credits transaction', formattedTransactionData );
+	return wpcom.transactions( formattedTransactionData );
 }
 
 function isMethodEnabled( method, allowedPaymentMethods ) {
