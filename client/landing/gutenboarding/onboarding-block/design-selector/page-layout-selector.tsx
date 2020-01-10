@@ -40,7 +40,7 @@ const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
 						<Card
 							as="button"
 							className={ classnames( 'page-layout-selector__item', {
-								'is-selected': pageLayouts.has( template.slug ),
+								'is-selected': pageLayouts.includes( template.slug ),
 							} ) }
 							onClick={ () => togglePageLayout( template ) }
 							key={ template.slug }

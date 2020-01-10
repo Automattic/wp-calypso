@@ -43,19 +43,16 @@ const siteVertical: Reducer<
 	return state;
 };
 
-const pageLayouts: Reducer< Set< string >, ReturnType< typeof Actions[ 'togglePageLayout' ] > > = (
-	state = new Set(),
-	action
-) => {
+const pageLayouts: Reducer<
+	Array< string >,
+	ReturnType< typeof Actions[ 'togglePageLayout' ] >
+> = ( state = [], action ) => {
 	if ( action.type === ActionType.TOGGLE_PAGE_LAYOUT ) {
-		const nextLayouts = new Set( state );
 		const layout = action.pageLayout;
-		if ( nextLayouts.has( layout.slug ) ) {
-			nextLayouts.delete( layout.slug );
-		} else {
-			nextLayouts.add( layout.slug );
+		if ( state.includes( layout.slug ) ) {
+			return state.filter( item => item !== layout.slug );
 		}
-		return nextLayouts;
+		return [ ...state, layout.slug ];
 	}
 	return state;
 };
