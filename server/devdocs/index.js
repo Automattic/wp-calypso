@@ -3,7 +3,6 @@
  */
 
 import express from 'express';
-import fs from 'fs';
 import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
@@ -17,13 +16,11 @@ import 'prismjs/components/prism-scss';
  * Internal dependencies
  */
 import config from 'config';
-import searchIndex from 'devdocs/search-index';
-import componentsUsageStats from 'devdocs/components-usage-stats.json';
+import searchIndex from './search-index';
+import componentsUsageStats from './components-usage-stats.json';
+import selectors from './selectors';
 
-const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	selectors = require( './selectors' );
+const docsIndex = lunr.Index.load( searchIndex.index );
 
 /**
  * Constants
@@ -46,41 +43,43 @@ marked.setOptions( {
  * Query the index using lunr.
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
+ *
  * @param {object} query The search query for lunr
  * @returns {Array} The results from the query
  */
 function queryDocs( query ) {
 	return docsIndex.search( query ).map( result => {
-		const doc = documents[ result.ref ],
-			snippet = makeSnippet( doc, query );
+		const doc = searchIndex.documents[ result.ref ];
+		const snippet = makeSnippet( doc, query );
 
 		return {
 			path: doc.path,
 			title: doc.title,
-			snippet: snippet,
+			snippet,
 		};
 	} );
 }
 
 /**
  * Return an array of results based on the provided filenames
+ *
  * @param {Array} filePaths An array of file paths
  * @returns {Array} The results from the docs
  */
 function listDocs( filePaths ) {
 	return filePaths.map( path => {
-		const doc = find( documents, entry => entry.path === path );
+		const doc = find( searchIndex.documents, { path } );
 
 		if ( doc ) {
 			return {
-				path: path,
+				path,
 				title: doc.title,
 				snippet: defaultSnippet( doc ),
 			};
 		}
 
 		return {
-			path: path,
+			path,
 			title: 'Not found: ' + path,
 			snippet: '',
 		};
@@ -91,6 +90,7 @@ function listDocs( filePaths ) {
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
+ *
  * @param {object} doc The document to extract the snippet from
  * @param {object} query The query to be searched for
  * @returns {string} A snippet from the document
@@ -126,6 +126,7 @@ function makeSnippet( doc, query ) {
 
 /**
  * Escapes a string
+ *
  * @param {lunr.Token} token The string to escape
  * @returns {lunr.Token} An escaped string
  */
@@ -137,6 +138,7 @@ function escapeRegexString( token ) {
 
 /**
  * Generate a standardized snippet
+ *
  * @param {object} doc The document from which to generate the snippet
  * @returns {string} The snippet
  */
@@ -211,8 +213,8 @@ module.exports = function() {
 	// return the content of a document in the given format (assumes that the document is in
 	// markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
-		let path = request.query.path;
-		const format = request.query.format || 'html';
+		let { path } = request.query;
+		const { format = 'html' } = request.query.format;
 
 		if ( ! path ) {
 			response
@@ -221,24 +223,23 @@ module.exports = function() {
 			return;
 		}
 
-		if ( ! /\.md$/.test( path ) ) {
+		if ( ! path.endsWith( '.md' ) ) {
 			path = fspath.join( path, 'README.md' );
 		}
 
-		try {
-			path = fs.realpathSync( fspath.join( root, path ) );
-		} catch ( err ) {
-			path = null;
-		}
+		// Make the path relative, i.e., convert `/client/README.md` to `client/README.md`.
+		// The `searchIndex.documents` array stores relative paths, but the `path` query arg
+		// can be both absolute and relative (always to root) path.
+		path = fspath.relative( '/', path );
 
-		if ( ! path || path.substring( 0, root.length + 1 ) !== root + fspath.sep ) {
+		const doc = find( searchIndex.documents, { path } );
+
+		if ( ! doc ) {
 			response.status( 404 ).send( 'File does not exist' );
 			return;
 		}
 
-		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
-
-		response.send( 'html' === format ? marked( fileContents ) : fileContents );
+		response.send( 'html' === format ? marked( doc.content ) : doc.content );
 	} );
 
 	// return json for the components usage stats

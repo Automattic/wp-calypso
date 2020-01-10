@@ -10,10 +10,8 @@
  */
 
 const fs = require( 'fs' );
-const fspath = require( 'path' );
 const lunr = require( 'lunr' );
 const globby = require( 'globby' );
-const root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
 
 function main() {
 	// Build a list of all .md files in allowed subdirectories...
@@ -23,6 +21,7 @@ function main() {
 		'client',
 		'config',
 		'docs',
+		'packages',
 		'server',
 		'test',
 		'.github',
@@ -30,12 +29,10 @@ function main() {
 	// ... and the current directory
 	dirList.push( '*.md' );
 
-	const documents = globby.sync( dirList ).map( fileWithPath => {
-		return documentFromFile( root, fileWithPath );
-	} ).filter( doc => {
-		// skip empty/invalid files
-		return doc.title && doc.body;
-	} );
+	const documents = globby
+		.sync( dirList )
+		.map( documentFromFile )
+		.filter( doc => doc.title && doc.body /* skip empty/invalid files */ );
 
 	writeSearchIndex( documents, 'server/devdocs/search-index.js' );
 }
@@ -57,28 +54,26 @@ function writeSearchIndex( documents, searchIndexPath ) {
 			indexDoc.title = doc.title;
 
 			//preprocess body to remove non-word characters, e.g. <optgroup> becomes optgroup
-			indexDoc.body = doc.body.replace(/<>\/="/, ' ');
+			indexDoc.body = doc.body.replace( /<>\/="/, ' ' );
 
 			this.add( indexDoc );
 		} );
 	} );
 
-	const searchIndexJS = 'module.exports.index = ' + jsFromJSON( JSON.stringify( idx ) ) + ';' +
-		'module.exports.documents = ' + jsFromJSON( JSON.stringify( documents ) ) + ';';
+	const searchIndexJS =
+		'module.exports.index = ' +
+		jsFromJSON( JSON.stringify( idx ) ) +
+		';' +
+		'module.exports.documents = ' +
+		jsFromJSON( JSON.stringify( documents ) ) +
+		';';
 
-	fs.writeFileSync( fspath.join( root, searchIndexPath ), searchIndexJS );
+	fs.writeFileSync( searchIndexPath, searchIndexJS );
 }
 
-/**
- * Some characters in JSON are invalid in JS. Replace them with ones that are.
- *
- * @copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>.
- * @license See CREDITS.md.
- * @see https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
- */
+// Some characters in JSON are invalid in JS. Replace them with valid ones.
+// See: https://stackoverflow.com/questions/16686687/json-stringify-and-u2028-u2029-check
 function jsFromJSON( json ) {
-	// some characters in JSON are invalid in JS
-	// lifted from https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
 	return json.replace( /\u2028/g, '\\u2028' ).replace( /\u2029/g, '\\u2029' );
 }
 
@@ -87,17 +82,12 @@ function jsFromJSON( json ) {
  * return a basic JSON object suitable for indexing
  */
 
-function documentFromFile( root, fileWithPath ) {
-	let data = fs.readFileSync( fspath.join( root, fileWithPath ), { encoding: 'utf8' } );
+function documentFromFile( path ) {
+	const content = fs.readFileSync( path, { encoding: 'utf8' } );
 
-	// render as markdown so that embedded HTML is properly escaped
-	// data = striptags( marked ( data) );
-
-	//strip leading and trailing lines/spaces
-	data = data.replace( /^\s*[\r\n]/gm, '' );
-
-	//strip common, noisy markdown stuff
-	data = data.replace( /^#+|^={2,}|^-{2,}/gm, '' );
+	const data = content
+		.replace( /^\s*[\r\n]/gm, '' ) // strip leading and trailing lines/spaces
+		.replace( /^#+|^={2,}|^-{2,}/gm, '' ); //strip common, noisy markdown stuff
 
 	const firstLineEnd = data.indexOf( '\n' );
 
@@ -110,9 +100,10 @@ function documentFromFile( root, fileWithPath ) {
 	const body = data.slice( firstLineEnd + 1 );
 
 	return {
-		path: fileWithPath,
-		title: title,
-		body: body
+		path,
+		content,
+		title,
+		body,
 	};
 }
 
