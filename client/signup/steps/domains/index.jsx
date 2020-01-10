@@ -474,7 +474,7 @@ class DomainsStep extends React.Component {
 				showTestParagraph={ this.showTestParagraph }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( true ) }
+				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
