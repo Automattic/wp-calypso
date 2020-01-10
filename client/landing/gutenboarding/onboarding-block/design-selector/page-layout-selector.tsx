@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Card from '../../components/card';
+import CardFooter from '../../components/card/footer';
 import CardMedia from '../../components/card/media';
 import { removeQueryArgs } from '@wordpress/url';
 import { Icon } from '@wordpress/components';
@@ -48,9 +49,12 @@ const PageLayoutSelector: FunctionComponent< Props > = ( {
 						<span className="page-layout-selector__selected-indicator">
 							<Icon icon="yes" size={ 24 } />
 						</span>
-						<CardMedia as="span">
+						<CardMedia className="page-layout-selector__card-media" as="span">
 							<img alt={ template.description } src={ removeQueryArgs( template.preview, 'w' ) } />
 						</CardMedia>
+						<CardFooter className="page-layout-selector__card-footer" as="span">
+							{ template.title }
+						</CardFooter>
 					</Card>
 				) ) }
 			</div>
