@@ -101,7 +101,15 @@ const rule = ( module.exports = function( context ) {
 } );
 
 rule.ERROR_MESSAGE = 'className should follow CSS namespace guidelines (expected {{expected}})';
-rule.DEFAULT_ROOT_FILES = [ 'index.js', 'index.jsx', 'index.ts', 'index.tsx' ];
+rule.DEFAULT_ROOT_FILES = [
+	'index.js',
+	'index.jsx',
+	'index.ts',
+	'index.tsx',
+	// Storybook files
+	'index.stories.js',
+	'index.stories.jsx',
+];
 
 rule.schema = [
 	{
