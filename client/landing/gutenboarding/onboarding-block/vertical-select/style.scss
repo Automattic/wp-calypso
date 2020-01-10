@@ -2,6 +2,10 @@
 
 .vertical-select {
 	width: 400px;
+
+	.onboarding-block__question-input {
+		width: inherit;
+	}
 }
 
 .vertical-select__suggestions {
