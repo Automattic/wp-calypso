@@ -43,7 +43,21 @@ const siteVertical: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { domain, siteTitle, siteVertical } );
+const pageLayouts: Reducer<
+	string[],
+	ReturnType< typeof Actions[ 'togglePageLayout' ] >
+> = ( state = [], action ) => {
+	if ( action.type === ActionType.TOGGLE_PAGE_LAYOUT ) {
+		const layout = action.pageLayout;
+		if ( state.includes( layout.slug ) ) {
+			return state.filter( item => item !== layout.slug );
+		}
+		return [ ...state, layout.slug ];
+	}
+	return state;
+};
+
+const reducer = combineReducers( { domain, siteTitle, siteVertical, pageLayouts } );
 
 export type State = ReturnType< typeof reducer >;
 
