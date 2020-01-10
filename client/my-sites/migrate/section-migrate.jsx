@@ -98,6 +98,9 @@ class SectionMigrate extends Component {
 	};
 
 	setMigrationState = state => {
+		// This is necessary to avoid a response from the migration-status endpoint
+		// accidentally resetting the state after the migrate/from endpoint
+		// has returned an error
 		if ( 'error' === this.state.migrationStatus ) {
 			return;
 		}
