@@ -913,6 +913,7 @@ class WpcomChecklistComponent extends PureComponent {
 				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Update homepage' ) }
+				action="update-homepage"
 			/>
 		);
 	};
