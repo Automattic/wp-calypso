@@ -400,6 +400,14 @@ describe( 'LanguagePickerModal', () => {
 		} );
 
 		test( 'should navigate through languages with arrow keys', () => {
+			const getLanguagesListColumnsCount =
+				LanguagePickerModal.prototype.getLanguagesListColumnsCount;
+
+			// Mock getLanguagesListColumnsCount method of LanguagePickerModal
+			// as we can't use it in test environment because it's using
+			// getBoundingClientRect internally
+			LanguagePickerModal.prototype.getLanguagesListColumnsCount = jest.fn( () => 2 );
+
 			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
 
 			// Set a search state that will match most of the test languages
@@ -409,6 +417,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( { selectedLanguageSlug: filteredLanguages[ 0 ].langSlug } );
 
 			const horizontalStep = 1;
+			const verticalStep = wrapper.instance().getLanguagesListColumnsCount();
 
 			for ( let i = 0; i < filteredLanguages.length - 1; i += horizontalStep ) {
 				simulateKeyDownEvent( 'ArrowRight' );
@@ -424,7 +433,25 @@ describe( 'LanguagePickerModal', () => {
 				);
 			}
 
-			// @todo test up and down arrow keys
+			for ( let i = 0; i < filteredLanguages.length - verticalStep - 1; i += verticalStep ) {
+				simulateKeyDownEvent( 'ArrowDown' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i + verticalStep ].langSlug
+				);
+			}
+
+			const selectedLanguageIndex = filteredLanguages.findIndex(
+				( { langSlug } ) => langSlug === wrapper.state().selectedLanguageSlug
+			);
+
+			for ( let i = selectedLanguageIndex; i > 0; i -= verticalStep ) {
+				simulateKeyDownEvent( 'ArrowUp' );
+				expect( wrapper.state().selectedLanguageSlug ).toBe(
+					filteredLanguages[ i - verticalStep ].langSlug
+				);
+			}
+
+			LanguagePickerModal.prototype.getLanguagesListColumnsCount = getLanguagesListColumnsCount;
 		} );
 	} );
 } );
