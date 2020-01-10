@@ -217,26 +217,26 @@ class Global_Styles {
 					'name'    => ['jetpack-global-styles', 'line_height_heading'],
 					'default' => 1.125,
 				],
-				'typescale_ratio' => [
+				'type_scale_ratio' => [
 					'type'      => 'option',
-					'name'      => ['jetpack_global_styles', 'typescale_ratio'],
+					'name'      => ['jetpack_global_styles', 'type_scale_ratio'],
 					'default'   => 1.5,
 					'updatable' => true,
 				],
-				'typescale_ratio_default' => [
+				'type_scale_ratio_default' => [
 					'type'    => 'theme',
-					'name'    => ['jetpack-global-styles', 'typescale_ratio'],
+					'name'    => ['jetpack-global-styles', 'type_scale_ratio'],
 					'default' => 1.2,
 				],
-				'typescale_root' => [
+				'type_scale_root' => [
 					'type'      => 'option',
-					'name'      => ['jetpack_global_styles', 'typescale_root'],
+					'name'      => ['jetpack_global_styles', 'type_scale_root'],
 					'default'   => 18, // Pixels.
 					'updatable' => true,
 				],
-				'typescale_root_default' => [
+				'type_scale_root_default' => [
 					'type'    => 'theme',
-					'name'    => ['jetpack-global-styles', 'typescale_root'],
+					'name'    => ['jetpack-global-styles', 'type_scale_root'],
 					'default' => 18, // Pixels.
 				],
 			]
@@ -565,8 +565,8 @@ class Global_Styles {
 		foreach( [
 			'line_height_body',
 			'line_height_heading',
-			'typescale_root',
-			'typescale_ratio',
+			'type_scale_root',
+			'type_scale_ratio',
 		] as $key ) {
 			if( is_numeric( $incoming_data[ $key ] ) ) {
 				$result[ $key ] = $incoming_data[ $key ];

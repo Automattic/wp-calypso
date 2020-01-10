@@ -19,8 +19,8 @@ import {
 	FONT_HEADINGS,
 	LINE_HEIGHT_BODY,
 	LINE_HEIGHT_HEADING,
-	TYPESCALE_ROOT,
-	TYPESCALE_RATIO,
+	TYPE_SCALE_ROOT,
+	TYPE_SCALE_RATIO,
 } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
@@ -93,8 +93,8 @@ export default ( {
 			[ FONT_HEADINGS ]: fontHeadings,
 			[ LINE_HEIGHT_BODY ]: lineHeightBase,
 			[ LINE_HEIGHT_HEADING ]: lineHeightHeadings,
-			[ TYPESCALE_ROOT ]: typeScaleRoot,
-			[ TYPESCALE_RATIO ]: typeScaleRatio,
+			[ TYPE_SCALE_ROOT ]: typeScaleRoot,
+			[ TYPE_SCALE_RATIO ]: typeScaleRatio,
 		} );
 	return (
 		<>
@@ -152,8 +152,8 @@ export default ( {
 						typeScaleRatio={ typeScaleRatio }
 						typeScaleRootDefault={ typeScaleRootDefault }
 						typeScaleRatioDefault={ typeScaleRatioDefault }
-						updateTypeScaleRoot={ value => updateOptions( { [ TYPESCALE_ROOT ]: value } ) }
-						updateTypeScaleRatio={ value => updateOptions( { [ TYPESCALE_RATIO ]: value } ) }
+						updateTypeScaleRoot={ value => updateOptions( { [ TYPE_SCALE_ROOT ]: value } ) }
+						updateTypeScaleRatio={ value => updateOptions( { [ TYPE_SCALE_RATIO ]: value } ) }
 					/>
 					<LineHeightPanel
 						lineHeightBase={ lineHeightBase }

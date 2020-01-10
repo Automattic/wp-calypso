@@ -23,10 +23,10 @@ import {
 	LINE_HEIGHT_BODY_DEFAULT,
 	LINE_HEIGHT_HEADING,
 	LINE_HEIGHT_HEADING_DEFAULT,
-	TYPESCALE_RATIO,
-	TYPESCALE_RATIO_DEFAULT,
-	TYPESCALE_ROOT,
-	TYPESCALE_ROOT_DEFAULT,
+	TYPE_SCALE_RATIO,
+	TYPE_SCALE_RATIO_DEFAULT,
+	TYPE_SCALE_ROOT,
+	TYPE_SCALE_ROOT_DEFAULT,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -58,10 +58,10 @@ registerPlugin( PLUGIN_NAME, {
 			lineHeightHeadingsDefault: getSelectors( STORE_NAME ).getOption(
 				LINE_HEIGHT_HEADING_DEFAULT
 			),
-			typeScaleRatio: getSelectors( STORE_NAME ).getOption( TYPESCALE_RATIO ),
-			typeScaleRatioDefault: getSelectors( STORE_NAME ).getOption( TYPESCALE_RATIO_DEFAULT ),
-			typeScaleRoot: getSelectors( STORE_NAME ).getOption( TYPESCALE_ROOT ),
-			typeScaleRootDefault: getSelectors( STORE_NAME ).getOption( TYPESCALE_ROOT_DEFAULT ),
+			typeScaleRatio: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_RATIO ),
+			typeScaleRatioDefault: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_RATIO_DEFAULT ),
+			typeScaleRoot: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_ROOT ),
+			typeScaleRootDefault: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_ROOT_DEFAULT ),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,

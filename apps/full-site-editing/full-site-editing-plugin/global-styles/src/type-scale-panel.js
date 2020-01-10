@@ -22,7 +22,7 @@ export default ( {
 				}
 			/>
 			<RangeControl
-				label={ __( 'Typescale Ratio' ) }
+				label={ __( 'Type Scale Ratio' ) }
 				value={ typeScaleRatio || typeScaleRatioDefault }
 				onChange={ value =>
 					value ? updateTypeScaleRatio( value ) : updateTypeScaleRatio( typeScaleRatioDefault )
