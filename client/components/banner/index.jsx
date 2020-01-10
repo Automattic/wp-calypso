@@ -46,7 +46,6 @@ export class Banner extends Component {
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
-		eventProperties: PropTypes.object,
 		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
@@ -62,6 +61,9 @@ export class Banner extends Component {
 		tracksImpressionName: PropTypes.string,
 		tracksClickName: PropTypes.string,
 		tracksDismissName: PropTypes.string,
+		tracksImpressionProperties: PropTypes.object,
+		tracksClickProperties: PropTypes.object,
+		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
 	};
 
@@ -100,30 +102,26 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, compact, onClick, tracksClickName, eventProperties } = this.props;
+		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( tracksClickName, {
-				cta_name: event,
-				cta_feature: feature,
-				cta_size: compact ? 'compact' : 'regular',
-				...eventProperties,
-			} );
-		}
+		this.props.recordTracksEvent( tracksClickName, {
+			cta_name: event,
+			cta_feature: feature,
+			cta_size: compact ? 'compact' : 'regular',
+			...tracksClickProperties,
+		} );
 
 		onClick( e );
 	};
 
 	handleDismiss = e => {
-		const { event, feature, onDismiss, tracksDismissName, eventProperties } = this.props;
+		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( tracksDismissName, {
-				cta_name: event,
-				cta_feature: feature,
-				...eventProperties,
-			} );
-		}
+		this.props.recordTracksEvent( tracksDismissName, {
+			cta_name: event,
+			cta_feature: feature,
+			...tracksDismissProperties,
+		} );
 
 		onDismiss( e );
 	};
@@ -161,7 +159,6 @@ export class Banner extends Component {
 			forceHref,
 			description,
 			event,
-			eventProperties,
 			feature,
 			compact,
 			list,
@@ -169,23 +166,22 @@ export class Banner extends Component {
 			title,
 			target,
 			tracksImpressionName,
+			tracksImpressionProperties,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
 			<div className="banner__content">
-				{ event && (
-					<TrackComponentView
-						eventName={ tracksImpressionName }
-						eventProperties={ {
-							cta_name: event,
-							cta_feature: feature,
-							cta_size: compact ? 'compact' : 'regular',
-							...eventProperties,
-						} }
-					/>
-				) }
+				<TrackComponentView
+					eventName={ tracksImpressionName }
+					eventProperties={ {
+						cta_name: event,
+						cta_feature: feature,
+						cta_size: compact ? 'compact' : 'regular',
+						...tracksImpressionProperties,
+					} }
+				/>
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
 					{ description && <div className="banner__description">{ description }</div> }
