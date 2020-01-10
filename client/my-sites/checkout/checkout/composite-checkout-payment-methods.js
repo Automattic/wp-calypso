@@ -59,6 +59,7 @@ export function createPaymentMethods( {
 						),
 					creditsDisplayValue: credits.amount.displayValue,
 					label: <WordPressCreditsLabel credits={ credits } />,
+					summary: <WordPressCreditsSummary />,
 					buttonText: translate( 'Pay %(amount)s with WordPress.com Credits', {
 						args: { amount: total.amount.displayValue },
 					} ),
@@ -379,6 +380,11 @@ function WordPressCreditsLabel( { credits } ) {
 			<WordPressLogo />
 		</React.Fragment>
 	);
+}
+
+function WordPressCreditsSummary() {
+	const translate = useTranslate();
+	return <div>{ translate( 'WordPress.com Credits' ) }</div>;
 }
 
 function WordPressLogo() {

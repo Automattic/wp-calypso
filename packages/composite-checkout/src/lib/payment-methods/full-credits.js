@@ -25,6 +25,7 @@ export function createFullCreditsMethod( {
 	submitTransaction,
 	creditsDisplayValue,
 	label,
+	summary,
 	buttonText,
 } ) {
 	const actions = {
@@ -90,7 +91,7 @@ export function createFullCreditsMethod( {
 		id: 'full-credits',
 		label: label || <FullCreditsLabel creditsDisplayValue={ creditsDisplayValue } />,
 		submitButton: <FullCreditsSubmitButton buttonText={ buttonText } />,
-		inactiveContent: <FullCreditsSummary />,
+		inactiveContent: summary || <FullCreditsSummary />,
 		getAriaLabel: localize => localize( 'Credits' ),
 	};
 }
