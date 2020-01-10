@@ -46,7 +46,6 @@ export const UpsellNudge = ( {
 	);
 };
 
-const mapStateToProps = null;
 const mapDispatchToProps = (
 	dispatch,
 	{ tracksEvent = 'calypso_upsell_nudge_click', href, eventName, eventProperties }
@@ -65,4 +64,4 @@ const mapDispatchToProps = (
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( UpsellNudge ) );
+export default connect( null, mapDispatchToProps )( localize( UpsellNudge ) );
