@@ -15,11 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
-import {
-	CALYPSO_CONTACT,
-	CHANGE_NAME_SERVERS_POINT_AWAY,
-	TRANSFER_DOMAIN_REGISTRATION,
-} from 'lib/url/support';
+import { CALYPSO_CONTACT, MOVE_DOMAIN } from 'lib/url/support';
 import { getName, isRefundable, maybeWithinRefundPeriod } from 'lib/purchases';
 
 class RemoveDomainDialog extends Component {
@@ -52,29 +48,6 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
-				<br />
-				{ translate(
-					'If you want to use your domain with another provider or service, you can ' +
-						'{{a}}map it instead{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									target="_blank"
-									rel="noopener noreferrer"
-									href={ CHANGE_NAME_SERVERS_POINT_AWAY }
-								/>
-							),
-						},
-					}
-				) }{ ' ' }
-				{ translate( 'You may also be able to {{a}}transfer it{{/a}}.', {
-					components: {
-						a: (
-							<a target="_blank" rel="noopener noreferrer" href={ TRANSFER_DOMAIN_REGISTRATION } />
-						),
-					},
-				} ) }
 			</p>
 		);
 	}
@@ -92,6 +65,18 @@ class RemoveDomainDialog extends Component {
 				</FormSectionHeading>
 
 				{ this.renderDomainDeletionWarning( productName ) }
+
+				<p>
+					{ translate( 'If you want to use this domain with another service, DO NOT delete it.' ) }{ ' ' }
+					{ translate(
+						'Instead, keep the domain. You can then {{a}}move or point your domain to a different service.{{/a}}',
+						{
+							components: {
+								a: <a target="_blank" rel="noopener noreferrer" href={ MOVE_DOMAIN } />,
+							},
+						}
+					) }
+				</p>
 
 				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
 					<p>
@@ -215,12 +200,12 @@ class RemoveDomainDialog extends Component {
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
+				isPrimary: true,
 				label: translate( 'Keep this Domain' ),
 			},
 			{
 				action: 'remove',
-				isPrimary: true,
-				additionalClassNames: this.props.isRemoving ? 'is-busy' : '',
+				additionalClassNames: [ this.props.isRemoving ? 'is-busy' : '', 'is-scary' ],
 				label: translate( 'Delete this Domain' ),
 				onClick: this.nextStep,
 			},
