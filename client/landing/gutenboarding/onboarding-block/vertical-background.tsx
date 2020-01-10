@@ -17,10 +17,12 @@ import { STORE_KEY } from '../stores/onboard';
 import defaultImageUrl from '../../../../static/images/verticals/default.jpg';
 
 export interface VerticalBackgroundProps {
-	onLoad: () => void;
+	onLoad?: () => void;
 }
 
-const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( { onLoad } ) => {
+const VerticalBackground: FunctionComponent< VerticalBackgroundProps > = ( {
+	onLoad = () => undefined,
+} ) => {
 	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const [ imageUrl, setImageUrl ] = useState< string | undefined >();
 

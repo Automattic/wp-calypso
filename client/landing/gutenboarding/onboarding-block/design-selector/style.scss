@@ -43,13 +43,6 @@ $deisgn-selector-selection-space: 175px;
 	text-align: center;
 }
 
-@media ( prefers-color-scheme: dark ) {
-	.design-selector__subtitle,
-	.design-selector__title {
-		color: $white;
-	}
-}
-
 .design-selector__grid-container {
 	position: absolute;
 	margin-top: 1em;
