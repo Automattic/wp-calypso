@@ -21,11 +21,11 @@ import './style.scss';
 export const UpsellNudge = ( {
 	buttonText,
 	className,
+	compact = false,
 	dismissPreferenceName,
 	eventName,
 	href,
 	icon = false,
-	compact = false,
 	navigateAndTrack,
 	text,
 } ) => {
