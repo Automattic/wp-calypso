@@ -147,6 +147,7 @@ const webpackConfig = {
 	entry: {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-jetpack-cloud': [ path.join( __dirname, 'client', 'landing', 'jetpack-cloud' ) ],
 		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'client', 'landing', 'gutenboarding' ) ],
 	},
