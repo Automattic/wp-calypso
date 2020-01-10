@@ -44,6 +44,10 @@
 		padding: 0;
 	}
 
+	&.banner.card .card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+
 	.banner__content {
 		padding: 1em 1em 1em 0;
 		margin-right: auto;
