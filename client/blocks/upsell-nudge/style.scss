@@ -1,36 +1,23 @@
 .upsell-nudge {
 	&.banner.card {
-		border-left: 8px solid var( --color-accent );
+		border-left-color: var( --color-accent );
 		background-color: var( --color-neutral-80 );
 		color: var( --color-text-inverted );
 		display: flex;
 		align-items: center;
-		margin-bottom: 1.5em;
-		padding: 0.5em 1.5em;
 
 		a {
 			color: var( --color-text-inverted );
 		}
 
 		&.is-compact {
-			border-left-width: 4px;
-			font-size: 12px;
 			margin-bottom: 0;
-			padding: 8px;
 
-			.banner__content {
-				padding: 5px;
-			}
-			.banner__title {
-				font-size: 12px;
-			}
 			.banner__icon-circle {
 				margin-right: 0.25em;
 			}
 			.dismissible-card__close-icon {
 				margin-left: 0.25em;
-				width: 16px;
-				height: 16px;
 			}
 		}
 	}
@@ -49,7 +36,6 @@
 	}
 
 	.banner__content {
-		padding: 1em 1em 1em 0;
 		margin-right: auto;
 		color: var( --color-text-inverted );
 	}
@@ -61,12 +47,13 @@
 
 	.banner__action {
 		margin-left: auto;
-		margin-right: 0;
+		margin-right: -5px;
 	}
 
 	.dismissible-card__close-icon {
 		fill: var( --color-text-inverted );
 		margin-left: 1em;
+		margin-top: 0;
 		position: relative;
 		top: auto;
 		right: auto;
@@ -74,6 +61,10 @@
 	}
 
 	&.is-dismissible .banner__action {
-		margin-top: 0;
+		margin-right: 0;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: 0;
+		}
 	}
 }
