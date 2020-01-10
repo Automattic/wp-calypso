@@ -72,6 +72,10 @@ const DesignSelector: FunctionComponent = () => {
 
 	const dialogId = 'page-selector-modal';
 
+	const descriptionOnRight: boolean =
+		!! selectedDesign &&
+		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
+
 	return (
 		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
 			<div
@@ -113,6 +117,22 @@ const DesignSelector: FunctionComponent = () => {
 								} }
 							/>
 						) ) }
+					</div>
+				</div>
+			</CSSTransition>
+
+			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming }>
+				<div
+					className={ classnames( 'design-selector__description-container', {
+						'on-right-side': descriptionOnRight,
+					} ) }
+				>
+					<div className="design-selector__description-title">{ selectedDesign?.title }</div>
+					<div className="design-selector__description-description">
+						{ /* @TODO: Real description? */ }
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+						incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+						exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 					</div>
 				</div>
 			</CSSTransition>
