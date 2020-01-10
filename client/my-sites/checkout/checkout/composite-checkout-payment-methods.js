@@ -59,8 +59,8 @@ export function createPaymentMethods( {
 						),
 					creditsDisplayValue: credits.amount.displayValue,
 					label: <WordPressCreditsLabel credits={ credits } />,
-					buttonText: translate( 'Pay %(amount) with WordPress.com Credits', {
-						args: { amount: total },
+					buttonText: translate( 'Pay %(amount)s with WordPress.com Credits', {
+						args: { amount: total.amount.displayValue },
 					} ),
 			  } )
 			: null;
@@ -372,7 +372,7 @@ function WordPressCreditsLabel( { credits } ) {
 	return (
 		<React.Fragment>
 			<div>
-				{ translate( 'WordPress.com Credits: %(amount)', {
+				{ translate( 'WordPress.com Credits: %(amount)s', {
 					args: { amount: credits.amount.displayValue },
 				} ) }
 			</div>
