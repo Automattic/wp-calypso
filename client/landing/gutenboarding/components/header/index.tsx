@@ -23,17 +23,13 @@ const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 interface Props {
 	next?: string;
 	prev?: string;
-	isNextHidden?: boolean;
 }
 
-const Header: FunctionComponent< Props > = ( {
-	next,
-	prev,
-	isNextHidden,
-} ) => {
-	const { domain, siteTitle, siteVertical } = useSelect( select =>
+const Header: FunctionComponent< Props > = ( { next, prev } ) => {
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const hasSelectedDesign = !! selectedDesign;
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const [ domainSearch ] = useDebounce(
@@ -108,9 +104,9 @@ const Header: FunctionComponent< Props > = ( {
 			</div>
 			<div className="gutenboarding__header-section">
 				<div className="gutenboarding__header-group">
-					{ ! isNextHidden && (
+					{ next && hasSelectedDesign && (
 						<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
-							{ NO__( 'Next' ) }
+							{ NO__( 'Create my site' ) }
 						</Link>
 					) }
 				</div>

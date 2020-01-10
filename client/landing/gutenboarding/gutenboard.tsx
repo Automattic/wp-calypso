@@ -39,14 +39,10 @@ export function Gutenboard() {
 	const r = useRouteMatch( routes );
 	let next: undefined | string;
 	let prev: undefined | string;
-	let isNextHidden = false;
 	switch ( r?.url ) {
-		case Step.IntentGathering:
-			isNextHidden = true;
-			break;
-
 		case Step.DesignSelection:
 			prev = Step.IntentGathering;
+			next = Step.CreateSite;
 			break;
 	}
 
@@ -60,7 +56,7 @@ export function Gutenboard() {
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="edit-post-layout">
-					<Header prev={ prev } next={ next } isNextHidden={ isNextHidden } />
+					<Header prev={ prev } next={ next } />
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }

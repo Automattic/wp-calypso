@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useLayoutEffect, useRef, useState, FunctionComponent, MouseEvent } from 'react';
 import classnames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
@@ -14,6 +14,7 @@ import { Dialog, DialogBackdrop } from 'reakit/Dialog';
 /**
  * Internal dependencies
  */
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -24,9 +25,7 @@ type Template = VerticalsTemplates.Template;
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
-	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical
-	);
+	const siteVertical = useSelect( select => select( ONBOARD_STORE ).getState().siteVertical );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -45,7 +44,8 @@ const DesignSelector: FunctionComponent = () => {
 		( { category } ) => category === 'home'
 	);
 
-	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
+	const selectedDesign = useSelect( select => select( ONBOARD_STORE ).getState().selectedDesign );
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const resetState = () => {
 		setSelectedDesign( undefined );
@@ -113,9 +113,7 @@ const DesignSelector: FunctionComponent = () => {
 								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
 									window.scrollTo( 0, 0 );
 									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( currentTemplate =>
-										currentTemplate?.slug === design?.slug ? undefined : design
-									);
+									setSelectedDesign( selectedDesign?.slug === design?.slug ? undefined : design );
 								} }
 							/>
 						) ) }

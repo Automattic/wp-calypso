@@ -20,6 +20,16 @@ const domain: Reducer<
 	return state;
 };
 
+const selectedDesign: Reducer<
+	import('@automattic/data-stores').VerticalsTemplates.Template | undefined,
+	ReturnType< typeof Actions[ 'setSelectedDesign' ] >
+> = ( state = undefined, action ) => {
+	if ( action.type === ActionType.SET_SELECTED_DESIGN ) {
+		return action.selectedDesign;
+	}
+	return state;
+};
+
 const siteTitle: Reducer< string, ReturnType< typeof Actions[ 'setSiteTitle' ] > > = (
 	state = '',
 	action
@@ -57,7 +67,7 @@ const pageLayouts: Reducer<
 	return state;
 };
 
-const reducer = combineReducers( { domain, siteTitle, siteVertical, pageLayouts } );
+const reducer = combineReducers( { domain, selectedDesign, siteTitle, siteVertical, pageLayouts } );
 
 export type State = ReturnType< typeof reducer >;
 
