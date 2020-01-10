@@ -17,10 +17,14 @@ node_modules/
 # Don't operate on these files
 #
 /stats.json
+/chart.json
+/style.json
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
 /server/bundler/assets.json
 /client/stats.json
+/client/chart.json
+/client/style.json
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
 /client/server/bundler/assets.json
