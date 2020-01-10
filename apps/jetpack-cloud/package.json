@@ -1,0 +1,30 @@
+{
+	"name": "@automattic/jetpack-cloud",
+	"version": "1.0.0-alpha.0",
+	"description": "Jetpack Cloud",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/jetpack-cloud"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"bundle": "calypso-build",
+		"build:dev": "npm run bundle --",
+		"build:prod": "NODE_ENV=production npm run bundle --",
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@automattic/calypso-build": "file:../../packages/calypso-build"
+	}
+}
