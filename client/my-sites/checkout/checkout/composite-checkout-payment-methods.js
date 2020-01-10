@@ -50,10 +50,10 @@ export function createPaymentMethods( {
 								...submitData,
 								siteId: select( 'wpcom' )?.getSiteId?.(),
 								domainDetails: getDomainDetails( select ),
-								country: select( 'wpcom' )?.getContactInfo?.()?.country?.value,
-								postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-								phoneNumber: select( 'wpcom' )?.getContactInfo?.()?.phoneNumber?.value,
-								subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+								// this data is intentionally empty so we do not charge taxes
+								country: null,
+								postalCode: null,
+								phoneNumber: null,
 							},
 							wpcom
 						),
