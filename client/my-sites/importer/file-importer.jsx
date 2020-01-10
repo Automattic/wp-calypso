@@ -20,6 +20,7 @@ import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 import { startImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+
 /**
  * Style dependencies
  */
