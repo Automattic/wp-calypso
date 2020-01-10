@@ -2,16 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
 
 /**
  * Style dependencies
@@ -23,11 +19,17 @@ export const UpsellNudge = ( {
 	className,
 	compact = false,
 	dismissPreferenceName,
-	eventName,
 	href,
 	icon = false,
-	navigateAndTrack,
+	onClick,
+	onDismiss,
 	text,
+	tracksImpressionName,
+	tracksClickName,
+	tracksDismissName,
+	tracksImpressionProperties,
+	tracksClickProperties,
+	tracksDismissProperties,
 } ) => {
 	const classes = classnames( 'upsell-nudge', className );
 
@@ -36,32 +38,20 @@ export const UpsellNudge = ( {
 			className={ classes }
 			callToAction={ buttonText }
 			dismissPreferenceName={ dismissPreferenceName }
-			event={ eventName }
 			href={ href }
 			icon={ icon }
 			compact={ compact }
-			onClick={ navigateAndTrack }
+			onClick={ onClick }
+			onDismiss={ onDismiss }
 			title={ text }
+			tracksImpressionName={ tracksImpressionName }
+			tracksClickName={ tracksClickName }
+			tracksDismissName={ tracksDismissName }
+			tracksImpressionProperties={ tracksImpressionProperties }
+			tracksClickProperties={ tracksClickProperties }
+			tracksDismissProperties={ tracksDismissProperties }
 		/>
 	);
 };
 
-const mapDispatchToProps = (
-	dispatch,
-	{ tracksEvent = 'calypso_upsell_nudge_click', href, eventName, eventProperties }
-) => {
-	return {
-		navigateAndTrack: () =>
-			dispatch(
-				withAnalytics(
-					recordTracksEvent( tracksEvent, {
-						cta_name: eventName,
-						...eventProperties,
-					} ),
-					navigate( href )
-				)
-			),
-	};
-};
-
-export default connect( null, mapDispatchToProps )( localize( UpsellNudge ) );
+export default UpsellNudge;
