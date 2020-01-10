@@ -238,7 +238,6 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-hide;
 
 	position: fixed;
-	// top: 100px;
 	display: flex;
 	flex-direction: column;
 	width: calc( 50% - #{$design-selector-grid-gap} );
