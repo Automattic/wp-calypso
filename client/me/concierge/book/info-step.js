@@ -48,10 +48,7 @@ class InfoStep extends Component {
 	};
 
 	setTimezone = timezone => {
-		this.props.updateConciergeSignupForm( {
-			...this.props.signupForm,
-			timezone: maybeRewriteTimezone( timezone ),
-		} );
+		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
 	};
 
 	updateSignupForm( name, value ) {
