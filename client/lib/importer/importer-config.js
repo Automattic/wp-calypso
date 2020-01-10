@@ -43,6 +43,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
+		overrideDestination: '/migrate/%SITE_SLUG%',
 		weight: 1,
 	};
 
