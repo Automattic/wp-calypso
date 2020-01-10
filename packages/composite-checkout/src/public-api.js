@@ -22,7 +22,6 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
-import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
@@ -54,7 +53,6 @@ export {
 	createApplePayMethod,
 	createCreditCardMethod,
 	createExistingCardMethod,
-	createFullCreditsMethod,
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
