@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,7 +11,13 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
-import { getUrlParts, getUrlFromParts } from 'lib/url';
+import {
+	getUrlParts,
+	getUrlFromParts,
+	determineUrlType,
+	URL_TYPE,
+	format as formatUrl,
+} from 'lib/url';
 import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
 
 /**
@@ -43,7 +48,13 @@ export class Gravatar extends Component {
 	getResizedImageURL( imageURL ) {
 		const { imgSize } = this.props;
 		imageURL = imageURL || 'https://www.gravatar.com/avatar/0';
-		const { search, ...parsedURL } = getUrlParts( imageURL );
+		const urlType = determineUrlType( imageURL );
+
+		if ( urlType === URL_TYPE.INVALID || urlType === URL_TYPE.PATH_RELATIVE ) {
+			return imageURL;
+		}
+
+		const { search, origin, host, ...parsedURL } = getUrlParts( imageURL );
 
 		if ( /^([-a-zA-Z0-9_]+\.)*(gravatar.com)$/.test( parsedURL.hostname ) ) {
 			parsedURL.searchParams.set( 's', imgSize );
@@ -53,7 +64,11 @@ export class Gravatar extends Component {
 			parsedURL.searchParams.set( 'resize', `${ imgSize },${ imgSize }` );
 		}
 
-		return getUrlFromParts( parsedURL ).href;
+		// getUrlFromParts can only handle absolute URLs, so add dummy data if needed.
+		// formatUrl will remove it away, to match the previous url type.
+		parsedURL.protocol = parsedURL.protocol || 'https:';
+		parsedURL.hostname = parsedURL.hostname || '__domain__.invalid';
+		return formatUrl( getUrlFromParts( parsedURL ), urlType );
 	}
 
 	onError = () => this.setState( { failedToLoad: true } );
