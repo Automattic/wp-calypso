@@ -133,3 +133,6 @@
 
 # Gutenboarding
 /client/landing/gutenboarding @Automattic/luna
+
+# @automattic/data-stores package
+/packages/data-stores @Automattic/luna
