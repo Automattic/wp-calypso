@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import escapeRegexp from 'escape-string-regexp';
 
 class Item extends PureComponent {
 	static propTypes = {
@@ -31,7 +32,7 @@ class Item extends PureComponent {
 	 * @returns {element}      A React element including the highlighted text.
 	 */
 	createTextWithHighlight( text, query ) {
-		const re = new RegExp( '(' + query + ')', 'gi' );
+		const re = new RegExp( '(' + escapeRegexp( query ) + ')', 'gi' );
 		const parts = text.split( re );
 
 		return parts.map( ( part, i ) => {
