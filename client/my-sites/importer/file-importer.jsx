@@ -70,17 +70,7 @@ class FileImporter extends React.PureComponent {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
-			importerData: { overrideDestination },
 		} = this.props;
-
-		/**
-		 * Override where the clicks sends a user.
-		 *
-		 * This is used for the new Migration logic for the moment.
-		 */
-		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
-			return false;
-		}
 
 		startImport( siteId, type );
 
@@ -113,7 +103,13 @@ class FileImporter extends React.PureComponent {
 		};
 
 		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+			/**
+			 * Override where the user lands when they click the importer.
+			 *
+			 * This is used for the new Migration logic for the moment.
+			 */
 			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
+			cardProps.onClick = null;
 		}
 
 		return (
