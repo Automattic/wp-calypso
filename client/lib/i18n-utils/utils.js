@@ -281,6 +281,7 @@ export function filterLanguageRevisions( languageRevisions ) {
 
 /**
  * Potentially rewrite the timezone to what we have on the server-side.
+ * See https://core.trac.wordpress.org/ticket/26656
  *
  * @param {string} A timezone string, like Asia/Calcutta.
  *
@@ -340,23 +341,8 @@ export function maybeRewriteTimezone( timezone ) {
 		'Australia/Victoria': 'Australia/Melbourne',
 		'Australia/West': 'Australia/Perth',
 		'Australia/Yancowinna': 'Australia/Broken_Hill',
-		'Brazil/Acre': 'America/Rio_Branco',
-		'Brazil/DeNoronha': 'America/Noronha',
-		'Brazil/East': 'America/Sao_Paulo',
-		'Brazil/West': 'America/Manaus',
-		'Canada/Atlantic': 'America/Halifax',
-		'Canada/Central': 'America/Winnipeg',
-		'Canada/Eastern': 'America/Toronto',
-		'Canada/Mountain': 'America/Edmonton',
-		'Canada/Newfoundland': 'America/St_Johns',
-		'Canada/Pacific': 'America/Vancouver',
-		'Canada/Saskatchewan': 'America/Regina',
-		'Canada/Yukon': 'America/Whitehorse',
 		'Europe/Belfast': 'Europe/London',
 		'Europe/Tiraspol': 'Europe/Chisinau',
-		'Mexico/BajaNorte': 'America/Tijuana',
-		'Mexico/BajaSur': 'America/Mazatlan',
-		'Mexico/General': 'America/Mexico_City',
 		'Pacific/Johnston': 'Pacific/Honolulu',
 		'Pacific/Ponape': 'Pacific/Pohnpei',
 		'Pacific/Samoa': 'Pacific/Pago_Pago',
