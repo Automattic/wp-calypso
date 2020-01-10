@@ -44,7 +44,7 @@ const siteVertical: Reducer<
 };
 
 const pageLayouts: Reducer<
-	Array< string >,
+	string[],
 	ReturnType< typeof Actions[ 'togglePageLayout' ] >
 > = ( state = [], action ) => {
 	if ( action.type === ActionType.TOGGLE_PAGE_LAYOUT ) {
