@@ -5,7 +5,6 @@ import { PluginSidebar } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
-import { FontSizePicker } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -13,6 +12,7 @@ import { FontSizePicker } from '@wordpress/block-editor';
 import FontPairingsPanel from './font-pairings-panel';
 import FontSelectionPanel from './font-selection-panel';
 import LineHeightPanel from './line-height-panel';
+import TypeScalePanel from './type-scale-panel';
 import { GlobalStylesIcon } from './icon';
 import {
 	FONT_BASE,
@@ -143,13 +143,10 @@ export default ( {
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Font Spacing' ) }>
-					<FontSizePicker
-						value={ typeScaleRoot }
-						onChange={ value =>
-							value === undefined
-								? updateOptions( { [ TYPESCALE_ROOT ]: typeScaleRootDefault } )
-								: updateOptions( { [ TYPESCALE_ROOT ]: value } )
-						}
+					<TypeScalePanel
+						typeScaleRoot={ typeScaleRoot }
+						typeScaleRootDefault={ typeScaleRootDefault }
+						update={ value => updateOptions( { [ TYPESCALE_ROOT ]: value } ) }
 					/>
 					<LineHeightPanel
 						lineHeightBase={ lineHeightBase }
