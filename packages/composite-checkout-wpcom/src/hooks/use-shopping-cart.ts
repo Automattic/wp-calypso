@@ -27,6 +27,8 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  * communicating with the backend are handled inside the hook. The interface
  * exposed by the hook consists of the following:
  *
+ *     * isLoading: true if we are loading the cart
+ *     * allowedPaymentMethods: the allowed payment method keys
  *     * items: the array of items currently in the cart
  *     * tax: the tax line item
  *     * total: the total price line item
@@ -36,6 +38,7 @@ const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
  */
 export interface ShoppingCartManager {
 	isLoading: boolean;
+	allowedPaymentMethods: string[];
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
 	total: CheckoutCartTotal;
@@ -206,6 +209,7 @@ export function useShoppingCart(
 		total: cart.total,
 		credits: cart.credits,
 		errors: responseCart.messages?.errors ?? [],
+		allowedPaymentMethods: cart.allowedPaymentMethods,
 		addItem,
 		removeItem,
 		changePlanLength,
