@@ -2,6 +2,8 @@
 
 $design-selector-transition-timing: 250ms;
 
+$design-selector-grid-gap: 4.5em;
+
 $design-selector-max-width: 1100px;
 $design-selector-header-height: 60px;
 // We'll use this height to move the heading up out of the viewport.
@@ -64,10 +66,11 @@ $deisgn-selector-selection-space: 175px;
 		}
 	}
 }
+
 .design-selector__grid {
 	@include design-selector-transition();
 	display: grid;
-	grid-gap: 4.5em;
+	grid-gap: $design-selector-grid-gap;
 
 	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr;
@@ -227,4 +230,40 @@ $deisgn-selector-selection-space: 175px;
 	display: block;
 	margin-left: -2px;
 	margin-right: -2px;
+}
+
+.design-selector__description-container {
+	@include design-selector-transition();
+	position: fixed;
+	@include design-selector-hide;
+
+	position: fixed;
+	// top: 100px;
+	display: flex;
+	flex-direction: column;
+	width: calc( 50% - #{$design-selector-grid-gap} );
+	padding-top: 23px;
+
+	@include breakpoint( '>660px' ) {
+		&.on-right-side {
+			right: 0;
+		}
+	}
+
+	&.enter-active,
+	&.enter-done {
+		@include design-selector-show;
+	}
+}
+
+.design-selector__description-title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.8em;
+}
+.design-selector__description-description {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	line-height: 1.3;
 }
