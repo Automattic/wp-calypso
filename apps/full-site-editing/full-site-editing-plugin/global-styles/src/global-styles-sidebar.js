@@ -94,6 +94,7 @@ export default ( {
 			[ LINE_HEIGHT_BODY ]: lineHeightBase,
 			[ LINE_HEIGHT_HEADING ]: lineHeightHeadings,
 			[ TYPESCALE_ROOT ]: typeScaleRoot,
+			[ TYPESCALE_RATIO ]: typeScaleRatio,
 		} );
 	return (
 		<>

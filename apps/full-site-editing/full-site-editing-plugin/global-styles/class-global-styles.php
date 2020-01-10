@@ -218,11 +218,14 @@ class Global_Styles {
 					'default' => 1.125,
 				],
 				'typescale_ratio' => [
-					'type' => 'literal',
-					'default' => 1.5,
+					'type'      => 'option',
+					'name'      => ['jetpack_global_styles', 'typescale_ratio'],
+					'default'   => 1.5,
+					'updatable' => true,
 				],
 				'typescale_ratio_default' => [
-					'type' => 'literal',
+					'type'    => 'theme',
+					'name'    => ['jetpack-global-styles', 'typescale_ratio'],
 					'default' => 1.2,
 				],
 				'typescale_root' => [
@@ -547,7 +550,10 @@ class Global_Styles {
 		$result = [];
 
 		$font_values = $this->get_font_values( self::AVAILABLE_FONTS );
-		foreach ( [ 'font_base', 'font_headings' ] as $key ) {
+		foreach ( [
+			'font_base',
+			'font_headings',
+		] as $key ) {
 			if (
 				array_key_exists( $key, $incoming_data ) &&
 				in_array( $incoming_data[ $key ], $font_values, true )
@@ -556,7 +562,12 @@ class Global_Styles {
 			}
 		}
 
-		foreach( [ 'line_height_body', 'line_height_heading', 'typescale_root' ] as $key ) {
+		foreach( [
+			'line_height_body',
+			'line_height_heading',
+			'typescale_root',
+			'typescale_ratio',
+		] as $key ) {
 			if( is_numeric( $incoming_data[ $key ] ) ) {
 				$result[ $key ] = $incoming_data[ $key ];
 			}
