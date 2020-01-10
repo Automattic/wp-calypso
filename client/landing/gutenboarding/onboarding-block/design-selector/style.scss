@@ -47,7 +47,8 @@ $deisgn-selector-selection-space: 175px;
 
 .design-selector__grid-container {
 	position: absolute;
-	margin-top: 1em;
+	padding-bottom: 50px;
+	padding-top: 50px;
 
 	&.exit,
 	&.exit-done {
