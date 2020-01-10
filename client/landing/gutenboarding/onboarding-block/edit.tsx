@@ -4,8 +4,7 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useState } from 'react';
-import classNames from 'classnames';
+import React, { FunctionComponent } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 /**
@@ -24,18 +23,13 @@ import Link from '../components/link';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
-	const [ hasBackground, setHasBackground ] = useState( false );
 
 	return (
 		<>
-			<VerticalBackground onLoad={ () => setHasBackground( true ) } />
+			<VerticalBackground />
 			<Switch>
 				<Route exact path={ Step.IntentGathering }>
-					<div
-						className={ classNames( 'onboarding-block__acquire-intent', {
-							'has-background': hasBackground && siteVertical,
-						} ) }
-					>
+					<div className="onboarding-block__acquire-intent">
 						<div className="onboarding-block__questions">
 							<h2 className="onboarding-block__questions-heading">
 								{ ! siteVertical &&
