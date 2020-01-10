@@ -123,6 +123,7 @@ export default function CompositeCheckout( {
 				wpcom,
 				credits,
 				total,
+				translate,
 			} ),
 		[
 			allowedPaymentMethods,
@@ -132,6 +133,7 @@ export default function CompositeCheckout( {
 			credits,
 			registerStore,
 			total,
+			translate,
 		]
 	);
 

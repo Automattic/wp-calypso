@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import {
 	createPayPalMethod,
 	createStripeMethod,
@@ -22,6 +23,7 @@ export function createPaymentMethods( {
 	wpcom,
 	credits,
 	total,
+	translate,
 } ) {
 	if ( isLoading ) {
 		return [];
@@ -56,6 +58,10 @@ export function createPaymentMethods( {
 							wpcom
 						),
 					creditsDisplayValue: credits.amount.displayValue,
+					label: <WordPressCreditsLabel credits={ credits } />,
+					buttonText: translate( 'Pay %(amount) with WordPress.com Credits', {
+						args: { amount: total },
+					} ),
 			  } )
 			: null;
 
@@ -358,4 +364,18 @@ function isMethodEnabled( method, allowedPaymentMethods ) {
 		return true;
 	}
 	return allowedPaymentMethods.includes( method );
+}
+
+function WordPressCreditsLabel( { credits } ) {
+	const translate = useTranslate();
+
+	return (
+		<React.Fragment>
+			<div>
+				{ translate( 'WordPress.com Credits: %(amount)', {
+					args: { amount: credits.amount.displayValue },
+				} ) }
+			</div>
+		</React.Fragment>
+	);
 }
