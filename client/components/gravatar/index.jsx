@@ -47,11 +47,12 @@ export class Gravatar extends Component {
 
 	getResizedImageURL( imageURL ) {
 		const { imgSize } = this.props;
-		imageURL = imageURL || 'https://www.gravatar.com/avatar/0';
+		const defaultUrl = 'https://www.gravatar.com/avatar/0';
+		imageURL = imageURL || defaultUrl;
 		const urlType = determineUrlType( imageURL );
 
 		if ( urlType === URL_TYPE.INVALID || urlType === URL_TYPE.PATH_RELATIVE ) {
-			return imageURL;
+			return defaultUrl;
 		}
 
 		const { search, origin, host, ...parsedURL } = getUrlParts( imageURL );
