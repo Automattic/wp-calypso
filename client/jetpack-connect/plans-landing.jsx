@@ -19,7 +19,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import QueryPlans from 'components/data/query-plans';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
@@ -133,8 +132,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( PlansLanding );
+export default flowRight( connectComponent, localize )( PlansLanding );

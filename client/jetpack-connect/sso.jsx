@@ -30,7 +30,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSSO } from 'state/jetpack-connect/selectors';
@@ -489,8 +488,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackSsoForm );
+export default flowRight( connectComponent, localize )( JetpackSsoForm );

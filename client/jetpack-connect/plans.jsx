@@ -35,7 +35,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { persistSignupDestination } from 'signup/utils';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
@@ -262,4 +261,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize, withTrackingTool( 'HotJar' ) )( Plans );
+export default flowRight( connectComponent, localize )( Plans );
