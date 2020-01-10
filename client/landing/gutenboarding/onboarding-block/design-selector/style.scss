@@ -138,8 +138,6 @@ $deisgn-selector-selection-space: 175px;
 	padding: 2px;
 
 	&.is-selected {
-		border: 3px solid $blue-medium-focus;
-		padding: 0;
 		.page-layout-selector__selected-indicator {
 			top: -2px;
 			right: -2px;
@@ -147,10 +145,16 @@ $deisgn-selector-selection-space: 175px;
 		}
 	}
 
+	&.is-selected,
 	&:hover,
 	&:focus {
-		border: 3px solid var( --color-neutral-dark );
 		padding: 0;
+		border: 3px solid $blue-medium-focus;
+	}
+
+	&:hover,
+	&:focus {
+		border-color: var( --color-neutral-dark );
 		.page-layout-selector__selected-indicator {
 			background: linear-gradient(
 				to bottom left,
@@ -215,4 +219,12 @@ $deisgn-selector-selection-space: 175px;
 			opacity: 1;
 		}
 	}
+}
+
+// Adjust to display full with accounting for padding/borders
+.page-layout-selector__card-footer,
+.page-layout-selector__card-media {
+	display: block;
+	margin-left: -2px;
+	margin-right: -2px;
 }
