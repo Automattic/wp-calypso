@@ -46,6 +46,7 @@ export class Banner extends Component {
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
+		eventProperties: PropTypes.object,
 		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
@@ -99,13 +100,14 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, compact, onClick, tracksClickName } = this.props;
+		const { event, feature, compact, onClick, tracksClickName, eventProperties } = this.props;
 
 		if ( event ) {
 			this.props.recordTracksEvent( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: compact ? 'compact' : 'regular',
+				...eventProperties,
 			} );
 		}
 
@@ -113,12 +115,13 @@ export class Banner extends Component {
 	};
 
 	handleDismiss = e => {
-		const { event, feature, onDismiss, tracksDismissName } = this.props;
+		const { event, feature, onDismiss, tracksDismissName, eventProperties } = this.props;
 
 		if ( event ) {
 			this.props.recordTracksEvent( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
+				...eventProperties,
 			} );
 		}
 
@@ -158,6 +161,7 @@ export class Banner extends Component {
 			forceHref,
 			description,
 			event,
+			eventProperties,
 			feature,
 			compact,
 			list,
@@ -178,6 +182,7 @@ export class Banner extends Component {
 							cta_name: event,
 							cta_feature: feature,
 							cta_size: compact ? 'compact' : 'regular',
+							...eventProperties,
 						} }
 					/>
 				) }
