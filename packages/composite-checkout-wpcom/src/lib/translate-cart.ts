@@ -27,6 +27,8 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		total_cost_integer,
 		total_cost_display,
 		currency,
+		credits_integer,
+		credits_display,
 		allowed_payment_methods,
 	} = serverCart;
 
@@ -54,6 +56,12 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
 		tax: taxLineItem,
 		total: totalItem,
+		credits: {
+			id: 'credits',
+			type: 'credits',
+			label: 'Credits',
+			amount: { value: credits_integer, displayValue: credits_display, currency },
+		},
 		allowedPaymentMethods: allowed_payment_methods
 			.filter( slug => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';

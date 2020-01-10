@@ -25,7 +25,7 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), and [createExistingCardMethod](#createExistingCardMethod).
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), [createFullCreditsMethod](#createFullCreditsMethod), and [createExistingCardMethod](#createExistingCardMethod).
 
 Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
@@ -224,6 +224,16 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `cardExpiry: string`. The card's expiry date. Used for display only.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
 - `last4: string`. The card's last four digits. Used for display only.
+
+### createFullCreditsMethod
+
+Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
+- `label?: React.ReactNode`. An optional label React element to use in the payment method.
+- `buttonText?: string`. An optional string to display in the payment button.
 
 ### createPayPalMethod
 

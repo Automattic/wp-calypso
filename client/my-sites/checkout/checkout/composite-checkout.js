@@ -89,6 +89,7 @@ export default function CompositeCheckout( {
 		items,
 		tax,
 		total,
+		credits,
 		removeItem,
 		addItem,
 		changePlanLength,
@@ -120,8 +121,20 @@ export default function CompositeCheckout( {
 				select,
 				registerStore,
 				wpcom,
+				credits,
+				total,
+				translate,
 			} ),
-		[ allowedPaymentMethods, isLoading, isLoadingStoredCards, storedCards, registerStore ]
+		[
+			allowedPaymentMethods,
+			isLoading,
+			isLoadingStoredCards,
+			storedCards,
+			credits,
+			registerStore,
+			total,
+			translate,
+		]
 	);
 
 	return (
