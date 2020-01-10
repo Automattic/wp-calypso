@@ -23,6 +23,8 @@ import {
 	LINE_HEIGHT_BODY_DEFAULT,
 	LINE_HEIGHT_HEADING,
 	LINE_HEIGHT_HEADING_DEFAULT,
+	TYPESCALE_RATIO,
+	TYPESCALE_RATIO_DEFAULT,
 	TYPESCALE_ROOT,
 	TYPESCALE_ROOT_DEFAULT,
 } from './src/constants';
@@ -56,6 +58,8 @@ registerPlugin( PLUGIN_NAME, {
 			lineHeightHeadingsDefault: getSelectors( STORE_NAME ).getOption(
 				LINE_HEIGHT_HEADING_DEFAULT
 			),
+			typeScaleRatio: getSelectors( STORE_NAME ).getOption( TYPESCALE_RATIO ),
+			typeScaleRatioDefault: getSelectors( STORE_NAME ).getOption( TYPESCALE_RATIO_DEFAULT ),
 			typeScaleRoot: getSelectors( STORE_NAME ).getOption( TYPESCALE_ROOT ),
 			typeScaleRootDefault: getSelectors( STORE_NAME ).getOption( TYPESCALE_ROOT_DEFAULT ),
 		} ) ),

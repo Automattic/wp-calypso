@@ -20,6 +20,7 @@ import {
 	LINE_HEIGHT_BODY,
 	LINE_HEIGHT_HEADING,
 	TYPESCALE_ROOT,
+	TYPESCALE_RATIO,
 } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
@@ -78,7 +79,9 @@ export default ( {
 	lineHeightHeadingsDefault,
 	siteName,
 	typeScaleRoot,
+	typeScaleRatio,
 	typeScaleRootDefault,
+	typeScaleRatioDefault,
 	publishOptions,
 	updateOptions,
 	hasLocalChanges,
@@ -145,8 +148,11 @@ export default ( {
 				<PanelBody title={ __( 'Font Spacing' ) }>
 					<TypeScalePanel
 						typeScaleRoot={ typeScaleRoot }
+						typeScaleRatio={ typeScaleRatio }
 						typeScaleRootDefault={ typeScaleRootDefault }
-						update={ value => updateOptions( { [ TYPESCALE_ROOT ]: value } ) }
+						typeScaleRatioDefault={ typeScaleRatioDefault }
+						updateTypeScaleRoot={ value => updateOptions( { [ TYPESCALE_ROOT ]: value } ) }
+						updateTypeScaleRatio={ value => updateOptions( { [ TYPESCALE_RATIO ]: value } ) }
 					/>
 					<LineHeightPanel
 						lineHeightBase={ lineHeightBase }

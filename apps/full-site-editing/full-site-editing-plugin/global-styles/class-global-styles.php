@@ -217,6 +217,14 @@ class Global_Styles {
 					'name'    => ['jetpack-global-styles', 'line_height_heading'],
 					'default' => 1.125,
 				],
+				'typescale_ratio' => [
+					'type' => 'literal',
+					'default' => 1.5,
+				],
+				'typescale_ratio_default' => [
+					'type' => 'literal',
+					'default' => 1.2,
+				],
 				'typescale_root' => [
 					'type'      => 'option',
 					'name'      => ['jetpack_global_styles', 'typescale_root'],

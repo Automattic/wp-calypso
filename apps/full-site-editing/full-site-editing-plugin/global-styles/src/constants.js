@@ -9,5 +9,7 @@ export const LINE_HEIGHT_BODY_DEFAULT = 'line_height_body_default';
 export const LINE_HEIGHT_HEADING = 'line_height_heading';
 export const LINE_HEIGHT_HEADING_DEFAULT = 'line_height_heading_default';
 export const SITE_NAME = 'blogname';
+export const TYPESCALE_RATIO = 'typescale_ratio';
+export const TYPESCALE_RATIO_DEFAULT = 'typescale_ratio_default';
 export const TYPESCALE_ROOT = 'typescale_root';
 export const TYPESCALE_ROOT_DEFAULT = 'typescale_root_default';
