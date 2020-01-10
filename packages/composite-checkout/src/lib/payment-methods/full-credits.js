@@ -24,6 +24,8 @@ export function createFullCreditsMethod( {
 	registerStore,
 	submitTransaction,
 	creditsDisplayValue,
+	label,
+	buttonText,
 } ) {
 	const actions = {
 		*beginCreditsTransaction( payload ) {
@@ -86,14 +88,14 @@ export function createFullCreditsMethod( {
 
 	return {
 		id: 'full-credits',
-		label: <FullCreditsLabel creditsDisplayValue={ creditsDisplayValue } />,
-		submitButton: <FullCreditsSubmitButton />,
+		label: label || <FullCreditsLabel creditsDisplayValue={ creditsDisplayValue } />,
+		submitButton: <FullCreditsSubmitButton buttonText={ buttonText } />,
 		inactiveContent: <FullCreditsSummary />,
 		getAriaLabel: localize => localize( 'Credits' ),
 	};
 }
 
-export function FullCreditsLabel( { creditsDisplayValue } ) {
+function FullCreditsLabel( { creditsDisplayValue } ) {
 	const localize = useLocalize();
 
 	return (
@@ -104,7 +106,7 @@ export function FullCreditsLabel( { creditsDisplayValue } ) {
 	);
 }
 
-function FullCreditsSubmitButton( { disabled } ) {
+function FullCreditsSubmitButton( { disabled, buttonText } ) {
 	const localize = useLocalize();
 	const { beginCreditsTransaction } = useDispatch( 'full-credits' );
 	const [ items, total ] = useLineItems();
@@ -142,7 +144,8 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const buttonString =
 		formStatus === 'submitting'
 			? localize( 'Processing...' )
-			: sprintf(
+			: buttonText ||
+			  sprintf(
 					localize( 'Pay %s with Credits' ),
 					renderDisplayValueMarkdown( total.amount.displayValue )
 			  );
