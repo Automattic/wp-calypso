@@ -48,6 +48,19 @@ $onboarding-block-css-transition-duration: 750ms;
 	margin: 10px 0;
 	text-decoration: none;
 	position: relative;
+
+	&:hover,
+	&:focus {
+		background: none;
+		border: none;
+		color: $blue-medium-focus;
+		outline: none;
+		box-shadow: none;
+	}
+
+	&:focus {
+		border-bottom: 2px solid $blue-medium-focus;
+	}
 }
 
 .onboarding-block__question input {
