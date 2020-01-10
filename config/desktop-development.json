@@ -29,7 +29,6 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,

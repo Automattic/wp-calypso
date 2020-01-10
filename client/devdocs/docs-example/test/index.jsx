@@ -13,9 +13,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
+import DocsExample, { DocsExampleToggle } from '../index';
 import { Button } from '@automattic/components';
-import Count from 'components/count';
 
 describe( 'DocsExample', () => {
 	const props = {
@@ -46,19 +45,6 @@ describe( 'DocsExample', () => {
 
 		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 1 );
 	} );
-
-	test( 'should render the stats', () => {
-		const propsWithStats = Object.assign( {}, props, {
-			componentUsageStats: {
-				count: 0,
-			},
-		} );
-		const docsExample = shallow(
-			<DocsExample { ...propsWithStats }>{ childrenFixture }</DocsExample>
-		);
-
-		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 1 );
-	} );
 } );
 
 describe( 'DocsExampleToggle', () => {
@@ -71,23 +57,5 @@ describe( 'DocsExampleToggle', () => {
 		const docsExampleToggle = shallow( <DocsExampleToggle { ...props } /> );
 
 		assert.lengthOf( docsExampleToggle.find( Button ), 1 );
-	} );
-} );
-
-describe( 'DocsExampleStats', () => {
-	const props = {
-		count: 10,
-	};
-
-	test( 'should render', () => {
-		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
-
-		assert.lengthOf( docsExampleStats.find( 'p' ), 1 );
-	} );
-
-	test( "should have the component's usage count", () => {
-		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
-
-		assert.lengthOf( docsExampleStats.find( Count ), 1 );
 	} );
 } );

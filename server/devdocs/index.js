@@ -17,7 +17,6 @@ import 'prismjs/components/prism-scss';
  */
 import config from 'config';
 import searchIndex from './search-index';
-import componentsUsageStats from './components-usage-stats.json';
 import selectors from './selectors';
 
 const docsIndex = lunr.Index.load( searchIndex.index );
@@ -147,28 +146,6 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
-/**
- * Given an object of { module: dependenciesArray }
- * it filters out modules that contain the world "docs/"
- * and that are not components (i.e. they don't start with "components/").
- * It also removes the "components/" prefix from the modules name.
- *
- * @param {object} modulesWithDependences An object of modules - dipendencies pairs
- * @returns {object} A reduced set of modules.
- */
-function reduceComponentsUsageStats( modulesWithDependences ) {
-	return Object.keys( modulesWithDependences )
-		.filter(
-			moduleName =>
-				moduleName.indexOf( 'components/' ) === 0 && moduleName.indexOf( '/docs' ) === -1
-		)
-		.reduce( ( target, moduleName ) => {
-			const name = moduleName.replace( 'components/', '' );
-			target[ name ] = modulesWithDependences[ moduleName ];
-			return target;
-		}, {} );
-}
-
 module.exports = function() {
 	const app = express();
 
@@ -239,12 +216,6 @@ module.exports = function() {
 		}
 
 		response.send( 'html' === format ? marked( doc.content ) : doc.content );
-	} );
-
-	// return json for the components usage stats
-	app.get( '/devdocs/service/components-usage-stats', ( request, response ) => {
-		const usageStats = reduceComponentsUsageStats( componentsUsageStats );
-		response.json( usageStats );
 	} );
 
 	// In environments where enabled, prime the selectors search cache whenever
