@@ -39,9 +39,7 @@ export function createPaymentMethods( {
 	);
 
 	const fullCreditsPaymentMethod =
-		isMethodEnabled( 'full-credits', allowedPaymentMethods ) &&
-		credits.amount.value > 0 &&
-		credits.amount.value >= total.amount.value
+		credits.amount.value > 0 && credits.amount.value >= total.amount.value
 			? createFullCreditsMethod( {
 					registerStore,
 					submitTransaction: submitData =>
