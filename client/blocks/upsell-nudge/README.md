@@ -26,12 +26,12 @@ function myUpsell() {
 
 Name | Type | Default | Description
 ---- | ---- | ---- | ----
-`buttonText` | `string` | 'Upgrade' | Message to show on the upsell call to action.
-`dismissPreferenceName` | `string` | empty | Enables a dismiss icon with this value as the event name
-`tracksEvent` | `string` | `calypso_upsell_nudge_click` | Unique event name to track when the nudge is clicked
+`buttonText` | `string` | null | Message to show on the upsell call to action.
+`compact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
+`dismissPreferenceName` | `string` | empty | Enables dismiss functionality with this value as the event name
 `eventName` | `string` | null | Unique event name for tracking the nudge on impression, click, and dismiss, passed to `Banner` as a Tracks event property `cta_name`
 `eventProperties` | `object` | null | Additional event properties to track on click
 `href` | `string` | null | The URL/path that the user is taken to when clicked.
 `icon` | `string` | null | Optional reference to a Gridicon.
-`compact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
-`text` | `string` | 'Free domain with a plan!' | Message to show on the upsell.
+`text` | `string` | null | Message to show on the upsell.
+`tracksEvent` | `string` | `calypso_upsell_nudge_click` | Unique event name to track when the nudge is clicked

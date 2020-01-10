@@ -24,8 +24,8 @@ export const UpsellNudge = ( {
 	dismissPreferenceName,
 	eventName,
 	href,
-	icon,
-	compact,
+	icon = false,
+	compact = false,
 	navigateAndTrack,
 	text,
 } ) => {
