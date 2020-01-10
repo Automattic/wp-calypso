@@ -58,6 +58,9 @@ export class Banner extends Component {
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		tracksImpressionName: PropTypes.string,
+		tracksClickName: PropTypes.string,
+		tracksDismissName: PropTypes.string,
 		customerType: PropTypes.string,
 	};
 
@@ -68,6 +71,9 @@ export class Banner extends Component {
 		compact: false,
 		onClick: noop,
 		onDismiss: noop,
+		tracksImpressionName: 'calypso_banner_cta_impression',
+		tracksClickName: 'calypso_banner_cta_click',
+		tracksDismissName: 'calypso_banner_dismiss',
 	};
 
 	getHref() {
@@ -93,10 +99,10 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, compact, onClick } = this.props;
+		const { event, feature, compact, onClick, tracksClickName } = this.props;
 
 		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+			this.props.recordTracksEvent( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: compact ? 'compact' : 'regular',
@@ -107,10 +113,10 @@ export class Banner extends Component {
 	};
 
 	handleDismiss = e => {
-		const { event, feature, onDismiss } = this.props;
+		const { event, feature, onDismiss, tracksDismissName } = this.props;
 
 		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_dismiss', {
+			this.props.recordTracksEvent( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
 			} );
@@ -158,6 +164,7 @@ export class Banner extends Component {
 			price,
 			title,
 			target,
+			tracksImpressionName,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -166,7 +173,7 @@ export class Banner extends Component {
 			<div className="banner__content">
 				{ event && (
 					<TrackComponentView
-						eventName={ 'calypso_banner_cta_impression' }
+						eventName={ tracksImpressionName }
 						eventProperties={ {
 							cta_name: event,
 							cta_feature: feature,
