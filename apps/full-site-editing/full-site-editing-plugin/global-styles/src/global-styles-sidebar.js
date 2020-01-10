@@ -145,7 +145,7 @@ export default ( {
 						}
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Font Spacing' ) }>
+				<PanelBody title={ __( 'Font Settings' ) }>
 					<TypeScalePanel
 						typeScaleRoot={ typeScaleRoot }
 						typeScaleRatio={ typeScaleRatio }
