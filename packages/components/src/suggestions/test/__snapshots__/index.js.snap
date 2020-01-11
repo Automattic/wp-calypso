@@ -1,6 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Suggestions> render basic list of suggestions 1`] = `
+<<<<<<< HEAD
 <div
   className="suggestions"
 >
@@ -31,5 +32,39 @@ exports[`<Suggestions> render basic list of suggestions 1`] = `
     onMouseOver={[Function]}
     query=""
   />
+=======
+<div>
+  <div
+    className="suggestions"
+  >
+    <Item
+      hasHighlight={true}
+      key="0"
+      label="Apple"
+      onMount={[Function]}
+      onMouseDown={[Function]}
+      onMouseOver={[Function]}
+      query=""
+    />
+    <Item
+      hasHighlight={false}
+      key="1"
+      label="Pear"
+      onMount={[Function]}
+      onMouseDown={[Function]}
+      onMouseOver={[Function]}
+      query=""
+    />
+    <Item
+      hasHighlight={false}
+      key="2"
+      label="Orange"
+      onMount={[Function]}
+      onMouseDown={[Function]}
+      onMouseOver={[Function]}
+      query=""
+    />
+  </div>
+>>>>>>> ca950e28d4... Remove enclosing div, rename component class to suggestions
 </div>
 `;
