@@ -214,7 +214,7 @@ module.exports = function() {
 	// markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
 		let { path } = request.query;
-		const { format = 'html' } = request.query.format;
+		const { format = 'html' } = request.query;
 
 		if ( ! path ) {
 			response
