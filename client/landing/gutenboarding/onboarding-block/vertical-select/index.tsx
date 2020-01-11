@@ -161,7 +161,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					query={ inputValue }
 					suggestions={ ! verticals.length ? loadingMessage : suggestions }
 					suggest={ handleSelect }
-					className='vertical-select__suggestions'
 				/>
 			</div>
 		</Question>
