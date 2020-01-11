@@ -3,7 +3,7 @@
 exports[`<Suggestions> render basic list of suggestions 1`] = `
 <div>
   <div
-    className="suggestions__wrapper"
+    className="suggestions"
   >
     <Item
       hasHighlight={true}
