@@ -2,19 +2,20 @@
 
 .vertical-select {
 	width: 400px;
+	margin-left: 0.2em;
 
 	.onboarding-block__question-input {
 		width: inherit;
+		margin-left: 0; // zeroing this out to inherit the parent's width and not overflow
 	}
 
 	.suggestions {
+		position: fixed;
 		width: inherit;
 		max-width: inherit;
-		margin-left: 0.2em;
-
-		background: $white;
-		position: fixed;
 		max-height: 440px;
+		margin-left: 0;
+		background: $white;
 		overflow: auto;
 		border: 1px solid $blue-medium-focus;
 	}
