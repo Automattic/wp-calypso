@@ -25,7 +25,10 @@ type Template = VerticalsTemplates.Template;
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
-	const siteVertical = useSelect( select => select( ONBOARD_STORE ).getState().siteVertical );
+	const { selectedDesign, siteVertical } = useSelect( select =>
+		select( ONBOARD_STORE ).getState()
+	);
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -43,9 +46,6 @@ const DesignSelector: FunctionComponent = () => {
 		templates,
 		( { category } ) => category === 'home'
 	);
-
-	const selectedDesign = useSelect( select => select( ONBOARD_STORE ).getState().selectedDesign );
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const resetState = () => {
 		setSelectedDesign( undefined );
@@ -113,7 +113,7 @@ const DesignSelector: FunctionComponent = () => {
 								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
 									window.scrollTo( 0, 0 );
 									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( selectedDesign?.slug === design?.slug ? undefined : design );
+									setSelectedDesign( selectedDesign?.slug === design.slug ? undefined : design );
 								} }
 							/>
 						) ) }
