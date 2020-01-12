@@ -386,6 +386,15 @@
 			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
 		}
 
+		.wpnc__traffic_surge .wpnc__note-icon img {
+			width: 32px;
+			height: 32px;
+			background: var( --color-primary );
+			border-color: var( --color-primary );
+			border-width: 4px;
+			border-style: solid;
+		}
+
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var( --color-primary );
 
@@ -405,7 +414,6 @@
 				@extend %ellipsy-box;
 				font-size: 16px;
 				letter-spacing: 0.15px;
-
 			}
 
 			.wpnc__subject .wpnc__gridicon {
