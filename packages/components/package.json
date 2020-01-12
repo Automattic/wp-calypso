@@ -25,7 +25,8 @@
 	"files": [
 		"dist",
 		"types",
-		"src"
+		"src",
+		"sass"
 	],
 	"types": "types",
 	"dependencies": {
