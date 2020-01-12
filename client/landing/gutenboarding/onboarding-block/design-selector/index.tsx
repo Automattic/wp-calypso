@@ -3,7 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
-import React, { useState, FunctionComponent, MouseEvent } from 'react';
+import React, { useLayoutEffect, useRef, useState, FunctionComponent, MouseEvent } from 'react';
 import classnames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
@@ -56,6 +56,17 @@ const DesignSelector: FunctionComponent = () => {
 	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
 	const [ cp, setCp ] = useState< number >();
 
+	const headingContainer = useRef< HTMLDivElement >( null );
+	const selectionTransitionShift = useRef< number >( 0 );
+	useLayoutEffect( () => {
+		if ( headingContainer.current ) {
+			// We'll use this height to move the heading up out of the viewport.
+			// Gutenberg editor adds 50px
+			const rect = headingContainer.current.getBoundingClientRect();
+			selectionTransitionShift.current = rect.height + rect.y - 50;
+		}
+	}, [ selectedDesign ] );
+
 	const dialogId = 'page-selector-modal';
 
 	const descriptionOnRight: boolean =
@@ -63,10 +74,18 @@ const DesignSelector: FunctionComponent = () => {
 		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
 
 	return (
-		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
+		<div
+			className="design-selector"
+			style={
+				selectedDesign && {
+					transform: `translate3d( 0,  -${ selectionTransitionShift.current }px, 0 )`,
+				}
+			}
+		>
 			<div
 				className="design-selector__header-container"
 				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
+				ref={ headingContainer }
 			>
 				<h1 className="design-selector__title">
 					{ NO__( 'Choose a starting design for your site' ) }

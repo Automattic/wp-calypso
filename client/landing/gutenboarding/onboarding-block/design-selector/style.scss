@@ -5,11 +5,7 @@ $design-selector-transition-timing: 250ms;
 $design-selector-grid-gap: 4.5em;
 
 $design-selector-max-width: 1100px;
-$design-selector-header-height: 60px;
-// We'll use this height to move the heading up out of the viewport.
-// Gutenberg editor adds 50px
-$design-selector-header-vertical-shift: $design-selector-header-height + 50px;
-$deisgn-selector-selection-space: 175px;
+$design-selector-selection-space: 285px;
 
 @mixin design-selector-show {
 	transform: translate3d( 0, 0, 0 );
@@ -25,9 +21,6 @@ $deisgn-selector-selection-space: 175px;
 .design-selector {
 	@include design-selector-transition();
 	transform: translate3d( 0, 0, 0 );
-	&.has-selected-design {
-		transform: translate3d( 0, -( $design-selector-header-vertical-shift ), 0 );
-	}
 }
 
 .design-selector__title {
@@ -41,7 +34,6 @@ $deisgn-selector-selection-space: 175px;
 .design-selector__subtitle {
 	color: $dark-gray-800;
 	font-size: 1.3em;
-	margin-bottom: 3em;
 	text-align: center;
 }
 
@@ -83,7 +75,7 @@ $deisgn-selector-selection-space: 175px;
 
 .design-selector__page-layout-container {
 	position: absolute;
-	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
+	top: $design-selector-selection-space;
 	width: 100%;
 	background: $white;
 	box-shadow: $dark-gray-300 0 0 12px;
@@ -112,7 +104,6 @@ $deisgn-selector-selection-space: 175px;
 }
 
 .design-selector__header-container {
-	height: $design-selector-header-height;
 }
 
 .page-layout-selector__title {
