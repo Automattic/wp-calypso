@@ -14,7 +14,7 @@ npm i -S @automattic/components @automattic/calypso-color-schemes
 
 ```jsx
 // import the color variables - you only need to do this once in your entire application
-import '@automattic/calypso-color-schemes/dist/calypso-color-schemes.css';
+import '@automattic/calypso-color-schemes';
 
 // import the component you wish to use
 import { Button } from '@automattic/components';
