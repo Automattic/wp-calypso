@@ -16,7 +16,7 @@ const doctrine = require( 'doctrine' );
  */
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
-const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors' );
+const SELECTORS_DIR = path.resolve( __dirname, '../../../../client/state/selectors' );
 
 /**
  * Module variables
