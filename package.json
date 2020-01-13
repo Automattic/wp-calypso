@@ -210,6 +210,7 @@
 		"jest-junit": "9.0.0",
 		"lerna": "3.18.4",
 		"loader-utils": "1.2.3",
+		"lodash": "4.17.15",
 		"md5-file": "4.0.0",
 		"mixedindentlint": "1.2.0",
 		"mkdirp": "0.5.1",
