@@ -26,6 +26,7 @@ render() {
 			onClick={ someFunction }
 			plan={ PLAN_BUSINESS }
 			prices={ [ 10.99, 9.99 ] }
+			showIcon={ false }
 			title="Upgrade to a better plan!"
 			tracksImpressionName="calypso_banner_upgrade_view"
 			tracksClickName="calypso_banner_upgrade_click"
@@ -55,10 +56,10 @@ render() {
 | `href` | `string` | null | The component target URL. |
 | `icon` | `string` | null | The component icon. |
 | `list` | `string` | null | A list of the upgrade features. |
-| `noIcon` | `bool` | `false` | Do not show an icon. |
 | `onClick` | `string` | null | A function associated to the click on the whole banner or just the CTA or dismiss button. |
 | `plan` | `string` | null | PlanSlug of the plan that upgrade leads to. |
 | `price` | `string` | null | One or two (original/discounted) upgrade prices. |
+| `showIcon` | `bool` | `true` | Show the icon specified in `icon` |
 | `title` | `string` | null | (required) The banner title. |
 | `tracksImpressionName` | `string` | | Unique event name to track when the nudge is viewed |
 | `tracksClickName` | `string` | | Unique event name to track when the nudge is clicked |

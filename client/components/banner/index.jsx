@@ -51,11 +51,11 @@ export class Banner extends Component {
 		icon: PropTypes.string,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
-		noIcon: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
@@ -73,9 +73,9 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
-		noIcon: false,
 		onClick: noop,
 		onDismiss: noop,
+		showIcon: true,
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
@@ -137,7 +137,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, plan } = this.props;
+		const { icon, showIcon, plan } = this.props;
 
 		if ( plan && ! icon ) {
 			return (
@@ -145,6 +145,10 @@ export class Banner extends Component {
 					<PlanIcon plan={ plan } />
 				</div>
 			);
+		}
+
+		if ( ! showIcon ) {
+			return;
 		}
 
 		return (
@@ -239,13 +243,12 @@ export class Banner extends Component {
 		const {
 			callToAction,
 			className,
-			forceHref,
+			compact,
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
-			noIcon,
+			forceHref,
 			plan,
-			compact,
 		} = this.props;
 
 		const classes = classNames(
@@ -271,7 +274,7 @@ export class Banner extends Component {
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
 				>
-					{ ! noIcon && this.getIcon() }
+					{ this.getIcon() }
 					{ this.getContent() }
 				</DismissibleCard>
 			);
