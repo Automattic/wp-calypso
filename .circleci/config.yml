@@ -330,7 +330,7 @@ jobs:
           name: Build the Full Site Editing plugin and theme
           command: |
             npx lerna run build --scope='@automattic/full-site-editing'
-            tar -czvf $CIRCLE_ARTIFACTS/full-site-editing/build-archive.tar.gz apps/full-site-editing/full-site-editing-plugin -C apps/full-site-editing/full-site-editing-plugin
+            tar -czvf $CIRCLE_ARTIFACTS/full-site-editing/build-archive.tar.gz -C apps/full-site-editing/full-site-editing-plugin .
       - store-artifacts-and-test-results
   test-full-site-editing:
     <<: *defaults
