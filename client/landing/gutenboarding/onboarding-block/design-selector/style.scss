@@ -225,6 +225,14 @@ $deisgn-selector-selection-space: 175px;
 	margin-right: -2px;
 }
 
+.page-layout-selector__card-media {
+	.page-layout-selector__card-media-img {
+		height: 280px;
+		object-fit: cover;
+		object-position: top;
+	}
+}
+
 .design-selector__description-container {
 	@include design-selector-transition();
 	position: fixed;

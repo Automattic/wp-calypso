@@ -52,6 +52,7 @@ const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
 								<img
 									alt={ template.description }
 									src={ removeQueryArgs( template.preview, 'w' ) }
+									className="page-layout-selector__card-media-img"
 								/>
 							</CardMedia>
 							<CardFooter className="page-layout-selector__card-footer" as="span">
