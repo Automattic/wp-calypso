@@ -227,10 +227,9 @@ module.exports = function() {
 			path = fspath.join( path, 'README.md' );
 		}
 
-		// Make the path relative, i.e., convert `/client/README.md` to `client/README.md`.
-		// The `searchIndex.documents` array stores relative paths, but the `path` query arg
-		// can be both absolute and relative (always to root) path.
-		path = fspath.relative( '/', path );
+		// Remove the optional leading `/` to make the path relative, i.e., convert `/client/README.md`
+		// to `client/README.md`. The `path` query arg can use both forms.
+		path = path.replace( /^\//, '' );
 
 		const doc = find( searchIndex.documents, { path } );
 
