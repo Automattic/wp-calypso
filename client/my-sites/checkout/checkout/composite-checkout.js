@@ -95,6 +95,7 @@ export default function CompositeCheckout( {
 		changePlanLength,
 		errors,
 		isLoading,
+		allowedPaymentMethods: serverAllowedPaymentMethods,
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
 
 	const { registerStore } = registry;
@@ -117,7 +118,7 @@ export default function CompositeCheckout( {
 			createPaymentMethods( {
 				isLoading: isLoading || isLoadingStoredCards,
 				storedCards,
-				allowedPaymentMethods,
+				allowedPaymentMethods: allowedPaymentMethods || serverAllowedPaymentMethods,
 				select,
 				registerStore,
 				wpcom,
@@ -127,6 +128,7 @@ export default function CompositeCheckout( {
 			} ),
 		[
 			allowedPaymentMethods,
+			serverAllowedPaymentMethods,
 			isLoading,
 			isLoadingStoredCards,
 			storedCards,

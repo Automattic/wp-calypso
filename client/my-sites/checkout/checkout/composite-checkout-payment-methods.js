@@ -64,7 +64,7 @@ export function createPaymentMethods( {
 			  } )
 			: null;
 
-	const stripeMethod = isMethodEnabled( 'stripe', allowedPaymentMethods )
+	const stripeMethod = isMethodEnabled( 'card', allowedPaymentMethods )
 		? createStripeMethod( {
 				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.country?.value,
 				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
@@ -114,7 +114,7 @@ export function createPaymentMethods( {
 			  } )
 			: null;
 
-	const existingCardMethods = isMethodEnabled( 'existing-cards', allowedPaymentMethods )
+	const existingCardMethods = isMethodEnabled( 'card', allowedPaymentMethods )
 		? storedCards.map( storedDetails =>
 				createExistingCardMethod( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
