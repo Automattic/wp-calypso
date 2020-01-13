@@ -35,10 +35,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return page;
 	}
 
-	async _postInit() {
-		await this.removeNUXNotice();
-	}
-
 	async _preInit() {
 		if ( this.editorType !== 'iframe' ) {
 			return;
@@ -50,6 +46,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			'Could not locate the editor iFrame.'
 		);
 		await this.driver.sleep( 2000 );
+	}
+
+	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
+		if ( dismissPageTemplateSelector ) {
+			this.dismissPageTemplateSelector();
+		}
+		this.dismissEditorWelcomeModal();
+		this.closeSidebar();
 	}
 
 	async publish( { visit = false } = {} ) {
@@ -101,7 +105,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterText( text ) {
-		const appenderSelector = By.css( '.editor-default-block-appender' );
+		const appenderSelector = By.css( '.block-editor-default-block-appender' );
 		const textSelector = By.css( '.wp-block-paragraph' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
@@ -148,27 +152,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async hasInvalidBlocks() {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.block-editor-warning' ) );
-	}
-
-	async removeNUXNotice() {
-		const nuxPopupSelector = By.css( '.nux-dot-tip' );
-		const nuxDisableSelector = By.css( '.nux-dot-tip__disable' );
-
-		if ( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) {
-			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
-			try {
-				await driverHelper.waitTillNotPresent(
-					this.driver,
-					nuxPopupSelector,
-					this.explicitWaitMS / 2
-				);
-			} catch {
-				if ( driverManager.currentScreenSize() === 'mobile' ) {
-					await this.closeSidebar();
-				}
-				await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
-			}
-		}
 	}
 
 	async openBlockInserterAndSearch( searchTerm ) {
@@ -237,7 +220,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		}
 
 		const inserterBlockItemSelector = By.css(
-			`li.editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass
+			`li.block-editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass
 				.replace( /\s+/g, '-' )
 				.toLowerCase() }`
 		);
@@ -316,7 +299,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closePublishedPanel() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header button.components-button.components-icon-button' )
+			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
 	}
 
@@ -424,7 +407,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.template-selector-item__template-title' ),
 					'Blank'
 				);
-				await this.closeSidebar();
 			} else {
 				await driverHelper.clickWhenClickable(
 					this.driver,

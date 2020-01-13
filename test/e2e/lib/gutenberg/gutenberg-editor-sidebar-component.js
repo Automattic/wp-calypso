@@ -15,8 +15,6 @@ import GutenbergEditorComponent from './gutenberg-editor-component';
 export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.edit-post-header' ) );
-		this.cogSelector = By.css( '[aria-label="Settings"]:not([disabled])' );
-		this.closeSelector = By.css( '[aria-label="Close settings"]:not([disabled])' );
 	}
 
 	async selectTab( name ) {
@@ -34,7 +32,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandStatusAndVisibility() {
-		return await this._expandOrCollapseSectionByText( 'Status & Visibility', true );
+		return await this._expandOrCollapseSectionByText( 'Status & visibility', true );
 	}
 
 	async expandPermalink() {
@@ -62,7 +60,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async collapseStatusAndVisibility() {
-		return await this._expandOrCollapseSectionByText( 'Status & Visibility', false );
+		return await this._expandOrCollapseSectionByText( 'Status & visibility', false );
 	}
 
 	async collapsePermalink() {
@@ -112,7 +110,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const labelSelector = await driverHelper.getElementByText(
 			this.driver,
 			By.css( '.components-checkbox-control__label' ),
-			'Allow Comments'
+			'Allow comments'
 		);
 		const checkBoxSelectorID = await this.driver.findElement( labelSelector ).getAttribute( 'for' );
 		const checkBoxSelector = By.id( checkBoxSelectorID );
@@ -168,22 +166,15 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async displayComponentIfNecessary() {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			const driver = this.driver;
-			const c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
-			if ( c.indexOf( 'is-toggled' ) < 0 ) {
-				return await driverHelper.clickWhenClickable( driver, this.cogSelector );
-			}
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			return await gEditorComponent.openSidebar();
 		}
 	}
 
 	async hideComponentIfNecessary() {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			const driver = this.driver;
-
-			const c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
-			if ( c.indexOf( 'is-toggled' ) > -1 ) {
-				return await driverHelper.clickWhenClickable( driver, this.closeSelector );
-			}
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			return await gEditorComponent.closeSidebar();
 		}
 	}
 
