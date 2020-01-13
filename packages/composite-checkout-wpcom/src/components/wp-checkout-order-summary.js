@@ -16,6 +16,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from './button';
 import Coupon from './coupon';
+import { isLineItemADomain } from '../hooks/has-domains';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
@@ -25,10 +26,12 @@ export default function WPCheckoutOrderSummary() {
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
 
-	//TODO: Replace yourdomain.tld with actual domian: show .wordpress subdomain if no custom domain available or in the cart
+	const firstDomainItem = items.find( isLineItemADomain );
+
+	//TODO: show domain of site or .wordpress subdomain if no custom domain available or in the cart
 	return (
 		<React.Fragment>
-			<DomainURL>yourdomain.tld</DomainURL>
+			{ firstDomainItem && <DomainURL>{ firstDomainItem.sublabel }</DomainURL> }
 
 			<SummaryContent>
 				<ProductList>
