@@ -35,7 +35,7 @@ export default function WPCheckoutOrderSummary( { siteUrl } ) {
 
 			<SummaryContent>
 				<ProductList>
-					{ items.map( product => {
+					{ items.filter( shouldItemBeInSummary ).map( product => {
 						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 					} ) }
 				</ProductList>
@@ -133,4 +133,9 @@ function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
 	onEvent( {
 		type: 'a8c_checkout_add_coupon_button_clicked',
 	} );
+}
+
+function shouldItemBeInSummary( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
 }
