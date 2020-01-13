@@ -27,6 +27,12 @@ render() {
 			plan={ PLAN_BUSINESS }
 			prices={ [ 10.99, 9.99 ] }
 			title="Upgrade to a better plan!"
+			tracksImpressionName="calypso_banner_upgrade_view"
+			tracksClickName="calypso_banner_upgrade_click"
+			tracksDismissName="calypso_banner_upgrade_dismiss"
+			tracksImpressionProperties={ { cta_name: 'calyspo_banner_upgrade' } }
+			tracksClickProperties={ { cta_name: 'calyspo_banner_upgrade' } }
+			tracksDismissProperties={ { cta_name: 'calyspo_banner_upgrade' } }
 		/>
 	);
 }
@@ -47,12 +53,19 @@ render() {
 | `event` | `string` | null | Event to distinguish the nudge in tracks. Used as <code>cta_name</code> event property. |
 | `feature` | `string` | null | Slug of the feature to highlight in the plans compare card. |
 | `href` | `string` | null | The component target URL. |
-| `icon` | `string` or `bool` | null or false | The component icon. |
+| `icon` | `string` | null | The component icon. |
 | `list` | `string` | null | A list of the upgrade features. |
+| `noIcon` | `bool` | `false` | Do not show an icon. |
 | `onClick` | `string` | null | A function associated to the click on the whole banner or just the CTA or dismiss button. |
 | `plan` | `string` | null | PlanSlug of the plan that upgrade leads to. |
 | `price` | `string` | null | One or two (original/discounted) upgrade prices. |
 | `title` | `string` | null | (required) The banner title. |
+| `tracksImpressionName` | `string` | | Unique event name to track when the nudge is viewed |
+| `tracksClickName` | `string` | | Unique event name to track when the nudge is clicked |
+| `tracksDismissName` | `string` |  | Unique event name to track when the nudge is dismissed |
+| `tracksImpressionProperties` | `object` | | Additional props to track when the nudge is viewed |
+| `tracksClickProperties` | `object` | | Additional props to track when the nudge is clicked |
+| `tracksDismissProperties` | `object` |  | Additional props to track when the nudge is dismissed |
 
 ### General guidelines
 

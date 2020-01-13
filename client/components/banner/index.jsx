@@ -48,9 +48,10 @@ export class Banner extends Component {
 		event: PropTypes.string,
 		feature: PropTypes.string,
 		href: PropTypes.string,
-		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		icon: PropTypes.string,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
+		noIcon: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -72,6 +73,7 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		noIcon: false,
 		onClick: noop,
 		onDismiss: noop,
 		tracksImpressionName: 'calypso_banner_cta_impression',
@@ -143,10 +145,6 @@ export class Banner extends Component {
 					<PlanIcon plan={ plan } />
 				</div>
 			);
-		}
-
-		if ( 'no-icon' === icon ) {
-			return;
 		}
 
 		return (
@@ -245,6 +243,7 @@ export class Banner extends Component {
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
+			noIcon,
 			plan,
 			compact,
 		} = this.props;
@@ -272,7 +271,7 @@ export class Banner extends Component {
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
 				>
-					{ this.getIcon() }
+					{ ! noIcon && this.getIcon() }
 					{ this.getContent() }
 				</DismissibleCard>
 			);
