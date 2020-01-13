@@ -145,7 +145,7 @@ export class Banner extends Component {
 			);
 		}
 
-		if ( ! icon ) {
+		if ( 'no-icon' === icon ) {
 			return;
 		}
 
