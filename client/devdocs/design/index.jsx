@@ -2,11 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
 
@@ -15,7 +12,6 @@ import { trim } from 'lodash';
  */
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
@@ -130,16 +126,9 @@ import Wizard from 'components/wizard/docs/example';
 import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
 import WpcomColophon from 'components/wpcom-colophon/docs/example';
 
-class DesignAssets extends React.Component {
+export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
-
-	UNSAFE_componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	}
 
 	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
@@ -150,7 +139,7 @@ class DesignAssets extends React.Component {
 	};
 
 	render() {
-		const { componentsUsageStats = {}, component } = this.props;
+		const { component } = this.props;
 		const { filter } = this.state;
 
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -190,20 +179,14 @@ class DesignAssets extends React.Component {
 					) }
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
-					<Accordions
-						componentUsageStats={ componentsUsageStats.accordion }
-						readmeFilePath="accordion"
-					/>
+					<Accordions readmeFilePath="accordion" />
 					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
-					<Buttons
-						componentUsageStats={ componentsUsageStats.button }
-						readmeFilePath="/packages/components/src/button"
-					/>
+					<Buttons readmeFilePath="/packages/components/src/button" />
 					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="/packages/components/src/card" />
 					<CardHeading readmeFilePath="card-heading" />
@@ -302,32 +285,3 @@ class DesignAssets extends React.Component {
 		);
 	}
 }
-
-let DesignAssetsExport = DesignAssets;
-
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = state => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = dispatch => {
-		return bindActionCreators(
-			{
-				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
-			},
-			dispatch
-		);
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func,
-	};
-
-	DesignAssetsExport = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
-}
-
-export default DesignAssetsExport;

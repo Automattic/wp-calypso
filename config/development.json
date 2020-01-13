@@ -40,7 +40,6 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"devdocs/components-usage-stats": false,
 		"devdocs/color-scheme-picker": true,
 		"dev/test-helper": true,
 		"dev/preferences-helper": true,

@@ -64,9 +64,6 @@ function getExternals() {
 		'bundler/hot-reloader',
 		// Exclude the devdocs search-index, as it's huge.
 		'devdocs/search-index',
-		// Exclude the devdocs components usage stats data
-		'devdocs/components-usage-stats.json',
-		'devdocs/components-usage-stats.json',
 		// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
 		'bundler/assets',
 	];

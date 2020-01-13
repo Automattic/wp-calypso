@@ -2,16 +2,6 @@ jest.mock( 'config', () => ( {
 	isEnabled: () => true,
 } ) );
 jest.mock(
-	'devdocs/components-usage-stats.json',
-	() => ( {
-		'components/foo': { count: 10 },
-		'components/foo/docs/': { count: 1 },
-		'foo/components/bar': { count: 1 },
-		'my-page/index.js': { count: 1 },
-	} ),
-	{ virtual: true }
-);
-jest.mock(
 	'devdocs/search-index',
 	() => ( {
 		index: {},
@@ -30,27 +20,6 @@ jest.mock( 'lunr', () => ( {
 import fs from 'fs';
 import fspath from 'path';
 import request from 'superagent';
-
-/**
- * Module variables
- */
-const componentsEntries = {
-	valid: {
-		'components/foo': { count: 10 },
-	},
-	invalid: {
-		'components/foo/docs/': { count: 1 },
-		'foo/components/bar': { count: 1 },
-		'my-page/index.js': { count: 1 },
-	},
-	expected: {
-		foo: { count: 10 },
-	},
-};
-
-function getComponentsUsageStats( cb ) {
-	request.get( 'http://localhost:9993/devdocs/service/components-usage-stats' ).end( cb );
-}
 
 function getDocument( base, path, cb ) {
 	if ( typeof path === 'function' ) {
@@ -137,18 +106,6 @@ describe( 'devdocs', () => {
 			expect( res.statusCode ).toBe( 404 );
 			expect( res.text ).toBe( 'File does not exist' );
 			done();
-		} );
-	} );
-
-	describe( 'components usage stats endpoint', () => {
-		test( 'should return stats', done => {
-			getComponentsUsageStats( ( err, res ) => {
-				expect( err ).toBeNull();
-				expect( res.statusCode ).toBe( 200 );
-				expect( res.type ).toBe( 'application/json' );
-				expect( res.body ).toEqual( componentsEntries.expected );
-				done();
-			} );
 		} );
 	} );
 } );
