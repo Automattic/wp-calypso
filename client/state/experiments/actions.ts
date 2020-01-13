@@ -1,15 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function assignVariationForUser() {
-	//todo
-}
+/**
+ * Internal Dependencies
+ */
+import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
+import { Experiment } from './reducer';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const assignCurrentUserToVariations = () => ( dispatch: any, getState: any ) => {
-	const anonId = getState().experiments.anonId;
-	const userId = getState().currentUser.id;
-	dispatch( {
-		type: 'GET_EXPERIMENT_VARIATIONS',
-		anonId: anonId,
-		userId: userId,
-	} );
-};
+export const assignToExperiments = ( experiments: Experiment[] ) => ( {
+	type: EXPERIMENT_ASSIGN,
+	experiments,
+} );
+
+// todo: handle TTL
+export const fetchExperiments = () => ( {
+	type: EXPERIMENT_FETCH,
+} );

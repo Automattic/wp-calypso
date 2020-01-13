@@ -11,3 +11,7 @@ export function getVariationForUser( state: AppState, experiment: string ) {
 export const isLoading = ( state: AppState, experimentName: string ) => {
 	return true;
 };
+
+export const getAnonId = ( state: AppState ) => {
+	return state.experiments.anonId;
+};

@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { findIndex, tail } from 'lodash';
+import { EXPERIMENT_ASSIGN } from 'state/action-types';
 
 /**
  * Internal Dependencies
@@ -21,8 +22,14 @@ function getAnonId(): string | null {
 	return null;
 }
 
+export interface Experiment {
+	name: string;
+	variation: string;
+}
+
 interface ExperimentState {
 	anonId: string | null;
+	experiments: Experiment[] | null;
 }
 
 /**
@@ -32,13 +39,19 @@ interface ExperimentState {
  * @param action The specified action
  * @returns object The modified state, if applied
  */
-export default function reducer( state: ExperimentState = { anonId: null }, action: any ) {
+export default function reducer(
+	state: ExperimentState = { anonId: null, experiments: null },
+	action: any
+) {
 	switch ( action.type ) {
 		/**
 		 * Store the anon-id in state, if there is one. We need this to apply any overrides for anonymous experiments
 		 */
 		case '@@INIT':
 			state.anonId = getAnonId();
+			return state;
+		case EXPERIMENT_ASSIGN:
+			state.experiments = action.experiments;
 			return state;
 		default:
 			return state;
