@@ -7,23 +7,24 @@
  */
 import { getUrlParts, getUrlFromParts } from '../url-parts';
 
-describe( 'getUrlParts', () => {
-	test( 'should empty parts for invalid URLs', () => {
-		expect( getUrlParts( '///' ) ).toEqual( {
-			hash: '',
-			host: '',
-			hostname: '',
-			origin: '',
-			password: '',
-			pathname: '',
-			port: '',
-			protocol: '',
-			search: '',
-			searchParams: expect.any( URLSearchParams ),
-			username: '',
-		} );
+function convertParamsToObject( searchParams ) {
+	const result = {};
+	for ( const key of searchParams.keys() ) {
+		result[ key ] = searchParams.get( key );
+	}
+	return result;
+}
 
-		expect( getUrlParts( 'https://example.com:badport?foo=bar#baz' ) ).toEqual( {
+function expectParamsAsObject( parts ) {
+	return expect( convertParamsToObject( parts.searchParams ) );
+}
+
+describe( 'getUrlParts', () => {
+	let parts;
+
+	test( 'should empty parts for invalid URLs', () => {
+		parts = getUrlParts( '///' );
+		expect( parts ).toEqual( {
 			hash: '',
 			host: '',
 			hostname: '',
@@ -36,10 +37,28 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
+
+		parts = getUrlParts( 'https://example.com:badport?foo=bar#baz' );
+		expect( parts ).toEqual( {
+			hash: '',
+			host: '',
+			hostname: '',
+			origin: '',
+			password: '',
+			pathname: '',
+			port: '',
+			protocol: '',
+			search: '',
+			searchParams: expect.any( URLSearchParams ),
+			username: '',
+		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 	} );
 
 	test( 'should return the right parts for absolute URLs', () => {
-		expect( getUrlParts( 'http://example.com' ) ).toEqual( {
+		parts = getUrlParts( 'http://example.com' );
+		expect( parts ).toEqual( {
 			hash: '',
 			host: 'example.com',
 			hostname: 'example.com',
@@ -52,8 +71,10 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 
-		expect( getUrlParts( 'http://user:pass@example.com:8080/path?foo=bar#baz' ) ).toEqual( {
+		parts = getUrlParts( 'http://user:pass@example.com:8080/path?foo=bar#baz' );
+		expect( parts ).toEqual( {
 			hash: '#baz',
 			host: 'example.com:8080',
 			hostname: 'example.com',
@@ -66,10 +87,12 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: 'user',
 		} );
+		expectParamsAsObject( parts ).toEqual( { foo: 'bar' } );
 	} );
 
 	test( 'should return the right parts for scheme-relative URLs', () => {
-		expect( getUrlParts( '//example.com' ) ).toEqual( {
+		parts = getUrlParts( '//example.com' );
+		expect( parts ).toEqual( {
 			hash: '',
 			host: 'example.com',
 			hostname: 'example.com',
@@ -82,8 +105,10 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 
-		expect( getUrlParts( '//user:pass@example.com:8080/path?foo=bar#baz' ) ).toEqual( {
+		parts = getUrlParts( '//user:pass@example.com:8080/path?foo=bar#baz' );
+		expect( parts ).toEqual( {
 			hash: '#baz',
 			host: 'example.com:8080',
 			hostname: 'example.com',
@@ -96,10 +121,12 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: 'user',
 		} );
+		expectParamsAsObject( parts ).toEqual( { foo: 'bar' } );
 	} );
 
 	test( 'should return the right parts for path-absolute URLs', () => {
-		expect( getUrlParts( '/' ) ).toEqual( {
+		parts = getUrlParts( '/' );
+		expect( parts ).toEqual( {
 			hash: '',
 			host: '',
 			hostname: '',
@@ -112,8 +139,10 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 
-		expect( getUrlParts( '/path?foo=bar#baz' ) ).toEqual( {
+		parts = getUrlParts( '/path?foo=bar#baz' );
+		expect( parts ).toEqual( {
 			hash: '#baz',
 			host: '',
 			hostname: '',
@@ -126,10 +155,12 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( { foo: 'bar' } );
 	} );
 
 	test( 'should return the right parts for path-relative URLs', () => {
-		expect( getUrlParts( 'path' ) ).toEqual( {
+		parts = getUrlParts( 'path' );
+		expect( parts ).toEqual( {
 			hash: '',
 			host: '',
 			hostname: '',
@@ -142,8 +173,10 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 
-		expect( getUrlParts( '../path?foo=bar#baz' ) ).toEqual( {
+		parts = getUrlParts( '../path?foo=bar#baz' );
+		expect( parts ).toEqual( {
 			hash: '#baz',
 			host: '',
 			hostname: '',
@@ -156,8 +189,10 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( { foo: 'bar' } );
 
-		expect( getUrlParts( '../path#baz' ) ).toEqual( {
+		parts = getUrlParts( '../path#baz' );
+		expect( parts ).toEqual( {
 			hash: '#baz',
 			host: '',
 			hostname: '',
@@ -170,6 +205,7 @@ describe( 'getUrlParts', () => {
 			searchParams: expect.any( URLSearchParams ),
 			username: '',
 		} );
+		expectParamsAsObject( parts ).toEqual( {} );
 	} );
 } );
 
