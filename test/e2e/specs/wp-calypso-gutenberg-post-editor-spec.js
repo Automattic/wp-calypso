@@ -243,7 +243,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Basic Public Post @canary @parallel', function() {
+	describe( 'Basic Public Post @canary @ie11canary @parallel', function() {
 		describe( 'Publish a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
@@ -276,6 +276,21 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					false,
 					'There is an error shown on the Gutenberg editor page!'
 				);
+			} );
+
+			step( 'Can see the Jetpack blocks', async function() {
+				// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
+				if ( dataHelper.getTargetType() === 'IE11' ) {
+					return this.skip();
+				}
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
+					true,
+					'Jetpack blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can publish and view content', async function() {
