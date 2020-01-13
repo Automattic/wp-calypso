@@ -14,6 +14,7 @@ import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
+import { prepareDomainContactDetails } from '../types';
 
 export default function WPContactForm( {
 	summary,
@@ -23,6 +24,7 @@ export default function WPContactForm( {
 	PhoneInput,
 	StateSelect,
 	countriesList,
+    renderDomainFields,
 } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
@@ -37,7 +39,7 @@ export default function WPContactForm( {
 
 	return (
 		<BillingFormFields>
-			{ isDomainFieldsVisible && <DomainFields StateSelect={ StateSelect } /> }
+			{ isDomainFieldsVisible && renderDomainFields( prepareDomainContactDetails( contactInfo ) ) }
 
 			<TaxFields
 				section="contact"

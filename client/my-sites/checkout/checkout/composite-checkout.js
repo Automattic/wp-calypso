@@ -10,9 +10,10 @@ import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	WPCheckout,
+	WPCheckoutErrorBoundary,
 	useWpcomStore,
 	useShoppingCart,
-	FormFieldAnnotation,
+    FormFieldAnnotation,
 } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
@@ -39,8 +40,17 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import PhoneInput from 'components/phone-input/index.jsx';
 import { StateSelect } from 'my-sites/domains/components/form';
+import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
+
+const renderDomainFields = contactDetails => {
+	return (
+		<WPCheckoutErrorBoundary componentTitle="ContactDetailsFormFields">
+			<ContactDetailsFormFields contactDetails={ contactDetails } />;
+		</WPCheckoutErrorBoundary>
+	);
+};
 
 const registry = createRegistry();
 const { select } = registry;
@@ -180,6 +190,7 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					PhoneInput={ PhoneInput }
 					StateSelect={ StateSelect }
+                    renderDomainFields={ renderDomainFields }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
