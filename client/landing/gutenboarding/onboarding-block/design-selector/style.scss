@@ -40,7 +40,7 @@ $design-selector-selection-space: 285px;
 .design-selector__grid-container {
 	position: absolute;
 	padding-bottom: 50px;
-	padding-top: 50px;
+	padding-top: 19px;
 
 	&.exit,
 	&.exit-done {
@@ -104,6 +104,7 @@ $design-selector-selection-space: 285px;
 }
 
 .design-selector__header-container {
+	padding-bottom: 31px;
 }
 
 .page-layout-selector__title {
