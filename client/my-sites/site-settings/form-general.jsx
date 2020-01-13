@@ -283,19 +283,23 @@ export class SiteSettingsFormGeneral extends Component {
 		const {
 			fields,
 			handleRadio,
+			updateFields,
 			isRequestingSettings,
 			eventTracker,
 			siteIsJetpack,
+			trackEvent,
 			translate,
 		} = this.props;
 
+		const currentValue = parseInt( fields.blog_public, 10 );
+
 		return (
 			<FormFieldset>
-				<FormLabel>
+				<FormLabel className="site-settings__visibility-label">
 					<FormRadio
 						name="blog_public"
 						value="1"
-						checked={ 1 === parseInt( fields.blog_public, 10 ) }
+						checked={ [ 0, 1 ].indexOf( currentValue ) !== -1 }
 						onChange={ handleRadio }
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
@@ -308,30 +312,29 @@ export class SiteSettingsFormGeneral extends Component {
 					) }
 				</FormSettingExplanation>
 
-				<FormLabel>
-					<FormRadio
+				<FormLabel className="site-settings__visibility-label is-checkbox">
+					<FormInputCheckbox
 						name="blog_public"
 						value="0"
-						checked={ 0 === parseInt( fields.blog_public, 10 ) }
-						onChange={ handleRadio }
+						checked={ 0 === currentValue }
+						onChange={ () => {
+							const newValue = currentValue === 0 ? 1 : 0;
+							trackEvent( `Set blog_public to ${ newValue }` );
+							updateFields( { blog_public: newValue } );
+						} }
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
-					<span>{ translate( 'Hidden' ) }</span>
+					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
 				</FormLabel>
-				<FormSettingExplanation isIndented>
-					{ translate(
-						'Your site is visible to everyone, but we ask search engines to not index your site.'
-					) }
-				</FormSettingExplanation>
 
 				{ ! siteIsJetpack && (
-					<div>
-						<FormLabel>
+					<>
+						<FormLabel className="site-settings__visibility-label">
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === parseInt( fields.blog_public, 10 ) }
+								checked={ -1 === currentValue }
 								onChange={ handleRadio }
 								disabled={ isRequestingSettings }
 								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
@@ -341,7 +344,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormSettingExplanation isIndented>
 							{ translate( 'Your site is only visible to you and users you approve.' ) }
 						</FormSettingExplanation>
-					</div>
+					</>
 				) }
 			</FormFieldset>
 		);
