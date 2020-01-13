@@ -146,6 +146,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
 	}
 
+	async hasInvalidBlocks() {
+		return await driverHelper.isElementPresent( this.driver, By.css( '.block-editor-warning' ) );
+	}
+
 	async removeNUXNotice() {
 		const nuxPopupSelector = By.css( '.nux-dot-tip' );
 		const nuxDisableSelector = By.css( '.nux-dot-tip__disable' );
