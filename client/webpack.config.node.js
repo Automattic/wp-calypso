@@ -58,13 +58,8 @@ function getExternals() {
 		} ),
 		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 		'webpack.config',
-		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
-		// and error.
-		'bundler/hot-reloader',
 		// Exclude the devdocs search-index, as it's huge.
-		'devdocs/search-index',
-		// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
-		'bundler/assets',
+		'server/devdocs/search-index',
 	];
 }
 
