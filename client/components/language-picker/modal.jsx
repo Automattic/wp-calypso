@@ -72,6 +72,7 @@ export class LanguagePickerModal extends PureComponent {
 		};
 
 		this.languagesList = React.createRef();
+		this.selectedLanguageItem = React.createRef();
 	}
 
 	componentDidMount() {
@@ -123,6 +124,21 @@ export class LanguagePickerModal extends PureComponent {
 		return languageGroup.name( translate );
 	}
 
+	getLanguageSearchableFields( language ) {
+		// We are getting the fields that will be used for language searching.
+		// For example, German will return:
+		// 1. language autonym (e.g., Deutsch)
+		// 2. language code (de).
+		// 3. localized name (e.g., Tedesco) or
+		// 4. English name (German).
+		return [
+			deburr( language.name ).toLowerCase(),
+			language.langSlug.toLowerCase(),
+			deburr( this.getLocalizedLanguageTitle( language.langSlug ) ).toLowerCase(),
+			this.getEnglishLanguageTitle( language.langSlug ).toLowerCase(),
+		];
+	}
+
 	getFilteredLanguages() {
 		const { languages } = this.props;
 		const { search, filter } = this.state;
@@ -130,18 +146,7 @@ export class LanguagePickerModal extends PureComponent {
 		if ( search ) {
 			const searchString = deburr( search ).toLowerCase();
 			return languages.filter( language => {
-				// Assuming set language is Italian and we're searching for German,
-				// we search against:
-				// 1. language autonym (e.g., Deutsch)
-				// 2. language code (de).
-				// 3. localized name (e.g., Tedesco) or
-				// 4. English name (German).
-				const names = [
-					deburr( language.name ).toLowerCase(),
-					language.langSlug.toLowerCase(),
-					deburr( this.getLocalizedLanguageTitle( language.langSlug ) ).toLowerCase(),
-					this.getEnglishLanguageTitle( language.langSlug ).toLowerCase(),
-				];
+				const names = this.getLanguageSearchableFields( language );
 				return some( names, name => includes( name, searchString ) );
 			} );
 		}
@@ -221,20 +226,26 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		const closeMatch = filteredLanguages.reduce( ( currentCloseMatch, language ) => {
-			const matchIndex = language.langSlug.indexOf( search );
+			const languageNames = this.getLanguageSearchableFields( language );
+			const searchString = deburr( search ).toLowerCase();
+			const matchIndex = languageNames.reduce( ( currentMatchIndex, languageName ) => {
+				const languageNameMatchIndex = languageName.indexOf( searchString );
+				return languageNameMatchIndex > -1
+					? Math.max( currentMatchIndex, languageNameMatchIndex )
+					: currentMatchIndex;
+			}, -1 );
 
 			if ( matchIndex === -1 ) {
 				return currentCloseMatch;
 			}
 
-			if ( ! currentCloseMatch || currentCloseMatch.langSlug.indexOf( search ) > matchIndex ) {
-				return language;
+			if ( ! currentCloseMatch || currentCloseMatch.matchIndex > matchIndex ) {
+				return { language, matchIndex };
 			}
 		}, null );
 
 		if ( closeMatch ) {
-			this.setState( { selectedLanguageSlug: closeMatch.langSlug } );
-			return;
+			this.setState( { selectedLanguageSlug: closeMatch.language.langSlug } );
 		}
 	}
 
@@ -385,6 +396,7 @@ export class LanguagePickerModal extends PureComponent {
 		const titleText = capitalize( this.getLocalizedLanguageTitle( language.langSlug ) );
 		return (
 			<div
+				ref={ isSelected && this.selectedLanguageItem }
 				className="language-picker__modal-item"
 				key={ language.langSlug }
 				onClick={ partial( this.handleLanguageItemClick, language.langSlug ) }
