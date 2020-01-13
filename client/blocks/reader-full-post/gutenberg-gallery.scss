@@ -11,11 +11,15 @@ $white: #fff;
 	}
 }
 
-.wp-block-gallery {
+// From https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/gallery/style.scss
+.wp-block-gallery,
+.blocks-gallery-grid {
 	display: flex;
 	flex-wrap: wrap;
 	list-style-type: none;
 	padding: 0;
+	// Some themes give all <ul> default margin instead of padding.
+	margin: 0;
 
 	.blocks-gallery-image,
 	.blocks-gallery-item {
@@ -149,14 +153,6 @@ $white: #fff;
 	&.alignright {
 		max-width: $content-width / 2;
 		width: 100%;
-	}
-
-	// Keep the display property consistent when alignments are applied
-	// to preserve columns
-	&.alignleft,
-	&.aligncenter,
-	&.alignright {
-		display: flex;
 	}
 
 	// If the gallery is centered, center the content inside as well.

@@ -131,7 +131,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			message: hasLocalizedText(
 				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
 			)
-				? hasLocalizedText(
+				? translate(
 						"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
 				  )
 				: translate( "Contact us to review your site's standing and resolve the dispute." ),
@@ -142,7 +142,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 			message: hasLocalizedText(
 				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 			)
-				? hasLocalizedText(
+				? translate(
 						'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 				  )
 				: translate(

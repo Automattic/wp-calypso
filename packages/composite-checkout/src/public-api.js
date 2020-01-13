@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	CheckoutProvider,
-	useEvents,
-	useMessages,
-	useCheckoutRedirects,
-} from './components/checkout-provider';
+import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import CheckoutStep from './components/checkout-step';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -27,11 +22,13 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
+import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createCreditCardMethod } from './lib/payment-methods/credit-card';
-import { useActiveStep, useIsStepActive } from './lib/active-step';
+import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
+import { useActiveStep, useIsStepActive, useIsStepComplete } from './lib/active-step';
 import CheckoutOrderSummary, {
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
@@ -56,6 +53,8 @@ export {
 	OrderReviewTotal,
 	createApplePayMethod,
 	createCreditCardMethod,
+	createExistingCardMethod,
+	createFullCreditsMethod,
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
@@ -65,11 +64,11 @@ export {
 	renderDisplayValueMarkdown,
 	useActiveStep,
 	useAllPaymentMethods,
-	useCheckoutRedirects,
 	useDispatch,
 	useEvents,
 	useFormStatus,
 	useIsStepActive,
+	useIsStepComplete,
 	useLineItems,
 	useMessages,
 	usePaymentData,

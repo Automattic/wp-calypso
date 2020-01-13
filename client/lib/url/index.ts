@@ -12,4 +12,4 @@ export { default as isHttps } from './is-https';
 export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as format } from './format';
-export { getUrlParts } from './url-parts';
+export { getUrlParts, getUrlFromParts } from './url-parts';

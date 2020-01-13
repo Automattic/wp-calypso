@@ -6,7 +6,7 @@
  *
  *
  * @param {Function} callback A callback function
- * @return {Function} the callback to fire on a keydown event
+ * @returns {Function} the callback to fire on a keydown event
  */
 
 export default function( callback ) {

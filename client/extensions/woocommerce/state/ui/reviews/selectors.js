@@ -10,9 +10,9 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} The current page being viewed. Defaults to 1.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {number} The current page being viewed. Defaults to 1.
  */
 export const getReviewsCurrentPage = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -23,9 +23,9 @@ export const getReviewsCurrentPage = ( state, siteId = getSelectedSiteId( state 
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current product being viewed. Defaults to null.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {string} The current product being viewed. Defaults to null.
  */
 export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -36,9 +36,9 @@ export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current search term being viewed. Defaults to an empty string.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {string} The current search term being viewed. Defaults to an empty string.
  */
 export const getReviewsCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

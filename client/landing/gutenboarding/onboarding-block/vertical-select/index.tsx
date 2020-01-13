@@ -22,6 +22,8 @@ import { __TodoAny__ } from '../../../../types';
  */
 import './style.scss';
 
+type Suggestion = SiteVertical & { category?: string };
+
 const VERTICALS_STORE = Verticals.register();
 
 const VerticalSelect: FunctionComponent< StepProps > = ( {
@@ -39,9 +41,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		NO__( 'Fashion Designer' ),
 		NO__( 'Real Estate Agent' ),
 	];
-
-	const [ inputValue, setInputValue ] = useState( '' );
-	const [ dirty, setDirty ] = useState( false );
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -66,10 +65,11 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
+	const [ inputValue, setInputValue ] = useState( siteVertical?.label ?? '' );
+
+	const normalizedInputValue = inputValue.trim().toLowerCase();
+
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( e.target.value !== inputValue && ! dirty ) {
-			setDirty( true );
-		}
 		setInputValue( e.target.value );
 	};
 
@@ -83,20 +83,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		}
 	};
 
-	const handleSelect = ( vertical: SiteVertical ) => {
-		setSiteVertical( vertical );
-		setDirty( false );
-		onSelect();
-	};
-
-	const handleBlur = () => {
-		if ( dirty ) {
-			resetSiteVertical();
-		}
-		setDirty( false );
-		onSelect();
-	};
-
 	const loadingMessage = [
 		{
 			label: '',
@@ -104,14 +90,42 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		},
 	];
 
-	const suggestions = ! inputValue.length
-		? popular
-				.map( label => ( {
-					...verticals.find( vertical => vertical.label === label ),
-					category: NO__( 'Popular' ),
-				} ) )
-				.filter( x => Object.prototype.hasOwnProperty.call( x, 'label' ) )
-		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
+	let suggestions: Suggestion[];
+
+	if ( ! normalizedInputValue ) {
+		suggestions = verticals
+			.filter( vertical => popular.includes( vertical.label ) )
+			.map( vertical => ( { ...vertical, category: NO__( 'Popular' ) } ) );
+		resetSiteVertical();
+	} else {
+		suggestions = verticals.filter( vertical =>
+			vertical.label.toLowerCase().includes( normalizedInputValue )
+		);
+
+		// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
+		// vertical to the list.
+		if (
+			! suggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
+		) {
+			// User-supplied verticals don't have IDs.
+			suggestions.unshift( { label: inputValue.trim() } );
+		}
+	}
+
+	const handleSelect = ( vertical: SiteVertical ) => {
+		setSiteVertical( vertical );
+		setInputValue( vertical.label );
+		onSelect();
+	};
+
+	const handleBlur = () => {
+		const vertical = suggestions.find( ( { label } ) =>
+			label.toLowerCase().includes( normalizedInputValue )
+		) ?? { label: inputValue.trim() };
+
+		setSiteVertical( vertical );
+		onSelect();
+	};
 
 	const label = NO__( 'My site is about' );
 	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );

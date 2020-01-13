@@ -16,7 +16,7 @@ import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
  *                         if known.
  * @param {string} locale - Two-letter code for the preferred language of the
  *                          user attempting to log in, if known.
- * @return {void}
+ * @returns {void}
  */
 export const saveImmediateLoginInformation = ( success, reason, email, locale ) => ( {
 	type: IMMEDIATE_LOGIN_SAVE_INFO,

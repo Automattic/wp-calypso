@@ -13,7 +13,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 /**
  * Maps automated transfer status value to indication if transfer is active
  *
- * @param {String} status name of current state in automated transfer
+ * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently active? null if unknown
  */
 export const isActive = status => ( status ? status === transferStates.START : null );
@@ -21,8 +21,8 @@ export const isActive = status => ( status ? status === transferStates.START : n
 /**
  * Indicates whether or not an automated transfer is active for a given site
  *
- * @param {Object} state app state
- * @param {Number} siteId site of interest
+ * @param {object} state app state
+ * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is active, or null if not known
  */
 export const isAutomatedTransferActive = compose( isActive, getAutomatedTransferStatus );

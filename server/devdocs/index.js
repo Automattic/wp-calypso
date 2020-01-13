@@ -3,7 +3,6 @@
  */
 
 import express from 'express';
-import fs from 'fs';
 import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
@@ -17,13 +16,10 @@ import 'prismjs/components/prism-scss';
  * Internal dependencies
  */
 import config from 'config';
-import searchIndex from 'devdocs/search-index';
-import componentsUsageStats from 'devdocs/components-usage-stats.json';
+import searchIndex from './search-index';
+import selectors from './selectors';
 
-const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	selectors = require( './selectors' );
+const docsIndex = lunr.Index.load( searchIndex.index );
 
 /**
  * Constants
@@ -46,41 +42,43 @@ marked.setOptions( {
  * Query the index using lunr.
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
+ *
  * @param {object} query The search query for lunr
- * @returns {array} The results from the query
+ * @returns {Array} The results from the query
  */
 function queryDocs( query ) {
 	return docsIndex.search( query ).map( result => {
-		const doc = documents[ result.ref ],
-			snippet = makeSnippet( doc, query );
+		const doc = searchIndex.documents[ result.ref ];
+		const snippet = makeSnippet( doc, query );
 
 		return {
 			path: doc.path,
 			title: doc.title,
-			snippet: snippet,
+			snippet,
 		};
 	} );
 }
 
 /**
  * Return an array of results based on the provided filenames
- * @param {array} filePaths An array of file paths
- * @returns {array} The results from the docs
+ *
+ * @param {Array} filePaths An array of file paths
+ * @returns {Array} The results from the docs
  */
 function listDocs( filePaths ) {
 	return filePaths.map( path => {
-		const doc = find( documents, entry => entry.path === path );
+		const doc = find( searchIndex.documents, { path } );
 
 		if ( doc ) {
 			return {
-				path: path,
+				path,
 				title: doc.title,
 				snippet: defaultSnippet( doc ),
 			};
 		}
 
 		return {
-			path: path,
+			path,
 			title: 'Not found: ' + path,
 			snippet: '',
 		};
@@ -91,6 +89,7 @@ function listDocs( filePaths ) {
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
+ *
  * @param {object} doc The document to extract the snippet from
  * @param {object} query The query to be searched for
  * @returns {string} A snippet from the document
@@ -126,6 +125,7 @@ function makeSnippet( doc, query ) {
 
 /**
  * Escapes a string
+ *
  * @param {lunr.Token} token The string to escape
  * @returns {lunr.Token} An escaped string
  */
@@ -137,34 +137,13 @@ function escapeRegexString( token ) {
 
 /**
  * Generate a standardized snippet
+ *
  * @param {object} doc The document from which to generate the snippet
  * @returns {string} The snippet
  */
 function defaultSnippet( doc ) {
 	const content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
 	return escapeHTML( content ) + '…';
-}
-
-/**
- * Given an object of { module: dependenciesArray }
- * it filters out modules that contain the world "docs/"
- * and that are not components (i.e. they don't start with "components/").
- * It also removes the "components/" prefix from the modules name.
- *
- * @param {object} modulesWithDependences An object of modules - dipendencies pairs
- * @returns {object} A reduced set of modules.
- */
-function reduceComponentsUsageStats( modulesWithDependences ) {
-	return Object.keys( modulesWithDependences )
-		.filter(
-			moduleName =>
-				moduleName.indexOf( 'components/' ) === 0 && moduleName.indexOf( '/docs' ) === -1
-		)
-		.reduce( ( target, moduleName ) => {
-			const name = moduleName.replace( 'components/', '' );
-			target[ name ] = modulesWithDependences[ moduleName ];
-			return target;
-		}, {} );
 }
 
 module.exports = function() {
@@ -211,8 +190,8 @@ module.exports = function() {
 	// return the content of a document in the given format (assumes that the document is in
 	// markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
-		let path = request.query.path;
-		const format = request.query.format || 'html';
+		let { path } = request.query;
+		const { format = 'html' } = request.query;
 
 		if ( ! path ) {
 			response
@@ -221,30 +200,22 @@ module.exports = function() {
 			return;
 		}
 
-		if ( ! /\.md$/.test( path ) ) {
+		if ( ! path.endsWith( '.md' ) ) {
 			path = fspath.join( path, 'README.md' );
 		}
 
-		try {
-			path = fs.realpathSync( fspath.join( root, path ) );
-		} catch ( err ) {
-			path = null;
-		}
+		// Remove the optional leading `/` to make the path relative, i.e., convert `/client/README.md`
+		// to `client/README.md`. The `path` query arg can use both forms.
+		path = path.replace( /^\//, '' );
 
-		if ( ! path || path.substring( 0, root.length + 1 ) !== root + fspath.sep ) {
+		const doc = find( searchIndex.documents, { path } );
+
+		if ( ! doc ) {
 			response.status( 404 ).send( 'File does not exist' );
 			return;
 		}
 
-		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
-
-		response.send( 'html' === format ? marked( fileContents ) : fileContents );
-	} );
-
-	// return json for the components usage stats
-	app.get( '/devdocs/service/components-usage-stats', ( request, response ) => {
-		const usageStats = reduceComponentsUsageStats( componentsUsageStats );
-		response.json( usageStats );
+		response.send( 'html' === format ? marked( doc.content ) : doc.content );
 	} );
 
 	// In environments where enabled, prime the selectors search cache whenever

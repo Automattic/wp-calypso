@@ -23,7 +23,7 @@ import 'state/data-layer/wpcom/sites/automated-transfer/status';
  *
  * @param {number} siteId The id of the site to transfer
  * @param {File} pluginZip The plugin to upload and install on transferred site
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
 	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
@@ -35,7 +35,7 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * Query the automated transfer status of a given site.
  *
  * @param {number} siteId The id of the site to query.
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const fetchAutomatedTransferStatus = siteId => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
@@ -54,7 +54,7 @@ export const fetchAutomatedTransferStatus = siteId => ( {
  * @param {number} siteId The site id to which the status belongs
  * @param {string} status The new status of the automated transfer
  * @param {string} uploadedPluginId Id of any uploaded plugin
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_SET,
@@ -68,7 +68,7 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * endpoint returns 404).
  *
  * @param {number} siteId The site id to which the status belongs
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const automatedTransferStatusFetchingFailure = siteId => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -79,7 +79,7 @@ export const automatedTransferStatusFetchingFailure = siteId => ( {
  * Indicates that we need the eligibility information for a given site
  *
  * @param {number} siteId site for requested information
- * @returns {Object} Redux action
+ * @returns {object} Redux action
  */
 export const requestEligibility = siteId => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
@@ -92,8 +92,8 @@ export const requestEligibility = siteId => ( {
  * @see state/automated-transfer/eligibility/reducer
  *
  * @param {number} siteId Site to which the information belongs
- * @param {Object} data eligibility information to be merged into existing state
- * @returns {Object} Redux action
+ * @param {object} data eligibility information to be merged into existing state
+ * @returns {object} Redux action
  */
 export const updateEligibility = (
 	siteId,

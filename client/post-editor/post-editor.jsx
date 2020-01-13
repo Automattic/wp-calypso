@@ -998,8 +998,8 @@ export class PostEditor extends React.Component {
 	 *
 	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
 	 *
-	 * @param {Object} editor The editor where we must find the selection
-	 * @returns {null | Object} The selection range position in the editor
+	 * @param {object} editor The editor where we must find the selection
+	 * @returns {null | object} The selection range position in the editor
 	 */
 	findBookmarkedPosition = editor => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.

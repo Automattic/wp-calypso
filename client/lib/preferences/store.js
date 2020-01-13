@@ -47,7 +47,7 @@ function receiveMany( preferences ) {
 /**
  * Returns an object of all key-value pairs in the store
  *
- * @return {Object} All key-value pairs in the store
+ * @returns {object} All key-value pairs in the store
  */
 PreferencesStore.getAll = function() {
 	return PreferencesStore._preferences;
@@ -57,7 +57,7 @@ PreferencesStore.getAll = function() {
  * Returns the value of a single item from the store
  *
  * @param  {string} key The key of the item
- * @return {*}          The value of the item
+ * @returns {*}          The value of the item
  */
 PreferencesStore.get = function( key ) {
 	if ( PreferencesStore._preferences ) {

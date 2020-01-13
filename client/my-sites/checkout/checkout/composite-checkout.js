@@ -1,12 +1,15 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useMemo } from 'react';
+import page from 'page';
+import wp from 'lib/wp';
+import React, { useMemo, useEffect, useCallback } from 'react';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { CheckoutProvider } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import { WPCheckout, useWpcomStore, useShoppingCart } from '@automattic/composite-checkout-wpcom';
+import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -20,38 +23,80 @@ import {
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
+import { createPaymentMethods, useStoredCards } from './composite-checkout-payment-methods';
+import notices from 'notices';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-// These are used only for redirect payment methods
-// TODO: determine what these should be
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
+const registry = createRegistry();
+const { select } = registry;
 
-export function CompositeCheckout( {
+const wpcom = wp.undocumented();
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
+const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
+const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
+const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
+
+export default function CompositeCheckout( {
 	siteSlug,
-	planSlug,
-	isJetpackNotAtomic,
-	setCart,
-	getCart,
-	availablePaymentMethods,
-	registry,
 	siteId,
-	onPaymentComplete,
-	showErrorMessage,
-	showInfoMessage,
-	showSuccessMessage,
+	product,
+	getCart,
+	setCart,
+	getStoredCards,
+	allowedPaymentMethods,
+	// TODO: handle these also
+	// purchaseId,
+	// couponCode,
 } ) {
+	const translate = useTranslate();
+	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
+	const isJetpackNotAtomic = useSelector(
+		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
+	const onPaymentComplete = useCallback( () => {
+		debug( 'payment completed successfully' );
+		// TODO: determine which thank-you page to visit
+		page.redirect( `/checkout/thank-you/${ siteId }/` );
+	}, [ siteId ] );
+
+	const showErrorMessage = useCallback(
+		error => {
+			debug( 'error', error );
+			const message = error && error.toString ? error.toString() : error;
+			notices.error( message || translate( 'An error occurred during your purchase.' ) );
+		},
+		[ translate ]
+	);
+
+	const showInfoMessage = useCallback( message => {
+		debug( 'info', message );
+		notices.info( message );
+	}, [] );
+
+	const showSuccessMessage = useCallback( message => {
+		debug( 'success', message );
+		notices.success( message );
+	}, [] );
+
 	const {
 		items,
 		tax,
 		total,
+		credits,
 		removeItem,
 		addItem,
 		changePlanLength,
 		errors,
 		isLoading,
-	} = useShoppingCart( siteSlug, setCart, getCart );
+	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
+
 	const { registerStore } = registry;
 	useWpcomStore( registerStore, handleCheckoutEvent );
 
@@ -63,6 +108,35 @@ export function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
+	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+		getStoredCards || wpcomGetStoredCards
+	);
+
+	const paymentMethods = useMemo(
+		() =>
+			createPaymentMethods( {
+				isLoading: isLoading || isLoadingStoredCards,
+				storedCards,
+				allowedPaymentMethods,
+				select,
+				registerStore,
+				wpcom,
+				credits,
+				total,
+				translate,
+			} ),
+		[
+			allowedPaymentMethods,
+			isLoading,
+			isLoadingStoredCards,
+			storedCards,
+			credits,
+			registerStore,
+			total,
+			translate,
+		]
+	);
+
 	return (
 		<CheckoutProvider
 			locale={ 'en-us' }
@@ -73,11 +147,9 @@ export function CompositeCheckout( {
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
 			onEvent={ handleCheckoutEvent }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ availablePaymentMethods }
+			paymentMethods={ paymentMethods }
 			registry={ registry }
-			isLoading={ isLoading }
+			isLoading={ isLoading || isLoadingStoredCards }
 		>
 			<WPCheckout
 				removeItem={ removeItem }
@@ -89,18 +161,13 @@ export function CompositeCheckout( {
 }
 
 CompositeCheckout.propTypes = {
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	registry: PropTypes.object.isRequired,
 	siteSlug: PropTypes.string,
-	setCart: PropTypes.func.isRequired,
-	getCart: PropTypes.func.isRequired,
-	onPaymentComplete: PropTypes.func.isRequired,
-	showErrorMessage: PropTypes.func.isRequired,
-	showInfoMessage: PropTypes.func.isRequired,
-	showSuccessMessage: PropTypes.func.isRequired,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-	planSlug: PropTypes.string,
-	isJetpackNotAtomic: PropTypes.bool,
+	product: PropTypes.string,
+	getCart: PropTypes.func,
+	setCart: PropTypes.func,
+	getStoredCards: PropTypes.func,
+	allowedPaymentMethods: PropTypes.array,
 };
 
 function useAddProductToCart( planSlug, isJetpackNotAtomic, addItem ) {

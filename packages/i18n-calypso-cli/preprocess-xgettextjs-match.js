@@ -9,7 +9,7 @@
  *  - wraps quotes and backslashes for php consumption
  *
  * @param  {object} match - parser matching object
- * @return {object} data object combining the strings and options passed into translate();
+ * @returns {object} data object combining the strings and options passed into translate();
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
 	const finalProps = { line: match.line };
@@ -77,7 +77,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
  * Long translation strings can be broken into multiple strings concatenated with the + operator.
  * This function concatenates the substrings into a single string.
  * @param  {object} ASTNode - the BinaryExpression object returned from the AST parser
- * @return {string}          - the concatenated string
+ * @returns {string}          - the concatenated string
  */
 function concatenateBinaryExpression( ASTNode ) {
 	if ( ASTNode.operator !== '+' ) {
@@ -101,7 +101,7 @@ function concatenateBinaryExpression( ASTNode ) {
  * version of that string
  *
  * @param  {string} literal - origin literal (string with quotes)
- * @return {string}         - double quote representation of the string
+ * @returns {string}         - double quote representation of the string
  */
 function makeDoubleQuoted( literal ) {
 	if ( ! literal || literal.length < 2 ) {
@@ -144,7 +144,7 @@ function makeDoubleQuoted( literal ) {
  * Takes a string argument and turns it into a valid string representation for most languages/format (with double quotes)
  * Anything else than a string is left unchanged
  * @param  {string} input  - origin string or other type of input
- * @return {string}        - universal representation of string or input unchanged
+ * @returns {string}        - universal representation of string or input unchanged
  */
 function encapsulateString( input ) {
 	if ( 'string' !== typeof input ) return input;

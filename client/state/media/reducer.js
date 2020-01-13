@@ -96,9 +96,9 @@ export const queryRequests = withoutPersistence( ( state = {}, action ) => {
  * dispatched. The state reflects a mapping of site ID, post ID pairing to a
  * boolean reflecting whether a request for the post is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const mediaItemRequests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

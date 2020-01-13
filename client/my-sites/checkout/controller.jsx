@@ -22,7 +22,7 @@ import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import config from 'config';
-import CompositeCheckoutContainer from './checkout/composite-checkout-container';
+import CompositeCheckout from './checkout/composite-checkout';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -55,7 +55,7 @@ export function checkout( context, next ) {
 
 	if ( config.isEnabled( 'composite-checkout-wpcom' ) ) {
 		context.primary = (
-			<CompositeCheckoutContainer
+			<CompositeCheckout
 				siteSlug={ selectedSite.slug }
 				siteId={ selectedSite.ID }
 				product={ product }

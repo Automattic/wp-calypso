@@ -59,7 +59,7 @@ import { SerializationResult } from 'state/serialization-result';
  *
  * @param {string} keyPath lodash-style path to the key in action referencing item in state map
  * @param {Function} reducer applied to referenced item in state map
- * @return {Function} super-reducer applying reducer over map of keyed items
+ * @returns {Function} super-reducer applying reducer over map of keyed items
  */
 export const keyedReducer = ( keyPath, reducer ) => {
 	// some keys are invalid

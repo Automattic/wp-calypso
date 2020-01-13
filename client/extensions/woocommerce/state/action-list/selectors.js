@@ -7,8 +7,8 @@ import { get } from 'lodash';
 /**
  * Get the current step in the action list.
  *
- * @param {Object} rootState The root Calypso state.
- * @return {Array|null} The action list, or null if no action list is present.
+ * @param {object} rootState The root Calypso state.
+ * @returns {Array|null} The action list, or null if no action list is present.
  */
 export function getActionList( rootState ) {
 	const woocommerce = rootState.extensions.woocommerce;
@@ -20,8 +20,8 @@ export function getActionList( rootState ) {
  *
  * This selector returns the 1-indexed number of the step that is currently executing in the action list.
  *
- * @param {Object} actionList The action list to check.
- * @return {Number|null} The index of the current step, or actionList.length if all steps are complete,
+ * @param {object} actionList The action list to check.
+ * @returns {number|null} The index of the current step, or actionList.length if all steps are complete,
  */
 export function getCurrentStepIndex( actionList ) {
 	const { prevSteps, currentStep } = actionList;
@@ -32,8 +32,8 @@ export function getCurrentStepIndex( actionList ) {
 /**
  * Gets the number of steps in total in the action list.
  *
- * @param {Object} actionList The action list to check.
- * @return {Number} The count of steps in total.
+ * @param {object} actionList The action list to check.
+ * @returns {number} The count of steps in total.
  */
 export function getTotalStepCount( actionList ) {
 	const { prevSteps, currentStep, nextSteps } = actionList;
@@ -48,8 +48,8 @@ export function getTotalStepCount( actionList ) {
 /**
  * Gets the number of steps in the action list that have not been completed.
  *
- * @param {Object} actionList The action list to check.
- * @return {Number} The number of steps remaining.
+ * @param {object} actionList The action list to check.
+ * @returns {number} The number of steps remaining.
  */
 export function getStepCountRemaining( actionList ) {
 	const { currentStep, nextSteps } = actionList;

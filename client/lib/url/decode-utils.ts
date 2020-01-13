@@ -25,7 +25,7 @@ function decodeIfValid(
  * Wrap decodeURI in a try / catch block to prevent `URIError` on invalid input
  * Passing a non-string value will return an empty string.
  * @param  encodedURI URI to attempt to decode
- * @return            Decoded URI (or passed in value on error)
+ * @returns            Decoded URI (or passed in value on error)
  */
 export function decodeURIIfValid( encodedURI: Stringable | Falsy ): string {
 	return decodeIfValid( encodedURI, decodeURI );
@@ -35,7 +35,7 @@ export function decodeURIIfValid( encodedURI: Stringable | Falsy ): string {
  * Wrap decodeURIComponent in a try / catch block to prevent `URIError` on invalid input
  * Passing a non-string value will return an empty string.
  * @param  encodedURIComponent URI component to attempt to decode
- * @return                     Decoded URI component (or passed in value on error)
+ * @returns                     Decoded URI component (or passed in value on error)
  */
 export function decodeURIComponentIfValid( encodedURIComponent: Stringable | Falsy ): string {
 	return decodeIfValid( encodedURIComponent, decodeURIComponent );

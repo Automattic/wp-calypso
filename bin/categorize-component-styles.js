@@ -24,8 +24,8 @@ function hasImports( f ) {
 
 /**
  *
- * @param {String} f
- * @param {String} name
+ * @param {string} f
+ * @param {string} name
  */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;

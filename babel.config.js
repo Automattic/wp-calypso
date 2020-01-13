@@ -10,12 +10,6 @@ const codeSplit = config.isEnabled( 'code-splitting' );
 const babelConfig = {
 	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
-	overrides: [
-		{
-			test: './apps/full-site-editing',
-			presets: [ require.resolve( '@automattic/calypso-build/babel/wordpress-element' ) ],
-		},
-	],
 	env: {
 		production: {
 			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],

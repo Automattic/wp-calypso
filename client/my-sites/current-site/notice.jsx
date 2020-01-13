@@ -25,13 +25,7 @@ import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
-import {
-	isStarted as isJetpackPluginsStarted,
-	isFinished as isJetpackPluginsFinished,
-} from 'state/plugins/premium/selectors';
-import CartData from 'components/data/cart';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PendingPaymentNotice from './pending-payment-notice';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import QueryProductsList from 'components/data/query-products-list';
@@ -234,44 +228,6 @@ export class SiteNotice extends React.Component {
 		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
 
-	jetpackPluginsSetupNotice() {
-		if (
-			! this.props.pausedJetpackPluginsSetup ||
-			this.props.site.plan.product_slug === 'jetpack_free'
-		) {
-			return null;
-		}
-
-		const { translate } = this.props;
-
-		return (
-			<Notice
-				icon="plugins"
-				isCompact
-				status="is-info"
-				text={ translate( 'Your %(plan)s plan needs setting up!', {
-					args: { plan: this.props.site.plan.product_name_short },
-				} ) }
-			>
-				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` }>
-					{ translate( 'Finish' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
-	pendingPaymentNotice() {
-		if ( ! config.isEnabled( 'async-payments' ) ) {
-			return null;
-		}
-
-		return (
-			<CartData>
-				<PendingPaymentNotice />
-			</CartData>
-		);
-	}
-
 	render() {
 		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
@@ -281,7 +237,6 @@ export class SiteNotice extends React.Component {
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
-		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
 
 		return (
 			<div className="current-site__notices">
@@ -297,15 +252,8 @@ export class SiteNotice extends React.Component {
 					) ) }
 				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
-				{ this.pendingPaymentNotice() }
 				{ ! hasJITM && domainCreditNotice }
-				{ jetpackPluginsSetupNotice }
-				{ ! (
-					hasJITM ||
-					discountOrFreeToPaid ||
-					domainCreditNotice ||
-					jetpackPluginsSetupNotice
-				) && this.domainUpsellNudge() }
+				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
 			</div>
 		);
 	}
@@ -323,8 +271,6 @@ export default connect(
 			activeDiscount: getActiveDiscount( state ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-			pausedJetpackPluginsSetup:
-				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
 			productsList: getProductsList( state ),
 			domains: getDomainsBySiteId( state, siteId ),
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),

@@ -6,7 +6,7 @@ import tracksRecordEvent from './track-record-event';
 /**
  * Return the event definition object to track `wpcom_block_editor_close_click`.
  *
- * @return {{handler: function, selector: string, type: string}} event object definition.
+ * @returns {{handler: function, selector: string, type: string}} event object definition.
  */
 export default () => ( {
 	selector: '.edit-post-fullscreen-mode-close__toolbar',

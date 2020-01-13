@@ -2,8 +2,8 @@
  * Returns a user object by user ID.
  *
  *
- * @param {Number} userId User ID
- * @return {Object}        User object
+ * @param {number} userId User ID
+ * @returns {object}        User object
  */
 
 export function getUser( state, userId ) {

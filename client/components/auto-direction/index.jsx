@@ -24,14 +24,14 @@ const SPACE_CHARACTERS = {
 
 /***
  * Checks whether a character is a space character
- * @param {String} character character to examine
+ * @param {string} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
 
 /***
  * Get index of the first character that is not within a tag
- * @param {String} text text to examine
+ * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
 const getTaglessIndex = text => {
@@ -204,7 +204,7 @@ const setChildDirection = ( child, isRtl ) => {
 
 /***
  * Auto direction component that will set direction to child components according to their text content
- * @param {Object.children} props react element props that must contain some children
+ * @param {object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
 export default function AutoDirection( { children } ) {

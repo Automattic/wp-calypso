@@ -34,7 +34,7 @@ Emitter( ProductsList.prototype );
 /**
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
- * @return {array} The array of products
+ * @returns {Array} The array of products
  * @api public
  */
 ProductsList.prototype.get = function() {
@@ -108,7 +108,7 @@ ProductsList.prototype.fetch = function() {
 
 /**
  * Initializes data with a list of products.
- * @param {Object} productsList The list of products
+ * @param {object} productsList The list of products
  **/
 ProductsList.prototype.initialize = function( productsList ) {
 	this.data = productsList;
@@ -118,7 +118,7 @@ ProductsList.prototype.initialize = function( productsList ) {
 /**
  * Determines whether the data has initially loaded from the server.
  *
- * @return {boolean} Has it loaded
+ * @returns {boolean} Has it loaded
  */
 ProductsList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;

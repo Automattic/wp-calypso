@@ -35,10 +35,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return page;
 	}
 
-	async _postInit() {
-		await this.removeNUXNotice();
-	}
-
 	async _preInit() {
 		if ( this.editorType !== 'iframe' ) {
 			return;
@@ -50,6 +46,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			'Could not locate the editor iFrame.'
 		);
 		await this.driver.sleep( 2000 );
+	}
+
+	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
+		if ( dismissPageTemplateSelector ) {
+			this.dismissPageTemplateSelector();
+		}
+		this.dismissEditorWelcomeModal();
+		this.closeSidebar();
 	}
 
 	async publish( { visit = false } = {} ) {
@@ -94,12 +98,28 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
 	}
 
+	async getTitle() {
+		return await this.driver
+			.findElement( By.css( '.editor-post-title__input' ) )
+			.getAttribute( 'value' );
+	}
+
 	async enterText( text ) {
-		const appenderSelector = By.css( '.editor-default-block-appender' );
+		const appenderSelector = By.css( '.block-editor-default-block-appender' );
 		const textSelector = By.css( '.wp-block-paragraph' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
 		return await this.driver.findElement( textSelector ).sendKeys( text );
+	}
+
+	async getContent() {
+		return await this.driver.findElement( By.css( '.block-editor-block-list__layout' ) ).getText();
+	}
+
+	async replaceTextOnLastParagraph( text ) {
+		const paragraph = By.css( '.wp-block-paragraph' );
+		await driverHelper.clearTextArea( this.driver, paragraph );
+		return await this.driver.findElement( paragraph ).sendKeys( text );
 	}
 
 	async insertShortcode( shortcode ) {
@@ -130,25 +150,42 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
 	}
 
-	async removeNUXNotice() {
-		const nuxPopupSelector = By.css( '.nux-dot-tip' );
-		const nuxDisableSelector = By.css( '.nux-dot-tip__disable' );
+	async hasInvalidBlocks() {
+		return await driverHelper.isElementPresent( this.driver, By.css( '.block-editor-warning' ) );
+	}
 
-		if ( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) {
-			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
-			try {
-				await driverHelper.waitTillNotPresent(
-					this.driver,
-					nuxPopupSelector,
-					this.explicitWaitMS / 2
-				);
-			} catch {
-				if ( driverManager.currentScreenSize() === 'mobile' ) {
-					await this.closeSidebar();
-				}
-				await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
-			}
+	async openBlockInserterAndSearch( searchTerm ) {
+		await driverHelper.scrollIntoView(
+			this.driver,
+			By.css( '.block-editor-writing-flow' ),
+			'start'
+		);
+		const inserterToggleSelector = By.css( '.edit-post-header .block-editor-inserter__toggle' );
+		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
+		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search' );
+		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
+			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		}
+		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, searchTerm );
+	}
+
+	async isBlockCategoryPresent( name ) {
+		const categorySelector = '.block-editor-inserter__results .components-panel__body-title';
+		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
+		return categoryName === name;
+	}
+
+	async closeBlockInserter() {
+		const inserterCloseSelector = By.css(
+			driverManager.currentScreenSize() === 'mobile'
+				? '.block-editor-inserter__popover .components-popover__close'
+				: '.edit-post-header .block-editor-inserter__toggle'
+		);
+		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
+		await driverHelper.clickWhenClickable( this.driver, inserterCloseSelector );
+		await driverHelper.waitTillNotPresent( this.driver, inserterMenuSelector );
 	}
 
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
@@ -181,11 +218,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				blockClass = 'dynamic-separator';
 				break;
 		}
-		const inserterToggleSelector = By.css( '.edit-post-header .editor-inserter__toggle' );
-		const inserterMenuSelector = By.css( '.editor-inserter__menu' );
-		const inserterSearchInputSelector = By.css( 'input.editor-inserter__search' );
+
 		const inserterBlockItemSelector = By.css(
-			`li.editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass
+			`li.block-editor-block-types-list__list-item button.editor-block-list-item-${ prefix }${ blockClass
 				.replace( /\s+/g, '-' )
 				.toLowerCase() }`
 		);
@@ -193,11 +228,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			`.block-editor-block-list__block.is-selected[aria-label*='Block: ${ name }']`
 		);
 
-		await driverHelper.scrollIntoView( this.driver, By.css( '.editor-writing-flow' ), 'start' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
-		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, name );
+		await this.openBlockInserterAndSearch( name );
 		// Using a JS click here since the Webdriver click wasn't working
 		const button = await this.driver.findElement( inserterBlockItemSelector );
 		await this.driver
@@ -268,7 +299,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closePublishedPanel() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header button.components-button.components-icon-button' )
+			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
 	}
 
@@ -376,7 +407,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.template-selector-item__template-title' ),
 					'Blank'
 				);
-				await this.closeSidebar();
 			} else {
 				await driverHelper.clickWhenClickable(
 					this.driver,

@@ -647,10 +647,10 @@ const analytics = {
 		/**
 		 * Fires a generic Google Analytics event
 		 *
-		 * {String} category Is the string that will appear as the event category.
-		 * {String} action Is the string that will appear as the event action in Google Analytics Event reports.
-		 * {String} label Is the string that will appear as the event label.
-		 * {String} value Is a non-negative integer that will appear as the event value.
+		 * {string} category Is the string that will appear as the event category.
+		 * {string} action Is the string that will appear as the event action in Google Analytics Event reports.
+		 * {string} label Is the string that will appear as the event label.
+		 * {string} value Is a non-negative integer that will appear as the event value.
 		 */
 		recordEvent: makeGoogleAnalyticsTrackingFunction( function recordEvent(
 			category,

@@ -49,7 +49,7 @@ function wpview( editor ) {
 	/**
 	 * Replaces all marker nodes tied to this view instance.
 	 *
-	 * @return {boolean} True if the replacement succeeded; false if it failed.
+	 * @returns {boolean} True if the replacement succeeded; false if it failed.
 	 */
 	function replaceMarkers() {
 		const markers = $( '.wpview-marker' );
@@ -130,7 +130,7 @@ function wpview( editor ) {
 	 * @param {object} node The node to search.
 	 * @param {string} className The class name to search for.
 	 *
-	 * @return {object|boolean} A node on success; false on failure.
+	 * @returns {object|boolean} A node on success; false on failure.
 	 */
 	function getParent( node, className ) {
 		while ( node && node.parentNode ) {

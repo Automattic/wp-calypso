@@ -84,6 +84,16 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	// No new connections allowed due to Eventbrite shutting down an endpoint needed
+	// for our integration. See: https://groups.google.com/forum/#!topic/eventbrite-api/FT2MsDswdrA
+	if ( 'eventbrite' === service.ID && status === 'not-connected' ) {
+		return (
+			<Button compact disabled={ true }>
+				{ label }
+			</Button>
+		);
+	}
+
 	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
 		return (
 			<div>

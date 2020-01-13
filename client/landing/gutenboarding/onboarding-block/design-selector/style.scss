@@ -2,6 +2,8 @@
 
 $design-selector-transition-timing: 250ms;
 
+$design-selector-grid-gap: 4.5em;
+
 $design-selector-max-width: 1100px;
 $design-selector-header-height: 60px;
 // We'll use this height to move the heading up out of the viewport.
@@ -43,13 +45,6 @@ $deisgn-selector-selection-space: 175px;
 	text-align: center;
 }
 
-@media ( prefers-color-scheme: dark ) {
-	.design-selector__subtitle,
-	.design-selector__title {
-		color: $white;
-	}
-}
-
 .design-selector__grid-container {
 	position: absolute;
 	margin-top: 1em;
@@ -64,10 +59,11 @@ $deisgn-selector-selection-space: 175px;
 		}
 	}
 }
+
 .design-selector__grid {
 	@include design-selector-transition();
 	display: grid;
-	grid-gap: 4.5em;
+	grid-gap: $design-selector-grid-gap;
 
 	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr;
@@ -76,33 +72,42 @@ $deisgn-selector-selection-space: 175px;
 	@include design-selector-show();
 }
 
-.page-layout-selector__container {
+.design-selector__page-layout-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.design-selector__page-layout-container {
 	position: absolute;
 	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
+	width: 100%;
+	background: $white;
+	box-shadow: $dark-gray-300 0 0 12px;
+	padding: 2em 4em;
+
+	@include design-selector-transition();
+	transition-timing-function: ease-out;
 
 	&,
 	&.enter,
-	&.exit-active.exit-active, // duplicate selector to override `.exit` below
+	&.exit-active.exit-active , // duplicate selector to override `.exit` below
 	&.exit-done {
-		.page-layout-selector {
-			@include design-selector-hide();
-		}
+		@include design-selector-hide();
 	}
 
 	&.exit,
 	&.enter-active,
 	&.enter-done {
-		.page-layout-selector {
-			@include design-selector-show();
-			transform: translate3d( 0, 0, 0 );
-		}
+		@include design-selector-show();
 	}
 }
+
 .page-layout-selector {
-	@include design-selector-transition();
-	background: $white;
-	box-shadow: gray 0 0 12px; // use a sass variable
-	padding: 2em 4em;
+	max-width: $design-selector-max-width;
+	margin: 0 auto;
 }
 
 .design-selector__header-container {
@@ -117,7 +122,7 @@ $deisgn-selector-selection-space: 175px;
 
 .page-layout-selector__grid {
 	display: grid;
-	grid-gap: 0.75em;
+	grid-gap: 1.25em;
 	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
@@ -129,12 +134,30 @@ $deisgn-selector-selection-space: 175px;
 	padding: 2px;
 
 	&.is-selected {
-		border: 3px solid $blue-medium-focus;
-		padding: 0;
 		.page-layout-selector__selected-indicator {
 			top: -2px;
 			right: -2px;
 			transform: translate3d( 0, 0, 0 );
+		}
+	}
+
+	&.is-selected,
+	&:hover,
+	&:focus {
+		padding: 0;
+		border: 3px solid $blue-medium-focus;
+	}
+
+	&:hover,
+	&:focus {
+		border-color: var( --color-neutral-dark );
+		.page-layout-selector__selected-indicator {
+			background: linear-gradient(
+				to bottom left,
+				var( --color-neutral-dark ),
+				var( --color-neutral-dark ) 50%,
+				transparent 51% /* 1% difference helps prevent a rough edge */
+			);
 		}
 	}
 }
@@ -165,4 +188,74 @@ $deisgn-selector-selection-space: 175px;
 .design-selector__design-option {
 	transform: translate3d( 0, 0, 0 );
 	@include design-selector-transition();
+
+	.design-selector__option-overlay {
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: 400ms;
+
+		.design-selector__option-overlay-text {
+			font-size: 24px;
+			color: $white;
+			border-bottom: 2px solid $white;
+		}
+	}
+
+	&:hover,
+	&:focus {
+		.design-selector__option-overlay {
+			opacity: 1;
+		}
+	}
+}
+
+// Adjust to display full with accounting for padding/borders
+.page-layout-selector__card-footer,
+.page-layout-selector__card-media {
+	display: block;
+	margin-left: -2px;
+	margin-right: -2px;
+}
+
+.design-selector__description-container {
+	@include design-selector-transition();
+	position: fixed;
+	@include design-selector-hide;
+
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	width: calc( 50% - #{$design-selector-grid-gap} );
+	padding-top: 23px;
+
+	@include breakpoint( '>660px' ) {
+		&.on-right-side {
+			right: 0;
+		}
+	}
+
+	&.enter-active,
+	&.enter-done {
+		@include design-selector-show;
+	}
+}
+
+.design-selector__description-title {
+	color: $dark-gray-800;
+	font-size: 2em;
+	font-weight: bold;
+	margin-bottom: 0.8em;
+}
+.design-selector__description-description {
+	color: $dark-gray-800;
+	font-size: 1.3em;
+	line-height: 1.3;
 }

@@ -88,22 +88,13 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	showPlanUpsellConcierge: {
-		datestamp: '20191106',
-		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
 			variantShowUpdates: 90,
 			control: 10,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
 	domainStepMoveParagraph: {
@@ -126,18 +117,8 @@ export default {
 		localeTargets: 'any',
 		localeExceptions: [ 'en' ],
 	},
-	domainSuggestionsWithHints: {
-		datestamp: '20191220',
-		variations: {
-			variation2_front: 0,
-			variation3_front: 50,
-			variation4_front: 25,
-			variation5_front: 25,
-		},
-		defaultVariation: 'variation2_front',
-	},
 	showBusinessPlanPopular: {
-		datestamp: '20191220',
+		datestamp: '20200109',
 		variations: {
 			variantShowBizPopular: 50,
 			control: 50,
@@ -146,5 +127,24 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 		localeExceptions: [ 'en' ],
+	},
+	readerFreeToPaidPlanNudge: {
+		datestamp: '20200102',
+		variations: {
+			display: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+	},
+	showPlanBumpVsGsuite: {
+		datestamp: '20200107',
+		variations: {
+			variantShowPlanBumpOffer: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

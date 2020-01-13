@@ -48,7 +48,7 @@ function bumpStat( group, name ) {
  *
  * @param {string} view - JSX template to render (basename)
  * @param {object} props - Properties which got passed to the JSX template
- * @return {string} Rendered markup
+ * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
 	const requireComponent = require.context( '../../client/document', true, /\.jsx$/ );
@@ -75,7 +75,7 @@ export function renderJsx( view, props ) {
  * @param {object} element - React element to be rendered to html
  * @param {string} key - (optional) custom key
  * @param {object} req - Request object
- * @return {string} The rendered Layout
+ * @returns {string} The rendered Layout
  */
 export function render( element, key = JSON.stringify( element ), req ) {
 	try {
@@ -217,7 +217,7 @@ export function serverRender( req, res ) {
  * applied before truly SSRing (@see isServerSideRenderCompatible)
  *
  * @param {object}   context  The entire request context
- * @param {function} next     As all middlewares, will call next in the sequence
+ * @param {Function} next     As all middlewares, will call next in the sequence
  */
 export function setShouldServerSideRender( context, next ) {
 	context.serverSideRender = Object.keys( context.query ).length === 0; // no SSR when we have query args
@@ -242,7 +242,7 @@ export function setShouldServerSideRender( context, next ) {
  *
  * @param {object}   context The currently built context
  *
- * @return {boolean} True if all the app-level criteria are fulfilled.
+ * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
@@ -259,7 +259,7 @@ function isServerSideRenderCompatible( context ) {
  * Warning: the context needs to be 'ready' for these checks (needs to have all values)
  *
  * @param {object}   context The currently built context
- * @return {boolean} if the current page/request should return a SSR response
+ * @returns {boolean} if the current page/request should return a SSR response
  */
 export function shouldServerSideRender( context ) {
 	return Boolean(

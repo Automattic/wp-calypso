@@ -56,6 +56,22 @@ The block editor integration provides features for the following combination of 
     <td>✅</td>
   </tr>
   <tr>
+      <td rowspan="2">
+        <a href="./src/wpcom/features/deprecate-coblocks-buttons.js"><code>deprecate-coblocks-buttons</code></a>:
+        Prevents the CoBlocks Buttons block from being insertable.
+      </td>
+      <td>WP Admin</td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td>Calypso</td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>❌</td>
+    </tr>
+  <tr>
     <td rowspan="2">
       <a href="./src/wpcom/features/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
       Performs block attempt block recovery on editor load if validation errors are detected.

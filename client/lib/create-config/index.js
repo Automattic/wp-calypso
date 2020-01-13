@@ -19,7 +19,7 @@
  *
  * @see server/config/parser.js
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
- * @param {String} key name of the property defined in the config files
+ * @param {string} key name of the property defined in the config files
  * @returns {*} value of property named by the key
  */
 
@@ -58,9 +58,9 @@ const config = data => key => {
 /**
  * Checks whether a specific feature is enabled.
  *
- * @param {String} feature Feature name
- * @param {Object} data the json environment configuration to use for getting config values
- * @return {Boolean} True when feature is enabled.
+ * @param {string} feature Feature name
+ * @param {object} data the json environment configuration to use for getting config values
+ * @returns {boolean} True when feature is enabled.
  * @api public
  */
 const isEnabled = data => feature => ( data.features && !! data.features[ feature ] ) || false;

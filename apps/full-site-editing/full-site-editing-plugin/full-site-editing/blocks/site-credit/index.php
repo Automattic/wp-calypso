@@ -113,14 +113,14 @@ function footercredit_rel_nofollow_link( $link ) {
  * Most settings will still work
  *
  * @typedef CreditOption
- * @type {Object}
+ * @type {object}
  * @property {string} label         The text to show the user as an option.
  * @property {string} value         The shorthand value to identify the option.
  * @property {string} [renderType]  The type of render to use. Defaults to 'text',
  *                                  which renders the label inside a <span/>. You
  *                                  can also use 'icon' to render an icon from
  *                                  @wordpress/components.
- * @property {Object} [renderProps] The props to pass into the renderer. For example,
+ * @property {object} [renderProps] The props to pass into the renderer. For example,
  *                                  for an icon, you could specify { icon: 'WordPress', color: 'gray' }
  *                                  which get passed into <Icon /> as props in order to
  *                                  render a gray WordPress icon. You can also specify

@@ -42,6 +42,7 @@ class SectionMigrate extends Component {
 		migrationStatus: 'unknown',
 		percent: 0,
 		startTime: '',
+		errorMessage: '',
 	};
 
 	componentDidMount() {
@@ -75,7 +76,7 @@ class SectionMigrate extends Component {
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
 			 * Call to updateFromAPI will update both local and non-local state.
 			 */
-			this.setState( { migrationStatus: 'inactive' }, this.updateFromAPI );
+			this.setState( { migrationStatus: 'inactive', errorMessage: '' }, this.updateFromAPI );
 		} );
 	};
 
@@ -97,10 +98,15 @@ class SectionMigrate extends Component {
 			return;
 		}
 
+		this.setMigrationState( { migrationStatus: 'backing-up' } );
+
 		wpcom
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
-			.catch( () => this.setMigrationState( { migrationStatus: 'error' } ) );
+			.catch( error => {
+				const { message = '' } = error;
+				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
+			} );
 	};
 
 	updateFromAPI = () => {
@@ -150,8 +156,9 @@ class SectionMigrate extends Component {
 					} );
 				}
 			} )
-			.catch( () => {
-				// @TODO: handle status error
+			.catch( error => {
+				const { message = '' } = error;
+				this.setMigrationState( { migrationStatus: 'error', errorMessage: message } );
 			} );
 	};
 
@@ -173,7 +180,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<CompactCard className="migrate__card-footer">
-				A Business Plan is required to migrate your theme and plugins. Or you can{ ' ' }
+				You need a Business Plan to import your theme and plugins. Or you can{ ' ' }
 				<a href={ this.getImportHref() }>import just your content</a> instead.
 			</CompactCard>
 		);
@@ -199,7 +206,7 @@ class SectionMigrate extends Component {
 					align="left"
 				/>
 				<CompactCard>
-					<div className="migrate__status">Your migration has completed successfully.</div>
+					<div className="migrate__status">Your import has completed successfully.</div>
 					<Button primary href={ viewSiteURL }>
 						View site
 					</Button>
@@ -213,13 +220,14 @@ class SectionMigrate extends Component {
 		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
+		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Migrate { sourceSiteDomain }</HeaderCake>
+				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
 				<CompactCard>
-					<CardHeading>{ `Migrate everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
+					<CardHeading>{ `Import everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
 					<div className="migrate__confirmation">
 						We can move everything from your current site to this WordPress.com site. It will keep
 						working as expected, but your WordPress.com dashboard will be locked during the
@@ -247,7 +255,7 @@ class SectionMigrate extends Component {
 							</li>
 						</ul>
 					</div>
-					<MigrateButton onClick={ this.startMigration } />
+					<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
 					<Button className="migrate__cancel" href={ backHref }>
 						Cancel
 					</Button>
@@ -259,20 +267,21 @@ class SectionMigrate extends Component {
 
 	renderMigrationError() {
 		return (
-			<>
+			<Card className="migrate__pane">
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Migrate"
-					subHeaderText="Migrate your WordPress site to WordPress.com"
-					align="left"
+					headerText="Import failed"
+					align="center"
 				/>
-				<CompactCard>
-					<div className="migrate__status">There was an error with your migration.</div>
-					<Button primary onClick={ this.resetMigration }>
-						Try again
-					</Button>
-				</CompactCard>
-			</>
+				<div className="migrate__status">
+					There was an error with your import.
+					<br />
+					{ this.state.errorMessage }
+				</div>
+				<Button primary onClick={ this.resetMigration }>
+					Back to your site
+				</Button>
+			</Card>
 		);
 	}
 
@@ -300,7 +309,7 @@ class SectionMigrate extends Component {
 					/>
 					<FormattedHeader
 						className="migrate__section-header"
-						headerText="Migration in progress"
+						headerText="Import in progress"
 						subHeaderText={ subHeaderText }
 						align="center"
 					/>
@@ -317,7 +326,7 @@ class SectionMigrate extends Component {
 			return <div className="migrate__start-time">&nbsp;</div>;
 		}
 
-		return <div className="migrate__start-time">Migration started { this.state.startTime }</div>;
+		return <div className="migrate__start-time">Import started { this.state.startTime }</div>;
 	}
 
 	renderProgressBar() {
@@ -408,13 +417,13 @@ class SectionMigrate extends Component {
 			<>
 				<FormattedHeader
 					className="migrate__section-header"
-					headerText="Migrate your WordPress site to WordPress.com"
+					headerText="Import your WordPress site to WordPress.com"
 					align="left"
 				/>
 				<CompactCard className="migrate__card">
-					<CardHeading>Select the Jetpack enabled site you want to migrate.</CardHeading>
+					<CardHeading>Select the Jetpack enabled site you want to import.</CardHeading>
 					<div className="migrate__explain">
-						If your site is connected to your WordPress.com account through Jetpack, we can migrate
+						If your site is connected to your WordPress.com account through Jetpack, we can import
 						all your content, users, themes, plugins, and settings.
 					</div>
 					<SiteSelector

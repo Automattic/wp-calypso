@@ -70,7 +70,7 @@ export function detectWebPaymentMethod() {
  *                                        (expecting one of the
  *                                        `WEB_PAYMENT_*_METHOD`
  *                                        constant).
- * @param {function} translate            Localization function to translate the label.
+ * @param {Function} translate            Localization function to translate the label.
  * @returns {string|null}                 A user-friendly payment name
  *                                        or the given payment method
  *                                        if none matches.

@@ -12,8 +12,8 @@ import debug from './debug';
 /**
  * Decodes a url-safe base64 encoded string.
  *
- * @param {String} str The url-safe base64 encoded string
- * @return {String} The decoded string
+ * @param {string} str The url-safe base64 encoded string
+ * @returns {string} The decoded string
  */
 function urlSafeBase64DecodeString( str ) {
 	const decodeMap = {
@@ -29,8 +29,8 @@ function urlSafeBase64DecodeString( str ) {
  * Decodes a URL param encoded by AMP's linker.js
  * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
  *
- * @param {String} value Value to be decoded
- * @return {null|Object} null or and object containing key/value pairs
+ * @param {string} value Value to be decoded
+ * @returns {null|object} null or and object containing key/value pairs
  */
 function parseAmpEncodedParams( value ) {
 	value = value
@@ -54,8 +54,8 @@ function parseAmpEncodedParams( value ) {
  * URL parameters explicitly present in the URL take precedence over the ones extracted from `tk_amp`.
  * This function is used to support AMP-compatible tracking.
  *
- * @param {String} url URL to be parsed like `document.location.href`.
- * @return {Object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
+ * @param {string} url URL to be parsed like `document.location.href`.
+ * @returns {object} An object equivalent to what url.parse( url, true ) would return plus the data extracted from in `tk_amp`
  */
 export default function urlParseAmpCompatible( url ) {
 	const parsedUrl = parseUrl( url, true );

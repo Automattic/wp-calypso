@@ -53,9 +53,9 @@ function deleteUnsavedSetting( settings, settingName ) {
  * Checks if an incoming change to settings.language is a change to the existing settings
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
  *
- * @param  {String}  languageSettingValue the newly-set language slug string.
- * @param  {Object}  settings user settings object.
- * @return {Boolean} if the language setting has been changed.
+ * @param  {string}  languageSettingValue the newly-set language slug string.
+ * @param  {object}  settings user settings object.
+ * @returns {boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {
 	if ( ! languageSettingValue ) {
@@ -73,7 +73,7 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 /**
  * Initialize UserSettings with defaults
  *
- * @return {Undefined} undefined
+ * @returns {Undefined} undefined
  */
 function UserSettings() {
 	if ( ! ( this instanceof UserSettings ) ) {
@@ -92,7 +92,7 @@ emitterClass( UserSettings.prototype );
 /**
  * Returns a boolean signifying whether there are settings or not
  *
- * @return {Boolean} true is the user has settings object
+ * @returns {boolean} true is the user has settings object
  */
 UserSettings.prototype.hasSettings = function() {
 	return !! this.settings;
@@ -101,7 +101,7 @@ UserSettings.prototype.hasSettings = function() {
 /**
  * Get user settings. If not already initialized, then fetch settings
  *
- * @return {Object} user setting object
+ * @returns {object} user setting object
  */
 UserSettings.prototype.getSettings = function() {
 	if ( ! this.settings ) {
@@ -144,8 +144,8 @@ UserSettings.prototype.fetchSettings = function() {
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {Function} callback - callback function
- * @param {Object} settingsOverride - default settings object
- * @return {Null} null
+ * @param {object} settingsOverride - default settings object
+ * @returns {Null} null
  */
 UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 	const settings = settingsOverride ? settingsOverride : this.unsavedSettings;
@@ -208,8 +208,8 @@ UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
 /**
  * Given a settingName, returns that original setting if it exists or null
  *
- * @param {String} settingName - setting name
- * @return {*} setting key value
+ * @param {string} settingName - setting name
+ * @returns {*} setting key value
  */
 UserSettings.prototype.getOriginalSetting = function( settingName ) {
 	return get( this.settings, settingName, null );
@@ -218,7 +218,7 @@ UserSettings.prototype.getOriginalSetting = function( settingName ) {
 /**
  * Is two-step enabled for the current user?
  *
- * @return {Boolean} return true if two-step is enabled
+ * @returns {boolean} return true if two-step is enabled
  */
 UserSettings.prototype.isTwoStepEnabled = function() {
 	return this.settings ? this.settings.two_step_enabled : false;
@@ -227,7 +227,7 @@ UserSettings.prototype.isTwoStepEnabled = function() {
 /**
  * Is two-step sms enabled for the current user?
  *
- * @return {Boolean} return true if two-step sms is enabled
+ * @returns {boolean} return true if two-step sms is enabled
  */
 UserSettings.prototype.isTwoStepSMSEnabled = function() {
 	return this.settings ? this.settings.two_step_sms_enabled : false;
@@ -236,7 +236,7 @@ UserSettings.prototype.isTwoStepSMSEnabled = function() {
 /**
  * Returns true if there is a pending email change, false if not.
  *
- * @return {Boolean} pending email state
+ * @returns {boolean} pending email state
  */
 UserSettings.prototype.isPendingEmailChange = function() {
 	if ( this.settings ) {
@@ -249,8 +249,8 @@ UserSettings.prototype.isPendingEmailChange = function() {
 /**
  * Given a settingName, returns that setting if it exists or null
  *
- * @param {String}  settingName - setting name
- * @return {*} setting name value
+ * @param {string}  settingName - setting name
+ * @returns {*} setting name value
  */
 UserSettings.prototype.getSetting = function( settingName ) {
 	let setting = null;
@@ -269,9 +269,9 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
  *
- * @param {String} settingName - setting name
+ * @param {string} settingName - setting name
  * @param {*} value - setting value
- * @return {Boolean} updating successful response
+ * @returns {boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
 	if ( has( this.settings, settingName ) ) {

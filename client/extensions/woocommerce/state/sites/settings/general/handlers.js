@@ -43,7 +43,7 @@ export const handleSettingsGeneral = action => ( dispatch, getState ) => {
 
 /**
  * Issues a PUT request to settings/general/woocommerce_currency
- * @param {Object} action - and action with the following fields: siteId, currency, successAction, failureAction
+ * @param {object} action - and action with the following fields: siteId, currency, successAction, failureAction
  */
 export const handleCurrencyUpdate = ( { dispatch }, action ) => {
 	const { siteId, currency, successAction, failureAction } = action;
@@ -56,7 +56,7 @@ export const handleCurrencyUpdate = ( { dispatch }, action ) => {
 	 * A callback issued after a successful request
 	 * @param {Function} localDispatch - dispatch function
 	 * @param {Function} getState - getState function
-	 * @param {Object} data - data returned by the server
+	 * @param {object} data - data returned by the server
 	 */
 	const updatedAction = ( localDispatch, getState, { data } ) => {
 		localDispatch( saveCurrencySuccess( siteId, data, action ) );

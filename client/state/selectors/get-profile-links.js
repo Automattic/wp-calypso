@@ -1,8 +1,8 @@
 /**
  * Returns all profile links of the current user.
  *
- * @param {Object}  state  Global state tree
- * @return {?Array}        Profile links
+ * @param {object}  state  Global state tree
+ * @returns {?Array}        Profile links
  */
 export default function getProfileLinks( state ) {
 	return state.userProfileLinks.items;

@@ -25,14 +25,14 @@ import { SCALE_CHOICES } from 'lib/media/constants';
 /**
  * Number of steps on the rendered input range
  *
- * @type {Number}
+ * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
  *
- * @type {Number}
+ * @type {number}
  */
 const SCALE_TOUCH_GRID = 0.32;
 

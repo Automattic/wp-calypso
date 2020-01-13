@@ -15,8 +15,8 @@ import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filte
  * Return a table of theme filter terms to taxonomies, with
  * ambiguous terms (terms in more than one tax) prefixed by taxonomy
  *
- * @param {Object} state Global state tree
- * @return {Object} a table of terms to taxonomies.
+ * @param {object} state Global state tree
+ * @returns {object} a table of terms to taxonomies.
  */
 export default createSelector(
 	state => {

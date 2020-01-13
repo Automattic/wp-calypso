@@ -14,7 +14,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
 import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
 /** @type {Map<String, Number>} stores most-recent polling times */
@@ -27,7 +27,7 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {Object} action Redux action
+ * @param {object} action Redux action
  */
 const fetchProgress = action => {
 	const { downloadId, siteId } = action;
@@ -93,7 +93,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
 /**
  * If the backup creation progress request fails, an error notice will be shown.
  *
- * @returns {function}          The dispatched action.
+ * @returns {Function}          The dispatched action.
  */
 export const announceError = () =>
 	errorNotice(
@@ -135,7 +135,7 @@ export const backupSilentlyDismissed = ( action, data ) =>
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const backupDismissFailed = () =>
 	errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) );

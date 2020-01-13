@@ -479,8 +479,8 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
+				{ this.renderProductsSelector() }
 				<CartData>
 					<PaymentMethods />
 				</CartData>

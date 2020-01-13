@@ -19,7 +19,7 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  * Looks up the block name based on its id.
  *
  * @param {string} blockId Blog identifier.
- * @return {string|null} Blg name if it exists. Otherwise, `null`.
+ * @returns {string|null} Blg name if it exists. Otherwise, `null`.
  */
 const getTypeForBlockId = blockId => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
@@ -33,7 +33,7 @@ const getTypeForBlockId = blockId => {
  * and calls your tracking for each of the blocks involved in the action.
  *
  * @param {string} eventName event name
- * @return {function} track handler
+ * @returns {Function} track handler
  */
 const getBlocksTracker = eventName => blockIds => {
 	// track separately for each block
@@ -45,8 +45,8 @@ const getBlocksTracker = eventName => blockIds => {
 /**
  * Track block insertion.
  *
- * @param {object|array} blocks block instance object or an array of such objects
- * @return {void}
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
  */
 const trackBlockInsertion = blocks => {
 	castArray( blocks ).forEach( block => {
@@ -60,9 +60,9 @@ const trackBlockInsertion = blocks => {
 /**
  * Track block replacement.
  *
- * @param {array} originalBlockIds ids or blocks that are being replaced
- * @param {object|array} blocks block instance object or an array of such objects
- * @return {void}
+ * @param {Array} originalBlockIds ids or blocks that are being replaced
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 	castArray( blocks ).forEach( block => {
@@ -77,7 +77,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * Track update and publish action for Global Styles plugin.
  *
  * @param {string} eventName Name of the track event.
- * @return {function}
+ * @returns {Function}
  */
 const trackGlobalStyles = eventName => options => {
 	tracksRecordEvent( eventName, {

@@ -17,7 +17,6 @@ import JetpackInstallStep from './install-step';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { confirmJetpackInstallStatus } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route';
@@ -139,8 +138,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( InstallInstructions );
+export default flowRight( connectComponent, localize )( InstallInstructions );

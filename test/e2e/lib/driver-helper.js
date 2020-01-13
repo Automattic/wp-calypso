@@ -233,8 +233,8 @@ export async function isElementPresent( driver, selector ) {
 	return !! elements.length;
 }
 
-export function elementIsNotPresent( driver, cssSelector ) {
-	return this.isElementPresent( driver, by.css( cssSelector ) ).then( function( isPresent ) {
+export function elementIsNotPresent( driver, selector ) {
+	return this.isElementPresent( driver, selector ).then( function( isPresent ) {
 		return ! isPresent;
 	} );
 }
@@ -333,8 +333,9 @@ export function waitTillNotPresent( driver, selector, waitOverride ) {
 
 /**
  * Check whether an image is actually visible - that is rendered to the screen - not just having a reference in the DOM
- * @param {webdriver} driver - Browser context in which to search
- * @param {WebElement} webElement - Element to search for
+ *
+ * @param {object} driver - Browser context in which to search
+ * @param {object} webElement - Element to search for
  * @returns {Promise} - Resolved when the script is done executing
  */
 export function imageVisible( driver, webElement ) {
@@ -490,9 +491,9 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
  * @description
  * Scroll element on a page to desired position
  *
- * @param {Object} driver WebDriver
- * @param {Object} selector A element's selector
- * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @param {object} driver WebDriver
+ * @param {object} selector A element's selector
+ * @param {string} position An element's position. Can be 'start', 'end' and 'center'
  * @returns {Promise<void>} Promise
  */
 export async function scrollIntoView( driver, selector, position = 'center' ) {

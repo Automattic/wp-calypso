@@ -24,6 +24,20 @@ interface UrlParts {
 	password: string;
 }
 
+interface OptionalUrlParts {
+	protocol?: string;
+	host?: string;
+	hostname?: string;
+	port?: string;
+	origin?: string;
+	pathname?: string;
+	hash?: string;
+	search?: string;
+	searchParams?: URLSearchParams;
+	username?: string;
+	password?: string;
+}
+
 type UrlPartKey = keyof UrlParts;
 
 const EMPTY_URL: Readonly< UrlParts > = Object.freeze( {
@@ -86,7 +100,7 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	}
 
 	// Path-absolute or path-relative URL; pick only a few parts.
-	const pathPartKeys: UrlPartKey[] = [ 'pathname', 'hash', 'search' ];
+	const pathPartKeys: UrlPartKey[] = [ 'pathname', 'hash', 'search', 'searchParams' ];
 	const pathParts = pickUrlParts( parsed, pathPartKeys );
 
 	// Path-relative URLs require special handling, because they cannot be transformed
@@ -99,4 +113,53 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	}
 
 	return pathParts;
+}
+
+/**
+ * Returns a URL object built from the provided URL parts.
+ *
+ * @param parts the provided URL parts.
+ *
+ * @returns the generated URL object.
+ */
+export function getUrlFromParts( parts: OptionalUrlParts ): URL {
+	if ( ! parts?.protocol && ! parts?.origin ) {
+		throw new Error( 'getUrlFromParts: protocol missing.' );
+	}
+
+	if ( ! parts.host && ! parts.hostname && ! parts.origin ) {
+		throw new Error( 'getUrlFromParts: host missing.' );
+	}
+
+	const result = new URL( BASE_URL );
+
+	// Apply 'origin' first, since it includes protocol, hostname, and port.
+	if ( parts.origin ) {
+		try {
+			const origin = new URL( parts.origin );
+			result.host = origin.host;
+			result.protocol = origin.protocol;
+		} catch {
+			throw new Error( 'getUrlFromParts: invalid origin.' );
+		}
+	}
+
+	// Apply 'host' next, since it includes both hostname and port.
+	result.host = parts.host || result.host;
+
+	// Apply 'searchParams' object if it's specified.
+	if ( parts.searchParams?.toString ) {
+		result.search = parts.searchParams.toString();
+	}
+
+	for ( const part of URL_PART_KEYS ) {
+		if ( part !== 'host' && part !== 'origin' && part !== 'searchParams' ) {
+			const value = parts[ part ];
+			// Avoid some implementation bugs, e.g. https://bugs.webkit.org/show_bug.cgi?id=127958.
+			if ( value && value !== result[ part ] ) {
+				result[ part ] = value;
+			}
+		}
+	}
+	return result;
 }

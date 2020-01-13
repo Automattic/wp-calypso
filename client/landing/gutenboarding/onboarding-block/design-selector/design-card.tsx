@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ as NO__ } from '@wordpress/i18n';
 import React, { FunctionComponent, MouseEventHandler, CSSProperties } from 'react';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
@@ -20,15 +21,25 @@ interface Props {
 	design: import('@automattic/data-stores').VerticalsTemplates.Template;
 	onClick: MouseEventHandler< HTMLDivElement >;
 	style?: CSSProperties;
+	dialogId: string;
 }
-const DesignCard: FunctionComponent< Props > = ( { design, onClick, isSelected, style } ) => (
+const DesignCard: FunctionComponent< Props > = ( {
+	design,
+	dialogId,
+	isSelected,
+	onClick,
+	style,
+} ) => (
 	<Card
+		as="button"
 		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
 		isElevated
 		onClick={ onClick }
 		style={ style }
+		aria-haspopup="dialog"
+		aria-controls={ dialogId }
 	>
-		<CardMedia>
+		<CardMedia as="span">
 			<img
 				width={ 480 }
 				height={ 360 }
@@ -36,6 +47,11 @@ const DesignCard: FunctionComponent< Props > = ( { design, onClick, isSelected, 
 				src={ removeQueryArgs( design.preview, 'w' ) }
 				srcSet={ srcSet( design.preview, [ gridWidth / 2, gridWidth / 4 ] ) }
 			/>
+			<span className="design-selector__option-overlay">
+				<span className="design-selector__option-overlay-text">
+					{ NO__( 'Select this design' ) }
+				</span>
+			</span>
 		</CardMedia>
 	</Card>
 );

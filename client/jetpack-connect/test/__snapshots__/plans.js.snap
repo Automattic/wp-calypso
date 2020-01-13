@@ -51,7 +51,6 @@ exports[`Plans should render plans 1`] = `
         },
         "domain": "an.example.site",
         "hasConflict": false,
-        "hasMinimumJetpackVersion": true,
         "isMainNetworkSite": true,
         "isSecondaryNetworkSite": false,
         "isSiteUpgradeable": true,
@@ -149,9 +148,6 @@ exports[`Plans should render plans 1`] = `
       }
     }
   >
-    <Localized(PlansExtendedInfo)
-      recordTracks={[Function]}
-    />
     <LoggedOutFormLinks>
       <Connect(Localized(JetpackConnectHappychatButton))
         eventName="calypso_jpc_plans_chat_initiated"

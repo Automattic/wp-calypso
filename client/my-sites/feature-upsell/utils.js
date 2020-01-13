@@ -25,7 +25,7 @@ export const getUpsellPlanPrice = ( state, upsellPlanSlug, selectedSiteId ) => {
  * Access control, users without rights to upgrade should not see these pages
  *
  * @param {React.Component} Component - Component to wrap in redirectIf
- * @return {function} Wrapped Component
+ * @returns {Function} Wrapped Component
  */
 export const redirectUnlessCanUpgradeSite = Component =>
 	redirectIf( state => ! canCurrentUserUpgradeSite( state ), '/stats' )( Component );

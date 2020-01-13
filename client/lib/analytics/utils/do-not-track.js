@@ -6,7 +6,7 @@ import debug from './debug';
 /**
  * Whether Do Not Track is enabled in the user's browser.
  *
- * @returns {Boolean} true if Do Not Track is enabled in the user's browser.
+ * @returns {boolean} true if Do Not Track is enabled in the user's browser.
  */
 export default function doNotTrack() {
 	const result = Boolean(

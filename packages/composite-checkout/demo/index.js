@@ -39,10 +39,8 @@ const initialItems = [
 	},
 ];
 
-const successRedirectUrl = '/complete.html';
-const failureRedirectUrl = window.location.href;
-
 const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
 	window.location.href = successRedirectUrl;
 };
 const onEvent = event => window.console.log( 'Event', event );
@@ -88,15 +86,13 @@ const registry = createRegistry();
 const { registerStore, select, subscribe } = registry;
 
 const stripeMethod = createStripeMethod( {
-	getSiteId: () => 5555,
 	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
 	getPostalCode: () => 90210,
 	getPhoneNumber: () => 5555555555,
 	getSubdivisionCode: () => 'CA',
-	getDomainDetails: () => ( {} ),
 	registerStore,
 	fetchStripeConfiguration,
-	sendStripeTransaction,
+	submitTransaction: sendStripeTransaction,
 } );
 
 const applePayMethod = isApplePayAvailable()
@@ -106,7 +102,12 @@ const applePayMethod = isApplePayAvailable()
 	  } )
 	: null;
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+const paypalMethod = createPayPalMethod( {
+	registerStore,
+	submitTransaction: makePayPalExpressRequest,
+	successUrl: '#',
+	cancelUrl: '#',
+} );
 
 export function isApplePayAvailable() {
 	// Our Apple Pay implementation uses the Payment Request API, so check that first.
@@ -314,8 +315,6 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
 			registry={ registry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }

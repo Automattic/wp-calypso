@@ -1,7 +1,14 @@
 /**
+ * External dependencies
+ */
+import { VerticalsTemplates } from '@automattic/data-stores';
+
+/**
  * Internal dependencies
  */
 import { ActionType, SiteVertical } from './types';
+
+type Template = VerticalsTemplates.Template;
 
 export const setDomain = (
 	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
@@ -22,4 +29,9 @@ export const resetSiteVertical = () => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
+} );
+
+export const togglePageLayout = ( pageLayout: Template ) => ( {
+	type: ActionType.TOGGLE_PAGE_LAYOUT as const,
+	pageLayout,
 } );

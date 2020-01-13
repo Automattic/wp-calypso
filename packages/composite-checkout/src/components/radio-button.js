@@ -113,7 +113,7 @@ const Label = styled.label`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	font-size: 14px;
 
 	:hover {
@@ -127,8 +127,7 @@ const Label = styled.label`
 		content: '';
 		border: 1px solid ${props => props.theme.colors.borderColor};
 		border-radius: 100%;
-		top: 50%;
-		transform: translateY( -50% );
+		top: 19px;
 		left: 16px;
 		position: absolute;
 		background: ${props => props.theme.colors.surface};
@@ -142,8 +141,7 @@ const Label = styled.label`
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		top: 50%;
-		transform: translateY( -50% );
+		top: 23px;
 		left: 20px;
 		position: absolute;
 		background: ${getRadioColor};

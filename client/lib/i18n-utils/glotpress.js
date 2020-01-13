@@ -12,9 +12,9 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
 
 /**
  * Sends the POST request
- * @param {String} glotPressUrl API url
- * @param {String} postFormData post data url param string
- * @returns {Object} request object
+ * @param {string} glotPressUrl API url
+ * @param {string} postFormData post data url param string
+ * @returns {object} request object
  */
 export async function postRequest( glotPressUrl, postFormData ) {
 	let response;
@@ -43,9 +43,9 @@ export function encodeOriginalKey( { original, context } ) {
 /**
  * Sends originals to translate.wordpress.com to be recorded
  * @param {[String]} originalKeys Array of original keys to record
- * @param {String} recordId fallback recordId to pass to the backend
+ * @param {string} recordId fallback recordId to pass to the backend
  * @param {Function} post see postRequest()
- * @returns {Object} request object
+ * @returns {object} request object
  */
 export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;

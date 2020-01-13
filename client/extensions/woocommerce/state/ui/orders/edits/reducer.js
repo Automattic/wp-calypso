@@ -18,9 +18,9 @@ import {
  * The state reflects the currently edited order ID (which might
  * be a placeholder object).
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function currentlyEditingId( state = null, action ) {
 	switch ( action.type ) {
@@ -43,9 +43,9 @@ export function currentlyEditingId( state = null, action ) {
  * The state reflects changes made to the current order (including
  * newly created orders)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function changes( state = {}, action ) {
 	switch ( action.type ) {

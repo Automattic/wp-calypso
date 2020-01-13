@@ -15,10 +15,10 @@ import isJetpackSite from './is-jetpack-site';
  * Returns null if the site is not known or is not a Jetpack site.
  * Can return an empty array if no reason have been found
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {String} action The update action we wanted to perform on this site
- * @return {?Array<String>} The reasons why file update is disabled
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @param {string} action The update action we wanted to perform on this site
+ * @returns {?Array<String>} The reasons why file update is disabled
  */
 export default function getJetpackSiteUpdateFilesDisabledReasons(
 	state,

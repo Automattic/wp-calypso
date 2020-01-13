@@ -2,8 +2,8 @@
  * Returns an author (user) object by ID.
  *
  *
- * @param {Number} userId User ID
- * @return {Object}        User object
+ * @param {number} userId User ID
+ * @returns {object}        User object
  */
 
 export function getPostRevisionAuthor( state, userId ) {

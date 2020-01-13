@@ -15,7 +15,7 @@ import Tooltip from 'components/tooltip';
 /**
  * Mapping of Notice status to Gridicon icon
  *
- * @type {Object}
+ * @type {object}
  */
 const STATUS_GRIDICON = {
 	info: 'info',

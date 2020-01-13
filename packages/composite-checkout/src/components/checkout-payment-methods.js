@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -16,14 +17,21 @@ import {
 	usePaymentMethod,
 	usePaymentMethodId,
 	useIsStepActive,
+	useIsStepComplete,
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+
+const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
 	const localize = useLocalize();
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
+	const onClickPaymentMethod = newMethod => {
+		debug( 'setting payment method to', newMethod );
+		setPaymentMethod( newMethod );
+	};
 	const paymentMethods = useAllPaymentMethods();
 
 	if ( summary && isComplete && paymentMethod ) {
@@ -46,6 +54,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	if ( summary ) {
 		return null;
 	}
+	debug( 'rendering paymentMethods', paymentMethods );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
@@ -59,8 +68,8 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 					>
 						<PaymentMethod
 							{ ...method }
-							checked={ paymentMethod.id === method.id }
-							onClick={ setPaymentMethod }
+							checked={ paymentMethod?.id === method.id }
+							onClick={ onClickPaymentMethod }
 							ariaLabel={ method.getAriaLabel( localize ) }
 						/>
 					</CheckoutErrorBoundary>
@@ -79,7 +88,10 @@ CheckoutPaymentMethods.propTypes = {
 export function CheckoutPaymentMethodsTitle() {
 	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Pick a payment method' ) : localize( 'Payment method' );
+	const isComplete = useIsStepComplete();
+	return ! isActive && isComplete
+		? localize( 'Payment method' )
+		: localize( 'Pick a payment method' );
 }
 
 function PaymentMethod( {

@@ -9,7 +9,7 @@ const urlWithoutHttpRegex = /^https?:\/\//;
 /**
  * Returns the supplied URL without the initial http(s).
  * @param  url The URL to remove http(s) from
- * @return     URL without the initial http(s)
+ * @returns     URL without the initial http(s)
  */
 export function withoutHttp( url: '' ): '';
 export function withoutHttp( url: Falsy ): null;
@@ -42,7 +42,7 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
  * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
  *
  * @param  urlToConvert The URL to convert
- * @return              The URL's domain and path
+ * @returns              The URL's domain and path
  */
 export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );

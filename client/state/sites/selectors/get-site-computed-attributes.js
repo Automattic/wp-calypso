@@ -16,9 +16,9 @@ import isSitePreviewable from './is-site-previewable';
 /**
  * Returns computed properties of the site object.
  *
- * @param    {Object}      state    Global state tree
- * @param    {Number}      siteId   Site ID
- * @returns  {?Object}              Site computed properties or null
+ * @param    {object}      state    Global state tree
+ * @param    {number}      siteId   Site ID
+ * @returns  {?object}              Site computed properties or null
  */
 export default function getSiteComputedAttributes( state, siteId ) {
 	const site = getRawSite( state, siteId );

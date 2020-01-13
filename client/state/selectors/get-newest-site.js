@@ -13,8 +13,8 @@ import getSitesItems from 'state/selectors/get-sites-items';
 /**
  * Get the newest site of the current user
  *
- * @param {Object} state  Global state tree
- * @return {Object}       Site object
+ * @param {object} state  Global state tree
+ * @returns {object}       Site object
  */
 export default createSelector(
 	state => {

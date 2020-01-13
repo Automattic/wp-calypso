@@ -34,9 +34,9 @@ import themeSetup from './theme-setup/reducers';
 /**
  * Tracks the currently selected site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
@@ -85,9 +85,9 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 
 /**
  * Tracks if the notifications panel is open
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isNotificationsOpen = function( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {

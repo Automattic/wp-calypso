@@ -15,9 +15,9 @@ import {
  * state maps site ID keys to a boolean value. Each site is true if roles
  * for it are being currently requested, and false otherwise.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -42,9 +42,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site roles.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( siteRolesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

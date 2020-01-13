@@ -10,11 +10,11 @@ import { findIndex, merge, remove } from 'lodash';
 import { getBucket } from 'woocommerce/state/ui/helpers';
 
 /**
- * @param {Object} zoneMethodEdits Pre-existing edits made to the zone methods.
+ * @param {object} zoneMethodEdits Pre-existing edits made to the zone methods.
  * It's in the format { creates: [], updates: [], deletes: [] }
- * @param {Object} [currentMethodEdits] Edits made to the zone's methods, but not committed yet
+ * @param {object} [currentMethodEdits] Edits made to the zone's methods, but not committed yet
  * (i.e. the "Edit Zone" modal is still open). Same format as zoneMethodEdits
- * @return {Object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
+ * @returns {object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
  */
 export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 	if ( ! currentMethodEdits ) {

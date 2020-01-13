@@ -25,21 +25,19 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), and [createPayPalMethod](#createpaypalmethod).
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), [createFullCreditsMethod](#createFullCreditsMethod), and [createExistingCardMethod](#createExistingCardMethod).
 
-Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useCheckoutRedirects](#useCheckoutRedirects), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentData](#usePaymentData), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
 
 The [Checkout](#checkout) component creates the form itself. That component displays a series of steps which are passed in as [Step objects](#steps). While you can create these objects manually, the package provides three pre-defined steps that can be created by using the functions [getDefaultOrderSummaryStep](#getDefaultOrderSummaryStep), [getDefaultPaymentMethodStep](#getDefaultPaymentMethodStep), and [getDefaultOrderReviewStep](#getDefaultOrderReviewStep).
 
-Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive).
+Any component within a Step object gets access to the custom hooks above as well as [useActiveStep](#useActiveStep), and [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
 ## Submitting the form
 
 When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `showErrorMessage` prop on `Checkout` will be called with an object describing the error.
 
 If the payment method succeeds, the `onPaymentComplete` prop will be called instead.
-
-Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `showErrorMessage` and `onPaymentComplete` callbacks. All four props are required.
 
 ## Steps
 
@@ -165,8 +163,6 @@ It has the following props.
 - `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
-- `successRedirectUrl: string`. The url to load if using a redirect payment method and it succeeds.
-- `failureRedirectUrl: string`. The url to load if using a redirect payment method and it fails.
 - `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, a default registry will be created.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
@@ -214,12 +210,39 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
 
+### createExistingCardMethod
+
+Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
+- `cardholderName: string`. The cardholder's name. Used for display only.
+- `cardExpiry: string`. The card's expiry date. Used for display only.
+- `brand: string`. The card's brand (eg: `visa`). Used for display only.
+- `last4: string`. The card's last four digits. Used for display only.
+
+### createFullCreditsMethod
+
+Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
+- `label?: React.ReactNode`. An optional label React element to use in the payment method.
+- `buttonText?: string`. An optional string to display in the payment button.
+
 ### createPayPalMethod
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `makePayPalExpressRequest: async ?object => object`. An async function that sends the request to the endpoint to get the redirect url.
+- `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
+- `successUrl: string`. The URL to return to after a successful payment redirect.
+- `cancelUrl: string`. The URL to return to after a unsuccessful payment redirect.
 
 ### createStripeMethod
 
@@ -227,7 +250,11 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 - `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
 - `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
-- `sendStripeTransaction: async ?object => object`. An async function that sends the request to the endpoint.
+- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `getPhoneNumber: () => string`. A function that returns the phone number for the transaction.
 
 ### getDefaultOrderReviewStep
 
@@ -263,13 +290,15 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 A React Hook that will return the currently active [Step object](#steps). Only works within a step.
 
+The step object that is returned will include some additional properties:
+
+- `isComplete: boolean`. True if the `isCompleteCallback` function returned true (it's not recommended to call the function yourself because it expects certain arguments that you may not be able to provide).
+- `stepNumber: number | null`. The step's visible number. If the step has no number (because `hasStepNumber` is false), this will be `null`.
+- `stepIndex: number`. The index of the step in the array of steps.
+
 ### useAllPaymentMethods
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
-
-### useCheckoutRedirects
-
-A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useDispatch
 
@@ -294,6 +323,10 @@ Only works within [CheckoutProvider](#CheckoutProvider).
 ### useIsStepActive
 
 A React Hook that will return true if the current step is the currently active [Step](#steps). Only works within a step.
+
+### useIsStepComplete
+
+A React Hook that will return true if the current [Step](#steps) is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
 
 ### useLineItems
 
