@@ -98,12 +98,24 @@ class SectionMigrate extends Component {
 	};
 
 	setMigrationState = state => {
-		// This is necessary to avoid a response from the migration-status endpoint
+		// Avoids a response from the migration-status endpoint
 		// accidentally resetting the state after the migrate/from endpoint
 		// has returned an error
 		if ( 'error' === this.state.migrationStatus ) {
 			return;
 		}
+
+		// Avoids a response from the migration-status endpoint
+		// accidentally resetting the state after a redirect from the cart
+		// has set local state and sent request to start backup
+		if (
+			this._startedMigrationFromCart &&
+			'backing-up' === this.state.migrationStatus &&
+			state.migrationStatus === 'inactive'
+		) {
+			return;
+		}
+
 		if ( state.migrationStatus ) {
 			this.props.updateSiteMigrationStatus( this.props.targetSiteId, state.migrationStatus );
 		}
@@ -507,6 +519,7 @@ class SectionMigrate extends Component {
 					: this.renderSourceSiteSelector();
 				break;
 
+			case 'new':
 			case 'backing-up':
 			case 'restoring':
 				migrationElement = this.renderMigrationProgress();
