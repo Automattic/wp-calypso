@@ -115,7 +115,7 @@ export function createPaymentMethods( {
 			: null;
 
 	const existingCardMethods = isMethodEnabled( 'card', allowedPaymentMethods )
-		? storedCards.map( storedDetails =>
+		? storedCards.filter( isCardAvailable ).map( storedDetails =>
 				createExistingCardMethod( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
 					cardholderName: storedDetails.name,
@@ -363,6 +363,16 @@ function isMethodEnabled( method, allowedPaymentMethods ) {
 		return true;
 	}
 	return allowedPaymentMethods.includes( method );
+}
+
+function isCardAvailable( storedDetails ) {
+	const expiryDate = new Date( storedDetails.expiry );
+	const now = new Date();
+	now.setHours( 0, 0, 0, 0 );
+	if ( expiryDate < now ) {
+		return false;
+	}
+	return true;
 }
 
 function WordPressCreditsLabel( { credits } ) {
