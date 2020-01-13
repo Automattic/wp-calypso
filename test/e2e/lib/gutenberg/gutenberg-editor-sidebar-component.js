@@ -293,4 +293,11 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			fileDetails.imageName
 		);
 	}
+
+	async openRevisionsDialog() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-post-last-revision__panel' )
+		);
+	}
 }

@@ -20,6 +20,7 @@ import SidebarComponent from '../lib/components/sidebar-component.js';
 import NoticesComponent from '../lib/components/notices-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component';
+import RevisionsModalComponent from '../lib/components/revisions-modal-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
@@ -1219,6 +1220,54 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const postContent = await viewPostPage.postContent();
 			assert.ok( postTitle.length > 0, 'Press This did not copy a post title!' );
 			assert.ok( postContent.length > 0, 'Press This did not copy any post content!' );
+		} );
+	} );
+
+	describe( 'Use the Calypso revisions modal @parallel', function() {
+		const originalTitle = dataHelper.randomPhrase();
+		const updatedTitle = dataHelper.randomPhrase();
+		const originalContent = 'Details matter, it’s worth waiting to get it right. ~ Steve Jobs';
+		const updatedContent =
+			'Your most unhappy customers are your greatest source of learning. ~ Bill Gates';
+
+		step( 'Can log in', async function() {
+			const loginFlow = new LoginFlow( driver, gutenbergUser );
+			await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can enter post title and text content', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.enterTitle( originalTitle );
+			await editor.enterText( originalContent );
+			await editor.ensureSaved();
+		} );
+
+		step( 'Can update post title and text content', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.enterTitle( updatedTitle );
+			await editor.replaceTextOnLastParagraph( updatedContent );
+			await editor.ensureSaved();
+		} );
+
+		step( 'Can open the revisions modal', async function() {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.openSidebar();
+			const sidebar = await GutenbergEditorSidebarComponent.Expect( driver );
+			await sidebar.selectDocumentTab();
+			await sidebar.openRevisionsDialog();
+		} );
+
+		step( 'Can restore the previous revision', async function() {
+			const revisions = await RevisionsModalComponent.Expect( driver );
+			await revisions.loadFirstRevision();
+
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			await editor.closeSidebar();
+			await editor.ensureSaved();
+			const title = await editor.getTitle();
+			const content = await editor.getContent();
+			assert.strictEqual( title, originalTitle, 'The restored post title is not correct' );
+			assert.strictEqual( content, originalContent, 'The restored post content is not correct' );
 		} );
 	} );
 } );

@@ -94,12 +94,28 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
 	}
 
+	async getTitle() {
+		return await this.driver
+			.findElement( By.css( '.editor-post-title__input' ) )
+			.getAttribute( 'value' );
+	}
+
 	async enterText( text ) {
 		const appenderSelector = By.css( '.editor-default-block-appender' );
 		const textSelector = By.css( '.wp-block-paragraph' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
 		return await this.driver.findElement( textSelector ).sendKeys( text );
+	}
+
+	async getContent() {
+		return await this.driver.findElement( By.css( '.block-editor-block-list__layout' ) ).getText();
+	}
+
+	async replaceTextOnLastParagraph( text ) {
+		const paragraph = By.css( '.wp-block-paragraph' );
+		await driverHelper.clearTextArea( this.driver, paragraph );
+		return await this.driver.findElement( paragraph ).sendKeys( text );
 	}
 
 	async insertShortcode( shortcode ) {
