@@ -472,7 +472,9 @@ class Global_Styles {
 			'font_headings_default',
 			'font_base_default',
 			'line_height_body',
-			'line_height_heading'
+			'line_height_heading',
+			'type_scale_root',
+			'type_scale_ratio',
 		];
 		foreach ( $keys as $key ) {
 			$value  = $data[ $key ];
