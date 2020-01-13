@@ -287,7 +287,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
 				assert.strictEqual(
 					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
-					false,
+					true,
 					'Jetpack blocks are not present'
 				);
 				await gEditorComponent.closeBlockInserter();

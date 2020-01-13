@@ -190,8 +190,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async isBlockCategoryPresent( name ) {
 		const categorySelector = '.block-editor-inserter__results .components-panel__body-title';
-		const category = await this.driver.findElement( By.css( categorySelector ) );
-		const categoryName = category.getText();
+		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
 		return categoryName === name;
 	}
 
