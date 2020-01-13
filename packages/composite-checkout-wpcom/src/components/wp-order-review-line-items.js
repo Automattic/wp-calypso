@@ -31,7 +31,7 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
+function WPLineItem( { item, className, hasDeleteButton, removeItem } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
@@ -45,7 +45,7 @@ function WPLineItem( { item, className, hasDeleteButtons, removeItem } ) {
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
-			{ hasDeleteButtons && item.type !== 'tax' && (
+			{ hasDeleteButton && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
@@ -79,7 +79,7 @@ WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
-	hasDeleteButtons: PropTypes.bool,
+	hasDeleteButton: PropTypes.bool,
 	removeItem: PropTypes.func,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
@@ -190,13 +190,7 @@ export function WPOrderReviewTotal( { total, className } ) {
 	);
 }
 
-export function WPOrderReviewLineItems( {
-	items,
-	className,
-	isSummaryVisible,
-	hasDeleteButtons,
-	removeItem,
-} ) {
+export function WPOrderReviewLineItems( { items, className, isSummaryVisible, removeItem } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( item => (
@@ -204,7 +198,7 @@ export function WPOrderReviewLineItems( {
 					<LineItemUI
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
-						hasDeleteButtons={ hasDeleteButtons }
+						hasDeleteButton={ canItemBeDeleted( item ) }
 						removeItem={ removeItem }
 					/>
 				</WPOrderReviewListItems>
@@ -216,7 +210,6 @@ export function WPOrderReviewLineItems( {
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
-	hasDeleteButtons: PropTypes.bool,
 	removeItem: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
@@ -324,4 +317,9 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 	}
 
 	return modalCopy;
+}
+
+function canItemBeDeleted( item ) {
+	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
