@@ -280,7 +280,11 @@ export class LanguagePickerModal extends PureComponent {
 			return;
 		}
 
-		this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug } );
+		this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug }, () => {
+			if ( this.selectedLanguageItem.current ) {
+				this.selectedLanguageItem.current.focus();
+			}
+		} );
 	}
 
 	handleKeyDown = event => {
