@@ -2,6 +2,7 @@
  * External dependencies
  */
 import 'core-js/stable';
+import 'core-js/features/global-this';
 import 'regenerator-runtime/runtime';
 import svg4everybody from 'svg4everybody';
 import 'isomorphic-fetch';
