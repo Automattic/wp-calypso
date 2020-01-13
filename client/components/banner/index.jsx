@@ -104,6 +104,10 @@ export class Banner extends Component {
 	handleClick = e => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
+		if ( ! tracksClickName ) {
+			return;
+		}
+
 		this.props.recordTracksEvent( tracksClickName, {
 			cta_name: event,
 			cta_feature: feature,
@@ -116,6 +120,10 @@ export class Banner extends Component {
 
 	handleDismiss = e => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
+
+		if ( ! tracksDismissName ) {
+			return;
+		}
 
 		this.props.recordTracksEvent( tracksDismissName, {
 			cta_name: event,
@@ -173,15 +181,17 @@ export class Banner extends Component {
 
 		return (
 			<div className="banner__content">
-				<TrackComponentView
-					eventName={ tracksImpressionName }
-					eventProperties={ {
-						cta_name: event,
-						cta_feature: feature,
-						cta_size: compact ? 'compact' : 'regular',
-						...tracksImpressionProperties,
-					} }
-				/>
+				{ tracksImpressionName && (
+					<TrackComponentView
+						eventName={ tracksImpressionName }
+						eventProperties={ {
+							cta_name: event,
+							cta_feature: feature,
+							cta_size: compact ? 'compact' : 'regular',
+							...tracksImpressionProperties,
+						} }
+					/>
+				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
 					{ description && <div className="banner__description">{ description }</div> }
