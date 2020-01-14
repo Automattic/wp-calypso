@@ -51,4 +51,6 @@ const Gridicon = React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps,
 	);
 } );
 
+Gridicon.displayName = 'Gridicon';
+
 export default React.memo( Gridicon );

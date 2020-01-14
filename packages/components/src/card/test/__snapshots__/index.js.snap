@@ -5,10 +5,9 @@ exports[`Card should be linkable 1`] = `
   className="card is-card-link"
   href="/test"
 >
-  <t
+  <Memo(Gridicon)
     className="card__link-indicator"
     icon="chevron-right"
-    size={24}
   />
   This is a linked card
 </a>
@@ -31,10 +30,9 @@ exports[`Card should render as a clickable button which looks like a link 1`] = 
   className="card is-card-link is-clickable"
   onClick="test"
 >
-  <t
+  <Memo(Gridicon)
     className="card__link-indicator"
     icon="chevron-right"
-    size={24}
   />
   This is a button which looks like a link
 </button>
