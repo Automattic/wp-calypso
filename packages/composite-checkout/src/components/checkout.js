@@ -159,13 +159,13 @@ export default function Checkout( { steps, className } ) {
 					) ) }
 				</ActiveStepProvider>
 
-				<CheckoutWrapper isCheckoutInProgress={ isCheckoutInProgress }>
+				<SubmitButtonWrapper isLastStepActive={ ! isThereAnotherNumberedStep }>
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
 						<CheckoutSubmitButton disabled={ isCheckoutInProgress } />
 					</CheckoutErrorBoundary>
-				</CheckoutWrapper>
+				</SubmitButtonWrapper>
 			</MainContent>
 		</Container>
 	);
@@ -250,16 +250,16 @@ const MainContent = styled.div`
 	}
 `;
 
-const CheckoutWrapper = styled.div`
+const SubmitButtonWrapper = styled.div`
 	background: ${props => props.theme.colors.background};
 	padding: 24px;
-	position: ${props => ( props.isCheckoutInProgress ? 'relative' : 'fixed' )};
+	position: ${props => ( props.isLastStepActive ? 'fixed' : 'relative' )};
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: ${props => ( props.isCheckoutInProgress ? '0' : '1px' )};
+	border-top-width: ${props => ( props.isLastStepActive ? '1px' : '0' )};
 	border-top-style: solid;
 	border-top-color: ${props => props.theme.colors.borderColorLight};
 
