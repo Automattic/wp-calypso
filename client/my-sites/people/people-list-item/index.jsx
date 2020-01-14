@@ -6,13 +6,9 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, CompactCard } from '@automattic/components';
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import {

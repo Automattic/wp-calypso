@@ -9,7 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';

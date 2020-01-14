@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, overSome, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -25,7 +25,6 @@ import {
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';

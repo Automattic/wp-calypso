@@ -5,13 +5,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, omit } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, ScreenReaderText } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependencies

@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -21,7 +21,6 @@ import EditorMediaModalDetailPreviewImage from './detail-preview-image';
 import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
-import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';

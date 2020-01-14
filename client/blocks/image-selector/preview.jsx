@@ -6,13 +6,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ImagePreloader from 'components/image-preloader';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';

@@ -13,7 +13,7 @@ const debug = debugFactory( 'calypso:stats:action-spam' );
  */
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 class StatsActionSpam extends React.Component {
 	static displayName = 'StatsActionSpam';
@@ -43,7 +43,7 @@ class StatsActionSpam extends React.Component {
 	};
 
 	render() {
-		let label = this.state.spammed
+		const label = this.state.spammed
 				? this.props.translate( 'Not Spam' )
 				: this.props.translate( 'Spam', {
 						context: 'Stats: Action to mark an item as spam',

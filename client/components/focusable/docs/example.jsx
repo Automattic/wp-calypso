@@ -3,13 +3,9 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, ScreenReaderText } from '@automattic/components';
 import { noop } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Card, ScreenReaderText } from '@automattic/components';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';

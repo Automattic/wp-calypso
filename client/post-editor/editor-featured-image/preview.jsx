@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal dependencies

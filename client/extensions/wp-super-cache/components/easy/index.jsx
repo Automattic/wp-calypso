@@ -5,14 +5,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isHttps } from 'lib/url';
-import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';

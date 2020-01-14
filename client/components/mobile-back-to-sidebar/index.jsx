@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal Dependencies

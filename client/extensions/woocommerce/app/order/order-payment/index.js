@@ -5,14 +5,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';

@@ -72,7 +72,7 @@ export { default as FormToggle } from 'components/forms/form-toggle';
 export { default as Gauge } from 'components/gauge';
 export { default as GlobalNotices } from 'components/global-notices';
 export { default as Gravatar } from 'components/gravatar';
-export { default as Gridicon } from 'components/gridicon';
+export { Gridicon } from '@automattic/components';
 export { default as HeaderCake } from 'components/header-cake';
 export { default as HeaderButton } from 'components/header-button';
 export { default as ImagePreloader } from 'components/image-preloader';

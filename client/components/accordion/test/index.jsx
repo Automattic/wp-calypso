@@ -5,7 +5,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import React from 'react';
 import { shallow } from 'enzyme';
 

@@ -6,15 +6,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';

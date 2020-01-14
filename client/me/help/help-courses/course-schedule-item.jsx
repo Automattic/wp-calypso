@@ -4,12 +4,8 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import analytics from 'lib/analytics';
 
 export default localize( props => {

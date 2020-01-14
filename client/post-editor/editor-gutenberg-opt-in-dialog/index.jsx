@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
-import { Button, Dialog } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

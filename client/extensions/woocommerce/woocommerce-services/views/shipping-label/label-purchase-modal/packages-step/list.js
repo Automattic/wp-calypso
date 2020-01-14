@@ -6,13 +6,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import getPackageDescriptions from './get-package-descriptions';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {

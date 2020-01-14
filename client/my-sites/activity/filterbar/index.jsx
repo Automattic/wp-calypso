@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -10,7 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import BackButton from 'components/back-button';
-import { Button } from '@automattic/components';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';

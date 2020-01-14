@@ -6,13 +6,12 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
-import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'state/selectors/can-current-user';
 import CardHeading from 'components/card-heading';
 import DocumentHead from 'components/data/document-head';

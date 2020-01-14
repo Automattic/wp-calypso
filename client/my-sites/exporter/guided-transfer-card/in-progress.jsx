@@ -4,12 +4,8 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import { GUIDED_TRANSFER } from 'lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) => (

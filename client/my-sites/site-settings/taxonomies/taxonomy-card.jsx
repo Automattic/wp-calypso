@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { get, isUndefined } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
-import { CompactCard } from '@automattic/components';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
 

@@ -9,7 +9,7 @@ import { isEmpty, join, merge, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { getDomainRegistrations, getDomainTransfers } from 'lib/cart-values/cart-items';
 import { HTTPS_SSL } from 'lib/url/support';
 import { getProductsList } from 'state/products-list/selectors';

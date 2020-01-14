@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { identity, noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
@@ -12,7 +12,6 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { RemoveButton } from '../index';
-import { Button } from '@automattic/components';
 
 describe( 'Remove Button', () => {
 	test( 'should render the button', () => {

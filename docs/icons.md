@@ -19,7 +19,7 @@ You should not use `gridicons/dist/...`, as that will load a legacy gridicon and
 Import the iconset and decide at run-time which icon to use:
 
 ```
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 // or `import Gridicon from 'gridicons'`;
 //...
 render() {

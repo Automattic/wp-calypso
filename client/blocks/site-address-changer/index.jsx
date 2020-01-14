@@ -7,13 +7,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';

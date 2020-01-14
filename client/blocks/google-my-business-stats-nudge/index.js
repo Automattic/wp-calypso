@@ -5,12 +5,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 
-/**
- * Internal Dependencies
- */
-import { Button, Card } from '@automattic/components';
 import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';

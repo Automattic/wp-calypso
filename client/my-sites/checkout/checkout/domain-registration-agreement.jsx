@@ -10,7 +10,7 @@ import { get, map, reduce } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,

@@ -1,17 +1,13 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';

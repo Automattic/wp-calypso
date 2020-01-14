@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { first, includes } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -31,7 +31,6 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import { Button, Dialog } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

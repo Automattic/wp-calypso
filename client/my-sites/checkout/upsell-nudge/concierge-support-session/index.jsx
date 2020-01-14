@@ -2,13 +2,9 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { CompactCard, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 

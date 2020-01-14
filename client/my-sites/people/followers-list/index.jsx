@@ -7,13 +7,12 @@ import React, { Component } from 'react';
 import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';

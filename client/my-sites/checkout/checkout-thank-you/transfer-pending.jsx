@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { identity } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal dependencies

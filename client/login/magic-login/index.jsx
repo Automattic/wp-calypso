@@ -31,7 +31,7 @@ import Main from 'components/main';
 import JetpackHeader from 'components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -117,7 +117,7 @@ class MagicLogin extends React.Component {
 	render() {
 		return (
 			<Main className="magic-login magic-login__request-link">
-				{ this.props.isJetpackLogin && ( <JetpackHeader/> ) }
+				{ this.props.isJetpackLogin && <JetpackHeader /> }
 
 				{ this.renderLocaleSuggestions() }
 

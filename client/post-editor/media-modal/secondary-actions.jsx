@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial, pick } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,7 +21,6 @@ import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import { Button } from '@automattic/components';
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {

@@ -6,7 +6,7 @@ import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 export default class extends React.Component {
 	static displayName = 'Security2faProgressItem';

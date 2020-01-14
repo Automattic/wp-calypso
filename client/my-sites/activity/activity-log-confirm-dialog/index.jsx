@@ -9,10 +9,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormCheckbox from 'components/forms/form-checkbox';
-import Gridicon from 'components/gridicon';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 

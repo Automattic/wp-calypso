@@ -30,7 +30,7 @@ import { unblockSave } from 'state/ui/editor/save-blockers/actions';
 import { getEditorRawContent, isEditorSaveBlocked } from 'state/ui/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Module variables

@@ -5,12 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import { Gridicon, CompactCard } from '@automattic/components';
 
 export default class extends React.Component {
 	static displayName = 'NotificationsBlogSettingsPlaceholder';

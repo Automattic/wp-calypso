@@ -5,12 +5,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 
-/**
- * Internal Dependencies
- */
-import { Dialog } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import TrackComponentView from 'lib/analytics/track-component-view';

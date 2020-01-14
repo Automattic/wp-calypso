@@ -10,10 +10,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import StatsNavigation from 'blocks/stats-navigation';
 import DocumentHead from 'components/data/document-head';
-import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Main from 'components/main';
 import Notice from 'components/notice';

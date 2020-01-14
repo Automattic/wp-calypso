@@ -4,7 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';

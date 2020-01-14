@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { REFUNDS } from 'lib/url/support';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { hasConciergeSession } from 'lib/cart-values/cart-items';
 
 class ConciergeRefundPolicy extends React.Component {

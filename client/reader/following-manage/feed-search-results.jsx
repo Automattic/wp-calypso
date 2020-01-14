@@ -6,13 +6,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import classnames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-sources';
 import InfiniteStream from 'reader/components/reader-infinite-stream';

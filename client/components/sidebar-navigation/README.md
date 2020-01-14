@@ -8,7 +8,7 @@ Put the component in your `Main` component, and wrap it around any components yo
 
 ```js
 import SidebarNavigation from 'components/sidebar-navigation';
-import Gridicon from 'components/gridicons';
+import { Gridicon } from '@automattic/components';
 
 
 render() {

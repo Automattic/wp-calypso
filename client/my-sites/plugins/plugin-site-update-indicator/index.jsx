@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import PluginsActions from 'lib/plugins/actions';
 
 /**

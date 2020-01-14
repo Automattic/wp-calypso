@@ -6,7 +6,7 @@ import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { withLocalizedMoment } from 'components/localized-moment';
 import moment from 'moment';
@@ -16,7 +16,6 @@ import moment from 'moment';
  */
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
-import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
@@ -167,6 +166,7 @@ export class DateRange extends Component {
 	/**
 	 * Updates state with current value of start/end
 	 * text inputs
+	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -212,6 +212,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Updates the state when the date text inputs are blurred
+	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -243,6 +244,7 @@ export class DateRange extends Component {
 	 * Updates the currently focused date picker month when one of the
 	 * inputs is focused.
 	 * http://react-day-picker.js.org/api/DayPicker/#month
+	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -275,6 +277,7 @@ export class DateRange extends Component {
 	/**
 	 * Converts moment dates to a DateRange
 	 * as required by Day Picker DateUtils
+	 *
 	 * @param  {MomentJSDate} startDate the start date for the range
 	 * @param  {MomentJSDate} endDate   the end date for the range
 	 * @returns {object}           the date range object
@@ -440,8 +443,9 @@ export class DateRange extends Component {
 
 	/**
 	 * Converts a moment date to a native JS Date object
+	 *
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
-	 * @returns {DATE}            the converted JS Date object
+	 * @returns {Date}            the converted JS Date object
 	 */
 	momentDateToJsDate( momentDate ) {
 		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
@@ -449,6 +453,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Converts a native JS Date object to a MomentJS Date object
+	 *
 	 * @param  {Date} nativeDate date to be converted
 	 * @returns {MomentJSDate}            the converted Date
 	 */
@@ -459,6 +464,7 @@ export class DateRange extends Component {
 	/**
 	 * Formats a given date to the appropriate format for the
 	 * current locale
+	 *
 	 * @param  {Date|MomentJSDate} date the date to be converted
 	 * @returns {string}      the date as a formatted locale string
 	 */
@@ -468,6 +474,7 @@ export class DateRange extends Component {
 
 	/**
 	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
+	 *
 	 * @returns {string} date format as a string
 	 */
 	getLocaleDateFormat() {
@@ -477,6 +484,7 @@ export class DateRange extends Component {
 	/**
 	 * Enforces that given date is within the bounds of the
 	 * range specified
+	 *
 	 * @param  {Moment} date             momentJS instance
 	 * @param  {Moment|Date} options.dateFrom the start of the date range
 	 * @param  {Moment|Date} options.dateTo   the end of the date range
@@ -499,6 +507,7 @@ export class DateRange extends Component {
 	 * Converts date-like object to a string suitable
 	 * for display in a text input. Also converts
 	 * to locale appropriate format.
+	 *
 	 * @param  {Date|Moment} date the date for conversion
 	 * @returns {string}      the date expressed as a locale appropriate string or if null
 	 *                       then returns the locale format (eg: MM/DD/YYYY)
@@ -577,6 +586,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the Popover component
+	 *
 	 * @returns {ReactComponent} the Popover component
 	 */
 	renderPopover() {
@@ -615,6 +625,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the DatePicker component
+	 *
 	 * @returns {ReactComponent} the DatePicker component
 	 */
 	renderDatePicker() {
@@ -666,6 +677,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the component
+	 *
 	 * @returns {ReactComponent} the DateRange component
 	 */
 	render() {

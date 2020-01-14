@@ -7,7 +7,7 @@ import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -97,6 +97,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Setup our initial state
+	 *
 	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
@@ -242,6 +243,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Determine if this form is ready to submit
+	 *
 	 * @returns {bool}	Return true if this form can be submitted
 	 */
 	canSubmitForm = () => {
@@ -261,6 +263,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Start a chat using the info set in state
+	 *
 	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
@@ -291,6 +294,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Submit additional support option
+	 *
 	 * @param  {object} event Event object
 	 */
 	submitAdditionalForm = () => {
@@ -313,6 +317,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Render the contact form
+	 *
 	 * @returns {object} ReactJS JSX object
 	 */
 	render() {

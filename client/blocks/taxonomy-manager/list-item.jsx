@@ -9,13 +9,12 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import Count from 'components/count';
-import { Dialog } from '@automattic/components';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';

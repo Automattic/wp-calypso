@@ -7,7 +7,7 @@ import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal Dependencies
@@ -24,7 +24,6 @@ import {
 	hideOnboardingWelcomePrompt,
 	hideChecklistPrompt,
 } from 'state/inline-help/actions';
-import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -9,10 +9,6 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { noop } from 'lodash';
 
-/**
- * Internal Dependencies
- */
-import { Button } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { hideOnboardingWelcomePrompt } from 'state/inline-help/actions';

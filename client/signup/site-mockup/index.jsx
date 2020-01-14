@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, isEmpty } from 'lodash';

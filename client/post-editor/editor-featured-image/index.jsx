@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
@@ -19,7 +19,6 @@ import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import { Button } from '@automattic/components';
 import RemoveButton from 'components/remove-button';
 import getMediaItem from 'state/selectors/get-media-item';
 import { getFeaturedImageId } from 'state/posts/utils';

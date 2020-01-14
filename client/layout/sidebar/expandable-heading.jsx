@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';

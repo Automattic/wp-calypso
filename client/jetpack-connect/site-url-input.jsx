@@ -3,14 +3,10 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';

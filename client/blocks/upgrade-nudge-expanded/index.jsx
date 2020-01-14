@@ -7,13 +7,9 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';

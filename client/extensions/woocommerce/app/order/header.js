@@ -3,7 +3,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,7 +14,6 @@ import React, { Component } from 'react';
  */
 import accept from 'lib/accept';
 import ActionHeader from 'woocommerce/components/action-header';
-import { Button } from '@automattic/components';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { deleteOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';

@@ -7,14 +7,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import { isUndefined, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';
 

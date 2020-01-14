@@ -5,13 +5,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-zone/shipping-methods/utils';
 import { getSelectedSite } from 'state/ui/selectors';

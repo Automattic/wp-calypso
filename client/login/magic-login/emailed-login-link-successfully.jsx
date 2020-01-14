@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { login } from 'lib/paths';
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
@@ -22,7 +22,6 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
-import Gridicon from 'components/gridicon';
 
 /**
  * Image dependencies
@@ -75,11 +74,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img
-						alt=""
-						src={ checkEmailImage }
-						className="magic-login__check-email-image"
-					/>
+					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
 					<p>{ line }</p>
 				</Card>
 

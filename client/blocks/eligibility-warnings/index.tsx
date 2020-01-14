@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes, noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, CompactCard } from '@automattic/components';
 import page from 'page';
 
 /**
@@ -18,7 +18,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';

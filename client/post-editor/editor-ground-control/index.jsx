@@ -6,13 +6,9 @@ import PropTypes from 'prop-types';
 import { identity, noop, get, findLast } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import Site from 'blocks/site';
 import EditorPublishButton from 'post-editor/editor-publish-button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';

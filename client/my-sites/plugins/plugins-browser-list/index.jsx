@@ -10,8 +10,7 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
-import { Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Card, Gridicon } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 
 /**

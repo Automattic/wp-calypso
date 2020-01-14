@@ -9,9 +9,8 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, CompactCard, Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
-import { CompactCard, Button } from '@automattic/components';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';

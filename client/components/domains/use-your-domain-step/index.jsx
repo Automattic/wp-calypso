@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 import page from 'page';
 import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
@@ -20,7 +20,6 @@ import {
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
-import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';

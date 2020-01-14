@@ -5,13 +5,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import Notice from 'components/notice';

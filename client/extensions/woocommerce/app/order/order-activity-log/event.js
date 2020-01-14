@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import formatCurrency from '@automattic/format-currency';

@@ -2,14 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { errorNotice } from 'state/notices/actions';

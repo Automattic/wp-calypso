@@ -4,13 +4,9 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {

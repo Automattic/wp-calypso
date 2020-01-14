@@ -4,14 +4,10 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';

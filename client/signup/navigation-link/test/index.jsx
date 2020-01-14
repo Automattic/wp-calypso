@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 jest.mock( 'signup/utils', () => ( {
 	getStepUrl: jest.fn(),

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
-import { Button, Dialog } from '@automattic/components';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';

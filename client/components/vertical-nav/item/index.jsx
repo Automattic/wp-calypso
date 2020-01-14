@@ -9,8 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { CompactCard, Gridicon } from '@automattic/components';
 
 /**
  * Style dependencies

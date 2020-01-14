@@ -5,13 +5,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { flow } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import EditorPostType from 'post-editor/editor-post-type';
 import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 

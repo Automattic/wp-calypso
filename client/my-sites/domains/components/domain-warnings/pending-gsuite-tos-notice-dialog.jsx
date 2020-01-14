@@ -2,15 +2,11 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Dialog } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal Dependencies
- */
-import { Button, Dialog } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';

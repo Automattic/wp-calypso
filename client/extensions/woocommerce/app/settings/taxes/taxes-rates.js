@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -24,7 +24,6 @@ import {
 	getStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
-import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';

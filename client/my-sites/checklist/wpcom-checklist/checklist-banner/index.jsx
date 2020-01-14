@@ -1,16 +1,12 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card, ProgressBar } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button, Card, ProgressBar } from '@automattic/components';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';

@@ -17,10 +17,9 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
-import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import {
 	showInlineHelpPopover,

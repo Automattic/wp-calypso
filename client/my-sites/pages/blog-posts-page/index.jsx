@@ -7,13 +7,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import { recordTracksEvent } from 'state/analytics/actions';

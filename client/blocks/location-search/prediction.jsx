@@ -3,12 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import { Gridicon, CompactCard } from '@automattic/components';
 
 export default class Prediction extends Component {
 	static propTypes = {

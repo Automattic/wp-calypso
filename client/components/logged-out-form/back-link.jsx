@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { localizeUrl } from 'lib/i18n-utils';
 import safeProtocolUrl from 'lib/safe-protocol-url';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Style dependencies

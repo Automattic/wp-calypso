@@ -13,7 +13,7 @@ import { saveAs } from 'browser-filesaver';
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { Card, Button, CompactCard } from '@automattic/components';
+import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
@@ -27,7 +27,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
-import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';

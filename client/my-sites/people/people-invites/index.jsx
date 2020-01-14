@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
@@ -18,7 +18,6 @@ import FormattedHeader from 'components/formatted-header';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import { Card, Button, Dialog } from '@automattic/components';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';

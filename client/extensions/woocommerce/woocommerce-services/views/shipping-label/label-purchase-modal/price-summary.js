@@ -6,13 +6,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import Tooltip from 'components/tooltip';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 

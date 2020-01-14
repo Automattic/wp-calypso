@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -12,7 +12,6 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
 import QueryRewindState from 'components/data/query-rewind-state';
 import {

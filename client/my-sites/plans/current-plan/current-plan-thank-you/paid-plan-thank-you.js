@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, ProgressBar } from '@automattic/components';
 import React, { Component, Fragment } from 'react';
 
 /**
@@ -13,7 +13,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
-import { Button, ProgressBar } from '@automattic/components';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import ThankYou from './thank-you';
 

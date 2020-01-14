@@ -15,7 +15,7 @@ import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
@@ -41,7 +41,6 @@ import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '..
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
 	isPersonal,

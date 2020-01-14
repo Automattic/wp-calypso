@@ -5,13 +5,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { endsWith } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import DnsRecordsListItem from '../dns-records/item';
 
 class DnsRecord extends React.Component {

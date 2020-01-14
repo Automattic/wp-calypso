@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { defer, flow, get, includes, noop, truncate } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import Gridicon from 'components/gridicon';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
-import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 

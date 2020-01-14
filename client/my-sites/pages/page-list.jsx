@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -32,7 +32,6 @@ import {
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
-import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 function preloadEditor() {

@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import { Button } from '@automattic/components';
 import { EMPTY_SITE } from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 

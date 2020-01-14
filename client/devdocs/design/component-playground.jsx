@@ -5,12 +5,8 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 

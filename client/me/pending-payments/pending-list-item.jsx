@@ -3,16 +3,12 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getSite, getSiteTitle, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';

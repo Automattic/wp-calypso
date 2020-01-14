@@ -8,8 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ButtonGroup from 'components/button-group';
-import { Button, Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Button, Card, Gridicon } from '@automattic/components';
 
 class Buttons extends React.PureComponent {
 	static displayName = 'ButtonGroup';

@@ -6,13 +6,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, CompactCard } from '@automattic/components';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { Card, CompactCard } from '@automattic/components';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import notices from 'notices';

@@ -10,7 +10,7 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
 /**

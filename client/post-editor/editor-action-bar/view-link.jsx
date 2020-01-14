@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -13,7 +13,6 @@ import { includes } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 import { isPublished } from 'state/posts/utils';
 import Tooltip from 'components/tooltip';
-import { Button } from '@automattic/components';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';

@@ -5,7 +5,7 @@
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -26,7 +26,6 @@ import {
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';

@@ -4,13 +4,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { noop } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 
 /**
  * Style dependencies

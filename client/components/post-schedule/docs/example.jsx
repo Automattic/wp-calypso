@@ -4,14 +4,13 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import PostSchedule from 'components/post-schedule';
 import Timezone from 'components/timezone';
-import { Card } from '@automattic/components';
 import EventsTooltip from 'components/date-picker/events-tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 

@@ -5,13 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
-import { Button } from '@automattic/components';
 
 /**
  * Style dependencies

@@ -4,12 +4,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { Gridicon, Card } from '@automattic/components';
 
 /**
  * Style dependencies

@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import SocialLogo from 'components/social-logo';
 import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';

@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import Gridicon from 'components/gridicon';
 import StepWrapper from 'signup/step-wrapper';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
-import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSurvey } from 'state/signup/steps/survey/actions';

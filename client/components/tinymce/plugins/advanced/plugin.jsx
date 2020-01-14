@@ -13,7 +13,7 @@ import { translate } from 'i18n-calypso';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 function advanced( editor ) {
 	const store = editor.getParam( 'redux_store' );

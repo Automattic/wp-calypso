@@ -5,14 +5,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
 function renderViewButton( product, label ) {

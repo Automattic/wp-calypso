@@ -3,12 +3,8 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import SharingPreviewPane from 'blocks/sharing-preview-pane';
 
 const SharingPreviewModal = props => {

@@ -3,12 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Style dependencies

@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal Dependencies
@@ -37,9 +37,6 @@ SidebarNavigation.propTypes = {
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
-	}
-)( SidebarNavigation );
+export default connect( null, {
+	toggleSidebar: () => setLayoutFocus( 'sidebar' ),
+} )( SidebarNavigation );

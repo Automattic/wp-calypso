@@ -15,7 +15,7 @@ import { stringify } from 'qs';
  */
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { addQueryArgs } from 'lib/url';

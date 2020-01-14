@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 Accordion.displayName = 'Accordion';
 Gridicon.displayName = 'Gridicon';

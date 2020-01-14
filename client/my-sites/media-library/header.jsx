@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
-import { Card, Button, ScreenReaderText } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import StickyPanel from 'components/sticky-panel';
 

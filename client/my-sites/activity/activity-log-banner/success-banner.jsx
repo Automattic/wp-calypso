@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { flowRight as compose } from 'lodash';
 
 /**
@@ -13,7 +13,6 @@ import { flowRight as compose } from 'lodash';
  */
 import ActivityLogBanner from './index';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { Button } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';

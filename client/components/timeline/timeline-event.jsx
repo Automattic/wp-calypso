@@ -8,8 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Button, CompactCard } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 class TimelineEvent extends PureComponent {

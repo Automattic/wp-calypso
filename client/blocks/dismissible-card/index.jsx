@@ -7,12 +7,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, flow } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';

@@ -10,9 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import hasLocalizedText from './has-localized-text';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { localizeUrl } from 'lib/i18n-utils';

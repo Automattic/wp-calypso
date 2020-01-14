@@ -11,8 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/components';
 
 /**
  * Style dependencies

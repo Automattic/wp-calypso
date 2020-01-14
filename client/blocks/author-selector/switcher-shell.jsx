@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 
 /**

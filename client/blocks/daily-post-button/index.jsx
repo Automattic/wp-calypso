@@ -7,7 +7,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { get, defer } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { preload } from 'sections-helper';
 import SitesPopover from 'components/sites-popover';
-import { Button } from '@automattic/components';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';

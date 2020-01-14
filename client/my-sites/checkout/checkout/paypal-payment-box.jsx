@@ -5,7 +5,7 @@
 import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import debugFactory from 'debug';
 
 /**

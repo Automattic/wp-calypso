@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Style dependencies

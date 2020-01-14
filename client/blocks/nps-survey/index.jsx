@@ -4,16 +4,12 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card, ScreenReaderText } from '@automattic/components';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isNumber, noop, trim } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button, Card, ScreenReaderText } from '@automattic/components';
 import FormTextArea from 'components/forms/form-textarea';
 import {
 	submitNpsSurvey,

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { connect } from 'react-redux';
 
 /**

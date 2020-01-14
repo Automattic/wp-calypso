@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card, CompactCard, Dialog } from '@automattic/components';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, map } from 'lodash';
@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'lib/route';
 import analytics from 'lib/analytics';
-import { Button, Card, CompactCard, Dialog } from '@automattic/components';
 import config from 'config';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import EmptyContent from 'components/empty-content';

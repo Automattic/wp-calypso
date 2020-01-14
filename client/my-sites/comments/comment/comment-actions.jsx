@@ -5,14 +5,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {

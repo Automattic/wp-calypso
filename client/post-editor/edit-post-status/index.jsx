@@ -5,12 +5,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormToggle from 'components/forms/form-toggle/compact';
 import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';

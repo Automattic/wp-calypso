@@ -5,12 +5,8 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Dialog, Button } from '@automattic/components';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';

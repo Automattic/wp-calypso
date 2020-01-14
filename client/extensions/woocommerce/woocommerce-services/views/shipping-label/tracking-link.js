@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 const TRACKING_URL_MAP = {
 	usps: tracking => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,

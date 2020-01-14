@@ -8,12 +8,8 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, ScreenReaderText } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { ScreenReaderText } from '@automattic/components';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';

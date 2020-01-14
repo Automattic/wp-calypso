@@ -11,7 +11,7 @@ import React from 'react';
  */
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {
 	static displayName = 'SecurityAccountRecoveryManageContactButtons';

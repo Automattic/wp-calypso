@@ -350,7 +350,7 @@ Example:
 
 ```jsx
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { useRtl } from 'i18n-calypso';
 
 export default function Header() {
@@ -373,7 +373,7 @@ Example:
 
 ```jsx
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { withRtl } from 'i18n-calypso';
 
 function Header( { isRtl } ) {

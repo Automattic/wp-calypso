@@ -5,12 +5,8 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 

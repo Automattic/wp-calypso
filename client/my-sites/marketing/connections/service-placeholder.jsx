@@ -6,12 +6,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import GridIcon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 
 class SharingServicePlaceholder extends Component {
@@ -26,7 +22,7 @@ class SharingServicePlaceholder extends Component {
 	render() {
 		const header = (
 			<div>
-				<GridIcon icon="share" size={ 48 } className="sharing-service__logo" />
+				<Gridicon icon="share" size={ 48 } className="sharing-service__logo" />
 
 				<div className="sharing-service__name">
 					<h2 />

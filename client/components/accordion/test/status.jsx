@@ -7,7 +7,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import React from 'react';
 import sinon from 'sinon';
 

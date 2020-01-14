@@ -7,12 +7,8 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 
 /**

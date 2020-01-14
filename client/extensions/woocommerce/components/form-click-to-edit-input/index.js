@@ -5,13 +5,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { noop, omit } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 
 class FormClickToEditInput extends Component {

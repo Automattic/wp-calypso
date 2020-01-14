@@ -6,12 +6,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {

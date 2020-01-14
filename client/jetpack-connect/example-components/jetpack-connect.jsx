@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 /**

@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import { Button } from '@automattic/components';
 import { decodeEntities, removep } from 'lib/formatting';
 import {
 	deleteReviewReply,

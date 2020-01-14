@@ -3,7 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 

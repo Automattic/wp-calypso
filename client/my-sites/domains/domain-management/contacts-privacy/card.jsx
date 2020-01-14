@@ -9,12 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import ContactDisplay from './contact-display';
 import SectionHeader from 'components/section-header';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 import FormToggle from 'components/forms/form-toggle';
-import Gridicon from 'components/gridicon';
 import {
 	enableDomainPrivacy,
 	disableDomainPrivacy,

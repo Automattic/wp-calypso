@@ -13,8 +13,7 @@ import { identity, includes, noop, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import { RootChild } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { RootChild, Gridicon } from '@automattic/components';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 import TranslatableString from 'components/translatable/proptype';
 

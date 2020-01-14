@@ -3,16 +3,11 @@
  */
 import React, { FunctionComponent } from 'react';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
-import { ScreenReaderText } from '@automattic/components';
 
 interface Props {
 	startDate: Date | Moment | null | undefined;

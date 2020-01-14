@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -14,7 +14,6 @@ import moment from 'moment';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';

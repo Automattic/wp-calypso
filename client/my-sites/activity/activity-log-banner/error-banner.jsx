@@ -11,9 +11,8 @@ import { isUndefined } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import HappychatButton from 'components/happychat/button';
-import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';

@@ -6,13 +6,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 import { isEmpty, startsWith } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import FlatRate from './shipping-methods/flat-rate';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

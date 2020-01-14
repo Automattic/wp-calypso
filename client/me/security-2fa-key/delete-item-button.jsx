@@ -9,10 +9,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import Gridicon from 'components/gridicon';
 
 class Security2faKeyDeleteButton extends Component {
 	static propTypes = {

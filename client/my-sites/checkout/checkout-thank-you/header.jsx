@@ -26,9 +26,8 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-import { Button } from '@automattic/components';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {

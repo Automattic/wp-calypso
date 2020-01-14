@@ -5,13 +5,9 @@ import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { get, noop, pick } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';

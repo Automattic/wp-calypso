@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AutomatticLogo from 'components/automattic-logo';
-import { Button } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';

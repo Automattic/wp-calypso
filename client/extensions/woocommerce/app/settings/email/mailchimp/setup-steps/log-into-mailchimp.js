@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 
 export default () => (

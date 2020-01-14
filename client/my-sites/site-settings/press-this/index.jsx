@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Card, Gridicon } from '@automattic/components';
 import PressThisLink from './link';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';

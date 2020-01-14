@@ -4,16 +4,12 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import { errorNotice } from 'state/notices/actions';
 
 /**

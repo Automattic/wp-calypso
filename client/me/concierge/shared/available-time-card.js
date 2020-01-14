@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
@@ -16,10 +16,6 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

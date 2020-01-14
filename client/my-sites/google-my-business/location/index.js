@@ -2,16 +2,11 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 
 /**
  * Style dependencies

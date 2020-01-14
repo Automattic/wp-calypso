@@ -5,13 +5,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 import { get, isEmpty } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Version from 'components/version';

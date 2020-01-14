@@ -7,13 +7,12 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';

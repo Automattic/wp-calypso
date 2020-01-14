@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 import Site from 'blocks/site';
 import { getSiteHomeUrl } from 'state/sites/selectors';
 

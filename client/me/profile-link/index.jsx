@@ -3,14 +3,10 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';

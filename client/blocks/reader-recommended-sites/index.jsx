@@ -5,13 +5,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { map, partial, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import { Button } from '@automattic/components';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 import ConnectedListItem from 'blocks/reader-list-item/connected';
 

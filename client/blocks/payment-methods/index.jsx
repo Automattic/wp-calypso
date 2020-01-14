@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 

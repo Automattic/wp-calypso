@@ -3,7 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import page from 'page';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -22,7 +22,6 @@ import ActionPanelFigureList from 'components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'components/action-panel/figure-list-item';
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
-import { Button } from '@automattic/components';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUser } from 'state/current-user/selectors';

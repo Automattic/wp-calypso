@@ -14,7 +14,7 @@ import { find } from 'lodash';
 import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
@@ -25,7 +25,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
-import Gridicon from 'components/gridicon';
 
 /**
  * Module variables

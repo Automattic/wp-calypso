@@ -7,12 +7,8 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
 import {
 	getStatus,

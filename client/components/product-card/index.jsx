@@ -9,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Card, Gridicon } from '@automattic/components';
 import ProductCardPriceGroup from './price-group';
 
 /**

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { menuItems, GridiconButton } from './menu-items';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 function initialize( editor ) {
 	// Conditional menu item support:

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { head, find, noop, trim, uniqueId } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 /**

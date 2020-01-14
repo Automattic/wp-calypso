@@ -8,14 +8,13 @@ import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
 import ButtonGroup from 'components/button-group';
-import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import BulkSelect from 'components/bulk-select';
 import analytics from 'lib/analytics';

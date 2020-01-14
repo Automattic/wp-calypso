@@ -3,12 +3,8 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import PaymentBox from './payment-box.jsx';
 
 export function PendingPaymentBlocker( { translate } ) {

@@ -10,13 +10,12 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import PluginsActions from 'lib/plugins/actions';
-import { Button } from '@automattic/components';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, omitBy } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal Dependencies
@@ -21,7 +21,6 @@ import {
 	RESULT_TYPE,
 	RESULT_VIDEO,
 } from './constants';
-import { Button } from '@automattic/components';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';

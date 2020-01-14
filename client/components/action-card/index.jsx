@@ -2,14 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Button } from '@automattic/components';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies

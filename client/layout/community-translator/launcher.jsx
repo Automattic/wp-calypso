@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog } from '@automattic/components';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
-import { Dialog } from '@automattic/components';
 import analytics from 'lib/analytics';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';

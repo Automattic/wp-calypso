@@ -7,12 +7,8 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';

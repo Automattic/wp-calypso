@@ -3,14 +3,13 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import AsyncLoad from 'components/async-load';
 
 class CalendarButton extends Component {

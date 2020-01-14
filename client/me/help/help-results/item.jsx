@@ -3,13 +3,9 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, CompactCard } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import { localizeUrl } from 'lib/i18n-utils';
 
 export default class extends React.PureComponent {

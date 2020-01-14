@@ -3,8 +3,12 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import PropTypes from 'prop-types';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from '../gridicon';
 
 /**
  * Style dependencies

@@ -5,13 +5,9 @@ import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Dialog, Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Dialog, Button, CompactCard } from '@automattic/components';
 import config from 'config';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';

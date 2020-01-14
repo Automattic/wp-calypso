@@ -25,8 +25,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
-import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 
 /**
  * Internal dependencies

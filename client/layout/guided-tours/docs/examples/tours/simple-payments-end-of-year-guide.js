@@ -5,7 +5,7 @@
 
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 /**
  * Internal dependencies

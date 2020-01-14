@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -12,7 +12,6 @@ import Gridicon from 'components/gridicon';
 
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Button } from '@automattic/components';
 import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';

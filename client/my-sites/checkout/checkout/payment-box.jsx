@@ -4,14 +4,13 @@
 
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 import { snakeCase, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { Card } from '@automattic/components';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';

@@ -5,12 +5,8 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldRemoveButton extends React.PureComponent {

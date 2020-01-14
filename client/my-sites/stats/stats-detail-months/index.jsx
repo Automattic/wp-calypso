@@ -7,12 +7,8 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card } from '@automattic/components';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostStats from 'components/data/query-post-stats';

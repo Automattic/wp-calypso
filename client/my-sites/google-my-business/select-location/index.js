@@ -3,15 +3,11 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, Card, CompactCard } from '@automattic/components';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-/**
- * Internal dependencies
- */
-import { Button, Card, CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';

@@ -2,6 +2,7 @@ export { default as Button } from './button';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as Dialog } from './dialog';
+export { default as Gridicon } from './gridicon';
 export { default as ProductIcon } from './product-icon';
 export { default as ProgressBar } from './progress-bar';
 export { default as Ribbon } from './ribbon';

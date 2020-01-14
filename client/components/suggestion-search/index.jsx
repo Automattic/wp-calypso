@@ -9,9 +9,8 @@ import { escapeRegExp, noop } from 'lodash';
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Suggestions } from '@automattic/components';
 import Spinner from 'components/spinner';
-import { Suggestions } from '@automattic/components';
 import { tracks } from 'lib/analytics';
 
 /**

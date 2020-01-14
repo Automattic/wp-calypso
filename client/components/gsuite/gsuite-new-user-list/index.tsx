@@ -1,14 +1,10 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import GSuiteNewUser from './new-user';
 import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
 

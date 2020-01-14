@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 

@@ -22,7 +22,7 @@ import {
 } from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import Gridicon from 'components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 function wpcomContactForm( editor ) {
 	let node;

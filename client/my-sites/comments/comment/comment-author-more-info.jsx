@@ -5,13 +5,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button } from '@automattic/components';
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Popover from 'components/popover';
@@ -85,7 +81,7 @@ export class CommentAuthorMoreInfo extends Component {
 			);
 		}
 
-		const newBlacklist = !! siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+		const newBlacklist = siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
 
 		updateBlacklist( siteId, newBlacklist, analytics );
 

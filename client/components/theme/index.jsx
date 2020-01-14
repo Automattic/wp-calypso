@@ -7,14 +7,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { Gridicon, Card, Ribbon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
 
-/**
- * Internal dependencies
- */
-import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
 import InfoPopover from 'components/info-popover';

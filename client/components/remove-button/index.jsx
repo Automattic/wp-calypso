@@ -2,15 +2,10 @@
  * External dependencies
  */
 
-import Gridicon from 'components/gridicon';
+import { Gridicon, Button, ScreenReaderText } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependences

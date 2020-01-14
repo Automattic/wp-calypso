@@ -114,10 +114,10 @@ module.exports = {
 				paths: [
 					// Error if any module depends on the data-observe mixin, which is deprecated.
 					'lib/mixins/data-observe',
-					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					// Prevent naked import of gridicons module. Use '@automattic/components' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{
@@ -139,10 +139,10 @@ module.exports = {
 				paths: [
 					// Error if any module depends on the data-observe mixin, which is deprecated.
 					'lib/mixins/data-observe',
-					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+					// Prevent naked import of gridicons module. Use '@automattic/components' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Use fetch instead of superagent.
 					{
