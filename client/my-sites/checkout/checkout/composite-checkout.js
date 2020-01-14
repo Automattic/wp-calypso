@@ -109,7 +109,7 @@ export default function CompositeCheckout( {
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
 
-	useRedirectIfCartEmpty( itemsForCheckout );
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug }` );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
@@ -236,16 +236,17 @@ function handleCheckoutEvent( action ) {
 	// TODO: record stats
 }
 
-function useRedirectIfCartEmpty( items ) {
+function useRedirectIfCartEmpty( items, redirectUrl ) {
 	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
+
 	useEffect( () => {
 		setPrevItemsLength( items.length );
 	}, [ items ] );
 
 	useEffect( () => {
 		if ( prevItemsLength > 0 && items.length === 0 ) {
-			debug( 'cart is empty; redirecting...' );
-			window.location = '/'; // TODO: where should we redirect to?
+			debug( 'cart has become empty; redirecting...' );
+			window.location = redirectUrl;
 		}
 	}, [ items, prevItemsLength ] );
 }
