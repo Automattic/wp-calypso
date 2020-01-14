@@ -53,8 +53,7 @@ export default function WPCheckoutOrderSummary() {
 
 			<CouponField
 				id="order-summary-coupon"
-				isCouponFieldVisible={ isCouponFieldVisible }
-				disabled={ formStatus !== 'ready' }
+				isCouponFieldVisible={ isCouponFieldVisible && formStatus === 'ready' }
 				couponAdded={ () => {
 					handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
 				} }
