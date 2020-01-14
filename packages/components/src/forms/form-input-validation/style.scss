@@ -1,0 +1,28 @@
+.form-input-validation {
+	color: var( --color-success );
+	position: relative;
+	padding: 6px 24px 11px 34px;
+	border-radius: 1px;
+	box-sizing: border-box;
+	font-size: 14px;
+	animation: appear 0.3s ease-in-out;
+	font-weight: normal;
+
+	&.is-error {
+		color: var( --color-error );
+	}
+
+	&.is-warning {
+		color: var( --color-warning );
+	}
+
+	&.is-hidden {
+		animation: none;
+		visibility: hidden;
+	}
+
+	.gridicon {
+		float: left;
+		margin-left: -34px;
+	}
+}

@@ -1,0 +1,26 @@
+@import '../../styles/typography.scss';
+
+.form-label {
+	font-family: $a8c-font-family-sans;
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+
+	.form-label__required {
+		color: var( --color-error );
+		font-weight: normal;
+		margin-left: 6px;
+	}
+
+	.form-label__optional {
+		color: var( --color-neutral-50 );
+		font-weight: normal;
+		margin-left: 6px;
+	}
+}
+
+.form-label input[type='checkbox'] + span,
+.form-label input[type='radio'] + span {
+	font-weight: normal;
+}

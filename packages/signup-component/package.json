@@ -29,14 +29,13 @@
 	],
 	"types": "types",
 	"dependencies": {
+		"@automattic/components": "*",
 		"classnames": "^2.2.6",
-		"enzyme": "^3.10.0",
-		"gridicons": "^3.3.1",
+		"email-validator": "^2.0.4",
+		"i18n-calypso": "*",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
-		"react": "^16.8.3",
-		"react-dom": "^16.8.3",
-		"react-modal": "^3.8.1"
+		"react": "^16.8.3"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist types",

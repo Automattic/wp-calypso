@@ -1,0 +1,13 @@
+@import '../../styles/extends-forms.scss';
+
+input[type='email'].form-text-input,
+input[type='password'].form-text-input,
+input[type='url'].form-text-input,
+input[type='text'].form-text-input {
+	// input[type="text"] is needed to override the default styles
+	-webkit-appearance: none;
+}
+
+.form-text-input {
+	@extend %form-field;
+}

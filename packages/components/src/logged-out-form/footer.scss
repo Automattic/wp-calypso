@@ -1,0 +1,21 @@
+@import '../styles/_elevation';
+
+.logged-out-form__footer {
+	box-shadow: none;
+	background: none;
+	margin: 16px -16px -16px;
+	padding: 16px;
+
+	&.is-blended {
+		background: none;
+		border-top: none;
+		padding-top: 0;
+	}
+
+	.button.is-primary {
+		float: none;
+		margin: 0;
+		width: 100%;
+		@include elevation( 1dp );
+	}
+}

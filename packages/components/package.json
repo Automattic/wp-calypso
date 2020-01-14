@@ -30,14 +30,19 @@
 	],
 	"types": "types",
 	"dependencies": {
+		"chai": "^4.2.0",
 		"classnames": "^2.2.6",
+		"debug": "^4.1.1",
 		"enzyme": "^3.10.0",
 		"gridicons": "^3.3.1",
+		"i18n-calypso": "*",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
 		"react": "^16.8.3",
 		"react-dom": "^16.8.3",
-		"react-modal": "^3.8.1"
+		"react-modal": "^3.8.1",
+		"sinon": "^7.5.0",
+		"utility-types": "^3.10.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist types",

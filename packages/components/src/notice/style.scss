@@ -1,0 +1,317 @@
+@import '../styles/breakpoints.scss';
+
+@keyframes notice-loading-pulse {
+	0, 100% {
+		opacity: 0.75;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+.notice {
+	display: flex;
+	position: relative;
+	width: 100%;
+	margin-bottom: 12px;
+	box-sizing: border-box;
+	animation: appear 0.3s ease-in-out;
+	background: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
+	border-radius: 3px;
+	line-height: 1.5;
+
+	@include a8c-breakpoint( '>660px' ) {
+		margin-bottom: 24px;
+	}
+
+	// Success!
+	&.is-success {
+		.notice__icon-wrapper {
+			background: var( --color-success-40 );
+		}
+
+		.notice__icon-wrapper-drop {
+			background: var( --color-success );
+		}
+	}
+
+	// Warning
+	&.is-warning {
+		.notice__icon-wrapper {
+			background: var( --color-warning-30 );
+		}
+
+		.notice__icon-wrapper-drop {
+			background: var( --color-warning );
+		}
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		.notice__icon-wrapper {
+			background: var( --color-error-40 );
+		}
+
+		.notice__icon-wrapper-drop {
+			background: var( --color-error );
+		}
+	}
+
+	// General notice
+	&.is-info {
+		.notice__icon-wrapper {
+			background: var( --color-accent-40 );
+		}
+
+		.notice__icon-wrapper-drop {
+			background: var( --color-accent );
+		}
+	}
+
+	&.is-loading {
+		.notice__icon-wrapper {
+			animation: notice-loading-pulse 0.8s ease-in-out infinite;
+		}
+	}
+
+	.notice__dismiss {
+		overflow: hidden;
+	}
+
+	&.is-success,
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		.notice__dismiss {
+			overflow: hidden;
+		}
+	}
+}
+
+.notice__icon-wrapper {
+	position: relative;
+	background: var( --color-neutral-40 );
+	color: var( --color-text-inverted );
+	display: flex;
+	align-items: center;
+	width: 47px;
+	justify-content: center;
+	border-radius: 3px 0 0 3px;
+	flex-shrink: 0;
+	align-self: stretch;
+}
+
+// Accessible background drop for icons enclosed in a circle
+// to emphasize the glyph inside
+.notice__icon-wrapper-drop {
+	position: absolute;
+	top: calc( 50% - 8px );
+	left: calc( 50% - 8px );
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
+	background: var( --color-neutral );
+
+	& + .notice__icon {
+		position: relative;
+	}
+}
+
+.notice__content {
+	padding: 13px;
+	font-size: 12px;
+	flex-grow: 1;
+
+	.notice__text {
+		a,
+		a:visited,
+		button.is-link {
+			text-decoration: underline;
+			color: var( --color-text-inverted );
+			line-height: inherit;
+
+			&:hover {
+				color: var( --color-text-inverted );
+				text-decoration: none;
+			}
+		}
+
+		ul {
+			margin-bottom: 0;
+			margin-left: 0;
+		}
+
+		li {
+			margin-left: 2em;
+			margin-top: 0.5em;
+		}
+
+		p {
+			margin-bottom: 0;
+			margin-top: 0.5em;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+
+	@include a8c-breakpoint( '>480px' ) {
+		font-size: 14px;
+	}
+}
+
+.notice__button {
+	cursor: pointer;
+	margin-left: 0.428em;
+}
+
+// "X" for dismissing a notice
+.notice__dismiss {
+	display: flex;
+	flex-shrink: 0;
+	padding: 12px;
+	cursor: pointer;
+
+	.gridicon {
+		width: 18px;
+		height: 18px;
+	}
+
+	@include a8c-breakpoint( '>480px' ) {
+		padding: 11px;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	.notice & {
+		color: var( --color-neutral-20 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-text-inverted );
+		}
+	}
+}
+
+// specificity for general `a` elements within notice is too great
+a.notice__action {
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 400;
+	text-decoration: none;
+	white-space: nowrap;
+	color: var( --color-neutral-20 );
+	padding: 13px;
+	display: flex;
+	align-items: center;
+
+	@include a8c-breakpoint( '>480px' ) {
+			flex-shrink: 1;
+			flex-grow: 0;
+		align-items: center;
+		border-radius: 0;
+		font-size: 14px;
+		margin: 0 0 0 auto; // forces the element to the right;
+		padding: 13px 16px;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	&:visited {
+		color: var( --color-neutral-20 );
+	}
+
+	&:hover {
+		color: var( --color-text-inverted );
+	}
+
+	.gridicon {
+		margin-left: 8px;
+		opacity: 0.7;
+		width: 18px;
+		height: 18px;
+	}
+}
+
+// Compact notices
+.notice.is-compact {
+	display: inline-flex;
+		flex-wrap: nowrap;
+		flex-direction: row;
+	width: auto;
+	border-radius: 3px;
+	min-height: 20px;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-transform: none;
+	vertical-align: middle;
+	line-height: 1.5;
+
+	.notice__content {
+		font-size: 12px;
+		padding: 6px 10px;
+	}
+
+	.notice__icon-wrapper {
+		width: 28px;
+
+		.notice__icon {
+			width: 18px;
+			height: 18px;
+			margin: 0;
+		}
+	}
+
+	.notice__icon-wrapper-drop {
+		top: calc( 50% - 6px );
+		left: calc( 50% - 6px );
+		width: 12px;
+		height: 12px;
+	}
+
+	.notice__dismiss {
+		position: relative;
+		align-self: center;
+		flex: none;
+		margin: 0 8px 0 0;
+		padding: 0;
+
+		.gridicon {
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	a.notice__action {
+		background: transparent;
+		display: inline-block;
+		margin: 0;
+		font-size: 12px;
+		align-self: center;
+		margin-left: 16px;
+		padding: 0 10px;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: transparent;
+		}
+
+		.gridicon {
+			margin-left: 8px;
+			width: 14px;
+			height: 14px;
+			vertical-align: sub;
+			opacity: 1;
+		}
+	}
+}

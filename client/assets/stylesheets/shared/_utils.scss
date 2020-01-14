@@ -3,4 +3,4 @@
 @import '../shared/variables'; // other variables
 @import '../shared/mixins/mixins'; // sass mixins for gradients, bordius radii, etc.
 @import '../shared/extends'; // sass extends for commonly used styles
-@import '../shared/extends-forms'; // sass extends for form styles
+@import '~@automattic/components/sass/extends-forms.scss'; // sass extends for form styles

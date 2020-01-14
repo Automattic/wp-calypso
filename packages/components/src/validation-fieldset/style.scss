@@ -1,0 +1,25 @@
+@import '../styles/_breakpoints.scss';
+@import '../styles/_reset-element';
+
+.validation-fieldset {
+	@extend %reset-element;
+
+	margin-bottom: 0;
+	position: relative;
+}
+
+.validation-fieldset__validation-message {
+	min-height: 38px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.validation-fieldset + .logged-out-form__footer {
+	margin-top: 0;
+
+	@include a8c-breakpoint( '>480px' ) {
+		margin-top: 20px;
+	}
+}
