@@ -1,0 +1,42 @@
+.import-type-choice__wrapper {
+	.import-type-choice__option-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: flex-start;
+
+		padding: 20px;
+
+		cursor: pointer;
+
+		border: 1px solid grey; /* TODO fix color */
+		border-radius: 4px;
+
+		.import-type-choice__option-data {
+			margin-left: 5px;
+
+			.import-type-choice__option-header {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				align-items: flex-start;
+
+				h3 {
+					font-weight: bold;
+					font-size: 18px;
+				}
+
+				.import-type-choice__option-token-label {
+					background-color: lightgrey;
+					border-radius: 10px;
+					padding: 2px 5px;
+					font-size: 10px;
+					color: darkgray;
+					margin: 5px 0;
+				}
+			}
+		}
+
+
+	}
+}
