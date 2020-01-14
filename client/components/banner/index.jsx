@@ -106,16 +106,14 @@ export class Banner extends Component {
 	handleClick = e => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( ! tracksClickName ) {
-			return;
+		if ( event && tracksClickName ) {
+			this.props.recordTracksEvent( tracksClickName, {
+				cta_name: event,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
 		}
-
-		this.props.recordTracksEvent( tracksClickName, {
-			cta_name: event,
-			cta_feature: feature,
-			cta_size: compact ? 'compact' : 'regular',
-			...tracksClickProperties,
-		} );
 
 		onClick( e );
 	};
@@ -123,15 +121,13 @@ export class Banner extends Component {
 	handleDismiss = e => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
-		if ( ! tracksDismissName ) {
-			return;
+		if ( event && tracksDismissName ) {
+			this.props.recordTracksEvent( tracksDismissName, {
+				cta_name: event,
+				cta_feature: feature,
+				...tracksDismissProperties,
+			} );
 		}
-
-		this.props.recordTracksEvent( tracksDismissName, {
-			cta_name: event,
-			cta_feature: feature,
-			...tracksDismissProperties,
-		} );
 
 		onDismiss( e );
 	};
