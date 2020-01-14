@@ -203,7 +203,7 @@ export default connect( state => {
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
-	const isEligibleForJITM = [ 'stats', 'plans' ].indexOf( sectionName ) >= 0;
+	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
 
 	return {
 		masterbarIsHidden:
