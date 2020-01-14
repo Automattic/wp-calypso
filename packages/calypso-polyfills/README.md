@@ -10,21 +10,21 @@ See the root directory's `package.json` for the list of supported browsers for e
 
 ## Usage
 
-In node, simply require the package:
+In Node.js, simply require the package:
 
 ```js
   require( '@automattic/calypso-polyfills' );
 ```
 
-In the client, a similar naked import will include the polyfills (defaulting to the `fallback` set):
+In a browser, a similar naked import will include the polyfills (defaulting to the `fallback` set):
 
 ```js
 	import from '@automattic/calypso-polyfills';
 ```
 
-If you want to explicitly include the `evergreen` or `fallback` polyfills, you can append that to the import path:
+If you want to explicitly include the `evergreen` or `fallback` polyfills, you can append to the import path:
 
 ```js
-  import from '@automattic/calypso-polyfills/evergreen';
-  import from '@automattic/calypso-polyfills/fallback';
+  import from '@automattic/calypso-polyfills/browser-evergreen';
+  import from '@automattic/calypso-polyfills/browser-fallback';
 ```

@@ -2,8 +2,8 @@
 	"name": "@automattic/calypso-polyfills",
 	"version": "1.0.0",
 	"description": "Polyfills required for Calypso to work across various browsers and in node.",
-	"browser": "index.web.js",
-	"main": "index.node.js",
+	"browser": "browser-fallback.js",
+	"main": "node.js",
 	"sideEffects": true,
 	"keywords": [
 		"wordpress"

@@ -334,7 +334,7 @@ if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin(
 			/^@automattic\/calypso-polyfills$/,
-			'@automattic/calypso-polyfills/evergreen'
+			'@automattic/calypso-polyfills/browser-evergreen'
 		)
 	);
 
