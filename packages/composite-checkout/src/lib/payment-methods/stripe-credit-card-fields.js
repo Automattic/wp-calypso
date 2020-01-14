@@ -542,10 +542,15 @@ function StripePayButton( { disabled } ) {
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionAuthData,
-			} ).catch( error => {
-				setFormReady();
-				showErrorMessage( error.stripeError || error.message );
-			} );
+			} )
+				.then( () => {
+					debug( 'stripe auth is complete' );
+					setFormComplete();
+				} )
+				.catch( error => {
+					setFormReady();
+					showErrorMessage( error.stripeError || error.message );
+				} );
 		}
 	}, [
 		redirectUrl,
@@ -646,7 +651,8 @@ async function showStripeModalAuth( { stripeConfiguration, response } ) {
 		response.message.payment_intent_client_secret
 	);
 
-	if ( authenticationResponse ) {
-		// TODO: what do we do here?
+	if ( authenticationResponse?.status ) {
+		return true;
 	}
+	return false;
 }
