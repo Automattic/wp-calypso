@@ -100,7 +100,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectPosts() {
 		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-post' );
+		console.log( 'wait for drawer to expand' );
+		await this.driver.sleep( 3000 );
+		await this._scrollToAndClickMenuItem( 'side-menu-post' );
+		console.log( 'click on Posts and wait 3s' );
+		return await this.driver.sleep( 3000 );
 	}
 
 	async selectComments() {
