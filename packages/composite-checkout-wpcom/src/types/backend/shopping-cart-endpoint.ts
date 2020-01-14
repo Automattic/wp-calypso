@@ -89,6 +89,8 @@ export interface ResponseCartProduct {
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
 	meta: string;
+	volume: number;
+	extra: object;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
