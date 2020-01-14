@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { escapeRegExp, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -144,7 +144,7 @@ class SuggestionSearch extends Component {
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }
-					query={ escapeRegExp( this.state.query ) }
+					query={ this.state.query }
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
