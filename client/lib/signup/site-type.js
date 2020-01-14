@@ -165,6 +165,10 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
+			/**
+			 * eCommerce sites are created public since they go Atomic at purchase.
+			 * p1578348423018900-slack-CCS1W9QVA
+			 */
 			forcePublicSite: true,
 			domainsStepSubheader: i18n.translate(
 				"Enter your site's name or some keywords that describe it to get started."
