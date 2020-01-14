@@ -198,8 +198,14 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
+	getErrorMessages = () => {
+		return formState.getErrorMessages( this.state );
+	};
+
 	setFormState = form =>
-		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
+		this.setState( { form }, () =>
+			this.props.onContactDetailsChange( this.getMainFieldValues(), this.getErrorMessages() )
+		);
 
 	handleFormControllerError = error => {
 		throw error;
