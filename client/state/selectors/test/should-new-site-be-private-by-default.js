@@ -8,13 +8,6 @@ describe( 'shouldNewSiteBePrivateByDefault()', () => {
 		expect( shouldNewSiteBePrivateByDefault() ).toBe( true );
 	} );
 
-	test( 'should return `true` if on test-fse flow', () => {
-		const mockState = {
-			signup: { flow: { currentFlowName: 'test-fse' }, steps: { siteType: 'online-store' } },
-		};
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
-	} );
-
 	test( 'should return `true` for invalid siteType', () => {
 		const mockState = { signup: { steps: { siteType: 'someOtherSiteType' } } };
 		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );

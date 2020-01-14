@@ -12,13 +12,6 @@ describe( 'getNewSitePublicSetting()', () => {
 		expect( getNewSitePublicSetting() ).toBe( -1 );
 	} );
 
-	test( 'should return `-1` if on test-fse flow', () => {
-		const mockState = {
-			signup: { flow: { currentFlowName: 'test-fse' }, steps: { siteType: 'online-store' } },
-		};
-		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
-	} );
-
 	test( 'should return `-1` for invalid siteType', () => {
 		const mockState = { signup: { steps: { siteType: 'someOtherSiteType' } } };
 		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
