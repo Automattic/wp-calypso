@@ -493,13 +493,15 @@ export class ContactDetailsFormFields extends Component {
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
 				<FormFooter>
-					<FormButton
-						className="contact-details-form-fields__submit-button"
-						disabled={ ! countryCode || disableSubmitButton }
-						onClick={ this.handleSubmitButtonClick }
-					>
-						{ labelTexts.submitButton || translate( 'Submit' ) }
-					</FormButton>
+					{ this.props.onSubmit && (
+						<FormButton
+							className="contact-details-form-fields__submit-button"
+							disabled={ ! countryCode || disableSubmitButton }
+							onClick={ this.handleSubmitButtonClick }
+						>
+							{ labelTexts.submitButton || translate( 'Submit' ) }
+						</FormButton>
+					) }
 					{ onCancel && (
 						<FormButton
 							className="contact-details-form-fields__cancel-button"

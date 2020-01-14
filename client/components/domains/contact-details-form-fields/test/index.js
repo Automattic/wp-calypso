@@ -9,12 +9,12 @@ import React from 'react';
 import update from 'immutability-helper';
 import { shallow } from 'enzyme';
 import { noop, omit } from 'lodash';
-// import { Provider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { ContactDetailsFormFields } from '../';
+import FormButton from '../../../../components/forms/form-button';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -71,19 +71,13 @@ describe( 'ContactDetailsFormFields', () => {
 		} );
 	} );
 
-	/*	describe( 'No onSubmit prop', () => {
-	    test( 'should not render Submit button', () => {
-	        const newProps = { ...defaultProps, onSubmit: undefined };
-	        const wrapper = mount(
-	            <Provider
-                    state={ 'FOOOO' }
-                >
-    	            <ContactDetailsFormFields { ...newProps } />
-                </Provider>
-            );
-            expect( wrapper.find('button') ).toHaveLength(0);
-        } );
-    } ); */
+	describe( 'onSubmit prop is undefined', () => {
+		test( 'should not render Submit button', () => {
+			const newProps = { ...defaultProps, onSubmit: undefined };
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( FormButton ) ).toHaveLength( 0 );
+		} );
+	} );
 
 	describe( 'Google Apps Form UI state', () => {
 		test( 'should not render GAppsFieldset in place of the default contact fields by default', () => {
