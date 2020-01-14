@@ -81,7 +81,7 @@
 		"lint:css": "stylelint \"**/*.scss\" --syntax scss",
 		"lint:js": "npm run -s install-if-deps-outdated && eslint --ext .js --ext .jsx --ext .ts --ext .tsx --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
-		"lint:package-json": "npmPkgJsonLint './package.json' './packages/*/package.json' './apps/*/package.json'",
+		"lint:package-json": "npmPkgJsonLint './package.json' './client/package.json' './packages/*/package.json' './apps/*/package.json'",
 		"prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",
 		"start": "npm run -s build",
 		"poststart": "run-p -s start-build-if-web start-build-if-desktop build-packages:watch",
