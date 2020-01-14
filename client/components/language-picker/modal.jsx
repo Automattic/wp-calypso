@@ -226,6 +226,12 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		const closeMatch = filteredLanguages.reduce( ( currentCloseMatch, language ) => {
+			// If current match is already matching the beginning of a language name,
+			// we can skip next steps of matching
+			if ( currentCloseMatch && currentCloseMatch.matchIndex === 0 ) {
+				return currentCloseMatch;
+			}
+
 			const languageNames = this.getLanguageSearchableFields( language );
 			const searchString = deburr( search ).toLowerCase();
 			const matchIndex = languageNames.reduce( ( currentMatchIndex, languageName ) => {
@@ -242,6 +248,8 @@ export class LanguagePickerModal extends PureComponent {
 			if ( ! currentCloseMatch || currentCloseMatch.matchIndex > matchIndex ) {
 				return { language, matchIndex };
 			}
+
+			return currentCloseMatch;
 		}, null );
 
 		if ( closeMatch ) {
@@ -325,11 +333,11 @@ export class LanguagePickerModal extends PureComponent {
 	};
 
 	handleSearch = search => {
-		this.setState( { search } );
-
-		if ( search ) {
-			this.selectLanguageFromSearch( search );
-		}
+		this.setState( { search }, () => {
+			if ( search ) {
+				this.selectLanguageFromSearch( search );
+			}
+		} );
 	};
 
 	handleSearchOpen = () => {
