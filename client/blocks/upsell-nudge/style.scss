@@ -24,7 +24,8 @@
 		}
 	}
 
-	&.banner.card .banner__icon-circle {
+	&.banner.card .banner__icon-circle,
+	&.banner.card .banner__icon {
 		width: auto;
 		height: auto;
 		color: var( --color-text-inverted );
