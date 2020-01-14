@@ -155,21 +155,20 @@ class PeopleInvites extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				{ hasPendingInvites ? (
+				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
 						<Card className="people-invites__invites-list">
 							{ pendingInvites.map( this.renderInvite ) }
 						</Card>
 					</div>
-				) : (
-					<div className="people-invites__pending">{ this.renderInviteUsersAction( false ) }</div>
 				) }
 
 				{ hasAcceptedInvites && (
 					<div className="people-invites__accepted">
 						<PeopleListSectionHeader
 							label={ acceptedLabel }
+							site={ hasPendingInvites ? null : site }
 							// Excluding `site=` hides the "Invite user" link.
 						>
 							{ this.renderClearAll() }
