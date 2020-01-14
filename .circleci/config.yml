@@ -572,6 +572,14 @@ jobs:
       - prepare
       - run: *set-e2e-variables
       - run: npm run decryptconfig
+      - run:
+          command: |
+            curl --silent --show-error --location --fail --retry 3 --output /tmp/google-chrome-beta_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb \
+                && (sudo dpkg -i /tmp/google-chrome-beta_current_amd64.deb || sudo apt-get -fy install)  \
+                && rm -rf /tmp/google-chrome-beta_current_amd64.deb \
+                && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
+                    "/opt/google/chrome/google-chrome" \
+                && google-chrome --version
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
@@ -724,6 +732,10 @@ workflows:
           test-flags: '-W -S $CIRCLE_SHA1'
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
+      - test-e2e:
+          name: full-suite
+          requires:
+            - wait-calypso-live
 
   calypso-nightly:
     jobs:
