@@ -1,6 +1,5 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-nodejs-modules */
 
-require( 'client/boot/polyfills' );
+require( '@automattic/calypso-polyfills' );
 
 /**
  * External dependencies.
