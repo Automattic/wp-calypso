@@ -165,6 +165,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
+			forcePublicSite: true,
 			domainsStepSubheader: i18n.translate(
 				"Enter your site's name or some keywords that describe it to get started."
 			),
