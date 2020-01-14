@@ -513,8 +513,6 @@ class SectionMigrate extends Component {
 
 		let migrationElement;
 
-		this.state.migrationStatus = 'backing-up';
-
 		switch ( this.state.migrationStatus ) {
 			case 'inactive':
 				migrationElement = sourceSiteId
