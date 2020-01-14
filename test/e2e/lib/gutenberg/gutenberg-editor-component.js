@@ -50,10 +50,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
 		if ( dismissPageTemplateSelector ) {
-			this.dismissPageTemplateSelector();
+			await this.dismissPageTemplateSelector();
 		}
-		this.dismissEditorWelcomeModal();
-		this.closeSidebar();
+		await this.dismissEditorWelcomeModal();
+		return await this.closeSidebar();
 	}
 
 	async publish( { visit = false } = {} ) {
