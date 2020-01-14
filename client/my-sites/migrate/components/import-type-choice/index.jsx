@@ -5,6 +5,22 @@ import React, { Component } from 'react';
 
 import './style.scss';
 
+const choices = [
+	{
+		key: 'everything',
+		title: 'Everything',
+		labels: ['Upgrade Required', 'Something Else', 'Third bubble'],
+		description: 'All your site\'s content, themes, plugins, users and settings',
+	},
+	{
+		key: 'content-only',
+		title: 'Content only',
+		labels: ['Free', 'Only content', 'Third bubble'],
+		description: 'Import posts, pages, comments, and media.',
+	}
+];
+
+
 export default class ImportTypeChoice extends Component {
 	componentDidMount = () => {
 
