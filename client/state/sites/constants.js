@@ -5,7 +5,6 @@ export const SITE_REQUEST_FIELDS = [
 	'icon',
 	'is_multisite',
 	'is_private',
-	'is_coming_soon',
 	'is_vip',
 	'jetpack',
 	'jetpack_modules',
