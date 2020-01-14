@@ -167,8 +167,7 @@ class MembershipsSection extends Component {
 			)
 			.join( '\n' );
 
-		// eslint-disable-next-line no-undef
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	}
