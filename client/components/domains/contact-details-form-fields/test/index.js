@@ -9,6 +9,7 @@ import React from 'react';
 import update from 'immutability-helper';
 import { shallow } from 'enzyme';
 import { noop, omit } from 'lodash';
+// import { Provider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -69,6 +70,20 @@ describe( 'ContactDetailsFormFields', () => {
 			expect( wrapper.find( '[name="phone"]' ) ).toHaveLength( 1 );
 		} );
 	} );
+
+	/*	describe( 'No onSubmit prop', () => {
+	    test( 'should not render Submit button', () => {
+	        const newProps = { ...defaultProps, onSubmit: undefined };
+	        const wrapper = mount(
+	            <Provider
+                    state={ 'FOOOO' }
+                >
+    	            <ContactDetailsFormFields { ...newProps } />
+                </Provider>
+            );
+            expect( wrapper.find('button') ).toHaveLength(0);
+        } );
+    } ); */
 
 	describe( 'Google Apps Form UI state', () => {
 		test( 'should not render GAppsFieldset in place of the default contact fields by default', () => {

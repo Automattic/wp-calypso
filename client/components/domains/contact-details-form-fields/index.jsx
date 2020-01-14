@@ -80,7 +80,7 @@ export class ContactDetailsFormFields extends Component {
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
-		onSubmit: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func,
 		onValidate: PropTypes.func,
 		onSanitize: PropTypes.func,
 		labelTexts: PropTypes.object,
@@ -198,14 +198,8 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
-	getErrorMessages = () => {
-		return formState.getErrorMessages( this.state );
-	};
-
 	setFormState = form =>
-		this.setState( { form }, () =>
-			this.props.onContactDetailsChange( this.getMainFieldValues(), this.getErrorMessages() )
-		);
+		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
 
 	handleFormControllerError = error => {
 		throw error;
