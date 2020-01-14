@@ -134,6 +134,9 @@ export function createStripeMethod( {
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
 		},
+		getRedirectUrl( state ) {
+			return state.redirectUrl;
+		},
 		getCardDataErrors( state ) {
 			return state.cardDataErrors;
 		},
@@ -197,6 +200,7 @@ export function createStripeMethod( {
 					return {
 						...state,
 						transactionStatus: 'redirect',
+						redirectUrl: action.payload.redirect_url,
 					};
 				case 'STRIPE_CONFIGURATION_SET':
 					return { ...state, stripeConfiguration: action.payload };
@@ -509,18 +513,18 @@ function LoadingFields() {
 function StripePayButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage } = useMessages();
+	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { stripe, stripeConfiguration } = useStripe();
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
 	const { beginStripeTransaction } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			// TODO: clear this after showing it
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
@@ -531,7 +535,8 @@ function StripePayButton( { disabled } ) {
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
-			// TODO: notify user that we are going to redirect
+			showInfoMessage( localize( 'Redirecting...' ) );
+			window.location = redirectUrl;
 		}
 		if ( transactionStatus === 'auth' ) {
 			showStripeModalAuth( {
@@ -543,8 +548,10 @@ function StripePayButton( { disabled } ) {
 			} );
 		}
 	}, [
+		redirectUrl,
 		setFormReady,
 		setFormComplete,
+		showInfoMessage,
 		showErrorMessage,
 		transactionStatus,
 		transactionError,
