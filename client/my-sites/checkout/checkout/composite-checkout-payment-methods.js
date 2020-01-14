@@ -345,7 +345,8 @@ function createCartFromLineItems( {
 			product_id: item.wpcom_meta?.product_id,
 			meta: item.sublabel,
 			currency: item.amount.currency,
-			volume: 1, // TODO: get this from the item
+			volume: item.wpcom_meta?.volume ?? 1,
+			extra: item.wpcom_meta?.extra,
 		} ) ),
 		tax: {
 			location: {
