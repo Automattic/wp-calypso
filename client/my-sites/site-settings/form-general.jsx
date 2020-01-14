@@ -295,24 +295,26 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel className="site-settings__visibility-label">
-					{ ! siteIsJetpack && (
-						<FormRadio
-							name="blog_public"
-							value="1"
-							checked={ [ 0, 1 ].indexOf( currentValue ) !== -1 }
-							onChange={ handleRadio }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-						/>
-					) }
-					<span>{ translate( 'Public' ) }</span>
-				</FormLabel>
-				<FormSettingExplanation isIndented={ ! siteIsJetpack }>
-					{ translate(
-						'Your site is visible to everyone, and it may be indexed by search engines.'
-					) }
-				</FormSettingExplanation>
+				{ ! siteIsJetpack && (
+					<>
+						<FormLabel className="site-settings__visibility-label">
+							<FormRadio
+								name="blog_public"
+								value="1"
+								checked={ [ 0, 1 ].indexOf( currentValue ) !== -1 }
+								onChange={ handleRadio }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+							/>
+							<span>{ translate( 'Public' ) }</span>
+						</FormLabel>
+						<FormSettingExplanation isIndented>
+							{ translate(
+								'Your site is visible to everyone, and it may be indexed by search engines.'
+							) }
+						</FormSettingExplanation>
+					</>
+				) }
 
 				<FormLabel className="site-settings__visibility-label is-checkbox">
 					<FormInputCheckbox
