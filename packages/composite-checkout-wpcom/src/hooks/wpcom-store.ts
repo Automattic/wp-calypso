@@ -49,6 +49,9 @@ export function useWpcomStore( registerStore, onEvent ) {
 				return updaters.updatePostalCode( state, action.payload );
 			case 'UPDATE_COUNTRY_CODE':
 				return updaters.updateCountryCode( state, action.payload );
+			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
+				console.log( 'DOMAIN VALIDATION', action.payload );
+				return state;
 			default:
 				return state;
 		}
@@ -124,7 +127,7 @@ export function useWpcomStore( registerStore, onEvent ) {
 			},
 
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
-				return state.contact;
+				return state.contactDetails;
 			},
 		},
 	} );
