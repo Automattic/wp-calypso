@@ -8,10 +8,10 @@ import page from 'page';
  * Internal dependencies
  */
 import detectHistoryNavigation from 'lib/detect-history-navigation';
-import initialReducer from 'state/reducer';
+import initialReducer from './reducer';
 import initJetpackCloudRoutes from './routes';
 import userFactory from 'lib/user';
-import { configureReduxStore, setupMiddlewares, utils } from 'boot/common';
+import { configureReduxStore, setupBasicMiddlewares, utils } from 'boot/common';
 import { createReduxStore } from 'state';
 import { getInitialState, persistOnChange } from 'state/initial-state';
 import { setupLocale } from 'boot/locale';
@@ -28,7 +28,7 @@ const boot = currentUser => {
 		persistOnChange( reduxStore );
 		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
-		setupMiddlewares( currentUser, reduxStore );
+		setupBasicMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
 		initJetpackCloudRoutes( '/jetpack-cloud' );
 		page.start( { decodeURLComponents: false } );
