@@ -573,6 +573,7 @@ jobs:
       - run: *set-e2e-variables
       - run: npm run decryptconfig
       - run:
+          name: Install Chrome beta
           command: |
             curl --silent --show-error --location --fail --retry 3 --output /tmp/google-chrome-beta_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb \
                 && (sudo dpkg -i /tmp/google-chrome-beta_current_amd64.deb || sudo apt-get -fy install)  \
@@ -645,6 +646,16 @@ jobs:
               circleci-agent step halt
             fi
       - run: npm run decryptconfig
+      - run:
+          name: Install Chrome beta
+          command: |
+            curl --silent --show-error --location --fail --retry 3 --output /tmp/google-chrome-beta_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb \
+                && (sudo dpkg -i /tmp/google-chrome-beta_current_amd64.deb || sudo apt-get -fy install)  \
+                && rm -rf /tmp/google-chrome-beta_current_amd64.deb \
+                && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
+                    "/opt/google/chrome/google-chrome" \
+                && sudo dpkg -r google-chrome-stable \
+                && google-chrome --version
       - run:
           name: Run Canary Tests
           command: |
