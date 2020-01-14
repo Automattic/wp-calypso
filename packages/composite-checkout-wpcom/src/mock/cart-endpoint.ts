@@ -25,7 +25,7 @@ export async function mockSetCartEndpoint( {
 	}, taxInteger );
 
 	return {
-		products: products,
+		products,
 		locale: requestLocale,
 		currency: requestCurrency,
 		credits_integer: 0,
@@ -60,6 +60,8 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
 					meta: '',
+					volume: 1,
+					extra: {},
 				};
 		}
 
