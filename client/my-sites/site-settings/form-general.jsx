@@ -551,7 +551,7 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 				<Card>
 					<form>
-						{ 1 || config.isEnabled( 'coming-soon' )
+						{ config.isEnabled( 'coming-soon' )
 							? this.visibilityOptionsComingSoon()
 							: this.visibilityOptions() }
 					</form>
