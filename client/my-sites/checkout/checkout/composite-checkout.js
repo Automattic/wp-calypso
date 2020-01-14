@@ -157,6 +157,7 @@ export default function CompositeCheckout( {
 				removeItem={ removeItem }
 				changePlanLength={ changePlanLength }
 				siteId={ siteId }
+				siteUrl={ siteSlug }
 			/>
 		</CheckoutProvider>
 	);

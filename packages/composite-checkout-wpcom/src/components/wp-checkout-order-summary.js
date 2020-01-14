@@ -17,8 +17,9 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from './button';
 import Coupon from './coupon';
+import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummary( { siteUrl } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const [ items ] = useLineItems();
@@ -27,14 +28,16 @@ export default function WPCheckoutOrderSummary() {
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
 
-	//TODO: Replace yourdomain.tld with actual domian: show .wordpress subdomain if no custom domain available or in the cart
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+
 	return (
 		<React.Fragment>
-			<DomainURL>yourdomain.tld</DomainURL>
+			{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }
 
 			<SummaryContent>
 				<ProductList>
-					{ items.map( product => {
+					{ items.filter( shouldItemBeInSummary ).map( product => {
 						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 					} ) }
 				</ProductList>
@@ -132,4 +135,9 @@ function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
 	onEvent( {
 		type: 'a8c_checkout_add_coupon_button_clicked',
 	} );
+}
+
+function shouldItemBeInSummary( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
 }
