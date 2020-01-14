@@ -357,7 +357,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<FormFieldset>
 				{ ! siteIsJetpack && (
 					<>
-						<FormLabel className="site-settings__visibility-label">
+						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio
 								name="blog_public"
 								value="-1"
@@ -382,7 +382,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				{ ! siteIsJetpack && (
 					<>
-						<FormLabel className="site-settings__visibility-label">
+						<FormLabel className="site-settings__visibility-label is-public">
 							<FormRadio
 								name="blog_public"
 								value="1"
@@ -405,7 +405,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</>
 				) }
-				<FormLabel className="site-settings__visibility-label is-checkbox">
+				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 					<FormInputCheckbox
 						name="blog_public"
 						value="0"
@@ -423,7 +423,7 @@ export class SiteSettingsFormGeneral extends Component {
 				</FormLabel>
 				{ ! siteIsJetpack && (
 					<>
-						<FormLabel className="site-settings__visibility-label">
+						<FormLabel className="site-settings__visibility-label is-private">
 							<FormRadio
 								name="blog_public"
 								value="-1"
@@ -537,7 +537,13 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
+		const {
+			isRequestingSettings,
+			translate,
+			handleSubmitForm,
+			isSavingSettings,
+			withComingSoonOption,
+		} = this.props;
 
 		return (
 			<>
@@ -551,9 +557,7 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 				<Card>
 					<form>
-						{ config.isEnabled( 'coming-soon' )
-							? this.visibilityOptionsComingSoon()
-							: this.visibilityOptions() }
+						{ withComingSoonOption ? this.visibilityOptionsComingSoon() : this.visibilityOptions() }
 					</form>
 				</Card>
 			</>
@@ -680,12 +684,16 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
 
 		return {
+			withComingSoonOption:
+				'withComingSoonOption' in ownProps
+					? ownProps.withComingSoonOption
+					: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
