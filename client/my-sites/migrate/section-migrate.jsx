@@ -98,16 +98,17 @@ class SectionMigrate extends Component {
 	};
 
 	setMigrationState = state => {
-		// Avoids a response from the migration-status endpoint
-		// accidentally resetting the state after the migrate/from endpoint
-		// has returned an error
+		// A response from the status endpoint may come in after the
+		// migrate/from endpoint has returned an error. This avoids that
+		// response accidentally clearing the error state.
 		if ( 'error' === this.state.migrationStatus ) {
 			return;
 		}
 
-		// Avoids a response from the migration-status endpoint
-		// accidentally resetting the state after a redirect from the cart
-		// has set local state and sent request to start backup
+		// When we redirect from the cart, we set migrationState to 'backing-up'
+		// and start migration straight away. This condition prevents a response
+		// from the status endpoint accidentally changing the local state
+		// before the server's properly registered that we're backing up.
 		if (
 			this._startedMigrationFromCart &&
 			'backing-up' === this.state.migrationStatus &&
@@ -511,6 +512,8 @@ class SectionMigrate extends Component {
 		const { sourceSiteId } = this.props;
 
 		let migrationElement;
+
+		this.state.migrationStatus = 'backing-up';
 
 		switch ( this.state.migrationStatus ) {
 			case 'inactive':
