@@ -254,7 +254,7 @@ class CancelPurchaseButton extends Component {
 
 		let text, onClick;
 
-		if ( isRefundable( purchase ) ) {
+		if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
 			onClick = this.handleCancelPurchaseClick;
 
 			if ( isDomainRegistration( purchase ) ) {

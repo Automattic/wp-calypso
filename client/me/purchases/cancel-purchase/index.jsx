@@ -114,7 +114,7 @@ class CancelPurchase extends React.Component {
 		const { purchase } = this.props;
 		const { refundText, expiryDate, refundAmount, currencySymbol, currency } = purchase;
 
-		if ( isRefundable( purchase ) ) {
+		if ( isRefundable( purchase ) && refundAmount > 0 ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				const { precision } = getCurrencyDefaults( currency );
 				const fullRefundText =

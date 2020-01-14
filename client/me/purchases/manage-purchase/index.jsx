@@ -35,7 +35,6 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
-	isRemovable,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -233,10 +232,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( isDomainRegistration( purchase ) && isRemovable( purchase ) ) {
-			return null;
-		}
-
 		const trackNavItemClick = linkText => () => {
 			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
@@ -251,7 +246,7 @@ class ManagePurchase extends Component {
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
-		} else if ( isRefundable( purchase ) ) {
+		} else if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}

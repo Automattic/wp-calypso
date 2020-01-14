@@ -137,7 +137,7 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
-	if ( isRefundable( purchase ) ) {
+	if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
 		return true;
 	}
 
@@ -266,14 +266,7 @@ function isRefundable( purchase ) {
  * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
-	if (
-		isDomainRegistration( purchase ) &&
-		( ! isRefundable( purchase ) || purchase.refundAmount === 0 )
-	) {
-		return true;
-	}
-
-	if ( isRefundable( purchase ) ) {
+	if ( isRefundable( purchase ) && purchase.refundAmount !== 0 ) {
 		return false;
 	}
 
