@@ -169,6 +169,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"upsell/nudge-a-palooza": false,
+		"upsell/nudge-component": true,
 		"webpack/hot-loader": false,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,

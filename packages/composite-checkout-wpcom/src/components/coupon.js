@@ -65,6 +65,7 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 Coupon.propTypes = {
 	id: PropTypes.string.isRequired,
 	couponAdded: PropTypes.func,
+	isCouponFieldVisible: PropTypes.bool,
 };
 
 const animateIn = keyframes`

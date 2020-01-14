@@ -15,6 +15,6 @@ export function areDomainsInLineItems( items ) {
 	return false;
 }
 
-function isLineItemADomain( item ) {
+export function isLineItemADomain( item ) {
 	return item.type.includes( 'domain' );
 }
