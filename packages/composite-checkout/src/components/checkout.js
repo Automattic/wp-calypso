@@ -147,6 +147,7 @@ export default function Checkout( { steps, className } ) {
 							}
 							goToNextStep={ () => changeStep( nextStep.stepNumber ) }
 							onEdit={
+								formStatus === 'ready' &&
 								step.id !== activeStep.id &&
 								step.hasStepNumber &&
 								step.isEditableCallback &&
