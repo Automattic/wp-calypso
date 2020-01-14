@@ -3,37 +3,36 @@
  */
 import getNewSitePublicSetting from '../get-new-site-public-setting';
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: testName => ( testName === 'privateByDefault' ? 'selected' : '' ),
-} ) );
-
 describe( 'getNewSitePublicSetting()', () => {
 	test( 'should return `-1` by default', () => {
 		expect( getNewSitePublicSetting() ).toBe( -1 );
 	} );
 
-	test( 'should return `-1` for invalid siteType', () => {
-		const mockState = { signup: { steps: { siteType: 'someOtherSiteType' } } };
+	test( 'should return `-1` for invalid plan', () => {
+		const mockState = { signup: { dependencyStore: { cartItem: 'notARealPlan' } } };
 		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 
-	test( 'should return `-1` for business segment', () => {
-		const mockState = { signup: { steps: { siteType: 'business' } } };
+	test( 'should return `-1` for free site', () => {
+		const mockState = { signup: { dependencyStore: { cartItem: null } } };
 		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 
-	test( 'should return `-1` for blog segment', () => {
-		const mockState = { signup: { steps: { siteType: 'blog' } } };
+	test( 'should return `-1` for business plan', () => {
+		const mockState = {
+			signup: {
+				dependencyStore: { cartItem: { product_slug: 'business-bundle', free_trial: false } },
+			},
+		};
 		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 
-	test( 'should return `1` for online-store segment', () => {
-		const mockState = { signup: { steps: { siteType: 'online-store' } } };
+	test( 'should return `1` for ecommerce plan', () => {
+		const mockState = {
+			signup: {
+				dependencyStore: { cartItem: { product_slug: 'ecommerce-bundle', free_trial: false } },
+			},
+		};
 		expect( getNewSitePublicSetting( mockState ) ).toBe( 1 );
-	} );
-
-	test( 'should return `-1` for professional segment', () => {
-		const mockState = { signup: { steps: { siteType: 'professional' } } };
-		expect( getNewSitePublicSetting( mockState ) ).toBe( -1 );
 	} );
 } );
