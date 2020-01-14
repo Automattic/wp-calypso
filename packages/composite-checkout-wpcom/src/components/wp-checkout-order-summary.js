@@ -8,6 +8,7 @@ import {
 	useTotal,
 	renderDisplayValueMarkdown,
 	useEvents,
+	useFormStatus,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -19,6 +20,7 @@ import Coupon from './coupon';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
 	const [ items ] = useLineItems();
 	const onEvent = useEvents();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
@@ -37,7 +39,7 @@ export default function WPCheckoutOrderSummary() {
 					} ) }
 				</ProductList>
 
-				{ ! hasCouponBeenApplied && ! isCouponFieldVisible && (
+				{ ! hasCouponBeenApplied && ! isCouponFieldVisible && formStatus === 'ready' && (
 					<AddCouponButton
 						buttonState="text-button"
 						onClick={ () => {
@@ -52,6 +54,7 @@ export default function WPCheckoutOrderSummary() {
 			<CouponField
 				id="order-summary-coupon"
 				isCouponFieldVisible={ isCouponFieldVisible }
+				disabled={ formStatus !== 'ready' }
 				couponAdded={ () => {
 					handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied );
 				} }
