@@ -61,9 +61,8 @@ const DesignSelector: FunctionComponent = () => {
 	useLayoutEffect( () => {
 		if ( headingContainer.current ) {
 			// We'll use this height to move the heading up out of the viewport.
-			// Gutenberg editor adds 50px
 			const rect = headingContainer.current.getBoundingClientRect();
-			selectionTransitionShift.current = rect.height + rect.y - 50;
+			selectionTransitionShift.current = rect.height;
 		}
 	}, [ selectedDesign ] );
 
