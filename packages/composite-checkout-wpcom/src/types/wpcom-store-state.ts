@@ -186,14 +186,10 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 export type WpcomStoreState = {
 	siteId: string;
-	contact: ManagedContactDetails;
-	contactDetailsValidator: ( ManagedContactDetails ) => ManagedContactDetails;
+	contactDetails: ManagedContactDetails;
 };
 
 export const initialWpcomStoreState: WpcomStoreState = {
 	siteId: '',
-	contact: defaultManagedContactDetails,
-	contactDetailsValidator: details => {
-		return details;
-	},
+	contactDetails: defaultManagedContactDetails,
 };

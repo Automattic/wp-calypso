@@ -55,14 +55,26 @@ const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 const wpcomValidateDomainContactInformation = ( ...args ) =>
-    wpcom.validateDomainContactInformation( ...args );
+	wpcom.validateDomainContactInformation( ...args );
 
-const renderDomainContactFields = ( contactDetails, updateContactDetails ) => {
+const renderDomainContactFields = (
+	domainNames,
+	contactDetails,
+	updateContactDetails,
+	applyDomainContactValidationResults,
+	validateDomainContactDetails
+) => {
 	return (
 		<WPCheckoutErrorBoundary componentTitle="ContactDetailsFormFields">
 			<ContactDetailsFormFields
-				// contactDetails={ contactDetails }
+				contactDetails={ contactDetails }
 				onContactDetailsChange={ updateContactDetails }
+				onValidate={ ( values, onComplete ) => {
+					validateDomainContactDetails( values, domainNames, ( errors, data ) => {
+						applyDomainContactValidationResults( errors );
+						onComplete( errors, data );
+					} );
+				} }
 			/>
 			;
 		</WPCheckoutErrorBoundary>
@@ -76,6 +88,7 @@ export default function CompositeCheckout( {
 	getCart,
 	setCart,
 	getStoredCards,
+	validateDomainContactDetails,
 	allowedPaymentMethods,
 	overrideCountryList,
 	// TODO: handle these also
@@ -129,7 +142,11 @@ export default function CompositeCheckout( {
 	} = useShoppingCart( siteSlug, setCart || wpcomSetCart, getCart || wpcomGetCart );
 
 	const { registerStore } = registry;
-	useWpcomStore( registerStore, handleCheckoutEvent );
+	useWpcomStore(
+		registerStore,
+		handleCheckoutEvent,
+		validateDomainContactDetails || wpcomValidateDomainContactInformation
+	);
 
 	const errorMessages = useMemo( () => errors.map( error => error.message ), [ errors ] );
 	useDisplayErrors( errorMessages, showErrorMessage );

@@ -16,8 +16,8 @@ import {
 
 type WpcomStoreAction =
 	| {
-			type: 'VALIDATE_CONTACT_DETAILS';
-			payload: ( ManagedContactDetails ) => ManagedContactDetails;
+			type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS';
+			payload: any;
 	  }
 	| { type: 'UPDATE_CONTACT_DETAILS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
@@ -67,17 +67,16 @@ export function useWpcomStore( registerStore, onEvent ) {
 		reducer( state: WpcomStoreState | null, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState = state === null ? initialWpcomStoreState : state;
 			return {
-				contact: contactReducer( checkedState.contact, action ),
+				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
-				contactDetailsValidator: checkedState.contactDetailsValidator,
 			};
 		},
 
 		actions: {
-			validateContactDetails(
-				payload: ( ManagedContactDetails ) => ManagedContactDetails
+			applyDomainContactValidationResults(
+				payload: any // TODO figure out what this should be
 			): WpcomStoreAction {
-				return { type: 'VALIDATE_CONTACT_DETAILS', payload };
+				return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
 			},
 
 			setSiteId( payload: string ): WpcomStoreAction {
