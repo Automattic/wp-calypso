@@ -2,7 +2,8 @@
  * Module dependencies.
  */
 import React from 'react';
-import { escapeRegExp, find, findIndex } from 'lodash';
+import escapeRegExp from 'escape-string-regexp';
+import { find, findIndex } from 'lodash';
 
 import Suggestion from './suggestion';
 

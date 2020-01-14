@@ -3,7 +3,8 @@
  */
 import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
+import escapeRegExp from 'escape-string-regexp';
+import { findIndex, get, head, includes, throttle, pick } from 'lodash';
 
 /**
  * Internal dependencies
