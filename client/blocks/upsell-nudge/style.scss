@@ -15,11 +15,13 @@
 		&.is-compact {
 			margin-bottom: 0;
 
-			.banner__icon-circle {
+			.banner__icon-circle,
+			.banner__icon {
+				margin-top: -2px;
 				margin-right: 0.25em;
 			}
 			.dismissible-card__close-icon {
-				margin-left: 0.25em;
+				margin-left: 0.75em;
 			}
 			.banner__content {
 				padding: 0 0 0 8px;
@@ -52,25 +54,25 @@
 	}
 
 	.banner__action {
-		margin-top: 3px;
+		margin-top: 5px;
 		margin-left: auto;
 	}
 
 	.dismissible-card__close-icon {
 		fill: var( --color-text-inverted );
 		margin-left: 1em;
-		margin-top: 0;
-		position: relative;
-		top: auto;
-		right: auto;
 		order: 2;
-	}
-
-	&.is-dismissible .banner__action {
-		margin-right: 0;
 
 		@include breakpoint( '>480px' ) {
 			margin-top: 0;
+			position: relative;
+			top: auto;
+			right: auto;
 		}
+	}
+
+	&.is-dismissible .banner__action {
+		margin-top: 3px;
+		margin-right: 0;
 	}
 }
