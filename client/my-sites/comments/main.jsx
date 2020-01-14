@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,9 +20,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { infoNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { NEWEST_FIRST } from './constants';
 
@@ -55,13 +51,6 @@ export class CommentsManagement extends Component {
 	};
 
 	setOrder = order => () => this.setState( { order } );
-
-	updateJetpackHandler = () => {
-		const { siteId, translate, jetpackPlugin } = this.props;
-
-		this.props.infoNotice( translate( 'Please wait while we update your Jetpack plugin.' ) );
-		this.props.updatePlugin( siteId, jetpackPlugin );
-	};
 
 	render() {
 		const {
@@ -137,9 +126,6 @@ const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
 	const showPermissionError = false === canModerateComments;
 
-	const sitePlugins = getPlugins( state, [ siteId ] );
-	const jetpackPlugin = find( sitePlugins, { slug: 'jetpack' } );
-
 	const showCommentTree =
 		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );
 
@@ -147,16 +133,10 @@ const mapStateToProps = ( state, { postId, siteFragment } ) => {
 
 	return {
 		siteId,
-		jetpackPlugin,
 		showCommentList,
 		showCommentTree,
 		showPermissionError,
 	};
 };
 
-const mapDispatchToProps = {
-	updatePlugin,
-	infoNotice,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentsManagement ) );
+export default connect( mapStateToProps )( localize( CommentsManagement ) );
