@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Icon, IconButton } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -21,26 +21,11 @@ import Link from '../link';
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 interface Props {
-	isEditorSidebarOpened: boolean;
 	next?: string;
 	prev?: string;
-	toggleGeneralSidebar: () => void;
-	toggleSidebarShortcut: KeyboardShortcut;
 }
 
-interface KeyboardShortcut {
-	raw: string;
-	display: string;
-	ariaLabel: string;
-}
-
-const Header: FunctionComponent< Props > = ( {
-	isEditorSidebarOpened,
-	next,
-	prev,
-	toggleGeneralSidebar,
-	toggleSidebarShortcut,
-} ) => {
+const Header: FunctionComponent< Props > = ( { next, prev } ) => {
 	const { domain, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -117,20 +102,10 @@ const Header: FunctionComponent< Props > = ( {
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
-				<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
-					{ NO__( 'Next' ) }
-				</Link>
 				<div className="gutenboarding__header-group">
-					<IconButton
-						aria-expanded={ isEditorSidebarOpened }
-						aria-haspopup="menu"
-						aria-pressed={ isEditorSidebarOpened }
-						icon="admin-generic"
-						isToggled={ isEditorSidebarOpened }
-						label={ NO__( 'Site block settings' ) }
-						onClick={ toggleGeneralSidebar }
-						shortcut={ toggleSidebarShortcut }
-					/>
+					<Link to={ next } className="gutenboarding__header-next-button" isPrimary isLarge>
+						{ NO__( 'Next' ) }
+					</Link>
 				</div>
 			</div>
 		</div>

@@ -88,35 +88,3 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 	padding: $padding--gutenboarding__header-domain-picker-button;
 	font-weight: bold;
 }
-
-.gutenboarding__header-actions {
-	padding: 0 20px;
-
-	// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-	display: inline-flex;
-	align-items: center;
-	flex-wrap: wrap;
-
-	> * {
-		margin-left: 20px;
-	}
-}
-
-// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-.gutenboarding__header .components-button {
-	// Header toggle buttons.
-	&.is-toggled {
-		color: $white;
-		background: $dark-gray-500;
-		margin: 1px;
-		padding: 7px;
-	}
-
-	// The !important in this ruleset need to override the pile of :not() selectors used in the icon-button.
-	&.is-toggled:hover,
-	&.is-toggled:focus {
-		box-shadow: 0 0 0 $border-width $dark-gray-500, inset 0 0 0 $border-width $white !important;
-		color: $white !important;
-		background: $dark-gray-500 !important;
-	}
-}
