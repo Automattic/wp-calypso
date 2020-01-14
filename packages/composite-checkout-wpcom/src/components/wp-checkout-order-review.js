@@ -25,17 +25,13 @@ export default function WPCheckoutOrderReview( { className, removeItem } ) {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<WPOrderReviewSection>
-				<WPOrderReviewLineItems
-					items={ items }
-					hasDeleteButtons={ true }
-					removeItem={ removeItem }
-				/>
+				<WPOrderReviewLineItems items={ items } removeItem={ removeItem } />
 			</WPOrderReviewSection>
 
 			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
 
 			<WPOrderReviewSection>
-				<WPOrderReviewTotal total={ total } hasDeleteButtons={ true } />
+				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 
 			<WPTermsAndConditions />
