@@ -41,7 +41,7 @@ exports[`DateRange should render 1`] = `
           className="date-range__info"
           role="status"
         >
-          <Memo([object Object])
+          <Memo(Gridicon)
             aria-hidden="true"
             icon="info"
             key="interpolation-child-1/.0"

@@ -8,7 +8,7 @@ exports[`PlansSkipButton should render 1`] = `
     type="button"
   >
     Start with free
-    <Memo([object Object])
+    <Memo(Gridicon)
       icon="arrow-right"
       size={18}
     />

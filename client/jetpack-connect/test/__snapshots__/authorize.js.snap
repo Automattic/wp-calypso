@@ -74,7 +74,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"
         >
-          <Memo([object Object])
+          <Memo(Gridicon)
             icon="arrow-left"
             size={18}
           />
