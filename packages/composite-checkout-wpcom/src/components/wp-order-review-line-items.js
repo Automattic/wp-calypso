@@ -4,7 +4,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { renderDisplayValueMarkdown, CheckoutModal } from '@automattic/composite-checkout';
+import {
+	renderDisplayValueMarkdown,
+	CheckoutModal,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -34,6 +38,7 @@ const OrderReviewSectionArea = styled.div`
 function WPLineItem( { item, className, hasDeleteButton, removeItem } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
+	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
@@ -45,7 +50,7 @@ function WPLineItem( { item, className, hasDeleteButton, removeItem } ) {
 			<span aria-labelledby={ itemSpanId }>
 				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
 			</span>
-			{ hasDeleteButton && (
+			{ hasDeleteButton && formStatus === 'ready' && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"

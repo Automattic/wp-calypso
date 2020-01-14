@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useLineItems } from '@automattic/composite-checkout';
+import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import {
 
 export default function WPCheckoutOrderReview( { className, removeItem } ) {
 	const [ items, total ] = useLineItems();
+	const { formStatus } = useFormStatus();
 
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
@@ -28,7 +29,7 @@ export default function WPCheckoutOrderReview( { className, removeItem } ) {
 				<WPOrderReviewLineItems items={ items } removeItem={ removeItem } />
 			</WPOrderReviewSection>
 
-			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
+			<CouponField id="order-review-coupon" isCouponFieldVisible={ formStatus === 'ready' } />
 
 			<WPOrderReviewSection>
 				<WPOrderReviewTotal total={ total } />
