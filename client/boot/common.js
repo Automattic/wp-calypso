@@ -225,9 +225,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
-	debug( 'Executing Calypso setup middlewares.' );
-
+export const setupBasicMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
@@ -240,6 +238,12 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+};
+
+export const setupMiddlewares = ( currentUser, reduxStore ) => {
+	debug( 'Executing Calypso setup middlewares.' );
+
+	setupBasicMiddlewares( currentUser, reduxStore );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
