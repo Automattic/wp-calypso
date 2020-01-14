@@ -371,7 +371,7 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings }
 								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 							/>
-							<span>{ translate( 'Coming soon' ) }</span>
+							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
 							{ translate(
