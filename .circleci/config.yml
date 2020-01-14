@@ -579,6 +579,7 @@ jobs:
                 && rm -rf /tmp/google-chrome-beta_current_amd64.deb \
                 && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
                     "/opt/google/chrome/google-chrome" \
+                && sudo dpkg -r google-chrome-stable \
                 && google-chrome --version
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
