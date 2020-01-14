@@ -49,7 +49,7 @@ render() {
 | `compact` | `bool` | false | Display a compact version of the banner. |
 | `description` | `string` | null | The banner description. |
 | `disableHref` | `bool` | false | When true, prevent the Banner to be linked either via the `href` props or as a side effect of the `siteSlug` connected prop. |
-| `dismissPreferenceName` | `bool` | false | The user preference name that we store a boolean against, prefixed with `dismissible-card-` to avoid namespace collisions. |
+| `dismissPreferenceName` | `string` | null | The user preference name that we store a boolean against, prefixed with `dismissible-card-` to avoid namespace collisions. |
 | `dismissTemporary` | `bool` | false | When true, clicking on the cross will dismiss the card for the current page load. |
 | `event` | `string` | null | Event to distinguish the nudge in tracks. Used as <code>cta_name</code> event property. |
 | `feature` | `string` | null | Slug of the feature to highlight in the plans compare card. |

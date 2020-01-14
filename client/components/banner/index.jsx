@@ -183,7 +183,7 @@ export class Banner extends Component {
 
 		return (
 			<div className="banner__content">
-				{ tracksImpressionName && (
+				{ tracksImpressionName && event && (
 					<TrackComponentView
 						eventName={ tracksImpressionName }
 						eventProperties={ {

@@ -54,8 +54,9 @@ import PlanPrice from 'my-sites/plan-price/';
 import { Banner } from '../index';
 
 const props = {
-	callToAction: false,
+	callToAction: null,
 	plan: PLAN_FREE,
+	title: 'banner title',
 };
 
 describe( 'Banner basic tests', () => {
@@ -64,25 +65,25 @@ describe( 'Banner basic tests', () => {
 		assert.lengthOf( comp.find( '.banner' ), 1 );
 	} );
 
-	test( 'should render Card if dismissPreferenceName is false', () => {
-		const comp = shallow( <Banner { ...props } dismissPreferenceName={ false } /> );
+	test( 'should render Card if dismissPreferenceName is null', () => {
+		const comp = shallow( <Banner { ...props } dismissPreferenceName={ null } /> );
 		assert.lengthOf( comp.find( 'Card' ), 1 );
 		assert.lengthOf( comp.find( 'DismissibleCard' ), 0 );
 	} );
 
-	test( 'should render DismissibleCard if dismissPreferenceName is true', () => {
-		const comp = shallow( <Banner { ...props } dismissPreferenceName={ true } /> );
+	test( 'should render DismissibleCard if dismissPreferenceName is defined', () => {
+		const comp = shallow( <Banner { ...props } dismissPreferenceName={ 'banner-test' } /> );
 		assert.lengthOf( comp.find( 'Card' ), 0 );
 		assert.lengthOf( comp.find( 'DismissibleCard' ), 1 );
 	} );
 
-	test( 'should have .has-call-to-action class if callToAction is true', () => {
-		const comp = shallow( <Banner { ...props } callToAction={ true } /> );
+	test( 'should have .has-call-to-action class if callToAction is defined', () => {
+		const comp = shallow( <Banner { ...props } callToAction={ 'Upgrade Now!' } /> );
 		assert.lengthOf( comp.find( '.has-call-to-action' ), 1 );
 	} );
 
-	test( 'should not have .has-call-to-action class if callToAction is false', () => {
-		const comp = shallow( <Banner { ...props } callToAction={ false } /> );
+	test( 'should not have .has-call-to-action class if callToAction is null', () => {
+		const comp = shallow( <Banner { ...props } callToAction={ null } /> );
 		assert.lengthOf( comp.find( '.has-call-to-action' ), 0 );
 	} );
 
