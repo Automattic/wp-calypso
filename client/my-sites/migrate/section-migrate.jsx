@@ -21,10 +21,11 @@ import Main from 'components/main';
 import MigrateButton from './migrate-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Site from 'blocks/site';
-import SiteSelector from 'components/site-selector';
 import Spinner from 'components/spinner';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
 import { planHasFeature } from 'lib/plans';
+import StepImportOrMigrate from './step-import-or-migrate';
+import StepSourceSelect from './step-source-select';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
@@ -48,6 +49,8 @@ class SectionMigrate extends Component {
 		percent: 0,
 		startTime: '',
 		errorMessage: '',
+		siteInfo: null,
+		url: '',
 	};
 
 	componentDidMount() {
@@ -123,9 +126,13 @@ class SectionMigrate extends Component {
 		this.setState( state );
 	};
 
+	setSiteInfo = ( siteInfo, callback ) => this.setState( { siteInfo }, callback );
+
 	setSourceSiteId = sourceSiteId => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
+
+	setUrl = event => this.setState( { url: event.target.value } );
 
 	startMigration = () => {
 		const { sourceSiteId, targetSiteId, targetSite } = this.props;
@@ -479,45 +486,28 @@ class SectionMigrate extends Component {
 		);
 	}
 
-	renderSourceSiteSelector() {
-		return (
-			<>
-				<FormattedHeader
-					className="migrate__section-header"
-					headerText="Import your WordPress site to WordPress.com"
-					align="left"
-				/>
-				<CompactCard className="migrate__card">
-					<CardHeading>Select the Jetpack enabled site you want to import.</CardHeading>
-					<div className="migrate__explain">
-						If your site is connected to your WordPress.com account through Jetpack, we can import
-						all your content, users, themes, plugins, and settings.
-					</div>
-					<SiteSelector
-						className="migrate__source-site"
-						onSiteSelect={ this.setSourceSiteId }
-						filter={ this.jetpackSiteFilter }
-					/>
-					<div className="migrate__import-instead">
-						Don't see it? You can still{ ' ' }
-						<a href={ this.getImportHref() }>import just your content</a>.
-					</div>
-				</CompactCard>
-				{ this.renderCardBusinessFooter() }
-			</>
-		);
-	}
-
 	render() {
-		const { sourceSiteId } = this.props;
+		const { showImportSelector, sourceSiteId, targetSite, targetSiteSlug } = this.props;
 
 		let migrationElement;
 
 		switch ( this.state.migrationStatus ) {
 			case 'inactive':
-				migrationElement = sourceSiteId
-					? this.renderMigrationConfirmation()
-					: this.renderSourceSiteSelector();
+				if ( sourceSiteId ) {
+					migrationElement = this.renderMigrationConfirmation();
+					break;
+				}
+				migrationElement = showImportSelector ? (
+					<StepImportOrMigrate targetSite={ targetSite } targetSiteSlug={ targetSiteSlug } />
+				) : (
+					<StepSourceSelect
+						onSiteInfoReceived={ this.setSiteInfo }
+						onUrlChange={ this.setUrl }
+						targetSite={ targetSite }
+						targetSiteSlug={ targetSiteSlug }
+						url={ this.state.url }
+					/>
+				);
 				break;
 
 			case 'new':
