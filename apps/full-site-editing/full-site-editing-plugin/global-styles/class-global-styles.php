@@ -231,13 +231,18 @@ class Global_Styles {
 				'type_scale_root' => [
 					'type'      => 'option',
 					'name'      => ['jetpack_global_styles', 'type_scale_root'],
-					'default'   => 18, // Pixels.
+					'default'   => '18px',
 					'updatable' => true,
 				],
 				'type_scale_root_default' => [
 					'type'    => 'theme',
 					'name'    => ['jetpack-global-styles', 'type_scale_root'],
-					'default' => 18, // Pixels.
+					'default' => '18px',
+				],
+				'type_scale_root_units' => [
+					'type'      => 'theme',
+					'name'      => ['jetpack-global-styles', 'type_scale_root_units'],
+					'default'   => 'px',
 				],
 			]
 		);
@@ -543,6 +548,21 @@ class Global_Styles {
 	}
 
 	/**
+	 * Return a regexp that can be used to validate
+	 * whether the incoming data contains a valid
+	 * type scale root value.
+	 *
+	 * @return RegExp
+	 */
+	private function get_type_scale_root_unit_regexp() {
+		// TODO:
+		// - take data from theme, if exists
+		// - default to px otherwise
+		// - consolidate with data declaration (see above)
+		return '/px$/';
+	}
+
+	/**
 	 * Callback for save data filter.
 	 *
 	 * @param array $incoming_data The data to validate.
@@ -567,12 +587,17 @@ class Global_Styles {
 		foreach( [
 			'line_height_body',
 			'line_height_heading',
-			'type_scale_root',
 			'type_scale_ratio',
 		] as $key ) {
-			if( is_numeric( $incoming_data[ $key ] ) ) {
+			if( array_key_exists( $key, $incoming_data ) &&
+				is_numeric( $incoming_data[ $key ] ) ) {
 				$result[ $key ] = $incoming_data[ $key ];
 			}
+		}
+
+		if ( array_key_exists( 'type_scale_root', $incoming_data) &&
+			preg_match( $this->get_type_scale_root_unit_regexp(), $incoming_data[ 'type_scale_root' ] ) === 1 )  {
+			$result[ 'type_scale_root' ] = $incoming_data[ 'type_scale_root' ];
 		}
 
 		return $result;

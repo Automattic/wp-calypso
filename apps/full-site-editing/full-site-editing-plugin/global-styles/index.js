@@ -27,6 +27,7 @@ import {
 	TYPE_SCALE_RATIO_DEFAULT,
 	TYPE_SCALE_ROOT,
 	TYPE_SCALE_ROOT_DEFAULT,
+	TYPE_SCALE_ROOT_UNITS,
 } from './src/constants';
 
 // Tell Webpack to compile this into CSS
@@ -69,6 +70,7 @@ registerPlugin( PLUGIN_NAME, {
 			typeScaleRatioDefault: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_RATIO_DEFAULT ),
 			typeScaleRoot: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_ROOT ),
 			typeScaleRootDefault: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_ROOT_DEFAULT ),
+			typeScaleRootUnits: getSelectors( STORE_NAME ).getOption( TYPE_SCALE_ROOT_UNITS ),
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,

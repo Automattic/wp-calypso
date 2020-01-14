@@ -13,3 +13,4 @@ export const TYPE_SCALE_RATIO = 'type_scale_ratio';
 export const TYPE_SCALE_RATIO_DEFAULT = 'type_scale_ratio_default';
 export const TYPE_SCALE_ROOT = 'type_scale_root';
 export const TYPE_SCALE_ROOT_DEFAULT = 'type_scale_root_default';
+export const TYPE_SCALE_ROOT_UNITS = 'type_scale_root_units';

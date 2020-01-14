@@ -10,15 +10,27 @@ export default ( {
 	typeScaleRatioDefault,
 	typeScaleRoot,
 	typeScaleRootDefault,
+	typeScaleRootUnits,
 	updateTypeScaleRatio,
 	updateTypeScaleRoot,
 } ) => {
+	const getInitialValue = ( valueWithUnits, units, defaultWithUnits ) => {
+		if ( typeof valueWithUnits === 'string' || valueWithUnits instanceof String ) {
+			return +valueWithUnits.replace( new RegExp( units ), '' );
+		}
+		if ( typeof defaultWithUnits === 'string' || defaultWithUnits instanceof String ) {
+			return +defaultWithUnits.replace( new RegExp( units ), '' );
+		}
+		return null;
+	};
 	return (
 		<>
 			<FontSizePicker
-				value={ typeScaleRoot || typeScaleRootDefault }
+				value={ getInitialValue( typeScaleRoot, typeScaleRootUnits, typeScaleRootDefault ) }
 				onChange={ value =>
-					value ? updateTypeScaleRoot( value ) : updateTypeScaleRoot( typeScaleRootDefault )
+					value
+						? updateTypeScaleRoot( value + typeScaleRootUnits )
+						: updateTypeScaleRoot( typeScaleRootDefault )
 				}
 			/>
 			<RangeControl

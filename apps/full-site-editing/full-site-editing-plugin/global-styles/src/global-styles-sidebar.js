@@ -82,6 +82,7 @@ export default ( {
 	typeScaleRatio,
 	typeScaleRootDefault,
 	typeScaleRatioDefault,
+	typeScaleRootUnits,
 	publishOptions,
 	updateOptions,
 	hasLocalChanges,
@@ -152,6 +153,7 @@ export default ( {
 						typeScaleRatio={ typeScaleRatio }
 						typeScaleRootDefault={ typeScaleRootDefault }
 						typeScaleRatioDefault={ typeScaleRatioDefault }
+						typeScaleRootUnits={ typeScaleRootUnits }
 						updateTypeScaleRoot={ value => updateOptions( { [ TYPE_SCALE_ROOT ]: value } ) }
 						updateTypeScaleRatio={ value => updateOptions( { [ TYPE_SCALE_RATIO ]: value } ) }
 					/>
