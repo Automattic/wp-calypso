@@ -103,9 +103,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		await this.expandDrawerItem( 'Site' );
 		await this.driver.sleep( 3000 );
 
-		// console.log( 'click on Posts and wait 3s' );
-		// await this._scrollToAndClickMenuItem( 'side-menu-post' );
-		// await this.driver.sleep( 3000 );
+		console.log( 'click on Posts and wait 3s' );
+		await this._scrollToAndClickMenuItem( 'side-menu-post' );
+		await this.driver.sleep( 3000 );
 
 		console.log( 'click on Posts and wait 3s' );
 		await driverHelper.selectElementByText(
