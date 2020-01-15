@@ -85,7 +85,12 @@ export class SiteNotice extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Notice compact title={ translate( 'Free domain available' ) }>
+			<Notice
+				isCompact
+				status="is-success"
+				icon="info-outline"
+				text={ translate( 'Free domain available' ) }
+			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
 					href={ `/domains/add/${ this.props.site.slug }` }
