@@ -206,10 +206,6 @@ $design-selector-selection-space: 285px;
 }
 
 .design-selector__description-container {
-	@include design-selector-transition();
-	@include design-selector-hide;
-	visibility: hidden;
-
 	position: fixed;
 	display: flex;
 	flex-direction: column;
@@ -220,12 +216,6 @@ $design-selector-selection-space: 285px;
 		&.on-right-side {
 			right: 0;
 		}
-	}
-
-	&.enter-active,
-	&.enter-done {
-		@include design-selector-show;
-		visibility: visible;
 	}
 }
 

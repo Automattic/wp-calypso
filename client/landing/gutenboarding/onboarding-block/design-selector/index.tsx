@@ -78,6 +78,11 @@ const DesignSelector: FunctionComponent = () => {
 		}px, 0)`,
 	} );
 
+	const descriptionContainerSpring = useSpring( {
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
+		visibility: hasSelectedDesign ? 'visible' : 'hidden',
+	} );
+
 	return (
 		<animated.div style={ designSelectorSpring }>
 			<div
@@ -122,21 +127,20 @@ const DesignSelector: FunctionComponent = () => {
 				</div>
 			</div>
 
-			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming }>
-				<div
-					className={ classnames( 'design-selector__description-container', {
-						'on-right-side': descriptionOnRight,
-					} ) }
-				>
-					<div className="design-selector__description-title">{ selectedDesign?.title }</div>
-					<div className="design-selector__description-description">
-						{ /* @TODO: Real description? */ }
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-						incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-						exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-					</div>
+			<animated.div
+				className={ classnames( 'design-selector__description-container', {
+					'on-right-side': descriptionOnRight,
+				} ) }
+				style={ descriptionContainerSpring }
+			>
+				<div className="design-selector__description-title">{ selectedDesign?.title }</div>
+				<div className="design-selector__description-description">
+					{ /* @TODO: Real description? */ }
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+					ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+					ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</div>
-			</CSSTransition>
+			</animated.div>
 
 			<Portal>
 				<DialogBackdrop
