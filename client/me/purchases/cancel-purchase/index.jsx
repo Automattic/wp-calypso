@@ -31,7 +31,7 @@ import {
 } from 'state/purchases/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { isRequestingSites, getSite } from 'state/sites/selectors';
 import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -53,7 +53,7 @@ class CancelPurchase extends React.Component {
 		includedDomainPurchase: PropTypes.object,
 		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
@@ -207,7 +207,7 @@ class CancelPurchase extends React.Component {
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
-					<ProductLink purchase={ purchase } selectedSite={ this.props.selectedSite } />
+					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
 					<div className="cancel-purchase__refund-amount">
@@ -217,7 +217,7 @@ class CancelPurchase extends React.Component {
 						purchase={ purchase }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
-						selectedSite={ this.props.selectedSite }
+						selectedSite={ this.props.site }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 					/>
@@ -234,6 +234,7 @@ export default connect( ( state, props ) => {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+		site: getSite( state, purchase ? purchase.siteId : null ),
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( withLocalizedMoment( CancelPurchase ) ) );
