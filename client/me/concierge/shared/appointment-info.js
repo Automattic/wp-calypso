@@ -34,6 +34,12 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 
+		const endTimeFormat = translate( 'LT z', {
+			comment:
+				'moment.js formatting string. See http://momentjs.com/docs/#/displaying/format/.' +
+				'e.g. 03:45 EST.',
+		} );
+
 		return (
 			<>
 				<CompactCard className="shared__site-block">
@@ -74,7 +80,9 @@ class AppointmentInfo extends Component {
 						<FormLabel>{ translate( 'When?' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
-							{ moment( endTimestamp ).format( 'LT ' ) }
+							{ moment( endTimestamp )
+								.tz( moment.tz.guess() )
+								.format( endTimeFormat ) }
 						</FormSettingExplanation>
 					</FormFieldset>
 
