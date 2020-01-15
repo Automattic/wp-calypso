@@ -300,7 +300,7 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
+	/**
 	 * Gets comments for display
 	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
 	 * @param {number} numberToTake How many top level comments to take

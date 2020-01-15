@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';

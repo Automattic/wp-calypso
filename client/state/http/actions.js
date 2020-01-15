@@ -4,7 +4,7 @@
 
 import { HTTP_REQUEST } from 'state/action-types';
 
-/***
+/**
  * @typedef {object} RequestDescription
  * @property {string} url the url to request
  * @property {string} method the method we should use in the request: GET, POST etc.
@@ -17,7 +17,7 @@ import { HTTP_REQUEST } from 'state/action-types';
  * @property {object} options other options
  */
 
-/***
+/**
  * Creates a raw http action request
  *
  * @param {RequestDescription} request HTTP request description

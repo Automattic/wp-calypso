@@ -1,4 +1,4 @@
-/***
+/**
  * External dependencies
  */
 import {
@@ -25,7 +25,7 @@ import treeSelect from '@automattic/tree-select';
 import { fetchStatusInitialState } from './reducer';
 import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 
-/***
+/**
  * Gets comment items for post
  * @param {object} state redux state
  * @param {number} siteId site identification
@@ -60,7 +60,7 @@ export const getCommentErrors = state => {
 	return state.comments.errors;
 };
 
-/***
+/**
  * Get total number of comments on the server for a given post
  * @param {object} state redux state
  * @param {number} siteId site identification
@@ -70,7 +70,7 @@ export const getCommentErrors = state => {
 export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
 	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
 
-/***
+/**
  * Get total number of comments in state at a given date and time
  *
  * @param {object} state redux state
@@ -101,7 +101,7 @@ export const getPostCommentsCountAtDate = ( state, siteId, postId, date ) => {
 	return size( postCommentsAtDate );
 };
 
-/***
+/**
  * Get most recent comment date for a given post
  * @param {object} state redux state
  * @param {number} siteId site identification
@@ -116,7 +116,7 @@ export const getPostNewestCommentDate = treeSelect(
 	}
 );
 
-/***
+/**
  * Get oldest comment date for a given post
  * @param {object} state redux state
  * @param {number} siteId site identification
@@ -131,7 +131,7 @@ export const getPostOldestCommentDate = treeSelect(
 	}
 );
 
-/***
+/**
  * Gets comment tree for a given post
  * @param {object} state redux state
  * @param {number} siteId site identification
@@ -218,7 +218,7 @@ export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 
 	};
 };
 
-/***
+/**
  * Gets likes stats for the comment
  * @param {object} state redux state
  * @param {number} siteId site identification

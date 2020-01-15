@@ -84,7 +84,7 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	};
 };
 
-/***
+/**
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
  * @param {object} state redux state
  * @param {object} action redux action
@@ -169,7 +169,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-/***
+/**
  * Comments pending items reducer, stores new comments per siteId and postId
  * @param {object} state redux state
  * @param {object} action redux action
@@ -277,7 +277,7 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-/***
+/**
  * Stores whether or not there are more comments, and in which directions, for a particular post.
  * Also includes whether or not a before/after has ever been queried
  * Example state:
@@ -323,7 +323,7 @@ export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-/***
+/**
  * Stores latest comments count for post we've seen from the server
  * @param {object} state redux state, prev totalCommentsCount
  * @param {object} action redux action
@@ -392,7 +392,7 @@ export const treesInitialized = keyedReducer(
 	keyedReducer( 'status', treesInitializedReducer )
 );
 
-/***
+/**
  * Stores the active reply comment for a given siteId and postId
  * @param {object} state redux state
  * @param {object} action redux action

@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-/***
+/**
  * Gets the OAuth2 client data.
  *
  * @param  {object}   state  Global state tree
