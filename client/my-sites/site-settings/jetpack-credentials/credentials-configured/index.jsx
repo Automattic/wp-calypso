@@ -9,12 +9,14 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
-import { CompactCard, Button } from '@automattic/components';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
+import Gridicon from 'components/gridicon';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
+import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
+import { CompactCard, Button } from '@automattic/components';
+import { deleteCredentials } from 'state/jetpack/credentials/actions';
 
 /**
  * Style dependencies
@@ -35,7 +37,7 @@ class CredentialsConfigured extends Component {
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
 
 	render() {
-		const { canAutoconfigure, siteId, translate } = this.props;
+		const { canAutoconfigure, siteId, supportsRealtimeBackup, translate } = this.props;
 
 		const isRevoking = this.state.isRevoking;
 
@@ -89,6 +91,14 @@ class CredentialsConfigured extends Component {
 			);
 		}
 
+		const headerText = supportsRealtimeBackup
+			? translate(
+					'Your site is being backed up in real time and regularly scanned for security threats.'
+			  )
+			: translate(
+					'Your site is being backed up every day and regularly scanned for security threats.'
+			  );
+
 		const header = (
 			<div className="credentials-configured__info">
 				<Gridicon
@@ -98,17 +108,15 @@ class CredentialsConfigured extends Component {
 				/>
 				<div className="credentials-configured__info-text">
 					<h3 className="credentials-configured__info-protocol">{ translate( 'Connected' ) }</h3>
-					<h4 className="credentials-configured__info-description">
-						{ translate(
-							'Your site is being backed up in real time and regularly scanned for security threats.'
-						) }
-					</h4>
+					<h4 className="credentials-configured__info-description">{ headerText }</h4>
 				</div>
 			</div>
 		);
 
 		return (
 			<FoldableCard header={ header } className="credentials-configured">
+				<QuerySitePurchases siteId={ siteId } />
+
 				<RewindCredentialsForm
 					{ ...{
 						role: 'main',
@@ -128,6 +136,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		mainCredentials: find( credentials, { role: 'main' } ),
+		supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
 	};
 };
 

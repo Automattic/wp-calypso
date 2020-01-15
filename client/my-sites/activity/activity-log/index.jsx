@@ -66,6 +66,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
+import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
@@ -370,6 +371,7 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
+			supportsRealtimeBackup,
 		} = this.props;
 
 		const disableRestore =
@@ -406,12 +408,24 @@ class ActivityLog extends Component {
 			};
 		} )();
 
+		const provisioningText = supportsRealtimeBackup
+			? translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes in real time."
+			  )
+			: translate(
+					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes every day."
+			  );
+
 		return (
 			<div>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
+
 				<SidebarNavigation />
 
 				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
@@ -431,10 +445,7 @@ class ActivityLog extends Component {
 						icon="history"
 						disableHref
 						title={ translate( 'Your backup is underway' ) }
-						description={ translate(
-							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-								"After this initial backup, we'll save future changes in real time."
-						) }
+						description={ provisioningText }
 					/>
 				) }
 				<IntroBanner siteId={ siteId } />
@@ -605,6 +616,7 @@ export default connect(
 			timezone,
 			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
+			supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
 		};
 	},
 	{
