@@ -8,7 +8,12 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
-import { WPCheckout, useWpcomStore, useShoppingCart, FormFieldAnnotation } from '@automattic/composite-checkout-wpcom';
+import {
+	WPCheckout,
+	useWpcomStore,
+	useShoppingCart,
+	FormFieldAnnotation,
+} from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, createRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -31,7 +36,6 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
-
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -60,10 +64,6 @@ function CountrySelectMenu( {
 	debug( 'Rendering CountrySelectMenu with list', countriesList );
 
 	useEffect( () => {
-		debug(
-			'Deciding whether to dispatch a request for the countries list in the global state.',
-			countriesList
-		);
 		if ( countriesList?.length <= 0 ) {
 			debug( 'Countries list is empty; dispatching request for data' );
 			dispatch( fetchPaymentCountries() );
@@ -86,7 +86,11 @@ function CountrySelectMenu( {
 		>
 			<FormCountrySelect
 				id={ countrySelectorId }
-				countriesList={ [ { code: null, name: translate( 'Select Country' ) }, ...countriesList ] }
+				countriesList={ [
+					{ code: '', name: translate( 'Select Country' ) },
+					{ code: null, name: '' },
+					...countriesList,
+				] }
 				translate={ translate }
 				onChange={ onChange }
 				disabled={ isDisabled }
