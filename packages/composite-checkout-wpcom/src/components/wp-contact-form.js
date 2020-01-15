@@ -322,10 +322,17 @@ function PhoneNumberField( {
 				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
 				countriesList={ countriesList }
 			/>
-			{ isError && <span>{ translate( 'This field is required.' ) }</span> }
+			{ isError && <ErrorMessage>{ translate( 'This field is required.' ) }</ErrorMessage> }
 		</PhoneNumberFieldUI>
 	);
 }
+
+const ErrorMessage = styled.p`
+	margin: 8px 0 0 0;
+	color: ${props => props.theme.colors.error};
+	font-style: italic;
+	font-size: 14px;
+`;
 
 const PhoneNumberFieldUI = styled.div`
 	margin-top: 16px;
