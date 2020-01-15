@@ -3,13 +3,14 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useLayoutEffect, useRef, useState, FunctionComponent, MouseEvent } from 'react';
+import React, { useLayoutEffect, useRef, useState, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
 import { Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useSpring, animated } from 'react-spring';
 
 /**
  * Internal dependencies
@@ -54,7 +55,6 @@ const DesignSelector: FunctionComponent = () => {
 	const transitionTiming = 250;
 	const hasSelectedDesign = !! selectedDesign;
 	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
-	const [ cp, setCp ] = useState< number >();
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -72,15 +72,14 @@ const DesignSelector: FunctionComponent = () => {
 		!! selectedDesign &&
 		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
 
+	const designSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${
+			hasSelectedDesign ? -selectionTransitionShift.current : 0
+		}px, 0)`,
+	} );
+
 	return (
-		<div
-			className="design-selector"
-			style={
-				selectedDesign && {
-					transform: `translate3d( 0,  -${ selectionTransitionShift.current }px, 0 )`,
-				}
-			}
-		>
+		<animated.div style={ designSelectorSpring }>
 			<div
 				className="design-selector__header-container"
 				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
@@ -93,33 +92,35 @@ const DesignSelector: FunctionComponent = () => {
 					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
 				</h2>
 			</div>
-
-			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
-				<div className="design-selector__grid-container">
-					<div className="design-selector__grid">
-						{ designs.map( design => (
-							<DesignCard
-								key={ design.slug }
-								dialogId={ dialogId }
-								design={ design }
-								isSelected={ design.slug === selectedDesign?.slug }
-								style={
-									selectedDesign?.slug === design.slug
-										? {
-												transform: `translate3d( 0, calc( -100vh + ${ -( cp ?? 0 ) + 10 }px ), 0 )`,
-										  }
-										: undefined
-								}
-								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
-									window.scrollTo( 0, 0 );
-									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( selectedDesign?.slug === design.slug ? undefined : design );
-								} }
-							/>
-						) ) }
-					</div>
+			<div
+				className={ classnames( 'design-selector__grid-container', {
+					'has-selected-design': hasSelectedDesign,
+				} ) }
+			>
+				<div className="design-selector__grid">
+					{ designs.map( design => (
+						<DesignCard
+							key={ design.slug }
+							dialogId={ dialogId }
+							design={ design }
+							style={
+								selectedDesign?.slug === design.slug
+									? {
+											gridRow: 1,
+											gridColumn: descriptionOnRight ? 1 : 2,
+									  }
+									: {
+											visibility: hasSelectedDesign ? 'hidden' : undefined,
+									  }
+							}
+							onClick={ () => {
+								window.scrollTo( 0, 0 );
+								setSelectedDesign( design );
+							} }
+						/>
+					) ) }
 				</div>
-			</CSSTransition>
+			</div>
 
 			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming }>
 				<div
@@ -163,7 +164,7 @@ const DesignSelector: FunctionComponent = () => {
 					</div>
 				</CSSTransition>
 			</Dialog>
-		</div>
+		</animated.div>
 	);
 };
 

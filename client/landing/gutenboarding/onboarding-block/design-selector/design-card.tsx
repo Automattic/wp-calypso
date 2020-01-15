@@ -4,7 +4,6 @@
 import { __ as NO__ } from '@wordpress/i18n';
 import React, { FunctionComponent, MouseEventHandler, CSSProperties } from 'react';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -17,22 +16,15 @@ const srcSet = ( src: string, widths: number[] ) =>
 	widths.map( width => addQueryArgs( src, { w: width } ) + ` ${ width }w` ).join( ', ' );
 
 interface Props {
-	isSelected?: boolean;
 	design: import('@automattic/data-stores').VerticalsTemplates.Template;
 	onClick: MouseEventHandler< HTMLDivElement >;
 	style?: CSSProperties;
 	dialogId: string;
 }
-const DesignCard: FunctionComponent< Props > = ( {
-	design,
-	dialogId,
-	isSelected,
-	onClick,
-	style,
-} ) => (
+const DesignCard: FunctionComponent< Props > = ( { design, dialogId, onClick, style } ) => (
 	<Card
 		as="button"
-		className={ classnames( 'design-selector__design-option', { 'is-selected': isSelected } ) }
+		className="design-selector__design-option"
 		isElevated
 		onClick={ onClick }
 		style={ style }

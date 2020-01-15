@@ -18,11 +18,6 @@ $design-selector-selection-space: 285px;
 	transition: $design-selector-transition-timing transform ease-out;
 }
 
-.design-selector {
-	@include design-selector-transition();
-	transform: translate3d( 0, 0, 0 );
-}
-
 .design-selector__title {
 	color: $dark-gray-800;
 	font-size: 2em;
@@ -42,27 +37,19 @@ $design-selector-selection-space: 285px;
 	padding-bottom: 48px;
 	padding-top: 19px;
 
-	&.exit,
-	&.exit-done {
+	&.has-selected-design {
 		overflow-y: hidden;
 		height: 100vh;
-
-		.design-selector__grid {
-			@include design-selector-hide();
-		}
 	}
 }
 
 .design-selector__grid {
-	@include design-selector-transition();
 	display: grid;
 	grid-gap: $design-selector-grid-gap;
 
 	@include breakpoint( '>660px' ) {
 		grid-template-columns: 1fr 1fr;
 	}
-
-	@include design-selector-show();
 }
 
 .design-selector__page-layout-backdrop {
@@ -180,8 +167,7 @@ $design-selector-selection-space: 285px;
 }
 
 .design-selector__design-option {
-	transform: translate3d( 0, 0, 0 );
-	@include design-selector-transition();
+	position: relative;
 
 	.design-selector__option-overlay {
 		background-color: rgba( var( --color-primary-rgb ), 0.8 );
