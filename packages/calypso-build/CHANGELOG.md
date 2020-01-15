@@ -1,12 +1,15 @@
 # next
 
-- Add `util.IncrementalProgressPlugin` to show incremental build progress
-- Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
-- Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
 - Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
 - Add basic TypeScript config, `tsconfig.json` (for projects to extend).
 - Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
 - Add support for transpiling selected NPM dependencies from ESnext to the target's ES version.
+
+# 5.1.0
+
+- Add `util.IncrementalProgressPlugin` to show incremental build progress
+- Add support for [optional chaining](https://github.com/tc39/proposal-optional-chaining).
+- Add support for [nullish coalescing](https://github.com/tc39/proposal-nullish-coalescing).
 
 # 5.0.1
 
