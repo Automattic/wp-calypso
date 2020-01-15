@@ -81,4 +81,8 @@ describe( 'LanguagePicker', () => {
 		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
 		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( '한국어' );
 	} );
+
+	test( 'fails', () => {
+		expect( true ).toEqual( false );
+	} );
 } );
