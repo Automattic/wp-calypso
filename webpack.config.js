@@ -25,6 +25,7 @@ const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' )
 const {
 	cssNameFromFilename,
 	IncrementalProgressPlugin,
+	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 
@@ -58,56 +59,6 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
 if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
-}
-
-const nodeModulesToTranspile = [
-	// general form is <package-name>/.
-	// The trailing slash makes sure we're not matching these as prefixes
-	// In some cases we do want prefix style matching (lodash. for lodash.assign)
-	'@automattic/calypso-polyfills/',
-	'@github/webauthn-json/',
-	'acorn-jsx/',
-	'chalk/',
-	'd3-array/',
-	'd3-scale/',
-	'debug/',
-	'escape-string-regexp/',
-	'filesize/',
-	'prismjs/',
-	'react-spring/',
-	'regenerate-unicode-properties/',
-	'regexpu-core/',
-	'striptags/',
-	'unicode-match-property-ecmascript/',
-	'unicode-match-property-value-ecmascript/',
-];
-/**
- * Check to see if we should transpile certain files in node_modules
- *
- * @param {string} filepath the path of the file to check
- * @returns {boolean} True if we should transpile it, false if not
- *
- * We had a thought to try to find the package.json and use the engines property
- * to determine what we should transpile, but not all libraries set engines properly
- * (see d3-array@2.0.0). Instead, we transpile libraries we know to have dropped Node 4 support
- * are likely to remain so going forward.
- */
-function shouldTranspileDependency( filepath ) {
-	// find the last index of node_modules and check from there
-	// we want <working>/node_modules/a-package/node_modules/foo/index.js to only match foo, not a-package
-	const marker = '/node_modules/';
-	const lastIndex = filepath.lastIndexOf( marker );
-	if ( lastIndex === -1 ) {
-		// we're not in node_modules
-		return false;
-	}
-
-	const checkFrom = lastIndex + marker.length;
-
-	return _.some(
-		nodeModulesToTranspile,
-		modulePart => filepath.substring( checkFrom, checkFrom + modulePart.length ) === modulePart
-	);
 }
 
 let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
@@ -194,7 +145,7 @@ const webpackConfig = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
 				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,
