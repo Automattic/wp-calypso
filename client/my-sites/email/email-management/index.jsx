@@ -24,6 +24,7 @@ import {
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
@@ -56,20 +57,32 @@ class EmailManagement extends React.Component {
 		gsuiteUsers: PropTypes.array,
 		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
+		canManageSite: PropTypes.bool.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		selectedDomainName: PropTypes.string,
 	};
 
 	render() {
-		const { selectedSiteId, selectedDomainName } = this.props;
+		const { selectedSiteId, canManageSite } = this.props;
 
 		return (
 			<Main className="email-management" wideLayout>
-				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
+				{ selectedSiteId && canManageSite && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
+				{ canManageSite && this.headerLayout() }
+				{ this.content() }
+			</Main>
+		);
+	}
+
+	headerLayout() {
+		const { selectedDomainName } = this.props;
+
+		return (
+			<Fragment>
 				{ ! selectedDomainName && (
 					<FormattedHeader
 						className="email-management__page-heading"
@@ -79,8 +92,7 @@ class EmailManagement extends React.Component {
 				) }
 
 				{ this.headerOrPlansNavigation() }
-				{ this.content() }
-			</Main>
+			</Fragment>
 		);
 	}
 
@@ -104,7 +116,16 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
+		const {
+			domains,
+			hasGSuiteUsersLoaded,
+			hasSiteDomainsLoaded,
+			selectedDomainName,
+			canManageSite,
+		} = this.props;
+		if ( ! canManageSite ) {
+			return this.emptyContent();
+		}
 
 		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
@@ -144,7 +165,7 @@ class EmailManagement extends React.Component {
 	}
 
 	getEmptyContentProps() {
-		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
+		const { selectedDomainName, selectedSiteSlug, translate, canManageSite } = this.props;
 
 		const selectedDomain = getSelectedDomain( this.props );
 
@@ -186,6 +207,14 @@ class EmailManagement extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				...emailForwardingAction,
+			};
+		}
+
+		if ( ! canManageSite ) {
+			return {
+				illustration: '/calypso/images/illustrations/illustration-404.svg',
+				title: translate( 'You are not authorized to view this page' ),
+				action: null,
 			};
 		}
 
@@ -255,6 +284,7 @@ export default connect( state => {
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
