@@ -1,4 +1,4 @@
-o /**
+/**
  * External dependencies
  */
 import React, { Component } from 'react';
