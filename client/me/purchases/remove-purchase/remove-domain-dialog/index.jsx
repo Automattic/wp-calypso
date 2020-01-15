@@ -15,7 +15,8 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { getName } from 'lib/purchases';
+import { CALYPSO_CONTACT } from 'lib/url/support';
+import { getName, isRefundable, maybeWithinRefundPeriod } from 'lib/purchases';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -34,7 +35,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderFirstStep( productName ) {
-		const { translate } = this.props;
+		const { translate, purchase } = this.props;
 
 		return (
 			<Fragment>
@@ -55,6 +56,26 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
+					<p>
+						<strong>
+							{ translate(
+								"We're not able to refund this purchase automatically. " +
+									"If you're canceling within %(refundPeriodInDays)s days of " +
+									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
+									'request a refund.',
+								{
+									args: {
+										refundPeriodInDays: purchase.refundPeriodInDays,
+									},
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+							) }
+						</strong>
+					</p>
+				) }
 			</Fragment>
 		);
 	}
