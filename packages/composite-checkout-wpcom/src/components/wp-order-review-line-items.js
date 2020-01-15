@@ -106,10 +106,6 @@ const LineItemUI = styled( WPLineItem )`
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
 	margin-right: 30px;
-
-	:first-of-type button {
-		top: -3px;
-	}
 `;
 
 const ProductTitle = styled.span`
@@ -239,6 +235,10 @@ const WPOrderReviewListItems = styled.li`
 
 	:first-of-type .checkout-line-item {
 		padding-top: 10px;
+	}
+
+	:first-of-type button {
+		top: -3px;
 	}
 `;
 
