@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import QueryTimezones from 'components/data/query-timezones';
 import getRawOffsets from 'state/selectors/get-raw-offsets';
 import getTimezones from 'state/selectors/get-timezones';
-import { maybeRewriteTimezone } from 'lib/i18n-utils/utils';
+import { maybeRewriteTimezone } from 'lib/i18n-utils/rewrite-timezone';
 
 /* eslint-disable jsx-a11y/no-onchange */
 class Timezone extends Component {
