@@ -524,6 +524,8 @@ function StripePayButton( { disabled } ) {
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
+		let isSubscribed = true;
+
 		if ( transactionStatus === 'error' ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
@@ -539,19 +541,22 @@ function StripePayButton( { disabled } ) {
 			window.location = redirectUrl;
 		}
 		if ( transactionStatus === 'auth' ) {
+			showInfoMessage( localize( 'Authorizing...' ) );
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} )
-				.then( () => {
-					debug( 'stripe auth is complete' );
-					setFormComplete();
+				.then( authenticationResponse => {
+					debug( 'stripe auth is complete', authenticationResponse );
+					isSubscribed && setFormComplete();
 				} )
 				.catch( error => {
-					setFormReady();
 					showErrorMessage( error.stripeError || error.message );
+					isSubscribed && setFormReady();
 				} );
 		}
+
+		return () => ( isSubscribed = false );
 	}, [
 		redirectUrl,
 		setFormReady,
@@ -652,7 +657,7 @@ async function showStripeModalAuth( { stripeConfiguration, response } ) {
 	);
 
 	if ( authenticationResponse?.status ) {
-		return true;
+		return authenticationResponse;
 	}
-	return false;
+	return null;
 }
