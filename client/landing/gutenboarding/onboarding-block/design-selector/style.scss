@@ -240,11 +240,9 @@ $deisgn-selector-selection-space: 175px;
 
 // Necessary for grid layout
 .page-layout-selector__card-media {
-	.page-layout-selector__card-media-img {
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
+	position: absolute;
+	top: 0;
+	width: 100%;
 }
 
 .design-selector__description-container {
