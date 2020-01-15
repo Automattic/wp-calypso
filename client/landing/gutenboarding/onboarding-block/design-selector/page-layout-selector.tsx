@@ -44,11 +44,17 @@ const PageLayoutSelector: FunctionComponent< Props > = ( { templates } ) => {
 							} ) }
 							onClick={ () => togglePageLayout( template ) }
 							key={ template.slug }
-							style={ { backgroundImage: `url( "${ removeQueryArgs( template.preview, 'w' ) }" )` } }
 						>
 							<span className="page-layout-selector__selected-indicator">
 								<Icon icon="yes" size={ 24 } />
 							</span>
+							<CardMedia className="page-layout-selector__card-media" as="span">
+								<img
+									alt={ template.description }
+									src={ removeQueryArgs( template.preview, 'w' ) }
+									className="page-layout-selector__card-media-img"
+								/>
+							</CardMedia>
 							<CardFooter className="page-layout-selector__card-footer" as="span">
 								{ template.title }
 							</CardFooter>
