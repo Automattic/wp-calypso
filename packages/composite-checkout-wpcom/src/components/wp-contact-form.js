@@ -297,18 +297,15 @@ function PhoneNumberField( {
 } ) {
 	const translate = useTranslate();
 
-	// TODO: style wrapper div
-	// TODO: add id for label to target
-	// TODO: add errorMessage and isError
-	// isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
-	// errorMessage={ translate( 'This field is required.' ) }
+	const isError = contactInfo.phoneNumber.isTouched && ! contactInfo.phoneNumber.isValid;
 	return (
-		<div>
-			<label htmlFor={ id }>
+		<PhoneNumberFieldUI>
+			<Label htmlFor={ id }>
 				{ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
-			</label>
+			</Label>
 			<PhoneInput
-				id={ id }
+				name={ id }
+				isError={ isError }
 				onChange={ ( { value, countryCode } ) => {
 					setContactField( 'phoneNumber', {
 						value,
@@ -325,9 +322,26 @@ function PhoneNumberField( {
 				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
 				countriesList={ countriesList }
 			/>
-		</div>
+			{ isError && <span>{ translate( 'This field is required.' ) }</span> }
+		</PhoneNumberFieldUI>
 	);
 }
+
+const PhoneNumberFieldUI = styled.div`
+	margin-top: 16px;
+`;
+
+const Label = styled.label`
+	display: block;
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer' )};
+	}
+`;
 
 PhoneNumberField.propTypes = {
 	isRequired: PropTypes.bool,
