@@ -46,18 +46,12 @@ export default function WPContactForm( {
 				countriesList={ countriesList }
 			/>
 
-			<PhoneInput
-				onChange={ ( { value, countryCode } ) => {
-					setters.setContactField( 'phoneNumber', { value, isTouched: true, isValid: !! value } );
-					setters.setContactField( 'phoneNumberCountry', {
-						countryCode,
-						isTouched: true,
-						isValid: !! value,
-					} );
-				} }
-				value={ contactInfo.phoneNumber.value }
-				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
+			<PhoneNumberField
+				id="contact-phone-number"
+				setContactField={ setters.setContactField }
 				countriesList={ countriesList }
+				contactInfo={ contactInfo }
+				PhoneInput={ PhoneInput }
 			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
@@ -293,30 +287,58 @@ function isStateorProvince() {
 	return 'province';
 }
 
-function PhoneNumberField( { id, isRequired, phoneNumber, onChange } ) {
+function PhoneNumberField( {
+	id,
+	isRequired,
+	setContactField,
+	contactInfo,
+	countriesList,
+	PhoneInput,
+} ) {
 	const translate = useTranslate();
 
+	// TODO: style wrapper div
+	// TODO: add id for label to target
+	// TODO: add errorMessage and isError
+	// isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
+	// errorMessage={ translate( 'This field is required.' ) }
 	return (
-		<FormField
-			id={ id }
-			type="text"
-			label={ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
-			value={ phoneNumber.value }
-			onChange={ value =>
-				onChange( 'phoneNumber', { value, isTouched: true, isValid: isRequired ? !! value : true } )
-			}
-			autoComplete="tel"
-			isError={ phoneNumber.isTouched && ! phoneNumber.isValid }
-			errorMessage={ translate( 'This field is required.' ) }
-		/>
+		<div>
+			<label htmlFor={ id }>
+				{ isRequired ? translate( 'Phone number (Optional)' ) : translate( 'Phone number' ) }
+			</label>
+			<PhoneInput
+				id={ id }
+				onChange={ ( { value, countryCode } ) => {
+					setContactField( 'phoneNumber', {
+						value,
+						isTouched: true,
+						isValid: isRequired ? !! value : true,
+					} );
+					setContactField( 'phoneNumberCountry', {
+						countryCode,
+						isTouched: true,
+						isValid: !! value,
+					} );
+				} }
+				value={ contactInfo.phoneNumber.value }
+				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
+				countriesList={ countriesList }
+			/>
+		</div>
 	);
 }
 
 PhoneNumberField.propTypes = {
 	isRequired: PropTypes.bool,
 	id: PropTypes.string.isRequired,
-	phoneNumber: PropTypes.object.isRequired,
-	onChange: PropTypes.func.isRequired,
+	setContactField: PropTypes.func.isRequired,
+	contactInfo: PropTypes.shape( {
+		phoneNumber: PropTypes.shape( { value: PropTypes.string } ),
+		phoneNumberCountry: PropTypes.shape( { value: PropTypes.string } ),
+	} ).isRequired,
+	countriesList: PropTypes.array.isRequired,
+	PhoneInput: PropTypes.elementType.isRequired,
 };
 
 function VatIdField() {
