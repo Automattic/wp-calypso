@@ -5,10 +5,7 @@ import { MOBILE_APPS_LOGIN_EMAIL_SEND } from 'state/action-types';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import 'state/data-layer/wpcom/auth/send-login-email';
 
-export const sendMobileEmailLogin = (
-	email,
-	{ redirectTo, showGlobalNotices = false, dispatchOnSuccess = [], dispatchOnError = [] }
-) => {
+export const sendMobileEmailLogin = ( email, { redirectTo, showGlobalNotices = false } ) => {
 	//Kind of weird usage, but this is a straight port from undocumented.js for now.
 	//I can move this to the caller, if there's equivalent info in the state tree
 	const locale = getLocaleSlug();
@@ -21,7 +18,5 @@ export const sendMobileEmailLogin = (
 		lang_id,
 		redirect_to: redirectTo,
 		showGlobalNotices,
-		dispatchOnSuccess,
-		dispatchOnError,
 	};
 };

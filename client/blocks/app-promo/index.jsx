@@ -111,7 +111,8 @@ export class AppPromo extends React.Component {
 	sendMagicLink = () => {
 		this.recordClickEvent();
 		const email = this.props.userSettings.user_email;
-		this.props.sendMobileEmailLogin( email, { showGlobalNotices: true } );
+		this.props.sendMobileEmailLogin( email, { showGlobalNotices: false } );
+		this.onShowDialog();
 		return false;
 	};
 

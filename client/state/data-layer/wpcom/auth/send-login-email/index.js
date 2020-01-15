@@ -14,12 +14,12 @@ import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/noti
 import config from 'config';
 
 export const sendLoginEmail = action => {
-	const noticeAction = action.showGlobalNotices
+	const { email, lang_id, locale, redirect_to, showGlobalNotices } = action;
+	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
-	const { email, lang_id, locale, redirect_to } = action;
 	return [
-		...( noticeAction ? [ noticeAction ] : [] ),
+		...( showGlobalNotices ? [ noticeAction ] : [] ),
 		http(
 			{
 				path: `/auth/send-login-email`,
@@ -41,8 +41,8 @@ export const sendLoginEmail = action => {
 	];
 };
 
-export const onSuccess = ( { dispatchOnSuccess = [], showGlobalNotices, infoNoticeId = null } ) => [
-	...dispatchOnSuccess,
+export const displaySuccessMessage = ( { showGlobalNotices, infoNoticeId = null } ) => [
+	// Default Global Notice Handling
 	...( showGlobalNotices
 		? [
 				removeNotice( infoNoticeId ),
@@ -53,24 +53,26 @@ export const onSuccess = ( { dispatchOnSuccess = [], showGlobalNotices, infoNoti
 		: [] ),
 ];
 
-export const onError = ( { dispatchOnError = [], showGlobalNotices, infoNoticeId = null } ) => [
-	...dispatchOnError,
-	...( showGlobalNotices
-		? [
-				removeNotice( infoNoticeId ),
-				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
-					duration: 4000,
-				} ),
-		  ]
-		: [] ),
-];
+export const displayErrorMessage = ( { showGlobalNotices, infoNoticeId = null } ) => {
+	return [
+		// Default Global Notice Handling
+		...( showGlobalNotices
+			? [
+					removeNotice( infoNoticeId ),
+					errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
+						duration: 4000,
+					} ),
+			  ]
+			: [] ),
+	];
+};
 
 registerHandlers( 'state/data-layer/wpcom/auth/send-login-email/index.js', {
 	[ MOBILE_APPS_LOGIN_EMAIL_SEND ]: [
 		dispatchRequest( {
 			fetch: sendLoginEmail,
-			onSuccess,
-			onError,
+			onSuccess: displaySuccessMessage,
+			onError: displayErrorMessage,
 		} ),
 	],
 } );
