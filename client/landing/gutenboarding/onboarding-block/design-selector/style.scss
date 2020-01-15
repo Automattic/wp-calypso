@@ -124,9 +124,6 @@ $deisgn-selector-selection-space: 175px;
 	display: grid;
 	grid-gap: 1.25em;
 	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
-	@include breakpoint( '>660px' ) {
-		grid-template-columns: 1fr 1fr 1fr;
-	}
 }
 
 .page-layout-selector__item {
