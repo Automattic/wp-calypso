@@ -14,14 +14,14 @@ const UpsellNudgeExample = ( { translate } ) => (
 		<UpsellNudge
 			href="#"
 			callToAction={ translate( 'Upgrade' ) }
-			title={ translate( 'Free domain with a plan! This is a regular nudge.' ) }
-			description={ translate( 'And it has a description.' ) }
+			title={ translate( 'Free domain with a plan! This is a regular nudge with an icon.' ) }
+			showIcon={ true }
 		/>
 		<UpsellNudge
 			href="#"
 			compact
 			callToAction={ translate( 'Upgrade' ) }
-			title={ translate( 'Free domain with a plan! This is a compact nudge.' ) }
+			title={ translate( 'Free domain with a plan! This is a compact nudge with no icon.' ) }
 		/>
 	</>
 );
