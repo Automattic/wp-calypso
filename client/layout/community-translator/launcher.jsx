@@ -53,6 +53,7 @@ class TranslatorLauncher extends React.Component {
 		isEnabled: translator.isEnabled(),
 		isDeliverablesHighlightEnabled: false,
 		deliverablesTarget: null,
+		scrollTop: 0,
 	};
 
 	componentDidMount() {
@@ -90,6 +91,10 @@ class TranslatorLauncher extends React.Component {
 		if ( isActive && event.getModifierState( 'Control' ) && event.key.toLowerCase() === 'd' ) {
 			this.toggleDeliverablesHighlight();
 		}
+	};
+
+	handleWindowScroll = event => {
+		this.setState( { scrollTop: window.scrollY } );
 	};
 
 	handleMouseMove = event => {
@@ -142,9 +147,11 @@ class TranslatorLauncher extends React.Component {
 		const isDeliverablesHighlightEnabled = ! this.state.isDeliverablesHighlightEnabled;
 
 		if ( isDeliverablesHighlightEnabled ) {
+			window.addEventListener( 'scroll', this.handleWindowScroll );
 			window.addEventListener( 'mousemove', this.handleMouseMove );
 			window.addEventListener( 'mousedown', this.handleMouseDown );
 		} else {
+			window.removeEventListener( 'scroll', this.handleWindowScroll );
 			window.removeEventListener( 'mousemove', this.handleMouseMove );
 			window.removeEventListener( 'mousedown', this.handleMouseDown );
 		}
@@ -153,7 +160,7 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	renderDeliverablesHighlight() {
-		const { isDeliverablesHighlightEnabled, deliverablesTarget } = this.state;
+		const { isDeliverablesHighlightEnabled, deliverablesTarget, scrollTop } = this.state;
 
 		if ( ! isDeliverablesHighlightEnabled || ! deliverablesTarget ) {
 			return null;
@@ -162,7 +169,7 @@ class TranslatorLauncher extends React.Component {
 		const { left, top, width, height } = deliverablesTarget.getBoundingClientRect();
 		const style = {
 			left: `${ left }px`,
-			top: `${ top }px`,
+			top: `${ top + scrollTop }px`,
 			width: `${ width }px`,
 			height: `${ height }px`,
 		};
