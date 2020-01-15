@@ -20,5 +20,5 @@ const commands = args.map( arg => argsToCommands[ arg ] ).filter( val => !! val 
 console.log( `Running the following commands: ${ commands.toString() }` );
 
 runAll( commands, { parallel: true } ).then( () => {
-	'Finished running commands!';
+	console.log( 'Finished running commands!' );
 } );
