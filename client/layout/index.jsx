@@ -26,6 +26,7 @@ import {
 	getSelectedSiteId,
 	hasSidebar,
 	masterbarIsVisible,
+	getSection,
 	getSectionGroup,
 	getSectionName,
 } from 'state/ui/selectors';
@@ -147,7 +148,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ this.props.sectionName }:admin_notices` }
+							messagePath={ `calypso:${ this.props.sectionModule }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
 					) }
@@ -191,6 +192,7 @@ class Layout extends Component {
 export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
+	const { module: sectionModule } = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
@@ -218,6 +220,7 @@ export default connect( state => {
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
+		sectionModule,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
