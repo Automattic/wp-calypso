@@ -41,6 +41,7 @@ import ImportTypeChoice from './components/import-type-choice';
  * Style dependencies
  */
 import './section-migrate.scss';
+import { redirectTo } from 'my-sites/migrate/helpers';
 
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
@@ -329,8 +330,17 @@ class SectionMigrate extends Component {
 	}
 
 	chooseImportType = type => {
-		console.log( 'chosen', type );
 		this.setState( { chosenImportType: type } );
+	};
+
+	handleImportRedirect = () => {
+		const { isTargetSiteAtomic, targetSiteSlug } = this.props;
+
+		if ( isTargetSiteAtomic ) {
+			window.location.href = `https://${ targetSiteSlug }/wp-admin/import.php`;
+		} else {
+			redirectTo( `/import/${ targetSiteSlug }/?engine=wordpress` );
+		}
 	};
 
 	renderMigrationConfirmation() {
@@ -377,7 +387,7 @@ class SectionMigrate extends Component {
 						<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
 					) : null }
 					{ this.state.chosenImportType === 'content-only' ? (
-						<Button primary onClick={ this.startMigration }>
+						<Button primary onClick={ this.handleImportRedirect }>
 							Import site
 						</Button>
 					) : null }
