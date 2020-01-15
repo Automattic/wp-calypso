@@ -14,10 +14,12 @@ import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/noti
 import config from 'config';
 
 export const sendLoginEmail = action => {
-	const noticeAction = infoNotice( translate( 'Sending email' ), { duration: 4000 } );
-	const { email, lang_id, locale } = action;
+	const noticeAction = action.showGlobalNotices
+		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
+		: null;
+	const { email, lang_id, locale, redirect_to } = action;
 	return [
-		noticeAction,
+		...( noticeAction ? [ noticeAction ] : [] ),
 		http(
 			{
 				path: `/auth/send-login-email`,
@@ -31,33 +33,44 @@ export const sendLoginEmail = action => {
 					locale,
 					lang_id: lang_id,
 					email: email,
+					...( !! redirect_to && { redirect_to } ),
 				},
 			},
-			{ ...action, infoNoticeId: noticeAction?.notice?.noticeId }
+			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }
 		),
 	];
 };
 
-export const displaySuccessMessage = ( { infoNoticeId } ) => [
-	removeNotice( infoNoticeId ),
-	successNotice( translate( 'Email Sent. Check your mail app!' ), {
-		duration: 4000,
-	} ),
+export const onSuccess = ( { dispatchOnSuccess = [], showGlobalNotices, infoNoticeId = null } ) => [
+	...dispatchOnSuccess,
+	...( showGlobalNotices
+		? [
+				removeNotice( infoNoticeId ),
+				successNotice( translate( 'Email Sent. Check your mail app!' ), {
+					duration: 4000,
+				} ),
+		  ]
+		: [] ),
 ];
 
-export const displayErrorMessage = ( { infoNoticeId } ) => [
-	removeNotice( infoNoticeId ),
-	errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
-		duration: 4000,
-	} ),
+export const onError = ( { dispatchOnError = [], showGlobalNotices, infoNoticeId = null } ) => [
+	...dispatchOnError,
+	...( showGlobalNotices
+		? [
+				removeNotice( infoNoticeId ),
+				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
+					duration: 4000,
+				} ),
+		  ]
+		: [] ),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/auth/send-login-email/index.js', {
 	[ MOBILE_APPS_LOGIN_EMAIL_SEND ]: [
 		dispatchRequest( {
 			fetch: sendLoginEmail,
-			onSuccess: displaySuccessMessage,
-			onError: displayErrorMessage,
+			onSuccess,
+			onError,
 		} ),
 	],
 } );

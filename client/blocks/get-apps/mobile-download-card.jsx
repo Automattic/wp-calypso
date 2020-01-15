@@ -300,7 +300,7 @@ class MobileDownloadCard extends React.Component {
 const sendMagicLink = email =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
-		sendMobileEmailLogin( email )
+		sendMobileEmailLogin( email, { showGlobalNotices: true } )
 	);
 
 export default connect(
