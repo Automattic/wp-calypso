@@ -65,6 +65,10 @@ export function createStripeMethod( {
 		setStripeError( payload ) {
 			return { type: 'STRIPE_TRANSACTION_ERROR', payload };
 		},
+		setStripeComplete( payload ) {
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload };
+		},
 		*getConfiguration( payload ) {
 			let configuration;
 			try {
@@ -110,7 +114,7 @@ export function createStripeMethod( {
 				debug( 'stripe transaction requires redirect' );
 				return { type: 'STRIPE_TRANSACTION_REDIRECT', payload: stripeResponse };
 			}
-			debug( 'stripe transaction requires is successful' );
+			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
 		},
 	};
@@ -518,29 +522,44 @@ function StripePayButton( { disabled } ) {
 	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
 	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
 	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
-	const { beginStripeTransaction } = useDispatch( 'stripe' );
+	const { beginStripeTransaction, setStripeComplete } = useDispatch( 'stripe' );
 	const name = useSelect( select => select( 'stripe' ).getCardholderName() );
 	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 
 	useEffect( () => {
-		let isSubscribed = true;
-
 		if ( transactionStatus === 'error' ) {
+			debug( 'showing error' );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
 			setFormReady();
 		}
 		if ( transactionStatus === 'complete' ) {
-			debug( 'stripe transaction is complete' );
+			debug( 'marking complete' );
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
+			debug( 'redirecting' );
 			showInfoMessage( localize( 'Redirecting...' ) );
 			window.location = redirectUrl;
 		}
+	}, [
+		setFormReady,
+		setFormComplete,
+		showErrorMessage,
+		showInfoMessage,
+		transactionStatus,
+		transactionError,
+		redirectUrl,
+		localize,
+	] );
+
+	useEffect( () => {
+		let isSubscribed = true;
+
 		if ( transactionStatus === 'auth' ) {
+			debug( 'showing auth' );
 			showInfoMessage( localize( 'Authorizing...' ) );
 			showStripeModalAuth( {
 				stripeConfiguration,
@@ -548,7 +567,7 @@ function StripePayButton( { disabled } ) {
 			} )
 				.then( authenticationResponse => {
 					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setFormComplete();
+					isSubscribed && setStripeComplete( authenticationResponse );
 				} )
 				.catch( error => {
 					showErrorMessage( error.stripeError || error.message );
@@ -558,13 +577,11 @@ function StripePayButton( { disabled } ) {
 
 		return () => ( isSubscribed = false );
 	}, [
-		redirectUrl,
+		setStripeComplete,
 		setFormReady,
-		setFormComplete,
 		showInfoMessage,
 		showErrorMessage,
 		transactionStatus,
-		transactionError,
 		transactionAuthData,
 		stripeConfiguration,
 		localize,
