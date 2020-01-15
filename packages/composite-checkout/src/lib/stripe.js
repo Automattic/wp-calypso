@@ -10,12 +10,14 @@ import React, {
 	createContext,
 } from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { useSelect, useDispatch } from '../public-api';
 
+const debug = debugFactory( 'composite-checkout:lib-stripe' );
 const StripeContext = createContext();
 
 /**
@@ -163,6 +165,7 @@ function stripeJsReducer( state, action ) {
 		case 'STRIPE_LOADING_ERROR':
 			return { ...state, isStripeLoading: false, stripeLoadingError: action.payload };
 		case 'STRIPE_JS_SET':
+			debug( 'setting stripejs' );
 			return {
 				...state,
 				stripeJs: action.payload,
@@ -194,16 +197,22 @@ function useStripeJs( stripeConfiguration ) {
 		let isSubscribed = true;
 
 		async function loadAndInitStripe() {
+			debug( 'loadAndInitStripe' );
 			if ( window.Stripe ) {
+				debug( 'loadAndInitStripe cancelled; stripe already exists' );
 				isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
+			debug( 'loadAndInitStripe loading...', stripeConfiguration.js_url );
 			await loadScriptAsync( stripeConfiguration.js_url );
+			debug( 'loadAndInitStripe success; stripe loaded' );
 			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
 
+		debug( 'useStripeJs loading', stripeConfiguration );
 		if ( stripeConfiguration ) {
 			loadAndInitStripe().catch( error => {
+				debug( 'loadAndInitStripe error', error );
 				isSubscribed && setStripeLoadingError( error );
 			} );
 		}
@@ -211,6 +220,7 @@ function useStripeJs( stripeConfiguration ) {
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration ] );
 
+	debug( 'useStripeJs returning', isStripeLoading, stripeLoadingError );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -250,9 +260,11 @@ function useStripeConfiguration( requestArgs ) {
 	const { getConfiguration } = useDispatch( 'stripe' );
 	const getConfigurationMemo = useCallback( getConfiguration, [ currentAttempt, requestArgs ] );
 	useEffect( () => {
+		debug( 'loading stripe configuration', requestArgs );
 		getConfigurationMemo( requestArgs );
 	}, [ requestArgs, currentAttempt, getConfigurationMemo ] );
 	const forceReload = () => setAttempt( currentAttempt + 1 );
+	debug( 'useStripeConfiguration returning', stripeConfiguration, forceReload );
 	return { stripeConfiguration, forceReload };
 }
 
@@ -285,6 +297,7 @@ export function StripeHookProvider( { children, configurationArgs } ) {
 		stripeLoadingError,
 		forceReload,
 	};
+	debug( 'StripeHookProvider', stripeData );
 
 	return (
 		<StripeProvider stripe={ stripeJs }>
