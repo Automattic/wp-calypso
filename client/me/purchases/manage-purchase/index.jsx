@@ -24,13 +24,13 @@ import {
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
+	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 	isPartnerPurchase,
-	isRefundable,
 	isRenewable,
 	isRenewing,
 	isSubscription,
@@ -246,7 +246,7 @@ class ManagePurchase extends Component {
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
-		} else if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
+		} else if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}

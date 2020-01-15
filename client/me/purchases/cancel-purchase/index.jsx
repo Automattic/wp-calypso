@@ -17,6 +17,7 @@ import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loadi
 import CancelPurchaseRefundInformation from './refund-information';
 import {
 	getName,
+	hasAmountAvailableToRefund,
 	isCancelable,
 	isOneTimePurchase,
 	isRefundable,
@@ -114,7 +115,7 @@ class CancelPurchase extends React.Component {
 		const { purchase } = this.props;
 		const { refundText, expiryDate, refundAmount, currencySymbol, currency } = purchase;
 
-		if ( isRefundable( purchase ) && refundAmount > 0 ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				const { precision } = getCurrencyDefaults( currency );
 				const fullRefundText =

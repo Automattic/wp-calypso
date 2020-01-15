@@ -19,8 +19,8 @@ import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-fo
 import {
 	getName,
 	getSubscriptionEndDate,
+	hasAmountAvailableToRefund,
 	isOneTimePurchase,
-	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
@@ -46,7 +46,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	getCancellationFlowType = () => {
-		return isRefundable( this.props.purchase )
+		return hasAmountAvailableToRefund( this.props.purchase )
 			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
 			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	};
@@ -217,7 +217,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	submitCancelAndRefundPurchase = () => {
-		const refundable = isRefundable( this.props.purchase );
+		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
 		if ( refundable ) {
 			this.cancelAndRefund();
@@ -254,7 +254,7 @@ class CancelPurchaseButton extends Component {
 
 		let text, onClick;
 
-		if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			onClick = this.handleCancelPurchaseClick;
 
 			if ( isDomainRegistration( purchase ) ) {

@@ -137,7 +137,7 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
-	if ( isRefundable( purchase ) && purchase.refundAmount > 0 ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return true;
 	}
 
@@ -278,7 +278,7 @@ function hasAmountAvailableToRefund( purchase ) {
  * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
-	if ( isRefundable( purchase ) && purchase.refundAmount !== 0 ) {
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return false;
 	}
 
