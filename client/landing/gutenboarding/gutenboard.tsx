@@ -11,7 +11,6 @@ import {
 } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
-import { useSelect } from '@wordpress/data';
 import '@wordpress/format-library';
 import React, { useRef } from 'react';
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
@@ -24,15 +23,12 @@ import { useRouteMatch } from 'react-router-dom';
  */
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
-import { STORE_KEY } from './stores/onboard';
 import { routes, Step } from './steps';
 import './style.scss';
 
 registerBlockType( name, settings );
 
 export function Gutenboard() {
-	const { siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
-
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
 	// entirely into the block), we'll be able to remove this code.
@@ -40,14 +36,9 @@ export function Gutenboard() {
 	let next: undefined | string;
 	let prev: undefined | string;
 	switch ( r?.url ) {
-		case Step.IntentGathering:
-			if ( siteVertical ) {
-				next = Step.DesignSelection;
-			}
-			break;
-
 		case Step.DesignSelection:
 			prev = Step.IntentGathering;
+			next = Step.CreateSite;
 			break;
 	}
 
