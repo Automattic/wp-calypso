@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import React, { useState, FunctionComponent, MouseEvent } from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import React, { useLayoutEffect, useRef, useState, FunctionComponent, MouseEvent } from 'react';
 import classnames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
@@ -14,6 +14,7 @@ import { Dialog, DialogBackdrop } from 'reakit/Dialog';
 /**
  * Internal dependencies
  */
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DesignCard from './design-card';
 
 import './style.scss';
@@ -24,9 +25,10 @@ type Template = VerticalsTemplates.Template;
 const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
 
 const DesignSelector: FunctionComponent = () => {
-	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical
+	const { selectedDesign, siteVertical } = useSelect( select =>
+		select( ONBOARD_STORE ).getState()
 	);
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
 	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
@@ -45,8 +47,6 @@ const DesignSelector: FunctionComponent = () => {
 		( { category } ) => category === 'home'
 	);
 
-	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
-
 	const resetState = () => {
 		setSelectedDesign( undefined );
 	};
@@ -56,6 +56,16 @@ const DesignSelector: FunctionComponent = () => {
 	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
 	const [ cp, setCp ] = useState< number >();
 
+	const headingContainer = useRef< HTMLDivElement >( null );
+	const selectionTransitionShift = useRef< number >( 0 );
+	useLayoutEffect( () => {
+		if ( headingContainer.current ) {
+			// We'll use this height to move the heading up out of the viewport.
+			const rect = headingContainer.current.getBoundingClientRect();
+			selectionTransitionShift.current = rect.height;
+		}
+	}, [ selectedDesign ] );
+
 	const dialogId = 'page-selector-modal';
 
 	const descriptionOnRight: boolean =
@@ -63,10 +73,18 @@ const DesignSelector: FunctionComponent = () => {
 		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
 
 	return (
-		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
+		<div
+			className="design-selector"
+			style={
+				selectedDesign && {
+					transform: `translate3d( 0,  -${ selectionTransitionShift.current }px, 0 )`,
+				}
+			}
+		>
 			<div
 				className="design-selector__header-container"
 				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
+				ref={ headingContainer }
 			>
 				<h1 className="design-selector__title">
 					{ NO__( 'Choose a starting design for your site' ) }
@@ -95,9 +113,7 @@ const DesignSelector: FunctionComponent = () => {
 								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
 									window.scrollTo( 0, 0 );
 									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( currentTemplate =>
-										currentTemplate?.slug === design?.slug ? undefined : design
-									);
+									setSelectedDesign( selectedDesign?.slug === design.slug ? undefined : design );
 								} }
 							/>
 						) ) }

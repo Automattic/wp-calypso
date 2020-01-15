@@ -114,15 +114,13 @@ export default function Checkout( { steps, className } ) {
 	} );
 	const isThereAnotherNumberedStep = !! nextStep && nextStep.hasStepNumber;
 	const isThereAnIncompleteStep = !! annotatedSteps.find( step => ! step.isComplete );
-	const isCheckoutInProgress =
-		isThereAnIncompleteStep || isThereAnotherNumberedStep || formStatus !== 'ready';
 
 	if ( formStatus === 'loading' ) {
 		return (
 			<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
 				<MainContent
 					className={ joinClasses( [ className, 'checkout__content' ] ) }
-					isCheckoutInProgress={ isCheckoutInProgress }
+					isLastStepActive={ isThereAnotherNumberedStep }
 				>
 					<LoadingContent />
 				</MainContent>
@@ -134,7 +132,7 @@ export default function Checkout( { steps, className } ) {
 		<Container className={ joinClasses( [ className, 'composite-checkout' ] ) }>
 			<MainContent
 				className={ joinClasses( [ className, 'checkout__content' ] ) }
-				isCheckoutInProgress={ isCheckoutInProgress }
+				isLastStepActive={ isThereAnotherNumberedStep }
 			>
 				<ActiveStepProvider step={ activeStep } steps={ annotatedSteps }>
 					{ annotatedSteps.map( step => (
@@ -159,13 +157,17 @@ export default function Checkout( { steps, className } ) {
 					) ) }
 				</ActiveStepProvider>
 
-				<CheckoutWrapper isCheckoutInProgress={ isCheckoutInProgress }>
+				<SubmitButtonWrapper isLastStepActive={ ! isThereAnotherNumberedStep }>
 					<CheckoutErrorBoundary
 						errorMessage={ localize( 'There was a problem with the submit button.' ) }
 					>
-						<CheckoutSubmitButton disabled={ isCheckoutInProgress } />
+						<CheckoutSubmitButton
+							disabled={
+								isThereAnotherNumberedStep || isThereAnIncompleteStep || formStatus !== 'ready'
+							}
+						/>
 					</CheckoutErrorBoundary>
-				</CheckoutWrapper>
+				</SubmitButtonWrapper>
 			</MainContent>
 		</Container>
 	);
@@ -240,7 +242,7 @@ const MainContent = styled.div`
 	background: ${props => props.theme.colors.surface};
 	width: 100%;
 	box-sizing: border-box;
-	margin-bottom: ${props => ( props.isCheckoutInProgress ? 0 : '89px' )};
+	margin-bottom: ${props => ( props.isLastStepActive ? '89px' : 0 )};
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
@@ -250,16 +252,16 @@ const MainContent = styled.div`
 	}
 `;
 
-const CheckoutWrapper = styled.div`
+const SubmitButtonWrapper = styled.div`
 	background: ${props => props.theme.colors.background};
 	padding: 24px;
-	position: ${props => ( props.isCheckoutInProgress ? 'relative' : 'fixed' )};
+	position: ${props => ( props.isLastStepActive ? 'fixed' : 'relative' )};
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: ${props => ( props.isCheckoutInProgress ? '0' : '1px' )};
+	border-top-width: ${props => ( props.isLastStepActive ? '1px' : '0' )};
 	border-top-style: solid;
 	border-top-color: ${props => props.theme.colors.borderColorLight};
 
