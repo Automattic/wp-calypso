@@ -36,6 +36,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
+import PhoneInput from 'components/phone-input/index.jsx';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -92,6 +93,16 @@ export default function CompositeCheckout( {
 		debug( 'success', message );
 		notices.success( message );
 	}, [] );
+
+	const dispatch = useDispatch();
+	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
+
+	useEffect( () => {
+		if ( countriesList?.length <= 0 ) {
+			debug( 'countries list is empty; dispatching request for data' );
+			dispatch( fetchPaymentCountries() );
+		}
+	}, [ countriesList, dispatch ] );
 
 	const {
 		items,
@@ -169,6 +180,8 @@ export default function CompositeCheckout( {
 				siteId={ siteId }
 				siteUrl={ siteSlug }
 				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				PhoneInput={ PhoneInput }
 			/>
 		</CheckoutProvider>
 	);
@@ -267,19 +280,8 @@ function CountrySelectMenu( {
 	isError,
 	errorMessage,
 	currentValue,
+	countriesList,
 } ) {
-	const dispatch = useDispatch();
-	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
-
-	debug( 'Rendering CountrySelectMenu with list', countriesList );
-
-	useEffect( () => {
-		if ( countriesList?.length <= 0 ) {
-			debug( 'Countries list is empty; dispatching request for data' );
-			dispatch( fetchPaymentCountries() );
-		}
-	}, [ countriesList, dispatch ] );
-
 	const countrySelectorId = 'country-selector';
 	const countrySelectorLabelId = 'country-selector-label';
 	const countrySelectorDescriptionId = 'country-selector-description';

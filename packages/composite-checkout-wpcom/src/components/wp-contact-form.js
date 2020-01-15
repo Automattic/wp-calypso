@@ -15,7 +15,14 @@ import Field from './field';
 import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 
-export default function WPContactForm( { summary, isComplete, isActive, CountrySelectMenu } ) {
+export default function WPContactForm( {
+	summary,
+	isComplete,
+	isActive,
+	CountrySelectMenu,
+	PhoneInput,
+	countriesList,
+} ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
@@ -36,12 +43,21 @@ export default function WPContactForm( { summary, isComplete, isActive, CountryS
 				taxInfo={ contactInfo }
 				setters={ setters }
 				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
 			/>
 
-			<PhoneNumberField
-				id="contact-phone-number"
-				phoneNumber={ contactInfo.phoneNumber }
-				onChange={ setters.setContactField }
+			<PhoneInput
+				onChange={ ( { value, countryCode } ) => {
+					setters.setContactField( 'phoneNumber', { value, isTouched: true, isValid: !! value } );
+					setters.setContactField( 'phoneNumberCountry', {
+						countryCode,
+						isTouched: true,
+						isValid: !! value,
+					} );
+				} }
+				value={ contactInfo.phoneNumber.value }
+				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
+				countriesList={ countriesList }
 			/>
 
 			{ isElligibleForVat() && <VatIdField /> }
@@ -321,7 +337,7 @@ function VatIdField() {
 	);
 }
 
-function TaxFields( { section, taxInfo, setters, CountrySelectMenu } ) {
+function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesList } ) {
 	const translate = useTranslate();
 	const { postalCode, country } = taxInfo;
 	const { setContactField } = setters;
@@ -355,6 +371,7 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu } ) {
 					isDisabled={ false } // TODO
 					errorMessage={ translate( 'This field is required.' ) }
 					currentValue={ country.value }
+					countriesList={ countriesList }
 				/>
 			</RightColumn>
 		</FieldRow>
