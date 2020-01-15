@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { get, includes, isEmpty, omit } from 'lodash';
@@ -54,6 +54,7 @@ class SectionMigrate extends Component {
 		selectedSiteSlug: null,
 		startTime: '',
 		url: '',
+		chosenImportType: '',
 	};
 
 	componentDidMount() {
@@ -327,6 +328,11 @@ class SectionMigrate extends Component {
 		);
 	}
 
+	chooseImportType = type => {
+		console.log( 'chosen', type );
+		this.setState( { chosenImportType: type } );
+	};
+
 	renderMigrationConfirmation() {
 		const { sourceSite, targetSite, targetSiteSlug } = this.props;
 
@@ -339,7 +345,6 @@ class SectionMigrate extends Component {
 				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
 				<CompactCard>
 					<CardHeading>{ `Import everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
-					<ImportTypeChoice />
 					<div className="migrate__confirmation">
 						We can move everything from your current site to this WordPress.com site. It will keep
 						working as expected, but your WordPress.com dashboard will be locked during the
@@ -350,24 +355,32 @@ class SectionMigrate extends Component {
 						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
 						<Site site={ targetSite } indicator={ false } />
 					</div>
-					<div className="migrate__confirmation">
-						This will overwrite everything on your WordPress.com site.
-						<ul className="migrate__list">
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All posts, pages, comments, and media
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								All users and roles
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								Theme, plugins, and settings
-							</li>
-						</ul>
-					</div>
-					<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
+					<ImportTypeChoice
+						onChange={ this.chooseImportType }
+						radioOptions={ {
+							everything: {
+								title: 'Everything',
+								labels: [ 'Upgrade Required', 'Something Else', 'Third bubble' ],
+								description: "All your site's content, themes, plugins, users and settings",
+								enabled: true,
+							},
+							'content-only': {
+								key: 'content-only',
+								title: 'Content only',
+								labels: [ 'Free', 'Only content', 'Third bubble' ],
+								description: 'Import posts, pages, comments, and media.',
+								enabled: true,
+							},
+						} }
+					/>
+					{ this.state.chosenImportType === 'everything' ? (
+						<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
+					) : null }
+					{ this.state.chosenImportType === 'content-only' ? (
+						<Button primary onClick={ this.startMigration }>
+							Import site
+						</Button>
+					) : null }
 					<Button className="migrate__cancel" href={ backHref }>
 						Cancel
 					</Button>

@@ -2,28 +2,34 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { findKey, map } from 'lodash';
+import classNames from 'classnames';
 
 import './style.scss';
-
-const choices = [
-	{
-		key: 'everything',
-		title: 'Everything',
-		labels: ['Upgrade Required', 'Something Else', 'Third bubble'],
-		description: 'All your site\'s content, themes, plugins, users and settings',
-	},
-	{
-		key: 'content-only',
-		title: 'Content only',
-		labels: ['Free', 'Only content', 'Third bubble'],
-		description: 'Import posts, pages, comments, and media.',
-	}
-];
-
+import PropTypes from 'prop-types';
 
 export default class ImportTypeChoice extends Component {
-	componentDidMount = () => {
+	state = {
+		activeItem: null,
+	};
 
+	constructor( props ) {
+		super( props );
+
+		let firstSelectedItem = findKey(
+			props.radioOptions,
+			el => el.selected !== true && el.enabled !== false
+		);
+		if ( firstSelectedItem === -1 ) {
+			firstSelectedItem = findKey( props.radioOptions, el => el.enabled !== false );
+		}
+
+		this.state.activeItem = firstSelectedItem !== -1 ? firstSelectedItem : null;
+	}
+
+	componentDidMount = () => {
+		// Update the parent about the chosen item after we choose it.
+		this.props.onChange( this.state.activeItem );
 	};
 
 	onClickHandler = event => {
@@ -31,13 +37,17 @@ export default class ImportTypeChoice extends Component {
 
 		const chosenItem = event.currentTarget.dataset.key;
 
-		if ( !chosenItem ) {
+		if ( ! chosenItem ) {
+			return;
+		}
+
+		if ( this.props.radioOptions[ chosenItem ].enabled === false ) {
 			return;
 		}
 
 		if ( this.state.activeItem !== chosenItem ) {
 			this.setState( { activeItem: chosenItem } );
-			// this.props.onChange( chosenItem ); // TODO implement
+			this.props.onChange( chosenItem );
 		}
 	};
 
@@ -47,47 +57,51 @@ export default class ImportTypeChoice extends Component {
 		console.log( event );
 	};
 
-	render() {
+	renderOption = ( item, key ) => {
+		const className = classNames( 'import-type-choice__option-wrapper', {
+			disabled: this.props.radioOptions[ key ].enabled === false,
+			selected: this.state.activeItem === key,
+		} );
 
-		const items = choices; // TODO pass as props
+		return (
+			<div
+				className={ className }
+				onClick={ this.onClickHandler }
+				onKeyPress={ this.onKeyPressHandler }
+				role="button"
+				tabIndex={ 0 }
+				data-key={ key }
+				key={ key }
+			>
+				<input type="radio" checked={ this.state.activeItem === key } readOnly={ true } />
+				<div className="import-type-choice__option-data">
+					<div className="import-type-choice__option-header">
+						<h3>{ item.title }</h3>
+
+						{ item.labels.map( ( label, idx ) => (
+							<div className="import-type-choice__option-token-label" key={ idx }>
+								{ label }
+							</div>
+						) ) }
+					</div>
+					<div className="import-type-choice__option-description">{ item.description }</div>
+				</div>
+			</div>
+		);
+	};
+
+	render() {
+		const items = this.props.radioOptions; // TODO pass as props
 
 		return (
 			<div className="import-type-choice__wrapper">
-				{items.map( item => (
-					<div
-						className="import-type-choice__option-wrapper"
-						onClick={this.onClickHandler}
-						onKeyPress={this.onKeyPressHandler}
-						role="button"
-						tabIndex={0}
-						data-key={item.key}
-						key={item.key}
-					>
-						<input
-							type="radio"
-							checked={this.state.activeItem === item.key}
-							readOnly={true}
-						/>
-						<div className="import-type-choice__option-data">
-							<div className="import-type-choice__option-header">
-								<h3>{item.title}</h3>
-
-								{item.labels.map( ( label, idx ) => (
-									<div
-										className="import-type-choice__option-token-label"
-										key={idx}
-									>
-										{label}
-									</div>
-								) )}
-							</div>
-							<div className="import-type-choice__option-description">
-								{item.description}
-							</div>
-						</div>
-					</div>
-				) )}
+				{ map( items, ( item, key ) => this.renderOption( item, key ) ) }
 			</div>
 		);
 	}
 }
+
+ImportTypeChoice.propTypes = {
+	radioOptions: PropTypes.object.isRequired,
+	onChange: PropTypes.func.isRequired,
+};

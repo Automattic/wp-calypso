@@ -12,6 +12,21 @@
 		border: 1px solid grey; /* TODO fix color */
 		border-radius: 4px;
 
+		&.disabled {
+			pointer-events: none;
+			border-color: grey;
+
+			* {
+				color: lightgrey;
+			}
+		}
+
+		&.selected {
+			pointer-events: none;
+			border-color: blue;
+		}
+
+
 		.import-type-choice__option-data {
 			margin-left: 5px;
 
