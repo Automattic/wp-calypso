@@ -281,6 +281,7 @@ function StripeCreditCardFields() {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
+			debug( 'showing error for loading', stripeLoadingError );
 			showErrorMessage( stripeLoadingError );
 		}
 	}, [ showErrorMessage, stripeLoadingError ] );
@@ -529,7 +530,7 @@ function StripePayButton( { disabled } ) {
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
-			debug( 'showing error' );
+			debug( 'showing error', transactionError );
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
@@ -570,7 +571,10 @@ function StripePayButton( { disabled } ) {
 					isSubscribed && setStripeComplete( authenticationResponse );
 				} )
 				.catch( error => {
-					showErrorMessage( error.stripeError || error.message );
+					debug( 'showing error for auth', error );
+					showErrorMessage(
+						localize( 'Authorization failed for that card. Please try a different payment method.' )
+					);
 					isSubscribed && setFormReady();
 				} );
 		}
@@ -651,6 +655,7 @@ async function submitStripePayment( {
 		} );
 	} catch ( error ) {
 		setFormReady();
+		debug( 'showing error for submit', error );
 		showErrorMessage( error );
 		return;
 	}
