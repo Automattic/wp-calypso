@@ -48,6 +48,7 @@ class SectionMigrate extends Component {
 		percent: 0,
 		startTime: '',
 		errorMessage: '',
+		errorCode: '',
 	};
 
 	componentDidMount() {
@@ -91,6 +92,7 @@ class SectionMigrate extends Component {
 				{
 					migrationStatus: 'inactive',
 					errorMessage: '',
+					errorCode: '',
 				},
 				this.updateFromAPI
 			);
@@ -160,6 +162,7 @@ class SectionMigrate extends Component {
 				this.setMigrationState( {
 					migrationStatus: 'error',
 					errorMessage: message,
+					errorCode: code,
 				} );
 			} );
 	};
@@ -221,10 +224,11 @@ class SectionMigrate extends Component {
 				}
 			} )
 			.catch( error => {
-				const { message = '' } = error;
+				const { code = '', message = '' } = error;
 				this.setMigrationState( {
 					migrationStatus: 'error',
 					errorMessage: message,
+					errorCode: code,
 				} );
 			} );
 	};
@@ -333,6 +337,22 @@ class SectionMigrate extends Component {
 	}
 
 	renderMigrationError() {
+		const { targetSiteSlug } = this.props;
+		let message = this.state.errorMessage;
+
+		if ( 'target_site_not_empty' === this.state.errorCode ) {
+			message = (
+				<>
+					You can
+					<a href={ 'https://wordpress.com/settings/start-over/' + targetSiteSlug }>
+						empty this site
+					</a>{ ' ' }
+					or
+					<a href={ 'https://wordpress.com/start/site-type' }>create a new site</a> to import into.
+				</>
+			);
+		}
+
 		return (
 			<Card className="migrate__pane">
 				<FormattedHeader
@@ -343,7 +363,7 @@ class SectionMigrate extends Component {
 				<div className="migrate__status">
 					There was an error with your import.
 					<br />
-					{ this.state.errorMessage }
+					{ message }
 				</div>
 				<Button primary onClick={ this.resetMigration }>
 					Back to your site
