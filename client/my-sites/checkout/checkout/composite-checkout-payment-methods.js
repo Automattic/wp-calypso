@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -153,8 +153,10 @@ export function createPaymentMethods( {
 }
 
 export function useStoredCards( getStoredCards ) {
-	const [ storedCards, setStoredCards ] = useState( [] );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const [ state, dispatch ] = useReducer( storedCardsReducer, {
+		storedCards: [],
+		isLoading: true,
+	} );
 	useEffect( () => {
 		let isSubscribed = true;
 		async function fetchStoredCards() {
@@ -165,13 +167,21 @@ export function useStoredCards( getStoredCards ) {
 		// TODO: handle errors
 		fetchStoredCards().then( cards => {
 			debug( 'stored cards fetched', cards );
-			isSubscribed && setIsLoading( false );
-			isSubscribed && setStoredCards( cards );
+			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
 		} );
 
 		return () => ( isSubscribed = false );
 	}, [ getStoredCards ] );
-	return { storedCards, isLoading };
+	return state;
+}
+
+function storedCardsReducer( state, action ) {
+	switch ( action.type ) {
+		case 'FETCH_END':
+			return { ...state, storedCards: action.payload, isLoading: false };
+		default:
+			return state;
+	}
 }
 
 async function submitExistingCardPayment( transactionData, wpcom ) {
