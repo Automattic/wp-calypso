@@ -29,7 +29,7 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getLanguage } from 'lib/i18n-utils/utils';
+import { getLanguage } from 'lib/i18n-utils';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
