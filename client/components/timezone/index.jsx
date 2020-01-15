@@ -15,7 +15,6 @@ import QueryTimezones from 'components/data/query-timezones';
 import getRawOffsets from 'state/selectors/get-raw-offsets';
 import getTimezones from 'state/selectors/get-timezones';
 
-/* eslint-disable jsx-a11y/no-onchange */
 class Timezone extends Component {
 	onSelect = event => {
 		this.props.onSelect( event.target.value );
@@ -59,7 +58,6 @@ class Timezone extends Component {
 		);
 	}
 
-	/* eslint-disable jsx-a11y/no-onchange */
 	render() {
 		const { selectedZone } = this.props;
 		return (
@@ -73,7 +71,6 @@ class Timezone extends Component {
 			</select>
 		);
 	}
-	/* eslint-enable jsx-a11y/no-onchange */
 }
 
 Timezone.defaultProps = {
