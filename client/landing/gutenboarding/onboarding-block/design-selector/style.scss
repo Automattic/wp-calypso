@@ -131,7 +131,7 @@ $deisgn-selector-selection-space: 175px;
 	overflow: hidden;
 	padding: 2px;
 
-	&:before {
+	&::before {
 		content: "";
 		display: inline-block;
 		width: 1px;
