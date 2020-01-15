@@ -217,18 +217,7 @@ export class EditorMediaModal extends Component {
 			const itemsWithTransientId = mediaLibrarySelectedItems.map( item =>
 				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
 			);
-			if (
-				itemsWithTransientId.length === 1 &&
-				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
-			) {
-				this.copyExternal( itemsWithTransientId, this.state.source );
-				this.props.onClose( {
-					type: 'media',
-					items: itemsWithTransientId,
-				} );
-			} else {
-				this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
-			}
+			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {
 			const value = mediaLibrarySelectedItems.length
 				? {
@@ -239,6 +228,10 @@ export class EditorMediaModal extends Component {
 				: undefined;
 			this.props.onClose( value );
 		}
+	};
+
+	isTransientSelected = () => {
+		return this.props.mediaLibrarySelectedItems.some( item => item.transient );
 	};
 
 	setDetailSelectedIndex = index => {
@@ -495,21 +488,10 @@ export class EditorMediaModal extends Component {
 			},
 		];
 
-		const getConfirmButtonLabelForExternal = () => {
-			let label = this.props.translate( 'Insert' );
-			if (
-				selectedItems.length > 1 ||
-				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
-			) {
-				label = this.props.translate( 'Copy to media library' );
-			}
-			return label;
-		};
-
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || getConfirmButtonLabelForExternal(),
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection,
@@ -532,7 +514,7 @@ export class EditorMediaModal extends Component {
 				action: 'confirm',
 				label: this.props.labels.confirm || this.props.translate( 'Insert' ),
 				isPrimary: true,
-				disabled: isDisabled || 0 === selectedItems.length,
+				disabled: isDisabled || 0 === selectedItems.length || this.isTransientSelected(),
 				onClick: this.confirmSelection,
 			} );
 		}
