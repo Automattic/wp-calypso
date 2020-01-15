@@ -284,7 +284,7 @@ AddressFields.propTypes = {
 
 function isStateorProvince() {
 	//TODO: Add location detection to return "state" or "province"
-	return 'province';
+	return 'state';
 }
 
 function PhoneNumberField( {
