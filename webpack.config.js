@@ -79,7 +79,6 @@ const nodeModulesToTranspile = [
 	'striptags/',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
-	'gridicons/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
