@@ -1,22 +1,9 @@
 @import '~@wordpress/base-styles/colors';
 
-$design-selector-transition-timing: 250ms;
-
 $design-selector-grid-gap: 4.5em;
 
 $design-selector-max-width: 1100px;
 $design-selector-selection-space: 285px;
-
-@mixin design-selector-show {
-	transform: translate3d( 0, 0, 0 );
-}
-@mixin design-selector-hide {
-	transform: translate3d( 0, 100vh, 0 );
-}
-
-@mixin design-selector-transition {
-	transition: $design-selector-transition-timing transform ease-out;
-}
 
 .design-selector__title {
 	color: $dark-gray-800;
@@ -67,22 +54,6 @@ $design-selector-selection-space: 285px;
 	background: $white;
 	box-shadow: $dark-gray-300 0 0 12px;
 	padding: 2em 4em;
-
-	@include design-selector-transition();
-	transition-timing-function: ease-out;
-
-	&,
-	&.enter,
-	&.exit-active.exit-active , // duplicate selector to override `.exit` below
-	&.exit-done {
-		@include design-selector-hide();
-	}
-
-	&.exit,
-	&.enter-active,
-	&.enter-done {
-		@include design-selector-show();
-	}
 }
 
 .page-layout-selector {

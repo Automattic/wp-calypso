@@ -3,9 +3,8 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useLayoutEffect, useRef, useState, FunctionComponent } from 'react';
+import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
-import { CSSTransition } from 'react-transition-group';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
@@ -52,9 +51,7 @@ const DesignSelector: FunctionComponent = () => {
 		setSelectedDesign( undefined );
 	};
 
-	const transitionTiming = 250;
 	const hasSelectedDesign = !! selectedDesign;
-	const [ isDialogVisible, setIsDialogVisible ] = useState( hasSelectedDesign );
 
 	const headingContainer = useRef< HTMLDivElement >( null );
 	const selectionTransitionShift = useRef< number >( 0 );
@@ -81,6 +78,11 @@ const DesignSelector: FunctionComponent = () => {
 	const descriptionContainerSpring = useSpring( {
 		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
 		visibility: hasSelectedDesign ? 'visible' : 'hidden',
+	} );
+
+	const pageSelectorSpring = useSpring( {
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
+		from: { transform: 'translate3d(0, -100vh, 0)' },
 	} );
 
 	return (
@@ -150,23 +152,19 @@ const DesignSelector: FunctionComponent = () => {
 			</Portal>
 
 			<Dialog
-				visible={ isDialogVisible }
+				visible={ hasSelectedDesign }
 				baseId={ dialogId }
 				hide={ resetState }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
 				hideOnEsc
 			>
-				<CSSTransition
-					in={ hasSelectedDesign }
-					onEnter={ () => setIsDialogVisible( true ) }
-					onExited={ () => setIsDialogVisible( false ) }
-					timeout={ transitionTiming }
+				<animated.div
+					className="design-selector__page-layout-container"
+					style={ pageSelectorSpring }
 				>
-					<div className="design-selector__page-layout-container">
-						<PageLayoutSelector templates={ otherTemplates } />
-					</div>
-				</CSSTransition>
+					<PageLayoutSelector templates={ otherTemplates } />
+				</animated.div>
 			</Dialog>
 		</animated.div>
 	);
