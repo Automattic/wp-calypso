@@ -49,14 +49,22 @@ export class Banner extends Component {
 		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		tracksImpressionName: PropTypes.string,
+		tracksClickName: PropTypes.string,
+		tracksDismissName: PropTypes.string,
+		tracksImpressionProperties: PropTypes.object,
+		tracksClickProperties: PropTypes.object,
+		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
 	};
 
@@ -64,8 +72,13 @@ export class Banner extends Component {
 		forceHref: false,
 		disableHref: false,
 		dismissTemporary: false,
+		compact: false,
 		onClick: noop,
 		onDismiss: noop,
+		showIcon: true,
+		tracksImpressionName: 'calypso_banner_cta_impression',
+		tracksClickName: 'calypso_banner_cta_click',
+		tracksDismissName: 'calypso_banner_dismiss',
 	};
 
 	getHref() {
@@ -91,13 +104,14 @@ export class Banner extends Component {
 	}
 
 	handleClick = e => {
-		const { event, feature, onClick } = this.props;
+		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+		if ( event && tracksClickName ) {
+			this.props.recordTracksEvent( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
-				cta_size: 'regular',
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
 			} );
 		}
 
@@ -105,12 +119,13 @@ export class Banner extends Component {
 	};
 
 	handleDismiss = e => {
-		const { event, feature, onDismiss } = this.props;
+		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
-		if ( event ) {
-			this.props.recordTracksEvent( 'calypso_banner_dismiss', {
+		if ( event && tracksDismissName ) {
+			this.props.recordTracksEvent( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
+				...tracksDismissProperties,
 			} );
 		}
 
@@ -118,7 +133,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, plan } = this.props;
+		const { icon, showIcon, plan } = this.props;
 
 		if ( plan && ! icon ) {
 			return (
@@ -126,6 +141,10 @@ export class Banner extends Component {
 					<PlanIcon plan={ plan } />
 				</div>
 			);
+		}
+
+		if ( ! showIcon ) {
+			return;
 		}
 
 		return (
@@ -147,23 +166,27 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
+			compact,
 			list,
 			price,
 			title,
 			target,
+			tracksImpressionName,
+			tracksImpressionProperties,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
 			<div className="banner__content">
-				{ event && (
+				{ tracksImpressionName && event && (
 					<TrackComponentView
-						eventName={ 'calypso_banner_cta_impression' }
+						eventName={ tracksImpressionName }
 						eventProperties={ {
 							cta_name: event,
 							cta_feature: feature,
-							cta_size: 'regular',
+							cta_size: compact ? 'compact' : 'regular',
+							...tracksImpressionProperties,
 						} }
 					/>
 				) }
@@ -216,10 +239,11 @@ export class Banner extends Component {
 		const {
 			callToAction,
 			className,
-			forceHref,
+			compact,
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
+			forceHref,
 			plan,
 		} = this.props;
 
@@ -234,6 +258,7 @@ export class Banner extends Component {
 			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
+			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 

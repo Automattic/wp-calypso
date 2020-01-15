@@ -29,6 +29,7 @@ const BannerExample = () => (
 			icon="star"
 			title="Banner unrelated to any plan"
 		/>
+		<Banner showIcon={ false } title="Banner with showIcon set to false" />
 		<Banner href="#" plan={ PLAN_BLOGGER } title="Upgrade to a Blogger Plan!" />
 		<Banner href="#" plan={ PLAN_PERSONAL } title="Upgrade to a Personal Plan!" />
 		<Banner href="#" plan={ PLAN_PREMIUM } title="Upgrade to a Premium Plan!" />
