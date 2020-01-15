@@ -56,6 +56,8 @@ class TranslatorLauncher extends React.Component {
 		scrollTop: 0,
 	};
 
+	highlightRef = React.createRef();
+
 	componentDidMount() {
 		i18n.on( 'change', this.onI18nChange );
 		window.addEventListener( 'keydown', this.handleKeyDown );
@@ -93,11 +95,11 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
-	handleWindowScroll = event => {
+	handleWindowScroll = () => {
 		this.setState( { scrollTop: window.scrollY } );
 	};
 
-	handleMouseMove = event => {
+	handleHighlightMouseMove = event => {
 		const { deliverablesTarget } = this.state;
 
 		if ( deliverablesTarget !== event.target ) {
@@ -105,18 +107,26 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
-	handleMouseDown = event => {
+	handleHighlightMouseDown = event => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		if ( this.highlightRef.current ) {
+			this.highlightRef.current.style.pointerEvents = 'all';
+		}
+	};
+
+	handleHighlightClick = event => {
 		event.preventDefault();
 		event.stopPropagation();
 
 		const { deliverablesTarget } = this.state;
-
 		const deliverablesIds = [ deliverablesTarget ]
 			.concat(
 				Array.from( deliverablesTarget.querySelectorAll( '[class*=translator-original-]' ) )
 			)
 			.reduce( ( ids, node ) => {
-				const match = node.className.match( /translator-original-(\d+)/ );
+				const match = node.className && node.className.match( /translator-original-(\d+)/ );
 
 				if ( match ) {
 					ids.push( match[ 1 ] );
@@ -124,6 +134,10 @@ class TranslatorLauncher extends React.Component {
 
 				return ids;
 			}, [] );
+
+		if ( this.highlightRef.current ) {
+			this.highlightRef.current.style.pointerEvents = 'all';
+		}
 
 		this.toggleDeliverablesHighlight();
 	};
@@ -148,12 +162,14 @@ class TranslatorLauncher extends React.Component {
 
 		if ( isDeliverablesHighlightEnabled ) {
 			window.addEventListener( 'scroll', this.handleWindowScroll );
-			window.addEventListener( 'mousemove', this.handleMouseMove );
-			window.addEventListener( 'mousedown', this.handleMouseDown );
+			window.addEventListener( 'mousemove', this.handleHighlightMouseMove );
+			window.addEventListener( 'mousedown', this.handleHighlightMouseDown );
+			window.addEventListener( 'click', this.handleHighlightClick );
 		} else {
 			window.removeEventListener( 'scroll', this.handleWindowScroll );
-			window.removeEventListener( 'mousemove', this.handleMouseMove );
-			window.removeEventListener( 'mousedown', this.handleMouseDown );
+			window.removeEventListener( 'mousemove', this.handleHighlightMouseMove );
+			window.removeEventListener( 'mousedown', this.handleHighlightMouseDown );
+			window.removeEventListener( 'click', this.handleHighlightClick );
 		}
 
 		this.setState( { isDeliverablesHighlightEnabled, deliverablesTarget: null } );
@@ -175,7 +191,7 @@ class TranslatorLauncher extends React.Component {
 		};
 
 		return ReactDOM.createPortal(
-			<div className="community-translator__highlight" style={ style } />,
+			<div ref={ this.highlightRef } className="community-translator__highlight" style={ style } />,
 			document.body
 		);
 	}
