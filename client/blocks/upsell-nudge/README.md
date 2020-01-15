@@ -15,6 +15,7 @@ function myUpsell() {
 			callToAction={ translate( 'Upgrade' ) }
 			title={ translate( 'Free domain with a plan!' ) }
 			href={ '/plans' }
+			showIcon={ true }
 			compact
 		/>
 	)
@@ -28,9 +29,10 @@ Name | Type | Default | Description
 ---- | ---- | ---- | ----
 `callToAction` | `string` | null | Message to show on the upsell call to action.
 `compact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
-`dismissPreferenceName` | `string` | empty | Enables dismiss functionality with this value as the event name
+`dismissPreferenceName` | `string` | empty | Enables dismiss functionality, using this value as the dismiss event name.
 `href` | `string` | null | The URL/path that the user is taken to when clicked.
 `icon` | `string` | null | Optional reference to a Gridicon.
+`showIcon` | `bool` | `false` | Show an icon next to the title.
 `title` | `string` | null | Message to show on the upsell.
 `tracksImpressionName` | `string` | | Unique event name to track when the nudge is viewed
 `tracksClickName` | `string` | | Unique event name to track when the nudge is clicked

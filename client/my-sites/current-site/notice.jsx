@@ -13,6 +13,7 @@ import { get, reject, transform } from 'lodash';
 /**
  * Internal dependencies
  */
+import UpsellNudge from 'blocks/upsell-nudge';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -80,25 +81,21 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
-				icon="info-outline"
-				text={ translate( 'Free domain available' ) }
-			>
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.site.slug }` }
-				>
-					{ translate( 'Claim' ) }
-					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-				</NoticeAction>
-			</Notice>
+			<UpsellNudge
+				callToAction={ translate( 'Claim' ) }
+				event="calypso_domain_credit_reminder_impression"
+				href={ `/domains/add/${ this.props.site.slug }` }
+				tracksImpressionName="calypso_domain_credit_reminder_impression"
+				tracksImpressionProperties={ eventProperties }
+				tracksClickName="calypso_domain_credit_reminder_click"
+				tracksClickProperties={ eventProperties }
+				compact
+				title={ translate( 'Free domain available' ) }
+			/>
 		);
 	}
 
@@ -283,12 +280,6 @@ export default connect(
 	},
 	dispatch => {
 		return {
-			clickClaimDomainNotice: () =>
-				dispatch(
-					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
-						cta_name: 'current_site_domain_notice',
-					} )
-				),
 			clickDomainUpsellGo: () =>
 				dispatch(
 					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {

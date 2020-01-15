@@ -14,10 +14,10 @@ import Banner from 'components/banner';
  */
 import './style.scss';
 
-export const UpsellNudge = ( { className, ...props } ) => {
+export const UpsellNudge = ( { className, showIcon = false, ...props } ) => {
 	const classes = classnames( 'upsell-nudge', className );
 
-	return <Banner { ...props } className={ classes } />;
+	return <Banner { ...props } showIcon={ showIcon } className={ classes } />;
 };
 
 export default UpsellNudge;
