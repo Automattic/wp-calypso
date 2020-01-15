@@ -42,7 +42,9 @@
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
+		"dev-and-sync:": "npm-run-all --parallel dev wpcom-sync",
+		"build-and-sync:": "npm-run-all --parallel build wpcom-sync"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
