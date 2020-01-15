@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'data-stores:utils:wpcom-wrapper' );
 
-export function wpcomRequest( params ) {
+export function wpcomRequest< T >( params ): Promise< T > {
 	return new Promise( ( resolve, reject ) => {
 		wpcomProxyRequest( params, ( err, res ) => {
 			debug( res );
