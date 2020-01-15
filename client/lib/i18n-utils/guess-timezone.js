@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import moment from 'moment-timezone';
+
+/**
  * Potentially rewrite the timezone to what we have on the server-side.
  * See https://core.trac.wordpress.org/ticket/26656
  *
@@ -7,7 +12,7 @@
  * @returns {string} A potentially rewritten timezone string, like Asia/Kolkata.
  */
 
-export function maybeRewriteTimezone( timezone ) {
+function maybeRewriteTimezone( timezone ) {
 	// This list comes from https://github.com/eggert/tz/blob/master/backward
 	const linkedTimezones = {
 		'Africa/Asmera': 'Africa/Nairobi',
@@ -74,4 +79,8 @@ export function maybeRewriteTimezone( timezone ) {
 	}
 
 	return timezone;
+};
+
+export default function guessTimezone() {
+  return maybeRewriteTimezone( moment.tz.guess() );
 }

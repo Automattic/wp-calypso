@@ -30,7 +30,6 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLanguage } from 'lib/i18n-utils/utils';
-import { maybeRewriteTimezone } from 'lib/i18n-utils/rewrite-timezone';
 import getCountries from 'state/selectors/get-countries';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -169,7 +168,7 @@ class InfoStep extends Component {
 							includeManualOffsets={ false }
 							name="timezone"
 							onSelect={ this.setTimezone }
-							selectedZone={ maybeRewriteTimezone( timezone ) }
+							selectedZone={ timezone }
 						/>
 						<FormSettingExplanation>
 							{ translate( 'Choose a city in your timezone.' ) }
