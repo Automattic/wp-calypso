@@ -112,7 +112,6 @@ export class AppPromo extends React.Component {
 		this.recordClickEvent();
 		const email = this.props.userSettings.user_email;
 		this.props.sendMobileEmailLogin( email );
-		this.onShowDialog();
 		return false;
 	};
 
