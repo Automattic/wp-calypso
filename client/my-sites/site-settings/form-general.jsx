@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
 import moment from 'moment-timezone';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -309,9 +310,12 @@ export class SiteSettingsFormGeneral extends Component {
 					</FormLabel>
 				) }
 
-				<FormSettingExplanation isIndented>
-					{ translate( 'Your site is visible to everyone.' ) }
-				</FormSettingExplanation>
+				{ i18n.state.localeSlug === i18n.defaultLocaleSlug ||
+					( i18n.hasTranslation( 'Your site is visible to everyone.' ) && (
+						<FormSettingExplanation isIndented>
+							{ translate( 'Your site is visible to everyone.' ) }
+						</FormSettingExplanation>
+					) ) }
 
 				<FormLabel className="site-settings__visibility-label is-checkbox">
 					<FormInputCheckbox
