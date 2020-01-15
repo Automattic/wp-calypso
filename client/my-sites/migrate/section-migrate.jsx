@@ -283,22 +283,6 @@ class SectionMigrate extends Component {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
 	};
 
-	renderCardBusinessFooter() {
-		const { isTargetSiteAtomic } = this.props;
-
-		// If the site is already Atomic, no upgrade footer is required
-		if ( isTargetSiteAtomic ) {
-			return null;
-		}
-
-		return (
-			<CompactCard className="migrate__card-footer">
-				You need a Business Plan to import your theme and plugins. Or you can{ ' ' }
-				<a href={ this.getImportHref() }>import just your content</a> instead.
-			</CompactCard>
-		);
-	}
-
 	renderLoading() {
 		return (
 			<CompactCard>
@@ -343,8 +327,29 @@ class SectionMigrate extends Component {
 		}
 	};
 
+	getJetpackOrUpgradeMessage = () => {
+		const { sourceSite, sourceSiteHasJetpack, isTargetSiteAtomic } = this.props;
+
+		if ( ! sourceSiteHasJetpack ) {
+			const sourceSiteDomain = get( sourceSite, 'domain' );
+			return (
+				<p>
+					You need to have{ ' ' }
+					<a href={ `https://wordpress.com/jetpack/connect?url=${ sourceSiteDomain }` }>Jetpack</a>{ ' ' }
+					installed on your site to be able to import over everything
+				</p>
+			);
+		}
+
+		if ( ! isTargetSiteAtomic ) {
+			return (
+				<p>A Business Plan (i) is required to import everything. Importing only content is free.</p>
+			);
+		}
+	};
+
 	renderMigrationConfirmation() {
-		const { sourceSite, targetSite, targetSiteSlug } = this.props;
+		const { sourceSite, targetSite, targetSiteSlug, sourceSiteHasJetpack } = this.props;
 
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
@@ -353,18 +358,25 @@ class SectionMigrate extends Component {
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
-				<CompactCard>
-					<CardHeading>{ `Import everything from ${ sourceSiteDomain } to WordPress.com.` }</CardHeading>
-					<div className="migrate__confirmation">
-						We can move everything from your current site to this WordPress.com site. It will keep
-						working as expected, but your WordPress.com dashboard will be locked during the
-						migration.
-					</div>
-					<div className="migrate__sites">
+				<div className="migrate__sites">
+					<div className="migrate__sites-item">
 						<Site site={ sourceSite } indicator={ false } />
-						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-						<Site site={ targetSite } indicator={ false } />
 					</div>
+					<div className="migrate__sites-arrow-wrapper">
+						<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
+					</div>
+					<div className="migrate__sites-item">
+						<Site site={ targetSite } indicator={ false } />
+						<div class="migrate__sites-labels-container">
+							<span className="migrate__token-label">This site</span>
+						</div>
+					</div>
+				</div>
+				<CompactCard>
+					<h3>What do you want to import?</h3>
+
+					{ this.getJetpackOrUpgradeMessage() }
+
 					<ImportTypeChoice
 						onChange={ this.chooseImportType }
 						radioOptions={ {
@@ -372,7 +384,7 @@ class SectionMigrate extends Component {
 								title: 'Everything',
 								labels: [ 'Upgrade Required', 'Something Else', 'Third bubble' ],
 								description: "All your site's content, themes, plugins, users and settings",
-								enabled: true,
+								enabled: sourceSiteHasJetpack,
 							},
 							'content-only': {
 								key: 'content-only',
@@ -388,14 +400,13 @@ class SectionMigrate extends Component {
 					) : null }
 					{ this.state.chosenImportType === 'content-only' ? (
 						<Button primary onClick={ this.handleImportRedirect }>
-							Import site
+							Continue
 						</Button>
 					) : null }
 					<Button className="migrate__cancel" href={ backHref }>
 						Cancel
 					</Button>
 				</CompactCard>
-				{ this.renderCardBusinessFooter() }
 			</>
 		);
 	}
@@ -621,6 +632,7 @@ export default connect(
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),

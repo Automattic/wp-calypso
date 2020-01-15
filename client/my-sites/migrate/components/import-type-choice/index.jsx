@@ -79,7 +79,7 @@ export default class ImportTypeChoice extends Component {
 						<h3>{ item.title }</h3>
 
 						{ item.labels.map( ( label, idx ) => (
-							<div className="import-type-choice__option-token-label" key={ idx }>
+							<div className="migrate__token-label" key={ idx }>
 								{ label }
 							</div>
 						) ) }
