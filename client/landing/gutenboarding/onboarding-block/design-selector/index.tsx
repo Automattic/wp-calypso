@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import PageLayoutSelector from './page-layout-selector';
 import { partition } from 'lodash';
 import { Portal } from 'reakit/Portal';
-import { Dialog, DialogBackdrop } from 'reakit/Dialog';
+import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
 import { useSpring, animated } from 'react-spring';
 
 /**
@@ -64,6 +64,7 @@ const DesignSelector: FunctionComponent = () => {
 	}, [ selectedDesign ] );
 
 	const dialogId = 'page-selector-modal';
+	const dialog = useDialogState( { visible: false, baseId: dialogId } );
 
 	const descriptionOnRight: boolean =
 		!! selectedDesign &&
@@ -82,7 +83,12 @@ const DesignSelector: FunctionComponent = () => {
 
 	const pageSelectorSpring = useSpring( {
 		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
-		from: { transform: 'translate3d(0, -100vh, 0)' },
+		onStart: () => {
+			hasSelectedDesign && dialog.show();
+		},
+		onRest: () => {
+			! hasSelectedDesign && dialog.hide();
+		},
 	} );
 
 	return (
@@ -152,8 +158,7 @@ const DesignSelector: FunctionComponent = () => {
 			</Portal>
 
 			<Dialog
-				visible={ hasSelectedDesign }
-				baseId={ dialogId }
+				{ ...dialog }
 				hide={ resetState }
 				aria-labelledby="page-layout-selector__title"
 				hideOnClickOutside
