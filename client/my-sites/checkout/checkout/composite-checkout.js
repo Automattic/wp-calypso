@@ -57,7 +57,7 @@ function CountrySelectMenu( {
 	const dispatch = useDispatch();
 	const countriesList = useSelector( state => getCountries( state, 'payments' ) );
 
-	debug( 'Rendering CountrySelectMenu' );
+	debug( 'Rendering CountrySelectMenu with list', countriesList );
 
 	useEffect( () => {
 		debug(
@@ -86,7 +86,7 @@ function CountrySelectMenu( {
 		>
 			<FormCountrySelect
 				id={ countrySelectorId }
-				countriesList={ countriesList }
+				countriesList={ [ { code: null, name: translate( 'Select Country' ) }, ...countriesList ] }
 				translate={ translate }
 				onChange={ onChange }
 				disabled={ isDisabled }
