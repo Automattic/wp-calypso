@@ -95,3 +95,10 @@ body {
 .community-translator__modal {
 	max-width: 400px;
 }
+
+.community-translator__highlight {
+	position: absolute;
+	z-index: 1000;
+	background: rgba( 32, 80, 129, 0.5 );
+	pointer-events: none;
+}

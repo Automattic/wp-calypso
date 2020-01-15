@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
 import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -50,14 +51,18 @@ class TranslatorLauncher extends React.Component {
 		firstActivation: true,
 		isActive: translator.isActivated(),
 		isEnabled: translator.isEnabled(),
+		isDeliverablesHighlightEnabled: false,
+		deliverablesTarget: null,
 	};
 
 	componentDidMount() {
 		i18n.on( 'change', this.onI18nChange );
+		window.addEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.onI18nChange );
+		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	onI18nChange = () => {
@@ -79,6 +84,45 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
+	handleKeyDown = event => {
+		const { isActive } = this.state;
+
+		if ( isActive && event.getModifierState( 'Control' ) && event.key.toLowerCase() === 'd' ) {
+			this.toggleDeliverablesHighlight();
+		}
+	};
+
+	handleMouseMove = event => {
+		const { deliverablesTarget } = this.state;
+
+		if ( deliverablesTarget !== event.target ) {
+			this.setState( { deliverablesTarget: event.target } );
+		}
+	};
+
+	handleMouseDown = event => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const { deliverablesTarget } = this.state;
+
+		const deliverablesIds = [ deliverablesTarget ]
+			.concat(
+				Array.from( deliverablesTarget.querySelectorAll( '[class*=translator-original-]' ) )
+			)
+			.reduce( ( ids, node ) => {
+				const match = node.className.match( /translator-original-(\d+)/ );
+
+				if ( match ) {
+					ids.push( match[ 1 ] );
+				}
+
+				return ids;
+			}, [] );
+
+		this.toggleDeliverablesHighlight();
+	};
+
 	toggleInfoCheckbox = event => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
 	};
@@ -93,6 +137,41 @@ class TranslatorLauncher extends React.Component {
 		analytics.mc.bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
 		this.setState( { isActive: nextIsActive } );
 	};
+
+	toggleDeliverablesHighlight = () => {
+		const isDeliverablesHighlightEnabled = ! this.state.isDeliverablesHighlightEnabled;
+
+		if ( isDeliverablesHighlightEnabled ) {
+			window.addEventListener( 'mousemove', this.handleMouseMove );
+			window.addEventListener( 'mousedown', this.handleMouseDown );
+		} else {
+			window.removeEventListener( 'mousemove', this.handleMouseMove );
+			window.removeEventListener( 'mousedown', this.handleMouseDown );
+		}
+
+		this.setState( { isDeliverablesHighlightEnabled, deliverablesTarget: null } );
+	};
+
+	renderDeliverablesHighlight() {
+		const { isDeliverablesHighlightEnabled, deliverablesTarget } = this.state;
+
+		if ( ! isDeliverablesHighlightEnabled || ! deliverablesTarget ) {
+			return null;
+		}
+
+		const { left, top, width, height } = deliverablesTarget.getBoundingClientRect();
+		const style = {
+			left: `${ left }px`,
+			top: `${ top }px`,
+			width: `${ width }px`,
+			height: `${ height }px`,
+		};
+
+		return ReactDOM.createPortal(
+			<div className="community-translator__highlight" style={ style } />,
+			document.body
+		);
+	}
 
 	renderConfirmationModal() {
 		const { translate } = this.props;
@@ -148,6 +227,7 @@ class TranslatorLauncher extends React.Component {
 						{ infoDialogVisible && this.renderConfirmationModal() }
 					</Fragment>
 				) }
+				{ this.renderDeliverablesHighlight() }
 			</Fragment>
 		);
 	}
