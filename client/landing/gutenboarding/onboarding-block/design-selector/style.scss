@@ -129,6 +129,7 @@ $deisgn-selector-selection-space: 175px;
 .page-layout-selector__item {
 	position: relative;
 	overflow: hidden;
+	padding: 2px;
 
 	&:before {
 		content: "";
@@ -225,6 +226,8 @@ $deisgn-selector-selection-space: 175px;
 .page-layout-selector__card-footer,
 .page-layout-selector__card-media {
 	display: block;
+	margin-left: -2px;
+	margin-right: -2px;
 }
 
 // Necessary for grid layout
