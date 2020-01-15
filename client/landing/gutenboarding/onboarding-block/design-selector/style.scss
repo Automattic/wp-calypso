@@ -221,8 +221,8 @@ $design-selector-selection-space: 285px;
 
 .design-selector__description-container {
 	@include design-selector-transition();
-	position: fixed;
 	@include design-selector-hide;
+	visibility: hidden;
 
 	position: fixed;
 	display: flex;
@@ -239,6 +239,7 @@ $design-selector-selection-space: 285px;
 	&.enter-active,
 	&.enter-done {
 		@include design-selector-show;
+		visibility: visible;
 	}
 }
 
