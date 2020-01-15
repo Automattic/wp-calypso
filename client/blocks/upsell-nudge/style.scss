@@ -53,6 +53,10 @@
 		font-weight: normal;
 	}
 
+	.banner__description {
+		color: var( --color-text-inverted );
+	}
+
 	.banner__action {
 		margin-top: 5px;
 		margin-left: auto;
