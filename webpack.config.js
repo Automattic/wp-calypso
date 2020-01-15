@@ -64,6 +64,7 @@ const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'@automattic/calypso-polyfills/',
 	'@github/webauthn-json/',
 	'acorn-jsx/',
 	'chalk/',
@@ -328,27 +329,22 @@ if ( isCalypsoClient && ! isDesktop ) {
 	);
 }
 
-// List of polyfills that we skip including in the evergreen bundle.
-// CoreJS polyfills are automatically dropped using the browserslist definitions; no need to include them here.
-const polyfillsSkippedInEvergreen = [
-	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-	/^lib[/\\]local-storage-polyfill$/,
-	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
-	/^svg4everybody$/,
-	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
-	/^isomorphic-fetch$/,
-	// All modern browsers support the URL API.
-	/^@webcomponents[/\\]url$/,
-	// All evergreen browsers support the URLSearchParams API.
-	/^@ungap[/\\]url-search-params$/,
-];
+if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
+	// Use "evergreen" polyfill config, rather than fallback.
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-polyfills$/,
+			'@automattic/calypso-polyfills/browser-evergreen'
+		)
+	);
 
-if ( browserslistEnv === 'evergreen' ) {
-	for ( const polyfill of polyfillsSkippedInEvergreen ) {
-		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash-es/noop' )
-		);
-	}
+	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin(
+			/^lib[/\\]local-storage-polyfill$/,
+			'lodash-es/noop'
+		)
+	);
 }
 
 module.exports = webpackConfig;

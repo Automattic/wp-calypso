@@ -1,5 +1,5 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
-require( '@babel/polyfill' );
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies

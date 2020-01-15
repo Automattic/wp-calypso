@@ -7,7 +7,7 @@ const config = {
 			{
 				modules: false,
 				useBuiltIns: 'entry',
-				corejs: 2,
+				corejs: 3.6,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
 				exclude: [ 'transform-typeof-symbol' ],
 			},

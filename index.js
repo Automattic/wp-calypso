@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-nodejs-modules */
 
-require( '@babel/polyfill' );
+require( '@automattic/calypso-polyfills' );
 
 /**
  * External dependencies.

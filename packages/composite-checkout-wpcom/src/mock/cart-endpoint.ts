@@ -1,4 +1,4 @@
-import '@babel/polyfill';
+import '@automattic/calypso-polyfills';
 
 /**
  * Internal dependencies
