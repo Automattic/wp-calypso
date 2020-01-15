@@ -42,7 +42,7 @@
 		"prebuild": "npm run clean",
 		"predev": "npm run clean",
 		"sync:blog-posts-block": "./bin/sync-blog-posts-block.sh",
-		"wpcom-sync": "chokidar \"./full-site-editing-plugin/**\" --debounce 1000 --throttle 10000 -c \"rsync -ahz full-site-editing-plugin/ wpcom-sandbox:/home/wpcom/public_html/wp-content/plugins/full-site-editing-plugin/dev\""
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
