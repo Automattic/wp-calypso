@@ -21,3 +21,10 @@ export function wpcomRequest< T >( params: WpcomRequestParams ): Promise< T > {
 		} );
 	} );
 }
+
+wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: object ) => {
+	if ( error ) {
+		throw error;
+	}
+	debug( 'Proxy now running in "access all user\'s blogs" mode' );
+} );

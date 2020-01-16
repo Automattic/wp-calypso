@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { registerStore } from '@wordpress/data';
-import wpcomProxyRequest from 'wpcom-proxy-request';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,8 +17,6 @@ import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 export * from './types';
 export { State };
 
-const debug = debugFactory( 'data-stores:user' );
-
 let isRegistered = false;
 export function register(): typeof STORE_KEY {
 	if ( ! isRegistered ) {
@@ -31,13 +27,6 @@ export function register(): typeof STORE_KEY {
 			reducer,
 			resolvers,
 			selectors,
-		} );
-
-		wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: object ) => {
-			if ( error ) {
-				throw error;
-			}
-			debug( 'Proxy now running in "access all user\'s blogs" mode' );
 		} );
 	}
 	return STORE_KEY;
