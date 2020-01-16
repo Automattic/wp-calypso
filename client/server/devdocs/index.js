@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import express from 'express';
 import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
-import { find, escape as escapeHTML } from 'lodash';
+import { escapeRegExp, find, escape as escapeHTML } from 'lodash';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
@@ -96,7 +95,7 @@ function listDocs( filePaths ) {
  */
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
-	const termRegexMatchers = lunr.tokenizer( query ).map( term => escapeRegexString( term ) );
+	const termRegexMatchers = lunr.tokenizer( query ).map( token => token.update( escapeRegExp ) );
 	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
 	const termRegex = new RegExp( termRegexString, 'gi' );
 	const snippets = [];
@@ -121,18 +120,6 @@ function makeSnippet( doc, query ) {
 	}
 
 	return defaultSnippet( doc );
-}
-
-/**
- * Escapes a string
- *
- * @param {lunr.Token} token The string to escape
- * @returns {lunr.Token} An escaped string
- */
-function escapeRegexString( token ) {
-	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
-	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
-	return token.update( str => str.replace( matchOperatorsRe, '\\$&' ) );
 }
 
 /**
