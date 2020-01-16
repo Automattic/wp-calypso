@@ -20,6 +20,7 @@ import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
+import { useStripe, showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -73,6 +74,10 @@ export function createExistingCardMethod( {
 			debug( 'existing card transaction requires is successful' );
 			return { type: 'EXISTING_CARD_TRANSACTION_END', payload: response };
 		},
+		setTransactionComplete( payload ) {
+			debug( 'transaction is successful' );
+			return { type: 'EXISTING_CARD_TRANSACTION_END', payload };
+		},
 	};
 
 	const selectors = {
@@ -84,6 +89,9 @@ export function createExistingCardMethod( {
 		},
 		getTransactionAuthData( state ) {
 			return state.transactionAuthData;
+		},
+		getRedirectUrl( state ) {
+			return state.redirectUrl;
 		},
 	};
 
@@ -118,6 +126,7 @@ export function createExistingCardMethod( {
 					return {
 						...state,
 						transactionStatus: 'redirect',
+						redirectUrl: action.payload.redirect_url,
 					};
 			}
 			return state;
@@ -188,7 +197,7 @@ const CardHolderName = styled.span`
 function ExistingCardPayButton( { disabled, id } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage } = useMessages();
+	const { showErrorMessage, showInfoMessage } = useMessages();
 	const transactionStatus = useSelect( select =>
 		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
@@ -198,8 +207,10 @@ function ExistingCardPayButton( { disabled, id } ) {
 	const transactionAuthData = useSelect( select =>
 		select( `existing-card-${ id }` ).getTransactionAuthData()
 	);
-	const { beginCardTransaction } = useDispatch( `existing-card-${ id }` );
+	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
+	const { beginCardTransaction, setTransactionComplete } = useDispatch( `existing-card-${ id }` );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { stripeConfiguration } = useStripe();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -213,15 +224,54 @@ function ExistingCardPayButton( { disabled, id } ) {
 			setFormComplete();
 		}
 		if ( transactionStatus === 'redirect' ) {
-			// TODO: notify user that we are going to redirect
+			debug( 'redirecting' );
+			showInfoMessage( localize( 'Redirecting...' ) );
+			window.location = redirectUrl;
 		}
 	}, [
+		redirectUrl,
 		setFormReady,
 		setFormComplete,
 		showErrorMessage,
+		showInfoMessage,
 		transactionStatus,
 		transactionError,
 		transactionAuthData,
+		localize,
+	] );
+
+	useEffect( () => {
+		let isSubscribed = true;
+
+		if ( transactionStatus === 'auth' ) {
+			debug( 'showing auth' );
+			showInfoMessage( localize( 'Authorizing...' ) );
+			showStripeModalAuth( {
+				stripeConfiguration,
+				response: transactionAuthData,
+			} )
+				.then( authenticationResponse => {
+					debug( 'auth is complete', authenticationResponse );
+					isSubscribed && setTransactionComplete( authenticationResponse );
+				} )
+				.catch( error => {
+					debug( 'showing error for auth', error );
+					showErrorMessage(
+						localize( 'Authorization failed for that card. Please try a different payment method.' )
+					);
+					isSubscribed && setFormReady();
+				} );
+		}
+
+		return () => ( isSubscribed = false );
+	}, [
+		setTransactionComplete,
+		setFormReady,
+		showInfoMessage,
+		showErrorMessage,
+		transactionStatus,
+		transactionAuthData,
+		stripeConfiguration,
 		localize,
 	] );
 
