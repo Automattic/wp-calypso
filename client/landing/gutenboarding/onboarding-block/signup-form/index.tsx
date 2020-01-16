@@ -10,6 +10,7 @@ import {
 	usePasswordlessSignUp,
 	UsePasswordlessSignUpStatus,
 	Provider,
+	Client,
 } from '@automattic/authentication';
 import { Button, TextControl, Modal } from '@wordpress/components';
 
@@ -33,7 +34,7 @@ const SignupForm = () => {
 	};
 
 	return (
-		<Modal title="Sign up to save your changes" onRequestClose={ () => {} }>
+		<Modal className="signup-form" title="Sign up to save your changes" onRequestClose={ () => {} }>
 			<form onSubmit={ handleSignUp }>
 				<label htmlFor="email">Your Email Address</label>
 				<TextControl
@@ -42,14 +43,20 @@ const SignupForm = () => {
 					onChange={ setEmailVal }
 					placeholder="yourname@email.com"
 				/>
-				<p>By creating an account you agree to our { renderTosLink() }.</p>
-				<Button
-					type="submit"
-					disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
-					isPrimary
-				>
-					Sign up
-				</Button>
+				<div className="signup-form__footer">
+					<p className="signup-form__terms-of-service-link">
+						By creating an account you agree to our { renderTosLink() }.
+					</p>
+
+					<Button
+						type="submit"
+						className="signup-form__submit"
+						disabled={ status === UsePasswordlessSignUpStatus.Authenticating }
+						isPrimary
+					>
+						Sign up
+					</Button>
+				</div>
 			</form>
 			{ status && <p>Status: { JSON.stringify( status, null, 2 ) }</p> }
 			{ error && <p>Error: { JSON.stringify( String( error ), null, 2 ) }</p> }
@@ -58,8 +65,12 @@ const SignupForm = () => {
 };
 
 const WrappedSignupForm = () => {
+	const client = new Client( {
+		clientID: '39911',
+		clientSecret: 'cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8',
+	} );
 	return (
-		<Provider clientID="1673757240" clientSecret="123">
+		<Provider client={ client }>
 			<SignupForm />
 		</Provider>
 	);

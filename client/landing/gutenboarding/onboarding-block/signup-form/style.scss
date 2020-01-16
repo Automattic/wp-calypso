@@ -1,0 +1,48 @@
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+.signup-form
+	.components-icon-button:not( :disabled ):not( [aria-disabled='true'] ):not( .is-default ):hover {
+	background: var( --color-masterbar-item-hover-background );
+	box-shadow: none;
+}
+
+.signup-form.components-modal__frame {
+	border: none;
+	border-radius: 3px;
+
+	.components-modal__header {
+		color: var( --color-text-inverted );
+		background: var( --color-masterbar-background );
+
+		.components-modal__header-heading {
+			font-size: 20px;
+			font-weight: normal;
+		}
+
+		.components-icon-button {
+			.dashicon {
+				color: var( --color-text-inverted );
+			}
+		}
+	}
+
+	label {
+		display: block;
+		color: var( --color-text );
+		margin-bottom: 5px;
+	}
+
+	.signup-form__terms-of-service-link {
+		text-align: center;
+		color: var( --color-text );
+		margin: 20px 0 40px;
+	}
+
+	.components-button.signup-form__submit {
+		display: block;
+		width: 100%;
+		text-align: center;
+		font-size: 16px;
+		height: 34px;
+	}
+}
