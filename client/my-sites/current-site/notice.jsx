@@ -255,6 +255,25 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if (
+			abtest( 'sidebarUpsellNudgeUnification' ) === 'variantShowUnifiedUpsells' &&
+			config.isEnabled( 'upsell/nudge-component' )
+		) {
+			const eventProperties = { cta_name: 'active-discount-sidebar' };
+			return (
+				<UpsellNudge
+					event="calypso_upgrade_nudge_impression"
+					tracksClickName="calypso_upgrade_nudge_cta_click"
+					tracksClickProperties={ eventProperties }
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksImpressionProperties={ eventProperties }
+					callToAction={ ctaText || 'Upgrade' }
+					href={ `/plans/${ site.slug }?discount=${ name }` }
+					title={ bannerText }
+				/>
+			);
+		}
+
 		return (
 			<SidebarBanner
 				ctaName="active-discount-sidebar"
