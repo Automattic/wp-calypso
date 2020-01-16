@@ -81,6 +81,7 @@ const nodeModulesToTranspile = [
 	'escape-string-regexp/',
 	'filesize/',
 	'prismjs/',
+	'punycode/',
 	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',

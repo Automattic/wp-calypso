@@ -1,9 +1,10 @@
 # next
 
+- Breaking Change: Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
 - Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
 - Add basic TypeScript config, `tsconfig.json` (for projects to extend).
-- Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
 - Add support for transpiling selected NPM dependencies from ESnext to the target's ES version.
+- Add `punycode` to the list of transpiled NPM dependencies.
 
 # 5.1.0
 
