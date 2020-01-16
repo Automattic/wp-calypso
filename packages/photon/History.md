@@ -5,6 +5,7 @@ TBD
   * Remove browser build from module.
   * Include esm and commonjs in module.
   * Update debug to v4
+  * Consolidate onto i0 for https URLs
 
 2.0.1 / 2017-11-08
 ==================

@@ -29,7 +29,6 @@ const mappings = {
  * @param {string} imageUrl - the URL of the image to run through Photon
  * @param {object} [opts] - optional options object with Photon options
  * @returns {string} The generated Photon URL string
- * @api public
  */
 export default function photon( imageUrl, opts ) {
 	// parse the URL, assuming //host.com/path style URLs are ok and parse the querystring
@@ -50,7 +49,11 @@ export default function photon( imageUrl, opts ) {
 		// We already have a server to use.
 		// Use it, even if it doesn't match our hash.
 		params.pathname = parsedUrl.pathname;
-		params.hostname = parsedUrl.hostname;
+		if ( wasSecure ) {
+			params.hostname = 'i0.wp.com';
+		} else {
+			params.hostname = parsedUrl.hostname;
+		}
 	} else {
 		// Photon does not support URLs with a querystring component
 		if ( parsedUrl.search ) {
@@ -59,7 +62,7 @@ export default function photon( imageUrl, opts ) {
 		const formattedUrl = url.format( parsedUrl );
 		params.pathname =
 			0 === formattedUrl.indexOf( '//' ) ? formattedUrl.substring( 1 ) : formattedUrl;
-		params.hostname = serverFromPathname( params.pathname );
+		params.hostname = serverFromUrlParts( params );
 		if ( wasSecure ) {
 			params.query.ssl = 1;
 		}
@@ -98,10 +101,16 @@ function isAlreadyPhotoned( host ) {
  * Determine which Photon server to connect to: `i0`, `i1`, or `i2`.
  *
  * Statically hash the subdomain based on the URL, to optimize browser caches.
+ * Only use i0 when using photon over https, based on the assumption that https
+ * maps to http/2 (or later)
+ *
  * @param  {string} pathname The pathname to use
  * @returns {string}          The hostname for the pathname
  */
-function serverFromPathname( pathname ) {
+function serverFromUrlParts( { protocol, pathname } ) {
+	if ( protocol === 'https:' ) {
+		return 'i0.wp.com';
+	}
 	const hash = crc32( pathname );
 	const rng = seed( hash );
 	const server = 'i' + Math.floor( rng() * 3 );

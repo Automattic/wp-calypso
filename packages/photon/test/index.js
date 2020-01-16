@@ -11,11 +11,11 @@ import { parse as parseUrl } from 'url';
 import photon from '../src';
 
 function expectHostedOnPhoton( url ) {
-	expect( url ).toEqual( expect.stringMatching( /^https:\/\/i[0-2].wp.com/ ) );
+	expect( url ).toEqual( expect.stringMatching( /^https:\/\/i0\.wp\.com/ ) );
 }
 
 function expectHostedOnPhotonInsecurely( url ) {
-	expect( url ).toEqual( expect.stringMatching( /^http:\/\/i[0-2].wp.com/ ) );
+	expect( url ).toEqual( expect.stringMatching( /^http:\/\/i[0-2]\.wp\.com/ ) );
 }
 
 function expectPathname( url, expected ) {
@@ -48,14 +48,26 @@ describe( 'photon()', function() {
 		);
 	} );
 
-	test( 'should not Photon-ify an existing Photon URL, even if the host is wrong', function() {
+	test( 'should not Photon-ify an existing insecure Photon URL, even if the host is wrong', function() {
 		const photonedUrl = photon( 'http://www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc' );
 		const alternateUrl =
-			'https://i1.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
+			'http://i1.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
 
 		expectHostedOnPhoton( photonedUrl );
 		expect( photonedUrl ).not.toBe( alternateUrl );
-		expect( photon( alternateUrl ) ).toBe( alternateUrl );
+		expect( photon( alternateUrl, { secure: false } ) ).toBe( alternateUrl );
+	} );
+
+	test( 'should move an existing Photon URL to i0 if it was on another host', function() {
+		const photonedUrl = photon( 'http://www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc' );
+		const alternateUrl =
+			'https://i1.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
+		const alternateUrloni0 =
+			'https://i0.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
+
+		expectHostedOnPhoton( photonedUrl );
+		expect( photonedUrl ).not.toBe( alternateUrl );
+		expect( photon( alternateUrl ) ).toBe( alternateUrloni0 );
 	} );
 
 	test( 'should handle photoning a photoned url', function() {
