@@ -27,12 +27,14 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QueryEmailForwards from 'components/data/query-email-forwards';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class StatsBanners extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		gsuiteDomainName: PropTypes.string,
 		isCustomerHomeEnabled: PropTypes.bool.isRequired,
+		isAllowedToManageSite: PropTypes.bool.isRequired,
 		isGoogleMyBusinessStatsNudgeVisible: PropTypes.bool.isRequired,
 		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
 		isUpworkStatsNudgeVisible: PropTypes.bool.isRequired,
@@ -112,7 +114,14 @@ class StatsBanners extends Component {
 	}
 
 	render() {
-		const { gsuiteDomainName, isCustomerHomeEnabled, planSlug, siteId, domains } = this.props;
+		const {
+			gsuiteDomainName,
+			isCustomerHomeEnabled,
+			isAllowedToManageSite,
+			planSlug,
+			siteId,
+			domains,
+		} = this.props;
 
 		if ( isEmpty( domains ) ) {
 			return null;
@@ -120,7 +129,9 @@ class StatsBanners extends Component {
 
 		return (
 			<Fragment>
-				{ gsuiteDomainName && <QueryEmailForwards domainName={ gsuiteDomainName } /> }
+				{ gsuiteDomainName && isAllowedToManageSite && (
+					<QueryEmailForwards domainName={ gsuiteDomainName } />
+				) }
 
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 
@@ -143,6 +154,7 @@ export default connect( ( state, ownProps ) => {
 		domains,
 		gsuiteDomainName: getEligibleGSuiteDomain( null, domains ),
 		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
+		isAllowedToManageSite: canCurrentUser( state, ownProps.siteId, 'manage_options' ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
