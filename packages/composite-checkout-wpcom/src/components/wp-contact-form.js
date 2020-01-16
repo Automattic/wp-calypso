@@ -258,7 +258,7 @@ function AddressFields( { section, contactInfo, setters, StateSelect } ) {
 
 				<RightColumn>
 					<StateSelect
-						countryCode={ country.value ?? 'US' }
+						countryCode={ country.value || 'US' }
 						label={
 							isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
 						}
@@ -322,7 +322,7 @@ function PhoneNumberField( {
 					} );
 				} }
 				value={ contactInfo.phoneNumber.value }
-				countryCode={ contactInfo.phoneNumberCountry.value ?? 'US' }
+				countryCode={ contactInfo.phoneNumberCountry.value || 'US' }
 				countriesList={ countriesList }
 			/>
 			{ isError && <ErrorMessage>{ translate( 'This field is required.' ) }</ErrorMessage> }
