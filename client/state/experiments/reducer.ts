@@ -4,10 +4,6 @@
 import { findIndex, tail } from 'lodash';
 import { EXPERIMENT_ASSIGN } from 'state/action-types';
 
-/**
- * Internal Dependencies
- */
-
 function getAnonId(): string | null {
 	if ( document && document.cookie !== null ) {
 		const cookieString = document.cookie;
@@ -22,14 +18,10 @@ function getAnonId(): string | null {
 	return null;
 }
 
-export interface Experiment {
-	name: string;
-	variation: string;
-}
-
 interface ExperimentState {
 	anonId: string | null;
-	experiments: Experiment[] | null;
+	Abtests: object | null;
+	nextRefresh: number;
 }
 
 /**
@@ -40,10 +32,11 @@ interface ExperimentState {
  * @returns object The modified state, if applied
  */
 export default function reducer(
-	state: ExperimentState = { anonId: null, experiments: null },
+	state: ExperimentState = { anonId: null, Abtests: null, nextRefresh: Date.now() },
 	action: any
 ) {
-	switch ( action.type ) {
+	const { type, ...data } = action;
+	switch ( type ) {
 		/**
 		 * Store the anon-id in state, if there is one. We need this to apply any overrides for anonymous experiments
 		 */
@@ -51,8 +44,8 @@ export default function reducer(
 			state.anonId = getAnonId();
 			return state;
 		case EXPERIMENT_ASSIGN:
-			state.experiments = action.experiments;
-			return state;
+			data.nextRefresh = Date.now() + data.nextRefresh * 1000;
+			return { ...state, ...data };
 		default:
 			return state;
 	}
