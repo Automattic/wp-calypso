@@ -1,4 +1,4 @@
-# next
+# 6.0.0
 
 - Breaking Change: Replace `copy-styles` with a generic `copy-assets` script to handle both styles and images.
 - Upgrade to [sass-loader@8](https://github.com/webpack-contrib/sass-loader/releases/tag/v8.0.0)
