@@ -19,7 +19,7 @@ import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 export * from './types';
 export { State };
 
-const debug = debugFactory( 'data-stores:current-user' );
+const debug = debugFactory( 'data-stores:user' );
 
 let isRegistered = false;
 export function register(): typeof STORE_KEY {

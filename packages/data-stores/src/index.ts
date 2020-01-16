@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import * as CurrentUser from './current-user';
+import * as User from './user';
 import * as DomainSuggestions from './domain-suggestions';
 import * as Verticals from './verticals';
 import * as VerticalsTemplates from './verticals-templates';
 
-export { CurrentUser, DomainSuggestions, Verticals, VerticalsTemplates };
+export { User, DomainSuggestions, Verticals, VerticalsTemplates };
 
 /**
  * Helper types
