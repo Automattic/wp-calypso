@@ -50,6 +50,7 @@ export default function WPCheckout( {
 	CountrySelectMenu,
 	countriesList,
 	PhoneInput,
+	StateSelect,
 } ) {
 	const translate = useTranslate();
 	const [ itemsWithTax ] = useLineItems();
@@ -92,6 +93,7 @@ export default function WPCheckout( {
 					CountrySelectMenu={ CountrySelectMenu }
 					countriesList={ countriesList }
 					PhoneInput={ PhoneInput }
+					StateSelect={ StateSelect }
 				/>
 			),
 			completeStepContent: <WPContactForm summary isComplete={ true } isActive={ false } />,

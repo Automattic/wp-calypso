@@ -37,6 +37,7 @@ import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import PhoneInput from 'components/phone-input/index.jsx';
+import { StateSelect } from 'my-sites/domains/components/form';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -182,6 +183,7 @@ export default function CompositeCheckout( {
 				CountrySelectMenu={ CountrySelectMenu }
 				countriesList={ countriesList }
 				PhoneInput={ PhoneInput }
+				StateSelect={ StateSelect }
 			/>
 		</CheckoutProvider>
 	);

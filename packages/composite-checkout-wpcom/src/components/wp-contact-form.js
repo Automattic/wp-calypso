@@ -21,6 +21,7 @@ export default function WPContactForm( {
 	isActive,
 	CountrySelectMenu,
 	PhoneInput,
+	StateSelect,
 	countriesList,
 } ) {
 	const isDomainFieldsVisible = useHasDomainsInCart();
@@ -36,7 +37,7 @@ export default function WPContactForm( {
 
 	return (
 		<BillingFormFields>
-			{ isDomainFieldsVisible && <DomainFields /> }
+			{ isDomainFieldsVisible && <DomainFields StateSelect={ StateSelect } /> }
 
 			<TaxFields
 				section="contact"
@@ -173,9 +174,9 @@ const DomainRegistrationCheckbox = styled.input`
 	}
 `;
 
-function AddressFields( { section, contactInfo, setters } ) {
+function AddressFields( { section, contactInfo, setters, StateSelect } ) {
 	const translate = useTranslate();
-	const { firstName, lastName, email, address, city, state } = contactInfo;
+	const { firstName, lastName, email, address, city, state, country } = contactInfo;
 	const { setContactField } = setters;
 
 	return (
@@ -256,19 +257,20 @@ function AddressFields( { section, contactInfo, setters } ) {
 				</LeftColumn>
 
 				<RightColumn>
-					<Field
-						id={ section + '-state' }
-						type="text"
+					<StateSelect
+						countryCode={ country.value ?? 'US' }
 						label={
 							isStateorProvince() === 'state' ? translate( 'State' ) : translate( 'Province' )
 						}
-						value={ state.value }
-						onChange={ value =>
-							setContactField( 'state', { value, isTouched: true, isValid: !! value } )
+						name={ section + '-state' }
+						onChange={ event =>
+							setContactField( 'state', {
+								value: event.target.value,
+								isTouched: true,
+								isValid: !! event.target.value,
+							} )
 						}
-						autoComplete={ section + ' address-level1' }
-						isError={ state.isTouched && ! state.isValid }
-						errorMessage={ translate( 'This field is required.' ) }
+						value={ state.value }
 					/>
 				</RightColumn>
 			</FieldRow>
@@ -280,6 +282,7 @@ AddressFields.propTypes = {
 	section: PropTypes.string.isRequired,
 	contactInfo: PropTypes.object.isRequired,
 	setters: PropTypes.object.isRequired,
+	StateSelect: PropTypes.elementType.isRequired,
 };
 
 function isStateorProvince() {
@@ -432,7 +435,7 @@ function isZipOrPostal() {
 	return 'postal';
 }
 
-function DomainFields() {
+function DomainFields( { StateSelect } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 	const setters = useDispatch( 'wpcom' );
@@ -445,7 +448,12 @@ function DomainFields() {
 				) }
 			</DomainContactFieldsDescription>
 
-			<AddressFields section="contact" contactInfo={ contactInfo } setters={ setters } />
+			<AddressFields
+				section="contact"
+				contactInfo={ contactInfo }
+				setters={ setters }
+				StateSelect={ StateSelect }
+			/>
 		</DomainContactFields>
 	);
 }
