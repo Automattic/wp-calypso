@@ -20,5 +20,8 @@
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
 		"build": "calypso-build --config='./webpack.config.js'"
+	},
+	"dependencies": {
+		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills"
 	}
 }
