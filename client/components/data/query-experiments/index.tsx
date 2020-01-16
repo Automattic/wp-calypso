@@ -20,6 +20,7 @@ function QueryExperiments( {
 	updateAfter: number;
 } ) {
 	useEffect( () => {
+		// todo: wait until after `updateAfter` to call the function
 		doFetchExperiments();
 	}, [ updateAfter, doFetchExperiments ] );
 
