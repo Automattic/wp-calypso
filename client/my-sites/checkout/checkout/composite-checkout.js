@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
@@ -108,6 +108,8 @@ export default function CompositeCheckout( {
 
 	const itemsForCheckout = items.length ? [ ...items, tax ] : [];
 	debug( 'items for checkout', itemsForCheckout );
+
+	useRedirectIfCartEmpty( items, `/plans/${ siteSlug }` );
 
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
@@ -232,4 +234,19 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 function handleCheckoutEvent( action ) {
 	debug( 'checkout event', action );
 	// TODO: record stats
+}
+
+function useRedirectIfCartEmpty( items, redirectUrl ) {
+	const [ prevItemsLength, setPrevItemsLength ] = useState( 0 );
+
+	useEffect( () => {
+		setPrevItemsLength( items.length );
+	}, [ items ] );
+
+	useEffect( () => {
+		if ( prevItemsLength > 0 && items.length === 0 ) {
+			debug( 'cart has become empty; redirecting...' );
+			window.location = redirectUrl;
+		}
+	}, [ items, prevItemsLength ] );
 }
