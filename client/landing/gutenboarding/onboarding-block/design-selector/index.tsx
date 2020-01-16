@@ -73,7 +73,7 @@ const DesignSelector: FunctionComponent = () => {
 	const designSelectorSpring = useSpring( {
 		transform: `translate3d( 0, ${
 			hasSelectedDesign ? -selectionTransitionShift.current : 0
-		}px, 0)`,
+		}px, 0 )`,
 	} );
 
 	const descriptionContainerSpring = useSpring( {
