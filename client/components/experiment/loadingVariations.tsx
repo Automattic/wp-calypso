@@ -10,8 +10,6 @@ import { LoadingProps } from './loadingProps';
 
 /**
  * This component displays when the variation is unknown and an API call needs to be made
- *
- * @param props The properties for loading variations
  */
 const LoadingVariations: FunctionComponent< LoadingProps > = ( {
 	variation,
