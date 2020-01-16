@@ -311,6 +311,7 @@ function PhoneNumberField( {
 			<PhoneInput
 				name={ id }
 				isError={ isError }
+				enableStickyCountry={ false }
 				onChange={ ( { value, countryCode } ) => {
 					setContactField( 'phoneNumber', {
 						value,
@@ -318,13 +319,13 @@ function PhoneNumberField( {
 						isValid: isRequired ? !! value : true,
 					} );
 					setContactField( 'phoneNumberCountry', {
-						countryCode,
+						value: countryCode,
 						isTouched: true,
 						isValid: !! value,
 					} );
 				} }
 				value={ contactInfo.phoneNumber.value }
-				countryCode={ contactInfo.phoneNumberCountry.value || 'US' }
+				countryCode={ contactInfo.phoneNumberCountry.value || contactInfo.country.value || 'US' }
 				countriesList={ countriesList }
 			/>
 			{ isError && <ErrorMessage>{ translate( 'This field is required.' ) }</ErrorMessage> }
