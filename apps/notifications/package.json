@@ -22,6 +22,7 @@
 		"build": "calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
+		"@automattic/calypso-color-schemes": "file:../../packages/calypso-color-schemes",
 		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills"
 	}
 }
