@@ -304,7 +304,7 @@ export class SiteSettingsFormGeneral extends Component {
 				</FormLabel>
 				<FormSettingExplanation isIndented>
 					{ translate(
-						'Your site is visible to everyone.'
+						'Your site is visible to everyone, and it may be indexed by search engines.'
 					) }
 				</FormSettingExplanation>
 
