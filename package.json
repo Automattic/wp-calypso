@@ -208,7 +208,7 @@
 		"jest-emotion": "10.0.27",
 		"jest-fetch-mock": "2.1.2",
 		"jest-junit": "9.0.0",
-		"lerna": "3.18.4",
+		"lerna": "3.20.2",
 		"loader-utils": "1.2.3",
 		"lodash": "4.17.15",
 		"md5-file": "4.0.0",
