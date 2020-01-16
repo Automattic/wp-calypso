@@ -10,10 +10,7 @@ import { defer, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	fetchMagicLoginRequestEmail,
-	hideMagicLoginRequestNotice,
-} from 'state/login/magic-login/actions';
+import { hideMagicLoginRequestNotice } from 'state/login/magic-login/actions';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestedEmailSuccessfully from 'state/selectors/get-magic-login-requested-email-successfully';
 import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-request-email-error';
@@ -31,6 +28,13 @@ import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import {
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+} from 'state/action-types';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
@@ -44,7 +48,7 @@ class RequestLoginEmailForm extends React.Component {
 		userEmail: PropTypes.string,
 
 		// mapped to dispatch
-		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
+		sendMobileEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 	};
 
@@ -87,17 +91,23 @@ class RequestLoginEmailForm extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_submit' );
 
-		this.props
-			.fetchMagicLoginRequestEmail( usernameOrEmail, this.props.redirectTo )
-			.then( () => {
-				this.props.recordTracksEvent( 'calypso_login_email_link_success' );
-			} )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_email_link_failure', {
-					error_code: error.error,
-					error_message: error.message,
-				} );
-			} );
+		this.props.sendMobileEmailLogin( usernameOrEmail, {
+			redirectTo: this.props.redirectTo,
+			actionsOnAPIFetch: [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } ],
+			actionsOnAPISuccess: [
+				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
+				{
+					type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+					email: usernameOrEmail,
+				},
+				recordTracksEvent( 'calypso_login_email_link_success' ),
+			],
+			//these are decorated with error info in client/state/data-layer/wpcom/auth/send-login-email/index.js
+			actionsOnAPIError: [
+				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR },
+				recordTracksEvent( 'calypso_login_email_link_failure' ),
+			],
+		} );
 	};
 
 	getUsernameOrEmailFromState() {
@@ -200,7 +210,7 @@ const mapState = state => {
 };
 
 const mapDispatch = {
-	fetchMagicLoginRequestEmail,
+	sendMobileEmailLogin,
 	hideMagicLoginRequestNotice,
 	recordTracksEvent,
 };

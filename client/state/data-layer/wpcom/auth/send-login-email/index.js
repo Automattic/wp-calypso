@@ -14,12 +14,13 @@ import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/noti
 import config from 'config';
 
 export const sendLoginEmail = action => {
-	const { email, lang_id, locale, redirect_to, showGlobalNotices } = action;
+	const { email, lang_id, locale, redirect_to, showGlobalNotices, actionsOnAPIFetch = [] } = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
 	return [
 		...( showGlobalNotices ? [ noticeAction ] : [] ),
+		...actionsOnAPIFetch,
 		http(
 			{
 				path: `/auth/send-login-email`,
@@ -33,7 +34,7 @@ export const sendLoginEmail = action => {
 					locale,
 					lang_id: lang_id,
 					email: email,
-					...( !! redirect_to && { redirect_to } ),
+					...( redirect_to && { redirect_to } ),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }
@@ -41,7 +42,12 @@ export const sendLoginEmail = action => {
 	];
 };
 
-export const displaySuccessMessage = ( { showGlobalNotices, infoNoticeId = null } ) => [
+export const onSuccess = ( {
+	showGlobalNotices,
+	infoNoticeId = null,
+	actionsOnAPISuccess = [],
+} ) => [
+	...actionsOnAPISuccess,
 	// Default Global Notice Handling
 	...( showGlobalNotices
 		? [
@@ -53,8 +59,26 @@ export const displaySuccessMessage = ( { showGlobalNotices, infoNoticeId = null 
 		: [] ),
 ];
 
-export const displayErrorMessage = ( { showGlobalNotices, infoNoticeId = null } ) => {
+export const onError = (
+	{ showGlobalNotices, infoNoticeId = null, actionsOnAPIError = [] },
+	error
+) => {
+	const decoratedActions = actionsOnAPIError.map( action => {
+		if ( action.type === 'MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR' ) {
+			return {
+				...action,
+				error: error.message,
+			};
+		}
+
+		return {
+			...action,
+			error_code: error.error,
+			error_message: error.message,
+		};
+	} );
 	return [
+		...decoratedActions,
 		// Default Global Notice Handling
 		...( showGlobalNotices
 			? [
@@ -71,8 +95,8 @@ registerHandlers( 'state/data-layer/wpcom/auth/send-login-email/index.js', {
 	[ MOBILE_APPS_LOGIN_EMAIL_SEND ]: [
 		dispatchRequest( {
 			fetch: sendLoginEmail,
-			onSuccess: displaySuccessMessage,
-			onError: displayErrorMessage,
+			onSuccess,
+			onError,
 		} ),
 	],
 } );

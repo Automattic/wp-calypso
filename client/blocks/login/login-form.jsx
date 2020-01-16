@@ -20,7 +20,6 @@ import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Divider from './divider';
-import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -52,12 +51,19 @@ import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
+import { sendMobileEmailLogin } from 'state/mobile-apps/actions';
+import {
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
+	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+} from 'state/action-types';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
-		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
+		sendMobileEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
@@ -131,19 +137,26 @@ export class LoginForm extends Component {
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
-			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
-
-			this.props
-				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail, nextProps.redirectTo )
-				.then( () => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
-				} )
-				.catch( error => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure', {
-						error_code: error.error,
-						error_message: error.message,
-					} );
-				} );
+			this.props.sendMobileEmailLogin( this.state.usernameOrEmail, {
+				redirectTo: nextProps.redirectTo,
+				actionsOnAPIFetch: [
+					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH },
+					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' ),
+				],
+				actionsOnAPISuccess: [
+					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
+					{
+						type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+						email: this.state.usernameOrEmail,
+					},
+					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' ),
+				],
+				//these are decorated with error info in client/state/data-layer/wpcom/auth/send-login-email/index.js
+				actionsOnAPIError: [
+					{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR },
+					recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure' ),
+				],
+			} );
 
 			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 		}
@@ -638,7 +651,7 @@ export default connect(
 		};
 	},
 	{
-		fetchMagicLoginRequestEmail,
+		sendMobileEmailLogin,
 		formUpdate,
 		getAuthAccountType,
 		loginUser,
