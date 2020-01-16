@@ -7,7 +7,6 @@ export { default as getSelectedSiteSlug } from './get-selected-site-slug';
 export { default as getSection } from './get-section';
 export { default as getSectionName } from './get-section-name';
 export { default as getSectionGroup } from './get-section-group';
-export { default as getSectionMessagePath } from './get-section-message-path';
 export { default as isSiteSection } from './is-site-section';
 export { default as isSectionLoading } from './is-section-loading';
 export { default as isSectionIsomorphic } from './is-section-isomorphic';
