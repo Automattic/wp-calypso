@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -121,7 +122,9 @@ class TranslatorLauncher extends React.Component {
 		event.stopPropagation();
 
 		const { deliverablesTarget } = this.state;
-		const deliverablesIds = [ deliverablesTarget ]
+
+		const title = window.prompt( this.props.translate( 'Deliverables title:' ) );
+		const originalIds = [ deliverablesTarget ]
 			.concat(
 				Array.from( deliverablesTarget.querySelectorAll( '[class*=translator-original-]' ) )
 			)
@@ -136,10 +139,18 @@ class TranslatorLauncher extends React.Component {
 			}, [] );
 
 		if ( this.highlightRef.current ) {
-			this.highlightRef.current.style.pointerEvents = 'all';
+			this.highlightRef.current.style.pointerEvents = '';
 		}
 
 		this.toggleDeliverablesHighlight();
+
+		const DELIVERABLES_ENDPOINT = 'https://translate.wordpress.com/deliverables/create';
+		const deliverablesUrl = addQueryArgs( DELIVERABLES_ENDPOINT, {
+			original_ids: originalIds.join( ',' ),
+			title,
+		} );
+
+		window.open( deliverablesUrl, '_blank' ).focus();
 	};
 
 	toggleInfoCheckbox = event => {
