@@ -15,3 +15,7 @@ export const isLoading = ( state: AppState, experimentName: string ) => {
 export const getAnonId = ( state: AppState ) => {
 	return state.experiments.anonId;
 };
+
+export const nextRefresh = ( state: AppState ) => {
+	return state.experiments.nextRefresh;
+};

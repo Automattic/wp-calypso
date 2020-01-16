@@ -10,7 +10,7 @@ import { AppState } from 'types';
  * Internal Dependencies
  */
 import { getVariationForUser, isLoading } from 'state/experiments/selectors';
-import { assignCurrentUserToVariations } from 'state/experiments/actions';
+import { fetchExperiments } from 'state/experiments/actions';
 
 /**
  * The expected props for the top-level experiment component
@@ -122,7 +122,7 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 }
 
 function mapDispatchToProps( dispatch, ownProps?: ExperimentProps ): ExperimentProps | undefined {
-	dispatch( assignCurrentUserToVariations() );
+	dispatch( fetchExperiments() );
 
 	return ownProps;
 }
