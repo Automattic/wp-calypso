@@ -82,7 +82,7 @@ const DesignSelector: FunctionComponent = () => {
 	} );
 
 	const pageSelectorSpring = useSpring( {
-		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0)`,
+		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
 		onStart: () => {
 			hasSelectedDesign && dialog.show();
 		},
