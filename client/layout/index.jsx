@@ -26,9 +26,9 @@ import {
 	getSelectedSiteId,
 	hasSidebar,
 	masterbarIsVisible,
-	getSection,
 	getSectionGroup,
 	getSectionName,
+	getSectionMessagePath,
 } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -148,7 +148,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ this.props.sectionModule }:admin_notices` }
+							messagePath={ `calypso:${ this.props.sectionMessagePath }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
 					) }
@@ -192,7 +192,7 @@ class Layout extends Component {
 export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
-	const { module: sectionModule } = getSection( state );
+	const sectionMessagePath = getSectionMessagePath( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
@@ -220,7 +220,7 @@ export default connect( state => {
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
-		sectionModule,
+		sectionMessagePath,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
