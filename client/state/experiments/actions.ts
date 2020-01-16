@@ -4,7 +4,7 @@
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/active-experiments';
 
-export const assignToExperiments = ( experiments: { Abtests: object; nextRefresh: number } ) => ( {
+export const assignToExperiments = ( experiments: { tests: object; nextRefresh: number } ) => ( {
 	type: EXPERIMENT_ASSIGN,
 	...experiments,
 } );
