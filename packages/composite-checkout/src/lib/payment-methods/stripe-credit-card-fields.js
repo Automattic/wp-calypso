@@ -559,7 +559,6 @@ function StripePayButton( { disabled } ) {
 
 		if ( transactionStatus === 'auth' ) {
 			debug( 'showing auth' );
-			showInfoMessage( localize( 'Authorizing...' ) );
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionAuthData,

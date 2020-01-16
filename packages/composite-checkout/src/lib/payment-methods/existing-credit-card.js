@@ -256,7 +256,6 @@ function ExistingCardPayButton( { disabled, id } ) {
 
 		if ( transactionStatus === 'auth' ) {
 			debug( 'showing auth' );
-			showInfoMessage( localize( 'Authorizing...' ) );
 			showStripeModalAuth( {
 				stripeConfiguration,
 				response: transactionAuthData,
