@@ -26,7 +26,6 @@ import {
 	getSelectedSiteId,
 	hasSidebar,
 	masterbarIsVisible,
-	getSection,
 	getSectionGroup,
 	getSectionName,
 } from 'state/ui/selectors';
@@ -45,6 +44,7 @@ import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
+import { sectionify } from 'lib/route';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
@@ -148,7 +148,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ this.props.sectionModule }:admin_notices` }
+							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
 					) }
@@ -192,9 +192,11 @@ class Layout extends Component {
 export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
-	const { module: sectionModule } = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const sectionJitmPath = sectionify( currentRoute )
+		.replace( /^\/+/, '' )
+		.replace( /\//g, '-' );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
@@ -220,7 +222,7 @@ export default connect( state => {
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
-		sectionModule,
+		sectionJitmPath,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
