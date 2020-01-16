@@ -7,10 +7,12 @@ import { includes } from 'lodash';
 /**
  * Internal Dependencies
  */
-import VariationProps from './variationProps';
+import { VariationProps } from './variationProps';
 
 /**
  * Behavior for variations
+ *
+ * This is a class component so we can use polymorphism to change the behavior in DefaultVariation
  */
 export default class Variation extends Component< VariationProps, {} > {
 	/**
