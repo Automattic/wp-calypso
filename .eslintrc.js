@@ -124,13 +124,6 @@ module.exports = {
 						importNames: [ 'combineReducers' ],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
-					// Use alternate regexp escape module over lodash's
-					{
-						name: 'lodash',
-						importNames: [ 'escapeRegExp' ],
-						message:
-							"`lodash.escapeRegExp` is disallowed. Use `import escapeRegExp from 'escape-string-regexp';` instead.",
-					},
 					// Use fetch instead of superagent.
 					{
 						name: 'superagent',

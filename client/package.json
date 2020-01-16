@@ -85,7 +85,6 @@
 		"email-validator": "2.0.4",
 		"emoji-text": "0.2.6",
 		"emotion-theming": "10.0.19",
-		"escape-string-regexp": "2.0.0",
 		"events": "3.0.0",
 		"express": "4.17.1",
 		"express-useragent": "1.0.13",

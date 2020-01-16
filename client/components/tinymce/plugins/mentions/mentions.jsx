@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
-import escapeRegExp from 'escape-string-regexp';
-import { findIndex, get, head, includes, last, pick } from 'lodash';
+import { escapeRegExp, findIndex, get, head, includes, last, pick } from 'lodash';
 import tinymce from 'tinymce/tinymce';
 
 /**
