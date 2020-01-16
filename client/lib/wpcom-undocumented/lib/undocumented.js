@@ -14,6 +14,7 @@ import MailingList from './mailing-list';
 import config from 'config';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
+import warn from 'lib/warn';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
@@ -1438,6 +1439,10 @@ Undocumented.prototype.usersEmailVerification = function( query, fn ) {
  * @returns {Promise} promise
  */
 Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
+	warn(
+		'wpcom.undocumented().requestMagicLoginEmail` is deprecated. Please dispatch a `sendMobileEmailLogin` ' +
+			'action instead.'
+	);
 	restrictByOauthKeys( data );
 
 	data.locale = getLocaleSlug();
