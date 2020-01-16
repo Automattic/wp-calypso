@@ -13,7 +13,7 @@ import * as Actions from './actions';
 function parseNewUserState(
 	state: NewUser | undefined,
 	action: ReturnType< typeof Actions[ 'receiveNewUser' ] >
-) {
+): NewUser | undefined {
 	const { newUser } = action;
 	if ( newUser ) {
 		return {

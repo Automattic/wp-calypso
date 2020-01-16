@@ -33,7 +33,7 @@ export function register(): typeof STORE_KEY {
 			selectors,
 		} );
 
-		wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, error => {
+		wpcomProxyRequest( { metaAPI: { accessAllUsersBlogs: true } }, ( error: object ) => {
 			if ( error ) {
 				throw error;
 			}
