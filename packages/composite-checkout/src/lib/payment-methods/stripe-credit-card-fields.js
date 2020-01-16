@@ -18,7 +18,7 @@ import PaymentLogo from './payment-logo';
 import {
 	useStripe,
 	createStripePaymentMethod,
-	confirmStripePaymentIntent,
+	showStripeModalAuth,
 	StripeHookProvider,
 } from '../stripe';
 import {
@@ -670,16 +670,4 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode, ph
 		},
 		...( phoneNumber ? { phone: phoneNumber } : {} ),
 	} );
-}
-
-async function showStripeModalAuth( { stripeConfiguration, response } ) {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse?.status ) {
-		return authenticationResponse;
-	}
-	return null;
 }
