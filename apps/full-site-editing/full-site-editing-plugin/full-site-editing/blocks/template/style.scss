@@ -65,10 +65,10 @@
 		border-color: rgba( #425863, 0.4 ); // Gutenberg $dark-opacity-light-800
 	}
 
-	.editor-block-list__block:first-child & {
+	.block-editor-block-list__block:first-child & {
 		border-bottom-width: 1px;
 	}
-	.editor-block-list__block:last-child & {
+	.block-editor-block-list__block:last-child & {
 		border-top-width: 1px;
 	}
 
