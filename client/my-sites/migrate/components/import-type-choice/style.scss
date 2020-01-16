@@ -9,15 +9,17 @@
 
 		cursor: pointer;
 
-		border: 1px solid grey; /* TODO fix color */
+		border: 1px solid var( --color-border ); /* TODO fix color */
 		border-radius: 4px;
+
+		margin-bottom: 10px;
 
 		&.disabled {
 			pointer-events: none;
-			border-color: grey;
+			border-color: var( --color-border-subtle );
 
 			* {
-				color: lightgrey;
+				color: var( --color-neutral-10 );
 			}
 		}
 
@@ -36,13 +38,11 @@
 				justify-content: flex-start;
 				align-items: flex-start;
 
-				h3 {
-					font-weight: bold;
+				.import-type-choice__option-title {
 					font-size: 18px;
+					margin: 0 10px 0 0;
 				}
 			}
 		}
-
-
 	}
 }

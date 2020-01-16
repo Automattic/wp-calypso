@@ -335,7 +335,9 @@ class SectionMigrate extends Component {
 			return (
 				<p>
 					You need to have{ ' ' }
-					<a href={ `https://wordpress.com/jetpack/connect?url=${ sourceSiteDomain }` }>Jetpack</a>{ ' ' }
+					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
+						Jetpack
+					</a>{ ' ' }
 					installed on your site to be able to import over everything
 				</p>
 			);
@@ -395,17 +397,23 @@ class SectionMigrate extends Component {
 							},
 						} }
 					/>
-					{ this.state.chosenImportType === 'everything' ? (
-						<MigrateButton onClick={ this.startMigration } targetSiteDomain={ targetSiteDomain } />
-					) : null }
-					{ this.state.chosenImportType === 'content-only' ? (
-						<Button primary onClick={ this.handleImportRedirect }>
-							Continue
+					<div className="migrate__buttons-wrapper">
+						{ this.state.chosenImportType === 'everything' ? (
+							<MigrateButton
+								onClick={ this.startMigration }
+								targetSiteDomain={ targetSiteDomain }
+							/>
+						) : null }
+						{ this.state.chosenImportType === 'content-only' ? (
+							<Button primary onClick={ this.handleImportRedirect }>
+								Continue
+							</Button>
+						) : null }
+
+						<Button className="migrate__cancel" href={ backHref }>
+							Cancel
 						</Button>
-					) : null }
-					<Button className="migrate__cancel" href={ backHref }>
-						Cancel
-					</Button>
+					</div>
 				</CompactCard>
 			</>
 		);

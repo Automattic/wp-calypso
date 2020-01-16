@@ -76,7 +76,7 @@ export default class ImportTypeChoice extends Component {
 				<input type="radio" checked={ this.state.activeItem === key } readOnly={ true } />
 				<div className="import-type-choice__option-data">
 					<div className="import-type-choice__option-header">
-						<h3>{ item.title }</h3>
+						<p className="import-type-choice__option-title">{ item.title }</p>
 
 						{ item.labels.map( ( label, idx ) => (
 							<div className="migrate__token-label" key={ idx }>
