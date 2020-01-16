@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import url from 'url';
 import crc32 from 'crc32';
 import seed from 'seed-random';
 import debugFactory from 'debug';
@@ -18,6 +17,10 @@ const mappings = {
 	removeLetterboxing: 'ulb',
 };
 
+const PARSE_BASE_HOST = '__domain__.invalid';
+const PARSE_BASE_URL = `http://${ PARSE_BASE_HOST }`;
+const PHOTON_BASE_URL = 'https://i0.wp.com';
+
 /**
  * Returns a "photon" URL from the given image URL.
  *
@@ -29,39 +32,42 @@ const mappings = {
  * @param {string} imageUrl - the URL of the image to run through Photon
  * @param {object} [opts] - optional options object with Photon options
  * @returns {string} The generated Photon URL string
- * @api public
  */
 export default function photon( imageUrl, opts ) {
-	// parse the URL, assuming //host.com/path style URLs are ok and parse the querystring
-	const parsedUrl = url.parse( imageUrl, true, true );
+	let parsedUrl;
+	try {
+		parsedUrl = new URL( imageUrl, PARSE_BASE_URL );
+	} catch {
+		// Return null for invalid URLs.
+		return null;
+	}
+
 	const wasSecure = parsedUrl.protocol === 'https:';
-
-	delete parsedUrl.protocol;
-	delete parsedUrl.auth;
-	delete parsedUrl.port;
-
-	const params = {
-		slashes: true,
-		protocol: 'https:',
-		query: {},
-	};
+	const photonUrl = new URL( PHOTON_BASE_URL );
 
 	if ( isAlreadyPhotoned( parsedUrl.host ) ) {
 		// We already have a server to use.
 		// Use it, even if it doesn't match our hash.
-		params.pathname = parsedUrl.pathname;
-		params.hostname = parsedUrl.hostname;
+		photonUrl.pathname = parsedUrl.pathname;
+		photonUrl.hostname = parsedUrl.hostname;
 	} else {
 		// Photon does not support URLs with a querystring component
 		if ( parsedUrl.search ) {
 			return null;
 		}
-		const formattedUrl = url.format( parsedUrl );
-		params.pathname =
-			0 === formattedUrl.indexOf( '//' ) ? formattedUrl.substring( 1 ) : formattedUrl;
-		params.hostname = serverFromPathname( params.pathname );
+		let formattedUrl = parsedUrl.href.replace( `${ parsedUrl.protocol }/`, '' );
+		// Handle blob: protocol URLs.
+		if ( parsedUrl.protocol === 'blob:' ) {
+			formattedUrl = parsedUrl.pathname.replace( '://', '//' );
+		}
+		// Handle path-absolute and path-relative URLs.
+		if ( parsedUrl.hostname === PARSE_BASE_HOST ) {
+			formattedUrl = parsedUrl.pathname;
+		}
+		photonUrl.pathname = formattedUrl;
+		photonUrl.hostname = serverFromPathname( formattedUrl );
 		if ( wasSecure ) {
-			params.query.ssl = 1;
+			photonUrl.searchParams.set( 'ssl', 1 );
 		}
 	}
 
@@ -69,25 +75,24 @@ export default function photon( imageUrl, opts ) {
 		for ( const i in opts ) {
 			// allow configurable "hostname"
 			if ( i === 'host' || i === 'hostname' ) {
-				params.hostname = opts[ i ];
+				photonUrl.hostname = opts[ i ];
 				continue;
 			}
 
 			// allow non-secure access
 			if ( i === 'secure' && ! opts[ i ] ) {
-				params.protocol = 'http:';
+				photonUrl.protocol = 'http:';
 				continue;
 			}
 
-			params.query[ mappings[ i ] || i ] = opts[ i ];
+			photonUrl.searchParams.set( mappings[ i ] || i, opts[ i ] );
 		}
 	}
 
 	// do this after so a passed opt can't override it
 
-	const photonUrl = url.format( params );
-	debug( 'generated Photon URL: %s', photonUrl );
-	return photonUrl;
+	debug( 'generated Photon URL: %s', photonUrl.href );
+	return photonUrl.href;
 }
 
 function isAlreadyPhotoned( host ) {
@@ -98,6 +103,7 @@ function isAlreadyPhotoned( host ) {
  * Determine which Photon server to connect to: `i0`, `i1`, or `i2`.
  *
  * Statically hash the subdomain based on the URL, to optimize browser caches.
+ *
  * @param  {string} pathname The pathname to use
  * @returns {string}          The hostname for the pathname
  */
