@@ -69,15 +69,6 @@ export function createStripeMethod( {
 			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload };
 		},
-		*getConfiguration( payload ) {
-			let configuration;
-			try {
-				configuration = yield { type: 'STRIPE_CONFIGURATION_FETCH', payload };
-			} catch ( error ) {
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			return { type: 'STRIPE_CONFIGURATION_SET', payload: configuration };
-		},
 		*beginStripeTransaction( payload ) {
 			let stripeResponse;
 			try {
@@ -120,9 +111,6 @@ export function createStripeMethod( {
 	};
 
 	const selectors = {
-		getStripeConfiguration( state ) {
-			return state.stripeConfiguration;
-		},
 		getBrand( state ) {
 			return state.brand || '';
 		},
@@ -206,8 +194,6 @@ export function createStripeMethod( {
 						transactionStatus: 'redirect',
 						redirectUrl: action.payload.redirect_url,
 					};
-				case 'STRIPE_CONFIGURATION_SET':
-					return { ...state, stripeConfiguration: action.payload };
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: action.payload };
 				case 'BRAND_SET':
@@ -228,9 +214,6 @@ export function createStripeMethod( {
 		actions,
 		selectors,
 		controls: {
-			STRIPE_CONFIGURATION_FETCH( action ) {
-				return fetchStripeConfiguration( action.payload );
-			},
 			STRIPE_CREATE_PAYMENT_METHOD_TOKEN( action ) {
 				return createStripePaymentMethodToken( action.payload );
 			},
@@ -245,7 +228,11 @@ export function createStripeMethod( {
 		label: <CreditCardLabel />,
 		activeContent: <StripeCreditCardFields />,
 		submitButton: <StripePayButton />,
-		checkoutWrapper: children => <StripeHookProvider>{ children }</StripeHookProvider>,
+		checkoutWrapper: children => (
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+				{ children }
+			</StripeHookProvider>
+		),
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
