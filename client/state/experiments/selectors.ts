@@ -9,11 +9,11 @@ import { get } from 'lodash';
 import { AppState } from 'types';
 
 export function getVariationForUser( state: AppState, experiment: string ) {
-	return get( state, [ 'experiments', 'Abtests', experiment ], null );
+	return get( state, [ 'experiments', 'tests', experiment ], null );
 }
 
 export const isLoading = ( state: AppState ) => {
-	return get( state, [ 'experiments', 'Abtests' ], null ) === null;
+	return get( state, [ 'experiments', 'isLoading' ], true );
 };
 
 export const getAnonId = ( state: AppState ) => {

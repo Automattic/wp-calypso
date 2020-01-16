@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { findIndex, tail } from 'lodash';
-import { EXPERIMENT_ASSIGN } from 'state/action-types';
+import { EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
 
 function getAnonId(): string | null {
 	if ( document && document.cookie !== null ) {
@@ -20,8 +20,9 @@ function getAnonId(): string | null {
 
 interface ExperimentState {
 	anonId: string | null;
-	Abtests: object | null;
+	tests: object | null;
 	nextRefresh: number;
+	isLoading: boolean;
 }
 
 /**
@@ -32,7 +33,7 @@ interface ExperimentState {
  * @returns object The modified state, if applied
  */
 export default function reducer(
-	state: ExperimentState = { anonId: null, Abtests: null, nextRefresh: Date.now() },
+	state: ExperimentState = { anonId: null, tests: null, nextRefresh: Date.now(), isLoading: true },
 	action: any
 ) {
 	const { type, ...data } = action;
@@ -45,7 +46,11 @@ export default function reducer(
 			return state;
 		case EXPERIMENT_ASSIGN:
 			data.nextRefresh = Date.now() + data.nextRefresh * 1000;
+			state.isLoading = false;
 			return { ...state, ...data };
+		case EXPERIMENT_FETCH:
+			state.isLoading = true;
+			return state;
 		default:
 			return state;
 	}

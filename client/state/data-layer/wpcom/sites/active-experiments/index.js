@@ -11,7 +11,7 @@ import { assignToExperiments } from 'state/experiments/actions';
 
 const transformApiRequest = data => {
 	return {
-		Abtests: data.variations,
+		tests: data.variations,
 		nextRefresh: data.ttl,
 	};
 };
