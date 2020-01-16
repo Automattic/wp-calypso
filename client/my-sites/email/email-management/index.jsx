@@ -64,25 +64,26 @@ class EmailManagement extends React.Component {
 	};
 
 	render() {
-		const { selectedSiteId, canManageSite } = this.props;
+		const { selectedSiteId, selectedDomainName, canManageSite } = this.props;
+
+		if ( ! canManageSite ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
 
 		return (
 			<Main className="email-management" wideLayout>
-				{ selectedSiteId && canManageSite && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
+				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
-				{ canManageSite && this.headerLayout() }
-				{ this.content() }
-			</Main>
-		);
-	}
-
-	headerLayout() {
-		const { selectedDomainName } = this.props;
-
-		return (
-			<Fragment>
 				{ ! selectedDomainName && (
 					<FormattedHeader
 						className="email-management__page-heading"
@@ -92,7 +93,8 @@ class EmailManagement extends React.Component {
 				) }
 
 				{ this.headerOrPlansNavigation() }
-			</Fragment>
+				{ this.content() }
+			</Main>
 		);
 	}
 
@@ -116,16 +118,7 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const {
-			domains,
-			hasGSuiteUsersLoaded,
-			hasSiteDomainsLoaded,
-			selectedDomainName,
-			canManageSite,
-		} = this.props;
-		if ( ! canManageSite ) {
-			return this.emptyContent();
-		}
+		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
 		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
@@ -165,7 +158,7 @@ class EmailManagement extends React.Component {
 	}
 
 	getEmptyContentProps() {
-		const { selectedDomainName, selectedSiteSlug, translate, canManageSite } = this.props;
+		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
 
 		const selectedDomain = getSelectedDomain( this.props );
 
@@ -207,14 +200,6 @@ class EmailManagement extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				...emailForwardingAction,
-			};
-		}
-
-		if ( ! canManageSite ) {
-			return {
-				illustration: '/calypso/images/illustrations/illustration-404.svg',
-				title: translate( 'You are not authorized to view this page' ),
-				action: null,
 			};
 		}
 
