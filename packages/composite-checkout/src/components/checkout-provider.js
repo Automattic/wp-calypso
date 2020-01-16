@@ -170,7 +170,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 
 function PaymentMethodWrapperProvider( { children, wrappers } ) {
 	return wrappers.reduce( ( whole, wrapper ) => {
-		return wrapper( { children: whole } );
+		return wrapper( whole );
 	}, children );
 }
 
