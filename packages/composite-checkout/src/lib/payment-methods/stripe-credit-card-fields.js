@@ -245,7 +245,7 @@ export function createStripeMethod( {
 		label: <CreditCardLabel />,
 		activeContent: <StripeCreditCardFields />,
 		submitButton: <StripePayButton />,
-		CheckoutWrapper: StripeHookProvider,
+		checkoutWrapper: children => <StripeHookProvider>{ children }</StripeHookProvider>,
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {

@@ -57,11 +57,11 @@ export const CheckoutProvider = props => {
 		}
 	}, [ formStatus, onPaymentComplete ] );
 
-	// Remove undefined and duplicate CheckoutWrapper properties
+	// Remove undefined and duplicate checkoutWrapper properties
 	const wrappers = [
-		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
+		...new Set( paymentMethods.map( method => method.checkoutWrapper ).filter( Boolean ) ),
 	];
-	debug( `applying ${ wrappers.length } CheckoutWrapper wrappers` );
+	debug( `applying ${ wrappers.length } checkoutWrapper wrappers` );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -169,8 +169,8 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 }
 
 function PaymentMethodWrapperProvider( { children, wrappers } ) {
-	return wrappers.reduce( ( whole, Wrapper ) => {
-		return <Wrapper>{ whole }</Wrapper>;
+	return wrappers.reduce( ( whole, wrapper ) => {
+		return wrapper( { children: whole } );
 	}, children );
 }
 
